@@ -11,7 +11,9 @@
 
 ## 📋 Overview
 
-LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for technical education. Built with modern web technologies, it provides an interactive environment for students to learn programming, IT certifications, and technical skills through structured courses, hands-on exercises, quizzes, and gamified challenges.
+LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for technical education. Built with modern web technologies, it provides an interactive environment for students to learn programming through structured courses, hands-on exercises, quizzes, and gamified challenges.
+
+**Currently Available**: Python Basics course with 180+ lessons and exercises. Additional courses coming soon!
 
 ### ✨ Key Features
 
@@ -76,9 +78,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the platform.
 LEARN-IT-ALL/
 ├── content/              # Course content (JSON-based curriculum)
 │   └── courses/
-│       ├── python-basics/
-│       ├── comptia-a-plus/
-│       └── comptia-network-plus/
+│       └── python-basics/    # 180+ lessons, exercises, and quizzes
 ├── prisma/               # SQLite database (auto-created)
 ├── public/               # Static assets
 ├── scripts/              # Utility scripts
@@ -106,29 +106,27 @@ LEARN-IT-ALL/
 
 ## 📚 Available Courses
 
-### 🐍 Python Basics
-Complete introduction to Python programming with 50+ exercises covering:
-- Variables and data types
-- Functions and control flow
-- Lists and data structures
-- Error handling
-- Best practices
+### 🐍 Python Basics (Available Now)
+Complete introduction to Python programming with 180+ lessons and exercises covering:
+- **Chapter 1**: Python fundamentals, variables, and data types
+- **Chapter 2**: String operations and user input
+- **Chapter 3**: Comments, debugging, and best practices
+- **Chapter 4**: Variables deep dive (naming, scope, memory)
+- **Chapter 5**: Computer science fundamentals
+- **Chapter 6**: Conditionals and boolean logic
+- **Chapter 7**: Loops and iteration patterns
+- **Chapter 8**: Functions and advanced scope
+- **Chapter 9**: Lists and list operations
+- **Chapter 10**: Dictionaries and key-value pairs
+- **Chapter 11**: Sets and set operations
+- **Chapter 12**: Error handling and testing
+- **Chapter 13**: Real-world practice projects
 
-### 💻 CompTIA A+ Certification
-Comprehensive IT certification preparation covering:
-- Hardware fundamentals
-- Operating systems
-- Networking basics
-- Security fundamentals
-- Troubleshooting
-
-### 🌐 CompTIA Network+ Certification
-Network infrastructure and administration:
-- Network protocols
-- OSI model
-- Network devices
-- Security concepts
-- Troubleshooting methodologies
+### 🚧 Coming Soon
+- 💻 CompTIA A+ Certification
+- 🌐 CompTIA Network+ Certification
+- 🐍 Python Advanced Topics
+- 🌐 Web Development Fundamentals
 
 ---
 
@@ -264,12 +262,15 @@ For questions, issues, or feature requests:
 **Active Development** - This platform is under active development. Features are being added regularly.
 
 ### Roadmap
-- [ ] Additional course content
-- [ ] Enhanced progress analytics
-- [ ] More gamified challenges
-- [ ] Certificate generation
-- [ ] Export/import progress
-- [ ] Multi-language support
+- [x] Python Basics course (180+ lessons)
+- [ ] CompTIA A+ Certification course
+- [ ] CompTIA Network+ Certification course
+- [ ] Python Advanced Topics course
+- [ ] Enhanced progress analytics dashboard
+- [ ] More gamified challenges and mini-games
+- [ ] Certificate generation system
+- [ ] Export/import progress data
+- [ ] Course recommendation engine
 
 ---
 
