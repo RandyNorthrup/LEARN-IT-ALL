@@ -1,0 +1,63 @@
+{
+  "id": "exercise-080-hexadecimal-system",
+  "lessonId": "lesson-072-hexadecimal-system",
+  "title": "Hex Color Code Generator",
+  "description": "Create a hex color code generator and converter that works with RGB colors. Hexadecimal is commonly used in web development for colors (e.g., #FF5733).\n\nYour program should:\n1. Convert RGB values (0-255) to hex color code\n2. Convert hex color code to RGB values\n3. Generate a color palette by adjusting brightness\n4. Display a color table showing RGB, hex, and binary representations\n\nImplement these functions:\n- `rgb_to_hex(r, g, b)`: Convert RGB to hex color code (e.g., '#FF5733')\n- `hex_to_rgb(hex_code)`: Convert hex code to (r, g, b) tuple\n- `adjust_brightness(hex_code, factor)`: Make color lighter (factor > 1) or darker (factor < 1)\n- `show_color_table(colors)`: Display table with RGB, hex, and binary for list of colors\n\nExample:\n```python\nprint(rgb_to_hex(255, 87, 51))  # '#FF5733'\nprint(hex_to_rgb('#FF5733'))  # (255, 87, 51)\nprint(adjust_brightness('#FF5733', 0.5))  # '#7F2B19' (darker)\n\ncolors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]\nshow_color_table(colors)\n# Color Table:\n# RGB              | Hex      | Binary\n# (255, 0, 0)     | #FF0000  | 11111111 00000000 00000000\n# (0, 255, 0)     | #00FF00  | 00000000 11111111 00000000\n# (0, 0, 255)     | #0000FF  | 00000000 00000000 11111111\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def rgb_to_hex(r, g, b):\n    \"\"\"Convert RGB values (0-255) to hex color code.\"\"\"\n    # TODO: Validate that r, g, b are in range 0-255\n    \n    # TODO: Convert each color value to 2-digit hex\n    # Hint: Use hex() function, remove '0x' prefix, pad with zeros if needed\n    \n    # TODO: Combine into #RRGGBB format\n    \n    pass\n\ndef hex_to_rgb(hex_code):\n    \"\"\"Convert hex color code to RGB tuple.\"\"\"\n    # TODO: Remove '#' if present\n    \n    # TODO: Extract RR, GG, BB parts (2 characters each)\n    \n    # TODO: Convert each hex pair to decimal (0-255)\n    # Hint: int(hex_str, 16) converts hex string to decimal\n    \n    # TODO: Return tuple (r, g, b)\n    \n    pass\n\ndef adjust_brightness(hex_code, factor):\n    \"\"\"Adjust color brightness. factor > 1 is brighter, < 1 is darker.\"\"\"\n    # TODO: Convert hex to RGB\n    \n    # TODO: Multiply each RGB value by factor\n    \n    # TODO: Clamp values to 0-255 range\n    # Use max(0, min(255, value)) to ensure value stays in range\n    \n    # TODO: Convert back to hex\n    \n    pass\n\ndef show_color_table(colors):\n    \"\"\"Display table showing RGB, hex, and binary for each color.\"\"\"\n    # TODO: Print table header\n    print(\"Color Table:\")\n    print(f\"{'RGB':<16} | {'Hex':<8} | Binary\")\n    print(\"-\" * 60)\n    \n    # TODO: Loop through each color (r, g, b)\n    # 1. Convert to hex using rgb_to_hex\n    # 2. Convert each RGB value to 8-bit binary (use format(value, '08b'))\n    # 3. Print formatted row\n    \n    pass\n\n# Test the functions\nprint(\"RGB to Hex:\")\nprint(f\"(255, 87, 51) → {rgb_to_hex(255, 87, 51)}\")\nprint(f\"(0, 128, 255) → {rgb_to_hex(0, 128, 255)}\")\n\nprint(\"\\nHex to RGB:\")\nprint(f\"#FF5733 → {hex_to_rgb('#FF5733')}\")\nprint(f\"#0080FF → {hex_to_rgb('#0080FF')}\")\n\nprint(\"\\nBrightness Adjustment:\")\noriginal = '#FF5733'\nprint(f\"Original: {original}\")\nprint(f\"50% darker: {adjust_brightness(original, 0.5)}\")\nprint(f\"50% brighter: {adjust_brightness(original, 1.5)}\")\n\nprint(\"\\n\" + \"=\"*60)\ncolors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]\nshow_color_table(colors)",
+  "solution": "def rgb_to_hex(r, g, b):\n    \"\"\"Convert RGB values (0-255) to hex color code.\"\"\"\n    # Validate range\n    if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):\n        raise ValueError(\"RGB values must be in range 0-255\")\n    \n    # Convert to hex (remove '0x' prefix, uppercase, pad to 2 digits)\n    hex_r = format(r, '02X')\n    hex_g = format(g, '02X')\n    hex_b = format(b, '02X')\n    \n    return f\"#{hex_r}{hex_g}{hex_b}\"\n\ndef hex_to_rgb(hex_code):\n    \"\"\"Convert hex color code to RGB tuple.\"\"\"\n    # Remove '#' if present\n    if hex_code.startswith('#'):\n        hex_code = hex_code[1:]\n    \n    # Extract RR, GG, BB\n    r = int(hex_code[0:2], 16)\n    g = int(hex_code[2:4], 16)\n    b = int(hex_code[4:6], 16)\n    \n    return (r, g, b)\n\ndef adjust_brightness(hex_code, factor):\n    \"\"\"Adjust color brightness. factor > 1 is brighter, < 1 is darker.\"\"\"\n    # Convert to RGB\n    r, g, b = hex_to_rgb(hex_code)\n    \n    # Adjust brightness\n    r = int(r * factor)\n    g = int(g * factor)\n    b = int(b * factor)\n    \n    # Clamp to 0-255 range\n    r = max(0, min(255, r))\n    g = max(0, min(255, g))\n    b = max(0, min(255, b))\n    \n    return rgb_to_hex(r, g, b)\n\ndef show_color_table(colors):\n    \"\"\"Display table showing RGB, hex, and binary for each color.\"\"\"\n    print(\"Color Table:\")\n    print(f\"{'RGB':<16} | {'Hex':<8} | Binary\")\n    print(\"-\" * 60)\n    \n    for r, g, b in colors:\n        # Convert to hex\n        hex_code = rgb_to_hex(r, g, b)\n        \n        # Convert to binary (8 bits each)\n        binary_r = format(r, '08b')\n        binary_g = format(g, '08b')\n        binary_b = format(b, '08b')\n        binary = f\"{binary_r} {binary_g} {binary_b}\"\n        \n        # Print row\n        rgb_str = f\"({r}, {g}, {b})\"\n        print(f\"{rgb_str:<16} | {hex_code:<8} | {binary}\")\n\n# Test the functions\nprint(\"RGB to Hex:\")\nprint(f\"(255, 87, 51) → {rgb_to_hex(255, 87, 51)}\")\nprint(f\"(0, 128, 255) → {rgb_to_hex(0, 128, 255)}\")\n\nprint(\"\\nHex to RGB:\")\nprint(f\"#FF5733 → {hex_to_rgb('#FF5733')}\")\nprint(f\"#0080FF → {hex_to_rgb('#0080FF')}\")\n\nprint(\"\\nBrightness Adjustment:\")\noriginal = '#FF5733'\nprint(f\"Original: {original}\")\nprint(f\"50% darker: {adjust_brightness(original, 0.5)}\")\nprint(f\"50% brighter: {adjust_brightness(original, 1.5)}\")\n\nprint(\"\\n\" + \"=\"*60)\ncolors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]\nshow_color_table(colors)",
+  "hints": [
+    "Use format(value, '02X') to convert a decimal number to a 2-digit uppercase hex string",
+    "To convert hex to decimal, use int(hex_string, 16) where 16 is the base",
+    "For hex_to_rgb, use string slicing: hex_code[0:2] for red, [2:4] for green, [4:6] for blue",
+    "To clamp a value to 0-255 range, use: max(0, min(255, value))",
+    "For binary representation, use format(value, '08b') to get an 8-bit binary string",
+    "When adjusting brightness, multiply RGB values by factor, then clamp to valid range before converting back to hex"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "rgb_to_hex converts (255, 87, 51) to '#FF5733'",
+      "input": "rgb_to_hex(255, 87, 51)",
+      "expectedOutput": "'#FF5733'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "hex_to_rgb converts '#FF5733' to (255, 87, 51)",
+      "input": "hex_to_rgb('#FF5733')",
+      "expectedOutput": "(255, 87, 51)",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "adjust_brightness darkens color by 50%",
+      "input": "adjust_brightness('#FF5733', 0.5)",
+      "expectedOutput": "'#7F2B19' or similar darker shade",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "rgb_to_hex handles pure colors correctly",
+      "input": "rgb_to_hex(255, 0, 0)",
+      "expectedOutput": "'#FF0000'",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "hex_to_rgb handles hex codes without # prefix",
+      "input": "hex_to_rgb('0080FF')",
+      "expectedOutput": "(0, 128, 255)",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "show_color_table displays proper formatting",
+      "input": "show_color_table([(255, 0, 0)])",
+      "expectedOutput": "Output contains 'Color Table:' and '#FF0000' and '11111111 00000000 00000000'",
+      "isHidden": true
+    }
+  ]
+}

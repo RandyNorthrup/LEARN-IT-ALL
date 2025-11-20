@@ -1,0 +1,63 @@
+{
+  "id": "exercise-168-advanced-error-patterns",
+  "lessonId": "lesson-158-advanced-error-patterns",
+  "title": "Advanced Error Handling Patterns",
+  "description": "Implement Result type, Option type, Saga pattern with compensation, Bulkhead isolation, and Dead Letter Queue patterns.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Advanced Error Handling Patterns\n\nclass Result:\n    \"\"\"Result type for operations (success/failure).\"\"\"\n    pass\n\nclass Option:\n    \"\"\"Option type for nullable values.\"\"\"\n    pass\n\nclass SagaOrchestrator:\n    \"\"\"Saga pattern with compensation.\"\"\"\n    pass\n\nclass Bulkhead:\n    \"\"\"Bulkhead isolation pattern.\"\"\"\n    pass\n\nclass DeadLetterQueue:\n    \"\"\"Dead Letter Queue for failed messages.\"\"\"\n    pass\n\nclass CircuitBreaker:\n    \"\"\"Circuit breaker pattern (advanced).\"\"\"\n    pass\n",
+  "solution": "# Solution: Advanced Error Handling Patterns\nfrom typing import TypeVar, Generic, Callable, Any, List, Dict\nfrom dataclasses import dataclass\nfrom enum import Enum\nfrom collections import deque\n\nT = TypeVar('T')\nE = TypeVar('E')\n\nclass Result(Generic[T, E]):\n    \"\"\"Result type for operations (success/failure).\"\"\"\n    \n    def __init__(self, value: T = None, error: E = None):\n        self._value = value\n        self._error = error\n        self._is_ok = error is None\n    \n    @staticmethod\n    def ok(value: T) -> 'Result[T, E]':\n        \"\"\"Create success result.\"\"\"\n        return Result(value=value)\n    \n    @staticmethod\n    def err(error: E) -> 'Result[T, E]':\n        \"\"\"Create error result.\"\"\"\n        return Result(error=error)\n    \n    def is_ok(self) -> bool:\n        \"\"\"Check if result is success.\"\"\"\n        return self._is_ok\n    \n    def is_err(self) -> bool:\n        \"\"\"Check if result is error.\"\"\"\n        return not self._is_ok\n    \n    def unwrap(self) -> T:\n        \"\"\"Get value or raise.\"\"\"\n        if self._is_ok:\n            return self._value\n        raise ValueError(f\"Called unwrap on error: {self._error}\")\n    \n    def unwrap_or(self, default: T) -> T:\n        \"\"\"Get value or default.\"\"\"\n        return self._value if self._is_ok else default\n\nclass Option(Generic[T]):\n    \"\"\"Option type for nullable values.\"\"\"\n    \n    def __init__(self, value: T = None):\n        self._value = value\n        self._is_some = value is not None\n    \n    @staticmethod\n    def some(value: T) -> 'Option[T]':\n        \"\"\"Create Some variant.\"\"\"\n        return Option(value)\n    \n    @staticmethod\n    def none() -> 'Option[T]':\n        \"\"\"Create None variant.\"\"\"\n        return Option()\n    \n    def is_some(self) -> bool:\n        \"\"\"Check if option has value.\"\"\"\n        return self._is_some\n    \n    def is_none(self) -> bool:\n        \"\"\"Check if option is empty.\"\"\"\n        return not self._is_some\n    \n    def unwrap(self) -> T:\n        \"\"\"Get value or raise.\"\"\"\n        if self._is_some:\n            return self._value\n        raise ValueError(\"Called unwrap on None\")\n    \n    def unwrap_or(self, default: T) -> T:\n        \"\"\"Get value or default.\"\"\"\n        return self._value if self._is_some else default\n\nclass SagaOrchestrator:\n    \"\"\"Saga pattern with compensation.\"\"\"\n    \n    def __init__(self):\n        self.steps = []\n        self.completed = []\n    \n    def add_step(self, name: str, action: Callable, compensate: Callable):\n        \"\"\"Add step with compensation.\"\"\"\n        self.steps.append((name, action, compensate))\n    \n    def execute(self) -> Result:\n        \"\"\"Execute saga with automatic rollback on failure.\"\"\"\n        for name, action, compensate in self.steps:\n            try:\n                action()\n                self.completed.append((name, compensate))\n            except Exception as e:\n                # Rollback completed steps\n                self._rollback()\n                return Result.err(f\"Step '{name}' failed: {e}\")\n        \n        return Result.ok(\"Success\")\n    \n    def _rollback(self):\n        \"\"\"Rollback completed steps in reverse.\"\"\"\n        for name, compensate in reversed(self.completed):\n            try:\n                compensate()\n            except Exception as e:\n                # Log compensation failure (in production)\n                pass\n\nclass Bulkhead:\n    \"\"\"Bulkhead isolation pattern.\"\"\"\n    \n    def __init__(self, max_concurrent: int = 10):\n        self.max_concurrent = max_concurrent\n        self.active_count = 0\n    \n    def execute(self, func: Callable, *args, **kwargs) -> Result:\n        \"\"\"Execute with concurrency limit.\"\"\"\n        if self.active_count >= self.max_concurrent:\n            return Result.err(\"Bulkhead limit reached\")\n        \n        self.active_count += 1\n        try:\n            result = func(*args, **kwargs)\n            return Result.ok(result)\n        except Exception as e:\n            return Result.err(str(e))\n        finally:\n            self.active_count -= 1\n\nclass DeadLetterQueue:\n    \"\"\"Dead Letter Queue for failed messages.\"\"\"\n    \n    def __init__(self, max_retries: int = 3):\n        self.max_retries = max_retries\n        self.dlq = deque()\n        self.retry_counts = {}\n    \n    def process_message(self, message_id: str, processor: Callable) -> bool:\n        \"\"\"Process message with automatic retry.\"\"\"\n        retries = self.retry_counts.get(message_id, 0)\n        \n        try:\n            processor(message_id)\n            # Success - remove from retry tracking\n            self.retry_counts.pop(message_id, None)\n            return True\n        except Exception as e:\n            retries += 1\n            self.retry_counts[message_id] = retries\n            \n            if retries >= self.max_retries:\n                # Move to DLQ\n                self.dlq.append({\n                    \"message_id\": message_id,\n                    \"error\": str(e),\n                    \"retries\": retries\n                })\n                self.retry_counts.pop(message_id, None)\n                return False\n            \n            return False\n    \n    def get_dlq_messages(self) -> List[Dict]:\n        \"\"\"Get messages in DLQ.\"\"\"\n        return list(self.dlq)\n\nclass CircuitBreakerState(Enum):\n    \"\"\"Circuit breaker states.\"\"\"\n    CLOSED = \"closed\"\n    OPEN = \"open\"\n    HALF_OPEN = \"half_open\"\n\nclass CircuitBreaker:\n    \"\"\"Circuit breaker pattern (advanced).\"\"\"\n    \n    def __init__(self, failure_threshold: int = 5, timeout: float = 60):\n        self.failure_threshold = failure_threshold\n        self.timeout = timeout\n        self.failure_count = 0\n        self.state = CircuitBreakerState.CLOSED\n        self.last_failure_time = 0\n    \n    def call(self, func: Callable, *args, **kwargs) -> Result:\n        \"\"\"Call function through circuit breaker.\"\"\"\n        if self.state == CircuitBreakerState.OPEN:\n            # Check if timeout has passed\n            import time\n            if time.time() - self.last_failure_time > self.timeout:\n                self.state = CircuitBreakerState.HALF_OPEN\n            else:\n                return Result.err(\"Circuit breaker is OPEN\")\n        \n        try:\n            result = func(*args, **kwargs)\n            \n            # Success\n            if self.state == CircuitBreakerState.HALF_OPEN:\n                self.state = CircuitBreakerState.CLOSED\n            \n            self.failure_count = 0\n            return Result.ok(result)\n        \n        except Exception as e:\n            import time\n            self.failure_count += 1\n            self.last_failure_time = time.time()\n            \n            if self.failure_count >= self.failure_threshold:\n                self.state = CircuitBreakerState.OPEN\n            \n            return Result.err(str(e))\n",
+  "hints": [
+    "Result type: Store value OR error, track is_ok boolean, unwrap() raises on error",
+    "Option type: Store value, track is_some boolean, unwrap_or() returns default",
+    "Saga: Execute steps in order, on failure rollback completed steps in reverse",
+    "Bulkhead: Track active_count, reject if >= max_concurrent, decrement in finally",
+    "DeadLetterQueue: Track retry counts, move to DLQ after max_retries",
+    "CircuitBreaker: Track failures, open circuit after threshold, close on success"
+  ],
+  "testCases": [
+    {
+      "input": "r = Result.ok(42)\\n(r.is_ok(), r.unwrap())",
+      "description": "Test Result ok",
+      "id": "test1",
+      "expectedOutput": "(True, 42)",
+      "isHidden": false
+    },
+    {
+      "input": "r = Result.err('failed')\\n(r.is_err(), r.unwrap_or(0))",
+      "description": "Test Result err",
+      "id": "test2",
+      "expectedOutput": "(True, 0)",
+      "isHidden": false
+    },
+    {
+      "input": "opt = Option.some(42)\\n(opt.is_some(), opt.unwrap())",
+      "description": "Test Option some",
+      "id": "test3",
+      "expectedOutput": "(True, 42)",
+      "isHidden": false
+    },
+    {
+      "input": "saga = SagaOrchestrator()\\nrollbacks = []\\nsaga.add_step('s1', lambda: None, lambda: rollbacks.append(1))\\nsaga.add_step('s2', lambda: raise_exception(), lambda: rollbacks.append(2))\\nresult = saga.execute()\\n(result.is_err(), len(rollbacks))",
+      "description": "Test SagaOrchestrator rollback",
+      "id": "test4",
+      "expectedOutput": "(True, 1)",
+      "isHidden": true
+    },
+    {
+      "input": "bulkhead = Bulkhead(max_concurrent=1)\\nbulkhead.active_count = 1\\nresult = bulkhead.execute(lambda: 42)\\nresult.is_err()",
+      "description": "Test Bulkhead limit",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "dlq = DeadLetterQueue(max_retries=2)\\nfor _ in range(2):\\n    dlq.process_message('msg1', lambda x: raise_exception())\\nlen(dlq.get_dlq_messages())",
+      "description": "Test DeadLetterQueue retry",
+      "id": "test6",
+      "expectedOutput": "1",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

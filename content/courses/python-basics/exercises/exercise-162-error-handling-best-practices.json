@@ -1,0 +1,63 @@
+{
+  "id": "exercise-162-error-handling-best-practices",
+  "lessonId": "lesson-152-error-handling-best-practices",
+  "title": "Error Handling Best Practices",
+  "description": "Follow professional error handling patterns, write maintainable code, document errors effectively, implement production-ready practices.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Error Handling Best Practices\n\ndef specific_exception_handling(data):\n    \"\"\"Handle specific exceptions (not broad Exception).\"\"\"\n    pass\n\ndef helpful_error_messages(user_input):\n    \"\"\"Provide clear, actionable error messages.\"\"\"\n    pass\n\ndef cleanup_resources_properly(filename):\n    \"\"\"Ensure resource cleanup with context managers.\"\"\"\n    pass\n\ndef handle_at_appropriate_level(user_id):\n    \"\"\"Handle exceptions at the right level.\"\"\"\n    pass\n\ndef documented_exceptions(email):\n    \"\"\"Function with documented exceptions.\"\"\"\n    pass\n\ndef exception_hierarchy_example(operation):\n    \"\"\"Use exception hierarchy for related errors.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling Best Practices\n\n# Define exception hierarchy\nclass AppError(Exception):\n    \"\"\"Base application error\"\"\"\n    pass\n\nclass ValidationError(AppError):\n    \"\"\"Validation failed\"\"\"\n    pass\n\nclass ProcessingError(AppError):\n    \"\"\"Processing failed\"\"\"\n    pass\n\ndef specific_exception_handling(data):\n    \"\"\"\n    Handle specific exceptions (not broad Exception).\n    \n    Returns:\n        Processed result\n    \"\"\"\n    try:\n        if not isinstance(data, dict):\n            raise TypeError(\"Data must be dictionary\")\n        \n        value = data['value']\n        result = int(value) * 2\n        return result\n    \n    # Specific exceptions, not Exception\n    except KeyError:\n        return None  # Missing key\n    except ValueError:\n        return None  # Invalid conversion\n    except TypeError:\n        return None  # Wrong type\n\ndef helpful_error_messages(user_input):\n    \"\"\"\n    Provide clear, actionable error messages.\n    \n    Returns:\n        Validated integer\n    \n    Raises:\n        ValueError: With helpful message\n    \"\"\"\n    try:\n        value = int(user_input)\n    except ValueError:\n        # Clear, actionable message\n        raise ValueError(\n            f\"'{user_input}' is not a valid number. \"\n            f\"Please enter digits only (e.g., '42').\"\n        )\n    \n    if value < 0:\n        raise ValueError(\n            f\"Number must be positive, got {value}. \"\n            f\"Please enter a value >= 0.\"\n        )\n    \n    return value\n\ndef cleanup_resources_properly(filename):\n    \"\"\"\n    Ensure resource cleanup with context managers.\n    \n    Returns:\n        File content or None\n    \"\"\"\n    try:\n        # Use context manager for automatic cleanup\n        with open(filename, 'r') as f:\n            return f.read()\n    except FileNotFoundError:\n        return None\n\ndef handle_at_appropriate_level(user_id):\n    \"\"\"\n    Handle exceptions at the right level.\n    \n    Returns:\n        User data or None\n    \"\"\"\n    def get_user_from_db(uid):\n        \"\"\"Low-level function - let exceptions propagate\"\"\"\n        if not uid:\n            raise ValueError(\"User ID required\")\n        # Simulate database access\n        return {\"id\": uid, \"name\": \"Alice\"}\n    \n    # Handle at this level where we can take action\n    try:\n        user = get_user_from_db(user_id)\n        return user\n    except ValueError as e:\n        # Can provide fallback\n        return None\n\ndef documented_exceptions(email):\n    \"\"\"\n    Validate email address.\n    \n    Args:\n        email: Email address to validate\n    \n    Returns:\n        Validated email (lowercase)\n    \n    Raises:\n        TypeError: If email is not a string\n        ValueError: If email format is invalid\n    \n    Examples:\n        >>> documented_exceptions(\"user@example.com\")\n        'user@example.com'\n    \"\"\"\n    if not isinstance(email, str):\n        raise TypeError(\"Email must be a string\")\n    \n    if \"@\" not in email:\n        raise ValueError(\"Email must contain @\")\n    \n    if \".\" not in email.split(\"@\")[1]:\n        raise ValueError(\"Email domain must contain .\")\n    \n    return email.lower()\n\ndef exception_hierarchy_example(operation):\n    \"\"\"\n    Use exception hierarchy for related errors.\n    \n    Args:\n        operation: Operation to perform\n    \n    Returns:\n        Result or error message\n    \"\"\"\n    try:\n        if operation == \"validate\":\n            raise ValidationError(\"Validation failed\")\n        elif operation == \"process\":\n            raise ProcessingError(\"Processing failed\")\n        else:\n            return \"Success\"\n    \n    except ValidationError as e:\n        return f\"Validation error: {e}\"\n    except ProcessingError as e:\n        return f\"Processing error: {e}\"\n    except AppError as e:\n        # Catch any app error\n        return f\"Application error: {e}\"\n",
+  "hints": [
+    "Catch specific exceptions (KeyError, ValueError) not broad Exception",
+    "Error messages should explain what happened, why, and how to fix",
+    "Always use context managers (with statement) for file operations",
+    "Handle exceptions where you can take meaningful action",
+    "Document all exceptions in docstrings with Raises: section",
+    "Create exception hierarchies: base class with specific subclasses"
+  ],
+  "testCases": [
+    {
+      "input": "specific_exception_handling({'value': '10'})",
+      "description": "Test specific_exception_handling success",
+      "id": "test1",
+      "expectedOutput": "20",
+      "isHidden": false
+    },
+    {
+      "input": "specific_exception_handling({'other': '10'})",
+      "description": "Test specific_exception_handling missing key",
+      "id": "test2",
+      "expectedOutput": "None",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    helpful_error_messages('abc')\\nexcept ValueError as e:\\n    'not a valid number' in str(e)",
+      "description": "Test helpful_error_messages invalid",
+      "id": "test3",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "documented_exceptions('USER@EXAMPLE.COM')",
+      "description": "Test documented_exceptions valid",
+      "id": "test4",
+      "expectedOutput": "'user@example.com'",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    documented_exceptions('invalid')\\nexcept ValueError as e:\\n    'contain @' in str(e)",
+      "description": "Test documented_exceptions no @",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "exception_hierarchy_example('validate')",
+      "description": "Test exception_hierarchy_example",
+      "id": "test6",
+      "expectedOutput": "'Validation error: Validation failed'",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

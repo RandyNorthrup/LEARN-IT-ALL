@@ -1,0 +1,63 @@
+{
+  "id": "exercise-172-test-coverage",
+  "lessonId": "lesson-162-test-coverage",
+  "title": "Test Coverage and Quality",
+  "description": "Measure test coverage, improve code coverage, write meaningful tests, and identify untested code paths.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Test Coverage and Quality\n\ndef calculate_grade(score):\n    \"\"\"Calculate letter grade from score.\"\"\"\n    pass\n\ndef validate_input(value):\n    \"\"\"Validate input with multiple branches.\"\"\"\n    pass\n\ndef process_items(items, filter_func):\n    \"\"\"Process items with filtering.\"\"\"\n    pass\n\ndef safe_divide(a, b):\n    \"\"\"Divide with error handling.\"\"\"\n    pass\n\ndef get_user_info(user_id, include_details=False):\n    \"\"\"Get user info with optional details.\"\"\"\n    pass\n\nclass DataProcessor:\n    \"\"\"Data processor with multiple methods.\"\"\"\n    pass\n",
+  "solution": "# Solution: Test Coverage and Quality\nfrom typing import List, Callable, Optional, Any\n\ndef calculate_grade(score: int) -> str:\n    \"\"\"\n    Calculate letter grade from score.\n    \n    Args:\n        score: Numeric score (0-100)\n    \n    Returns:\n        Letter grade (A, B, C, D, F)\n    \"\"\"\n    if score >= 90:\n        return \"A\"\n    elif score >= 80:\n        return \"B\"\n    elif score >= 70:\n        return \"C\"\n    elif score >= 60:\n        return \"D\"\n    else:\n        return \"F\"\n\ndef validate_input(value: Any) -> tuple:\n    \"\"\"\n    Validate input with multiple branches.\n    \n    Args:\n        value: Input to validate\n    \n    Returns:\n        Tuple of (is_valid, error_message)\n    \"\"\"\n    # Branch 1: Check None\n    if value is None:\n        return False, \"Value cannot be None\"\n    \n    # Branch 2: Check type\n    if not isinstance(value, (int, float, str)):\n        return False, \"Value must be int, float, or str\"\n    \n    # Branch 3: Check string length\n    if isinstance(value, str) and len(value) == 0:\n        return False, \"String cannot be empty\"\n    \n    # Branch 4: Check numeric range\n    if isinstance(value, (int, float)) and value < 0:\n        return False, \"Number cannot be negative\"\n    \n    # All checks passed\n    return True, \"Valid\"\n\ndef process_items(items: List[Any], filter_func: Callable) -> List[Any]:\n    \"\"\"\n    Process items with filtering.\n    \n    Args:\n        items: List of items to process\n        filter_func: Function to filter items\n    \n    Returns:\n        List of filtered items\n    \"\"\"\n    if not items:\n        return []\n    \n    result = []\n    for item in items:\n        try:\n            if filter_func(item):\n                result.append(item)\n        except Exception:\n            # Skip items that cause errors\n            continue\n    \n    return result\n\ndef safe_divide(a: float, b: float) -> Optional[float]:\n    \"\"\"\n    Divide with error handling.\n    \n    Args:\n        a: Numerator\n        b: Denominator\n    \n    Returns:\n        Result or None if error\n    \"\"\"\n    try:\n        if b == 0:\n            return None\n        return a / b\n    except TypeError:\n        return None\n\ndef get_user_info(user_id: str, include_details: bool = False) -> dict:\n    \"\"\"\n    Get user info with optional details.\n    \n    Args:\n        user_id: User identifier\n        include_details: Whether to include detailed info\n    \n    Returns:\n        User information dictionary\n    \"\"\"\n    # Basic info\n    info = {\n        \"id\": user_id,\n        \"username\": f\"user_{user_id}\"\n    }\n    \n    # Conditional detailed info\n    if include_details:\n        info[\"email\"] = f\"{user_id}@example.com\"\n        info[\"created_at\"] = \"2024-01-01\"\n        info[\"active\"] = True\n    \n    return info\n\nclass DataProcessor:\n    \"\"\"Data processor with multiple methods.\"\"\"\n    \n    def __init__(self):\n        self.processed_count = 0\n        self.error_count = 0\n    \n    def process(self, data: List[int]) -> List[int]:\n        \"\"\"\n        Process data items.\n        \n        Args:\n            data: List of integers\n        \n        Returns:\n            List of processed integers\n        \"\"\"\n        result = []\n        \n        for item in data:\n            try:\n                processed = self._transform(item)\n                result.append(processed)\n                self.processed_count += 1\n            except ValueError:\n                self.error_count += 1\n                continue\n        \n        return result\n    \n    def _transform(self, value: int) -> int:\n        \"\"\"\n        Transform single value.\n        \n        Args:\n            value: Input value\n        \n        Returns:\n            Transformed value\n        \n        Raises:\n            ValueError: If value is negative\n        \"\"\"\n        if value < 0:\n            raise ValueError(\"Value must be non-negative\")\n        return value * 2\n    \n    def get_stats(self) -> dict:\n        \"\"\"\n        Get processing statistics.\n        \n        Returns:\n            Statistics dictionary\n        \"\"\"\n        return {\n            \"processed\": self.processed_count,\n            \"errors\": self.error_count\n        }\n    \n    def reset(self):\n        \"\"\"Reset statistics.\"\"\"\n        self.processed_count = 0\n        self.error_count = 0\n\n# Comprehensive test suite for coverage\n\ndef test_calculate_grade_all_branches():\n    \"\"\"\n    Test all grade branches for 100% coverage.\n    \n    Tests: A, B, C, D, F grades\n    \"\"\"\n    assert calculate_grade(95) == \"A\"\n    assert calculate_grade(85) == \"B\"\n    assert calculate_grade(75) == \"C\"\n    assert calculate_grade(65) == \"D\"\n    assert calculate_grade(55) == \"F\"\n    \n    # Boundary cases\n    assert calculate_grade(90) == \"A\"\n    assert calculate_grade(89) == \"B\"\n    assert calculate_grade(80) == \"B\"\n    assert calculate_grade(79) == \"C\"\n\ndef test_validate_input_all_branches():\n    \"\"\"\n    Test all validation branches.\n    \n    Tests: None, type, empty string, negative number, valid\n    \"\"\"\n    # None case\n    valid, msg = validate_input(None)\n    assert valid is False\n    assert \"None\" in msg\n    \n    # Invalid type\n    valid, msg = validate_input([1, 2, 3])\n    assert valid is False\n    assert \"must be\" in msg\n    \n    # Empty string\n    valid, msg = validate_input(\"\")\n    assert valid is False\n    assert \"empty\" in msg\n    \n    # Negative number\n    valid, msg = validate_input(-5)\n    assert valid is False\n    assert \"negative\" in msg\n    \n    # Valid cases\n    assert validate_input(\"test\")[0] is True\n    assert validate_input(10)[0] is True\n    assert validate_input(3.14)[0] is True\n\ndef test_process_items_all_paths():\n    \"\"\"\n    Test all code paths in process_items.\n    \n    Tests: empty list, filtering, exceptions\n    \"\"\"\n    # Empty list\n    assert process_items([], lambda x: True) == []\n    \n    # Normal filtering\n    result = process_items([1, 2, 3, 4, 5], lambda x: x > 2)\n    assert result == [3, 4, 5]\n    \n    # Exception handling (skip bad items)\n    def bad_filter(x):\n        if x == 3:\n            raise ValueError(\"Bad item\")\n        return x > 1\n    \n    result = process_items([1, 2, 3, 4], bad_filter)\n    assert result == [2, 4]\n\ndef test_safe_divide_all_cases():\n    \"\"\"\n    Test all safe_divide cases.\n    \n    Tests: normal division, divide by zero, type error\n    \"\"\"\n    # Normal division\n    assert safe_divide(10, 2) == 5.0\n    assert safe_divide(7, 3) == pytest.approx(2.333, rel=0.01)\n    \n    # Divide by zero\n    assert safe_divide(10, 0) is None\n    \n    # Type error\n    assert safe_divide(\"10\", 2) is None\n    assert safe_divide(10, \"2\") is None\n\ndef test_get_user_info_both_branches():\n    \"\"\"\n    Test get_user_info with and without details.\n    \n    Tests: both branches of include_details\n    \"\"\"\n    # Without details\n    info = get_user_info(\"user123\", include_details=False)\n    assert \"id\" in info\n    assert \"username\" in info\n    assert \"email\" not in info\n    \n    # With details\n    info = get_user_info(\"user123\", include_details=True)\n    assert \"id\" in info\n    assert \"username\" in info\n    assert \"email\" in info\n    assert \"created_at\" in info\n    assert \"active\" in info\n\ndef test_data_processor_comprehensive():\n    \"\"\"\n    Test DataProcessor for full coverage.\n    \n    Tests: process, transform, error handling, stats, reset\n    \"\"\"\n    processor = DataProcessor()\n    \n    # Process valid data\n    result = processor.process([1, 2, 3])\n    assert result == [2, 4, 6]\n    assert processor.processed_count == 3\n    assert processor.error_count == 0\n    \n    # Process with errors\n    result = processor.process([-1, 4, -2, 5])\n    assert result == [8, 10]\n    assert processor.processed_count == 5  # 3 + 2 new\n    assert processor.error_count == 2\n    \n    # Get stats\n    stats = processor.get_stats()\n    assert stats[\"processed\"] == 5\n    assert stats[\"errors\"] == 2\n    \n    # Reset\n    processor.reset()\n    assert processor.processed_count == 0\n    assert processor.error_count == 0\n",
+  "hints": [
+    "Branch coverage: Test all if-elif-else branches with separate test cases",
+    "Edge cases: Test empty inputs, None, zero, negative, boundary values",
+    "Exception paths: Test code that handles exceptions (try-except)",
+    "Optional parameters: Test function with parameter both True and False",
+    "Error handling: Test functions that return None or raise exceptions",
+    "Class coverage: Test all methods including private ones (_method)"
+  ],
+  "testCases": [
+    {
+      "input": "calculate_grade(95)",
+      "description": "Test calculate_grade A",
+      "id": "test1",
+      "expectedOutput": "'A'",
+      "isHidden": false
+    },
+    {
+      "input": "calculate_grade(45)",
+      "description": "Test calculate_grade F",
+      "id": "test2",
+      "expectedOutput": "'F'",
+      "isHidden": false
+    },
+    {
+      "input": "validate_input(None)[0]",
+      "description": "Test validate_input None",
+      "id": "test3",
+      "expectedOutput": "False",
+      "isHidden": false
+    },
+    {
+      "input": "process_items([], lambda x: True)",
+      "description": "Test process_items empty",
+      "id": "test4",
+      "expectedOutput": "[]",
+      "isHidden": true
+    },
+    {
+      "input": "safe_divide(10, 0)",
+      "description": "Test safe_divide by zero",
+      "id": "test5",
+      "expectedOutput": "None",
+      "isHidden": true
+    },
+    {
+      "input": "processor = DataProcessor()\\nprocessor.process([1, 2, 3])\\nprocessor.processed_count",
+      "description": "Test DataProcessor",
+      "id": "test6",
+      "expectedOutput": "3",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

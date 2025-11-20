@@ -1,0 +1,63 @@
+{
+  "id": "exercise-171-mocking-patching",
+  "lessonId": "lesson-161-mocking-patching",
+  "title": "Mocking and Patching",
+  "description": "Mock external dependencies, patch functions and methods, control test behavior, and test isolated units effectively.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Mocking and Patching\nfrom unittest.mock import Mock, patch\n\ndef test_mock_return_value():\n    \"\"\"Test mock with return value.\"\"\"\n    pass\n\ndef test_mock_side_effect():\n    \"\"\"Test mock with side effect.\"\"\"\n    pass\n\ndef test_patch_function():\n    \"\"\"Test patching a function.\"\"\"\n    pass\n\ndef test_patch_method():\n    \"\"\"Test patching a class method.\"\"\"\n    pass\n\ndef test_verify_mock_calls():\n    \"\"\"Test verifying mock was called correctly.\"\"\"\n    pass\n\ndef test_mock_exception():\n    \"\"\"Test mock raising exception.\"\"\"\n    pass\n",
+  "solution": "# Solution: Mocking and Patching\nfrom unittest.mock import Mock, patch, MagicMock\nimport pytest\n\ndef test_mock_return_value():\n    \"\"\"\n    Test mock with return value.\n    \n    Creates a mock and configures its return value.\n    \"\"\"\n    mock_api = Mock()\n    mock_api.get_user.return_value = {\"id\": \"user1\", \"name\": \"Alice\"}\n    \n    # Use mock\n    result = mock_api.get_user(\"user1\")\n    \n    assert result[\"name\"] == \"Alice\"\n    mock_api.get_user.assert_called_once_with(\"user1\")\n\ndef test_mock_side_effect():\n    \"\"\"\n    Test mock with side effect.\n    \n    Side effect provides different values for multiple calls.\n    \"\"\"\n    mock_counter = Mock()\n    mock_counter.get_count.side_effect = [1, 2, 3]\n    \n    # Multiple calls return different values\n    assert mock_counter.get_count() == 1\n    assert mock_counter.get_count() == 2\n    assert mock_counter.get_count() == 3\n    \n    assert mock_counter.get_count.call_count == 3\n\ndef get_current_timestamp():\n    \"\"\"Function to be patched.\"\"\"\n    from datetime import datetime\n    return datetime.now()\n\ndef format_log_entry(message: str) -> str:\n    \"\"\"Format log entry with timestamp.\"\"\"\n    timestamp = get_current_timestamp()\n    return f\"[{timestamp}] {message}\"\n\ndef test_patch_function():\n    \"\"\"\n    Test patching a function.\n    \n    Patches get_current_timestamp to return fixed value.\n    \"\"\"\n    from datetime import datetime\n    fixed_time = datetime(2024, 1, 15, 10, 30, 0)\n    \n    with patch('__main__.get_current_timestamp') as mock_timestamp:\n        mock_timestamp.return_value = fixed_time\n        \n        result = format_log_entry(\"Test message\")\n        \n        assert \"2024-01-15 10:30:00\" in result\n        assert \"Test message\" in result\n        mock_timestamp.assert_called_once()\n\nclass DataService:\n    \"\"\"Service to be tested with mocked methods.\"\"\"\n    \n    def __init__(self, database):\n        self.database = database\n    \n    def get_data(self, key: str):\n        \"\"\"Get data from database.\"\"\"\n        return self.database.query(key)\n    \n    def process_data(self, key: str) -> dict:\n        \"\"\"Process data with transformation.\"\"\"\n        data = self.get_data(key)\n        return {\"processed\": True, \"data\": data}\n\ndef test_patch_method():\n    \"\"\"\n    Test patching a class method.\n    \n    Patches DataService.get_data method.\n    \"\"\"\n    with patch.object(DataService, 'get_data') as mock_get_data:\n        mock_get_data.return_value = {\"value\": 42}\n        \n        service = DataService(None)  # Database not needed\n        result = service.process_data(\"key1\")\n        \n        assert result[\"processed\"] is True\n        assert result[\"data\"][\"value\"] == 42\n        mock_get_data.assert_called_once_with(\"key1\")\n\ndef test_verify_mock_calls():\n    \"\"\"\n    Test verifying mock was called correctly.\n    \n    Demonstrates various assertion methods.\n    \"\"\"\n    mock_service = Mock()\n    \n    # Make calls\n    mock_service.create_user(\"alice\", \"alice@example.com\")\n    mock_service.create_user(\"bob\", \"bob@example.com\")\n    mock_service.delete_user(\"alice\")\n    \n    # Verify called\n    assert mock_service.create_user.called\n    assert mock_service.delete_user.called\n    \n    # Verify call count\n    assert mock_service.create_user.call_count == 2\n    assert mock_service.delete_user.call_count == 1\n    \n    # Verify called with specific arguments (last call)\n    mock_service.create_user.assert_called_with(\"bob\", \"bob@example.com\")\n    \n    # Verify any call with arguments\n    mock_service.create_user.assert_any_call(\"alice\", \"alice@example.com\")\n    \n    # Verify called once\n    mock_service.delete_user.assert_called_once_with(\"alice\")\n\ndef test_mock_exception():\n    \"\"\"\n    Test mock raising exception.\n    \n    Configures mock to raise exception when called.\n    \"\"\"\n    mock_api = Mock()\n    mock_api.fetch_data.side_effect = ConnectionError(\"API unavailable\")\n    \n    with pytest.raises(ConnectionError) as exc_info:\n        mock_api.fetch_data()\n    \n    assert \"API unavailable\" in str(exc_info.value)\n    mock_api.fetch_data.assert_called_once()\n\n# Additional comprehensive mocking examples\n\ndef test_patch_builtin_open():\n    \"\"\"\n    Test patching built-in open function.\n    \n    Uses mock_open to simulate file operations.\n    \"\"\"\n    from unittest.mock import mock_open\n    \n    with patch('builtins.open', mock_open(read_data='file content')):\n        with open('test.txt') as f:\n            content = f.read()\n        \n        assert content == 'file content'\n\ndef test_multiple_patches():\n    \"\"\"\n    Test using multiple patches together.\n    \n    Patches multiple functions simultaneously.\n    \"\"\"\n    with patch('__main__.get_current_timestamp') as mock_time, \\\n         patch('builtins.print') as mock_print:\n        \n        from datetime import datetime\n        mock_time.return_value = datetime(2024, 1, 1)\n        \n        timestamp = get_current_timestamp()\n        print(f\"Time: {timestamp}\")\n        \n        mock_time.assert_called_once()\n        mock_print.assert_called_once()\n\ndef test_mock_spec():\n    \"\"\"\n    Test mock with spec to enforce interface.\n    \n    Spec prevents calling non-existent methods.\n    \"\"\"\n    class APIClient:\n        def get(self, url):\n            pass\n        \n        def post(self, url, data):\n            pass\n    \n    mock_api = Mock(spec=APIClient)\n    mock_api.get.return_value = {\"status\": \"ok\"}\n    \n    result = mock_api.get(\"/users\")\n    assert result[\"status\"] == \"ok\"\n    \n    # This would raise AttributeError if uncommented:\n    # mock_api.nonexistent_method()\n\ndef test_magic_mock():\n    \"\"\"\n    Test MagicMock for magic methods.\n    \n    MagicMock supports __len__, __getitem__, etc.\n    \"\"\"\n    mock_list = MagicMock()\n    mock_list.__len__.return_value = 3\n    mock_list.__getitem__.return_value = \"item\"\n    \n    assert len(mock_list) == 3\n    assert mock_list[0] == \"item\"\n\ndef test_spy_on_function():\n    \"\"\"\n    Test spying on function (verify calls without changing behavior).\n    \n    Creates a mock callback to verify it was called.\n    \"\"\"\n    def process_items(items, callback):\n        for item in items:\n            callback(item * 2)\n    \n    spy_callback = Mock()\n    process_items([1, 2, 3], spy_callback)\n    \n    assert spy_callback.call_count == 3\n    spy_callback.assert_any_call(2)\n    spy_callback.assert_any_call(4)\n    spy_callback.assert_any_call(6)\n",
+  "hints": [
+    "Mock return_value: Set mock.method.return_value = your_value",
+    "Mock side_effect: Use list for multiple calls, or exception class",
+    "Patch function: Use @patch decorator or 'with patch()' context manager",
+    "Patch method: Use patch.object(ClassName, 'method_name')",
+    "Verify calls: Use assert_called_once_with(), assert_any_call()",
+    "Mock exception: Set side_effect to exception class or instance"
+  ],
+  "testCases": [
+    {
+      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.get.return_value = 42\\nmock.get()",
+      "description": "Test Mock with return_value",
+      "id": "test1",
+      "expectedOutput": "42",
+      "isHidden": false
+    },
+    {
+      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.count.side_effect = [1, 2, 3]\\n(mock.count(), mock.count(), mock.count())",
+      "description": "Test Mock with side_effect list",
+      "id": "test2",
+      "expectedOutput": "(1, 2, 3)",
+      "isHidden": false
+    },
+    {
+      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.func('arg')\\nmock.func.called",
+      "description": "Test Mock call verification",
+      "id": "test3",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.fail.side_effect = ValueError('error')\\ntry:\\n    mock.fail()\\nexcept ValueError as e:\\n    str(e)",
+      "description": "Test Mock exception",
+      "id": "test4",
+      "expectedOutput": "'error'",
+      "isHidden": true
+    },
+    {
+      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.func()\\nmock.func()\\nmock.func.call_count",
+      "description": "Test Mock call_count",
+      "id": "test5",
+      "expectedOutput": "2",
+      "isHidden": true
+    },
+    {
+      "input": "from unittest.mock import MagicMock\\nmock = MagicMock()\\nmock.__len__.return_value = 5\\nlen(mock)",
+      "description": "Test MagicMock __len__",
+      "id": "test6",
+      "expectedOutput": "5",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

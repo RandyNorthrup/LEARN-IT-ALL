@@ -1,0 +1,63 @@
+{
+  "id": "exercise-093-short-circuit-evaluation",
+  "lessonId": "lesson-085-short-circuit-evaluation",
+  "title": "Performance Optimizer",
+  "description": "Create a system that leverages short-circuit evaluation to optimize code performance and enable safe conditional patterns.\n\nYour program should:\n1. Understand how Python stops evaluating boolean expressions early\n2. Order conditions from cheapest to most expensive\n3. Use short-circuiting for safe attribute access\n4. Implement efficient validation with early termination\n5. Apply short-circuit patterns for default values\n\nImplement these functions:\n- `validate_fast(data)`: Check conditions in order from fastest to slowest\n- `safe_get_nested(obj, *keys)`: Safely access nested attributes using short-circuit\n- `get_first_valid(*values)`: Return first truthy value\n- `lazy_or(*funcs)`: Call functions lazily until one returns truthy\n- `efficient_check(items, expensive_validator)`: Optimize validation order\n\nExample:\n```python\nvalid = validate_fast({'type': 'invalid'})  # Stops early\nvalue = get_first_valid(None, '', 0, 'Found!')  # 'Found!'\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def validate_fast(data):\n    \"\"\"Validate data with fast checks first.\"\"\"\n    # TODO: Check conditions in order of speed (fast to slow):\n    # 1. Check if data exists (very fast)\n    # 2. Check if 'type' key exists (fast)\n    # 3. Check if type == 'valid' (fast)\n    # 4. Check if 'data' key exists (fast)\n    # 5. Check if data['data'] is not empty (medium)\n    # Return True if all pass, False otherwise\n    # Use 'and' so it short-circuits on first failure\n    \n    pass\n\ndef safe_get_nested(obj, *keys):\n    \"\"\"Safely get nested attribute/key using short-circuit.\"\"\"\n    # TODO: Navigate through nested dict/object safely\n    # Example: safe_get_nested(user, 'profile', 'address', 'city')\n    # Should return None if any level is missing\n    # Use short-circuit evaluation to avoid errors\n    # Hint: Loop through keys, return None if any fails\n    \n    pass\n\ndef get_first_valid(*values):\n    \"\"\"Return first truthy value from arguments.\"\"\"\n    # TODO: Return first truthy value, None if all falsy\n    # Use short-circuit OR pattern: value1 or value2 or value3\n    # Hint: Loop through values, return first truthy one\n    \n    pass\n\ndef lazy_or(*funcs):\n    \"\"\"Call functions lazily until one returns truthy.\"\"\"\n    # TODO: funcs is tuple of functions to call\n    # Call each function in order until one returns truthy\n    # Return that result (short-circuit remaining calls)\n    # Return None if all return falsy\n    \n    pass\n\ndef efficient_check(items, expensive_validator):\n    \"\"\"Check items efficiently with expensive validator.\"\"\"\n    # TODO: items is list like [1, 2, 3, 4, 5]\n    # expensive_validator is function that takes item and returns bool\n    # Check:\n    # 1. items is not empty (cheap)\n    # 2. All items are positive numbers (cheap)\n    # 3. Call expensive_validator on each (only if above pass)\n    # Return True if all checks pass\n    # Use short-circuit to avoid expensive calls if early checks fail\n    \n    pass\n\ndef get_config_with_fallback(primary_config, backup_config, key):\n    \"\"\"Get config value with fallback chain.\"\"\"\n    # TODO: Try to get key from primary_config\n    # If not found or None, try backup_config\n    # If still not found, return 'default'\n    # Use short-circuit OR pattern\n    \n    pass\n\n# Test the functions\nprint(\"Fast Validation (short-circuits on failure):\")\nprint(\"=\"*60)\ntest_data = [\n    None,\n    {},\n    {'type': 'invalid'},\n    {'type': 'valid'},\n    {'type': 'valid', 'data': []},\n    {'type': 'valid', 'data': [1, 2, 3]},\n]\n\nfor data in test_data:\n    result = validate_fast(data)\n    print(f\"{str(data)[:50]:50} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Safe Nested Access:\")\nprint(\"=\"*60)\nuser = {\n    'profile': {\n        'address': {\n            'city': 'NYC',\n            'zip': '10001'\n        }\n    }\n}\n\nprint(f\"City: {safe_get_nested(user, 'profile', 'address', 'city')}\")\nprint(f\"Country: {safe_get_nested(user, 'profile', 'address', 'country')}\")\nprint(f\"Missing: {safe_get_nested(user, 'profile', 'contact', 'email')}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"First Valid Value:\")\nprint(\"=\"*60)\ntest_values = [\n    (None, '', 0, 'Found!'),\n    ('First', 'Second', 'Third'),\n    (0, False, None, ''),\n    (None, None, 42),\n]\n\nfor vals in test_values:\n    result = get_first_valid(*vals)\n    print(f\"{vals} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Lazy Function Calls (stops at first truthy):\")\nprint(\"=\"*60)\n\ndef func1():\n    print(\"  func1 called\")\n    return None\n\ndef func2():\n    print(\"  func2 called\")\n    return \"Found in func2\"\n\ndef func3():\n    print(\"  func3 called (should not run!)\")\n    return \"func3 result\"\n\nprint(\"Calling lazy_or with 3 functions:\")\nresult = lazy_or(func1, func2, func3)\nprint(f\"Result: {result}\\n\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Efficient Validation (cheap checks first):\")\nprint(\"=\"*60)\n\ndef expensive_validator(item):\n    \"\"\"Simulate expensive validation.\"\"\"\n    print(f\"  Expensive check on {item}\")\n    return item < 10\n\ntest_lists = [\n    [],\n    [1, 2, -3],  # Has negative, should short-circuit\n    [1, 2, 3],   # All positive, calls expensive validator\n]\n\nfor items in test_lists:\n    print(f\"Checking {items}:\")\n    result = efficient_check(items, expensive_validator)\n    print(f\"Result: {result}\\n\")\n\nprint(\"=\"*60)\nprint(\"Config Fallback Chain:\")\nprint(\"=\"*60)\nprimary = {'theme': 'dark', 'timeout': None}\nbackup = {'theme': 'light', 'timeout': 30, 'debug': True}\n\nkeys = ['theme', 'timeout', 'debug', 'missing']\nfor key in keys:\n    value = get_config_with_fallback(primary, backup, key)\n    print(f\"{key}: {value}\")",
+  "solution": "def validate_fast(data):\n    \"\"\"Validate data with fast checks first.\"\"\"\n    return (\n        data is not None and\n        'type' in data and\n        data['type'] == 'valid' and\n        'data' in data and\n        len(data['data']) > 0\n    )\n\ndef safe_get_nested(obj, *keys):\n    \"\"\"Safely get nested attribute/key using short-circuit.\"\"\"\n    result = obj\n    for key in keys:\n        if result is None:\n            return None\n        if isinstance(result, dict):\n            result = result.get(key)\n        else:\n            result = getattr(result, key, None)\n    return result\n\ndef get_first_valid(*values):\n    \"\"\"Return first truthy value from arguments.\"\"\"\n    for value in values:\n        if value:\n            return value\n    return None\n\ndef lazy_or(*funcs):\n    \"\"\"Call functions lazily until one returns truthy.\"\"\"\n    for func in funcs:\n        result = func()\n        if result:\n            return result\n    return None\n\ndef efficient_check(items, expensive_validator):\n    \"\"\"Check items efficiently with expensive validator.\"\"\"\n    # Fast checks first\n    if not items:\n        return False\n    \n    if not all(isinstance(item, (int, float)) and item > 0 for item in items):\n        return False\n    \n    # Only run expensive check if fast checks passed\n    return all(expensive_validator(item) for item in items)\n\ndef get_config_with_fallback(primary_config, backup_config, key):\n    \"\"\"Get config value with fallback chain.\"\"\"\n    # Try primary, then backup, then default\n    value = primary_config.get(key)\n    if value is not None:\n        return value\n    \n    value = backup_config.get(key)\n    if value is not None:\n        return value\n    \n    return 'default'\n\n# Test the functions\nprint(\"Fast Validation (short-circuits on failure):\")\nprint(\"=\"*60)\ntest_data = [\n    None,\n    {},\n    {'type': 'invalid'},\n    {'type': 'valid'},\n    {'type': 'valid', 'data': []},\n    {'type': 'valid', 'data': [1, 2, 3]},\n]\n\nfor data in test_data:\n    result = validate_fast(data)\n    print(f\"{str(data)[:50]:50} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Safe Nested Access:\")\nprint(\"=\"*60)\nuser = {\n    'profile': {\n        'address': {\n            'city': 'NYC',\n            'zip': '10001'\n        }\n    }\n}\n\nprint(f\"City: {safe_get_nested(user, 'profile', 'address', 'city')}\")\nprint(f\"Country: {safe_get_nested(user, 'profile', 'address', 'country')}\")\nprint(f\"Missing: {safe_get_nested(user, 'profile', 'contact', 'email')}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"First Valid Value:\")\nprint(\"=\"*60)\ntest_values = [\n    (None, '', 0, 'Found!'),\n    ('First', 'Second', 'Third'),\n    (0, False, None, ''),\n    (None, None, 42),\n]\n\nfor vals in test_values:\n    result = get_first_valid(*vals)\n    print(f\"{vals} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Lazy Function Calls (stops at first truthy):\")\nprint(\"=\"*60)\n\ndef func1():\n    print(\"  func1 called\")\n    return None\n\ndef func2():\n    print(\"  func2 called\")\n    return \"Found in func2\"\n\ndef func3():\n    print(\"  func3 called (should not run!)\")\n    return \"func3 result\"\n\nprint(\"Calling lazy_or with 3 functions:\")\nresult = lazy_or(func1, func2, func3)\nprint(f\"Result: {result}\\n\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Efficient Validation (cheap checks first):\")\nprint(\"=\"*60)\n\ndef expensive_validator(item):\n    \"\"\"Simulate expensive validation.\"\"\"\n    print(f\"  Expensive check on {item}\")\n    return item < 10\n\ntest_lists = [\n    [],\n    [1, 2, -3],\n    [1, 2, 3],\n]\n\nfor items in test_lists:\n    print(f\"Checking {items}:\")\n    result = efficient_check(items, expensive_validator)\n    print(f\"Result: {result}\\n\")\n\nprint(\"=\"*60)\nprint(\"Config Fallback Chain:\")\nprint(\"=\"*60)\nprimary = {'theme': 'dark', 'timeout': None}\nbackup = {'theme': 'light', 'timeout': 30, 'debug': True}\n\nkeys = ['theme', 'timeout', 'debug', 'missing']\nfor key in keys:\n    value = get_config_with_fallback(primary, backup, key)\n    print(f\"{key}: {value}\")",
+  "hints": [
+    "AND operator short-circuits: stops at first False value",
+    "OR operator short-circuits: stops at first True (truthy) value",
+    "Put cheap checks before expensive ones to maximize short-circuit benefit",
+    "For nested access, check at each level: if result: result = result.get(key)",
+    "Use generator expressions with all() or any() for lazy evaluation",
+    "Short-circuit saves time by not executing unnecessary code"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Invalid data short-circuits early",
+      "input": "validate_fast({'type': 'invalid'})",
+      "expectedOutput": "False",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Valid complete data returns True",
+      "input": "validate_fast({'type': 'valid', 'data': [1, 2, 3]})",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Safe nested access works",
+      "input": "safe_get_nested({'a': {'b': {'c': 'value'}}}, 'a', 'b', 'c')",
+      "expectedOutput": "'value'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "First truthy value returned",
+      "input": "get_first_valid(None, '', 0, 'Found', 'Ignored')",
+      "expectedOutput": "'Found'",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "Empty list short-circuits",
+      "input": "efficient_check([], lambda x: True)",
+      "expectedOutput": "False",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "Config fallback to backup",
+      "input": "get_config_with_fallback({'key': None}, {'key': 'backup'}, 'key')",
+      "expectedOutput": "'backup'",
+      "isHidden": true
+    }
+  ]
+}

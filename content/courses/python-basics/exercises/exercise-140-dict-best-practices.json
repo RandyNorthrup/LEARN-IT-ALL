@@ -1,0 +1,63 @@
+{
+  "id": "exercise-140-dict-best-practices",
+  "lessonId": "lesson-130-dict-best-practices",
+  "title": "Dictionary Best Practices and Patterns",
+  "description": "Learn production-ready dictionary patterns, anti-patterns to avoid, and idiomatic Python dict usage.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Function 1: Validate dict structure\ndef validate_user_dict(user):\n    \"\"\"Validate that user dict has required fields.\n    \n    Args:\n        user (dict): User dictionary\n    \n    Returns:\n        tuple: (is_valid, error_message)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Use get() with default value\ndef get_user_age(user):\n    \"\"\"Get user age with default of 0 if not present.\n    \n    Args:\n        user (dict): User dictionary\n    \n    Returns:\n        int: User age or 0\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Build dict incrementally\ndef build_query_params(**kwargs):\n    \"\"\"Build query params dict, excluding None values.\n    \n    Args:\n        **kwargs: Query parameters\n    \n    Returns:\n        dict: Non-None parameters\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Use setdefault for initialization\ndef add_to_group(groups, key, value):\n    \"\"\"Add value to group, creating list if needed.\n    \n    Args:\n        groups (dict): Dictionary of lists\n        key (str): Group key\n        value (any): Value to add\n    \n    Returns:\n        dict: Updated groups\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Avoid mutable default arguments\ndef create_user(name, email, roles=None):\n    \"\"\"Create user dict with optional roles.\n    \n    Args:\n        name (str): User name\n        email (str): User email\n        roles (list, optional): User roles\n    \n    Returns:\n        dict: User dictionary\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Use dict unpacking for merging\ndef merge_settings(defaults, overrides):\n    \"\"\"Merge settings with overrides taking priority.\n    \n    Args:\n        defaults (dict): Default settings\n        overrides (dict): Override settings\n    \n    Returns:\n        dict: Merged settings\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Validate dict structure\ndef validate_user_dict(user):\n    \"\"\"Validate that user dict has required fields.\n    \n    Args:\n        user (dict): User dictionary\n    \n    Returns:\n        tuple: (is_valid, error_message)\n    \"\"\"\n    required_fields = ['name', 'email']\n    missing = [field for field in required_fields if field not in user]\n    \n    if missing:\n        return (False, f\"Missing fields: {', '.join(missing)}\")\n    return (True, \"\")\n\n# Function 2: Use get() with default value\ndef get_user_age(user):\n    \"\"\"Get user age with default of 0 if not present.\n    \n    Args:\n        user (dict): User dictionary\n    \n    Returns:\n        int: User age or 0\n    \"\"\"\n    return user.get('age', 0)\n\n# Function 3: Build dict incrementally\ndef build_query_params(**kwargs):\n    \"\"\"Build query params dict, excluding None values.\n    \n    Args:\n        **kwargs: Query parameters\n    \n    Returns:\n        dict: Non-None parameters\n    \"\"\"\n    return {k: v for k, v in kwargs.items() if v is not None}\n\n# Function 4: Use setdefault for initialization\ndef add_to_group(groups, key, value):\n    \"\"\"Add value to group, creating list if needed.\n    \n    Args:\n        groups (dict): Dictionary of lists\n        key (str): Group key\n        value (any): Value to add\n    \n    Returns:\n        dict: Updated groups\n    \"\"\"\n    groups.setdefault(key, []).append(value)\n    return groups\n\n# Function 5: Avoid mutable default arguments\ndef create_user(name, email, roles=None):\n    \"\"\"Create user dict with optional roles.\n    \n    Args:\n        name (str): User name\n        email (str): User email\n        roles (list, optional): User roles\n    \n    Returns:\n        dict: User dictionary\n    \"\"\"\n    if roles is None:\n        roles = []\n    return {'name': name, 'email': email, 'roles': roles}\n\n# Function 6: Use dict unpacking for merging\ndef merge_settings(defaults, overrides):\n    \"\"\"Merge settings with overrides taking priority.\n    \n    Args:\n        defaults (dict): Default settings\n        overrides (dict): Override settings\n    \n    Returns:\n        dict: Merged settings\n    \"\"\"\n    return {**defaults, **overrides}",
+  "hints": [
+    "Check if each required field is in dict with 'field in user', collect missing fields",
+    "Use user.get('age', 0) to return 0 if 'age' key doesn't exist",
+    "Dict comprehension with if condition: {k: v for k, v in kwargs.items() if v is not None}",
+    "setdefault(key, []) returns existing list or creates new one, then append",
+    "Check if roles is None, then assign empty list: if roles is None: roles = []",
+    "Use unpacking: {**defaults, **overrides} - right dict overwrites left"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "validate_user_dict({'name': 'Alice', 'email': 'alice@example.com'})",
+      "expectedOutput": "(True, '')",
+      "isHidden": false,
+      "description": "Validate user - valid"
+    },
+    {
+      "id": "test2",
+      "input": "validate_user_dict({'name': 'Bob'})[0]",
+      "expectedOutput": "False",
+      "isHidden": false,
+      "description": "Validate user - missing field"
+    },
+    {
+      "id": "test3",
+      "input": "get_user_age({'name': 'Alice'})",
+      "expectedOutput": "0",
+      "isHidden": false,
+      "description": "Get age with default"
+    },
+    {
+      "id": "test4",
+      "input": "build_query_params(page=1, limit=None, search='test')",
+      "expectedOutput": "{'page': 1, 'search': 'test'}",
+      "isHidden": true,
+      "description": "Build query params"
+    },
+    {
+      "id": "test5",
+      "input": "add_to_group({}, 'fruits', 'apple')",
+      "expectedOutput": "{'fruits': ['apple']}",
+      "isHidden": true,
+      "description": "Add to group"
+    },
+    {
+      "id": "test6",
+      "input": "merge_settings({'port': 8080, 'host': 'localhost'}, {'port': 3000})",
+      "expectedOutput": "{'port': 3000, 'host': 'localhost'}",
+      "isHidden": true,
+      "description": "Merge settings"
+    }
+  ],
+  "language": "python"
+}

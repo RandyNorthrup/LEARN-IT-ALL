@@ -1,0 +1,63 @@
+{
+  "id": "exercise-161-error-handling-file-io",
+  "lessonId": "lesson-151-error-handling-file-io",
+  "title": "Error Handling in File Operations",
+  "description": "Handle file operation errors gracefully, manage permissions issues, work with file paths safely, implement robust file processing.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Error Handling in File Operations\n\ndef safe_read_file(filename):\n    \"\"\"Safely read file with comprehensive error handling.\"\"\"\n    pass\n\ndef safe_write_file(filename, content):\n    \"\"\"Safely write file with error handling.\"\"\"\n    pass\n\ndef read_json_safe(filename):\n    \"\"\"Safely read JSON file.\"\"\"\n    pass\n\ndef write_with_backup(filename, content):\n    \"\"\"Write file, creating backup of original.\"\"\"\n    pass\n\ndef process_csv_robust(filename):\n    \"\"\"Process CSV with line-level error handling.\"\"\"\n    pass\n\ndef validate_file_path(path, base_directory):\n    \"\"\"Validate file path is within base directory.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling in File Operations\nimport json\nimport os\nimport shutil\nimport csv\n\ndef safe_read_file(filename):\n    \"\"\"\n    Safely read file with comprehensive error handling.\n    \n    Returns:\n        Tuple of (content, error_message)\n    \"\"\"\n    try:\n        with open(filename, 'r') as f:\n            return f.read(), None\n    except FileNotFoundError:\n        return None, f\"File not found: {filename}\"\n    except PermissionError:\n        return None, f\"Permission denied: {filename}\"\n    except IsADirectoryError:\n        return None, f\"Path is a directory: {filename}\"\n    except Exception as e:\n        return None, f\"Error reading file: {e}\"\n\ndef safe_write_file(filename, content):\n    \"\"\"\n    Safely write file with error handling.\n    \n    Returns:\n        Tuple of (success, error_message)\n    \"\"\"\n    try:\n        # Create directory if needed\n        directory = os.path.dirname(filename)\n        if directory:\n            os.makedirs(directory, exist_ok=True)\n        \n        with open(filename, 'w') as f:\n            f.write(content)\n        return True, None\n    \n    except PermissionError:\n        return False, f\"Permission denied: {filename}\"\n    except OSError as e:\n        return False, f\"Error writing file: {e}\"\n\ndef read_json_safe(filename):\n    \"\"\"\n    Safely read JSON file.\n    \n    Returns:\n        Tuple of (data, error_message)\n    \"\"\"\n    try:\n        with open(filename, 'r') as f:\n            data = json.load(f)\n        return data, None\n    \n    except FileNotFoundError:\n        return None, f\"File not found: {filename}\"\n    except json.JSONDecodeError as e:\n        return None, f\"Invalid JSON: {e}\"\n    except Exception as e:\n        return None, f\"Error reading JSON: {e}\"\n\ndef write_with_backup(filename, content):\n    \"\"\"\n    Write file, creating backup of original.\n    \n    Returns:\n        Tuple of (success, error_message)\n    \"\"\"\n    backup_name = f\"{filename}.backup\"\n    \n    try:\n        # Create backup if file exists\n        if os.path.exists(filename):\n            shutil.copy2(filename, backup_name)\n        \n        # Write new content\n        with open(filename, 'w') as f:\n            f.write(content)\n        \n        return True, None\n    \n    except Exception as e:\n        # Try to restore backup\n        if os.path.exists(backup_name):\n            try:\n                shutil.copy2(backup_name, filename)\n            except:\n                pass\n        \n        return False, f\"Error: {e}\"\n\ndef process_csv_robust(filename):\n    \"\"\"\n    Process CSV with line-level error handling.\n    \n    Returns:\n        Tuple of (results, errors)\n    \"\"\"\n    results = []\n    errors = []\n    \n    try:\n        with open(filename, 'r') as f:\n            reader = csv.DictReader(f)\n            \n            for line_num, row in enumerate(reader, 2):\n                try:\n                    # Process row (example: extract name and age)\n                    processed = {\n                        'name': row['name'].strip(),\n                        'age': int(row['age'])\n                    }\n                    results.append(processed)\n                \n                except KeyError as e:\n                    errors.append((line_num, f\"Missing column: {e}\"))\n                except ValueError as e:\n                    errors.append((line_num, f\"Invalid value: {e}\"))\n                except Exception as e:\n                    errors.append((line_num, f\"Error: {e}\"))\n    \n    except FileNotFoundError:\n        return None, [(0, f\"File not found: {filename}\")]\n    except Exception as e:\n        return None, [(0, f\"Error opening file: {e}\")]\n    \n    return results, errors\n\ndef validate_file_path(path, base_directory):\n    \"\"\"\n    Validate file path is within base directory.\n    \n    Returns:\n        Tuple of (valid, error_message)\n    \"\"\"\n    try:\n        if not path:\n            return False, \"Path cannot be empty\"\n        \n        abs_path = os.path.abspath(path)\n        abs_base = os.path.abspath(base_directory)\n        \n        # Check if within base directory\n        if not abs_path.startswith(abs_base):\n            return False, \"Path outside base directory\"\n        \n        return True, None\n    \n    except Exception as e:\n        return False, f\"Error validating path: {e}\"\n",
+  "hints": [
+    "Use try-except for FileNotFoundError, PermissionError, IsADirectoryError",
+    "Create directories with os.makedirs(path, exist_ok=True)",
+    "JSON errors: json.JSONDecodeError for invalid JSON",
+    "CSV: Use csv.DictReader and handle KeyError for missing columns",
+    "Backup pattern: copy original, write new, restore on failure",
+    "Path validation: Use os.path.abspath() and check startswith() for security"
+  ],
+  "testCases": [
+    {
+      "input": "content, error = safe_read_file('nonexistent.txt')\\n(content is None, 'not found' in error.lower())",
+      "description": "Test safe_read_file missing file",
+      "id": "test1",
+      "expectedOutput": "(True, True)",
+      "isHidden": false
+    },
+    {
+      "input": "data, error = read_json_safe('missing.json')\\n(data is None, 'not found' in error.lower())",
+      "description": "Test read_json_safe missing file",
+      "id": "test2",
+      "expectedOutput": "(True, True)",
+      "isHidden": false
+    },
+    {
+      "input": "validate_file_path('/tmp/test.txt', '/tmp')",
+      "description": "Test validate_file_path valid",
+      "id": "test3",
+      "expectedOutput": "(True, None)",
+      "isHidden": false
+    },
+    {
+      "input": "valid, error = validate_file_path('/etc/passwd', '/tmp')\\n(valid, 'outside' in error.lower())",
+      "description": "Test validate_file_path traversal attempt",
+      "id": "test4",
+      "expectedOutput": "(False, True)",
+      "isHidden": true
+    },
+    {
+      "input": "import tempfile, os\\ntemp_dir = tempfile.mkdtemp()\\npath = os.path.join(temp_dir, 'sub', 'file.txt')\\nsuccess, error = safe_write_file(path, 'test')\\n(success, os.path.exists(path))",
+      "description": "Test safe_write_file creates directories",
+      "id": "test5",
+      "expectedOutput": "(True, True)",
+      "isHidden": true
+    },
+    {
+      "input": "results, errors = process_csv_robust('missing.csv')\\n(results is None, len(errors) > 0)",
+      "description": "Test process_csv_robust missing file",
+      "id": "test6",
+      "expectedOutput": "(True, True)",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

@@ -1,0 +1,63 @@
+{
+  "id": "exercise-151-set-best-practices",
+  "lessonId": "lesson-141-set-best-practices",
+  "title": "Set Best Practices and Patterns",
+  "description": "Master professional set patterns: choosing right structure, safe operations, immutability, and idiomatic usage.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Function 1: Safe set removal\ndef safe_remove_item(items, item):\n    \"\"\"Remove item without error if missing.\n    \n    Args:\n        items (set): Set to modify\n        item (any): Item to remove\n    \n    Returns:\n        bool: True if item was present and removed\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Return immutable copy\ndef get_admin_ids():\n    \"\"\"Return admin IDs as immutable set.\n    \n    Returns:\n        frozenset: Immutable admin ID set\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Validate set structure\ndef validate_tags(tags):\n    \"\"\"Validate tags are non-empty set of strings.\n    \n    Args:\n        tags (set): Tags to validate\n    \n    Returns:\n        tuple: (is_valid, error_message)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Build set outside loop\ndef filter_records(records, valid_codes):\n    \"\"\"Filter records efficiently (pre-compute set).\n    \n    Args:\n        records (list): List of dicts with 'code' field\n        valid_codes (list): List of valid codes\n    \n    Returns:\n        list: Filtered records\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Use discard for safe operation\ndef cleanup_tags(tags, remove_tags):\n    \"\"\"Remove multiple tags safely.\n    \n    Args:\n        tags (set): Tag set to modify\n        remove_tags (list): Tags to remove\n    \n    Returns:\n        set: Modified tag set\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Proper empty set creation\ndef initialize_tracking_sets():\n    \"\"\"Initialize three empty sets for tracking.\n    \n    Returns:\n        dict: Dict with 'seen', 'processed', 'errors' sets\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Safe set removal\ndef safe_remove_item(items, item):\n    \"\"\"Remove item without error if missing.\n    \n    Args:\n        items (set): Set to modify\n        item (any): Item to remove\n    \n    Returns:\n        bool: True if item was present and removed\n    \"\"\"\n    if item in items:\n        items.discard(item)\n        return True\n    return False\n\n# Function 2: Return immutable copy\ndef get_admin_ids():\n    \"\"\"Return admin IDs as immutable set.\n    \n    Returns:\n        frozenset: Immutable admin ID set\n    \"\"\"\n    return frozenset([1, 2, 3, 4, 5])\n\n# Function 3: Validate set structure\ndef validate_tags(tags):\n    \"\"\"Validate tags are non-empty set of strings.\n    \n    Args:\n        tags (set): Tags to validate\n    \n    Returns:\n        tuple: (is_valid, error_message)\n    \"\"\"\n    if not isinstance(tags, set):\n        return (False, \"Tags must be a set\")\n    \n    if not tags:\n        return (False, \"Tags cannot be empty\")\n    \n    if not all(isinstance(tag, str) for tag in tags):\n        return (False, \"All tags must be strings\")\n    \n    return (True, \"\")\n\n# Function 4: Build set outside loop\ndef filter_records(records, valid_codes):\n    \"\"\"Filter records efficiently (pre-compute set).\n    \n    Args:\n        records (list): List of dicts with 'code' field\n        valid_codes (list): List of valid codes\n    \n    Returns:\n        list: Filtered records\n    \"\"\"\n    valid_set = set(valid_codes)  # Pre-compute once\n    return [r for r in records if r.get('code') in valid_set]\n\n# Function 5: Use discard for safe operation\ndef cleanup_tags(tags, remove_tags):\n    \"\"\"Remove multiple tags safely.\n    \n    Args:\n        tags (set): Tag set to modify\n        remove_tags (list): Tags to remove\n    \n    Returns:\n        set: Modified tag set\n    \"\"\"\n    for tag in remove_tags:\n        tags.discard(tag)  # Safe - no error if missing\n    return tags\n\n# Function 6: Proper empty set creation\ndef initialize_tracking_sets():\n    \"\"\"Initialize three empty sets for tracking.\n    \n    Returns:\n        dict: Dict with 'seen', 'processed', 'errors' sets\n    \"\"\"\n    return {\n        'seen': set(),\n        'processed': set(),\n        'errors': set()\n    }",
+  "hints": [
+    "Check if item in set first, use .discard() for safe removal",
+    "Return frozenset([1, 2, 3, 4, 5]) for immutability",
+    "Check isinstance(tags, set), not empty, all isinstance(tag, str)",
+    "Create valid_set = set(valid_codes) once before loop/comprehension",
+    "Use tags.discard(tag) in loop - no error if tag missing",
+    "Use set() for empty sets, NOT {} (that creates dict)"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "s = {1, 2, 3}; safe_remove_item(s, 2)",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Safe remove - item exists"
+    },
+    {
+      "id": "test2",
+      "input": "type(get_admin_ids()).__name__",
+      "expectedOutput": "'frozenset'",
+      "isHidden": false,
+      "description": "Get admin IDs type"
+    },
+    {
+      "id": "test3",
+      "input": "validate_tags({'python', 'tutorial'})[0]",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Validate tags - valid"
+    },
+    {
+      "id": "test4",
+      "input": "filter_records([{'code': 'A'}, {'code': 'B'}], ['A', 'C'])",
+      "expectedOutput": "[{'code': 'A'}]",
+      "isHidden": true,
+      "description": "Filter records"
+    },
+    {
+      "id": "test5",
+      "input": "tags = {'a', 'b', 'c'}; cleanup_tags(tags, ['b', 'd']); tags",
+      "expectedOutput": "{'a', 'c'}",
+      "isHidden": true,
+      "description": "Cleanup tags"
+    },
+    {
+      "id": "test6",
+      "input": "len(initialize_tracking_sets())",
+      "expectedOutput": "3",
+      "isHidden": true,
+      "description": "Initialize tracking sets"
+    }
+  ],
+  "language": "python"
+}

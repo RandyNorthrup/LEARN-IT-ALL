@@ -1,0 +1,63 @@
+{
+  "id": "exercise-163-error-handling-mastery",
+  "lessonId": "lesson-153-error-handling-mastery",
+  "title": "Error Handling Mastery Capstone",
+  "description": "Integrate all error handling concepts into production-ready systems: API client with retry, data pipeline with error tracking, and configuration manager.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Error Handling Mastery Capstone\n\nclass APIClient:\n    \"\"\"Production-ready API client with retry and circuit breaker.\"\"\"\n    pass\n\nclass DataPipeline:\n    \"\"\"Data pipeline with stage-by-stage error tracking.\"\"\"\n    pass\n\nclass ConfigManager:\n    \"\"\"Configuration manager with validation and error reporting.\"\"\"\n    pass\n\nclass ErrorReporter:\n    \"\"\"Report errors with context and aggregation.\"\"\"\n    pass\n\nclass HealthMonitor:\n    \"\"\"Monitor system health with multiple checks.\"\"\"\n    pass\n\nclass SafeFileManager:\n    \"\"\"File manager with atomic operations and validation.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling Mastery Capstone\nfrom datetime import datetime\nfrom typing import Any, Dict, List, Optional, Callable\nimport time\n\nclass APIClient:\n    \"\"\"Production-ready API client with retry and circuit breaker.\"\"\"\n    \n    def __init__(self, base_url: str, max_retries: int = 3):\n        self.base_url = base_url\n        self.max_retries = max_retries\n        self.failure_count = 0\n        self.circuit_open = False\n    \n    def request(self, endpoint: str, fail_count: int = 0) -> Dict[str, Any]:\n        \"\"\"Make request with retry logic.\"\"\"\n        if self.circuit_open:\n            raise RuntimeError(\"Circuit breaker open\")\n        \n        for attempt in range(1, self.max_retries + 1):\n            try:\n                # Simulate request (fails first fail_count times)\n                if attempt <= fail_count:\n                    raise ConnectionError(f\"Attempt {attempt} failed\")\n                \n                self.failure_count = 0\n                return {\"data\": \"success\", \"url\": f\"{self.base_url}/{endpoint}\"}\n            \n            except ConnectionError as e:\n                self.failure_count += 1\n                \n                if attempt == self.max_retries:\n                    if self.failure_count >= 5:\n                        self.circuit_open = True\n                    raise\n                \n                time.sleep(0.01 * attempt)  # Backoff\n        \n        raise RuntimeError(\"Max retries exceeded\")\n\nclass DataPipeline:\n    \"\"\"Data pipeline with stage-by-stage error tracking.\"\"\"\n    \n    def __init__(self):\n        self.stages: List[tuple] = []\n        self.errors: List[Dict] = []\n    \n    def add_stage(self, name: str, processor: Callable):\n        \"\"\"Add processing stage.\"\"\"\n        self.stages.append((name, processor))\n    \n    def process(self, data: List[Any]) -> tuple:\n        \"\"\"Process data through all stages.\"\"\"\n        results = []\n        self.errors = []\n        \n        for item_index, item in enumerate(data):\n            current_item = item\n            item_failed = False\n            \n            for stage_name, processor in self.stages:\n                try:\n                    current_item = processor(current_item)\n                except Exception as e:\n                    self.errors.append({\n                        \"stage\": stage_name,\n                        \"item_index\": item_index,\n                        \"error\": str(e)\n                    })\n                    item_failed = True\n                    break\n            \n            if not item_failed:\n                results.append(current_item)\n        \n        return results, self.errors\n\nclass ConfigManager:\n    \"\"\"Configuration manager with validation and error reporting.\"\"\"\n    \n    def __init__(self, schema: Dict[str, Dict]):\n        self.schema = schema\n        self.config = {}\n        self.errors = []\n    \n    def load(self, data: Dict[str, Any]) -> bool:\n        \"\"\"Load and validate configuration.\"\"\"\n        self.errors = []\n        \n        # Check required fields\n        for field, spec in self.schema.items():\n            if spec.get('required', False) and field not in data:\n                self.errors.append(f\"Required field missing: {field}\")\n            \n            # Type validation\n            if field in data:\n                expected_type = spec['type']\n                if not isinstance(data[field], expected_type):\n                    self.errors.append(\n                        f\"Invalid type for {field}: \"\n                        f\"expected {expected_type.__name__}, \"\n                        f\"got {type(data[field]).__name__}\"\n                    )\n        \n        if self.errors:\n            return False\n        \n        self.config = data.copy()\n        return True\n    \n    def get(self, key: str, default=None):\n        \"\"\"Get configuration value.\"\"\"\n        return self.config.get(key, default)\n\nclass ErrorReporter:\n    \"\"\"Report errors with context and aggregation.\"\"\"\n    \n    def __init__(self):\n        self.errors = []\n    \n    def report(self, error: Exception, context: Optional[Dict] = None):\n        \"\"\"Report an error with context.\"\"\"\n        self.errors.append({\n            \"type\": type(error).__name__,\n            \"message\": str(error),\n            \"timestamp\": datetime.now().isoformat(),\n            \"context\": context or {}\n        })\n    \n    def get_summary(self) -> Dict[str, Any]:\n        \"\"\"Get error summary.\"\"\"\n        if not self.errors:\n            return {\"total\": 0, \"by_type\": {}}\n        \n        by_type = {}\n        for error in self.errors:\n            error_type = error[\"type\"]\n            by_type[error_type] = by_type.get(error_type, 0) + 1\n        \n        return {\n            \"total\": len(self.errors),\n            \"by_type\": by_type\n        }\n\nclass HealthMonitor:\n    \"\"\"Monitor system health with multiple checks.\"\"\"\n    \n    def __init__(self):\n        self.checks = []\n    \n    def add_check(self, name: str, check_func: Callable):\n        \"\"\"Add health check.\"\"\"\n        self.checks.append((name, check_func))\n    \n    def run_checks(self) -> Dict[str, Any]:\n        \"\"\"Run all health checks.\"\"\"\n        results = {}\n        \n        for name, check_func in self.checks:\n            try:\n                healthy, message = check_func()\n                results[name] = {\"healthy\": healthy, \"message\": message}\n            except Exception as e:\n                results[name] = {\"healthy\": False, \"message\": f\"Check failed: {e}\"}\n        \n        return results\n\nclass SafeFileManager:\n    \"\"\"File manager with atomic operations and validation.\"\"\"\n    \n    def __init__(self, base_dir: str):\n        import os\n        self.base_dir = os.path.abspath(base_dir)\n    \n    def write(self, filename: str, content: str) -> tuple:\n        \"\"\"Write file safely.\"\"\"\n        import os\n        \n        try:\n            # Validate path\n            abs_path = os.path.abspath(filename)\n            if not abs_path.startswith(self.base_dir):\n                return False, \"Path outside base directory\"\n            \n            # Write file\n            os.makedirs(os.path.dirname(abs_path), exist_ok=True)\n            with open(abs_path, 'w') as f:\n                f.write(content)\n            \n            return True, None\n        \n        except Exception as e:\n            return False, str(e)\n    \n    def read(self, filename: str) -> tuple:\n        \"\"\"Read file safely.\"\"\"\n        import os\n        \n        try:\n            abs_path = os.path.abspath(filename)\n            if not abs_path.startswith(self.base_dir):\n                return None, \"Path outside base directory\"\n            \n            with open(abs_path, 'r') as f:\n                return f.read(), None\n        \n        except FileNotFoundError:\n            return None, \"File not found\"\n        except Exception as e:\n            return None, str(e)\n",
+  "hints": [
+    "APIClient: Implement retry loop with backoff, track failures for circuit breaker",
+    "DataPipeline: Process items through stages, collect errors with item_index and stage",
+    "ConfigManager: Validate required fields and types, collect all errors before returning",
+    "ErrorReporter: Store error type, message, timestamp, context; aggregate by type",
+    "HealthMonitor: Run all checks, catch exceptions, return healthy boolean + message",
+    "SafeFileManager: Validate paths with os.path.abspath/startswith, create directories"
+  ],
+  "testCases": [
+    {
+      "input": "client = APIClient('https://api.example.com')\\nresult = client.request('users', fail_count=0)\\nresult['data']",
+      "description": "Test APIClient successful request",
+      "id": "test1",
+      "expectedOutput": "'success'",
+      "isHidden": false
+    },
+    {
+      "input": "client = APIClient('https://api.example.com', max_retries=3)\\nresult = client.request('users', fail_count=2)\\nresult['data']",
+      "description": "Test APIClient retry logic",
+      "id": "test2",
+      "expectedOutput": "'success'",
+      "isHidden": false
+    },
+    {
+      "input": "pipeline = DataPipeline()\\npipeline.add_stage('double', lambda x: x * 2)\\npipeline.add_stage('validate', lambda x: x if x < 10 else [][0])\\nresults, errors = pipeline.process([1, 2, 10])\\n(len(results), len(errors))",
+      "description": "Test DataPipeline with errors",
+      "id": "test3",
+      "expectedOutput": "(2, 1)",
+      "isHidden": false
+    },
+    {
+      "input": "schema = {'api_key': {'type': str, 'required': True}}\\nmanager = ConfigManager(schema)\\nmanager.load({'api_key': 123})",
+      "description": "Test ConfigManager validation",
+      "id": "test4",
+      "expectedOutput": "False",
+      "isHidden": true
+    },
+    {
+      "input": "reporter = ErrorReporter()\\nreporter.report(ValueError('e1'))\\nreporter.report(ValueError('e2'))\\nreporter.report(TypeError('e3'))\\nsummary = reporter.get_summary()\\n(summary['total'], summary['by_type']['ValueError'])",
+      "description": "Test ErrorReporter aggregation",
+      "id": "test5",
+      "expectedOutput": "(3, 2)",
+      "isHidden": true
+    },
+    {
+      "input": "import tempfile\\nmanager = SafeFileManager(tempfile.gettempdir())\\nsuccess, error = manager.write('/etc/passwd', 'test')\\n(success, 'outside' in error.lower())",
+      "description": "Test SafeFileManager path validation",
+      "id": "test6",
+      "expectedOutput": "(False, True)",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

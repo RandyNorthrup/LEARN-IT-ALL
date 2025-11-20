@@ -1,0 +1,63 @@
+{
+  "id": "exercise-143-dict-mastery-capstone",
+  "lessonId": "lesson-133-dict-mastery-capstone",
+  "title": "Dictionary Mastery Capstone",
+  "description": "Comprehensive capstone integrating all dictionary concepts: data pipelines, advanced caching, state machines, and production patterns.",
+  "difficulty": "advanced",
+  "points": 30,
+  "starterCode": "from collections import defaultdict, OrderedDict\nfrom datetime import datetime\n\n# Function 1: Build data pipeline with transformations\ndef build_pipeline(data, transformations):\n    \"\"\"Apply multiple transformation functions to data.\n    \n    Args:\n        data (list): List of dictionaries\n        transformations (list): List of transformation functions\n    \n    Returns:\n        list: Transformed data\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Implement LRU cache with max size\ndef create_lru_cache(max_size):\n    \"\"\"Create LRU cache with size limit.\n    \n    Args:\n        max_size (int): Maximum cache size\n    \n    Returns:\n        dict: Cache object with 'get' and 'put' methods\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Multi-index database\ndef create_multi_index_db(items, primary_key, indexes):\n    \"\"\"Create database with primary key and secondary indexes.\n    \n    Args:\n        items (list): List of dictionaries\n        primary_key (str): Primary key field\n        indexes (list): List of fields to index\n    \n    Returns:\n        dict: Database with 'primary' and 'indexes' keys\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: State machine with history\ndef create_state_machine(transitions):\n    \"\"\"Create state machine that tracks history.\n    \n    Args:\n        transitions (dict): State transition rules\n    \n    Returns:\n        dict: State machine with 'state', 'history', and 'process_event' method\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Advanced data aggregation\ndef aggregate_data(items, group_by, aggregations):\n    \"\"\"Group and aggregate data.\n    \n    Args:\n        items (list): List of dictionaries\n        group_by (str): Field to group by\n        aggregations (dict): Aggregation functions {field: function}\n    \n    Returns:\n        dict: Grouped and aggregated data\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Configuration manager with validation\ndef create_config_manager(schema, defaults):\n    \"\"\"Create configuration manager with validation.\n    \n    Args:\n        schema (dict): Schema defining required fields and types\n        defaults (dict): Default configuration values\n    \n    Returns:\n        dict: Config manager with 'get', 'set', and 'validate' methods\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "from collections import defaultdict, OrderedDict\nfrom datetime import datetime\n\n# Function 1: Build data pipeline with transformations\ndef build_pipeline(data, transformations):\n    \"\"\"Apply multiple transformation functions to data.\n    \n    Args:\n        data (list): List of dictionaries\n        transformations (list): List of transformation functions\n    \n    Returns:\n        list: Transformed data\n    \"\"\"\n    result = data\n    for transform in transformations:\n        result = [transform(item) for item in result]\n    return result\n\n# Function 2: Implement LRU cache with max size\ndef create_lru_cache(max_size):\n    \"\"\"Create LRU cache with size limit.\n    \n    Args:\n        max_size (int): Maximum cache size\n    \n    Returns:\n        dict: Cache object with 'get' and 'put' methods\n    \"\"\"\n    cache = OrderedDict()\n    \n    def get(key):\n        if key in cache:\n            cache.move_to_end(key)\n            return cache[key]\n        return None\n    \n    def put(key, value):\n        if key in cache:\n            cache.move_to_end(key)\n        cache[key] = value\n        if len(cache) > max_size:\n            cache.popitem(last=False)\n    \n    return {'get': get, 'put': put, 'cache': cache}\n\n# Function 3: Multi-index database\ndef create_multi_index_db(items, primary_key, indexes):\n    \"\"\"Create database with primary key and secondary indexes.\n    \n    Args:\n        items (list): List of dictionaries\n        primary_key (str): Primary key field\n        indexes (list): List of fields to index\n    \n    Returns:\n        dict: Database with 'primary' and 'indexes' keys\n    \"\"\"\n    db = {\n        'primary': {item[primary_key]: item for item in items if primary_key in item},\n        'indexes': {}\n    }\n    \n    for index_field in indexes:\n        index = defaultdict(list)\n        for item in items:\n            if index_field in item:\n                index[item[index_field]].append(item)\n        db['indexes'][index_field] = dict(index)\n    \n    return db\n\n# Function 4: State machine with history\ndef create_state_machine(transitions):\n    \"\"\"Create state machine that tracks history.\n    \n    Args:\n        transitions (dict): State transition rules\n    \n    Returns:\n        dict: State machine with 'state', 'history', and 'process_event' method\n    \"\"\"\n    machine = {\n        'state': 'idle',\n        'history': ['idle']\n    }\n    \n    def process_event(event):\n        current = machine['state']\n        if current in transitions and event in transitions[current]:\n            new_state = transitions[current][event]\n            machine['state'] = new_state\n            machine['history'].append(new_state)\n            return new_state\n        return current\n    \n    machine['process_event'] = process_event\n    return machine\n\n# Function 5: Advanced data aggregation\ndef aggregate_data(items, group_by, aggregations):\n    \"\"\"Group and aggregate data.\n    \n    Args:\n        items (list): List of dictionaries\n        group_by (str): Field to group by\n        aggregations (dict): Aggregation functions {field: function}\n    \n    Returns:\n        dict: Grouped and aggregated data\n    \"\"\"\n    groups = defaultdict(list)\n    for item in items:\n        if group_by in item:\n            groups[item[group_by]].append(item)\n    \n    result = {}\n    for key, group_items in groups.items():\n        result[key] = {}\n        for field, agg_func in aggregations.items():\n            values = [item[field] for item in group_items if field in item]\n            result[key][field] = agg_func(values) if values else None\n    \n    return result\n\n# Function 6: Configuration manager with validation\ndef create_config_manager(schema, defaults):\n    \"\"\"Create configuration manager with validation.\n    \n    Args:\n        schema (dict): Schema defining required fields and types\n        defaults (dict): Default configuration values\n    \n    Returns:\n        dict: Config manager with 'get', 'set', and 'validate' methods\n    \"\"\"\n    config = defaults.copy()\n    \n    def get(key, default=None):\n        return config.get(key, default)\n    \n    def set_config(key, value):\n        if key in schema:\n            expected_type = schema[key]\n            if not isinstance(value, expected_type):\n                raise TypeError(f\"Expected {expected_type} for {key}\")\n        config[key] = value\n    \n    def validate():\n        missing = [k for k in schema if k not in config]\n        return (len(missing) == 0, missing)\n    \n    return {'get': get, 'set': set_config, 'validate': validate, 'config': config}",
+  "hints": [
+    "Loop through transformations and apply each to all items: result = [transform(item) for item in result]",
+    "Use OrderedDict with move_to_end() for LRU, popitem(last=False) removes oldest",
+    "Build primary index with dict comprehension, secondary indexes with defaultdict(list)",
+    "Store current state and history list, check transitions dict for valid event",
+    "Use defaultdict(list) to group, then apply aggregation functions to each group",
+    "Store config dict, validate types on set, check for missing required fields"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "build_pipeline([{'x': 1}, {'x': 2}], [lambda d: {**d, 'x': d['x'] * 2}])",
+      "expectedOutput": "[{'x': 2}, {'x': 4}]",
+      "isHidden": false,
+      "description": "Pipeline transformation"
+    },
+    {
+      "id": "test2",
+      "input": "cache = create_lru_cache(2); cache['put']('a', 1); cache['put']('b', 2); cache['get']('a')",
+      "expectedOutput": "1",
+      "isHidden": false,
+      "description": "LRU cache put and get"
+    },
+    {
+      "id": "test3",
+      "input": "db = create_multi_index_db([{'id': 1, 'name': 'Alice', 'dept': 'eng'}], 'id', ['dept']); 'eng' in db['indexes']['dept']",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Multi-index database"
+    },
+    {
+      "id": "test4",
+      "input": "sm = create_state_machine({'idle': {'start': 'running'}}); sm['process_event']('start')",
+      "expectedOutput": "'running'",
+      "isHidden": true,
+      "description": "State machine transition"
+    },
+    {
+      "id": "test5",
+      "input": "aggregate_data([{'dept': 'eng', 'salary': 100}, {'dept': 'eng', 'salary': 200}], 'dept', {'salary': sum})",
+      "expectedOutput": "{'eng': {'salary': 300}}",
+      "isHidden": true,
+      "description": "Aggregate data"
+    },
+    {
+      "id": "test6",
+      "input": "cm = create_config_manager({'port': int}, {'port': 8080}); cm['validate']()[0]",
+      "expectedOutput": "True",
+      "isHidden": true,
+      "description": "Config validation"
+    }
+  ],
+  "language": "python"
+}

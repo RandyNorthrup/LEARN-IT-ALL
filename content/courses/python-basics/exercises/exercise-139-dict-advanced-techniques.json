@@ -1,0 +1,63 @@
+{
+  "id": "exercise-139-dict-advanced-techniques",
+  "lessonId": "lesson-129-dict-advanced-techniques",
+  "title": "Advanced Dictionary Techniques",
+  "description": "Master OrderedDict, ChainMap, dictionary views, and advanced patterns for complex dict operations.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "from collections import OrderedDict, ChainMap\n\n# Function 1: Maintain insertion order with OrderedDict\ndef create_ordered_history():\n    \"\"\"Create an OrderedDict for tracking history.\n    \n    Returns:\n        OrderedDict: Empty ordered dictionary\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Use ChainMap for layered configuration\ndef get_config_value(defaults, user_config, key):\n    \"\"\"Get config value with fallback to defaults.\n    \n    Args:\n        defaults (dict): Default configuration\n        user_config (dict): User configuration\n        key (str): Config key\n    \n    Returns:\n        any: Config value (user config takes priority)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Move item to end in OrderedDict\ndef update_lru_cache(cache, key, value):\n    \"\"\"Update LRU cache, moving accessed item to end.\n    \n    Args:\n        cache (OrderedDict): LRU cache\n        key (str): Cache key\n        value (any): Value to store\n    \n    Returns:\n        OrderedDict: Updated cache\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Use dictionary views for set operations\ndef common_keys(dict1, dict2):\n    \"\"\"Find common keys using dictionary views.\n    \n    Args:\n        dict1 (dict): First dictionary\n        dict2 (dict): Second dictionary\n    \n    Returns:\n        set: Common keys\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Create ChainMap with multiple sources\ndef load_config(defaults, env_vars, user_settings):\n    \"\"\"Load configuration with priority: user_settings > env_vars > defaults.\n    \n    Args:\n        defaults (dict): Default settings\n        env_vars (dict): Environment variables\n        user_settings (dict): User settings\n    \n    Returns:\n        ChainMap: Merged configuration\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Filter dict using view\ndef filter_dict_by_value(data, min_value):\n    \"\"\"Filter dictionary keeping only values >= min_value.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        min_value (int or float): Minimum value threshold\n    \n    Returns:\n        dict: Filtered dictionary\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "from collections import OrderedDict, ChainMap\n\n# Function 1: Maintain insertion order with OrderedDict\ndef create_ordered_history():\n    \"\"\"Create an OrderedDict for tracking history.\n    \n    Returns:\n        OrderedDict: Empty ordered dictionary\n    \"\"\"\n    return OrderedDict()\n\n# Function 2: Use ChainMap for layered configuration\ndef get_config_value(defaults, user_config, key):\n    \"\"\"Get config value with fallback to defaults.\n    \n    Args:\n        defaults (dict): Default configuration\n        user_config (dict): User configuration\n        key (str): Config key\n    \n    Returns:\n        any: Config value (user config takes priority)\n    \"\"\"\n    config = ChainMap(user_config, defaults)\n    return config.get(key)\n\n# Function 3: Move item to end in OrderedDict\ndef update_lru_cache(cache, key, value):\n    \"\"\"Update LRU cache, moving accessed item to end.\n    \n    Args:\n        cache (OrderedDict): LRU cache\n        key (str): Cache key\n        value (any): Value to store\n    \n    Returns:\n        OrderedDict: Updated cache\n    \"\"\"\n    if key in cache:\n        cache.move_to_end(key)\n    cache[key] = value\n    return cache\n\n# Function 4: Use dictionary views for set operations\ndef common_keys(dict1, dict2):\n    \"\"\"Find common keys using dictionary views.\n    \n    Args:\n        dict1 (dict): First dictionary\n        dict2 (dict): Second dictionary\n    \n    Returns:\n        set: Common keys\n    \"\"\"\n    return dict1.keys() & dict2.keys()\n\n# Function 5: Create ChainMap with multiple sources\ndef load_config(defaults, env_vars, user_settings):\n    \"\"\"Load configuration with priority: user_settings > env_vars > defaults.\n    \n    Args:\n        defaults (dict): Default settings\n        env_vars (dict): Environment variables\n        user_settings (dict): User settings\n    \n    Returns:\n        ChainMap: Merged configuration\n    \"\"\"\n    return ChainMap(user_settings, env_vars, defaults)\n\n# Function 6: Filter dict using view\ndef filter_dict_by_value(data, min_value):\n    \"\"\"Filter dictionary keeping only values >= min_value.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        min_value (int or float): Minimum value threshold\n    \n    Returns:\n        dict: Filtered dictionary\n    \"\"\"\n    return {k: v for k, v in data.items() if v >= min_value}",
+  "hints": [
+    "Simply return OrderedDict() - it's a callable class",
+    "ChainMap(user_config, defaults) searches user_config first, then defaults",
+    "Use cache.move_to_end(key) before setting value to implement LRU",
+    "Dictionary views support set operations: dict1.keys() & dict2.keys()",
+    "ChainMap searches left to right: ChainMap(highest_priority, ..., lowest_priority)",
+    "Dict comprehension with condition: {k: v for k, v in data.items() if v >= min_value}"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "type(create_ordered_history()).__name__",
+      "expectedOutput": "'OrderedDict'",
+      "isHidden": false,
+      "description": "Create ordered history"
+    },
+    {
+      "id": "test2",
+      "input": "get_config_value({'port': 8080}, {'port': 3000}, 'port')",
+      "expectedOutput": "3000",
+      "isHidden": false,
+      "description": "Get config with fallback"
+    },
+    {
+      "id": "test3",
+      "input": "cache = OrderedDict([('a', 1), ('b', 2)]); update_lru_cache(cache, 'a', 10); list(cache.keys())",
+      "expectedOutput": "['b', 'a']",
+      "isHidden": false,
+      "description": "Update LRU cache"
+    },
+    {
+      "id": "test4",
+      "input": "common_keys({'a': 1, 'b': 2}, {'b': 3, 'c': 4})",
+      "expectedOutput": "{'b'}",
+      "isHidden": true,
+      "description": "Common keys"
+    },
+    {
+      "id": "test5",
+      "input": "config = load_config({'port': 8080}, {'port': 9090}, {'port': 3000}); config['port']",
+      "expectedOutput": "3000",
+      "isHidden": true,
+      "description": "Load config priority"
+    },
+    {
+      "id": "test6",
+      "input": "filter_dict_by_value({'a': 10, 'b': 5, 'c': 15}, 10)",
+      "expectedOutput": "{'a': 10, 'c': 15}",
+      "isHidden": true,
+      "description": "Filter by value"
+    }
+  ],
+  "language": "python"
+}

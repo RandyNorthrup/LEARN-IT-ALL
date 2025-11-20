@@ -1,0 +1,63 @@
+{
+  "id": "exercise-164-async-error-handling",
+  "lessonId": "lesson-154-async-error-handling",
+  "title": "Error Handling in Async Code",
+  "description": "Handle errors in async/await code, manage task exceptions, use asyncio error patterns, and debug async errors effectively.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Error Handling in Async Code\nimport asyncio\n\nasync def safe_async_fetch(url):\n    \"\"\"Fetch data asynchronously with error handling.\"\"\"\n    pass\n\nasync def fetch_all_with_errors(urls):\n    \"\"\"Fetch multiple URLs, collect errors.\"\"\"\n    pass\n\nasync def async_with_timeout(coro, timeout_seconds):\n    \"\"\"Execute coroutine with timeout.\"\"\"\n    pass\n\nclass AsyncContextManager:\n    \"\"\"Async context manager with error handling.\"\"\"\n    pass\n\nasync def retry_async(coro_func, max_retries=3):\n    \"\"\"Retry async function with exponential backoff.\"\"\"\n    pass\n\nasync def aggregate_async_errors(tasks):\n    \"\"\"Run tasks, aggregate all errors.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling in Async Code\nimport asyncio\nfrom typing import List, Tuple, Any, Callable\n\nasync def safe_async_fetch(url: str) -> Tuple[Any, str]:\n    \"\"\"\n    Fetch data asynchronously with error handling.\n    \n    Returns:\n        Tuple of (data, error_message)\n    \"\"\"\n    try:\n        # Simulate async fetch\n        await asyncio.sleep(0.01)\n        \n        if \"error\" in url:\n            raise ValueError(f\"Invalid URL: {url}\")\n        \n        return f\"Data from {url}\", None\n    \n    except ValueError as e:\n        return None, str(e)\n    except Exception as e:\n        return None, f\"Unexpected error: {e}\"\n\nasync def fetch_all_with_errors(urls: List[str]) -> Tuple[List, List]:\n    \"\"\"\n    Fetch multiple URLs, collect errors.\n    \n    Returns:\n        Tuple of (successful_results, errors)\n    \"\"\"\n    tasks = [safe_async_fetch(url) for url in urls]\n    results = await asyncio.gather(*tasks, return_exceptions=False)\n    \n    successful = []\n    errors = []\n    \n    for i, (data, error) in enumerate(results):\n        if error:\n            errors.append((urls[i], error))\n        else:\n            successful.append(data)\n    \n    return successful, errors\n\nasync def async_with_timeout(coro, timeout_seconds: float):\n    \"\"\"\n    Execute coroutine with timeout.\n    \n    Returns:\n        Result or raises TimeoutError\n    \"\"\"\n    try:\n        result = await asyncio.wait_for(coro, timeout=timeout_seconds)\n        return result\n    except asyncio.TimeoutError:\n        raise TimeoutError(f\"Operation timed out after {timeout_seconds}s\")\n\nclass AsyncContextManager:\n    \"\"\"Async context manager with error handling.\"\"\"\n    \n    def __init__(self, resource_name: str):\n        self.resource_name = resource_name\n        self.connected = False\n    \n    async def __aenter__(self):\n        \"\"\"Async enter - acquire resource.\"\"\"\n        await asyncio.sleep(0.01)  # Simulate async connection\n        \n        if \"invalid\" in self.resource_name:\n            raise ConnectionError(f\"Cannot connect to {self.resource_name}\")\n        \n        self.connected = True\n        return self\n    \n    async def __aexit__(self, exc_type, exc_val, exc_tb):\n        \"\"\"Async exit - release resource.\"\"\"\n        await asyncio.sleep(0.01)  # Simulate async cleanup\n        self.connected = False\n        return False  # Don't suppress exceptions\n\nasync def retry_async(coro_func: Callable, max_retries: int = 3):\n    \"\"\"\n    Retry async function with exponential backoff.\n    \n    Returns:\n        Function result or raises last exception\n    \"\"\"\n    last_exception = None\n    \n    for attempt in range(1, max_retries + 1):\n        try:\n            return await coro_func()\n        except Exception as e:\n            last_exception = e\n            \n            if attempt == max_retries:\n                raise\n            \n            # Exponential backoff\n            wait_time = 0.01 * (2 ** (attempt - 1))\n            await asyncio.sleep(wait_time)\n    \n    if last_exception:\n        raise last_exception\n\nasync def aggregate_async_errors(tasks: List):\n    \"\"\"\n    Run tasks, aggregate all errors.\n    \n    Returns:\n        Tuple of (successful_results, error_list)\n    \"\"\"\n    results = await asyncio.gather(*tasks, return_exceptions=True)\n    \n    successful = []\n    errors = []\n    \n    for i, result in enumerate(results):\n        if isinstance(result, Exception):\n            errors.append((i, type(result).__name__, str(result)))\n        else:\n            successful.append(result)\n    \n    return successful, errors\n",
+  "hints": [
+    "Use await for async operations, handle exceptions in try-except",
+    "asyncio.gather with return_exceptions=True collects both results and exceptions",
+    "asyncio.wait_for() adds timeout to async operations",
+    "Async context managers use __aenter__ and __aexit__ (with await)",
+    "Retry pattern: loop with await asyncio.sleep() for backoff",
+    "Check isinstance(result, Exception) to detect exceptions in gathered results"
+  ],
+  "testCases": [
+    {
+      "input": "import asyncio\\ndata, error = asyncio.run(safe_async_fetch('https://example.com'))\\n(data is not None, error is None)",
+      "description": "Test safe_async_fetch success",
+      "id": "test1",
+      "expectedOutput": "(True, True)",
+      "isHidden": false
+    },
+    {
+      "input": "import asyncio\\ndata, error = asyncio.run(safe_async_fetch('https://error.com'))\\n(data is None, 'Invalid URL' in error)",
+      "description": "Test safe_async_fetch error",
+      "id": "test2",
+      "expectedOutput": "(True, True)",
+      "isHidden": false
+    },
+    {
+      "input": "import asyncio\\nurls = ['https://a.com', 'https://error.com', 'https://b.com']\\nsuccessful, errors = asyncio.run(fetch_all_with_errors(urls))\\n(len(successful), len(errors))",
+      "description": "Test fetch_all_with_errors mixed",
+      "id": "test3",
+      "expectedOutput": "(2, 1)",
+      "isHidden": false
+    },
+    {
+      "input": "import asyncio\\nasync def quick():\\n    await asyncio.sleep(0.01)\\n    return 42\\nresult = asyncio.run(async_with_timeout(quick(), 1.0))\\nresult",
+      "description": "Test async_with_timeout success",
+      "id": "test4",
+      "expectedOutput": "42",
+      "isHidden": true
+    },
+    {
+      "input": "import asyncio\\nasync def test():\\n    try:\\n        async with AsyncContextManager('invalid') as cm:\\n            pass\\n        return 'no error'\\n    except ConnectionError:\\n        return 'error caught'\\nasyncio.run(test())",
+      "description": "Test AsyncContextManager error handling",
+      "id": "test5",
+      "expectedOutput": "'error caught'",
+      "isHidden": true
+    },
+    {
+      "input": "import asyncio\\nasync def ok(): return 42\\nasync def fail(): raise ValueError('fail')\\ntasks = [ok(), fail(), ok()]\\nsuccessful, errors = asyncio.run(aggregate_async_errors(tasks))\\n(len(successful), len(errors))",
+      "description": "Test aggregate_async_errors",
+      "id": "test6",
+      "expectedOutput": "(2, 1)",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

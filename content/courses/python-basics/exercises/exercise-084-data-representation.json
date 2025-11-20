@@ -1,0 +1,56 @@
+{
+  "id": "exercise-084-data-representation",
+  "lessonId": "lesson-076-data-representation",
+  "title": "Text Encoding Explorer",
+  "description": "Create a text encoding explorer that demonstrates how text is encoded in different formats (ASCII, UTF-8, UTF-16) and calculates byte sizes.\n\nYour program should:\n1. Display ASCII codes for characters\n2. Show UTF-8 encoding byte representation\n3. Compare byte sizes for different encodings\n4. Demonstrate multi-byte characters (emoji, international text)\n\nImplement these functions:\n- `show_ascii_range(start, end)`: Display ASCII table for character range\n- `analyze_character(char)`: Show ASCII/Unicode code, UTF-8 bytes, binary representation\n- `encoding_comparison(text)`: Compare byte sizes in different encodings\n- `emoji_breakdown(emoji)`: Show how emoji is encoded in UTF-8\n\nExample:\n```python\nanalyze_character('A')\n# Character: A\n# Unicode: U+0041 (65)\n# UTF-8: b'A' (1 byte)\n# Binary: 01000001\n# Hex: 0x41\n\nencoding_comparison(\"Hello 世界\")\n# Text: Hello 世界\n# ASCII: Not encodable (contains non-ASCII)\n# UTF-8: 12 bytes\n# UTF-16: 16 bytes\n# UTF-32: 28 bytes\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def show_ascii_range(start, end):\n    \"\"\"Display ASCII table for character range.\"\"\"\n    # TODO: Print table header\n    print(f\"ASCII Table ({start}-{end}):\")\n    print(f\"{'Dec':<5} {'Hex':<6} {'Binary':<10} {'Char'}\")\n    print(\"-\" * 30)\n    \n    # TODO: Loop through range from start to end (inclusive)\n    # For each code:\n    #   1. Convert to character using chr()\n    #   2. Show decimal, hex, binary, and character\n    #   3. Only show printable characters (32-126)\n    \n    pass\n\ndef analyze_character(char):\n    \"\"\"Show detailed encoding information for a character.\"\"\"\n    # TODO: Get Unicode code point using ord()\n    \n    # TODO: Get UTF-8 bytes using char.encode('utf-8')\n    \n    # TODO: Convert code point to binary using bin()\n    \n    # TODO: Convert code point to hex using hex()\n    \n    # TODO: Print all information in formatted way\n    \n    pass\n\ndef encoding_comparison(text):\n    \"\"\"Compare byte sizes in different encodings.\"\"\"\n    # TODO: Print the text being analyzed\n    \n    # TODO: Try ASCII encoding (may fail for non-ASCII)\n    # Use try-except to handle encoding error\n    \n    # TODO: Encode in UTF-8, UTF-16, UTF-32\n    # Calculate byte length using len()\n    \n    # TODO: Print comparison table\n    \n    pass\n\ndef emoji_breakdown(emoji):\n    \"\"\"Show how emoji is encoded in UTF-8.\"\"\"\n    # TODO: Print emoji being analyzed\n    \n    # TODO: Get Unicode code point(s)\n    # Some emoji are multiple code points!\n    \n    # TODO: Get UTF-8 bytes\n    \n    # TODO: Show each byte in hex format\n    \n    # TODO: Calculate and show total bytes\n    \n    pass\n\n# Test the functions\nprint(\"ASCII Character Range:\")\nprint(\"=\" * 60)\nshow_ascii_range(65, 75)  # A-K\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Character Analysis:\")\nprint(\"=\" * 60)\n\ntest_chars = ['A', 'a', '0', '@', '€', '世', '😀']\nfor char in test_chars:\n    analyze_character(char)\n    print()\n\nprint(\"=\" * 60)\nprint(\"Encoding Comparison:\")\nprint(\"=\" * 60)\n\ntest_strings = [\n    \"Hello\",\n    \"Hello World\",\n    \"Hello 世界\",\n    \"🐍 Python\",\n    \"Café résumé\"\n]\n\nfor text in test_strings:\n    encoding_comparison(text)\n    print()\n\nprint(\"=\" * 60)\nprint(\"Emoji Breakdown:\")\nprint(\"=\" * 60)\n\nemojis = ['😀', '🐍', '❤️', '👨‍💻']\nfor emoji in emojis:\n    emoji_breakdown(emoji)\n    print()",
+  "solution": "def show_ascii_range(start, end):\n    \"\"\"Display ASCII table for character range.\"\"\"\n    print(f\"ASCII Table ({start}-{end}):\")\n    print(f\"{'Dec':<5} {'Hex':<6} {'Binary':<10} {'Char'}\")\n    print(\"-\" * 30)\n    \n    for code in range(start, end + 1):\n        if 32 <= code <= 126:  # Printable range\n            char = chr(code)\n            hex_val = hex(code)\n            binary = bin(code)\n            print(f\"{code:<5} {hex_val:<6} {binary:<10} '{char}'\")\n        else:\n            print(f\"{code:<5} {hex(code):<6} {bin(code):<10} (control)\")\n\ndef analyze_character(char):\n    \"\"\"Show detailed encoding information for a character.\"\"\"\n    # Get Unicode code point\n    code_point = ord(char)\n    \n    # Get UTF-8 bytes\n    utf8_bytes = char.encode('utf-8')\n    \n    # Convert to binary and hex\n    binary = bin(code_point)[2:]  # Remove '0b' prefix\n    hex_val = hex(code_point)\n    \n    print(f\"Character: {char}\")\n    print(f\"Unicode: U+{code_point:04X} ({code_point})\")\n    print(f\"UTF-8: {utf8_bytes} ({len(utf8_bytes)} byte{'s' if len(utf8_bytes) > 1 else ''})\")\n    print(f\"Binary: {binary}\")\n    print(f\"Hex: {hex_val}\")\n\ndef encoding_comparison(text):\n    \"\"\"Compare byte sizes in different encodings.\"\"\"\n    print(f\"Text: {text}\")\n    \n    # Try ASCII\n    try:\n        ascii_bytes = text.encode('ascii')\n        print(f\"ASCII: {len(ascii_bytes)} bytes\")\n    except UnicodeEncodeError:\n        print(\"ASCII: Not encodable (contains non-ASCII characters)\")\n    \n    # UTF-8\n    utf8_bytes = text.encode('utf-8')\n    print(f\"UTF-8: {len(utf8_bytes)} bytes\")\n    \n    # UTF-16\n    utf16_bytes = text.encode('utf-16')\n    print(f\"UTF-16: {len(utf16_bytes)} bytes\")\n    \n    # UTF-32\n    utf32_bytes = text.encode('utf-32')\n    print(f\"UTF-32: {len(utf32_bytes)} bytes\")\n\ndef emoji_breakdown(emoji):\n    \"\"\"Show how emoji is encoded in UTF-8.\"\"\"\n    print(f\"Emoji: {emoji}\")\n    \n    # Get Unicode code points\n    code_points = [f\"U+{ord(char):04X}\" for char in emoji]\n    print(f\"Unicode: {' + '.join(code_points)}\")\n    \n    # Get UTF-8 bytes\n    utf8_bytes = emoji.encode('utf-8')\n    \n    # Show hex representation\n    hex_bytes = ' '.join(f\"{byte:02X}\" for byte in utf8_bytes)\n    print(f\"UTF-8 Bytes (hex): {hex_bytes}\")\n    print(f\"Total bytes: {len(utf8_bytes)}\")\n\n# Test the functions\nprint(\"ASCII Character Range:\")\nprint(\"=\" * 60)\nshow_ascii_range(65, 75)  # A-K\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Character Analysis:\")\nprint(\"=\" * 60)\n\ntest_chars = ['A', 'a', '0', '@', '€', '世', '😀']\nfor char in test_chars:\n    analyze_character(char)\n    print()\n\nprint(\"=\" * 60)\nprint(\"Encoding Comparison:\")\nprint(\"=\" * 60)\n\ntest_strings = [\n    \"Hello\",\n    \"Hello World\",\n    \"Hello 世界\",\n    \"🐍 Python\",\n    \"Café résumé\"\n]\n\nfor text in test_strings:\n    encoding_comparison(text)\n    print()\n\nprint(\"=\" * 60)\nprint(\"Emoji Breakdown:\")\nprint(\"=\" * 60)\n\nemojis = ['😀', '🐍', '❤️', '👨‍💻']\nfor emoji in emojis:\n    emoji_breakdown(emoji)\n    print()",
+  "hints": [
+    "Use ord(char) to get the Unicode code point (integer) of a character",
+    "Use chr(code) to convert a code point back to a character",
+    "Use char.encode('utf-8') to get the UTF-8 byte representation of a character",
+    "Format code points as Unicode with f'U+{code:04X}' for 4-digit hex with leading zeros",
+    "Use try-except UnicodeEncodeError to handle characters that can't be encoded in ASCII",
+    "For emoji_breakdown, some emoji are composed of multiple code points (use loop: [ord(c) for c in emoji])"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "show_ascii_range displays character table correctly",
+      "input": "show_ascii_range(65, 67)",
+      "expectedOutput": "Output contains '65' and 'A', '66' and 'B', '67' and 'C'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "analyze_character shows correct info for 'A'",
+      "input": "analyze_character('A')",
+      "expectedOutput": "Output contains 'Character: A', 'Unicode: U+0041', 'UTF-8: b\\'A\\' (1 byte)'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "analyze_character handles multi-byte characters",
+      "input": "analyze_character('世')",
+      "expectedOutput": "Output shows 3 bytes for UTF-8 encoding of Chinese character",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "encoding_comparison detects non-ASCII text",
+      "input": "encoding_comparison('Hello 世界')",
+      "expectedOutput": "Output contains 'Not encodable' for ASCII and shows byte counts for UTF encodings",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "emoji_breakdown shows multi-byte emoji encoding",
+      "input": "emoji_breakdown('😀')",
+      "expectedOutput": "Output shows 4 bytes for UTF-8 encoding of emoji",
+      "isHidden": true
+    }
+  ]
+}

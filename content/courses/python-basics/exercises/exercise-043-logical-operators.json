@@ -1,0 +1,63 @@
+{
+  "id": "exercise-043-logical-operators",
+  "lessonId": "lesson-029-logical-operators",
+  "title": "Access Control System",
+  "description": "Create an access control system that uses logical operators (and, or, not) to determine permissions and eligibility based on multiple conditions.\n\nYour program should:\n1. Check user access based on multiple criteria\n2. Validate form inputs with complex requirements\n3. Determine discount eligibility\n4. Implement authentication logic with multiple factors\n\nImplement these functions:\n- `can_access_building(has_badge, is_employee, is_visitor_registered)`: Check building access\n- `validate_password(password, min_length, require_uppercase, require_digit)`: Validate password strength\n- `is_discount_eligible(age, is_student, is_veteran, is_member)`: Check discount eligibility\n- `authenticate_user(username, password, has_2fa, correct_username, correct_password)`: Full authentication\n\nExample:\n```python\nprint(can_access_building(True, True, False))  # True\nprint(validate_password('Pass123', 8, True, True))  # True\nprint(is_discount_eligible(67, False, False, False))  # True (senior)\n```",
+  "difficulty": "intermediate",
+  "points": 15,
+  "language": "python",
+  "starterCode": "def can_access_building(has_badge, is_employee, is_visitor_registered):\n    \"\"\"Check if person can access building.\"\"\"\n    # TODO: Access granted if:\n    # - Has badge AND is employee, OR\n    # - Has badge AND is registered visitor\n    # Use 'and' and 'or' operators\n    \n    pass\n\ndef validate_password(password, min_length=8, require_uppercase=True, require_digit=True):\n    \"\"\"Validate password meets requirements.\"\"\"\n    # TODO: Check if password is valid:\n    # 1. Length >= min_length\n    # 2. If require_uppercase, must have at least one uppercase letter\n    # 3. If require_digit, must have at least one digit\n    # Use 'and' to combine conditions\n    # Hints: any(c.isupper() for c in password), any(c.isdigit() for c in password)\n    \n    pass\n\ndef is_discount_eligible(age, is_student, is_veteran, is_member):\n    \"\"\"Check if person qualifies for discount.\"\"\"\n    # TODO: Discount if:\n    # - Age under 18 OR over 65 (senior), OR\n    # - Is student, OR\n    # - Is veteran, OR\n    # - Is member\n    # Use 'or' operators\n    \n    pass\n\ndef authenticate_user(username, password, has_2fa, correct_username, correct_password):\n    \"\"\"Authenticate user with username, password, and optional 2FA.\"\"\"\n    # TODO: Authentication succeeds if:\n    # - Username matches AND password matches, AND\n    # - Either has_2fa is True OR 2FA not required (you can assume 2FA is optional)\n    # Return tuple: (success: bool, message: str)\n    \n    pass\n\ndef check_work_eligibility(age, has_permit, is_citizen, has_degree):\n    \"\"\"Check if person is eligible to work.\"\"\"\n    # TODO: Eligible if:\n    # - Age >= 18 AND (is_citizen OR has_permit), AND\n    # - has_degree\n    # Use parentheses for proper grouping\n    \n    pass\n\n# Test the functions\nprint(\"Building Access Control:\")\nprint(\"=\"*60)\naccess_tests = [\n    (True, True, False),   # Employee with badge\n    (True, False, True),   # Visitor with badge and registration\n    (False, True, False),  # Employee without badge\n    (True, False, False),  # Has badge but neither employee nor visitor\n]\n\nfor has_badge, is_emp, is_vis in access_tests:\n    can_access = can_access_building(has_badge, is_emp, is_vis)\n    print(f\"Badge: {has_badge}, Employee: {is_emp}, Visitor: {is_vis} → {can_access}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Password Validation:\")\nprint(\"=\"*60)\npassword_tests = [\n    ('Pass123', 8, True, True),\n    ('weak', 8, True, True),\n    ('password', 8, True, True),\n    ('PASSWORD', 8, True, True),\n    ('Pass', 8, True, True),\n]\n\nfor pwd, min_len, req_upper, req_digit in password_tests:\n    valid = validate_password(pwd, min_len, req_upper, req_digit)\n    print(f\"'{pwd}' (len>={min_len}, upper={req_upper}, digit={req_digit}): {valid}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Discount Eligibility:\")\nprint(\"=\"*60)\ndiscount_tests = [\n    (15, False, False, False),  # Child\n    (30, False, False, False),  # Regular adult\n    (67, False, False, False),  # Senior\n    (30, True, False, False),   # Student\n    (30, False, True, False),   # Veteran\n]\n\nfor age, student, veteran, member in discount_tests:\n    eligible = is_discount_eligible(age, student, veteran, member)\n    print(f\"Age {age}, Student: {student}, Veteran: {veteran}, Member: {member} → {eligible}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"User Authentication:\")\nprint(\"=\"*60)\nauth_tests = [\n    ('admin', 'pass123', True, 'admin', 'pass123'),\n    ('user', 'wrong', True, 'admin', 'pass123'),\n    ('admin', 'wrong', True, 'admin', 'pass123'),\n]\n\nfor user, pwd, has_2fa, correct_u, correct_p in auth_tests:\n    success, msg = authenticate_user(user, pwd, has_2fa, correct_u, correct_p)\n    print(f\"User: {user}, Pass: {pwd} → {success}: {msg}\")",
+  "solution": "def can_access_building(has_badge, is_employee, is_visitor_registered):\n    \"\"\"Check if person can access building.\"\"\"\n    return (has_badge and is_employee) or (has_badge and is_visitor_registered)\n\ndef validate_password(password, min_length=8, require_uppercase=True, require_digit=True):\n    \"\"\"Validate password meets requirements.\"\"\"\n    # Check length\n    length_ok = len(password) >= min_length\n    \n    # Check uppercase if required\n    if require_uppercase:\n        has_uppercase = any(c.isupper() for c in password)\n    else:\n        has_uppercase = True\n    \n    # Check digit if required\n    if require_digit:\n        has_digit = any(c.isdigit() for c in password)\n    else:\n        has_digit = True\n    \n    return length_ok and has_uppercase and has_digit\n\ndef is_discount_eligible(age, is_student, is_veteran, is_member):\n    \"\"\"Check if person qualifies for discount.\"\"\"\n    return age < 18 or age > 65 or is_student or is_veteran or is_member\n\ndef authenticate_user(username, password, has_2fa, correct_username, correct_password):\n    \"\"\"Authenticate user with username, password, and optional 2FA.\"\"\"\n    username_match = username == correct_username\n    password_match = password == correct_password\n    \n    if username_match and password_match:\n        return (True, \"Authentication successful\")\n    elif not username_match:\n        return (False, \"Invalid username\")\n    else:\n        return (False, \"Invalid password\")\n\ndef check_work_eligibility(age, has_permit, is_citizen, has_degree):\n    \"\"\"Check if person is eligible to work.\"\"\"\n    return age >= 18 and (is_citizen or has_permit) and has_degree\n\n# Test the functions\nprint(\"Building Access Control:\")\nprint(\"=\"*60)\naccess_tests = [\n    (True, True, False),\n    (True, False, True),\n    (False, True, False),\n    (True, False, False),\n]\n\nfor has_badge, is_emp, is_vis in access_tests:\n    can_access = can_access_building(has_badge, is_emp, is_vis)\n    print(f\"Badge: {has_badge}, Employee: {is_emp}, Visitor: {is_vis} → {can_access}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Password Validation:\")\nprint(\"=\"*60)\npassword_tests = [\n    ('Pass123', 8, True, True),\n    ('weak', 8, True, True),\n    ('password', 8, True, True),\n    ('PASSWORD', 8, True, True),\n    ('Pass', 8, True, True),\n]\n\nfor pwd, min_len, req_upper, req_digit in password_tests:\n    valid = validate_password(pwd, min_len, req_upper, req_digit)\n    print(f\"'{pwd}' (len>={min_len}, upper={req_upper}, digit={req_digit}): {valid}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Discount Eligibility:\")\nprint(\"=\"*60)\ndiscount_tests = [\n    (15, False, False, False),\n    (30, False, False, False),\n    (67, False, False, False),\n    (30, True, False, False),\n    (30, False, True, False),\n]\n\nfor age, student, veteran, member in discount_tests:\n    eligible = is_discount_eligible(age, student, veteran, member)\n    print(f\"Age {age}, Student: {student}, Veteran: {veteran}, Member: {member} → {eligible}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"User Authentication:\")\nprint(\"=\"*60)\nauth_tests = [\n    ('admin', 'pass123', True, 'admin', 'pass123'),\n    ('user', 'wrong', True, 'admin', 'pass123'),\n    ('admin', 'wrong', True, 'admin', 'pass123'),\n]\n\nfor user, pwd, has_2fa, correct_u, correct_p in auth_tests:\n    success, msg = authenticate_user(user, pwd, has_2fa, correct_u, correct_p)\n    print(f\"User: {user}, Pass: {pwd} → {success}: {msg}\")",
+  "hints": [
+    "Use 'and' to combine conditions that must ALL be true: condition1 and condition2",
+    "Use 'or' to combine conditions where AT LEAST ONE must be true: condition1 or condition2",
+    "Use parentheses for clarity: (has_badge and is_employee) or (has_badge and is_visitor)",
+    "For password validation, check each requirement separately then combine with 'and'",
+    "Use any(c.isupper() for c in password) to check if any character is uppercase",
+    "For discount eligibility, use multiple 'or' operators: age < 18 or age > 65 or is_student or..."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Employee with badge can access building",
+      "input": "can_access_building(True, True, False)",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Employee without badge cannot access",
+      "input": "can_access_building(False, True, False)",
+      "expectedOutput": "False",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Valid password meets all requirements",
+      "input": "validate_password('Pass123', 8, True, True)",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Password without uppercase fails when required",
+      "input": "validate_password('pass123', 8, True, True)",
+      "expectedOutput": "False",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "Senior citizen (>65) eligible for discount",
+      "input": "is_discount_eligible(67, False, False, False)",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "Regular adult without special status not eligible",
+      "input": "is_discount_eligible(30, False, False, False)",
+      "expectedOutput": "False",
+      "isHidden": true
+    }
+  ]
+}

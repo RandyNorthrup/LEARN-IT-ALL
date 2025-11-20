@@ -1,0 +1,63 @@
+{
+  "id": "exercise-142-dict-json-serialization",
+  "lessonId": "lesson-132-dict-json-serialization",
+  "title": "Dictionary JSON Serialization",
+  "description": "Master JSON operations with dictionaries: serialization, deserialization, custom encoders, and API patterns.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "import json\nfrom datetime import datetime\n\n# Function 1: Convert dict to JSON string\ndef dict_to_json(data):\n    \"\"\"Convert dictionary to JSON string.\n    \n    Args:\n        data (dict): Dictionary to convert\n    \n    Returns:\n        str: JSON string\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Parse JSON string to dict\ndef json_to_dict(json_string):\n    \"\"\"Parse JSON string to dictionary.\n    \n    Args:\n        json_string (str): JSON string\n    \n    Returns:\n        dict: Parsed dictionary\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Handle datetime in JSON\ndef serialize_with_dates(data):\n    \"\"\"Serialize dict with datetime objects to JSON.\n    \n    Args:\n        data (dict): Dictionary potentially containing datetime objects\n    \n    Returns:\n        str: JSON string with dates as ISO format strings\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Validate required fields\ndef validate_json_data(data, required_fields):\n    \"\"\"Validate that dict has all required fields.\n    \n    Args:\n        data (dict): Dictionary to validate\n        required_fields (list): List of required field names\n    \n    Returns:\n        tuple: (is_valid, missing_fields)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Flatten nested dict\ndef flatten_dict(nested_dict, parent_key='', sep='.'):\n    \"\"\"Flatten nested dictionary.\n    \n    Args:\n        nested_dict (dict): Nested dictionary\n        parent_key (str): Parent key prefix\n        sep (str): Separator for keys\n    \n    Returns:\n        dict: Flattened dictionary\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Extract fields from API response\ndef extract_fields(response, fields):\n    \"\"\"Extract specific fields from API response dict.\n    \n    Args:\n        response (dict): API response dictionary\n        fields (list): List of field names to extract\n    \n    Returns:\n        dict: Dictionary with only specified fields\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "import json\nfrom datetime import datetime\n\n# Function 1: Convert dict to JSON string\ndef dict_to_json(data):\n    \"\"\"Convert dictionary to JSON string.\n    \n    Args:\n        data (dict): Dictionary to convert\n    \n    Returns:\n        str: JSON string\n    \"\"\"\n    return json.dumps(data)\n\n# Function 2: Parse JSON string to dict\ndef json_to_dict(json_string):\n    \"\"\"Parse JSON string to dictionary.\n    \n    Args:\n        json_string (str): JSON string\n    \n    Returns:\n        dict: Parsed dictionary\n    \"\"\"\n    return json.loads(json_string)\n\n# Function 3: Handle datetime in JSON\ndef serialize_with_dates(data):\n    \"\"\"Serialize dict with datetime objects to JSON.\n    \n    Args:\n        data (dict): Dictionary potentially containing datetime objects\n    \n    Returns:\n        str: JSON string with dates as ISO format strings\n    \"\"\"\n    def default_handler(obj):\n        if isinstance(obj, datetime):\n            return obj.isoformat()\n        raise TypeError(f\"Type {type(obj)} not serializable\")\n    \n    return json.dumps(data, default=default_handler)\n\n# Function 4: Validate required fields\ndef validate_json_data(data, required_fields):\n    \"\"\"Validate that dict has all required fields.\n    \n    Args:\n        data (dict): Dictionary to validate\n        required_fields (list): List of required field names\n    \n    Returns:\n        tuple: (is_valid, missing_fields)\n    \"\"\"\n    missing = [field for field in required_fields if field not in data]\n    return (len(missing) == 0, missing)\n\n# Function 5: Flatten nested dict\ndef flatten_dict(nested_dict, parent_key='', sep='.'):\n    \"\"\"Flatten nested dictionary.\n    \n    Args:\n        nested_dict (dict): Nested dictionary\n        parent_key (str): Parent key prefix\n        sep (str): Separator for keys\n    \n    Returns:\n        dict: Flattened dictionary\n    \"\"\"\n    items = []\n    for k, v in nested_dict.items():\n        new_key = f\"{parent_key}{sep}{k}\" if parent_key else k\n        if isinstance(v, dict):\n            items.extend(flatten_dict(v, new_key, sep).items())\n        else:\n            items.append((new_key, v))\n    return dict(items)\n\n# Function 6: Extract fields from API response\ndef extract_fields(response, fields):\n    \"\"\"Extract specific fields from API response dict.\n    \n    Args:\n        response (dict): API response dictionary\n        fields (list): List of field names to extract\n    \n    Returns:\n        dict: Dictionary with only specified fields\n    \"\"\"\n    return {field: response[field] for field in fields if field in response}",
+  "hints": [
+    "Use json.dumps(data) to convert dict to JSON string",
+    "Use json.loads(json_string) to parse JSON string to dict",
+    "Define custom default function: if isinstance(obj, datetime): return obj.isoformat()",
+    "List comprehension: [field for field in required_fields if field not in data]",
+    "Recursively flatten: for nested dicts, call flatten_dict again with new parent_key",
+    "Dict comprehension: {field: response[field] for field in fields if field in response}"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "dict_to_json({'name': 'Alice', 'age': 30})",
+      "expectedOutput": "'{\"name\": \"Alice\", \"age\": 30}'",
+      "isHidden": false,
+      "description": "Dict to JSON"
+    },
+    {
+      "id": "test2",
+      "input": "json_to_dict('{\"name\": \"Bob\", \"age\": 25}')",
+      "expectedOutput": "{'name': 'Bob', 'age': 25}",
+      "isHidden": false,
+      "description": "JSON to dict"
+    },
+    {
+      "id": "test3",
+      "input": "'2024-01-15' in serialize_with_dates({'date': datetime(2024, 1, 15)})",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Serialize with dates"
+    },
+    {
+      "id": "test4",
+      "input": "validate_json_data({'name': 'Alice'}, ['name', 'email'])",
+      "expectedOutput": "(False, ['email'])",
+      "isHidden": true,
+      "description": "Validate missing fields"
+    },
+    {
+      "id": "test5",
+      "input": "flatten_dict({'a': {'b': {'c': 1}}})",
+      "expectedOutput": "{'a.b.c': 1}",
+      "isHidden": true,
+      "description": "Flatten nested dict"
+    },
+    {
+      "id": "test6",
+      "input": "extract_fields({'id': 1, 'name': 'Alice', 'age': 30}, ['id', 'name'])",
+      "expectedOutput": "{'id': 1, 'name': 'Alice'}",
+      "isHidden": true,
+      "description": "Extract fields"
+    }
+  ],
+  "language": "python"
+}

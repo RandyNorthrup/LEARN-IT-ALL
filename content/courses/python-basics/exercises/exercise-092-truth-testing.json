@@ -1,0 +1,63 @@
+{
+  "id": "exercise-092-truth-testing",
+  "lessonId": "lesson-084-truth-testing",
+  "title": "Truthiness Validator",
+  "description": "Create a validation system that leverages Python's truthiness rules to check data validity and provide default values.\n\nYour program should:\n1. Understand which values are truthy and falsy in Python\n2. Use truthiness for clean conditional checks\n3. Implement default value patterns\n4. Distinguish between None checks and truthiness\n5. Handle edge cases where 0 or False are valid values\n\nImplement these functions:\n- `check_truthiness(value)`: Return 'truthy' or 'falsy' classification\n- `get_display_name(name)`: Return name or 'Guest' default\n- `has_content(collection)`: Check if collection has items\n- `get_user_score(scores, username)`: Get score, handle 0 as valid\n- `all_fields_present(data, required_fields)`: Check all fields exist\n\nExample:\n```python\nprint(check_truthiness([]))  # 'falsy'\nprint(get_display_name(''))  # 'Guest'\nprint(has_content([1, 2]))  # True\n```",
+  "difficulty": "intermediate",
+  "points": 15,
+  "language": "python",
+  "starterCode": "def check_truthiness(value):\n    \"\"\"Classify value as truthy or falsy.\"\"\"\n    # TODO: Return 'truthy' if value is truthy, 'falsy' otherwise\n    # Remember: False, None, 0, 0.0, '', [], (), {}, set() are falsy\n    # Everything else is truthy\n    \n    pass\n\ndef get_display_name(name):\n    \"\"\"Get display name with default.\"\"\"\n    # TODO: Return name if truthy, otherwise 'Guest'\n    # Use 'or' operator for concise code\n    \n    pass\n\ndef has_content(collection):\n    \"\"\"Check if collection has items.\"\"\"\n    # TODO: Return True if collection is truthy (has items), False otherwise\n    # Use truthiness instead of len(collection) > 0\n    \n    pass\n\ndef get_user_score(scores, username):\n    \"\"\"Get user score, handling 0 as valid.\"\"\"\n    # TODO: scores is dict like {'Alice': 100, 'Bob': 0, 'Charlie': 50}\n    # Return score if user exists, None if not found\n    # Be careful: 0 is valid score but falsy!\n    # Use 'is not None' check, not truthiness\n    \n    pass\n\ndef all_fields_present(data, required_fields):\n    \"\"\"Check if all required fields exist in data.\"\"\"\n    # TODO: Return True if all required_fields exist in data dict\n    # Field values can be falsy (0, '', False) but still \"present\"\n    # Use 'in' operator to check key existence\n    # Hint: all(field in data for field in required_fields)\n    \n    pass\n\ndef get_config_value(config, key, default):\n    \"\"\"Get config value with fallback.\"\"\"\n    # TODO: Return config[key] if key exists and value is not None\n    # Otherwise return default\n    # Be careful: 0 and False are valid config values\n    \n    pass\n\n# Test the functions\nprint(\"Truthiness Classification:\")\nprint(\"=\"*60)\ntest_values = [\n    [],\n    [1, 2],\n    '',\n    'hello',\n    0,\n    42,\n    None,\n    True,\n    False,\n    {},\n    {'a': 1}\n]\n\nfor val in test_values:\n    result = check_truthiness(val)\n    print(f\"{str(val):20} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Display Names:\")\nprint(\"=\"*60)\nnames = ['Alice', '', None, 'Bob', '   ']\nfor name in names:\n    display = get_display_name(name)\n    print(f\"'{name}' → '{display}'\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Collection Content Check:\")\nprint(\"=\"*60)\ncollections = [\n    [],\n    [1, 2, 3],\n    '',\n    'text',\n    {},\n    {'key': 'value'}\n]\n\nfor coll in collections:\n    result = has_content(coll)\n    print(f\"{str(coll):30} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"User Scores (0 is valid!):\")\nprint(\"=\"*60)\nscores = {'Alice': 100, 'Bob': 0, 'Charlie': 50}\nusernames = ['Alice', 'Bob', 'David']\n\nfor user in usernames:\n    score = get_user_score(scores, user)\n    if score is not None:\n        print(f\"{user}: {score} points\")\n    else:\n        print(f\"{user}: Not found\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Required Fields Validation:\")\nprint(\"=\"*60)\nrequired = ['name', 'email', 'age']\ntest_data = [\n    {'name': 'Alice', 'email': 'a@test.com', 'age': 30},\n    {'name': '', 'email': 'b@test.com', 'age': 0},  # Falsy values but present\n    {'name': 'Charlie', 'email': 'c@test.com'},      # Missing 'age'\n    {},                                                # Missing all\n]\n\nfor i, data in enumerate(test_data, 1):\n    valid = all_fields_present(data, required)\n    print(f\"Data {i}: {valid} - {data}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Config Values (0 and False are valid):\")\nprint(\"=\"*60)\nconfig = {'debug': False, 'port': 0, 'timeout': 30, 'api_key': None}\nkeys = ['debug', 'port', 'timeout', 'api_key', 'missing']\n\nfor key in keys:\n    value = get_config_value(config, key, 'DEFAULT')\n    print(f\"{key}: {value}\")",
+  "solution": "def check_truthiness(value):\n    \"\"\"Classify value as truthy or falsy.\"\"\"\n    return 'truthy' if value else 'falsy'\n\ndef get_display_name(name):\n    \"\"\"Get display name with default.\"\"\"\n    return name or 'Guest'\n\ndef has_content(collection):\n    \"\"\"Check if collection has items.\"\"\"\n    return bool(collection)\n\ndef get_user_score(scores, username):\n    \"\"\"Get user score, handling 0 as valid.\"\"\"\n    if username in scores:\n        return scores[username]\n    return None\n\ndef all_fields_present(data, required_fields):\n    \"\"\"Check if all required fields exist in data.\"\"\"\n    return all(field in data for field in required_fields)\n\ndef get_config_value(config, key, default):\n    \"\"\"Get config value with fallback.\"\"\"\n    if key in config and config[key] is not None:\n        return config[key]\n    return default\n\n# Test the functions\nprint(\"Truthiness Classification:\")\nprint(\"=\"*60)\ntest_values = [\n    [],\n    [1, 2],\n    '',\n    'hello',\n    0,\n    42,\n    None,\n    True,\n    False,\n    {},\n    {'a': 1}\n]\n\nfor val in test_values:\n    result = check_truthiness(val)\n    print(f\"{str(val):20} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Display Names:\")\nprint(\"=\"*60)\nnames = ['Alice', '', None, 'Bob', '   ']\nfor name in names:\n    display = get_display_name(name)\n    print(f\"'{name}' → '{display}'\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Collection Content Check:\")\nprint(\"=\"*60)\ncollections = [\n    [],\n    [1, 2, 3],\n    '',\n    'text',\n    {},\n    {'key': 'value'}\n]\n\nfor coll in collections:\n    result = has_content(coll)\n    print(f\"{str(coll):30} → {result}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"User Scores (0 is valid!):\")\nprint(\"=\"*60)\nscores = {'Alice': 100, 'Bob': 0, 'Charlie': 50}\nusernames = ['Alice', 'Bob', 'David']\n\nfor user in usernames:\n    score = get_user_score(scores, user)\n    if score is not None:\n        print(f\"{user}: {score} points\")\n    else:\n        print(f\"{user}: Not found\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Required Fields Validation:\")\nprint(\"=\"*60)\nrequired = ['name', 'email', 'age']\ntest_data = [\n    {'name': 'Alice', 'email': 'a@test.com', 'age': 30},\n    {'name': '', 'email': 'b@test.com', 'age': 0},\n    {'name': 'Charlie', 'email': 'c@test.com'},\n    {},\n]\n\nfor i, data in enumerate(test_data, 1):\n    valid = all_fields_present(data, required)\n    print(f\"Data {i}: {valid} - {data}\")\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Config Values (0 and False are valid):\")\nprint(\"=\"*60)\nconfig = {'debug': False, 'port': 0, 'timeout': 30, 'api_key': None}\nkeys = ['debug', 'port', 'timeout', 'api_key', 'missing']\n\nfor key in keys:\n    value = get_config_value(config, key, 'DEFAULT')\n    print(f\"{key}: {value}\")",
+  "hints": [
+    "Falsy values: False, None, 0, 0.0, '', [], (), {}, set() - everything else is truthy",
+    "Use 'or' operator for defaults: value or default returns first truthy value",
+    "For collections, truthiness checks if empty: if items: (better than if len(items) > 0:)",
+    "When 0 or False are valid, use explicit checks: if value is not None: not if value:",
+    "Check key existence with 'in': if key in dict, not if dict.get(key):",
+    "Use all() with generator: all(condition for item in items)"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Empty list is falsy",
+      "input": "check_truthiness([])",
+      "expectedOutput": "'falsy'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Non-empty list is truthy",
+      "input": "check_truthiness([1, 2])",
+      "expectedOutput": "'truthy'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Empty string returns Guest",
+      "input": "get_display_name('')",
+      "expectedOutput": "'Guest'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Score of 0 is valid (not None)",
+      "input": "get_user_score({'Bob': 0}, 'Bob')",
+      "expectedOutput": "0",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "All fields present even with falsy values",
+      "input": "all_fields_present({'name': '', 'age': 0}, ['name', 'age'])",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "Config value 0 is valid, not default",
+      "input": "get_config_value({'port': 0}, 'port', 8080)",
+      "expectedOutput": "0",
+      "isHidden": true
+    }
+  ]
+}

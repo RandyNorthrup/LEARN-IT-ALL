@@ -1,0 +1,63 @@
+{
+  "id": "exercise-167-performance-error-handling",
+  "lessonId": "lesson-157-performance-error-handling",
+  "title": "Performance Considerations in Error Handling",
+  "description": "Understand error handling performance costs, optimize exception usage, balance safety and performance effectively.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Performance Considerations in Error Handling\n\ndef eafp_vs_lbyl_dict(data, key, approach='eafp'):\n    \"\"\"Compare EAFP vs LBYL performance patterns.\"\"\"\n    pass\n\ndef batch_validation(items):\n    \"\"\"Validate all items in batch (faster than per-item).\"\"\"\n    pass\n\ndef cached_validation(value):\n    \"\"\"Cache validation results for performance.\"\"\"\n    pass\n\ndef early_validation_loop(items, processor):\n    \"\"\"Validate before loop, not inside.\"\"\"\n    pass\n\ndef minimize_exception_context(data):\n    \"\"\"Create minimal exception context.\"\"\"\n    pass\n\ndef avoid_exceptions_in_loop(items):\n    \"\"\"Process without exceptions in hot path.\"\"\"\n    pass\n",
+  "solution": "# Solution: Performance Considerations in Error Handling\nfrom functools import lru_cache\nfrom typing import List, Any, Callable\n\ndef eafp_vs_lbyl_dict(data, key, approach='eafp'):\n    \"\"\"\n    Compare EAFP vs LBYL performance patterns.\n    \n    EAFP: Faster when exceptions are rare\n    LBYL: Faster when exceptions are common\n    \n    Args:\n        data: Dictionary to access\n        key: Key to retrieve\n        approach: 'eafp' or 'lbyl'\n    \n    Returns:\n        Value or None\n    \"\"\"\n    if approach == 'eafp':\n        # Easier to Ask Forgiveness than Permission\n        try:\n            return data[key]\n        except KeyError:\n            return None\n    else:\n        # Look Before You Leap\n        if key in data:\n            return data[key]\n        return None\n\ndef batch_validation(items: List[Any]) -> tuple:\n    \"\"\"\n    Validate all items in batch (faster than per-item).\n    \n    Returns:\n        Tuple of (valid_items, error_count)\n    \"\"\"\n    # Single pass validation (no exceptions in loop)\n    valid_items = []\n    error_count = 0\n    \n    for item in items:\n        # Quick type check (no exception)\n        if isinstance(item, (int, float)):\n            if item >= 0:  # Quick validation\n                valid_items.append(item)\n            else:\n                error_count += 1\n        else:\n            error_count += 1\n    \n    return valid_items, error_count\n\n# Cache for validation results\n_validation_cache = {}\n\ndef cached_validation(value: str) -> bool:\n    \"\"\"\n    Cache validation results for performance.\n    \n    Returns:\n        True if valid\n    \n    Raises:\n        ValueError: If invalid\n    \"\"\"\n    # Check cache first\n    if value in _validation_cache:\n        if not _validation_cache[value]:\n            raise ValueError(f\"Invalid value: {value}\")\n        return True\n    \n    # Validate and cache\n    try:\n        valid = \"@\" in value and \".\" in value.split(\"@\")[1]\n        _validation_cache[value] = valid\n        \n        if not valid:\n            raise ValueError(f\"Invalid value: {value}\")\n        \n        return True\n    except Exception:\n        _validation_cache[value] = False\n        raise\n\ndef early_validation_loop(items: List[dict], processor: Callable) -> List:\n    \"\"\"\n    Validate before loop, not inside.\n    \n    Returns:\n        Processed results\n    \"\"\"\n    # Validate ALL items first (single pass)\n    if not all(isinstance(item, dict) and 'value' in item for item in items):\n        raise ValueError(\"Invalid items\")\n    \n    # Now process without error checking (fast)\n    return [processor(item) for item in items]\n\ndef minimize_exception_context(data: List) -> None:\n    \"\"\"\n    Create minimal exception context.\n    \n    Raises:\n        ValueError: With minimal context\n    \"\"\"\n    if len(data) > 1000:\n        # Don't include full data (expensive string creation)\n        raise ValueError(f\"Data too large: {len(data)} items\")\n    \n    # Process data\n    pass\n\ndef avoid_exceptions_in_loop(items: List[Any]) -> tuple:\n    \"\"\"\n    Process without exceptions in hot path.\n    \n    Returns:\n        Tuple of (results, error_count)\n    \"\"\"\n    results = []\n    error_count = 0\n    \n    for item in items:\n        # Use normal control flow, not exceptions\n        if not isinstance(item, (int, float)):\n            error_count += 1\n            continue\n        \n        if item < 0:\n            error_count += 1\n            continue\n        \n        # Process (no exceptions)\n        results.append(item * 2)\n    \n    return results, error_count\n\n# Additional optimization functions\n\ndef optimized_find_index(items: List, target) -> int:\n    \"\"\"\n    Find index without exceptions.\n    \n    Returns:\n        Index or -1\n    \"\"\"\n    # Normal control flow (fast)\n    for i, item in enumerate(items):\n        if item == target:\n            return i\n    return -1\n\ndef lazy_exception_creation(value: int):\n    \"\"\"\n    Only create exception when raised.\n    \n    Returns:\n        Validated value\n    \"\"\"\n    # Don't create exception object unless needed\n    if value < 0:\n        raise ValueError(f\"Value must be positive: {value}\")\n    \n    return value\n\n@lru_cache(maxsize=1000)\ndef cached_email_validation(email: str) -> bool:\n    \"\"\"\n    Use LRU cache for repeated validations.\n    \n    Returns:\n        True if valid\n    \"\"\"\n    if \"@\" not in email:\n        raise ValueError(\"Email must contain @\")\n    if \".\" not in email.split(\"@\")[1]:\n        raise ValueError(\"Invalid domain\")\n    return True\n",
+  "hints": [
+    "EAFP: try-except (fast when exceptions rare), LBYL: if-check (fast when exceptions common)",
+    "Batch validation: Single pass through all items, avoid exception per item",
+    "Caching: Store validation results in dict, check cache before validating",
+    "Early validation: Validate all items before loop, process without checks",
+    "Minimal context: Use len(data) not str(data) in error messages",
+    "Avoid exceptions in loops: Use if-continue pattern instead of try-except"
+  ],
+  "testCases": [
+    {
+      "input": "eafp_vs_lbyl_dict({'a': 1}, 'a', 'eafp')",
+      "description": "Test eafp_vs_lbyl_dict EAFP success",
+      "id": "test1",
+      "expectedOutput": "1",
+      "isHidden": false
+    },
+    {
+      "input": "eafp_vs_lbyl_dict({'a': 1}, 'b', 'lbyl')",
+      "description": "Test eafp_vs_lbyl_dict LBYL missing",
+      "id": "test2",
+      "expectedOutput": "None",
+      "isHidden": false
+    },
+    {
+      "input": "batch_validation([1, 'bad', -5, 3])",
+      "description": "Test batch_validation mixed",
+      "id": "test3",
+      "expectedOutput": "([1, 3], 2)",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    cached_validation('user@example.com')\\n    cached_validation('user@example.com')\\n    result = 'cached'\\nexcept:\\n    result = 'error'\\nresult",
+      "description": "Test cached_validation caches",
+      "id": "test4",
+      "expectedOutput": "'cached'",
+      "isHidden": true
+    },
+    {
+      "input": "items = [{'value': 1}, {'value': 2}]\\nearly_validation_loop(items, lambda x: x['value'] * 2)",
+      "description": "Test early_validation_loop",
+      "id": "test5",
+      "expectedOutput": "[2, 4]",
+      "isHidden": true
+    },
+    {
+      "input": "avoid_exceptions_in_loop([1, 'bad', -5, 3])",
+      "description": "Test avoid_exceptions_in_loop",
+      "id": "test6",
+      "expectedOutput": "([2, 6], 2)",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

@@ -1,0 +1,63 @@
+{
+  "id": "exercise-157-raising-exceptions",
+  "lessonId": "lesson-147-raising-exceptions",
+  "title": "Raising and Custom Exceptions",
+  "description": "Master raising exceptions, create custom exception classes, implement exception chaining, and design exception hierarchies.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Raising and Custom Exceptions\n\nclass ValidationError(Exception):\n    \"\"\"Custom validation error\"\"\"\n    pass\n\nclass InsufficientFundsError(Exception):\n    \"\"\"Custom insufficient funds error\"\"\"\n    pass\n\ndef validate_age(age):\n    \"\"\"Validate age, raise ValueError if invalid.\"\"\"\n    pass\n\ndef validate_email(email):\n    \"\"\"Validate email, raise ValidationError if invalid.\"\"\"\n    pass\n\ndef withdraw_funds(balance, amount):\n    \"\"\"Withdraw funds, raise InsufficientFundsError if balance too low.\"\"\"\n    pass\n\ndef load_config(filename):\n    \"\"\"Load config with exception chaining (from).\"\"\"\n    pass\n\ndef process_data(data):\n    \"\"\"Process data, re-raise exceptions after logging.\"\"\"\n    pass\n\ndef create_user(user_data):\n    \"\"\"Create user with multiple validation checks.\"\"\"\n    pass\n",
+  "solution": "# Solution: Raising and Custom Exceptions\n\nclass ValidationError(Exception):\n    \"\"\"Custom validation error\"\"\"\n    def __init__(self, field, message):\n        self.field = field\n        self.message = message\n        super().__init__(f\"{field}: {message}\")\n\nclass InsufficientFundsError(Exception):\n    \"\"\"Custom insufficient funds error\"\"\"\n    def __init__(self, balance, amount):\n        self.balance = balance\n        self.amount = amount\n        self.deficit = amount - balance\n        super().__init__(f\"Insufficient funds: need {amount}, have {balance}\")\n\ndef validate_age(age):\n    \"\"\"\n    Validate age, raise ValueError if invalid.\n    \n    Raises:\n        ValueError: If age is negative or unrealistic\n    \"\"\"\n    if not isinstance(age, int):\n        raise TypeError(\"Age must be an integer\")\n    if age < 0:\n        raise ValueError(\"Age cannot be negative\")\n    if age > 150:\n        raise ValueError(\"Age is unrealistic\")\n    return True\n\ndef validate_email(email):\n    \"\"\"\n    Validate email, raise ValidationError if invalid.\n    \n    Raises:\n        ValidationError: If email format is invalid\n    \"\"\"\n    if not isinstance(email, str):\n        raise ValidationError(\"email\", \"must be string\")\n    if \"@\" not in email:\n        raise ValidationError(\"email\", \"must contain @\")\n    if \".\" not in email.split(\"@\")[1]:\n        raise ValidationError(\"email\", \"domain must contain .\")\n    return True\n\ndef withdraw_funds(balance, amount):\n    \"\"\"\n    Withdraw funds, raise InsufficientFundsError if balance too low.\n    \n    Raises:\n        ValueError: If amount is negative\n        InsufficientFundsError: If balance insufficient\n    \"\"\"\n    if amount < 0:\n        raise ValueError(\"Amount cannot be negative\")\n    if amount > balance:\n        raise InsufficientFundsError(balance, amount)\n    return balance - amount\n\ndef load_config(filename):\n    \"\"\"\n    Load config with exception chaining (from).\n    \n    Raises:\n        RuntimeError: Chained from original exception\n    \"\"\"\n    try:\n        with open(filename) as f:\n            import json\n            return json.load(f)\n    except FileNotFoundError as e:\n        raise RuntimeError(f\"Config file not found: {filename}\") from e\n    except Exception as e:\n        raise RuntimeError(f\"Failed to load config: {filename}\") from e\n\ndef process_data(data):\n    \"\"\"\n    Process data, re-raise exceptions after logging.\n    \n    Raises:\n        Exception: Re-raised after logging\n    \"\"\"\n    try:\n        if not data:\n            raise ValueError(\"Data cannot be empty\")\n        return [item * 2 for item in data]\n    except Exception as e:\n        print(f\"Error processing data: {e}\")\n        raise\n\ndef create_user(user_data):\n    \"\"\"\n    Create user with multiple validation checks.\n    \n    Returns:\n        User dict\n    \n    Raises:\n        ValidationError: If validation fails\n        ValueError: If data invalid\n    \"\"\"\n    if \"email\" not in user_data:\n        raise ValueError(\"Email is required\")\n    if \"age\" not in user_data:\n        raise ValueError(\"Age is required\")\n    \n    validate_email(user_data[\"email\"])\n    validate_age(user_data[\"age\"])\n    \n    return {\n        \"id\": \"user123\",\n        \"email\": user_data[\"email\"],\n        \"age\": user_data[\"age\"]\n    }\n",
+  "hints": [
+    "Use 'raise ExceptionType(message)' to raise exceptions with custom messages",
+    "Custom exceptions should inherit from Exception and call super().__init__()",
+    "Store additional context in custom exception attributes (balance, amount, field)",
+    "Use 'raise NewException from original' for exception chaining",
+    "Use 'raise' without arguments to re-raise the current exception",
+    "Validate inputs early and raise specific exceptions for different error types"
+  ],
+  "testCases": [
+    {
+      "input": "validate_age(30)",
+      "description": "Test validate_age with valid age",
+      "id": "test1",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    validate_age(-5)\\nexcept ValueError as e:\\n    str(e)",
+      "description": "Test validate_age with negative age raises ValueError",
+      "id": "test2",
+      "expectedOutput": "'Age cannot be negative'",
+      "isHidden": false
+    },
+    {
+      "input": "validate_email('user@example.com')",
+      "description": "Test validate_email with valid email",
+      "id": "test3",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    validate_email('invalid')\\nexcept ValidationError as e:\\n    e.field",
+      "description": "Test validate_email without @ raises ValidationError",
+      "id": "test4",
+      "expectedOutput": "'email'",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    withdraw_funds(100, 150)\\nexcept InsufficientFundsError as e:\\n    e.deficit",
+      "description": "Test withdraw_funds insufficient balance",
+      "id": "test5",
+      "expectedOutput": "50",
+      "isHidden": true
+    },
+    {
+      "input": "create_user({'email': 'test@example.com', 'age': 25})['id']",
+      "description": "Test create_user with valid data",
+      "id": "test6",
+      "expectedOutput": "'user123'",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

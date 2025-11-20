@@ -1,0 +1,63 @@
+{
+  "id": "exercise-160-debugging-techniques",
+  "lessonId": "lesson-150-debugging-techniques",
+  "title": "Debugging and Troubleshooting Errors",
+  "description": "Master debugging techniques including print debugging, pdb, logging, exception inspection, and common troubleshooting scenarios.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Debugging and Troubleshooting Errors\n\ndef debug_with_logging(data, logger):\n    \"\"\"Process data with comprehensive logging.\"\"\"\n    pass\n\ndef inspect_exception_details(func):\n    \"\"\"Execute function and return exception details if it fails.\"\"\"\n    pass\n\ndef binary_search_debug(items, target):\n    \"\"\"Find target with debug checkpoints.\"\"\"\n    pass\n\ndef validate_with_assertions(value, min_val, max_val):\n    \"\"\"Validate value with debug assertions.\"\"\"\n    pass\n\ndef trace_function_calls(func):\n    \"\"\"Decorator to trace function entry/exit.\"\"\"\n    pass\n\ndef get_traceback_info(exception):\n    \"\"\"Extract traceback information from exception.\"\"\"\n    pass\n",
+  "solution": "# Solution: Debugging and Troubleshooting Errors\nimport logging\nimport traceback\nimport sys\nfrom functools import wraps\n\ndef debug_with_logging(data, logger):\n    \"\"\"\n    Process data with comprehensive logging.\n    \n    Args:\n        data: List of numbers\n        logger: Logger instance\n    \n    Returns:\n        Processed results\n    \"\"\"\n    logger.debug(f\"Starting processing with {len(data)} items\")\n    \n    try:\n        if not data:\n            raise ValueError(\"Data cannot be empty\")\n        \n        result = sum(data) / len(data)\n        logger.info(f\"Successfully processed data: result={result}\")\n        return result\n    \n    except ValueError as e:\n        logger.error(f\"Validation error: {e}\")\n        raise\n    except Exception as e:\n        logger.critical(f\"Unexpected error: {e}\", exc_info=True)\n        raise\n\ndef inspect_exception_details(func):\n    \"\"\"\n    Execute function and return exception details if it fails.\n    \n    Returns:\n        Tuple of (success, result_or_error_dict)\n    \"\"\"\n    try:\n        result = func()\n        return True, result\n    except Exception as e:\n        exc_type, exc_value, exc_tb = sys.exc_info()\n        \n        error_details = {\n            \"type\": exc_type.__name__,\n            \"message\": str(exc_value),\n            \"traceback\": traceback.format_exc()\n        }\n        \n        return False, error_details\n\ndef binary_search_debug(items, target):\n    \"\"\"\n    Find target with debug checkpoints.\n    \n    Returns:\n        Index or -1 if not found\n    \"\"\"\n    left, right = 0, len(items) - 1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        \n        # Debug checkpoint\n        assert 0 <= mid < len(items), f\"Invalid mid index: {mid}\"\n        \n        if items[mid] == target:\n            return mid\n        elif items[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1\n\ndef validate_with_assertions(value, min_val, max_val):\n    \"\"\"\n    Validate value with debug assertions.\n    \n    Returns:\n        Validated value\n    \"\"\"\n    # Precondition assertions\n    assert isinstance(value, (int, float)), f\"Value must be numeric, got {type(value)}\"\n    assert isinstance(min_val, (int, float)), f\"min_val must be numeric\"\n    assert isinstance(max_val, (int, float)), f\"max_val must be numeric\"\n    assert min_val <= max_val, f\"min_val {min_val} > max_val {max_val}\"\n    \n    # Validation\n    if value < min_val:\n        raise ValueError(f\"Value {value} below minimum {min_val}\")\n    if value > max_val:\n        raise ValueError(f\"Value {value} above maximum {max_val}\")\n    \n    # Postcondition assertion\n    assert min_val <= value <= max_val, \"Postcondition failed\"\n    \n    return value\n\ndef trace_function_calls(func):\n    \"\"\"\n    Decorator to trace function entry/exit.\n    \n    Returns:\n        Wrapped function\n    \"\"\"\n    @wraps(func)\n    def wrapper(*args, **kwargs):\n        print(f\"[TRACE] Entering {func.__name__} with args={args}, kwargs={kwargs}\")\n        try:\n            result = func(*args, **kwargs)\n            print(f\"[TRACE] {func.__name__} returned {result}\")\n            return result\n        except Exception as e:\n            print(f\"[TRACE] {func.__name__} raised {type(e).__name__}: {e}\")\n            raise\n    \n    return wrapper\n\ndef get_traceback_info(exception):\n    \"\"\"\n    Extract traceback information from exception.\n    \n    Returns:\n        Dict with traceback details\n    \"\"\"\n    tb_list = traceback.extract_tb(exception.__traceback__)\n    \n    frames = []\n    for frame in tb_list:\n        frames.append({\n            \"filename\": frame.filename,\n            \"line\": frame.lineno,\n            \"function\": frame.name,\n            \"code\": frame.line\n        })\n    \n    return {\n        \"exception_type\": type(exception).__name__,\n        \"exception_message\": str(exception),\n        \"frames\": frames\n    }\n",
+  "hints": [
+    "Use logger.debug/info/warning/error/critical for different log levels",
+    "sys.exc_info() returns (type, value, traceback) of current exception",
+    "traceback.format_exc() returns formatted traceback as string",
+    "Assert statements check debug-time invariants (disabled with python -O)",
+    "Decorators with @wraps preserve original function metadata",
+    "traceback.extract_tb() returns list of FrameSummary objects with file/line info"
+  ],
+  "testCases": [
+    {
+      "input": "import logging\\nlogger = logging.getLogger('test')\\ndebug_with_logging([1, 2, 3], logger)",
+      "description": "Test debug_with_logging success",
+      "id": "test1",
+      "expectedOutput": "2.0",
+      "isHidden": false
+    },
+    {
+      "input": "inspect_exception_details(lambda: 42)",
+      "description": "Test inspect_exception_details success",
+      "id": "test2",
+      "expectedOutput": "(True, 42)",
+      "isHidden": false
+    },
+    {
+      "input": "success, details = inspect_exception_details(lambda: 1/0)\\n(success, details['type'])",
+      "description": "Test inspect_exception_details failure",
+      "id": "test3",
+      "expectedOutput": "(False, 'ZeroDivisionError')",
+      "isHidden": false
+    },
+    {
+      "input": "binary_search_debug([1, 2, 3, 4, 5], 3)",
+      "description": "Test binary_search_debug found",
+      "id": "test4",
+      "expectedOutput": "2",
+      "isHidden": true
+    },
+    {
+      "input": "validate_with_assertions(5, 0, 10)",
+      "description": "Test validate_with_assertions valid",
+      "id": "test5",
+      "expectedOutput": "5",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    1/0\\nexcept ZeroDivisionError as e:\\n    info = get_traceback_info(e)\\ninfo['exception_type']",
+      "description": "Test get_traceback_info",
+      "id": "test6",
+      "expectedOutput": "'ZeroDivisionError'",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

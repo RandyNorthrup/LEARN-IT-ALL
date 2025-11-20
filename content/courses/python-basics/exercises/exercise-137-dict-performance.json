@@ -1,0 +1,63 @@
+{
+  "id": "exercise-137-dict-performance",
+  "lessonId": "lesson-127-dict-performance",
+  "title": "Dictionary Performance and Memory",
+  "description": "Understand dictionary time complexity, optimize performance, and master efficient patterns for dict operations in production code.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Function 1: Check if value is hashable\ndef is_hashable(value):\n    \"\"\"Check if a value can be hashed (used as dict key).\n    \n    Args:\n        value (any): Value to check\n    \n    Returns:\n        bool: True if hashable, False otherwise\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Optimize repeated lookups\ndef sum_nested_values(data, keys):\n    \"\"\"Efficiently sum values from nested dict for multiple keys.\n    \n    Args:\n        data (dict): Dictionary like {'a': {'value': 10}, 'b': {'value': 20}}\n        keys (list): List of top-level keys\n    \n    Returns:\n        int: Sum of all nested 'value' fields\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Use dict for fast membership testing\ndef find_common_elements(list1, list2):\n    \"\"\"Find common elements using dict for O(1) lookups.\n    \n    Args:\n        list1 (list): First list\n        list2 (list): Second list\n    \n    Returns:\n        list: Common elements (no duplicates)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Batch dictionary operations\ndef batch_increment(data, keys, amount):\n    \"\"\"Increment multiple keys efficiently.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        keys (list): Keys to increment\n        amount (int): Amount to add\n    \n    Returns:\n        dict: Updated dictionary\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Convert list search to dict lookup\ndef create_lookup_table(items):\n    \"\"\"Convert list to dict for O(1) membership testing.\n    \n    Args:\n        items (list): List of items\n    \n    Returns:\n        dict: Dictionary with items as keys, True as values\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Optimize with get() instead of try-except\ndef safe_sum_dict_values(data, keys):\n    \"\"\"Sum values for given keys, using get() for missing keys.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        keys (list): Keys to sum (some may not exist)\n    \n    Returns:\n        int or float: Sum of existing values\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Check if value is hashable\ndef is_hashable(value):\n    \"\"\"Check if a value can be hashed (used as dict key).\n    \n    Args:\n        value (any): Value to check\n    \n    Returns:\n        bool: True if hashable, False otherwise\n    \"\"\"\n    try:\n        hash(value)\n        return True\n    except TypeError:\n        return False\n\n# Function 2: Optimize repeated lookups\ndef sum_nested_values(data, keys):\n    \"\"\"Efficiently sum values from nested dict for multiple keys.\n    \n    Args:\n        data (dict): Dictionary like {'a': {'value': 10}, 'b': {'value': 20}}\n        keys (list): List of top-level keys\n    \n    Returns:\n        int: Sum of all nested 'value' fields\n    \"\"\"\n    total = 0\n    for key in keys:\n        if key in data:\n            nested = data[key]  # Lookup once\n            total += nested.get('value', 0)\n    return total\n\n# Function 3: Use dict for fast membership testing\ndef find_common_elements(list1, list2):\n    \"\"\"Find common elements using dict for O(1) lookups.\n    \n    Args:\n        list1 (list): First list\n        list2 (list): Second list\n    \n    Returns:\n        list: Common elements (no duplicates)\n    \"\"\"\n    set1 = set(list1)  # Or dict.fromkeys(list1)\n    return list(set(list2) & set1)\n\n# Function 4: Batch dictionary operations\ndef batch_increment(data, keys, amount):\n    \"\"\"Increment multiple keys efficiently.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        keys (list): Keys to increment\n        amount (int): Amount to add\n    \n    Returns:\n        dict: Updated dictionary\n    \"\"\"\n    for key in keys:\n        if key in data:\n            data[key] += amount\n    return data\n\n# Function 5: Convert list search to dict lookup\ndef create_lookup_table(items):\n    \"\"\"Convert list to dict for O(1) membership testing.\n    \n    Args:\n        items (list): List of items\n    \n    Returns:\n        dict: Dictionary with items as keys, True as values\n    \"\"\"\n    return {item: True for item in items}\n\n# Function 6: Optimize with get() instead of try-except\ndef safe_sum_dict_values(data, keys):\n    \"\"\"Sum values for given keys, using get() for missing keys.\n    \n    Args:\n        data (dict): Dictionary with numeric values\n        keys (list): Keys to sum (some may not exist)\n    \n    Returns:\n        int or float: Sum of existing values\n    \"\"\"\n    return sum(data.get(key, 0) for key in keys)",
+  "hints": [
+    "Use try-except with hash() to check if something is hashable",
+    "Look up once and store in variable: nested = data[key]; use nested multiple times",
+    "Convert one list to set/dict for O(1) lookups when checking membership",
+    "Loop through keys and increment in place - no need to recreate dict",
+    "Dict comprehension: {item: True for item in items} creates lookup table",
+    "Use .get(key, 0) to safely get values with default for missing keys"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "is_hashable('hello')",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Check hashable - string"
+    },
+    {
+      "id": "test2",
+      "input": "is_hashable([1, 2, 3])",
+      "expectedOutput": "False",
+      "isHidden": false,
+      "description": "Check hashable - list"
+    },
+    {
+      "id": "test3",
+      "input": "sum_nested_values({'a': {'value': 10}, 'b': {'value': 20}}, ['a', 'b'])",
+      "expectedOutput": "30",
+      "isHidden": false,
+      "description": "Sum nested values"
+    },
+    {
+      "id": "test4",
+      "input": "set(find_common_elements([1, 2, 3, 4], [3, 4, 5, 6]))",
+      "expectedOutput": "{3, 4}",
+      "isHidden": true,
+      "description": "Find common elements"
+    },
+    {
+      "id": "test5",
+      "input": "batch_increment({'a': 10, 'b': 20, 'c': 30}, ['a', 'c'], 5)",
+      "expectedOutput": "{'a': 15, 'b': 20, 'c': 35}",
+      "isHidden": true,
+      "description": "Batch increment"
+    },
+    {
+      "id": "test6",
+      "input": "safe_sum_dict_values({'a': 10, 'b': 20}, ['a', 'b', 'c'])",
+      "expectedOutput": "30",
+      "isHidden": true,
+      "description": "Safe sum with missing keys"
+    }
+  ],
+  "language": "python"
+}

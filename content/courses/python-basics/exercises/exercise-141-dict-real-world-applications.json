@@ -1,0 +1,63 @@
+{
+  "id": "exercise-141-dict-real-world-applications",
+  "lessonId": "lesson-131-dict-real-world-applications",
+  "title": "Real-World Dictionary Applications",
+  "description": "Apply dictionaries to practical scenarios: caching, configuration, indexing, graph representation, and state machines.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "from collections import defaultdict\n\n# Function 1: Simple memoization cache\ndef memoize(func):\n    \"\"\"Decorator that caches function results.\n    \n    Args:\n        func (callable): Function to memoize\n    \n    Returns:\n        callable: Wrapped function with caching\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Configuration with fallback\ndef get_config(config_dict, key, default=None):\n    \"\"\"Get config value with dot notation support.\n    \n    Args:\n        config_dict (dict): Configuration dictionary\n        key (str): Key with dot notation (e.g., 'database.host')\n        default (any): Default value if key not found\n    \n    Returns:\n        any: Configuration value\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Build index for fast lookup\ndef build_index(items, key_field):\n    \"\"\"Build index mapping key to item.\n    \n    Args:\n        items (list): List of dicts\n        key_field (str): Field to use as key\n    \n    Returns:\n        dict: Index mapping key_field values to items\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Graph representation with adjacency list\ndef add_edge(graph, from_node, to_node):\n    \"\"\"Add directed edge to graph.\n    \n    Args:\n        graph (dict): Adjacency list representation\n        from_node (str): Source node\n        to_node (str): Target node\n    \n    Returns:\n        dict: Updated graph\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Simple state machine\ndef process_event(state_machine, current_state, event):\n    \"\"\"Process event in state machine.\n    \n    Args:\n        state_machine (dict): State machine transitions\n        current_state (str): Current state\n        event (str): Event to process\n    \n    Returns:\n        str: New state or current state if no transition\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Frequency counter\ndef analyze_frequency(items):\n    \"\"\"Analyze frequency and find most common item.\n    \n    Args:\n        items (list): List of items\n    \n    Returns:\n        dict: {'counts': {item: count}, 'most_common': (item, count)}\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "from collections import defaultdict\n\n# Function 1: Simple memoization cache\ndef memoize(func):\n    \"\"\"Decorator that caches function results.\n    \n    Args:\n        func (callable): Function to memoize\n    \n    Returns:\n        callable: Wrapped function with caching\n    \"\"\"\n    cache = {}\n    def wrapper(*args):\n        if args not in cache:\n            cache[args] = func(*args)\n        return cache[args]\n    return wrapper\n\n# Function 2: Configuration with fallback\ndef get_config(config_dict, key, default=None):\n    \"\"\"Get config value with dot notation support.\n    \n    Args:\n        config_dict (dict): Configuration dictionary\n        key (str): Key with dot notation (e.g., 'database.host')\n        default (any): Default value if key not found\n    \n    Returns:\n        any: Configuration value\n    \"\"\"\n    keys = key.split('.')\n    value = config_dict\n    \n    for k in keys:\n        if isinstance(value, dict) and k in value:\n            value = value[k]\n        else:\n            return default\n    \n    return value\n\n# Function 3: Build index for fast lookup\ndef build_index(items, key_field):\n    \"\"\"Build index mapping key to item.\n    \n    Args:\n        items (list): List of dicts\n        key_field (str): Field to use as key\n    \n    Returns:\n        dict: Index mapping key_field values to items\n    \"\"\"\n    return {item[key_field]: item for item in items if key_field in item}\n\n# Function 4: Graph representation with adjacency list\ndef add_edge(graph, from_node, to_node):\n    \"\"\"Add directed edge to graph.\n    \n    Args:\n        graph (dict): Adjacency list representation\n        from_node (str): Source node\n        to_node (str): Target node\n    \n    Returns:\n        dict: Updated graph\n    \"\"\"\n    if from_node not in graph:\n        graph[from_node] = []\n    graph[from_node].append(to_node)\n    return graph\n\n# Function 5: Simple state machine\ndef process_event(state_machine, current_state, event):\n    \"\"\"Process event in state machine.\n    \n    Args:\n        state_machine (dict): State machine transitions\n        current_state (str): Current state\n        event (str): Event to process\n    \n    Returns:\n        str: New state or current state if no transition\n    \"\"\"\n    if current_state in state_machine:\n        transitions = state_machine[current_state]\n        if event in transitions:\n            return transitions[event]\n    return current_state\n\n# Function 6: Frequency counter\ndef analyze_frequency(items):\n    \"\"\"Analyze frequency and find most common item.\n    \n    Args:\n        items (list): List of items\n    \n    Returns:\n        dict: {'counts': {item: count}, 'most_common': (item, count)}\n    \"\"\"\n    counts = {}\n    for item in items:\n        counts[item] = counts.get(item, 0) + 1\n    \n    most_common = max(counts.items(), key=lambda x: x[1]) if counts else (None, 0)\n    \n    return {'counts': counts, 'most_common': most_common}",
+  "hints": [
+    "Create cache dict, check if args in cache, store result if not, return cached value",
+    "Split key by '.', loop through keys accessing nested dicts, return default if any key missing",
+    "Dict comprehension: {item[key_field]: item for item in items if key_field in item}",
+    "Check if from_node in graph, create empty list if not, append to_node",
+    "Access state_machine[current_state][event] with safety checks, return new state or current",
+    "Count with .get(item, 0) + 1, use max(counts.items(), key=lambda x: x[1]) for most common"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "@memoize\\ndef add(a, b):\\n    return a + b\\nadd(1, 2) + add(1, 2)",
+      "expectedOutput": "6",
+      "isHidden": false,
+      "description": "Memoize function"
+    },
+    {
+      "id": "test2",
+      "input": "get_config({'database': {'host': 'localhost'}}, 'database.host')",
+      "expectedOutput": "'localhost'",
+      "isHidden": false,
+      "description": "Get nested config"
+    },
+    {
+      "id": "test3",
+      "input": "build_index([{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}], 'id')",
+      "expectedOutput": "{1: {'id': 1, 'name': 'Alice'}, 2: {'id': 2, 'name': 'Bob'}}",
+      "isHidden": false,
+      "description": "Build index"
+    },
+    {
+      "id": "test4",
+      "input": "add_edge({}, 'A', 'B')",
+      "expectedOutput": "{'A': ['B']}",
+      "isHidden": true,
+      "description": "Add graph edge"
+    },
+    {
+      "id": "test5",
+      "input": "process_event({'idle': {'start': 'running'}}, 'idle', 'start')",
+      "expectedOutput": "'running'",
+      "isHidden": true,
+      "description": "State machine transition"
+    },
+    {
+      "id": "test6",
+      "input": "analyze_frequency(['a', 'b', 'a', 'c', 'a'])['most_common']",
+      "expectedOutput": "('a', 3)",
+      "isHidden": true,
+      "description": "Analyze frequency"
+    }
+  ],
+  "language": "python"
+}

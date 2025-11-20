@@ -1,0 +1,63 @@
+{
+  "id": "exercise-159-context-managers",
+  "lessonId": "lesson-149-context-managers",
+  "title": "Context Managers and Resource Management",
+  "description": "Master context managers with 'with' statement, create custom context managers, understand resource cleanup patterns.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Context Managers and Resource Management\n\nclass FileManager:\n    \"\"\"Context manager for file operations.\"\"\"\n    pass\n\nclass Timer:\n    \"\"\"Context manager to measure execution time.\"\"\"\n    pass\n\nclass DatabaseTransaction:\n    \"\"\"Context manager for database transactions.\"\"\"\n    pass\n\nclass SuppressException:\n    \"\"\"Context manager to suppress specific exceptions.\"\"\"\n    pass\n\ndef create_temp_file_manager():\n    \"\"\"Context manager using @contextmanager decorator.\"\"\"\n    pass\n\ndef safe_resource_cleanup(resource_creator, resource_user):\n    \"\"\"Use context manager to ensure cleanup.\"\"\"\n    pass\n",
+  "solution": "# Solution: Context Managers and Resource Management\nfrom contextlib import contextmanager\nimport time\n\nclass FileManager:\n    \"\"\"Context manager for file operations.\"\"\"\n    \n    def __init__(self, filename, mode='r'):\n        self.filename = filename\n        self.mode = mode\n        self.file = None\n    \n    def __enter__(self):\n        self.file = open(self.filename, self.mode)\n        return self.file\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        if self.file:\n            self.file.close()\n        return False\n\nclass Timer:\n    \"\"\"Context manager to measure execution time.\"\"\"\n    \n    def __enter__(self):\n        self.start = time.time()\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.end = time.time()\n        self.elapsed = self.end - self.start\n        return False\n\nclass DatabaseTransaction:\n    \"\"\"Context manager for database transactions.\"\"\"\n    \n    def __init__(self, connection):\n        self.connection = connection\n    \n    def __enter__(self):\n        self.connection.begin()\n        return self.connection\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        if exc_type is None:\n            self.connection.commit()\n        else:\n            self.connection.rollback()\n        return False\n\nclass SuppressException:\n    \"\"\"Context manager to suppress specific exceptions.\"\"\"\n    \n    def __init__(self, *exception_types):\n        self.exception_types = exception_types\n    \n    def __enter__(self):\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        if exc_type is None:\n            return False\n        return issubclass(exc_type, self.exception_types)\n\n@contextmanager\ndef create_temp_file_manager():\n    \"\"\"\n    Context manager using @contextmanager decorator.\n    \n    Yields:\n        Temporary file path\n    \"\"\"\n    temp_file = \"temp_file.txt\"\n    \n    try:\n        # Setup\n        with open(temp_file, 'w') as f:\n            f.write(\"temporary data\")\n        yield temp_file\n    finally:\n        # Cleanup\n        import os\n        if os.path.exists(temp_file):\n            os.remove(temp_file)\n\ndef safe_resource_cleanup(resource_creator, resource_user):\n    \"\"\"\n    Use context manager to ensure cleanup.\n    \n    Args:\n        resource_creator: Function that creates resource\n        resource_user: Function that uses resource\n    \n    Returns:\n        Result of resource_user or None if error\n    \"\"\"\n    class ResourceManager:\n        def __enter__(self):\n            self.resource = resource_creator()\n            return self.resource\n        \n        def __exit__(self, exc_type, exc_val, exc_tb):\n            if hasattr(self.resource, 'close'):\n                self.resource.close()\n            return False\n    \n    try:\n        with ResourceManager() as resource:\n            return resource_user(resource)\n    except Exception:\n        return None\n",
+  "hints": [
+    "Context managers implement __enter__ and __exit__ methods",
+    "__enter__ returns the resource, __exit__ handles cleanup",
+    "__exit__ receives (exc_type, exc_val, exc_tb) - return True to suppress exceptions",
+    "@contextmanager decorator allows using generators as context managers",
+    "Use try-finally in @contextmanager to ensure cleanup happens",
+    "Transaction pattern: commit on success, rollback on exception"
+  ],
+  "testCases": [
+    {
+      "input": "with Timer() as t:\\n    pass\\nhasattr(t, 'elapsed')",
+      "description": "Test Timer measures time",
+      "id": "test1",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    with SuppressException(ValueError):\\n        raise ValueError('test')\\n    result = 'suppressed'\\nexcept:\\n    result = 'not suppressed'\\nresult",
+      "description": "Test SuppressException suppresses ValueError",
+      "id": "test2",
+      "expectedOutput": "'suppressed'",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    with SuppressException(ValueError):\\n        raise TypeError('test')\\n    result = 'suppressed'\\nexcept:\\n    result = 'not suppressed'\\nresult",
+      "description": "Test SuppressException doesn't suppress TypeError",
+      "id": "test3",
+      "expectedOutput": "'not suppressed'",
+      "isHidden": false
+    },
+    {
+      "input": "class MockConn:\\n    def __init__(self):\\n        self.began = False\\n        self.committed = False\\n    def begin(self): self.began = True\\n    def commit(self): self.committed = True\\n    def rollback(self): pass\\nconn = MockConn()\\nwith DatabaseTransaction(conn):\\n    pass\\nconn.committed",
+      "description": "Test DatabaseTransaction commits on success",
+      "id": "test4",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "class MockConn:\\n    def __init__(self):\\n        self.rolled_back = False\\n    def begin(self): pass\\n    def commit(self): pass\\n    def rollback(self): self.rolled_back = True\\nconn = MockConn()\\ntry:\\n    with DatabaseTransaction(conn):\\n        raise ValueError()\\nexcept ValueError:\\n    pass\\nconn.rolled_back",
+      "description": "Test DatabaseTransaction rollback on error",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "class MockResource:\\n    def __init__(self):\\n        self.closed = False\\n    def close(self):\\n        self.closed = True\\nres = None\\ndef creator():\\n    global res\\n    res = MockResource()\\n    return res\\ndef user(r):\\n    return 42\\nsafe_resource_cleanup(creator, user)\\nres.closed",
+      "description": "Test safe_resource_cleanup ensures cleanup",
+      "id": "test6",
+      "expectedOutput": "True",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

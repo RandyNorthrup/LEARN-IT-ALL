@@ -1,0 +1,56 @@
+{
+  "id": "exercise-086-networking-basics",
+  "lessonId": "lesson-078-networking-basics",
+  "title": "Network Address Calculator",
+  "description": "Create a network address calculator and analyzer that works with IP addresses, ports, and network protocols.\n\nYour program should:\n1. Parse and validate IPv4 addresses\n2. Identify private vs public IP addresses\n3. Parse URLs into protocol, host, port, and path components\n4. Display common port numbers and their services\n\nImplement these functions:\n- `is_valid_ipv4(ip)`: Validate IPv4 address format\n- `is_private_ip(ip)`: Check if IP is in private range\n- `parse_url(url)`: Break URL into components\n- `show_common_ports()`: Display table of common ports and services\n\nExample:\n```python\nprint(is_valid_ipv4('192.168.1.1'))  # True\nprint(is_valid_ipv4('256.1.1.1'))    # False (256 out of range)\n\nprint(is_private_ip('192.168.1.1'))  # True\nprint(is_private_ip('8.8.8.8'))      # False\n\nparse_url('https://example.com:8080/path/to/page')\n# Protocol: https\n# Host: example.com\n# Port: 8080\n# Path: /path/to/page\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def is_valid_ipv4(ip):\n    \"\"\"Validate IPv4 address format (4 numbers, 0-255, separated by dots).\"\"\"\n    # TODO: Split IP by '.'\n    \n    # TODO: Check if exactly 4 parts\n    \n    # TODO: Check if each part is a number between 0-255\n    # Use try-except to handle non-numeric parts\n    \n    pass\n\ndef is_private_ip(ip):\n    \"\"\"Check if IP address is in private range.\"\"\"\n    # Private ranges:\n    # 10.0.0.0 - 10.255.255.255\n    # 172.16.0.0 - 172.31.255.255\n    # 192.168.0.0 - 192.168.255.255\n    # 127.0.0.0 - 127.255.255.255 (localhost)\n    \n    # TODO: Validate IP first\n    \n    # TODO: Split IP and get first two octets\n    \n    # TODO: Check against private ranges\n    \n    pass\n\ndef parse_url(url):\n    \"\"\"Parse URL into protocol, host, port, and path components.\"\"\"\n    # TODO: Extract protocol (before ://)\n    # Default to 'http' if not specified\n    \n    # TODO: Extract host and optional port\n    # Format: host:port or just host\n    \n    # TODO: Extract path (after host or port)\n    # Default to '/' if not specified\n    \n    # TODO: Determine port (use default if not specified)\n    # HTTP default: 80, HTTPS default: 443\n    \n    # TODO: Print parsed components\n    \n    pass\n\ndef show_common_ports():\n    \"\"\"Display table of common ports and their services.\"\"\"\n    # TODO: Create dictionary of common ports and services\n    ports = {\n        20: \"FTP Data\",\n        21: \"FTP Control\",\n        22: \"SSH\",\n        23: \"Telnet\",\n        25: \"SMTP (Email)\",\n        53: \"DNS\",\n        80: \"HTTP\",\n        110: \"POP3 (Email)\",\n        143: \"IMAP (Email)\",\n        443: \"HTTPS\",\n        3306: \"MySQL\",\n        5432: \"PostgreSQL\",\n        6379: \"Redis\",\n        8080: \"HTTP Alternate\"\n    }\n    \n    # TODO: Print table header\n    \n    # TODO: Print each port and service\n    \n    pass\n\ndef ip_info(ip):\n    \"\"\"Display comprehensive information about an IP address.\"\"\"\n    # TODO: Check if valid\n    \n    # TODO: Check if private or public\n    \n    # TODO: Convert to binary representation\n    \n    # TODO: Print all information\n    \n    pass\n\n# Test the functions\nprint(\"IPv4 Address Validation:\")\nprint(\"=\" * 60)\ntest_ips = [\n    '192.168.1.1',\n    '8.8.8.8',\n    '256.1.1.1',\n    '192.168.1',\n    '192.168.1.1.1',\n    'invalid'\n]\n\nfor ip in test_ips:\n    valid = is_valid_ipv4(ip)\n    print(f\"{ip:<20} {'✓ Valid' if valid else '✗ Invalid'}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Private vs Public IP:\")\nprint(\"=\" * 60)\ntest_private_ips = [\n    '192.168.1.1',\n    '10.0.0.1',\n    '172.16.0.1',\n    '127.0.0.1',\n    '8.8.8.8',\n    '1.1.1.1'\n]\n\nfor ip in test_private_ips:\n    if is_valid_ipv4(ip):\n        private = is_private_ip(ip)\n        print(f\"{ip:<20} {'Private' if private else 'Public'}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"URL Parsing:\")\nprint(\"=\" * 60)\ntest_urls = [\n    'https://example.com',\n    'http://example.com:8080',\n    'https://api.github.com/users',\n    'ftp://files.example.com:21/documents'\n]\n\nfor url in test_urls:\n    print(f\"\\nURL: {url}\")\n    parse_url(url)\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Common Network Ports:\")\nprint(\"=\" * 60)\nshow_common_ports()\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"IP Address Information:\")\nprint(\"=\" * 60)\nip_info('192.168.1.100')\nprint()\nip_info('8.8.8.8')",
+  "solution": "def is_valid_ipv4(ip):\n    \"\"\"Validate IPv4 address format (4 numbers, 0-255, separated by dots).\"\"\"\n    parts = ip.split('.')\n    \n    if len(parts) != 4:\n        return False\n    \n    for part in parts:\n        try:\n            num = int(part)\n            if num < 0 or num > 255:\n                return False\n        except ValueError:\n            return False\n    \n    return True\n\ndef is_private_ip(ip):\n    \"\"\"Check if IP address is in private range.\"\"\"\n    if not is_valid_ipv4(ip):\n        return False\n    \n    parts = ip.split('.')\n    first = int(parts[0])\n    second = int(parts[1])\n    \n    # Check private ranges\n    if first == 10:\n        return True\n    if first == 172 and 16 <= second <= 31:\n        return True\n    if first == 192 and second == 168:\n        return True\n    if first == 127:  # Localhost\n        return True\n    \n    return False\n\ndef parse_url(url):\n    \"\"\"Parse URL into protocol, host, port, and path components.\"\"\"\n    # Extract protocol\n    if '://' in url:\n        protocol, rest = url.split('://', 1)\n    else:\n        protocol = 'http'\n        rest = url\n    \n    # Extract path\n    if '/' in rest:\n        host_port, path = rest.split('/', 1)\n        path = '/' + path\n    else:\n        host_port = rest\n        path = '/'\n    \n    # Extract host and port\n    if ':' in host_port:\n        host, port_str = host_port.split(':', 1)\n        port = int(port_str)\n    else:\n        host = host_port\n        # Default ports\n        if protocol == 'https':\n            port = 443\n        elif protocol == 'http':\n            port = 80\n        elif protocol == 'ftp':\n            port = 21\n        else:\n            port = 80\n    \n    print(f\"Protocol: {protocol}\")\n    print(f\"Host: {host}\")\n    print(f\"Port: {port}\")\n    print(f\"Path: {path}\")\n\ndef show_common_ports():\n    \"\"\"Display table of common ports and their services.\"\"\"\n    ports = {\n        20: \"FTP Data\",\n        21: \"FTP Control\",\n        22: \"SSH\",\n        23: \"Telnet\",\n        25: \"SMTP (Email)\",\n        53: \"DNS\",\n        80: \"HTTP\",\n        110: \"POP3 (Email)\",\n        143: \"IMAP (Email)\",\n        443: \"HTTPS\",\n        3306: \"MySQL\",\n        5432: \"PostgreSQL\",\n        6379: \"Redis\",\n        8080: \"HTTP Alternate\"\n    }\n    \n    print(f\"{'Port':<10} {'Service'}\")\n    print(\"-\" * 40)\n    \n    for port, service in sorted(ports.items()):\n        print(f\"{port:<10} {service}\")\n\ndef ip_info(ip):\n    \"\"\"Display comprehensive information about an IP address.\"\"\"\n    print(f\"IP Address: {ip}\")\n    \n    if not is_valid_ipv4(ip):\n        print(\"Status: Invalid IP address\")\n        return\n    \n    print(\"Status: Valid\")\n    \n    # Check private/public\n    if is_private_ip(ip):\n        print(\"Type: Private IP\")\n    else:\n        print(\"Type: Public IP\")\n    \n    # Convert to binary\n    parts = ip.split('.')\n    binary_parts = [format(int(part), '08b') for part in parts]\n    binary = '.'.join(binary_parts)\n    print(f\"Binary: {binary}\")\n\n# Test the functions\nprint(\"IPv4 Address Validation:\")\nprint(\"=\" * 60)\ntest_ips = [\n    '192.168.1.1',\n    '8.8.8.8',\n    '256.1.1.1',\n    '192.168.1',\n    '192.168.1.1.1',\n    'invalid'\n]\n\nfor ip in test_ips:\n    valid = is_valid_ipv4(ip)\n    print(f\"{ip:<20} {'✓ Valid' if valid else '✗ Invalid'}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Private vs Public IP:\")\nprint(\"=\" * 60)\ntest_private_ips = [\n    '192.168.1.1',\n    '10.0.0.1',\n    '172.16.0.1',\n    '127.0.0.1',\n    '8.8.8.8',\n    '1.1.1.1'\n]\n\nfor ip in test_private_ips:\n    if is_valid_ipv4(ip):\n        private = is_private_ip(ip)\n        print(f\"{ip:<20} {'Private' if private else 'Public'}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"URL Parsing:\")\nprint(\"=\" * 60)\ntest_urls = [\n    'https://example.com',\n    'http://example.com:8080',\n    'https://api.github.com/users',\n    'ftp://files.example.com:21/documents'\n]\n\nfor url in test_urls:\n    print(f\"\\nURL: {url}\")\n    parse_url(url)\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Common Network Ports:\")\nprint(\"=\" * 60)\nshow_common_ports()\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"IP Address Information:\")\nprint(\"=\" * 60)\nip_info('192.168.1.100')\nprint()\nip_info('8.8.8.8')",
+  "hints": [
+    "Split IPv4 address by '.' and check if you get exactly 4 parts",
+    "Use int() with try-except to check if each part is a valid number",
+    "For private IP ranges, check first octet for 10, 172 (with second 16-31), 192 (with second 168), and 127",
+    "For URL parsing, use string methods like split() with '://' and '/' to extract components",
+    "Default ports: HTTP=80, HTTPS=443, FTP=21",
+    "Use format(num, '08b') to convert a number to 8-bit binary string"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "is_valid_ipv4 validates correct IP addresses",
+      "input": "is_valid_ipv4('192.168.1.1')",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "is_valid_ipv4 rejects out-of-range values",
+      "input": "is_valid_ipv4('256.1.1.1')",
+      "expectedOutput": "False",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "is_private_ip identifies private addresses",
+      "input": "is_private_ip('192.168.1.1')",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "is_private_ip identifies public addresses",
+      "input": "is_private_ip('8.8.8.8')",
+      "expectedOutput": "False",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "parse_url extracts components correctly",
+      "input": "parse_url('https://example.com:8080/path')",
+      "expectedOutput": "Output contains 'Protocol: https', 'Host: example.com', 'Port: 8080', 'Path: /path'",
+      "isHidden": true
+    }
+  ]
+}

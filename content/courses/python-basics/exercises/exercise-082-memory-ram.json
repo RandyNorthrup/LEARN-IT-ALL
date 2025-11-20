@@ -1,0 +1,56 @@
+{
+  "id": "exercise-082-memory-ram",
+  "lessonId": "lesson-074-memory-ram",
+  "title": "Memory Address Inspector",
+  "description": "Create a memory inspector that demonstrates how Python objects are stored in memory, showing memory addresses, sizes, and references.\n\nYour program should:\n1. Show memory addresses of variables using id()\n2. Calculate memory size of different objects using sys.getsizeof()\n3. Demonstrate reference vs value by showing when objects share memory\n4. Create a memory usage report for different data types\n\nImplement these functions:\n- `show_memory_address(name, obj)`: Display variable name, value, and memory address\n- `compare_memory(obj1, obj2, name1, name2)`: Check if two objects share memory\n- `memory_size_report(objects)`: Create table showing object types and memory sizes\n- `demonstrate_references()`: Show how assignment creates references vs copies\n\nExample:\n```python\nshow_memory_address(\"x\", 42)\n# Variable: x\n# Value: 42\n# Memory Address: 0x102a3c790\n# Memory Size: 28 bytes\n\ncompare_memory(a, b, \"a\", \"b\")\n# Comparing memory:\n#   a at 0x102a3c790\n#   b at 0x102a3c790\n# Result: Same memory location (reference)\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "import sys\n\ndef show_memory_address(name, obj):\n    \"\"\"Display variable name, value, memory address, and size.\"\"\"\n    # TODO: Get memory address using id()\n    \n    # TODO: Get memory size using sys.getsizeof()\n    \n    # TODO: Convert address to hexadecimal for display\n    # Use hex() function\n    \n    # TODO: Print formatted information\n    \n    pass\n\ndef compare_memory(obj1, obj2, name1, name2):\n    \"\"\"Compare memory addresses of two objects.\"\"\"\n    # TODO: Get memory addresses of both objects\n    \n    # TODO: Print addresses in hex format\n    \n    # TODO: Compare addresses and print result\n    # If same: \"Same memory location (reference)\"\n    # If different: \"Different memory locations (separate objects)\"\n    \n    pass\n\ndef memory_size_report(objects):\n    \"\"\"Create table showing object types and memory sizes.\"\"\"\n    # TODO: Print table header\n    print(\"Memory Size Report:\")\n    print(f\"{'Type':<20} {'Value':<30} {'Size (bytes)'}\")\n    print(\"-\" * 65)\n    \n    # TODO: Loop through objects\n    # For each object:\n    #   1. Get type name using type(obj).__name__\n    #   2. Get string representation (limit to 30 chars)\n    #   3. Get size using sys.getsizeof()\n    #   4. Print formatted row\n    \n    pass\n\ndef demonstrate_references():\n    \"\"\"Demonstrate how assignment creates references vs copies.\"\"\"\n    print(\"Reference Demonstration:\")\n    print(\"=\"*60)\n    \n    # TODO: Create an integer and assign to two variables\n    # Show they share memory (for small integers, Python caches them)\n    \n    # TODO: Create a list and assign to another variable\n    # Show they share memory (lists are mutable)\n    \n    # TODO: Create a copy of the list using .copy()\n    # Show they have different memory addresses\n    \n    # TODO: Modify original list and show copy is unaffected\n    \n    pass\n\n# Test the functions\nprint(\"Memory Address Inspection:\")\nprint(\"=\"*60)\nx = 42\ny = \"Hello, World!\"\nz = [1, 2, 3, 4, 5]\n\nshow_memory_address(\"x\", x)\nprint()\nshow_memory_address(\"y\", y)\nprint()\nshow_memory_address(\"z\", z)\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Memory Comparison:\")\nprint(\"=\"*60)\na = 100\nb = 100\nc = 999999\nd = 999999\nlist1 = [1, 2, 3]\nlist2 = list1\nlist3 = [1, 2, 3]\n\ncompare_memory(a, b, \"a (100)\", \"b (100)\")\nprint()\ncompare_memory(c, d, \"c (999999)\", \"d (999999)\")\nprint()\ncompare_memory(list1, list2, \"list1\", \"list2 = list1\")\nprint()\ncompare_memory(list1, list3, \"list1\", \"list3 (new list)\")\n\nprint(\"\\n\" + \"=\"*60)\nobjects = [\n    42,\n    \"Hello\",\n    [1, 2, 3],\n    {\"a\": 1, \"b\": 2},\n    (1, 2, 3),\n    {1, 2, 3},\n    True,\n    3.14\n]\nmemory_size_report(objects)\n\nprint(\"\\n\" + \"=\"*60)\ndemonstrate_references()",
+  "solution": "import sys\n\ndef show_memory_address(name, obj):\n    \"\"\"Display variable name, value, memory address, and size.\"\"\"\n    address = id(obj)\n    size = sys.getsizeof(obj)\n    hex_address = hex(address)\n    \n    print(f\"Variable: {name}\")\n    print(f\"Value: {obj}\")\n    print(f\"Memory Address: {hex_address}\")\n    print(f\"Memory Size: {size} bytes\")\n\ndef compare_memory(obj1, obj2, name1, name2):\n    \"\"\"Compare memory addresses of two objects.\"\"\"\n    addr1 = id(obj1)\n    addr2 = id(obj2)\n    \n    print(\"Comparing memory:\")\n    print(f\"  {name1} at {hex(addr1)}\")\n    print(f\"  {name2} at {hex(addr2)}\")\n    \n    if addr1 == addr2:\n        print(\"Result: Same memory location (reference)\")\n    else:\n        print(\"Result: Different memory locations (separate objects)\")\n\ndef memory_size_report(objects):\n    \"\"\"Create table showing object types and memory sizes.\"\"\"\n    print(\"Memory Size Report:\")\n    print(f\"{'Type':<20} {'Value':<30} {'Size (bytes)'}\")\n    print(\"-\" * 65)\n    \n    for obj in objects:\n        obj_type = type(obj).__name__\n        obj_str = str(obj)\n        \n        # Limit value display to 30 characters\n        if len(obj_str) > 30:\n            obj_str = obj_str[:27] + \"...\"\n        \n        size = sys.getsizeof(obj)\n        \n        print(f\"{obj_type:<20} {obj_str:<30} {size}\")\n\ndef demonstrate_references():\n    \"\"\"Demonstrate how assignment creates references vs copies.\"\"\"\n    print(\"Reference Demonstration:\")\n    print(\"=\"*60)\n    \n    # Integer reference (small integers are cached)\n    print(\"\\n1. Small integers (cached):\")\n    a = 42\n    b = 42\n    print(f\"a = {a}, b = {b}\")\n    compare_memory(a, b, \"a\", \"b\")\n    \n    # List reference\n    print(\"\\n2. List assignment (creates reference):\")\n    list1 = [1, 2, 3]\n    list2 = list1\n    print(f\"list1 = {list1}\")\n    print(f\"list2 = list1\")\n    compare_memory(list1, list2, \"list1\", \"list2\")\n    \n    # List copy\n    print(\"\\n3. List copy (creates new object):\")\n    list3 = list1.copy()\n    print(f\"list3 = list1.copy()\")\n    compare_memory(list1, list3, \"list1\", \"list3\")\n    \n    # Modification demonstration\n    print(\"\\n4. Modifying original affects reference but not copy:\")\n    list1.append(4)\n    print(f\"After list1.append(4):\")\n    print(f\"  list1 = {list1}\")\n    print(f\"  list2 = {list2} (changed - reference)\")\n    print(f\"  list3 = {list3} (unchanged - copy)\")\n\n# Test the functions\nprint(\"Memory Address Inspection:\")\nprint(\"=\"*60)\nx = 42\ny = \"Hello, World!\"\nz = [1, 2, 3, 4, 5]\n\nshow_memory_address(\"x\", x)\nprint()\nshow_memory_address(\"y\", y)\nprint()\nshow_memory_address(\"z\", z)\n\nprint(\"\\n\" + \"=\"*60)\nprint(\"Memory Comparison:\")\nprint(\"=\"*60)\na = 100\nb = 100\nc = 999999\nd = 999999\nlist1 = [1, 2, 3]\nlist2 = list1\nlist3 = [1, 2, 3]\n\ncompare_memory(a, b, \"a (100)\", \"b (100)\")\nprint()\ncompare_memory(c, d, \"c (999999)\", \"d (999999)\")\nprint()\ncompare_memory(list1, list2, \"list1\", \"list2 = list1\")\nprint()\ncompare_memory(list1, list3, \"list1\", \"list3 (new list)\")\n\nprint(\"\\n\" + \"=\"*60)\nobjects = [\n    42,\n    \"Hello\",\n    [1, 2, 3],\n    {\"a\": 1, \"b\": 2},\n    (1, 2, 3),\n    {1, 2, 3},\n    True,\n    3.14\n]\nmemory_size_report(objects)\n\nprint(\"\\n\" + \"=\"*60)\ndemonstrate_references()",
+  "hints": [
+    "Use id(obj) to get the memory address of an object as an integer",
+    "Convert the integer address to hexadecimal using hex() for better readability",
+    "Use sys.getsizeof(obj) to get the size of an object in bytes",
+    "Compare two memory addresses using == on the results of id()",
+    "For demonstrate_references(), show that list2 = list1 creates a reference, but list3 = list1.copy() creates a new object",
+    "Small integers (-5 to 256) are cached by Python, so they'll always share the same memory address"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "show_memory_address displays variable info correctly",
+      "input": "show_memory_address('test', 42)",
+      "expectedOutput": "Output contains 'Variable: test', 'Value: 42', 'Memory Address: 0x', and 'Memory Size:' with bytes",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "compare_memory identifies same memory location",
+      "input": "a = [1,2]; b = a; compare_memory(a, b, 'a', 'b')",
+      "expectedOutput": "Output contains 'Same memory location (reference)'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "compare_memory identifies different memory locations",
+      "input": "a = [1,2]; b = [1,2]; compare_memory(a, b, 'a', 'b')",
+      "expectedOutput": "Output contains 'Different memory locations (separate objects)'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "memory_size_report creates proper table",
+      "input": "memory_size_report([42, 'test', [1,2]])",
+      "expectedOutput": "Output contains 'Memory Size Report:' header and shows int, str, list types with sizes",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "demonstrate_references shows list reference behavior",
+      "input": "demonstrate_references()",
+      "expectedOutput": "Output shows list assignment creates reference and copy creates new object",
+      "isHidden": true
+    }
+  ]
+}

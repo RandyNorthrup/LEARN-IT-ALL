@@ -1,0 +1,56 @@
+{
+  "id": "exercise-083-storage-devices",
+  "lessonId": "lesson-075-storage-devices",
+  "title": "Storage Performance Calculator",
+  "description": "Create a storage performance calculator that compares different storage devices and calculates transfer times for different file sizes.\n\nYour program should:\n1. Store specifications for HDD, SSD, NVMe SSD, and USB drives\n2. Calculate transfer time for files of different sizes\n3. Compare performance between storage types\n4. Convert between storage units (bytes, KB, MB, GB, TB)\n\nImplement these functions:\n- `bytes_to_readable(bytes)`: Convert bytes to human-readable format (e.g., '1.5 GB')\n- `calculate_transfer_time(file_size_mb, speed_mbps)`: Calculate transfer time in seconds\n- `compare_storage(file_size_mb)`: Compare transfer times across all storage types\n- `storage_capacity_table()`: Display storage unit conversion table\n\nStorage speeds (MB/s):\n- HDD: 120 MB/s\n- SSD: 550 MB/s\n- NVMe: 3500 MB/s\n- USB 3.0: 100 MB/s\n\nExample output:\n```\nTransferring 4000 MB (4.0 GB) file:\n  HDD:     33.33 seconds\n  SSD:     7.27 seconds\n  NVMe:    1.14 seconds\n  USB 3.0: 40.00 seconds\n```",
+  "difficulty": "intermediate",
+  "points": 15,
+  "language": "python",
+  "starterCode": "# Storage device specifications (speed in MB/s)\nSTORAGE_SPEEDS = {\n    \"HDD\": 120,\n    \"SSD\": 550,\n    \"NVMe\": 3500,\n    \"USB 3.0\": 100\n}\n\ndef bytes_to_readable(bytes_value):\n    \"\"\"Convert bytes to human-readable format.\"\"\"\n    # TODO: Define units and their thresholds\n    # Units: B, KB (1024), MB (1024^2), GB (1024^3), TB (1024^4)\n    \n    # TODO: Find appropriate unit by checking if bytes >= threshold\n    \n    # TODO: Calculate value in that unit and format with 2 decimal places\n    \n    pass\n\ndef calculate_transfer_time(file_size_mb, speed_mbps):\n    \"\"\"Calculate transfer time in seconds.\"\"\"\n    # TODO: Time = Size / Speed\n    # Return time in seconds rounded to 2 decimal places\n    \n    pass\n\ndef compare_storage(file_size_mb):\n    \"\"\"Compare transfer times across all storage types.\"\"\"\n    # TODO: Convert file size to readable format\n    \n    # TODO: Print header with file size\n    \n    # TODO: Loop through each storage type and speed\n    # Calculate transfer time and print formatted result\n    \n    pass\n\ndef storage_capacity_table():\n    \"\"\"Display storage unit conversion table.\"\"\"\n    # TODO: Print table header\n    print(\"Storage Capacity Units:\")\n    print(f\"{'Unit':<10} {'Bytes':<20} {'Description'}\")\n    print(\"-\" * 55)\n    \n    # TODO: Define units with their byte values\n    # KB = 1024, MB = 1024^2, GB = 1024^3, TB = 1024^4\n    \n    # TODO: Print each unit with byte value and description\n    \n    pass\n\n# Test the functions\nprint(\"Storage Capacity Units:\")\nprint(\"=\" * 60)\nstorage_capacity_table()\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Byte Conversion Examples:\")\nprint(\"=\" * 60)\ntest_sizes = [500, 1024, 1024 * 500, 1024 * 1024 * 2.5, 1024 * 1024 * 1024 * 1.5]\nfor size in test_sizes:\n    print(f\"{size:>20,} bytes = {bytes_to_readable(size)}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Storage Performance Comparison:\")\nprint(\"=\" * 60)\n\n# Compare different file sizes\nfile_sizes = [100, 1000, 4000, 10000]  # MB\nfor file_size in file_sizes:\n    compare_storage(file_size)\n    print()",
+  "solution": "# Storage device specifications (speed in MB/s)\nSTORAGE_SPEEDS = {\n    \"HDD\": 120,\n    \"SSD\": 550,\n    \"NVMe\": 3500,\n    \"USB 3.0\": 100\n}\n\ndef bytes_to_readable(bytes_value):\n    \"\"\"Convert bytes to human-readable format.\"\"\"\n    # Define units\n    units = [\n        (1024 ** 4, 'TB'),\n        (1024 ** 3, 'GB'),\n        (1024 ** 2, 'MB'),\n        (1024, 'KB'),\n        (1, 'B')\n    ]\n    \n    # Find appropriate unit\n    for threshold, unit in units:\n        if bytes_value >= threshold:\n            value = bytes_value / threshold\n            return f\"{value:.2f} {unit}\"\n    \n    return f\"{bytes_value} B\"\n\ndef calculate_transfer_time(file_size_mb, speed_mbps):\n    \"\"\"Calculate transfer time in seconds.\"\"\"\n    time_seconds = file_size_mb / speed_mbps\n    return round(time_seconds, 2)\n\ndef compare_storage(file_size_mb):\n    \"\"\"Compare transfer times across all storage types.\"\"\"\n    # Convert to readable format\n    file_size_bytes = file_size_mb * 1024 * 1024\n    readable_size = bytes_to_readable(file_size_bytes)\n    \n    print(f\"Transferring {file_size_mb} MB ({readable_size}) file:\")\n    \n    # Calculate for each storage type\n    for storage_type, speed in STORAGE_SPEEDS.items():\n        time = calculate_transfer_time(file_size_mb, speed)\n        print(f\"  {storage_type:<8} {time:>6.2f} seconds\")\n\ndef storage_capacity_table():\n    \"\"\"Display storage unit conversion table.\"\"\"\n    print(\"Storage Capacity Units:\")\n    print(f\"{'Unit':<10} {'Bytes':<20} {'Description'}\")\n    print(\"-\" * 55)\n    \n    units = [\n        (\"Byte (B)\", 1, \"Single byte\"),\n        (\"Kilobyte (KB)\", 1024, \"1,024 bytes\"),\n        (\"Megabyte (MB)\", 1024 ** 2, \"1,048,576 bytes\"),\n        (\"Gigabyte (GB)\", 1024 ** 3, \"1,073,741,824 bytes\"),\n        (\"Terabyte (TB)\", 1024 ** 4, \"1,099,511,627,776 bytes\"),\n    ]\n    \n    for unit, bytes_value, description in units:\n        print(f\"{unit:<10} {bytes_value:<20,} {description}\")\n\n# Test the functions\nprint(\"Storage Capacity Units:\")\nprint(\"=\" * 60)\nstorage_capacity_table()\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Byte Conversion Examples:\")\nprint(\"=\" * 60)\ntest_sizes = [500, 1024, 1024 * 500, 1024 * 1024 * 2.5, 1024 * 1024 * 1024 * 1.5]\nfor size in test_sizes:\n    print(f\"{size:>20,} bytes = {bytes_to_readable(size)}\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"Storage Performance Comparison:\")\nprint(\"=\" * 60)\n\n# Compare different file sizes\nfile_sizes = [100, 1000, 4000, 10000]  # MB\nfor file_size in file_sizes:\n    compare_storage(file_size)\n    print()",
+  "hints": [
+    "For bytes_to_readable, create a list of tuples with (threshold, unit_name) and loop through them from largest to smallest",
+    "Use 1024 as the conversion factor between units (binary units: KB, MB, GB, TB)",
+    "Calculate transfer time with: time_seconds = file_size_mb / speed_mbps",
+    "Use f-strings with alignment: f'{value:<10}' for left-align, f'{value:>10}' for right-align",
+    "Round time to 2 decimal places using round(value, 2) or format with :.2f",
+    "Storage speeds are already in MB/s, so calculation is straightforward: time = size / speed"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "bytes_to_readable converts bytes to appropriate unit",
+      "input": "bytes_to_readable(1024 * 1024 * 2)",
+      "expectedOutput": "'2.00 MB'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "calculate_transfer_time calculates correctly",
+      "input": "calculate_transfer_time(1000, 100)",
+      "expectedOutput": "10.0",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "bytes_to_readable handles GB correctly",
+      "input": "bytes_to_readable(1024 * 1024 * 1024 * 1.5)",
+      "expectedOutput": "'1.50 GB'",
+      "isHidden": true
+    },
+    {
+      "id": "tc4",
+      "description": "compare_storage displays all storage types",
+      "input": "compare_storage(4000)",
+      "expectedOutput": "Output contains 'HDD', 'SSD', 'NVMe', 'USB 3.0' with transfer times",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "storage_capacity_table shows all units",
+      "input": "storage_capacity_table()",
+      "expectedOutput": "Output contains 'Byte', 'Kilobyte', 'Megabyte', 'Gigabyte', 'Terabyte'",
+      "isHidden": true
+    }
+  ]
+}

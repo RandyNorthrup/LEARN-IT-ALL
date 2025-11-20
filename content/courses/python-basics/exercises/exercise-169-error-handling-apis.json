@@ -1,0 +1,63 @@
+{
+  "id": "exercise-169-error-handling-apis",
+  "lessonId": "lesson-159-error-handling-apis",
+  "title": "Error Handling in APIs",
+  "description": "Handle API errors, use HTTP status codes, create structured error responses, implement error middleware, and validate requests.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Error Handling in APIs\n\nclass APIError(Exception):\n    \"\"\"Base API error with HTTP status.\"\"\"\n    pass\n\nclass ValidationError(APIError):\n    \"\"\"Validation error (400).\"\"\"\n    pass\n\nclass NotFoundError(APIError):\n    \"\"\"Not found error (404).\"\"\"\n    pass\n\ndef create_error_response(exception):\n    \"\"\"Create structured error response.\"\"\"\n    pass\n\ndef validate_request(data, schema):\n    \"\"\"Validate request data against schema.\"\"\"\n    pass\n\nclass RateLimiter:\n    \"\"\"Rate limiter with error handling.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling in APIs\nfrom typing import Dict, Any, Optional\nfrom dataclasses import dataclass\nfrom collections import defaultdict\nfrom time import time\n\nclass APIError(Exception):\n    \"\"\"Base API error with HTTP status.\"\"\"\n    \n    def __init__(self, message: str, status_code: int = 500, details: Dict = None):\n        super().__init__(message)\n        self.message = message\n        self.status_code = status_code\n        self.details = details or {}\n    \n    def to_dict(self) -> Dict[str, Any]:\n        \"\"\"Convert to dictionary.\"\"\"\n        return {\n            \"error\": self.__class__.__name__,\n            \"message\": self.message,\n            \"status_code\": self.status_code,\n            \"details\": self.details\n        }\n\nclass ValidationError(APIError):\n    \"\"\"Validation error (400).\"\"\"\n    \n    def __init__(self, message: str, field: str = None, details: Dict = None):\n        super().__init__(message, status_code=400, details=details or {})\n        if field:\n            self.details[\"field\"] = field\n\nclass NotFoundError(APIError):\n    \"\"\"Not found error (404).\"\"\"\n    \n    def __init__(self, resource: str, resource_id: str):\n        message = f\"{resource} not found: {resource_id}\"\n        super().__init__(message, status_code=404, details={\n            \"resource\": resource,\n            \"resource_id\": resource_id\n        })\n\nclass UnauthorizedError(APIError):\n    \"\"\"Unauthorized error (401).\"\"\"\n    \n    def __init__(self, message: str = \"Unauthorized\"):\n        super().__init__(message, status_code=401)\n\nclass RateLimitError(APIError):\n    \"\"\"Rate limit exceeded error (429).\"\"\"\n    \n    def __init__(self, retry_after: int):\n        message = f\"Rate limit exceeded. Retry after {retry_after}s\"\n        super().__init__(message, status_code=429, details={\n            \"retry_after\": retry_after\n        })\n\nclass ConflictError(APIError):\n    \"\"\"Conflict error (409).\"\"\"\n    \n    def __init__(self, message: str):\n        super().__init__(message, status_code=409)\n\ndef create_error_response(exception: Exception) -> Dict[str, Any]:\n    \"\"\"\n    Create structured error response.\n    \n    Returns:\n        Dictionary with error details and status code\n    \"\"\"\n    if isinstance(exception, APIError):\n        return exception.to_dict()\n    \n    # Generic server error for unexpected exceptions\n    return {\n        \"error\": \"InternalServerError\",\n        \"message\": \"An unexpected error occurred\",\n        \"status_code\": 500,\n        \"details\": {}\n    }\n\ndef validate_request(data: Dict[str, Any], schema: Dict[str, type]) -> None:\n    \"\"\"\n    Validate request data against schema.\n    \n    Args:\n        data: Request data to validate\n        schema: Schema mapping field names to expected types\n    \n    Raises:\n        ValidationError: If validation fails\n    \"\"\"\n    # Check required fields\n    for field, expected_type in schema.items():\n        if field not in data:\n            raise ValidationError(\n                f\"Missing required field: {field}\",\n                field=field\n            )\n        \n        # Check type\n        if not isinstance(data[field], expected_type):\n            raise ValidationError(\n                f\"Invalid type for {field}: expected {expected_type.__name__}\",\n                field=field,\n                details={\n                    \"expected_type\": expected_type.__name__,\n                    \"actual_type\": type(data[field]).__name__\n                }\n            )\n\nclass RateLimiter:\n    \"\"\"Rate limiter with error handling.\"\"\"\n    \n    def __init__(self, max_requests: int = 100, window_seconds: int = 60):\n        self.max_requests = max_requests\n        self.window_seconds = window_seconds\n        self.requests = defaultdict(list)\n    \n    def check_rate_limit(self, client_id: str) -> None:\n        \"\"\"\n        Check if client is within rate limit.\n        \n        Raises:\n            RateLimitError: If rate limit exceeded\n        \"\"\"\n        now = time()\n        \n        # Clean old requests\n        cutoff = now - self.window_seconds\n        self.requests[client_id] = [\n            req_time for req_time in self.requests[client_id]\n            if req_time > cutoff\n        ]\n        \n        # Check limit\n        if len(self.requests[client_id]) >= self.max_requests:\n            raise RateLimitError(retry_after=self.window_seconds)\n        \n        # Record request\n        self.requests[client_id].append(now)\n\n# Additional API error handling utilities\n\nclass ErrorMiddleware:\n    \"\"\"Middleware to handle API errors.\"\"\"\n    \n    def __init__(self, handler):\n        self.handler = handler\n    \n    def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"Process request with error handling.\"\"\"\n        try:\n            return {\n                \"status\": \"success\",\n                \"data\": self.handler(request),\n                \"status_code\": 200\n            }\n        except APIError as e:\n            return create_error_response(e)\n        except Exception as e:\n            return create_error_response(e)\n\ndef validate_pagination(page: int, page_size: int) -> None:\n    \"\"\"\n    Validate pagination parameters.\n    \n    Raises:\n        ValidationError: If invalid\n    \"\"\"\n    if page < 1:\n        raise ValidationError(\"Page must be >= 1\", field=\"page\")\n    \n    if page_size < 1 or page_size > 100:\n        raise ValidationError(\n            \"Page size must be between 1 and 100\",\n            field=\"page_size\"\n        )\n\ndef safe_json_parse(data: str) -> Dict:\n    \"\"\"\n    Safely parse JSON with proper error.\n    \n    Returns:\n        Parsed dictionary\n    \n    Raises:\n        ValidationError: If JSON is invalid\n    \"\"\"\n    import json\n    \n    try:\n        return json.loads(data)\n    except json.JSONDecodeError as e:\n        raise ValidationError(\n            \"Invalid JSON\",\n            details={\"error\": str(e)}\n        )\n",
+  "hints": [
+    "APIError: Base class with status_code, message, details, to_dict() method",
+    "Subclass APIError: Set appropriate status codes (400/404/401/429/409)",
+    "create_error_response: Check isinstance(exception, APIError), return to_dict()",
+    "validate_request: Loop through schema, check 'field in data' and isinstance()",
+    "RateLimiter: Store timestamps per client, clean old ones, check count >= max",
+    "HTTP status codes: 400 (bad request), 404 (not found), 401 (unauthorized), 429 (rate limit), 409 (conflict), 500 (server error)"
+  ],
+  "testCases": [
+    {
+      "input": "err = ValidationError('Invalid email', field='email')\\n(err.status_code, err.details['field'])",
+      "description": "Test ValidationError",
+      "id": "test1",
+      "expectedOutput": "(400, 'email')",
+      "isHidden": false
+    },
+    {
+      "input": "err = NotFoundError('User', '123')\\n(err.status_code, 'User not found' in err.message)",
+      "description": "Test NotFoundError",
+      "id": "test2",
+      "expectedOutput": "(404, True)",
+      "isHidden": false
+    },
+    {
+      "input": "err = ValidationError('test')\\nresponse = create_error_response(err)\\n(response['status_code'], response['error'])",
+      "description": "Test create_error_response APIError",
+      "id": "test3",
+      "expectedOutput": "(400, 'ValidationError')",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    validate_request({'name': 'John', 'age': 30}, {'name': str, 'age': int})\\n    result = 'valid'\\nexcept ValidationError:\\n    result = 'invalid'\\nresult",
+      "description": "Test validate_request success",
+      "id": "test4",
+      "expectedOutput": "'valid'",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    validate_request({'name': 'John'}, {'name': str, 'age': int})\\nexcept ValidationError as e:\\n    'Missing' in e.message",
+      "description": "Test validate_request missing field",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "limiter = RateLimiter(max_requests=2)\\ntry:\\n    for _ in range(3):\\n        limiter.check_rate_limit('client1')\\nexcept RateLimitError as e:\\n    e.status_code",
+      "description": "Test RateLimiter exceeds limit",
+      "id": "test6",
+      "expectedOutput": "429",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

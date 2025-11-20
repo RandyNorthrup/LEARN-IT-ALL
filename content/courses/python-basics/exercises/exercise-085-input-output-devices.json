@@ -1,0 +1,56 @@
+{
+  "id": "exercise-085-input-output-devices",
+  "lessonId": "lesson-077-input-output-devices",
+  "title": "Device Interface Simulator",
+  "description": "Create a device interface simulator that demonstrates how input/output devices communicate with computers through events and data streams.\n\nYour program should:\n1. Simulate keyboard input with key events (key down, key up)\n2. Simulate mouse input with position and button events\n3. Track device state (keys pressed, mouse position)\n4. Generate event logs showing device communication\n\nImplement these classes:\n- `KeyboardDevice`: Simulate keyboard with key press/release tracking\n- `MouseDevice`: Simulate mouse with position and button tracking\n- `DeviceManager`: Manage multiple devices and log all events\n\nExample:\n```python\nkeyboard = KeyboardDevice()\nkeyboard.key_down('A')\n# [KEYBOARD] Key Down: A (Scan Code: 0x1E)\n# [KEYBOARD] Keys Pressed: {'A'}\n\nmouse = MouseDevice()\nmouse.move(100, 150)\n# [MOUSE] Moved to position (100, 150)\nmouse.click('left')\n# [MOUSE] Button Click: left at (100, 150)\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "class KeyboardDevice:\n    \"\"\"Simulate keyboard input device.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize keyboard device.\"\"\"\n        # TODO: Create set to track currently pressed keys\n        self.keys_pressed = set()\n        \n        # TODO: Create scan code dictionary for common keys\n        self.scan_codes = {\n            'A': 0x1E, 'B': 0x30, 'C': 0x2E, 'D': 0x20,\n            'ENTER': 0x1C, 'SPACE': 0x39, 'SHIFT': 0x2A\n        }\n    \n    def key_down(self, key):\n        \"\"\"Simulate key press.\"\"\"\n        # TODO: Add key to pressed set\n        \n        # TODO: Get scan code (default to 0x00 if not found)\n        \n        # TODO: Print key down event with scan code\n        \n        # TODO: Print currently pressed keys\n        \n        pass\n    \n    def key_up(self, key):\n        \"\"\"Simulate key release.\"\"\"\n        # TODO: Remove key from pressed set\n        \n        # TODO: Print key up event\n        \n        # TODO: Print currently pressed keys\n        \n        pass\n    \n    def type_text(self, text):\n        \"\"\"Simulate typing text (key down then up for each character).\"\"\"\n        # TODO: Loop through each character\n        # Simulate key_down then key_up for each\n        \n        pass\n\nclass MouseDevice:\n    \"\"\"Simulate mouse input device.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize mouse device.\"\"\"\n        # TODO: Initialize position to (0, 0)\n        self.x = 0\n        self.y = 0\n        \n        # TODO: Track button states (left, right, middle)\n        self.buttons = {'left': False, 'right': False, 'middle': False}\n    \n    def move(self, x, y):\n        \"\"\"Move mouse to position.\"\"\"\n        # TODO: Update position\n        \n        # TODO: Print move event\n        \n        pass\n    \n    def button_down(self, button):\n        \"\"\"Press mouse button.\"\"\"\n        # TODO: Set button state to True\n        \n        # TODO: Print button down event with position\n        \n        pass\n    \n    def button_up(self, button):\n        \"\"\"Release mouse button.\"\"\"\n        # TODO: Set button state to False\n        \n        # TODO: Print button up event with position\n        \n        pass\n    \n    def click(self, button):\n        \"\"\"Simulate button click (down then up).\"\"\"\n        # TODO: Call button_down then button_up\n        \n        pass\n\nclass DeviceManager:\n    \"\"\"Manage multiple I/O devices and log events.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize device manager.\"\"\"\n        # TODO: Create keyboard and mouse devices\n        self.keyboard = KeyboardDevice()\n        self.mouse = MouseDevice()\n        \n        # TODO: Create event log list\n        self.event_log = []\n    \n    def log_event(self, event):\n        \"\"\"Add event to log.\"\"\"\n        # TODO: Append event to log\n        \n        # TODO: Print event\n        \n        pass\n    \n    def show_event_log(self):\n        \"\"\"Display all logged events.\"\"\"\n        # TODO: Print header\n        print(\"\\nEvent Log:\")\n        print(\"=\" * 60)\n        \n        # TODO: Print each event with index\n        \n        pass\n\n# Test the device simulator\nprint(\"Device Interface Simulation\")\nprint(\"=\" * 60)\n\nprint(\"\\n1. Keyboard Events:\")\nprint(\"-\" * 60)\nkeyboard = KeyboardDevice()\nkeyboard.key_down('A')\nkeyboard.key_down('SHIFT')\nkeyboard.key_down('B')\nkeyboard.key_up('A')\nkeyboard.key_up('SHIFT')\nkeyboard.key_up('B')\n\nprint(\"\\n2. Mouse Events:\")\nprint(\"-\" * 60)\nmouse = MouseDevice()\nmouse.move(100, 150)\nmouse.move(200, 250)\nmouse.button_down('left')\nmouse.button_up('left')\nmouse.click('right')\n\nprint(\"\\n3. Typing Simulation:\")\nprint(\"-\" * 60)\nkeyboard2 = KeyboardDevice()\nkeyboard2.type_text(\"HI\")\n\nprint(\"\\n4. Device Manager:\")\nprint(\"-\" * 60)\nmanager = DeviceManager()\nmanager.log_event(\"System started\")\nmanager.log_event(\"Keyboard connected\")\nmanager.log_event(\"Mouse connected\")\nmanager.log_event(\"User pressed key 'A'\")\nmanager.log_event(\"User moved mouse to (50, 75)\")\nmanager.show_event_log()",
+  "solution": "class KeyboardDevice:\n    \"\"\"Simulate keyboard input device.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize keyboard device.\"\"\"\n        self.keys_pressed = set()\n        self.scan_codes = {\n            'A': 0x1E, 'B': 0x30, 'C': 0x2E, 'D': 0x20,\n            'ENTER': 0x1C, 'SPACE': 0x39, 'SHIFT': 0x2A\n        }\n    \n    def key_down(self, key):\n        \"\"\"Simulate key press.\"\"\"\n        self.keys_pressed.add(key)\n        scan_code = self.scan_codes.get(key, 0x00)\n        print(f\"[KEYBOARD] Key Down: {key} (Scan Code: {hex(scan_code)})\")\n        print(f\"[KEYBOARD] Keys Pressed: {self.keys_pressed}\")\n    \n    def key_up(self, key):\n        \"\"\"Simulate key release.\"\"\"\n        self.keys_pressed.discard(key)\n        print(f\"[KEYBOARD] Key Up: {key}\")\n        print(f\"[KEYBOARD] Keys Pressed: {self.keys_pressed}\")\n    \n    def type_text(self, text):\n        \"\"\"Simulate typing text (key down then up for each character).\"\"\"\n        for char in text:\n            self.key_down(char)\n            self.key_up(char)\n\nclass MouseDevice:\n    \"\"\"Simulate mouse input device.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize mouse device.\"\"\"\n        self.x = 0\n        self.y = 0\n        self.buttons = {'left': False, 'right': False, 'middle': False}\n    \n    def move(self, x, y):\n        \"\"\"Move mouse to position.\"\"\"\n        self.x = x\n        self.y = y\n        print(f\"[MOUSE] Moved to position ({self.x}, {self.y})\")\n    \n    def button_down(self, button):\n        \"\"\"Press mouse button.\"\"\"\n        self.buttons[button] = True\n        print(f\"[MOUSE] Button Down: {button} at ({self.x}, {self.y})\")\n    \n    def button_up(self, button):\n        \"\"\"Release mouse button.\"\"\"\n        self.buttons[button] = False\n        print(f\"[MOUSE] Button Up: {button} at ({self.x}, {self.y})\")\n    \n    def click(self, button):\n        \"\"\"Simulate button click (down then up).\"\"\"\n        self.button_down(button)\n        self.button_up(button)\n\nclass DeviceManager:\n    \"\"\"Manage multiple I/O devices and log events.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize device manager.\"\"\"\n        self.keyboard = KeyboardDevice()\n        self.mouse = MouseDevice()\n        self.event_log = []\n    \n    def log_event(self, event):\n        \"\"\"Add event to log.\"\"\"\n        self.event_log.append(event)\n        print(f\"[EVENT LOG] {event}\")\n    \n    def show_event_log(self):\n        \"\"\"Display all logged events.\"\"\"\n        print(\"\\nEvent Log:\")\n        print(\"=\" * 60)\n        for i, event in enumerate(self.event_log, 1):\n            print(f\"{i}. {event}\")\n\n# Test the device simulator\nprint(\"Device Interface Simulation\")\nprint(\"=\" * 60)\n\nprint(\"\\n1. Keyboard Events:\")\nprint(\"-\" * 60)\nkeyboard = KeyboardDevice()\nkeyboard.key_down('A')\nkeyboard.key_down('SHIFT')\nkeyboard.key_down('B')\nkeyboard.key_up('A')\nkeyboard.key_up('SHIFT')\nkeyboard.key_up('B')\n\nprint(\"\\n2. Mouse Events:\")\nprint(\"-\" * 60)\nmouse = MouseDevice()\nmouse.move(100, 150)\nmouse.move(200, 250)\nmouse.button_down('left')\nmouse.button_up('left')\nmouse.click('right')\n\nprint(\"\\n3. Typing Simulation:\")\nprint(\"-\" * 60)\nkeyboard2 = KeyboardDevice()\nkeyboard2.type_text(\"HI\")\n\nprint(\"\\n4. Device Manager:\")\nprint(\"-\" * 60)\nmanager = DeviceManager()\nmanager.log_event(\"System started\")\nmanager.log_event(\"Keyboard connected\")\nmanager.log_event(\"Mouse connected\")\nmanager.log_event(\"User pressed key 'A'\")\nmanager.log_event(\"User moved mouse to (50, 75)\")\nmanager.show_event_log()",
+  "hints": [
+    "Use a set() to track pressed keys in KeyboardDevice, as sets prevent duplicates",
+    "Store scan codes in a dictionary with key names as keys and hex codes as values",
+    "For MouseDevice, store position as self.x and self.y attributes",
+    "Store button states in a dictionary: {'left': False, 'right': False, 'middle': False}",
+    "In type_text(), loop through each character and call key_down() then key_up()",
+    "Use .discard() instead of .remove() for sets to avoid KeyError if key not present"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "KeyboardDevice tracks pressed keys correctly",
+      "input": "kb = KeyboardDevice(); kb.key_down('A'); print(kb.keys_pressed)",
+      "expectedOutput": "{'A'}",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "MouseDevice updates position on move",
+      "input": "m = MouseDevice(); m.move(100, 200); print(m.x, m.y)",
+      "expectedOutput": "100 200",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "KeyboardDevice removes key on key_up",
+      "input": "kb = KeyboardDevice(); kb.key_down('A'); kb.key_up('A'); print(kb.keys_pressed)",
+      "expectedOutput": "set()",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "MouseDevice click simulates button_down and button_up",
+      "input": "m = MouseDevice(); m.move(50, 50); m.click('left'); print(m.buttons['left'])",
+      "expectedOutput": "False (button released after click)",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "DeviceManager logs events correctly",
+      "input": "dm = DeviceManager(); dm.log_event('Test'); print(len(dm.event_log))",
+      "expectedOutput": "1",
+      "isHidden": true
+    }
+  ]
+}

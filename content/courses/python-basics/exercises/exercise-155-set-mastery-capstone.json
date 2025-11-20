@@ -1,0 +1,63 @@
+{
+  "id": "exercise-155-set-mastery-capstone",
+  "lessonId": "lesson-145-set-mastery-capstone",
+  "title": "Set Mastery: Comprehensive Capstone",
+  "description": "Comprehensive capstone: build permission system, recommendation engine, and data deduplication pipeline using sets.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Function 1: Permission system\ndef check_access(user_roles, required_permissions, role_permissions):\n    \"\"\"Check if user has required permissions via roles.\n    \n    Args:\n        user_roles (set): User's roles\n        required_permissions (set): Required permissions\n        role_permissions (dict): {role: {permissions}}\n    \n    Returns:\n        bool: True if user has all required permissions\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Recommendation engine\ndef recommend_items(user_likes, all_users_likes, all_items):\n    \"\"\"Recommend items based on similar users.\n    \n    Args:\n        user_likes (set): Current user's liked items\n        all_users_likes (list): List of sets of liked items\n        all_items (set): All available items\n    \n    Returns:\n        set: Recommended items (liked by similar users, not by current user)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Data deduplication pipeline\ndef deduplicate_records(records, key_func):\n    \"\"\"Deduplicate records using key function.\n    \n    Args:\n        records (list): List of records (dicts)\n        key_func (function): Function to extract key from record\n    \n    Returns:\n        list: Deduplicated records\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Multi-level filtering\ndef filter_multi_criteria(items, include_tags, exclude_tags, required_all):\n    \"\"\"Filter items by tag criteria.\n    \n    Args:\n        items (list): List of dicts with 'id' and 'tags' (set)\n        include_tags (set): At least one must be present\n        exclude_tags (set): None can be present\n        required_all (set): All must be present\n    \n    Returns:\n        list: Filtered items\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Change tracking system\ndef track_changes(old_data, new_data):\n    \"\"\"Track additions, deletions, and unchanged items.\n    \n    Args:\n        old_data (set): Old dataset\n        new_data (set): New dataset\n    \n    Returns:\n        dict: {'added': set, 'removed': set, 'unchanged': set}\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Network analysis\ndef find_influencers(follower_graph, min_followers):\n    \"\"\"Find users with at least min_followers.\n    \n    Args:\n        follower_graph (dict): {user: {followers}}\n        min_followers (int): Minimum follower count\n    \n    Returns:\n        set: Users meeting threshold\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Permission system\ndef check_access(user_roles, required_permissions, role_permissions):\n    \"\"\"Check if user has required permissions via roles.\n    \n    Args:\n        user_roles (set): User's roles\n        required_permissions (set): Required permissions\n        role_permissions (dict): {role: {permissions}}\n    \n    Returns:\n        bool: True if user has all required permissions\n    \"\"\"\n    user_permissions = set()\n    for role in user_roles:\n        user_permissions.update(role_permissions.get(role, set()))\n    \n    return required_permissions <= user_permissions\n\n# Function 2: Recommendation engine\ndef recommend_items(user_likes, all_users_likes, all_items):\n    \"\"\"Recommend items based on similar users.\n    \n    Args:\n        user_likes (set): Current user's liked items\n        all_users_likes (list): List of sets of liked items\n        all_items (set): All available items\n    \n    Returns:\n        set: Recommended items (liked by similar users, not by current user)\n    \"\"\"\n    similar_users_likes = set()\n    \n    for other_likes in all_users_likes:\n        # Find users with at least 2 items in common\n        if len(user_likes & other_likes) >= 2:\n            similar_users_likes.update(other_likes)\n    \n    # Recommend items liked by similar users but not by current user\n    return similar_users_likes - user_likes\n\n# Function 3: Data deduplication pipeline\ndef deduplicate_records(records, key_func):\n    \"\"\"Deduplicate records using key function.\n    \n    Args:\n        records (list): List of records (dicts)\n        key_func (function): Function to extract key from record\n    \n    Returns:\n        list: Deduplicated records\n    \"\"\"\n    seen_keys = set()\n    unique_records = []\n    \n    for record in records:\n        key = key_func(record)\n        # Convert to frozenset if dict/list\n        if isinstance(key, (dict, set)):\n            key = frozenset(key.items() if isinstance(key, dict) else key)\n        elif isinstance(key, list):\n            key = tuple(key)\n        \n        if key not in seen_keys:\n            seen_keys.add(key)\n            unique_records.append(record)\n    \n    return unique_records\n\n# Function 4: Multi-level filtering\ndef filter_multi_criteria(items, include_tags, exclude_tags, required_all):\n    \"\"\"Filter items by tag criteria.\n    \n    Args:\n        items (list): List of dicts with 'id' and 'tags' (set)\n        include_tags (set): At least one must be present\n        exclude_tags (set): None can be present\n        required_all (set): All must be present\n    \n    Returns:\n        list: Filtered items\n    \"\"\"\n    filtered = []\n    \n    for item in items:\n        tags = item.get('tags', set())\n        \n        # Check exclude: no excluded tags present\n        if tags & exclude_tags:\n            continue\n        \n        # Check required_all: all required tags present\n        if not (required_all <= tags):\n            continue\n        \n        # Check include: at least one include tag present (if include_tags specified)\n        if include_tags and not (tags & include_tags):\n            continue\n        \n        filtered.append(item)\n    \n    return filtered\n\n# Function 5: Change tracking system\ndef track_changes(old_data, new_data):\n    \"\"\"Track additions, deletions, and unchanged items.\n    \n    Args:\n        old_data (set): Old dataset\n        new_data (set): New dataset\n    \n    Returns:\n        dict: {'added': set, 'removed': set, 'unchanged': set}\n    \"\"\"\n    return {\n        'added': new_data - old_data,\n        'removed': old_data - new_data,\n        'unchanged': old_data & new_data\n    }\n\n# Function 6: Network analysis\ndef find_influencers(follower_graph, min_followers):\n    \"\"\"Find users with at least min_followers.\n    \n    Args:\n        follower_graph (dict): {user: {followers}}\n        min_followers (int): Minimum follower count\n    \n    Returns:\n        set: Users meeting threshold\n    \"\"\"\n    return {user for user, followers in follower_graph.items() \n            if len(followers) >= min_followers}",
+  "hints": [
+    "Collect all permissions from user_roles, then check required_permissions <= user_permissions",
+    "Find similar users (>= 2 common likes), collect their likes, subtract user_likes",
+    "Apply key_func, convert unhashable types to hashable (frozenset/tuple), track in seen_keys",
+    "Check: no exclude_tags in tags, required_all <= tags, include_tags & tags if include_tags specified",
+    "Use set operations: added = new - old, removed = old - new, unchanged = old & new",
+    "Comprehension: {user for user, followers in graph.items() if len(followers) >= min_followers}"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "check_access({'admin'}, {'read', 'write'}, {'admin': {'read', 'write', 'delete'}})",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Check access - has permission"
+    },
+    {
+      "id": "test2",
+      "input": "len(recommend_items({1, 2}, [{1, 2, 3}, {1, 2, 4}], {1, 2, 3, 4, 5})) > 0",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Recommend items"
+    },
+    {
+      "id": "test3",
+      "input": "len(deduplicate_records([{'id': 1}, {'id': 2}, {'id': 1}], lambda r: r['id']))",
+      "expectedOutput": "2",
+      "isHidden": false,
+      "description": "Deduplicate records"
+    },
+    {
+      "id": "test4",
+      "input": "len(filter_multi_criteria([{'id': 1, 'tags': {'python', 'tutorial'}}, {'id': 2, 'tags': {'java', 'tutorial'}}], {'python'}, {'java'}, set()))",
+      "expectedOutput": "1",
+      "isHidden": true,
+      "description": "Filter multi criteria"
+    },
+    {
+      "id": "test5",
+      "input": "track_changes({1, 2, 3}, {2, 3, 4})['added']",
+      "expectedOutput": "{4}",
+      "isHidden": true,
+      "description": "Track changes"
+    },
+    {
+      "id": "test6",
+      "input": "find_influencers({'alice': {1, 2, 3}, 'bob': {1}}, 2)",
+      "expectedOutput": "{'alice'}",
+      "isHidden": true,
+      "description": "Find influencers"
+    }
+  ],
+  "language": "python"
+}

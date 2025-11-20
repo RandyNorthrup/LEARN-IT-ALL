@@ -1,0 +1,63 @@
+{
+  "id": "exercise-165-testing-error-handling",
+  "lessonId": "lesson-155-testing-error-handling",
+  "title": "Testing Error Handling",
+  "description": "Test exception raising, verify error messages, test error recovery paths, and ensure cleanup happens correctly.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Testing Error Handling\nimport pytest\n\ndef validate_age(age):\n    \"\"\"Validate age - raises ValueError if invalid.\"\"\"\n    pass\n\nclass Resource:\n    \"\"\"Resource that needs cleanup.\"\"\"\n    pass\n\ndef test_validate_age_negative():\n    \"\"\"Test that negative age raises ValueError.\"\"\"\n    pass\n\ndef test_resource_cleanup_on_exception():\n    \"\"\"Test resource cleanup happens even on exception.\"\"\"\n    pass\n\ndef test_exception_message_content():\n    \"\"\"Test exception message contains expected text.\"\"\"\n    pass\n\ndef test_exception_chaining():\n    \"\"\"Test exception chaining with 'from'.\"\"\"\n    pass\n",
+  "solution": "# Solution: Testing Error Handling\nimport pytest\n\ndef validate_age(age):\n    \"\"\"\n    Validate age - raises ValueError if invalid.\n    \n    Raises:\n        TypeError: If age is not an integer\n        ValueError: If age is negative or too large\n    \"\"\"\n    if not isinstance(age, int):\n        raise TypeError(\"Age must be an integer\")\n    \n    if age < 0:\n        raise ValueError(\"Age cannot be negative\")\n    \n    if age > 150:\n        raise ValueError(\"Age is unrealistic\")\n    \n    return age\n\nclass Resource:\n    \"\"\"Resource that needs cleanup.\"\"\"\n    \n    def __init__(self, name: str):\n        self.name = name\n        self.opened = False\n        self.closed = False\n    \n    def open(self):\n        \"\"\"Open resource.\"\"\"\n        self.opened = True\n    \n    def close(self):\n        \"\"\"Close resource.\"\"\"\n        self.closed = True\n    \n    def __enter__(self):\n        self.open()\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.close()\n        return False\n\ndef test_validate_age_negative():\n    \"\"\"\n    Test that negative age raises ValueError.\n    \n    Uses pytest.raises to verify exception is raised.\n    \"\"\"\n    with pytest.raises(ValueError) as exc_info:\n        validate_age(-5)\n    \n    assert \"cannot be negative\" in str(exc_info.value).lower()\n\ndef test_resource_cleanup_on_exception():\n    \"\"\"\n    Test resource cleanup happens even on exception.\n    \n    Verifies cleanup in __exit__ is called.\n    \"\"\"\n    resource = Resource(\"test\")\n    \n    with pytest.raises(ValueError):\n        with resource:\n            assert resource.opened is True\n            raise ValueError(\"Test error\")\n    \n    # Cleanup should have happened\n    assert resource.closed is True\n\ndef test_exception_message_content():\n    \"\"\"\n    Test exception message contains expected text.\n    \n    Uses match parameter to verify message content.\n    \"\"\"\n    with pytest.raises(ValueError, match=\"unrealistic\"):\n        validate_age(200)\n\ndef test_exception_chaining():\n    \"\"\"\n    Test exception chaining with 'from'.\n    \n    Verifies __cause__ attribute is set.\n    \"\"\"\n    def load_config(filename):\n        try:\n            with open(filename) as f:\n                return f.read()\n        except FileNotFoundError as e:\n            raise RuntimeError(f\"Config not found: {filename}\") from e\n    \n    with pytest.raises(RuntimeError) as exc_info:\n        load_config(\"missing.txt\")\n    \n    # Check original exception is chained\n    assert exc_info.value.__cause__.__class__ is FileNotFoundError\n\n# Additional test functions for comprehensive coverage\n\ndef test_validate_age_success():\n    \"\"\"Test valid age passes.\"\"\"\n    assert validate_age(25) == 25\n\ndef test_validate_age_type_error():\n    \"\"\"Test non-integer raises TypeError.\"\"\"\n    with pytest.raises(TypeError, match=\"must be an integer\"):\n        validate_age(\"25\")\n\ndef test_resource_cleanup_success():\n    \"\"\"Test resource cleanup on success.\"\"\"\n    resource = Resource(\"test\")\n    \n    with resource:\n        assert resource.opened is True\n    \n    assert resource.closed is True\n\ndef parametrized_age_tests():\n    \"\"\"Parametrized tests for multiple invalid ages.\"\"\"\n    @pytest.mark.parametrize(\"age,exception,message\", [\n        (-1, ValueError, \"negative\"),\n        (-100, ValueError, \"negative\"),\n        (151, ValueError, \"unrealistic\"),\n        (1000, ValueError, \"unrealistic\"),\n        (\"30\", TypeError, \"integer\"),\n        (30.5, TypeError, \"integer\"),\n    ])\n    def test_invalid_ages(age, exception, message):\n        with pytest.raises(exception, match=message):\n            validate_age(age)\n    \n    return test_invalid_ages\n",
+  "hints": [
+    "Use pytest.raises() context manager to catch expected exceptions",
+    "Access exception with exc_info.value to check message content",
+    "match parameter in pytest.raises() checks message with regex",
+    "Test cleanup: Verify resource.closed is True after exception",
+    "Exception chaining: Check exc_info.value.__cause__ for original exception",
+    "Parametrize tests with @pytest.mark.parametrize for multiple test cases"
+  ],
+  "testCases": [
+    {
+      "input": "validate_age(30)",
+      "description": "Test validate_age with valid input",
+      "id": "test1",
+      "expectedOutput": "30",
+      "isHidden": false
+    },
+    {
+      "input": "try:\\n    validate_age(-5)\\n    result = 'no error'\\nexcept ValueError:\\n    result = 'error raised'\\nresult",
+      "description": "Test validate_age raises on negative",
+      "id": "test2",
+      "expectedOutput": "'error raised'",
+      "isHidden": false
+    },
+    {
+      "input": "r = Resource('test')\\nwith r:\\n    pass\\nr.closed",
+      "description": "Test Resource cleanup on success",
+      "id": "test3",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "r = Resource('test')\\ntry:\\n    with r:\\n        raise ValueError()\\nexcept ValueError:\\n    pass\\nr.closed",
+      "description": "Test Resource cleanup on exception",
+      "id": "test4",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    validate_age('25')\\nexcept TypeError as e:\\n    'integer' in str(e).lower()",
+      "description": "Test validate_age type error",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "try:\\n    validate_age(200)\\nexcept ValueError as e:\\n    'unrealistic' in str(e).lower()",
+      "description": "Test validate_age unrealistic",
+      "id": "test6",
+      "expectedOutput": "True",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

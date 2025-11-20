@@ -1,0 +1,63 @@
+{
+  "id": "exercise-170-test-fixtures",
+  "lessonId": "lesson-160-test-fixtures",
+  "title": "Test Fixtures and Setup",
+  "description": "Create reusable test fixtures, use setup and teardown methods, manage test data effectively, and share fixtures across tests.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Test Fixtures and Setup\nimport pytest\n\n@pytest.fixture\ndef sample_users():\n    \"\"\"Fixture returning list of sample users.\"\"\"\n    pass\n\n@pytest.fixture\ndef database_connection():\n    \"\"\"Fixture with setup and teardown.\"\"\"\n    pass\n\n@pytest.fixture\ndef temp_file(tmp_path):\n    \"\"\"Fixture creating temporary file.\"\"\"\n    pass\n\n@pytest.fixture\ndef user_service(database_connection):\n    \"\"\"Fixture with dependencies.\"\"\"\n    pass\n\n@pytest.fixture\ndef make_user():\n    \"\"\"Factory fixture for creating users.\"\"\"\n    pass\n\nclass TestUserService:\n    @pytest.fixture(autouse=True)\n    def setup(self):\n        \"\"\"Auto-use fixture for setup/teardown.\"\"\"\n        pass\n",
+  "solution": "# Solution: Test Fixtures and Setup\nimport pytest\nfrom typing import List, Dict, Callable\nfrom pathlib import Path\n\n@pytest.fixture\ndef sample_users() -> List[Dict[str, any]]:\n    \"\"\"\n    Fixture returning list of sample users.\n    \n    Returns:\n        List of user dictionaries\n    \"\"\"\n    return [\n        {\"id\": \"user1\", \"username\": \"alice\", \"email\": \"alice@example.com\"},\n        {\"id\": \"user2\", \"username\": \"bob\", \"email\": \"bob@example.com\"},\n        {\"id\": \"user3\", \"username\": \"charlie\", \"email\": \"charlie@example.com\"}\n    ]\n\nclass MockDatabase:\n    \"\"\"Mock database for testing.\"\"\"\n    \n    def __init__(self):\n        self.connected = False\n        self.data = {}\n    \n    def connect(self):\n        \"\"\"Connect to database.\"\"\"\n        self.connected = True\n    \n    def disconnect(self):\n        \"\"\"Disconnect from database.\"\"\"\n        self.connected = False\n    \n    def insert(self, table: str, data: dict):\n        \"\"\"Insert data into table.\"\"\"\n        if table not in self.data:\n            self.data[table] = []\n        self.data[table].append(data)\n    \n    def query(self, table: str) -> List[dict]:\n        \"\"\"Query table.\"\"\"\n        return self.data.get(table, [])\n\n@pytest.fixture\ndef database_connection():\n    \"\"\"\n    Fixture with setup and teardown.\n    \n    Yields:\n        Connected database instance\n    \"\"\"\n    db = MockDatabase()\n    db.connect()\n    \n    yield db\n    \n    # Teardown\n    db.disconnect()\n\n@pytest.fixture\ndef temp_file(tmp_path: Path) -> Path:\n    \"\"\"\n    Fixture creating temporary file.\n    \n    Args:\n        tmp_path: pytest's built-in temp directory fixture\n    \n    Returns:\n        Path to temporary file\n    \"\"\"\n    file_path = tmp_path / \"test_data.txt\"\n    file_path.write_text(\"Initial content\")\n    return file_path\n\nclass UserService:\n    \"\"\"User service for testing.\"\"\"\n    \n    def __init__(self, database):\n        self.db = database\n    \n    def create_user(self, username: str, email: str) -> dict:\n        \"\"\"Create user in database.\"\"\"\n        user = {\"username\": username, \"email\": email}\n        self.db.insert(\"users\", user)\n        return user\n    \n    def get_users(self) -> List[dict]:\n        \"\"\"Get all users.\"\"\"\n        return self.db.query(\"users\")\n\n@pytest.fixture\ndef user_service(database_connection):\n    \"\"\"\n    Fixture with dependencies.\n    \n    Args:\n        database_connection: Database fixture\n    \n    Returns:\n        UserService instance\n    \"\"\"\n    return UserService(database_connection)\n\n@pytest.fixture\ndef make_user():\n    \"\"\"\n    Factory fixture for creating users.\n    \n    Returns:\n        Function that creates users\n    \"\"\"\n    users = []\n    \n    def _make_user(username: str, email: str) -> dict:\n        user = {\"username\": username, \"email\": email}\n        users.append(user)\n        return user\n    \n    yield _make_user\n    \n    # Cleanup all created users\n    users.clear()\n\nclass TestUserService:\n    \"\"\"Test class with setup/teardown.\"\"\"\n    \n    @pytest.fixture(autouse=True)\n    def setup(self):\n        \"\"\"\n        Auto-use fixture for setup/teardown.\n        \n        Runs before each test method automatically.\n        \"\"\"\n        self.test_data = {\"initialized\": True}\n        yield\n        # Teardown\n        self.test_data.clear()\n    \n    def test_initialization(self):\n        \"\"\"Test that setup ran.\"\"\"\n        assert self.test_data[\"initialized\"] is True\n\n# Additional fixtures for comprehensive testing\n\n@pytest.fixture(scope=\"module\")\ndef shared_resource():\n    \"\"\"\n    Module-scoped fixture (runs once per module).\n    \n    Returns:\n        Shared resource dictionary\n    \"\"\"\n    resource = {\"count\": 0}\n    yield resource\n    # Cleanup runs once after all tests in module\n\n@pytest.fixture(params=[\"sqlite\", \"postgres\", \"mysql\"])\ndef database_type(request):\n    \"\"\"\n    Parametrized fixture for testing multiple database types.\n    \n    Args:\n        request: pytest request object\n    \n    Returns:\n        Database type string\n    \"\"\"\n    return request.param\n\n@pytest.fixture\ndef populated_database(database_connection, sample_users):\n    \"\"\"\n    Fixture composition - database with sample data.\n    \n    Args:\n        database_connection: Database fixture\n        sample_users: Sample user data fixture\n    \n    Returns:\n        Database with users already inserted\n    \"\"\"\n    for user in sample_users:\n        database_connection.insert(\"users\", user)\n    \n    return database_connection\n",
+  "hints": [
+    "Simple fixture: Use @pytest.fixture decorator, return test data",
+    "Setup/teardown: Use yield to separate setup from teardown code",
+    "Temp file: Use tmp_path fixture, create file with write_text()",
+    "Fixture dependencies: Add other fixtures as function parameters",
+    "Factory fixture: Return a function that creates objects, yield it",
+    "Autouse fixture: Add autouse=True to @pytest.fixture decorator"
+  ],
+  "testCases": [
+    {
+      "input": "users = sample_users()\\nlen(users)",
+      "description": "Test sample_users fixture",
+      "id": "test1",
+      "expectedOutput": "3",
+      "isHidden": false
+    },
+    {
+      "input": "db = MockDatabase()\\ndb.connect()\\ndb.connected",
+      "description": "Test database_connection setup",
+      "id": "test2",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "input": "import tempfile\\nfrom pathlib import Path\\ntmp = Path(tempfile.mkdtemp())\\nfile = tmp / 'test.txt'\\nfile.write_text('test')\\nfile.read_text()",
+      "description": "Test temp_file creation",
+      "id": "test3",
+      "expectedOutput": "'test'",
+      "isHidden": false
+    },
+    {
+      "input": "db = MockDatabase()\\ndb.connect()\\nservice = UserService(db)\\nservice.create_user('alice', 'alice@example.com')\\nlen(service.get_users())",
+      "description": "Test user_service creates users",
+      "id": "test4",
+      "expectedOutput": "1",
+      "isHidden": true
+    },
+    {
+      "input": "users = []\\ndef factory(username, email):\\n    user = {'username': username, 'email': email}\\n    users.append(user)\\n    return user\\nfactory('alice', 'a@ex.com')\\nfactory('bob', 'b@ex.com')\\nlen(users)",
+      "description": "Test make_user factory",
+      "id": "test5",
+      "expectedOutput": "2",
+      "isHidden": true
+    },
+    {
+      "input": "test_obj = TestUserService()\\ntest_obj.test_data = {'initialized': True}\\ntest_obj.test_data['initialized']",
+      "description": "Test TestUserService setup",
+      "id": "test6",
+      "expectedOutput": "True",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

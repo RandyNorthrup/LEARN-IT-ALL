@@ -1,0 +1,63 @@
+{
+  "id": "exercise-158-exception-handling-patterns",
+  "lessonId": "lesson-148-exception-handling-patterns",
+  "title": "Exception Handling Patterns and Strategies",
+  "description": "Master EAFP vs LBYL, implement retry logic, handle exceptions in loops, and apply defensive programming patterns.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Exception Handling Patterns and Strategies\n\ndef eafp_dict_access(data, key, default=None):\n    \"\"\"Access dict using EAFP pattern.\"\"\"\n    pass\n\ndef retry_operation(operation, max_attempts=3):\n    \"\"\"Retry operation with exponential backoff.\"\"\"\n    pass\n\ndef process_items_continue_on_error(items):\n    \"\"\"Process items, continue on error, return (results, errors).\"\"\"\n    pass\n\ndef get_value_with_fallback(primary_source, fallback_source, key):\n    \"\"\"Try primary source, fall back to secondary.\"\"\"\n    pass\n\ndef transaction_with_rollback(operations):\n    \"\"\"Execute operations, rollback on error.\"\"\"\n    pass\n\ndef aggregate_errors(data, validators):\n    \"\"\"Run all validators, collect all errors.\"\"\"\n    pass\n",
+  "solution": "# Solution: Exception Handling Patterns and Strategies\nimport time\n\ndef eafp_dict_access(data, key, default=None):\n    \"\"\"\n    Access dict using EAFP pattern (Easier to Ask Forgiveness than Permission).\n    \n    Returns:\n        Value or default\n    \"\"\"\n    try:\n        return data[key]\n    except KeyError:\n        return default\n\ndef retry_operation(operation, max_attempts=3):\n    \"\"\"\n    Retry operation with exponential backoff.\n    \n    Args:\n        operation: Callable to retry\n        max_attempts: Maximum retry attempts\n    \n    Returns:\n        Operation result or raises last exception\n    \"\"\"\n    last_exception = None\n    \n    for attempt in range(1, max_attempts + 1):\n        try:\n            return operation()\n        except Exception as e:\n            last_exception = e\n            if attempt == max_attempts:\n                raise\n            # Exponential backoff (simulated)\n            wait_time = 0.01 * (2 ** (attempt - 1))\n    \n    if last_exception:\n        raise last_exception\n\ndef process_items_continue_on_error(items):\n    \"\"\"\n    Process items, continue on error, return (results, errors).\n    \n    Returns:\n        Tuple of (successful_results, errors_list)\n    \"\"\"\n    results = []\n    errors = []\n    \n    for i, item in enumerate(items):\n        try:\n            if not isinstance(item, (int, float)):\n                raise TypeError(f\"Expected number, got {type(item).__name__}\")\n            result = item * 2\n            results.append(result)\n        except Exception as e:\n            errors.append((i, str(e)))\n    \n    return results, errors\n\ndef get_value_with_fallback(primary_source, fallback_source, key):\n    \"\"\"\n    Try primary source, fall back to secondary.\n    \n    Returns:\n        Value from primary or fallback source\n    \n    Raises:\n        KeyError: If key not in either source\n    \"\"\"\n    try:\n        return primary_source[key]\n    except KeyError:\n        try:\n            return fallback_source[key]\n        except KeyError:\n            raise KeyError(f\"Key '{key}' not found in any source\")\n\ndef transaction_with_rollback(operations):\n    \"\"\"\n    Execute operations, rollback on error.\n    \n    Args:\n        operations: List of (do_func, undo_func) tuples\n    \n    Returns:\n        True if successful, False if rolled back\n    \"\"\"\n    completed = []\n    \n    try:\n        for do_func, undo_func in operations:\n            do_func()\n            completed.append(undo_func)\n        return True\n    \n    except Exception as e:\n        # Rollback completed operations in reverse\n        for undo_func in reversed(completed):\n            try:\n                undo_func()\n            except Exception:\n                pass\n        return False\n\ndef aggregate_errors(data, validators):\n    \"\"\"\n    Run all validators, collect all errors.\n    \n    Args:\n        data: Data to validate\n        validators: List of validator functions\n    \n    Returns:\n        List of error messages (empty if valid)\n    \"\"\"\n    errors = []\n    \n    for validator in validators:\n        try:\n            validator(data)\n        except Exception as e:\n            errors.append(str(e))\n    \n    return errors\n",
+  "hints": [
+    "EAFP: Try the operation and catch exceptions (Pythonic approach)",
+    "Retry: Loop with max_attempts, catch exceptions, wait between retries",
+    "Continue on error: Use try-except inside loop, collect both results and errors",
+    "Fallback: Nested try-except blocks, try primary first, then fallback",
+    "Rollback: Track completed operations, execute undo functions in reverse order",
+    "Aggregate errors: Don't raise immediately, collect all validation errors first"
+  ],
+  "testCases": [
+    {
+      "input": "eafp_dict_access({'name': 'Alice'}, 'name')",
+      "description": "Test eafp_dict_access with existing key",
+      "id": "test1",
+      "expectedOutput": "'Alice'",
+      "isHidden": false
+    },
+    {
+      "input": "eafp_dict_access({'name': 'Alice'}, 'age', 0)",
+      "description": "Test eafp_dict_access with missing key",
+      "id": "test2",
+      "expectedOutput": "0",
+      "isHidden": false
+    },
+    {
+      "input": "process_items_continue_on_error([1, 'bad', 3])",
+      "description": "Test process_items_continue_on_error mixed",
+      "id": "test3",
+      "expectedOutput": "([2, 6], [(1, \"Expected number, got str\")])",
+      "isHidden": false
+    },
+    {
+      "input": "retry_operation(lambda: 42, 3)",
+      "description": "Test retry_operation success",
+      "id": "test4",
+      "expectedOutput": "42",
+      "isHidden": true
+    },
+    {
+      "input": "get_value_with_fallback({'a': 1}, {'b': 2}, 'a')",
+      "description": "Test get_value_with_fallback from primary",
+      "id": "test5",
+      "expectedOutput": "1",
+      "isHidden": true
+    },
+    {
+      "input": "len(aggregate_errors({}, [lambda d: [][0], lambda d: int('x')]))",
+      "description": "Test aggregate_errors collects all",
+      "id": "test6",
+      "expectedOutput": "2",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

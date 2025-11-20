@@ -1,0 +1,63 @@
+{
+  "id": "exercise-166-error-monitoring",
+  "lessonId": "lesson-156-error-monitoring",
+  "title": "Error Monitoring and Tracking",
+  "description": "Track error rates and patterns, implement error reporting, monitor production errors, and create error dashboards.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Exercise: Error Monitoring and Tracking\n\nclass ErrorCounter:\n    \"\"\"Count errors by type.\"\"\"\n    pass\n\nclass ErrorRateTracker:\n    \"\"\"Track error rate over time window.\"\"\"\n    pass\n\nclass ErrorReporter:\n    \"\"\"Report errors with context.\"\"\"\n    pass\n\nclass HealthMonitor:\n    \"\"\"Monitor system health.\"\"\"\n    pass\n\nclass AlertManager:\n    \"\"\"Manage error alerts and thresholds.\"\"\"\n    pass\n\nclass ErrorDashboard:\n    \"\"\"Aggregate error statistics.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Monitoring and Tracking\nfrom collections import defaultdict, deque\nfrom datetime import datetime\nfrom typing import Dict, List, Any, Callable, Tuple\nfrom dataclasses import dataclass\nfrom time import time\n\nclass ErrorCounter:\n    \"\"\"Count errors by type.\"\"\"\n    \n    def __init__(self):\n        self.counts = defaultdict(int)\n        self.total = 0\n    \n    def record(self, error_type: str):\n        \"\"\"Record an error.\"\"\"\n        self.counts[error_type] += 1\n        self.total += 1\n    \n    def get_counts(self) -> Dict[str, int]:\n        \"\"\"Get error counts.\"\"\"\n        return dict(self.counts)\n    \n    def get_top_errors(self, n: int = 5) -> List[Tuple[str, int]]:\n        \"\"\"Get top N error types.\"\"\"\n        return sorted(self.counts.items(), key=lambda x: x[1], reverse=True)[:n]\n\nclass ErrorRateTracker:\n    \"\"\"Track error rate over time window.\"\"\"\n    \n    def __init__(self, window_seconds: int = 60):\n        self.window_seconds = window_seconds\n        self.timestamps = deque()\n    \n    def record_error(self):\n        \"\"\"Record an error.\"\"\"\n        now = time()\n        self.timestamps.append(now)\n        self._cleanup_old_errors(now)\n    \n    def _cleanup_old_errors(self, now: float):\n        \"\"\"Remove errors outside window.\"\"\"\n        cutoff = now - self.window_seconds\n        while self.timestamps and self.timestamps[0] < cutoff:\n            self.timestamps.popleft()\n    \n    def get_error_count(self) -> int:\n        \"\"\"Get error count in window.\"\"\"\n        self._cleanup_old_errors(time())\n        return len(self.timestamps)\n    \n    def get_error_rate(self) -> float:\n        \"\"\"Get errors per second.\"\"\"\n        count = self.get_error_count()\n        return count / self.window_seconds\n\n@dataclass\nclass ErrorReport:\n    \"\"\"Error report details.\"\"\"\n    timestamp: datetime\n    error_type: str\n    error_message: str\n    context: Dict[str, Any]\n\nclass ErrorReporter:\n    \"\"\"Report errors with context.\"\"\"\n    \n    def __init__(self):\n        self.reports: List[ErrorReport] = []\n    \n    def report(self, exc: Exception, context: Dict[str, Any] = None):\n        \"\"\"Report an exception.\"\"\"\n        report = ErrorReport(\n            timestamp=datetime.now(),\n            error_type=type(exc).__name__,\n            error_message=str(exc),\n            context=context or {}\n        )\n        self.reports.append(report)\n    \n    def get_summary(self) -> Dict[str, Any]:\n        \"\"\"Get error summary.\"\"\"\n        if not self.reports:\n            return {\"total\": 0, \"by_type\": {}}\n        \n        by_type = defaultdict(int)\n        for report in self.reports:\n            by_type[report.error_type] += 1\n        \n        return {\n            \"total\": len(self.reports),\n            \"by_type\": dict(by_type),\n            \"first_error\": self.reports[0].timestamp.isoformat(),\n            \"last_error\": self.reports[-1].timestamp.isoformat()\n        }\n\nclass HealthMonitor:\n    \"\"\"Monitor system health.\"\"\"\n    \n    def __init__(self):\n        self.checks: List[Tuple[str, Callable]] = []\n    \n    def add_check(self, name: str, check_func: Callable):\n        \"\"\"Add health check.\"\"\"\n        self.checks.append((name, check_func))\n    \n    def run_checks(self) -> Dict[str, Dict[str, Any]]:\n        \"\"\"Run all health checks.\"\"\"\n        results = {}\n        \n        for name, check_func in self.checks:\n            try:\n                healthy, message = check_func()\n                results[name] = {\"healthy\": healthy, \"message\": message}\n            except Exception as e:\n                results[name] = {\"healthy\": False, \"message\": f\"Check failed: {e}\"}\n        \n        return results\n\nclass AlertManager:\n    \"\"\"Manage error alerts and thresholds.\"\"\"\n    \n    def __init__(self, error_rate_threshold: float = 0.1):\n        self.error_rate_threshold = error_rate_threshold\n        self.rate_tracker = ErrorRateTracker()\n        self.alerts = []\n    \n    def record_error(self):\n        \"\"\"Record error and check thresholds.\"\"\"\n        self.rate_tracker.record_error()\n        \n        # Check if rate exceeds threshold\n        if self.rate_tracker.get_error_rate() > self.error_rate_threshold:\n            self.alerts.append({\n                \"type\": \"rate_exceeded\",\n                \"message\": f\"Error rate {self.rate_tracker.get_error_rate():.4f} exceeds threshold\",\n                \"timestamp\": datetime.now().isoformat()\n            })\n    \n    def get_alerts(self) -> List[Dict[str, str]]:\n        \"\"\"Get active alerts.\"\"\"\n        return self.alerts.copy()\n\nclass ErrorDashboard:\n    \"\"\"Aggregate error statistics.\"\"\"\n    \n    def __init__(self):\n        self.counter = ErrorCounter()\n        self.reporter = ErrorReporter()\n        self.rate_tracker = ErrorRateTracker()\n    \n    def record_error(self, exc: Exception, context: Dict[str, Any] = None):\n        \"\"\"Record error across all trackers.\"\"\"\n        error_type = type(exc).__name__\n        \n        self.counter.record(error_type)\n        self.rate_tracker.record_error()\n        self.reporter.report(exc, context)\n    \n    def get_dashboard_data(self) -> Dict[str, Any]:\n        \"\"\"Get complete dashboard data.\"\"\"\n        return {\n            \"overview\": {\n                \"total_errors\": self.counter.total,\n                \"error_rate\": f\"{self.rate_tracker.get_error_rate():.4f}/sec\",\n                \"errors_last_minute\": self.rate_tracker.get_error_count()\n            },\n            \"top_errors\": self.counter.get_top_errors(5),\n            \"summary\": self.reporter.get_summary()\n        }\n",
+  "hints": [
+    "ErrorCounter: Use defaultdict(int) to count by error type",
+    "ErrorRateTracker: Use deque for timestamps, cleanup old ones outside window",
+    "ErrorReporter: Store timestamp, type, message, context in dataclass",
+    "HealthMonitor: Run each check function, catch exceptions, return healthy boolean",
+    "AlertManager: Compare error rate to threshold, create alert dict",
+    "ErrorDashboard: Coordinate multiple trackers, aggregate statistics"
+  ],
+  "testCases": [
+    {
+      "input": "counter = ErrorCounter()\\ncounter.record('ValueError')\\ncounter.record('ValueError')\\ncounter.record('TypeError')\\ncounter.total",
+      "description": "Test ErrorCounter records errors",
+      "id": "test1",
+      "expectedOutput": "3",
+      "isHidden": false
+    },
+    {
+      "input": "counter = ErrorCounter()\\nfor _ in range(3): counter.record('ValueError')\\nfor _ in range(1): counter.record('TypeError')\\ncounter.get_top_errors(1)[0]",
+      "description": "Test ErrorCounter get_top_errors",
+      "id": "test2",
+      "expectedOutput": "('ValueError', 3)",
+      "isHidden": false
+    },
+    {
+      "input": "tracker = ErrorRateTracker(60)\\ntracker.record_error()\\ntracker.record_error()\\ntracker.get_error_count()",
+      "description": "Test ErrorRateTracker records",
+      "id": "test3",
+      "expectedOutput": "2",
+      "isHidden": false
+    },
+    {
+      "input": "reporter = ErrorReporter()\\nreporter.report(ValueError('e1'))\\nreporter.report(TypeError('e2'))\\nsummary = reporter.get_summary()\\n(summary['total'], len(summary['by_type']))",
+      "description": "Test ErrorReporter summary",
+      "id": "test4",
+      "expectedOutput": "(2, 2)",
+      "isHidden": true
+    },
+    {
+      "input": "monitor = HealthMonitor()\\nmonitor.add_check('test', lambda: (True, 'OK'))\\nresults = monitor.run_checks()\\nresults['test']['healthy']",
+      "description": "Test HealthMonitor runs checks",
+      "id": "test5",
+      "expectedOutput": "True",
+      "isHidden": true
+    },
+    {
+      "input": "dashboard = ErrorDashboard()\\ndashboard.record_error(ValueError('test'))\\ndata = dashboard.get_dashboard_data()\\ndata['overview']['total_errors']",
+      "description": "Test ErrorDashboard integration",
+      "id": "test6",
+      "expectedOutput": "1",
+      "isHidden": true
+    }
+  ],
+  "language": "python"
+}

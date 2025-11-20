@@ -1,0 +1,63 @@
+{
+  "id": "exercise-153-set-advanced-patterns",
+  "lessonId": "lesson-143-set-advanced-patterns",
+  "title": "Advanced Set Patterns and Algorithms",
+  "description": "Master advanced set patterns: graph algorithms, clustering, state machines, set-based optimization techniques.",
+  "difficulty": "advanced",
+  "points": 25,
+  "starterCode": "# Function 1: Find connected components\ndef find_reachable(graph, start):\n    \"\"\"Find all nodes reachable from start using BFS.\n    \n    Args:\n        graph (dict): Adjacency list {node: {neighbors}}\n        start: Starting node\n    \n    Returns:\n        set: Set of reachable nodes\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: Clustering - find groups\ndef group_by_common_items(items_list):\n    \"\"\"Group items that share elements.\n    \n    Args:\n        items_list (list): List of sets\n    \n    Returns:\n        list: List of merged groups (sets)\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: State machine validation\ndef valid_state_transitions(current, transitions, target):\n    \"\"\"Check if target state reachable from current.\n    \n    Args:\n        current (str): Current state\n        transitions (dict): {state: {reachable_states}}\n        target (str): Target state\n    \n    Returns:\n        bool: True if target reachable\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Set-based deduplication algorithm\ndef merge_duplicates(records, key_fields):\n    \"\"\"Merge records with same key fields.\n    \n    Args:\n        records (list): List of dicts\n        key_fields (list): Fields to use as key\n    \n    Returns:\n        list: Deduplicated records\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Find cycles in graph\ndef has_cycle(graph):\n    \"\"\"Check if directed graph has cycle.\n    \n    Args:\n        graph (dict): Adjacency list {node: {neighbors}}\n    \n    Returns:\n        bool: True if cycle exists\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: Set-based caching strategy\ndef create_cache_tracker(max_size):\n    \"\"\"Create cache with set-based tracking.\n    \n    Args:\n        max_size (int): Maximum cache size\n    \n    Returns:\n        dict: Cache with 'add', 'contains', 'size' functions\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Find connected components\ndef find_reachable(graph, start):\n    \"\"\"Find all nodes reachable from start using BFS.\n    \n    Args:\n        graph (dict): Adjacency list {node: {neighbors}}\n        start: Starting node\n    \n    Returns:\n        set: Set of reachable nodes\n    \"\"\"\n    visited = {start}\n    queue = [start]\n    \n    while queue:\n        node = queue.pop(0)\n        for neighbor in graph.get(node, set()):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    \n    return visited\n\n# Function 2: Clustering - find groups\ndef group_by_common_items(items_list):\n    \"\"\"Group items that share elements.\n    \n    Args:\n        items_list (list): List of sets\n    \n    Returns:\n        list: List of merged groups (sets)\n    \"\"\"\n    if not items_list:\n        return []\n    \n    groups = []\n    for items in items_list:\n        merged = False\n        for group in groups:\n            if group & items:  # If intersection exists\n                group.update(items)\n                merged = True\n                break\n        if not merged:\n            groups.append(set(items))\n    \n    return groups\n\n# Function 3: State machine validation\ndef valid_state_transitions(current, transitions, target):\n    \"\"\"Check if target state reachable from current.\n    \n    Args:\n        current (str): Current state\n        transitions (dict): {state: {reachable_states}}\n        target (str): Target state\n    \n    Returns:\n        bool: True if target reachable\n    \"\"\"\n    if current == target:\n        return True\n    \n    visited = {current}\n    queue = [current]\n    \n    while queue:\n        state = queue.pop(0)\n        if state == target:\n            return True\n        \n        for next_state in transitions.get(state, set()):\n            if next_state not in visited:\n                visited.add(next_state)\n                queue.append(next_state)\n    \n    return False\n\n# Function 4: Set-based deduplication algorithm\ndef merge_duplicates(records, key_fields):\n    \"\"\"Merge records with same key fields.\n    \n    Args:\n        records (list): List of dicts\n        key_fields (list): Fields to use as key\n    \n    Returns:\n        list: Deduplicated records\n    \"\"\"\n    seen_keys = set()\n    unique_records = []\n    \n    for record in records:\n        key = frozenset((k, record.get(k)) for k in key_fields)\n        if key not in seen_keys:\n            seen_keys.add(key)\n            unique_records.append(record)\n    \n    return unique_records\n\n# Function 5: Find cycles in graph\ndef has_cycle(graph):\n    \"\"\"Check if directed graph has cycle.\n    \n    Args:\n        graph (dict): Adjacency list {node: {neighbors}}\n    \n    Returns:\n        bool: True if cycle exists\n    \"\"\"\n    visited = set()\n    rec_stack = set()\n    \n    def dfs(node):\n        visited.add(node)\n        rec_stack.add(node)\n        \n        for neighbor in graph.get(node, set()):\n            if neighbor not in visited:\n                if dfs(neighbor):\n                    return True\n            elif neighbor in rec_stack:\n                return True\n        \n        rec_stack.remove(node)\n        return False\n    \n    for node in graph:\n        if node not in visited:\n            if dfs(node):\n                return True\n    \n    return False\n\n# Function 6: Set-based caching strategy\ndef create_cache_tracker(max_size):\n    \"\"\"Create cache with set-based tracking.\n    \n    Args:\n        max_size (int): Maximum cache size\n    \n    Returns:\n        dict: Cache with 'add', 'contains', 'size' functions\n    \"\"\"\n    cache = set()\n    \n    def add(item):\n        if len(cache) >= max_size:\n            cache.pop()  # Remove arbitrary item\n        cache.add(item)\n    \n    def contains(item):\n        return item in cache\n    \n    def size():\n        return len(cache)\n    \n    return {\n        'add': add,\n        'contains': contains,\n        'size': size\n    }",
+  "hints": [
+    "Use BFS with visited set: start queue with start, add neighbors not in visited",
+    "For each new set, check if intersection exists with any group, merge if so",
+    "Use BFS from current state: if reach target, return True; track visited states",
+    "Create key as frozenset of (field, value) tuples, track in seen_keys set",
+    "Use DFS with rec_stack set: if neighbor in rec_stack, cycle found",
+    "Return dict with closures: add checks size and uses set.pop(), contains uses 'in'"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "find_reachable({1: {2, 3}, 2: {4}, 3: {4}}, 1)",
+      "expectedOutput": "{1, 2, 3, 4}",
+      "isHidden": false,
+      "description": "Find reachable nodes"
+    },
+    {
+      "id": "test2",
+      "input": "len(group_by_common_items([{1, 2}, {2, 3}, {4, 5}]))",
+      "expectedOutput": "2",
+      "isHidden": false,
+      "description": "Group by common items"
+    },
+    {
+      "id": "test3",
+      "input": "valid_state_transitions('A', {'A': {'B'}, 'B': {'C'}}, 'C')",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Valid state transitions"
+    },
+    {
+      "id": "test4",
+      "input": "len(merge_duplicates([{'id': 1, 'name': 'A'}, {'id': 1, 'name': 'B'}], ['id']))",
+      "expectedOutput": "1",
+      "isHidden": true,
+      "description": "Merge duplicates"
+    },
+    {
+      "id": "test5",
+      "input": "has_cycle({1: {2}, 2: {3}, 3: {1}})",
+      "expectedOutput": "True",
+      "isHidden": true,
+      "description": "Has cycle - cycle exists"
+    },
+    {
+      "id": "test6",
+      "input": "cache = create_cache_tracker(5); cache['add'](1); cache['contains'](1)",
+      "expectedOutput": "True",
+      "isHidden": true,
+      "description": "Cache tracker"
+    }
+  ],
+  "language": "python"
+}

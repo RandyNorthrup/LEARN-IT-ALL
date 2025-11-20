@@ -1,0 +1,54 @@
+{
+  "id": "exercise-023-advanced-type-conversion",
+  "lessonId": "lesson-014-advanced-type-conversion",
+  "title": "Safe Type Converter",
+  "description": "Create a robust type conversion function that handles errors gracefully.\n\nImplement a function `safe_convert(value, target_type)` that:\n1. Attempts to convert value to target_type\n2. Returns the converted value if successful\n3. Returns None if conversion fails\n\nSupported types: 'int', 'float', 'str', 'bool'\n\nExample:\nsafe_convert('42', 'int') → 42\nsafe_convert('hello', 'int') → None\nsafe_convert('3.14', 'float') → 3.14",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def safe_convert(value, target_type):\n    \"\"\"\n    Safely convert value to target_type.\n    Returns converted value or None if conversion fails.\n    \"\"\"\n    # TODO: Implement conversion logic\n    pass\n\n# Test cases\nprint(safe_convert('42', 'int'))\nprint(safe_convert('3.14', 'float'))\nprint(safe_convert('hello', 'int'))\nprint(safe_convert('True', 'bool'))",
+  "solution": "def safe_convert(value, target_type):\n    \"\"\"\n    Safely convert value to target_type.\n    Returns converted value or None if conversion fails.\n    \"\"\"\n    try:\n        if target_type == 'int':\n            return int(float(value))  # Handle '42.5' -> 42\n        elif target_type == 'float':\n            return float(value)\n        elif target_type == 'str':\n            return str(value)\n        elif target_type == 'bool':\n            if isinstance(value, str):\n                return value.lower() in ('true', '1', 'yes')\n            return bool(value)\n        else:\n            return None\n    except (ValueError, TypeError):\n        return None\n\n# Test cases\nprint(safe_convert('42', 'int'))\nprint(safe_convert('3.14', 'float'))\nprint(safe_convert('hello', 'int'))\nprint(safe_convert('True', 'bool'))",
+  "hints": [
+    "Use try-except to catch ValueError and TypeError",
+    "For int conversion, use int(float(value)) to handle '42.5'",
+    "For bool conversion from string, check for 'true', '1', 'yes'",
+    "Return None if any error occurs"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Should convert valid integer string",
+      "input": "safe_convert('42', 'int')",
+      "expectedOutput": "42",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Should convert valid float string",
+      "input": "safe_convert('3.14', 'float')",
+      "expectedOutput": "3.14",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Should return None for invalid conversion",
+      "input": "safe_convert('hello', 'int')",
+      "expectedOutput": "None",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Should handle float string to int",
+      "input": "safe_convert('42.7', 'int')",
+      "expectedOutput": "42",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "Should convert boolean string",
+      "input": "safe_convert('True', 'bool')",
+      "expectedOutput": "True",
+      "isHidden": true
+    }
+  ]
+}

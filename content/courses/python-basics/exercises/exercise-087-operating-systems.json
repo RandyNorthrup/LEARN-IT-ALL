@@ -1,0 +1,56 @@
+{
+  "id": "exercise-087-operating-systems",
+  "lessonId": "lesson-079-operating-systems",
+  "title": "Process Manager Simulator",
+  "description": "Create a simple operating system process manager simulator that demonstrates how an OS manages running programs.\n\nYour simulator should:\n1. Create and manage processes with PIDs (Process IDs)\n2. Track process states (running, waiting, terminated)\n3. Simulate CPU time slicing between processes\n4. Show process scheduling and context switching\n\nImplement these classes:\n- `Process`: Represent a running program with state and CPU time\n- `ProcessManager`: Manage multiple processes and schedule CPU time\n\nExample:\n```python\nmanager = ProcessManager()\nmanager.create_process(\"Browser\", 100)\nmanager.create_process(\"Editor\", 150)\nmanager.run_scheduler(time_quantum=20)\n# [OS] Process 1001 'Browser' created\n# [OS] Process 1002 'Editor' created\n# [CPU] Running Process 1001 'Browser' (20ms/100ms)\n# [CPU] Context switch to Process 1002\n# [CPU] Running Process 1002 'Editor' (20ms/150ms)\n# ...\n```",
+  "difficulty": "advanced",
+  "points": 25,
+  "language": "python",
+  "starterCode": "class Process:\n    \"\"\"Represent an OS process.\"\"\"\n    \n    # Class variable for generating PIDs\n    next_pid = 1001\n    \n    def __init__(self, name, cpu_time_needed):\n        \"\"\"Initialize a process.\"\"\"\n        # TODO: Assign unique PID and increment next_pid\n        self.pid = Process.next_pid\n        Process.next_pid += 1\n        \n        # TODO: Store process name\n        self.name = name\n        \n        # TODO: Store total CPU time needed\n        self.cpu_time_needed = cpu_time_needed\n        \n        # TODO: Track CPU time used so far\n        self.cpu_time_used = 0\n        \n        # TODO: Set initial state to 'ready'\n        # States: 'ready', 'running', 'terminated'\n        self.state = 'ready'\n    \n    def run(self, time_quantum):\n        \"\"\"Run process for given time quantum.\"\"\"\n        # TODO: Set state to 'running'\n        \n        # TODO: Calculate time to run (minimum of time_quantum and remaining time)\n        \n        # TODO: Update cpu_time_used\n        \n        # TODO: Print running message\n        \n        # TODO: Check if process is complete\n        # If complete, set state to 'terminated'\n        # Otherwise, set state back to 'ready'\n        \n        # TODO: Return time actually used\n        \n        pass\n    \n    def is_complete(self):\n        \"\"\"Check if process has finished.\"\"\"\n        # TODO: Return True if cpu_time_used >= cpu_time_needed\n        pass\n    \n    def remaining_time(self):\n        \"\"\"Get remaining CPU time needed.\"\"\"\n        # TODO: Return cpu_time_needed - cpu_time_used\n        pass\n\nclass ProcessManager:\n    \"\"\"Manage processes and schedule CPU time.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize process manager.\"\"\"\n        # TODO: Create list to store all processes\n        self.processes = []\n        \n        # TODO: Track total CPU time used\n        self.total_cpu_time = 0\n    \n    def create_process(self, name, cpu_time_needed):\n        \"\"\"Create a new process.\"\"\"\n        # TODO: Create new Process object\n        \n        # TODO: Add to processes list\n        \n        # TODO: Print creation message\n        \n        pass\n    \n    def run_scheduler(self, time_quantum=20):\n        \"\"\"Run round-robin scheduler.\"\"\"\n        # TODO: Print scheduler start message\n        print(f\"\\n[OS] Starting round-robin scheduler (time quantum: {time_quantum}ms)\")\n        print(\"=\" * 60)\n        \n        # TODO: Keep running until all processes complete\n        # Loop while there are incomplete processes\n        \n        # TODO: For each process that's not terminated:\n        #   1. Print context switch message (if not first process)\n        #   2. Run process for time_quantum\n        #   3. Update total_cpu_time\n        \n        # TODO: Print completion message\n        \n        pass\n    \n    def show_status(self):\n        \"\"\"Display status of all processes.\"\"\"\n        # TODO: Print header\n        print(\"\\nProcess Status:\")\n        print(f\"{'PID':<8} {'Name':<15} {'State':<12} {'Progress'}\")\n        print(\"-\" * 60)\n        \n        # TODO: Print each process info\n        # Show: PID, name, state, progress (used/needed ms)\n        \n        pass\n\n# Test the process manager\nprint(\"Operating System Process Manager\")\nprint(\"=\" * 60)\n\n# Create process manager\nmanager = ProcessManager()\n\n# Create some processes\nprint(\"\\nCreating processes...\")\nmanager.create_process(\"Web Browser\", 100)\nmanager.create_process(\"Text Editor\", 80)\nmanager.create_process(\"Music Player\", 120)\nmanager.create_process(\"Terminal\", 60)\n\n# Show initial status\nmanager.show_status()\n\n# Run scheduler\nmanager.run_scheduler(time_quantum=20)\n\n# Show final status\nmanager.show_status()\n\nprint(f\"\\n[OS] Total CPU time used: {manager.total_cpu_time}ms\")\nprint(f\"[OS] All processes completed!\")",
+  "solution": "class Process:\n    \"\"\"Represent an OS process.\"\"\"\n    \n    next_pid = 1001\n    \n    def __init__(self, name, cpu_time_needed):\n        \"\"\"Initialize a process.\"\"\"\n        self.pid = Process.next_pid\n        Process.next_pid += 1\n        self.name = name\n        self.cpu_time_needed = cpu_time_needed\n        self.cpu_time_used = 0\n        self.state = 'ready'\n    \n    def run(self, time_quantum):\n        \"\"\"Run process for given time quantum.\"\"\"\n        self.state = 'running'\n        \n        # Calculate actual time to run\n        remaining = self.remaining_time()\n        time_to_run = min(time_quantum, remaining)\n        \n        self.cpu_time_used += time_to_run\n        \n        print(f\"[CPU] Running Process {self.pid} '{self.name}' for {time_to_run}ms ({self.cpu_time_used}/{self.cpu_time_needed}ms)\")\n        \n        # Check if complete\n        if self.is_complete():\n            self.state = 'terminated'\n            print(f\"[OS] Process {self.pid} '{self.name}' terminated\")\n        else:\n            self.state = 'ready'\n        \n        return time_to_run\n    \n    def is_complete(self):\n        \"\"\"Check if process has finished.\"\"\"\n        return self.cpu_time_used >= self.cpu_time_needed\n    \n    def remaining_time(self):\n        \"\"\"Get remaining CPU time needed.\"\"\"\n        return self.cpu_time_needed - self.cpu_time_used\n\nclass ProcessManager:\n    \"\"\"Manage processes and schedule CPU time.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize process manager.\"\"\"\n        self.processes = []\n        self.total_cpu_time = 0\n    \n    def create_process(self, name, cpu_time_needed):\n        \"\"\"Create a new process.\"\"\"\n        process = Process(name, cpu_time_needed)\n        self.processes.append(process)\n        print(f\"[OS] Process {process.pid} '{name}' created (needs {cpu_time_needed}ms CPU time)\")\n    \n    def run_scheduler(self, time_quantum=20):\n        \"\"\"Run round-robin scheduler.\"\"\"\n        print(f\"\\n[OS] Starting round-robin scheduler (time quantum: {time_quantum}ms)\")\n        print(\"=\" * 60)\n        \n        # Keep running until all processes complete\n        while True:\n            # Get incomplete processes\n            active_processes = [p for p in self.processes if not p.is_complete()]\n            \n            if not active_processes:\n                break\n            \n            # Run each active process for time quantum\n            for process in active_processes:\n                if not process.is_complete():\n                    time_used = process.run(time_quantum)\n                    self.total_cpu_time += time_used\n                    print()\n    \n    def show_status(self):\n        \"\"\"Display status of all processes.\"\"\"\n        print(\"\\nProcess Status:\")\n        print(f\"{'PID':<8} {'Name':<15} {'State':<12} {'Progress'}\")\n        print(\"-\" * 60)\n        \n        for process in self.processes:\n            progress = f\"{process.cpu_time_used}/{process.cpu_time_needed}ms\"\n            print(f\"{process.pid:<8} {process.name:<15} {process.state:<12} {progress}\")\n\n# Test the process manager\nprint(\"Operating System Process Manager\")\nprint(\"=\" * 60)\n\nmanager = ProcessManager()\n\nprint(\"\\nCreating processes...\")\nmanager.create_process(\"Web Browser\", 100)\nmanager.create_process(\"Text Editor\", 80)\nmanager.create_process(\"Music Player\", 120)\nmanager.create_process(\"Terminal\", 60)\n\nmanager.show_status()\n\nmanager.run_scheduler(time_quantum=20)\n\nmanager.show_status()\n\nprint(f\"\\n[OS] Total CPU time used: {manager.total_cpu_time}ms\")\nprint(f\"[OS] All processes completed!\")",
+  "hints": [
+    "Use a class variable (Process.next_pid) to generate unique PIDs that increment for each new process",
+    "In Process.run(), calculate time_to_run as min(time_quantum, remaining_time())",
+    "Update cpu_time_used by adding time_to_run after each execution",
+    "Check if process is complete by comparing cpu_time_used >= cpu_time_needed",
+    "In ProcessManager.run_scheduler(), use a while loop that continues while there are incomplete processes",
+    "Use list comprehension to filter active processes: [p for p in self.processes if not p.is_complete()]"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Process assigns unique PIDs",
+      "input": "p1 = Process('Test1', 100); p2 = Process('Test2', 100); print(p1.pid != p2.pid)",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Process tracks CPU time correctly",
+      "input": "p = Process('Test', 100); p.run(20); print(p.cpu_time_used)",
+      "expectedOutput": "20",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Process completes when CPU time exhausted",
+      "input": "p = Process('Test', 50); p.run(50); print(p.is_complete())",
+      "expectedOutput": "True",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "ProcessManager creates processes with correct PIDs",
+      "input": "pm = ProcessManager(); pm.create_process('Test', 100); print(len(pm.processes))",
+      "expectedOutput": "1",
+      "isHidden": true
+    },
+    {
+      "id": "tc5",
+      "description": "Scheduler runs all processes to completion",
+      "input": "pm = ProcessManager(); pm.create_process('A', 40); pm.create_process('B', 40); pm.run_scheduler(20); print(all(p.is_complete() for p in pm.processes))",
+      "expectedOutput": "True",
+      "isHidden": true
+    }
+  ]
+}

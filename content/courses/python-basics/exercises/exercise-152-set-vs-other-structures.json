@@ -1,0 +1,63 @@
+{
+  "id": "exercise-152-set-vs-other-structures",
+  "lessonId": "lesson-142-set-vs-other-structures",
+  "title": "Sets vs Other Data Structures",
+  "description": "Compare sets with lists, tuples, and dicts: when to use each structure, trade-offs, and decision criteria.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Function 1: Choose structure for membership testing\ndef optimize_lookup(items, test_count):\n    \"\"\"Convert to best structure for repeated lookups.\n    \n    Args:\n        items (list): Items to store\n        test_count (int): Number of lookups expected\n    \n    Returns:\n        set or list: Optimal structure\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 2: When to use list vs set\ndef should_use_set(need_order, need_duplicates, need_fast_lookup):\n    \"\"\"Determine if set is appropriate.\n    \n    Args:\n        need_order (bool): Need to maintain order\n        need_duplicates (bool): Need to keep duplicates\n        need_fast_lookup (bool): Need O(1) membership\n    \n    Returns:\n        bool: True if set is best choice\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 3: Convert dict keys to set\ndef get_dict_keys_as_set(dictionary):\n    \"\"\"Get dictionary keys as set.\n    \n    Args:\n        dictionary (dict): Input dictionary\n    \n    Returns:\n        set: Set of keys\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 4: Set for deduplication vs list ordering\ndef deduplicate_preserve_order(items):\n    \"\"\"Remove duplicates while preserving order.\n    \n    Args:\n        items (list): List with duplicates\n    \n    Returns:\n        list: Deduplicated list with order preserved\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 5: Compare memory usage patterns\ndef memory_efficient_choice(items, will_modify, need_unique):\n    \"\"\"Choose memory-efficient structure.\n    \n    Args:\n        items (list): Initial items\n        will_modify (bool): Will add/remove items\n        need_unique (bool): Only unique items needed\n    \n    Returns:\n        tuple or set: Efficient structure\n    \"\"\"\n    # Your code here\n    pass\n\n# Function 6: List to set trade-offs\ndef should_convert_to_set(list_size, lookup_count):\n    \"\"\"Decide if converting list to set is worth it.\n    \n    Args:\n        list_size (int): Size of list\n        lookup_count (int): Number of lookups\n    \n    Returns:\n        bool: True if conversion beneficial\n    \"\"\"\n    # Your code here\n    pass",
+  "solution": "# Function 1: Choose structure for membership testing\ndef optimize_lookup(items, test_count):\n    \"\"\"Convert to best structure for repeated lookups.\n    \n    Args:\n        items (list): Items to store\n        test_count (int): Number of lookups expected\n    \n    Returns:\n        set or list: Optimal structure\n    \"\"\"\n    # If many lookups, set is O(1) vs list O(n)\n    if test_count > len(items):\n        return set(items)\n    return items\n\n# Function 2: When to use list vs set\ndef should_use_set(need_order, need_duplicates, need_fast_lookup):\n    \"\"\"Determine if set is appropriate.\n    \n    Args:\n        need_order (bool): Need to maintain order\n        need_duplicates (bool): Need to keep duplicates\n        need_fast_lookup (bool): Need O(1) membership\n    \n    Returns:\n        bool: True if set is best choice\n    \"\"\"\n    # Set: unordered, no duplicates, fast lookup\n    # Can't use if need order or duplicates\n    if need_duplicates:\n        return False\n    # Python 3.7+ sets maintain insertion order\n    # But if fast lookup needed and duplicates not needed\n    return need_fast_lookup and not need_duplicates\n\n# Function 3: Convert dict keys to set\ndef get_dict_keys_as_set(dictionary):\n    \"\"\"Get dictionary keys as set.\n    \n    Args:\n        dictionary (dict): Input dictionary\n    \n    Returns:\n        set: Set of keys\n    \"\"\"\n    return set(dictionary.keys())\n\n# Function 4: Set for deduplication vs list ordering\ndef deduplicate_preserve_order(items):\n    \"\"\"Remove duplicates while preserving order.\n    \n    Args:\n        items (list): List with duplicates\n    \n    Returns:\n        list: Deduplicated list with order preserved\n    \"\"\"\n    seen = set()\n    result = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Function 5: Compare memory usage patterns\ndef memory_efficient_choice(items, will_modify, need_unique):\n    \"\"\"Choose memory-efficient structure.\n    \n    Args:\n        items (list): Initial items\n        will_modify (bool): Will add/remove items\n        need_unique (bool): Only unique items needed\n    \n    Returns:\n        tuple or set: Efficient structure\n    \"\"\"\n    if need_unique:\n        return set(items)\n    # If won't modify, tuple is most memory efficient\n    if not will_modify:\n        return tuple(items)\n    # Otherwise set for uniqueness or keep list\n    return set(items) if need_unique else items\n\n# Function 6: List to set trade-offs\ndef should_convert_to_set(list_size, lookup_count):\n    \"\"\"Decide if converting list to set is worth it.\n    \n    Args:\n        list_size (int): Size of list\n        lookup_count (int): Number of lookups\n    \n    Returns:\n        bool: True if conversion beneficial\n    \"\"\"\n    # Conversion O(n), lookups set O(1) vs list O(n)\n    # Worth if: lookup_count * list_size > list_size\n    # Simplifies to: lookup_count > 1\n    return lookup_count > 1",
+  "hints": [
+    "If test_count > len(items), many lookups benefit from set O(1) lookup",
+    "Set can't preserve duplicates; if need_duplicates=True, return False",
+    "Use set(dictionary.keys()) or set(dictionary) to get keys as set",
+    "Track seen in set, append to result list only if not seen before",
+    "If need_unique: set; if not will_modify: tuple for memory efficiency",
+    "Converting costs O(n), but set lookups O(1) vs list O(n) - worth if lookup_count > 1"
+  ],
+  "testCases": [
+    {
+      "id": "test1",
+      "input": "type(optimize_lookup([1, 2, 3], 10)).__name__",
+      "expectedOutput": "'set'",
+      "isHidden": false,
+      "description": "Optimize lookup - many tests"
+    },
+    {
+      "id": "test2",
+      "input": "should_use_set(False, False, True)",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "description": "Should use set - need fast lookup"
+    },
+    {
+      "id": "test3",
+      "input": "get_dict_keys_as_set({'a': 1, 'b': 2})",
+      "expectedOutput": "{'a', 'b'}",
+      "isHidden": false,
+      "description": "Dict keys as set"
+    },
+    {
+      "id": "test4",
+      "input": "deduplicate_preserve_order([1, 2, 2, 3, 1, 4])",
+      "expectedOutput": "[1, 2, 3, 4]",
+      "isHidden": true,
+      "description": "Deduplicate preserve order"
+    },
+    {
+      "id": "test5",
+      "input": "type(memory_efficient_choice([1, 2, 3], True, True)).__name__",
+      "expectedOutput": "'set'",
+      "isHidden": true,
+      "description": "Memory efficient - need unique"
+    },
+    {
+      "id": "test6",
+      "input": "should_convert_to_set(100, 10)",
+      "expectedOutput": "True",
+      "isHidden": true,
+      "description": "Should convert to set"
+    }
+  ],
+  "language": "python"
+}
