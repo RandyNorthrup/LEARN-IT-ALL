@@ -4,7 +4,7 @@
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-7.0-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
+[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite)](https://www.sqlite.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ---
@@ -32,7 +32,7 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for 
 |----------|-----------|
 | **Framework** | Next.js 16.0 (App Router) |
 | **Language** | TypeScript 5.3 (Strict Mode) |
-| **Database** | SQLite with Prisma ORM 7.0 |
+| **Database** | SQLite with better-sqlite3 |
 | **Styling** | Tailwind CSS 4.0 |
 | **Code Editor** | Monaco Editor (VS Code engine) |
 | **Syntax Highlighting** | React Syntax Highlighter |
@@ -62,16 +62,7 @@ cd LEARN-IT-ALL
 # Install dependencies
 npm install
 
-# Generate Prisma client
-npm run postinstall
-
-# Run database migrations
-npm run db:migrate
-
-# Seed the database (optional)
-npm run db:seed
-
-# Start development server
+# Start development server (database auto-initializes)
 npm run dev
 ```
 
@@ -88,9 +79,7 @@ LEARN-IT-ALL/
 │       ├── python-basics/
 │       ├── comptia-a-plus/
 │       └── comptia-network-plus/
-├── prisma/               # Database schema and migrations
-│   ├── schema.prisma
-│   └── migrations/
+├── prisma/               # SQLite database (auto-created)
 ├── public/               # Static assets
 ├── scripts/              # Utility scripts
 ├── src/
@@ -169,9 +158,8 @@ npm run build            # Build for production
 npm run start            # Start production server
 
 # Database
-npm run db:migrate       # Run Prisma migrations
-npm run db:reset         # Reset database
-npm run db:seed          # Seed database with content
+# Database auto-initializes on first run
+# Progress data stored in prisma/learn-it-all.db
 
 # Code Quality
 npm run lint             # Run ESLint (standard)
@@ -189,17 +177,17 @@ npm run mocks:scan       # Scan for TODO/MOCK/FIXME comments
 
 ## 🗄️ Database Schema
 
-The platform uses SQLite with Prisma ORM. Key models include:
+The platform uses SQLite with better-sqlite3. Key tables include:
 
-- **User** - User profiles and preferences
-- **Course** - Course metadata and structure
-- **Lesson** - Individual lesson content
-- **Exercise** - Coding challenges
-- **Quiz** - Assessments and questions
-- **Progress** - User progress tracking
-- **Achievement** - Gamification rewards
+- **settings** - User preferences and display name
+- **course_enrollments** - Course enrollment and completion tracking
+- **lesson_progress** - Individual lesson completion status
+- **exercise_submissions** - Coding exercise submissions and scores
+- **quiz_attempts** - Quiz attempts with scores and pass/fail status
+- **test_results** - Exercise test case results
+- **certificates** - Course completion certificates
 
-See `prisma/schema.prisma` for the complete schema.
+See `src/lib/db.ts` for the complete schema and database helpers.
 
 ---
 
@@ -254,7 +242,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Next.js** - The React framework for production
-- **Prisma** - Next-generation ORM
+- **better-sqlite3** - Fast SQLite3 bindings for Node.js
 - **Monaco Editor** - The editor that powers VS Code
 - **Tailwind CSS** - Utility-first CSS framework
 - **React** - UI library
