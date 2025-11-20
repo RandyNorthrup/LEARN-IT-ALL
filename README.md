@@ -122,11 +122,54 @@ Complete introduction to Python programming with 180+ lessons and exercises cove
 - **Chapter 12**: Error handling and testing
 - **Chapter 13**: Real-world practice projects
 
-### 🚧 Coming Soon
-- 💻 CompTIA A+ Certification
-- 🌐 CompTIA Network+ Certification
-- 🐍 Python Advanced Topics
-- 🌐 Web Development Fundamentals
+### 🚧 Coming Soon (43+ Courses Planned)
+
+#### Foundation Courses (7 courses)
+- 🐍 **Learn Object Oriented Programming in Python** - 61 lessons
+- 🐍 **Learn Functional Programming in Python** - 88 lessons
+- 🐍 **Learn Data Structures and Algorithms in Python** - 175 lessons
+- 📜 **Learn JavaScript** - 122 lessons
+- 📘 **Learn TypeScript** - 105 lessons
+- 🗄️ **Learn SQL** - 124 lessons
+- 🐹 **Learn Go** - 188 lessons
+
+#### Infrastructure & DevOps (6 courses)
+- 🐧 **Learn Linux** - 66 lessons
+- 🔀 **Learn Git** - 75 lessons
+- 🔀 **Learn Git 2 (Advanced)** - 73 lessons
+- 🐳 **Learn Docker** - 43 lessons
+- ☸️ **Learn Kubernetes** - 66 lessons
+- 🔄 **Learn CI/CD with GitHub Actions** - 39 lessons
+
+#### HTTP & Networking (6 courses)
+- 🌐 **HTTP Clients** in Go, TypeScript, Python
+- 🌐 **HTTP Servers** in Go, TypeScript
+- 🌐 **HTTP Protocol** in Go
+
+#### Guided Projects (14 courses)
+- 📚 **Build a Bookbot in Python**
+- 🌐 **Build a Static Site Generator**
+- 🎮 **Build a Maze Solver**
+- 🕷️ **Build Web Scrapers** (Python, TypeScript, Go)
+- 🤖 **Build an AI Agent in Python**
+- 🎮 **Build a Pokedex in TypeScript**
+- *...and more project-based courses*
+
+#### Advanced Specialized (8 courses)
+- 💾 **Learn Memory Management in C** - 101 lessons
+- 🔐 **Learn Cryptography in Go** - 127 lessons
+- 🤖 **Learn Retrieval Augmented Generation (RAG)** - 75 lessons
+- 📊 **Learn DSA 2 in Python** - 76 lessons
+- 📡 **Pub/Sub Architecture with RabbitMQ** (Go & TypeScript)
+- ☁️ **File Servers & CDNs with S3/CloudFront** (Go & TypeScript)
+
+#### Career & Certification (4 courses)
+- 💼 **Learn How to Find a Programming Job** - 52 lessons
+- 🎓 **Capstone Project** - Full portfolio project
+- 💻 **CompTIA A+ Certification Prep** - 100 lessons
+- 🌐 **CompTIA Network+ Certification Prep** - 90 lessons
+
+**Total Planned**: 2,000+ lessons across 43+ courses
 
 ---
 
