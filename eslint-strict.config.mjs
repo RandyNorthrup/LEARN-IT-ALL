@@ -17,7 +17,6 @@ const eslintConfig = [
       "node_modules/**",
       ".vercel/**",
       "dist/**",
-      "prisma/seed.ts", // Seed scripts need console.log for output
     ],
   },
   {

@@ -201,11 +201,12 @@ export default function CodeBuilderGame() {
                 <p className="text-gray-500 text-center py-8">Drag blocks here</p>
               ) : (
                 selectedBlocks.map((blockId, index) => {
-                  const block = challenge.blocks.find(b => b.id === blockId);
+                  const block = availableBlocks.find(b => b.id === blockId);
                   if (!block) return null;
                   
+                  const uniqueKey = `selected-${blockId}-${index}-${block.code.substring(0, 10)}`;
                   return (
-                    <div key={`${blockId}-${index}`} className="flex items-center gap-2">
+                    <div key={uniqueKey} className="flex items-center gap-2">
                       <div className="flex flex-col">
                         <button
                           onClick={() => moveBlockUp(index)}

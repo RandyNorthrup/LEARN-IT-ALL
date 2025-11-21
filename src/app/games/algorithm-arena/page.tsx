@@ -215,23 +215,32 @@ export default function AlgorithmArenaGame() {
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
                 <h3 className="font-semibold text-indigo-900 mb-2">Test Cases:</h3>
                 <div className="space-y-2">
-                  {challenge.testCases.map((tc, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <span className={`text-lg ${
-                        testResults[index] === true
-                          ? 'text-green-600'
-                          : testResults[index] === false
-                          ? 'text-red-600'
-                          : 'text-gray-400'
-                      }`}>
-                        {testResults[index] === true ? '✅' : testResults[index] === false ? '❌' : '⚪'}
-                      </span>
-                      <div className="flex-1 font-mono text-sm text-indigo-800">
-                        <div>Input: {tc.input}</div>
-                        <div>Expected: {tc.expectedOutput}</div>
+                  {challenge.testCases.map((tc) => {
+                    const testIndex = challenge.testCases.indexOf(tc);
+                    const testResult = testResults[testIndex];
+                    let iconColor = 'text-gray-400';
+                    let iconEmoji = '⚪';
+                    
+                    if (testResult === true) {
+                      iconColor = 'text-green-600';
+                      iconEmoji = '✅';
+                    } else if (testResult === false) {
+                      iconColor = 'text-red-600';
+                      iconEmoji = '❌';
+                    }
+                    
+                    return (
+                      <div key={`${tc.input}-${tc.expectedOutput}`} className="flex items-start gap-2">
+                        <span className={`text-lg ${iconColor}`}>
+                          {iconEmoji}
+                        </span>
+                        <div className="flex-1 font-mono text-sm text-indigo-800">
+                          <div>Input: {tc.input}</div>
+                          <div>Expected: {tc.expectedOutput}</div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

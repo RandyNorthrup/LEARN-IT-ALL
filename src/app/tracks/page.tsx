@@ -108,7 +108,7 @@ export default function TracksPage() {
                 {/* Technologies */}
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-                    Technologies You'll Learn
+                    Technologies You&apos;ll Learn
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {track.technologies.map((tech) => (
@@ -167,7 +167,7 @@ export default function TracksPage() {
             Each track focuses on a specific career path and includes all the courses, projects, and skills you need to succeed.
           </p>
           <p className="text-gray-600">
-            <strong className="text-gray-900">Pro tip:</strong> Complete courses in the order they're presented for the best learning experience. 
+            <strong className="text-gray-900">Pro tip:</strong> Complete courses in the order they&apos;re presented for the best learning experience. 
             Each course builds upon the knowledge from previous courses in the track.
           </p>
         </div>

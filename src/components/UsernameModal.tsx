@@ -35,6 +35,7 @@ export default function UsernameModal({ onComplete }: UsernameModalProps) {
         setError('Failed to save username');
         setLoading(false);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       setError('Failed to save username');
       setLoading(false);

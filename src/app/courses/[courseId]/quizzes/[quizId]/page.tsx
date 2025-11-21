@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -77,6 +77,7 @@ export default function QuizPage() {
     }, 1000);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRemaining, result]);
 
   const formatTime = (seconds: number): string => {
@@ -85,7 +86,7 @@ export default function QuizPage() {
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!quiz) return;
 
     setSubmitting(true);
@@ -117,7 +118,7 @@ export default function QuizPage() {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [quiz, courseId, quizId, answers, startTime, router]);
 
   const updateAnswer = (questionId: string, answer: UserAnswer) => {
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
@@ -521,8 +522,8 @@ function CodingExerciseInput({
           </button>
           {showHints && (
             <ul className="space-y-2">
-              {question.hints.map((hint, idx) => (
-                <li key={idx} className="text-sm text-gray-700 p-2 bg-blue-50 rounded">
+              {question.hints.map((hint) => (
+                <li key={hint} className="text-sm text-gray-700 p-2 bg-blue-50 rounded">
                   {hint}
                 </li>
               ))}

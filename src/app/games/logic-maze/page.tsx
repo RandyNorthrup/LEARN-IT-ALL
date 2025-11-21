@@ -46,7 +46,7 @@ export default function LogicMazeGame() {
 
   function executeCode() {
     const lines = codeInput.trim().split('\n');
-    let currentPos = { ...START_POS };
+    const currentPos = { ...START_POS };
     const newOutput: string[] = [];
     let moveCount = 0;
 
@@ -163,29 +163,35 @@ export default function LogicMazeGame() {
           <div className="rounded-2xl bg-white p-6 shadow-xl">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Maze</h3>
             <div className="grid grid-cols-6 gap-2 mb-4">
-              {Array.from({ length: GRID_SIZE }).map((_, y) =>
-                Array.from({ length: GRID_SIZE }).map((_, x) => {
-                  const isPlayer = playerPos.x === x && playerPos.y === y;
-                  const isStart = START_POS.x === x && START_POS.y === y;
-                  const isEnd = END_POS.x === x && END_POS.y === y;
-                  const isObst = isObstacle(x, y);
+              {Array.from({ length: GRID_SIZE }, (_, rowIndex) =>
+                Array.from({ length: GRID_SIZE }, (__, colIndex) => {
+                  const isPlayer = playerPos.x === colIndex && playerPos.y === rowIndex;
+                  const isStart = START_POS.x === colIndex && START_POS.y === rowIndex;
+                  const isEnd = END_POS.x === colIndex && END_POS.y === rowIndex;
+                  const isObst = isObstacle(colIndex, rowIndex);
+
+                  let bgColor = 'bg-gray-100';
+                  let content = '';
+                  
+                  if (isPlayer) {
+                    bgColor = 'bg-blue-500 text-white';
+                    content = '🤖';
+                  } else if (isEnd) {
+                    bgColor = 'bg-green-500 text-white';
+                    content = '🎯';
+                  } else if (isStart) {
+                    bgColor = 'bg-purple-200';
+                    content = 'S';
+                  } else if (isObst) {
+                    bgColor = 'bg-gray-800';
+                  }
 
                   return (
                     <div
-                      key={`${x}-${y}`}
-                      className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-all ${
-                        isPlayer
-                          ? 'bg-blue-500 text-white'
-                          : isEnd
-                          ? 'bg-green-500 text-white'
-                          : isStart
-                          ? 'bg-purple-200'
-                          : isObst
-                          ? 'bg-gray-800'
-                          : 'bg-gray-100'
-                      }`}
+                      key={`${colIndex}-${rowIndex}`}
+                      className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-all ${bgColor}`}
                     >
-                      {isPlayer ? '🤖' : isEnd ? '🎯' : isStart && !isPlayer ? 'S' : ''}
+                      {content}
                     </div>
                   );
                 })
@@ -194,19 +200,19 @@ export default function LogicMazeGame() {
 
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-purple-200 rounded"></div>
+                <div className="w-6 h-6 bg-purple-200 rounded" />
                 <span className="text-gray-600">Start (0, 0)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-green-500 rounded"></div>
+                <div className="w-6 h-6 bg-green-500 rounded" />
                 <span className="text-gray-600">Goal (5, 5)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-blue-500 rounded"></div>
+                <div className="w-6 h-6 bg-blue-500 rounded" />
                 <span className="text-gray-600">Player</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-gray-800 rounded"></div>
+                <div className="w-6 h-6 bg-gray-800 rounded" />
                 <span className="text-gray-600">Obstacle</span>
               </div>
             </div>
@@ -262,8 +268,8 @@ export default function LogicMazeGame() {
             {/* Output */}
             {output.length > 0 && (
               <div className="bg-gray-900 rounded-lg p-4 max-h-48 overflow-y-auto">
-                {output.map((line, index) => (
-                  <div key={index} className="font-mono text-sm text-gray-300">
+                {output.map((line) => (
+                  <div key={line} className="font-mono text-sm text-gray-300">
                     {line}
                   </div>
                 ))}

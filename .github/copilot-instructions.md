@@ -67,10 +67,11 @@ async function getUserProgress(userId: string): Promise<UserProgress[]> {
       throw new ValidationError('Invalid userId format');
     }
     
-    const userProgress = await db.userProgress.findMany({
-      where: { userId },
-      select: { courseId: true, completionPercentage: true, lastAccessedAt: true }
-    });
+    const userProgress = db.prepare(`
+      SELECT courseId, completionPercentage, updatedAt as lastAccessedAt
+      FROM course_enrollments
+      WHERE userId = ?
+    `).all(userId);
     
     return userProgress;
   } catch (error) {
@@ -81,7 +82,7 @@ async function getUserProgress(userId: string): Promise<UserProgress[]> {
 
 // ❌ BAD - Magic numbers, unclear code, loose types
 function getUserProgress(userId: any) {
-  return db.userProgress.findMany({ where: { userId } })
+  return db.prepare('SELECT * FROM course_enrollments WHERE userId = ?').all(userId)
     .filter(p => p.x > 50)  // What is 50? What is x?
     .slice(0, 10);          // Why 10? Hardcoded limit?
 }

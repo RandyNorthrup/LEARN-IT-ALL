@@ -218,8 +218,8 @@ export default function ExercisePage() {
                   </button>
                   {showHints && (
                     <ul className="space-y-2">
-                      {exercise.hints.map((hint, index) => (
-                        <li key={index} className="text-sm text-gray-700 p-3 bg-blue-50 rounded-lg">
+                      {exercise.hints.map((hint) => (
+                        <li key={hint} className="text-sm text-gray-700 p-3 bg-blue-50 rounded-lg">
                           {hint}
                         </li>
                       ))}

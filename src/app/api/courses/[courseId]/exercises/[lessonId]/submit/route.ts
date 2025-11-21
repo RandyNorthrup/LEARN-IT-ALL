@@ -207,6 +207,7 @@ async function evaluatePythonOutput(
 }
 
 // FIXME-PROD: Implement Python sandbox execution
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _evaluatePythonCode(code: string, testCase: TestCase): Promise<boolean> {
   // FIXME-PROD: Replace with actual Python sandbox execution
   // For now, we'll do basic validation checks
@@ -231,6 +232,7 @@ async function _evaluatePythonCode(code: string, testCase: TestCase): Promise<bo
 }
 
 // FIXME-PROD: Implement Python sandbox execution
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _evaluatePythonFunction(
   code: string,
   input: string,

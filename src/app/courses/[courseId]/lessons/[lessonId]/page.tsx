@@ -122,8 +122,8 @@ export default function LessonPage() {
                   Learning Objectives
                 </h3>
                 <ul className="space-y-2">
-                  {lesson.frontmatter.objectives.map((objective, index) => (
-                    <li key={index} className="flex items-start">
+                  {lesson.frontmatter.objectives.map((objective) => (
+                    <li key={objective} className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
                       <span>{objective}</span>
                     </li>
@@ -170,7 +170,7 @@ export default function LessonPage() {
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Complete the Exercise</h3>
                 <p className="text-gray-700 mb-4">
-                  Practice what you've learned by completing the exercise for this lesson.
+                  Practice what you&apos;ve learned by completing the exercise for this lesson.
                   You must pass the exercise to proceed to the next lesson.
                 </p>
                 <Link

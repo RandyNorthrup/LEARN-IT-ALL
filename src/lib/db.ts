@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import { join } from 'path';
 
 // Create singleton database connection
-const dbPath = join(process.cwd(), 'prisma', 'learn-it-all.db');
+const dbPath = join(process.cwd(), 'database', 'learn-it-all.db');
 const db = new Database(dbPath);
 
 // Enable foreign keys and set pragmas

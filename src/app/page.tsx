@@ -25,6 +25,7 @@ export default function HomePage() {
           setShowModal(true);
           setLoading(false);
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
         setShowModal(true);
         setLoading(false);

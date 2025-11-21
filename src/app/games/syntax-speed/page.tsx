@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Zap, Trophy, Clock } from 'lucide-react';
 
@@ -28,6 +28,14 @@ export default function SyntaxSpeedGame() {
   const [wpm, setWpm] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const calculateWPM = useCallback(() => {
+    const timeElapsed = (60 - timeLeft) / 60;
+    if (timeElapsed > 0) {
+      const words = correctCount * 5;
+      setWpm(Math.round(words / timeElapsed));
+    }
+  }, [timeLeft, correctCount]);
+
   useEffect(() => {
     if (gameStarted && !gameOver && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -42,7 +50,7 @@ export default function SyntaxSpeedGame() {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [gameStarted, gameOver, timeLeft]);
+  }, [gameStarted, gameOver, timeLeft, calculateWPM]);
 
   function startGame() {
     setGameStarted(true);
@@ -54,14 +62,6 @@ export default function SyntaxSpeedGame() {
     setUserInput('');
     setCurrentSnippet(codeSnippets[Math.floor(Math.random() * codeSnippets.length)]);
     setTimeout(() => inputRef.current?.focus(), 100);
-  }
-
-  function calculateWPM() {
-    const timeElapsed = (60 - timeLeft) / 60;
-    if (timeElapsed > 0) {
-      const words = correctCount * 5;
-      setWpm(Math.round(words / timeElapsed));
-    }
   }
 
   function handleInputChange(value: string) {
@@ -102,24 +102,30 @@ export default function SyntaxSpeedGame() {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        {!gameStarted ? (
-          <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
-            <Zap className="h-20 w-20 text-green-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Syntax Speed!</h2>
-            <p className="text-gray-600 mb-6 text-lg">
-              Type Python code snippets as accurately and quickly as possible.
-              Each character typed correctly earns you points. You have 60 seconds!
-            </p>
-            <button
-              onClick={startGame}
-              className="px-8 py-4 bg-green-600 text-white rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors"
-            >
-              Start Game
-            </button>
-          </div>
-        ) : gameOver ? (
-          <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
-            <Trophy className="h-20 w-20 text-yellow-500 mx-auto mb-4" />
+        {(() => {
+          if (!gameStarted) {
+            return (
+              <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
+                <Zap className="h-20 w-20 text-green-600 mx-auto mb-4" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Syntax Speed!</h2>
+                <p className="text-gray-600 mb-6 text-lg">
+                  Type Python code snippets as accurately and quickly as possible.
+                  Each character typed correctly earns you points. You have 60 seconds!
+                </p>
+                <button
+                  onClick={startGame}
+                  className="px-8 py-4 bg-green-600 text-white rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors"
+                >
+                  Start Game
+                </button>
+              </div>
+            );
+          }
+          
+          if (gameOver) {
+            return (
+              <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
+                <Trophy className="h-20 w-20 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Game Over!</h2>
             <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
@@ -142,7 +148,10 @@ export default function SyntaxSpeedGame() {
               Play Again
             </button>
           </div>
-        ) : (
+            );
+          }
+          
+          return (
           <div className="space-y-6">
             {/* Stats Bar */}
             <div className="flex gap-4 justify-between items-center bg-white rounded-lg p-4 shadow-lg">
@@ -166,12 +175,14 @@ export default function SyntaxSpeedGame() {
               {/* Display Code to Type */}
               <div className="bg-gray-900 rounded-lg p-6 mb-6 min-h-24 flex items-center justify-center">
                 <div className="font-mono text-2xl tracking-wide">
-                  {currentSnippet.split('').map((char, index) => (
-                    <span key={index} className={getCharacterClass(index)}>
-                      {char}
-                    </span>
-                  ))}
-                </div>
+                  {currentSnippet.split('').map((char, idx) => {
+                    const uniqueKey = `${currentSnippet}-${idx}-${char}-${char.charCodeAt(0)}`;
+                    return (
+                      <span key={uniqueKey} className={getCharacterClass(idx)}>
+                        {char}
+                      </span>
+                    );
+                  })}\n                </div>
               </div>
 
               {/* Input Field */}
@@ -191,7 +202,8 @@ export default function SyntaxSpeedGame() {
               </p>
             </div>
           </div>
-        )}
+          );
+        })()}
       </main>
     </div>
   );

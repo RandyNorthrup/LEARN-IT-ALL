@@ -34,7 +34,7 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for 
 |----------|-----------|
 | **Framework** | Next.js 16.0 (App Router) |
 | **Language** | TypeScript 5.3 (Strict Mode) |
-| **Database** | SQLite with better-sqlite3 |
+| **Database** | SQLite with better-sqlite3 (direct) |
 | **Styling** | Tailwind CSS 4.0 |
 | **Code Editor** | Monaco Editor (VS Code engine) |
 | **Syntax Highlighting** | React Syntax Highlighter |
@@ -79,7 +79,8 @@ LEARN-IT-ALL/
 ├── content/              # Course content (JSON-based curriculum)
 │   └── courses/
 │       └── python-basics/    # 180+ lessons, exercises, and quizzes
-├── prisma/               # SQLite database (auto-created)
+├── database/             # SQLite database directory
+│   └── learn-it-all.db   # SQLite database file (auto-created)
 ├── public/               # Static assets
 ├── scripts/              # Utility scripts
 ├── src/
@@ -92,7 +93,7 @@ LEARN-IT-ALL/
 │   ├── components/       # React components
 │   ├── lib/              # Utilities and helpers
 │   │   ├── constants.ts  # App-wide constants
-│   │   ├── db.ts         # Database utilities
+│   │   ├── db.ts         # Database utilities (better-sqlite3)
 │   │   └── courseLoader.ts
 │   └── types/            # TypeScript type definitions
 ├── .gitignore
@@ -199,8 +200,8 @@ npm run build            # Build for production
 npm run start            # Start production server
 
 # Database
-# Database auto-initializes on first run
-# Progress data stored in prisma/learn-it-all.db
+# Database auto-initializes on first run using better-sqlite3
+# Progress data stored in database/learn-it-all.db (SQLite file)
 
 # Code Quality
 npm run lint             # Run ESLint (standard)
@@ -218,7 +219,7 @@ npm run mocks:scan       # Scan for TODO/MOCK/FIXME comments
 
 ## 🗄️ Database Schema
 
-The platform uses SQLite with better-sqlite3. Key tables include:
+The platform uses **better-sqlite3** directly (no ORM). The database auto-initializes on first run with the following tables:
 
 - **settings** - User preferences and display name
 - **course_enrollments** - Course enrollment and completion tracking
@@ -228,7 +229,9 @@ The platform uses SQLite with better-sqlite3. Key tables include:
 - **test_results** - Exercise test case results
 - **certificates** - Course completion certificates
 
-See `src/lib/db.ts` for the complete schema and database helpers.
+Database location: `database/learn-it-all.db` (SQLite file)
+
+See `src/lib/db.ts` for the complete schema and database helper functions.
 
 ---
 

@@ -156,24 +156,30 @@ export default function CodeHunterGame() {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        {!gameStarted ? (
-          <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
-            <Target className="h-20 w-20 text-blue-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Code Hunter!</h2>
-            <p className="text-gray-600 mb-6 text-lg">
-              Find bugs in Python code as fast as you can. Each correct answer gives you 10 points.
-              Using hints reduces points to 5. You have 60 seconds. Good luck!
-            </p>
-            <button
-              onClick={startGame}
-              className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
-            >
-              Start Game
-            </button>
-          </div>
-        ) : gameOver ? (
-          <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
-            <Trophy className="h-20 w-20 text-yellow-500 mx-auto mb-4" />
+        {(() => {
+          if (!gameStarted) {
+            return (
+              <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
+                <Target className="h-20 w-20 text-blue-600 mx-auto mb-4" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Code Hunter!</h2>
+                <p className="text-gray-600 mb-6 text-lg">
+                  Find bugs in Python code as fast as you can. Each correct answer gives you 10 points.
+                  Using hints reduces points to 5. You have 60 seconds. Good luck!
+                </p>
+                <button
+                  onClick={startGame}
+                  className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
+                >
+                  Start Game
+                </button>
+              </div>
+            );
+          }
+          
+          if (gameOver) {
+            return (
+              <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
+                <Trophy className="h-20 w-20 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Game Over!</h2>
             <div className="text-6xl font-bold text-blue-600 mb-4">{score}</div>
             <p className="text-gray-600 mb-2">Final Score</p>
@@ -187,7 +193,10 @@ export default function CodeHunterGame() {
               Play Again
             </button>
           </div>
-        ) : (
+            );
+          }
+          
+          return (
           <div className="space-y-6">
             {/* Stats Bar */}
             <div className="flex gap-4 justify-between items-center bg-white rounded-lg p-4 shadow-lg">
@@ -213,7 +222,7 @@ export default function CodeHunterGame() {
               <div className="bg-gray-900 rounded-lg p-4 mb-4">
                 {codeLines.map((line, index) => (
                   <button
-                    key={index}
+                    key={`line-${index + 1}-${line}`}
                     onClick={() => setSelectedLine(index + 1)}
                     className={`w-full text-left font-mono text-sm py-1 px-2 hover:bg-gray-800 rounded transition-colors ${
                       selectedLine === index + 1 ? 'bg-blue-600 text-white' : 'text-gray-300'
@@ -256,7 +265,8 @@ export default function CodeHunterGame() {
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
       </main>
     </div>
   );

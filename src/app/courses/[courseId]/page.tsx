@@ -264,13 +264,15 @@ export default function CourseDetailPage() {
                             }`}
                           >
                             <div className="flex items-center flex-1">
-                              {isCompleted ? (
-                                <CheckCircle2 className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
-                              ) : isLocked ? (
-                                <Lock className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                              ) : (
-                                <div className="h-5 w-5 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0" />
-                              )}
+                              {(() => {
+                                if (isCompleted) {
+                                  return <CheckCircle2 className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />;
+                                }
+                                if (isLocked) {
+                                  return <Lock className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />;
+                                }
+                                return <div className="h-5 w-5 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0" />;
+                              })()}
                               <span className={`text-sm ${isLocked ? 'text-gray-500' : 'text-gray-900 font-medium'}`}>
                                 Lesson {chapterIndex + 1}.{lessonIndex + 1}: {lessonId.replace(/^lesson-\d+-/, '').replace(/-/g, ' ')}
                               </span>
