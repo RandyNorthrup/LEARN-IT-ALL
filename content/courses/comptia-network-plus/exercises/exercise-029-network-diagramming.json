@@ -1,0 +1,118 @@
+{
+  "id": "exercise-029",
+  "lessonId": "lesson-029-network-diagramming",
+  "title": "Network Diagram Creation Following Standards",
+  "description": "Your company is preparing for an ISO 27001 audit, and the auditor requires comprehensive network documentation following industry standards. You need to create a logical network diagram that accurately represents your network topology, uses standard Cisco symbols, includes proper IP addressing in CIDR notation, and follows professional diagramming best practices. The diagram will be used for security reviews, change management, and troubleshooting.",
+  "difficulty": "medium",
+  "points": 75,
+  "language": "text",
+  "scenario": {
+    "company": "SecureCloud Services",
+    "situation": "ISO 27001 audit requires professional network diagrams following standards",
+    "requirements": [
+      "Create logical network diagram showing all network segments",
+      "Use standard Cisco network symbols",
+      "Include IP addressing in CIDR notation for all subnets",
+      "Add security zones and firewall rules",
+      "Include legend and proper labeling"
+    ],
+    "network_overview": {
+      "internet_connection": "Dual ISPs (primary 1Gbps, secondary 500Mbps)",
+      "security_zones": [
+        "DMZ",
+        "Internal",
+        "Guest",
+        "Management"
+      ],
+      "vlans": [
+        "VLAN 10 Engineering",
+        "VLAN 20 Finance",
+        "VLAN 30 Guest WiFi",
+        "VLAN 99 Management"
+      ],
+      "servers": [
+        "Web (public-facing)",
+        "Database (internal)",
+        "Email",
+        "File server"
+      ],
+      "devices": "2 core switches, 3 distribution switches, 20 access switches, 2 firewalls"
+    }
+  },
+  "starterCode": "# Network Logical Diagram - SecureCloud Services\n# ISO 27001 Compliance Documentation\n# Created: November 21, 2025\n\n## Network Topology (Text-based representation)\n## Note: In production, use Visio, Lucidchart, or Draw.io\n\n```\n                    INTERNET\n                       |\n        +-------------+-------------+\n        |                           |\n   [ISP-Primary]               [ISP-Secondary]\n   1 Gbps Fiber                500 Mbps Cable\n   Public IP: ___.___.___.___  Public IP: ___.___.___.___\n        |                           |\n        +-------------+-------------+\n                      |\n                [Edge Router]\n                BGP AS: _____\n                      |\n        +-------------+-------------+\n        |                           |\n  [Firewall-01]               [Firewall-02]\n  (Active)                    (Standby)\n  HSRP VIP: ___.___.___.___\n        |\n        +-------------------+-------------------+\n        |                   |                   |\n    [DMZ Zone]         [Internal Zone]     [Guest Zone]\n    Subnet: _____      Subnet: _____       Subnet: _____\n    Gateway: _____     Gateway: _____      Gateway: _____\n        |                   |                   |\n        |                   |                   |\n   [Web Server]    [Core-SW-01/02]      [Guest WiFi AP]\n   IP: _____       HSRP VIP: _____      VLAN: _____\n   Services: ___   Stack/HSRP           DHCP Range: _____\n        |                   |\n   [Mail Server]            |\n   IP: _____       +--------+--------+--------+\n   Services: ___   |        |        |        |\n                [VLAN 10][VLAN 20][VLAN 50][VLAN 99]\n                Engineering Finance Servers Mgmt\n                Subnet: ___ Subnet: ___ Subnet: ___ Subnet: ___\n                Gateway: ___ Gateway: ___ Gateway: ___ Gateway: ___\n                Hosts: ___  Hosts: ___  Hosts: ___  Hosts: ___\n                    |        |        |        |\n                    |        |        |        |\n              [Dist-SW-01] [Dist-SW-02] [Database] [Core Mgmt]\n              Access layer  Access layer  Primary/  Interface\n              switches      switches      Secondary IPs: _____\n              15 switches   8 switches    IPs: _____\n```\n\n## IP Addressing Scheme\n\n### Public IP Addresses\n| Device/Service | IP Address (CIDR) | Purpose |\n|----------------|-------------------|----------|\n| ISP-Primary WAN | ___.___.___.___/___ | Primary internet |\n| ISP-Secondary WAN | ___.___.___.___/___ | Backup internet |\n| Public Web Server | ___.___.___.___/___ | NAT to DMZ web server |\n| Public Mail (MX) | ___.___.___.___/___ | NAT to DMZ mail server |\n\n### Private IP Addresses (Internal)\n| VLAN/Segment | Subnet (CIDR) | Gateway | DHCP Range | Purpose |\n|--------------|---------------|---------|------------|----------|\n| DMZ | ___.___.___.___/___ | ___.___.___.___  | Static only | Public-facing servers |\n| VLAN 10 (Engineering) | ___.___.___.___/___ | ___.___.___.___  | ___.___.___.___-___ | Engineering workstations |\n| VLAN 20 (Finance) | ___.___.___.___/___ | ___.___.___.___  | ___.___.___.___-___ | Finance workstations |\n| VLAN 30 (Guest) | ___.___.___.___/___ | ___.___.___.___  | ___.___.___.___-___ | Guest WiFi |\n| VLAN 50 (Servers) | ___.___.___.___/___ | ___.___.___.___  | Static only | Internal servers |\n| VLAN 99 (Management) | ___.___.___.___/___ | ___.___.___.___  | Static only | Device management |\n\n### Critical Device Static IPs\n| Device | Management IP | Interface/VLAN | Purpose |\n|--------|---------------|----------------|----------|\n| Core-SW-01 | ___.___.___.___/___ | VLAN 99 | Core switch primary |\n| Core-SW-02 | ___.___.___.___/___ | VLAN 99 | Core switch secondary |\n| Firewall-01 | ___.___.___.___/___ | VLAN 99 | Firewall primary |\n| Firewall-02 | ___.___.___.___/___ | VLAN 99 | Firewall secondary |\n| DMZ-Web-Server | ___.___.___.___/___ | DMZ | Public website |\n| DMZ-Mail-Server | ___.___.___.___/___ | DMZ | Email gateway |\n| DB-Server-01 | ___.___.___.___/___ | VLAN 50 | Database primary |\n| DB-Server-02 | ___.___.___.___/___ | VLAN 50 | Database secondary |\n\n## Security Zones and Firewall Rules\n\n### Zone Definitions\n| Zone | Trust Level | Networks | Purpose |\n|------|-------------|----------|----------|\n| Internet | Untrusted | 0.0.0.0/0 | External networks |\n| DMZ | Low trust | ___.___.___.___/___ | Public-facing services |\n| Internal | Trusted | ___.___.___.___/___ | Corporate network |\n| Guest | Untrusted | ___.___.___.___/___ | Guest wireless |\n| Management | High trust | ___.___.___.___/___ | Device management |\n\n### Firewall Policy (High-Level)\n| Source Zone | Destination Zone | Allowed Services | Action |\n|-------------|------------------|------------------|--------|\n| Internet | DMZ | HTTP(S), SMTP | ___ |\n| Internet | Internal | ___ | DENY |\n| DMZ | Internal | ___ (Database:3306) | ALLOW |\n| Internal | Internet | HTTP(S), DNS, NTP | ___ |\n| Internal | DMZ | HTTP(S), SMTP | ___ |\n| Guest | Internet | HTTP(S), DNS | ___ |\n| Guest | Internal | ___ | DENY |\n| Management | All | SSH, HTTPS, SNMP | ___ |\n\n## Network Device Inventory\n\n### Core Infrastructure\n| Device Type | Model | Quantity | Role | Redundancy |\n|-------------|-------|----------|------|------------|\n| Edge Router | Cisco ISR 4451 | 1 | Internet gateway | Dual ISP |\n| Firewall | ___ | 2 | Security gateway | Active/Passive |\n| Core Switch | ___ | 2 | Network core | HSRP |\n| Distribution Switch | ___ | 3 | VLAN routing | Stacked |\n| Access Switch | ___ | 23 | End-user access | None |\n\n## Color Coding Legend\n(For actual diagrams in Visio/Lucidchart)\n\n| Color | Purpose | Example |\n|-------|---------|----------|\n| Red | ___ | Firewall, security devices |\n| Blue | ___ | Switches, routers |\n| Green | ___ | Servers |\n| Yellow | ___ | Wireless access points |\n| Orange | ___ | Internet/WAN connections |\n| Purple | ___ | Management connections |\n| Gray | ___ | End-user devices |\n\n## Symbol Standards (Cisco Icons)\n\n### Device Symbols\n- Router: ___ (describe or reference standard icon)\n- Layer 3 Switch: ___\n- Layer 2 Switch: ___\n- Firewall: ___\n- Server: ___\n- Wireless AP: ___\n- Cloud (Internet): ___\n- Workstation: ___\n\n### Connection Types\n- Solid line: ___ (Ethernet)\n- Dashed line: ___ (Wireless)\n- Thick line: ___ (High-bandwidth trunk)\n- Red line: ___ (Failed/down link)\n- Lightning bolt on line: ___ (EtherChannel/LAG)\n\n## Documentation Standards\n\n### Diagram Metadata\n- **Title:** Network Logical Diagram - SecureCloud Services\n- **Document ID:** NET-DIAG-001\n- **Version:** 1.0\n- **Created By:** ___\n- **Date:** November 21, 2025\n- **Last Updated:** ___\n- **Approved By:** ___\n- **Review Frequency:** ___\n\n### Change Log\n| Version | Date | Change Description | Author |\n|---------|------|-------------------|--------|\n| 1.0 | 2025-11-21 | Initial diagram creation | ___ |\n| ___ | ___ | ___ | ___ |\n\n## Diagram Best Practices Applied\n\n- [ ] Uses standard Cisco network symbols\n- [ ] IP addresses shown in CIDR notation\n- [ ] All subnets and gateways documented\n- [ ] Security zones clearly labeled\n- [ ] Redundancy paths shown\n- [ ] Color coding consistent throughout\n- [ ] Legend included\n- [ ] Title block with version and date\n- [ ] Readable at standard page sizes (11x17 or A3)\n- [ ] Follows left-to-right, top-to-bottom flow\n- [ ] Interface labels on all connections\n- [ ] Device hostnames match naming convention",
+  "solution": "# Network Logical Diagram - SecureCloud Services\n# ISO 27001 Compliance Documentation\n# Created: November 21, 2025\n\n## Network Topology (Text-based representation)\n## Note: In production, use Visio, Lucidchart, or Draw.io\n\n```\n                    INTERNET\n                       |\n        +-------------+-------------+\n        |                           |\n   [ISP-Primary]               [ISP-Secondary]\n   1 Gbps Fiber                500 Mbps Cable\n   Public IP: 203.0.113.0/30   Public IP: 198.51.100.0/30\n        |                           |\n        +-------------+-------------+\n                      |\n                [Edge Router]\n                BGP AS: 65001\n                      |\n        +-------------+-------------+\n        |                           |\n  [Firewall-01]               [Firewall-02]\n  (Active)                    (Standby)\n  HSRP VIP: 10.0.0.1/24\n        |\n        +-------------------+-------------------+\n        |                   |                   |\n    [DMZ Zone]         [Internal Zone]     [Guest Zone]\n    Subnet: 172.16.1.0/24   Subnet: 10.0.0.0/8   Subnet: 192.168.100.0/24\n    Gateway: 172.16.1.1     Gateway: 10.0.0.1    Gateway: 192.168.100.1\n        |                   |                   |\n        |                   |                   |\n   [Web Server]    [Core-SW-01/02]      [Guest WiFi AP]\n   IP: 172.16.1.10/24      HSRP VIP: 10.0.0.1   VLAN: 30\n   Services: HTTP/HTTPS    Stack/HSRP           DHCP Range: 192.168.100.10-250\n        |                   |\n   [Mail Server]            |\n   IP: 172.16.1.20/24      +--------+--------+--------+\n   Services: SMTP/IMAP     |        |        |        |\n                        [VLAN 10][VLAN 20][VLAN 50][VLAN 99]\n                        Engineering Finance Servers  Mgmt\n                        10.10.0.0/24 10.20.0.0/24 10.50.0.0/24 192.168.99.0/24\n                        GW: 10.10.0.1 GW: 10.20.0.1 GW: 10.50.0.1 GW: 192.168.99.1\n                        80 hosts   40 hosts   25 hosts   50 devices\n                            |        |        |        |\n                            |        |        |        |\n                      [Dist-SW-01] [Dist-SW-02] [Database] [Core Mgmt]\n                      Access layer  Access layer  Primary:   Core-SW-01:\n                      15 switches   8 switches    10.50.0.10 192.168.99.2\n                                                  Secondary: Core-SW-02:\n                                                  10.50.0.11 192.168.99.3\n```\n\n## IP Addressing Scheme\n\n### Public IP Addresses\n| Device/Service | IP Address (CIDR) | Purpose |\n|----------------|-------------------|----------|\n| ISP-Primary WAN | 203.0.113.2/30 | Primary internet connection |\n| ISP-Secondary WAN | 198.51.100.2/30 | Backup internet connection |\n| Public Web Server | 203.0.113.10/32 | NAT to DMZ web server (172.16.1.10) |\n| Public Mail (MX) | 203.0.113.20/32 | NAT to DMZ mail server (172.16.1.20) |\n\n### Private IP Addresses (Internal)\n| VLAN/Segment | Subnet (CIDR) | Gateway | DHCP Range | Purpose |\n|--------------|---------------|---------|------------|----------|\n| DMZ | 172.16.1.0/24 | 172.16.1.1  | Static only | Public-facing servers |\n| VLAN 10 (Engineering) | 10.10.0.0/24 | 10.10.0.1  | 10.10.0.10-10.10.0.250 | Engineering workstations (80 hosts) |\n| VLAN 20 (Finance) | 10.20.0.0/24 | 10.20.0.1  | 10.20.0.10-10.20.0.250 | Finance workstations (40 hosts) |\n| VLAN 30 (Guest) | 192.168.100.0/24 | 192.168.100.1  | 192.168.100.10-192.168.100.250 | Guest WiFi |\n| VLAN 50 (Servers) | 10.50.0.0/24 | 10.50.0.1  | Static only | Internal servers (25 servers) |\n| VLAN 99 (Management) | 192.168.99.0/24 | 192.168.99.1  | Static only | Device management (50 devices) |\n\n### Critical Device Static IPs\n| Device | Management IP | Interface/VLAN | Purpose |\n|--------|---------------|----------------|----------|\n| Core-SW-01 | 192.168.99.2/24 | VLAN 99 | Core switch primary |\n| Core-SW-02 | 192.168.99.3/24 | VLAN 99 | Core switch secondary |\n| Firewall-01 | 192.168.99.10/24 | VLAN 99 | Firewall primary |\n| Firewall-02 | 192.168.99.11/24 | VLAN 99 | Firewall secondary |\n| DMZ-Web-Server | 172.16.1.10/24 | DMZ | Public website (Apache/Nginx) |\n| DMZ-Mail-Server | 172.16.1.20/24 | DMZ | Email gateway (Postfix) |\n| DB-Server-01 | 10.50.0.10/24 | VLAN 50 | Database primary (MySQL) |\n| DB-Server-02 | 10.50.0.11/24 | VLAN 50 | Database secondary (MySQL replica) |\n\n## Security Zones and Firewall Rules\n\n### Zone Definitions\n| Zone | Trust Level | Networks | Purpose |\n|------|-------------|----------|----------|\n| Internet | Untrusted | 0.0.0.0/0 | External networks |\n| DMZ | Low trust | 172.16.1.0/24 | Public-facing services |\n| Internal | Trusted | 10.0.0.0/8 | Corporate network |\n| Guest | Untrusted | 192.168.100.0/24 | Guest wireless |\n| Management | High trust | 192.168.99.0/24 | Device management |\n\n### Firewall Policy (High-Level)\n| Source Zone | Destination Zone | Allowed Services | Action |\n|-------------|------------------|------------------|--------|\n| Internet | DMZ | HTTP(80), HTTPS(443), SMTP(25) | ALLOW |\n| Internet | Internal | ALL | DENY |\n| DMZ | Internal | MySQL(3306) to 10.50.0.10 only | ALLOW |\n| Internal | Internet | HTTP(S), DNS(53), NTP(123) | ALLOW |\n| Internal | DMZ | HTTP(S), SMTP | ALLOW |\n| Guest | Internet | HTTP(S), DNS | ALLOW |\n| Guest | Internal | ALL | DENY |\n| Management | All | SSH(22), HTTPS(443), SNMP(161) | ALLOW |\n\n## Network Device Inventory\n\n### Core Infrastructure\n| Device Type | Model | Quantity | Role | Redundancy |\n|-------------|-------|----------|------|------------|\n| Edge Router | Cisco ISR 4451 | 1 | Internet gateway | Dual ISP (BGP) |\n| Firewall | Cisco ASA 5516-X | 2 | Security gateway | Active/Passive (failover) |\n| Core Switch | Cisco Catalyst 9500 | 2 | Network core | HSRP + VSS |\n| Distribution Switch | Cisco Catalyst 3850 | 3 | VLAN routing | Stacked (StackWise-480) |\n| Access Switch | Cisco Catalyst 2960-X | 23 | End-user access | None (uplink redundancy) |\n\n## Color Coding Legend\n(For actual diagrams in Visio/Lucidchart)\n\n| Color | Purpose | Example |\n|-------|---------|----------|\n| Red | Security devices | Firewall, IPS |\n| Blue | Network devices | Switches, routers |\n| Green | Servers | Web, database, file servers |\n| Yellow | Wireless | Access points, controllers |\n| Orange | WAN/Internet | ISP connections, edge router |\n| Purple | Management | Out-of-band management |\n| Gray | End-user devices | Workstations, laptops, phones |\n\n## Symbol Standards (Cisco Icons)\n\n### Device Symbols\n- Router: Rectangle with arrows on sides (Cisco standard router icon)\n- Layer 3 Switch: Stacked rectangles with upward arrows (multilayer switch)\n- Layer 2 Switch: Single rectangle with multiple ports\n- Firewall: Rectangle with flame icon or brick wall pattern\n- Server: Vertical rectangle (tower) or horizontal rectangle (rack mount)\n- Wireless AP: Circle with radiating waves\n- Cloud (Internet): Cloud shape with \"Internet\" label\n- Workstation: Monitor/computer icon\n\n### Connection Types\n- Solid line: Physical Ethernet connection\n- Dashed line: Wireless connection\n- Thick line: High-bandwidth trunk (10 Gbps+)\n- Red line: Failed/down link (for troubleshooting diagrams)\n- Lightning bolt on line: EtherChannel/Port-channel (LACP/PAgP)\n\n## Documentation Standards\n\n### Diagram Metadata\n- **Title:** Network Logical Diagram - SecureCloud Services\n- **Document ID:** NET-DIAG-001\n- **Version:** 1.0\n- **Created By:** Network Engineering Team\n- **Date:** November 21, 2025\n- **Last Updated:** November 21, 2025\n- **Approved By:** IT Director - John Smith\n- **Review Frequency:** Quarterly or after major changes\n\n### Change Log\n| Version | Date | Change Description | Author |\n|---------|------|-------------------|--------|\n| 1.0 | 2025-11-21 | Initial diagram creation for ISO 27001 audit | Network Engineer |\n| 1.1 | TBD | Future updates | TBD |\n\n## Diagram Best Practices Applied\n\n- [X] Uses standard Cisco network symbols\n- [X] IP addresses shown in CIDR notation\n- [X] All subnets and gateways documented\n- [X] Security zones clearly labeled\n- [X] Redundancy paths shown (HSRP, dual ISP)\n- [X] Color coding consistent throughout\n- [X] Legend included\n- [X] Title block with version and date\n- [X] Readable at standard page sizes (11x17 or A3)\n- [X] Follows left-to-right, top-to-bottom flow (Internet \u2192 Edge \u2192 Core \u2192 Distribution)\n- [X] Interface labels on all connections\n- [X] Device hostnames match naming convention (Location-Function-Number)",
+  "hints": [
+    "Use CIDR notation for all IP addresses (e.g., 10.10.0.0/24 instead of 255.255.255.0)",
+    "DMZ typically uses 172.16.0.0/12 private range or small public subnet",
+    "Management VLAN commonly uses 192.168.x.x or VLAN 99",
+    "Security zones: Internet (untrusted), DMZ (low trust), Internal (trusted), Management (high trust)",
+    "HSRP virtual IP should be .1 in each subnet (standard gateway)",
+    "Include both physical and logical connections in network diagrams",
+    "Legend should explain colors, line types, and symbols used",
+    "Document version, date, and approval for compliance requirements",
+    "Standard Cisco icons available from Cisco.com or in Visio/Lucidchart libraries",
+    "Firewall rules should follow least privilege: deny all, allow specific required services"
+  ],
+  "testCases": [
+    {
+      "input": "CIDR notation",
+      "expected": "All IP addresses and subnets use CIDR notation (e.g., /24, /30)",
+      "assert": "assert '/24' in solution or '/30' in solution or '/32' in solution",
+      "id": "tc1"
+    },
+    {
+      "input": "Security zones defined",
+      "expected": "DMZ, Internal, Guest, and Management zones clearly defined with subnets",
+      "assert": "assert 'DMZ' in solution and 'Internal' in solution and 'Guest' in solution and 'Management' in solution",
+      "id": "tc2"
+    },
+    {
+      "input": "Gateway addresses",
+      "expected": "Gateway IP addresses documented for all VLANs (typically .1)",
+      "assert": "assert 'Gateway' in solution or 'GW:' in solution",
+      "id": "tc3"
+    },
+    {
+      "input": "Standard symbols referenced",
+      "expected": "Cisco standard symbols referenced (router, switch, firewall, server)",
+      "assert": "assert 'Router' in solution and 'Switch' in solution and 'Firewall' in solution",
+      "id": "tc4"
+    },
+    {
+      "input": "Color coding legend",
+      "expected": "Color coding legend with consistent color assignments",
+      "assert": "assert 'Red' in solution and 'Blue' in solution and 'Color' in solution",
+      "id": "tc5"
+    },
+    {
+      "input": "Redundancy shown",
+      "expected": "Redundant components documented (dual ISP, dual firewalls, HSRP)",
+      "assert": "assert 'HSRP' in solution or 'Dual' in solution or 'Primary' in solution and 'Secondary' in solution",
+      "id": "tc6"
+    },
+    {
+      "input": "Firewall rules",
+      "expected": "Firewall policy with source zone, destination zone, services, and action",
+      "assert": "assert 'ALLOW' in solution and 'DENY' in solution",
+      "id": "tc7"
+    },
+    {
+      "input": "Document metadata",
+      "expected": "Document includes version, date, author, and approval information",
+      "assert": "assert 'Version' in solution and 'Date' in solution",
+      "id": "tc8"
+    },
+    {
+      "input": "Private IP ranges",
+      "expected": "Uses RFC 1918 private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)",
+      "assert": "assert '10.' in solution or '172.16.' in solution or '192.168.' in solution",
+      "id": "tc9"
+    },
+    {
+      "input": "DHCP ranges documented",
+      "expected": "DHCP ranges documented for dynamic assignment VLANs",
+      "assert": "assert 'DHCP Range' in solution or 'DHCP' in solution",
+      "id": "tc10"
+    }
+  ]
+}

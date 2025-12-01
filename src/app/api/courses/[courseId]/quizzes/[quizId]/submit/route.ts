@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getQuizData } from '@/lib/lessonLoader';
-import { createQuizAttempt } from '@/lib/db';
+import { createQuizAttempt, markLessonComplete } from '@/lib/db';
+import { getCourseData } from '@/lib/courseLoader';
 import {
   Quiz,
   QuizSubmission,
@@ -44,6 +45,53 @@ export async function POST(
       result.pointsPossible,
       submission.timeSpent
     );
+
+    // If quiz passed, mark lessons as complete
+    if (result.passed) {
+      try {
+        // Load course structure
+        const courseData = getCourseData(courseId);
+        
+        if (courseData) {
+          // Check if this is the final exam
+          if (quizId === 'final-exam') {
+            // Final exam: mark ALL lessons in the entire course as complete
+            let totalLessons = 0;
+            for (const chapter of courseData.chapters) {
+              if (chapter.lessons) {
+                for (const lessonFile of chapter.lessons) {
+                  const lessonId = lessonFile.replace(/\.md$/, '');
+                  markLessonComplete(lessonId, courseId);
+                  totalLessons++;
+                }
+              }
+            }
+            console.log(`Auto-completed entire course (${totalLessons} lessons) after passing final exam`);
+          } else {
+            // Chapter quiz: mark only that chapter's lessons as complete
+            const chapterMatch = quizId.match(/chapter-(\d+)/i);
+            if (chapterMatch) {
+              const chapterNumber = parseInt(chapterMatch[1], 10);
+              
+              if (courseData.chapters && courseData.chapters.length >= chapterNumber) {
+                const chapter = courseData.chapters[chapterNumber - 1]; // 0-indexed array
+                
+                if (chapter && chapter.lessons) {
+                  for (const lessonFile of chapter.lessons) {
+                    const lessonId = lessonFile.replace(/\.md$/, '');
+                    markLessonComplete(lessonId, courseId);
+                  }
+                  console.log(`Auto-completed ${chapter.lessons.length} lessons in ${chapter.title} after passing ${quizId}`);
+                }
+              }
+            }
+          }
+        }
+      } catch (autoCompleteError) {
+        // Don't fail the quiz submission if auto-complete fails
+        console.error('Error auto-completing lessons after quiz pass:', autoCompleteError);
+      }
+    }
 
     return NextResponse.json(result);
   } catch (error) {

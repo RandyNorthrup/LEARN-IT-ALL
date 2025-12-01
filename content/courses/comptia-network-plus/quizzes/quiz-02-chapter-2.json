@@ -1,0 +1,813 @@
+{
+  "id": "quiz-02-chapter-2",
+  "courseId": "comptia-network-plus",
+  "chapterId": "ch2-network-implementations",
+  "title": "Chapter 2: Network Implementations - Comprehensive Quiz",
+  "description": "Comprehensive assessment covering all 12 lessons in Chapter 2: Ethernet standards, switching, VLANs, trunking, link aggregation, STP, routing fundamentals, dynamic routing protocols, BGP, first hop redundancy, QoS, and NAT.",
+  "timeLimit": 3600,
+  "passingScore": 70,
+  "totalPoints": 500,
+  "difficulty": "intermediate",
+  "questions": [
+    {
+      "id": "ch2-q1",
+      "type": "multiple-choice",
+      "question": "What is the maximum transmission distance for 10GBASE-T over Cat6a cabling?",
+      "points": 10,
+      "options": [
+        "55 meters",
+        "100 meters",
+        "300 meters",
+        "550 meters"
+      ],
+      "correctAnswer": 1,
+      "explanation": "10GBASE-T supports 100 meters over Cat6a cabling. Cat6 (non-augmented) only supports 55 meters for 10GBASE-T. This is critical for data center and enterprise deployments where 100-meter coverage is needed. 10GBASE-T uses twisted pair copper with advanced encoding (PAM-16) to achieve 10 Gbps speeds.",
+      "reference": "Lesson 11: Ethernet Standards",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q2",
+      "type": "multiple-choice",
+      "question": "Which fiber optic standard uses wavelength division multiplexing (WDM) to achieve 40 Gbps over multimode fiber?",
+      "points": 10,
+      "options": [
+        "40GBASE-SR4",
+        "40GBASE-LR4",
+        "40GBASE-ER4",
+        "40GBASE-T"
+      ],
+      "correctAnswer": 0,
+      "explanation": "40GBASE-SR4 uses 4 wavelengths (WDM) over multimode fiber (OM3/OM4), with each wavelength carrying 10 Gbps (4 x 10G = 40G). Distance: 100m (OM3) or 150m (OM4). 40GBASE-LR4 uses single-mode fiber. 40GBASE-ER4 is extended range single-mode. 40GBASE-T would be copper (doesn't exist as standard).",
+      "reference": "Lesson 11: Ethernet Standards",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q3",
+      "type": "multiple-choice",
+      "question": "A switch receives a frame with destination MAC address 00:1A:2B:3C:4D:5E but this address is NOT in the MAC address table. What does the switch do?",
+      "points": 10,
+      "options": [
+        "Drop the frame immediately",
+        "Send the frame back to the source",
+        "Flood the frame out all ports except the port it arrived on",
+        "Send an ARP request to find the destination"
+      ],
+      "correctAnswer": 2,
+      "explanation": "When a switch receives a frame with an unknown destination MAC (not in CAM table), it FLOODS the frame out all ports in the same VLAN except the port it arrived on. This ensures the frame reaches the destination even if the switch hasn't learned its location yet. When the destination replies, the switch learns that MAC address. Switches do NOT send ARP (that's Layer 3) and don't drop unknown unicast.",
+      "reference": "Lesson 12: Advanced Switching",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q4",
+      "type": "multiple-choice",
+      "question": "What switching method forwards a frame immediately after reading only the destination MAC address, providing lowest latency but no error checking?",
+      "points": 10,
+      "options": [
+        "Store-and-forward",
+        "Cut-through",
+        "Fragment-free",
+        "Adaptive switching"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Cut-through switching forwards immediately after reading the destination MAC (first 6 bytes), providing lowest latency (~10 microseconds) but NO error checking (bad frames forwarded). Store-and-forward reads entire frame and checks FCS (highest latency but error-free). Fragment-free reads first 64 bytes (compromise, catches collision fragments). Modern switches often use adaptive switching (cut-through normally, store-and-forward if errors detected).",
+      "reference": "Lesson 12: Advanced Switching",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q5",
+      "type": "multiple-choice",
+      "question": "What is the primary purpose of VLANs?",
+      "points": 10,
+      "options": [
+        "Increase physical network speed",
+        "Create logical broadcast domains to segment traffic and improve security",
+        "Provide redundant network paths",
+        "Compress network traffic"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VLANs create LOGICAL broadcast domains, segmenting Layer 2 traffic without physical separation. Benefits: reduce broadcast domains (improve performance), enhance security (isolate sensitive traffic), improve flexibility (group users logically regardless of location), simplify management. VLANs don't increase speed, provide redundancy (that's STP/link aggregation), or compress traffic.",
+      "reference": "Lesson 13: VLANs",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q6",
+      "type": "multiple-choice",
+      "question": "An access port is configured with 'switchport access vlan 30'. What happens when the port receives a tagged frame with VLAN 40?",
+      "points": 10,
+      "options": [
+        "The frame is processed normally in VLAN 40",
+        "The frame is dropped because access ports only accept untagged frames",
+        "The frame is forwarded to VLAN 30",
+        "The frame triggers a security violation"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Access ports only accept UNTAGGED frames and automatically assign them to the configured VLAN (VLAN 30). If a tagged frame arrives on an access port, it's DROPPED because access ports expect untagged traffic from end devices. Trunk ports handle tagged frames. If an IP phone is connected, 'switchport voice vlan' creates an exception allowing 802.1Q tagged voice traffic.",
+      "reference": "Lesson 13: VLANs",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q7",
+      "type": "multiple-choice",
+      "question": "What is the purpose of the Native VLAN on a trunk port?",
+      "points": 10,
+      "options": [
+        "To encrypt all traffic on the trunk",
+        "To carry untagged frames (default VLAN 1), ensuring backward compatibility with non-802.1Q devices",
+        "To provide the fastest transmission speed",
+        "To block unauthorized VLANs"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The Native VLAN (default VLAN 1) carries UNTAGGED frames on a trunk link, providing backward compatibility with devices that don't support 802.1Q tagging. Frames belonging to the native VLAN traverse the trunk without tags. CRITICAL: Native VLAN must MATCH on both ends of the trunk or you get VLAN mismatch errors. Best practice: change native VLAN from default 1 to unused VLAN for security (prevents VLAN hopping attacks).",
+      "reference": "Lesson 14: VLAN Trunking",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q8",
+      "type": "multiple-choice",
+      "question": "Which trunking protocol is Cisco proprietary and limited to 1000 VLANs?",
+      "points": 10,
+      "options": [
+        "802.1Q",
+        "ISL (Inter-Switch Link)",
+        "VTP",
+        "DTP"
+      ],
+      "correctAnswer": 1,
+      "explanation": "ISL (Inter-Switch Link) is Cisco's proprietary trunking protocol that ENCAPSULATES entire Ethernet frame (adds 26-byte ISL header + 4-byte trailer). ISL supports 1000 VLANs (VLAN IDs 1-1000). ISL is DEPRECATED and not supported on modern switches. 802.1Q is the STANDARD protocol (inserts 4-byte tag, supports 4094 VLANs). VTP manages VLAN databases. DTP negotiates trunking. Use 802.1Q for all new deployments.",
+      "reference": "Lesson 14: VLAN Trunking",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q9",
+      "type": "multiple-choice",
+      "question": "What is the primary advantage of LACP over PAgP for link aggregation?",
+      "points": 10,
+      "options": [
+        "LACP is faster than PAgP",
+        "LACP is an industry standard (802.3ad) supporting multi-vendor environments; PAgP is Cisco proprietary",
+        "LACP supports more VLANs",
+        "LACP provides encryption"
+      ],
+      "correctAnswer": 1,
+      "explanation": "LACP (Link Aggregation Control Protocol, 802.3ad/802.1ax) is an INDUSTRY STANDARD, supporting multi-vendor environments (Cisco, Juniper, HP, etc.). PAgP (Port Aggregation Protocol) is CISCO PROPRIETARY, only working between Cisco devices. LACP is preferred for modern deployments. Both support the same number of active links (8) and provide similar performance. Neither provides encryption. Configuration: 'channel-group X mode active' (LACP) vs 'channel-group X mode desirable' (PAgP).",
+      "reference": "Lesson 15: Link Aggregation",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q10",
+      "type": "multiple-choice",
+      "question": "An EtherChannel is configured with 4 physical links. How much usable bandwidth is available if using a 1 Gbps interface?",
+      "points": 10,
+      "options": [
+        "1 Gbps (only one link active)",
+        "2 Gbps (load balancing across 2 links)",
+        "4 Gbps (all links active, load balanced)",
+        "8 Gbps (bonded together)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "EtherChannel/Link Aggregation combines multiple physical links into one logical link with load balancing. With 4 x 1 Gbps links, you get 4 Gbps aggregate bandwidth (all links active simultaneously). Load balancing uses hash algorithms (src-mac, dst-mac, src-dst-ip, etc.) to distribute flows across links. Individual flows don't exceed single link speed (1 Gbps per flow), but aggregate throughput is sum of all links. This provides both bandwidth increase and redundancy (if link fails, traffic redistributed).",
+      "reference": "Lesson 15: Link Aggregation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q11",
+      "type": "multiple-choice",
+      "question": "What is the primary purpose of Spanning Tree Protocol (STP)?",
+      "points": 10,
+      "options": [
+        "Increase network bandwidth by using all redundant paths",
+        "Prevent Layer 2 loops by blocking redundant paths while maintaining redundancy",
+        "Encrypt traffic between switches",
+        "Load balance traffic across multiple switches"
+      ],
+      "correctAnswer": 1,
+      "explanation": "STP's primary purpose is to PREVENT LAYER 2 LOOPS in networks with redundant paths. Without STP, loops cause broadcast storms, MAC table instability, and duplicate frames, crashing the network in seconds. STP elects one root bridge, calculates best path to root, and BLOCKS redundant paths. When active path fails, STP unblocks backup path (failover). STP doesn't use all paths (that would create loops)—it blocks some for loop prevention while maintaining redundancy for failover.",
+      "reference": "Lesson 16: Spanning Tree Protocol",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q12",
+      "type": "multiple-choice",
+      "question": "What is the convergence time difference between traditional STP (802.1D) and RSTP (802.1w)?",
+      "points": 10,
+      "options": [
+        "STP: 5 seconds, RSTP: 1 second",
+        "STP: 50 seconds, RSTP: 1-2 seconds",
+        "STP: 2 minutes, RSTP: 30 seconds",
+        "STP: 10 minutes, RSTP: 1 minute"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Traditional STP (802.1D) has 50-second convergence (Blocking→Listening 15s→Learning 15s→Forwarding, plus 20s max age), causing significant downtime during topology changes. RSTP (802.1w) reduces convergence to 1-2 SECONDS using proposal/agreement mechanism, edge ports, and link type detection. RSTP is backward compatible with STP. All modern networks should use RSTP (or MSTP which includes RSTP benefits). Configuration: 'spanning-tree mode rapid-pvst'.",
+      "reference": "Lesson 16: Spanning Tree Protocol",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q13",
+      "type": "multiple-choice",
+      "question": "What is Administrative Distance (AD) in routing?",
+      "points": 10,
+      "options": [
+        "The physical distance between routers in kilometers",
+        "The trustworthiness/preference of a routing protocol source (lower AD preferred)",
+        "The number of hops to reach a destination",
+        "The bandwidth cost of a route"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Administrative Distance (AD) indicates the TRUSTWORTHINESS or PREFERENCE of a routing protocol source. When multiple routing protocols provide routes to the same destination, the route with LOWEST AD is installed in the routing table. AD values: Connected=0, Static=1, eBGP=20, EIGRP=90, OSPF=110, RIP=120, iBGP=200. AD is LOCAL significance only (not advertised). Metric is used to compare routes WITHIN the same protocol. Example: If OSPF and RIP both know route to 10.0.0.0/8, OSPF wins (AD 110 < 120).",
+      "reference": "Lesson 17: Routing Fundamentals",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q14",
+      "type": "multiple-choice",
+      "question": "What is a floating static route, and what is its typical use case?",
+      "points": 10,
+      "options": [
+        "A static route that changes destination dynamically",
+        "A backup static route with higher AD than the primary route, used for failover",
+        "A static route that only works during business hours",
+        "A static route that floats between different interfaces"
+      ],
+      "correctAnswer": 1,
+      "explanation": "A floating static route is a BACKUP static route configured with HIGHER AD than the primary route, remaining inactive until the primary fails. Normal static route AD=1. Configure floating static with higher AD (e.g., 130) so dynamic routing protocol (OSPF AD=110) is preferred. When primary route fails, floating static becomes active. Configuration: 'ip route 0.0.0.0 0.0.0.0 Serial0/1/0 130' (AD 130 backup). Use case: Backup WAN link that's only used when primary fails.",
+      "reference": "Lesson 17: Routing Fundamentals",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q15",
+      "type": "multiple-choice",
+      "question": "Which routing protocol uses hop count as its metric and has a maximum hop count of 15?",
+      "points": 10,
+      "options": [
+        "OSPF",
+        "EIGRP",
+        "RIP (Routing Information Protocol)",
+        "BGP"
+      ],
+      "correctAnswer": 2,
+      "explanation": "RIP uses HOP COUNT as its metric (number of routers to destination). RIP has maximum 15 hops (16 = unreachable/infinity). This limits RIP to small networks. RIP is distance-vector, sends full routing table every 30 seconds. RIP v1 (classful) and RIP v2 (classless, supports VLSM). OSPF uses cost (bandwidth-based). EIGRP uses composite metric (bandwidth + delay). BGP uses path attributes. RIP rarely deployed today due to limitations but commonly appears on exams.",
+      "reference": "Lesson 18: Dynamic Routing Protocols",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q16",
+      "type": "multiple-choice",
+      "question": "What is the primary advantage of OSPF over RIP?",
+      "points": 10,
+      "options": [
+        "OSPF is easier to configure",
+        "OSPF is link-state with fast convergence, no hop limit, and bandwidth-aware routing; RIP is distance-vector with slow convergence and 15-hop limit",
+        "OSPF uses less CPU and memory",
+        "OSPF works on Layer 2; RIP requires Layer 3"
+      ],
+      "correctAnswer": 1,
+      "explanation": "OSPF (link-state) has significant advantages over RIP (distance-vector): FAST convergence (SPF algorithm calculates best paths immediately), NO HOP LIMIT (scalable to large networks), BANDWIDTH-AWARE metric (chooses fast paths), sends only topology changes (not full table), hierarchical design with areas. RIP: slow convergence (periodic updates), 15-hop limit, ignores bandwidth, sends full table every 30s. OSPF more complex to configure but vastly superior for production networks. Both are Layer 3 IGPs.",
+      "reference": "Lesson 18: Dynamic Routing Protocols",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q17",
+      "type": "multiple-choice",
+      "question": "In OSPF, what is the purpose of Area 0?",
+      "points": 10,
+      "options": [
+        "Area 0 is for testing only and should not be used in production",
+        "Area 0 is the backbone area that all other areas must connect to",
+        "Area 0 is the default area for stub networks",
+        "Area 0 is reserved for external routes"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Area 0 is the BACKBONE AREA in OSPF—all other areas MUST connect to Area 0 (directly or via virtual links). This creates a hub-and-spoke hierarchical design: Area 1 ↔ Area 0 ↔ Area 2. Inter-area traffic must pass through Area 0. ABRs (Area Border Routers) connect areas to the backbone. This design prevents routing loops and reduces LSA flooding. Single-area OSPF still uses Area 0. Every OSPF network must have Area 0.",
+      "reference": "Lesson 18: Dynamic Routing Protocols",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q18",
+      "type": "multiple-choice",
+      "question": "What is an Autonomous System (AS) in BGP?",
+      "points": 10,
+      "options": [
+        "A single router running BGP",
+        "A collection of networks under single administrative control with unified routing policy, identified by unique ASN",
+        "A backup system that automatically takes over when primary fails",
+        "A security zone within a network"
+      ],
+      "correctAnswer": 1,
+      "explanation": "An Autonomous System (AS) is a collection of IP networks and routers under SINGLE ADMINISTRATIVE CONTROL with unified routing policy, identified by unique ASN (AS Number). Examples: ISP network, large enterprise, cloud provider. ASNs are 16-bit (1-65535, public 1-64511) or 32-bit. BGP routes between ASes. eBGP runs between different ASes (inter-AS routing). iBGP runs within same AS (intra-AS distribution). AS_PATH attribute lists ASes traversed, preventing loops.",
+      "reference": "Lesson 19: BGP and Advanced Routing",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q19",
+      "type": "multiple-choice",
+      "question": "What is the difference between eBGP and iBGP?",
+      "points": 10,
+      "options": [
+        "eBGP is faster than iBGP",
+        "eBGP runs between different ASes (AD=20), changes next-hop; iBGP runs within same AS (AD=200), preserves next-hop, requires full mesh",
+        "eBGP is for IPv4; iBGP is for IPv6",
+        "eBGP is encrypted; iBGP is not"
+      ],
+      "correctAnswer": 1,
+      "explanation": "eBGP (External BGP) runs BETWEEN different ASes (inter-AS routing), has AD=20 (highly trusted), automatically changes next-hop to self, TTL=1 by default (directly connected). iBGP (Internal BGP) runs WITHIN same AS (distribute external routes internally), has AD=200 (less trusted than IGPs), preserves original next-hop (requires IGP reachability), requires FULL MESH or route reflectors (loop prevention). Both use TCP 179. iBGP doesn't advertise to other iBGP peers (prevents loops, necessitates full mesh).",
+      "reference": "Lesson 19: BGP and Advanced Routing",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q20",
+      "type": "multiple-choice",
+      "question": "Which BGP attribute prevents routing loops by listing ASes traversed?",
+      "points": 10,
+      "options": [
+        "LOCAL_PREF",
+        "MED",
+        "AS_PATH",
+        "NEXT_HOP"
+      ],
+      "correctAnswer": 2,
+      "explanation": "AS_PATH is a well-known mandatory attribute listing all ASes the route traversed. BGP rejects routes if its own ASN appears in AS_PATH (loop prevention). AS_PATH also used in path selection (shorter AS_PATH preferred). Operators prepend ASNs to AS_PATH to make paths less attractive. LOCAL_PREF controls outbound traffic preference (within AS). MED influences inbound traffic (between ASes). NEXT_HOP indicates next router IP. AS_PATH is fundamental to BGP operation and loop prevention.",
+      "reference": "Lesson 19: BGP and Advanced Routing",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q21",
+      "type": "multiple-choice",
+      "question": "What is the primary purpose of First Hop Redundancy Protocols (FHRP) like HSRP, VRRP, and GLBP?",
+      "points": 10,
+      "options": [
+        "Increase bandwidth by bonding multiple routers",
+        "Eliminate single point of failure for default gateway by sharing virtual IP across multiple routers",
+        "Provide encryption for gateway traffic",
+        "Load balance traffic across multiple switches"
+      ],
+      "correctAnswer": 1,
+      "explanation": "FHRPs eliminate the DEFAULT GATEWAY single point of failure. End devices use a VIRTUAL IP as default gateway, shared across multiple physical routers. If active router fails, standby takes over transparently (same virtual IP/MAC). HSRP (Cisco, Active/Standby), VRRP (standard, Master/Backup), GLBP (Cisco, true load balancing). Without FHRP, if default gateway router fails, all devices lose Internet connectivity until manual reconfiguration. FHRPs provide automatic failover in seconds.",
+      "reference": "Lesson 20: First Hop Redundancy",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q22",
+      "type": "multiple-choice",
+      "question": "Which FHRP is an industry standard supporting multi-vendor environments?",
+      "points": 10,
+      "options": [
+        "HSRP (Hot Standby Router Protocol)",
+        "VRRP (Virtual Router Redundancy Protocol)",
+        "GLBP (Gateway Load Balancing Protocol)",
+        "All of the above are industry standards"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VRRP (Virtual Router Redundancy Protocol, RFC 5798) is the INDUSTRY STANDARD FHRP, supporting multi-vendor environments (Cisco, Juniper, HP, etc.). VRRP uses Master/Backup terminology, IP protocol 112, preemption enabled by default, priority 1-254. HSRP is CISCO PROPRIETARY (Active/Standby, UDP 1985). GLBP is CISCO PROPRIETARY (load balancing, UDP 3222). Use VRRP for multi-vendor networks, GLBP for load balancing in Cisco-only networks, HSRP for legacy Cisco deployments.",
+      "reference": "Lesson 20: First Hop Redundancy",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q23",
+      "type": "multiple-choice",
+      "question": "What is the unique advantage of GLBP compared to HSRP and VRRP?",
+      "points": 10,
+      "options": [
+        "GLBP provides faster failover",
+        "GLBP is standards-based and multi-vendor",
+        "GLBP provides TRUE load balancing where all routers forward traffic simultaneously",
+        "GLBP supports more routers in a group"
+      ],
+      "correctAnswer": 2,
+      "explanation": "GLBP's unique advantage is TRUE LOAD BALANCING—all routers forward traffic simultaneously (not active/standby). GLBP AVG (Active Virtual Gateway) answers ARPs with different virtual MACs (up to 4), distributing clients across AVFs (Active Virtual Forwarders). Load balancing methods: round-robin, weighted, host-dependent. HSRP and VRRP only have one active forwarder (others standby). GLBP provides both redundancy AND bandwidth utilization. GLBP is Cisco proprietary (not multi-vendor). Failover speed similar to HSRP/VRRP.",
+      "reference": "Lesson 20: First Hop Redundancy",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q24",
+      "type": "multiple-choice",
+      "question": "In HSRP, what happens by default if a router with higher priority comes online?",
+      "points": 10,
+      "options": [
+        "The higher priority router immediately becomes Active",
+        "Nothing happens; the current Active router remains Active (preemption disabled by default)",
+        "All routers restart their HSRP process",
+        "An election is triggered and users experience downtime"
+      ],
+      "correctAnswer": 1,
+      "explanation": "By default in HSRP, PREEMPTION IS DISABLED. If a higher priority router comes online, the current Active router remains Active (stable, no disruption). To enable preemption (higher priority reclaims Active role), configure 'standby X preempt'. VRRP has PREEMPTION ENABLED by default (opposite behavior). When enabling preemption, consider delay: 'standby X preempt delay minimum 60' (waits 60s for routing protocols to converge before taking over). Default priority is 100; highest priority becomes Active.",
+      "reference": "Lesson 20: First Hop Redundancy",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q25",
+      "type": "multiple-choice",
+      "question": "What is the primary purpose of Quality of Service (QoS)?",
+      "points": 10,
+      "options": [
+        "Increase total network bandwidth",
+        "Provide preferential treatment to critical traffic during congestion",
+        "Encrypt sensitive traffic",
+        "Reduce network cable costs"
+      ],
+      "correctAnswer": 1,
+      "explanation": "QoS provides PREFERENTIAL TREATMENT to critical traffic during network CONGESTION, ensuring important applications (voice, video, mission-critical data) receive necessary resources. QoS does NOT create bandwidth—it intelligently manages existing bandwidth by prioritizing traffic. Without QoS, all traffic treated equally (best effort), causing quality issues for delay-sensitive applications. QoS mechanisms: classification/marking (identify traffic), queuing (prioritize), congestion avoidance (WRED), policing/shaping (rate limiting). QoS doesn't encrypt traffic or reduce costs.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q26",
+      "type": "multiple-choice",
+      "question": "What are the maximum acceptable latency and jitter for good VoIP quality?",
+      "points": 10,
+      "options": [
+        "Latency < 50ms, Jitter < 10ms",
+        "Latency < 150ms, Jitter < 30ms",
+        "Latency < 300ms, Jitter < 50ms",
+        "Latency < 500ms, Jitter < 100ms"
+      ],
+      "correctAnswer": 1,
+      "explanation": "For good voice quality: latency < 150ms (one-way), jitter < 30ms, packet loss < 1%. Latency > 150ms causes noticeable conversational delay. Jitter > 30ms causes choppy audio. These are ITU G.114 recommendations. Video conferencing has similar requirements. Understanding these thresholds is critical for QoS design—voice placed in priority queue with guaranteed low latency/jitter. Data applications more tolerant of delay but sensitive to loss.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q27",
+      "type": "multiple-choice",
+      "question": "What is the difference between CoS and DSCP marking?",
+      "points": 10,
+      "options": [
+        "CoS is Layer 3 with 6 bits; DSCP is Layer 2 with 3 bits",
+        "CoS is Layer 2 with 3 bits (values 0-7), lost at Layer 3 boundaries; DSCP is Layer 3 with 6 bits (values 0-63), preserved across routers",
+        "CoS is faster; DSCP is more accurate",
+        "CoS is for voice; DSCP is for data"
+      ],
+      "correctAnswer": 1,
+      "explanation": "CoS (Class of Service) is LAYER 2 marking using 3 bits in 802.1Q VLAN tag (PCP field), providing 8 priority levels (0-7). CoS LOST when crossing Layer 3 boundaries (routers strip Ethernet headers). DSCP (Differentiated Services Code Point) is LAYER 3 marking using 6 bits in IP header ToS byte, providing 64 values (0-63). DSCP PRESERVED across routers (preferred for WAN). Common values: EF (46) voice, AF41 (34) video, Default (0) best effort. Must map CoS↔DSCP at L2/L3 boundaries.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q28",
+      "type": "multiple-choice",
+      "question": "Which DSCP value is standard for voice bearer (RTP) traffic?",
+      "points": 10,
+      "options": [
+        "CS5 (40)",
+        "AF41 (34)",
+        "EF (46)",
+        "Default (0)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "EF (Expedited Forwarding, DSCP 46 / binary 101110) is the STANDARD marking for voice bearer traffic (RTP). EF provides low latency, low jitter, low loss—perfect for voice. Other values: CS5 (40) for voice/video signaling, AF41 (34) for video conferencing, AF31 (26) for streaming video, Default (0) for best effort. Using standard values ensures consistent treatment across multi-vendor networks and with service providers. Voice placed in priority queue with EF marking.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q29",
+      "type": "multiple-choice",
+      "question": "What is Low Latency Queuing (LLQ), and why is it commonly used?",
+      "points": 10,
+      "options": [
+        "Single FIFO queue with low overhead",
+        "Priority queue only (fastest but risks starvation)",
+        "Combination of strict priority queue (for voice) with CBWFQ (for other classes), preventing starvation while guaranteeing voice quality",
+        "Round-robin queuing cycling through all types"
+      ],
+      "correctAnswer": 2,
+      "explanation": "LLQ (Low Latency Queuing) combines STRICT PRIORITY QUEUE for delay-sensitive traffic (voice/video) with CBWFQ (Class-Based Weighted Fair Queuing) for other classes. Priority queue serviced first (zero queuing delay), while bandwidth limits prevent starvation. Most common enterprise QoS method. Configuration: voice in priority queue (<33% bandwidth), video/data classes with bandwidth guarantees, default class with fair queuing + WRED. Provides excellent voice quality while fairly allocating remaining bandwidth.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q30",
+      "type": "multiple-choice",
+      "question": "What is the difference between traffic policing and traffic shaping?",
+      "points": 10,
+      "options": [
+        "Policing increases bandwidth; shaping decreases bandwidth",
+        "Policing for inbound only; shaping for outbound only",
+        "Policing drops/remarks excess immediately (hard limit); shaping buffers excess for later transmission (soft limit)",
+        "Policing is Layer 2; shaping is Layer 3"
+      ],
+      "correctAnswer": 2,
+      "explanation": "POLICING drops or remarks excess traffic IMMEDIATELY when rate exceeded (HARD limit, no buffering). Can cause TCP retransmits. Typically applied at network edge/ingress. SHAPING buffers excess traffic and transmits when bandwidth available (SOFT limit, smooths bursts). Better for TCP. Typically used at WAN egress to match service provider rate. Both use token bucket algorithm. Both can be applied either direction and operate at Layer 3. Choose based on requirement: policing for strict enforcement, shaping for TCP-friendly rate limiting.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q31",
+      "type": "multiple-choice",
+      "question": "What percentage of link bandwidth should typically be reserved for voice in the priority queue?",
+      "points": 10,
+      "options": [
+        "Less than 10%",
+        "Less than 33%",
+        "Less than 50%",
+        "Less than 75%"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Voice traffic in priority queue should be limited to LESS THAN 33% of link bandwidth (Rule of 33) to prevent starvation of other traffic. Priority queue uses strict priority scheduling (always serviced first). If priority queue consumed 80% bandwidth, other applications would experience severe delays. 33% guideline ensures voice gets excellent treatment while leaving sufficient bandwidth for video, data, and other applications. Configure with bandwidth limit on priority class: 'priority 1024' (Kbps) or 'priority percent 20'.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q32",
+      "type": "multiple-choice",
+      "question": "Which QoS model is dominant in modern networks?",
+      "points": 10,
+      "options": [
+        "Best Effort (no QoS)",
+        "IntServ with RSVP signaling",
+        "DiffServ with DSCP per-hop behaviors",
+        "All three equally used"
+      ],
+      "correctAnswer": 2,
+      "explanation": "DiffServ (Differentiated Services) is the DOMINANT QoS model because it's SCALABLE and doesn't require per-flow state. DiffServ uses DSCP markings in IP headers to indicate traffic class; routers apply per-hop behaviors based on markings. No signaling (RSVP) or flow reservations needed—scales to Internet size. IntServ provides hard guarantees but doesn't scale (per-flow state on every router). Best Effort provides no QoS. DiffServ provides 'soft' QoS (preferential treatment) sufficient for most applications.",
+      "reference": "Lesson 21: Quality of Service",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q33",
+      "type": "multiple-choice",
+      "question": "What is the primary reason NAT was developed?",
+      "points": 10,
+      "options": [
+        "Increase network speed",
+        "Conserve IPv4 addresses by allowing multiple devices to share public IPs",
+        "Replace firewalls for security",
+        "Provide encryption"
+      ],
+      "correctAnswer": 1,
+      "explanation": "NAT was developed to CONSERVE IPv4 ADDRESSES in response to IPv4 exhaustion. IPv4 provides only ~4.3 billion addresses, insufficient for global demand. NAT enables multiple devices on private networks (RFC 1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to share single public IP or small pool. Standardized 1994 (RFC 1631) as interim solution until IPv6. Additional benefits: security through obscurity, network flexibility. NAT doesn't increase speed, replace firewalls, or provide encryption.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q34",
+      "type": "multiple-choice",
+      "question": "In NAT terminology, what is the 'Inside Local' address?",
+      "points": 10,
+      "options": [
+        "The public IP representing internal host to Internet",
+        "The private IP address of the internal host on local network",
+        "The public IP of external destination",
+        "The router's interface IP"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Inside Local is the PRIVATE IP address of internal host on local network (e.g., 10.0.0.10—actual IP device uses). Inside Global is PUBLIC IP representing that host to outside after translation (e.g., 203.0.113.5). Outside Global is public IP of external destination (e.g., 8.8.8.8). Outside Local is external destination as seen from inside (usually same as Outside Global). Understanding NAT terminology critical for configuration and troubleshooting.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q35",
+      "type": "multiple-choice",
+      "question": "What is the difference between Static NAT and Dynamic NAT?",
+      "points": 10,
+      "options": [
+        "Static is faster; Dynamic is slower",
+        "Static creates permanent one-to-one mappings; Dynamic creates temporary mappings from pool",
+        "Static uses TCP; Dynamic uses UDP",
+        "Static is for servers; Dynamic is for clients (both can be used for either)"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Static NAT creates PERMANENT one-to-one mappings between specific inside local and inside global addresses (e.g., 10.0.0.50 always → 203.0.113.10). Mappings never expire, allow bidirectional connections (ideal for publishing servers). Dynamic NAT creates TEMPORARY mappings from pool of public addresses (first-come, first-served). Mappings expire after idle timeout. Dynamic NAT rarely used today (PAT more efficient). Static NAT typically for servers due to permanent mapping requirement, not protocol restriction.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q36",
+      "type": "multiple-choice",
+      "question": "What is PAT (Port Address Translation), and why is it most common?",
+      "points": 10,
+      "options": [
+        "PAT encrypts ports for security",
+        "PAT creates permanent port mappings",
+        "PAT allows many devices to share ONE public IP using port numbers (up to 65,535 connections)",
+        "PAT only works with TCP"
+      ],
+      "correctAnswer": 2,
+      "explanation": "PAT (Port Address Translation / NAT Overload) allows MANY devices to share ONE public IP using source port numbers to differentiate connections. Translates both IP and port, supporting up to 65,535 concurrent connections per public IP (16-bit port field). MOST COMMON NAT type—extremely scalable, maximally conserves public IPs. Thousands of devices share single IP. Used in home routers, ISPs, enterprises. Configuration: 'ip nat inside source list 1 interface GigabitEthernet0/1 overload'. Supports both TCP and UDP. Doesn't encrypt.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q37",
+      "type": "multiple-choice",
+      "question": "What Cisco command enables PAT using the outside interface IP?",
+      "points": 10,
+      "options": [
+        "ip nat inside source list 1 pool NAT-POOL",
+        "ip nat inside source static 10.0.0.10 203.0.113.5",
+        "ip nat inside source list 1 interface GigabitEthernet0/1 overload",
+        "ip nat outside source list 1 interface GigabitEthernet0/0"
+      ],
+      "correctAnswer": 2,
+      "explanation": "'ip nat inside source list 1 interface GigabitEthernet0/1 overload' enables PAT using outside interface IP. 'overload' keyword is CRITICAL—enables PAT (multiple devices share single IP). ACL (access-list 1) defines which inside addresses are translated. Option A: Dynamic NAT (pool without overload). Option B: Static NAT (one-to-one). Option D: Wrong direction (outside source vs inside source). PAT requires: inside/outside interface designation, ACL for inside addresses, NAT statement with 'overload'.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q38",
+      "type": "multiple-choice",
+      "question": "What is port forwarding, and when is it used?",
+      "points": 10,
+      "options": [
+        "Port forwarding speeds up NAT translation",
+        "Port forwarding maps specific external port to internal server, allowing inbound connections through PAT",
+        "Port forwarding blocks specific ports for security",
+        "Port forwarding automatically selects best port"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Port forwarding (inbound NAT / destination NAT) maps specific external port on public IP to internal server, allowing inbound connections through PAT. PAT normally blocks unsolicited inbound connections (good for security), but servers need to accept requests. Solution: forward external public-ip:port → internal-server:port. Example: Forward 203.0.113.5:80 → 10.0.0.50:80. Configuration: 'ip nat inside source static tcp 10.0.0.50 80 203.0.113.5 80'. Home routers use this to host servers behind NAT. Not related to speed or blocking—enables selective inbound access.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q39",
+      "type": "multiple-choice",
+      "question": "Which command displays the NAT translation table?",
+      "points": 10,
+      "options": [
+        "show ip nat configuration",
+        "show ip nat translations",
+        "show ip nat interfaces",
+        "show ip nat statistics"
+      ],
+      "correctAnswer": 1,
+      "explanation": "'show ip nat translations' displays current NAT translation table showing all active mappings (inside local ↔ inside global, with outside addresses and ports). Primary NAT verification command. Shows static (permanent) and dynamic (temporary) translations. Other commands: 'show ip nat statistics' (counters, hit/miss, pool status), 'show running-config | include nat' (configuration), 'clear ip nat translation *' (clear dynamic translations). Essential for troubleshooting NAT issues.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q40",
+      "type": "multiple-choice",
+      "question": "What NAT traversal problem affects IPsec VPNs, and what is the solution?",
+      "points": 10,
+      "options": [
+        "IPsec encrypts port numbers breaking PAT; solution is disable encryption",
+        "IPsec uses fragmentation NAT can't handle; solution is increase MTU",
+        "IPsec ESP authenticates entire packet including IP header; NAT modification breaks authentication; solution is NAT-T (encapsulate ESP in UDP 4500)",
+        "IPsec only works with IPv6; solution is upgrade to IPv6"
+      ],
+      "correctAnswer": 2,
+      "explanation": "IPsec ESP encrypts and AUTHENTICATES entire packet including IP header. NAT modifies IP header (source IP/port), causing authentication checksum validation to FAIL, dropping VPN connection. Solution: NAT-T (NAT Traversal, RFC 3947) encapsulates ESP packets in UDP port 4500. NAT only modifies outer UDP header; ESP payload passes unchanged. NAT-T supported by all modern VPN implementations, automatically negotiated during IKE phase 1 when NAT detected. Critical for VPN/NAT interaction. Not related to MTU, IPv6, or disabling encryption.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q41",
+      "type": "multiple-choice",
+      "question": "Why do VoIP applications like SIP have NAT problems?",
+      "points": 10,
+      "options": [
+        "VoIP uses too much bandwidth",
+        "VoIP protocols embed IP addresses in payload; NAT only translates headers; solutions: ALG, STUN, TURN, SBC",
+        "VoIP requires static NAT only",
+        "VoIP encryption conflicts with NAT"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VoIP protocols (SIP, H.323) embed IP addresses and ports in APPLICATION PAYLOAD (message body), not just packet headers. NAT translates headers but NOT payload content. Called device receives (incorrect) private IP in payload, tries to establish media streams (RTP) to unreachable address → call fails. Solutions: ALG (NAT device inspects/modifies payload), STUN (server helps discover public IP), TURN (relay server), SBC (Session Border Controller proxy handles NAT). Common enterprise VoIP deployment challenge. Not bandwidth, static NAT, or encryption related.",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q42",
+      "type": "multiple-choice",
+      "question": "How does IPv6 eliminate the need for NAT?",
+      "points": 10,
+      "options": [
+        "IPv6 uses longer addresses NAT can't translate",
+        "IPv6 provides 340 undecillion addresses (2^128) eliminating scarcity; SLAAC Privacy Extensions provide privacy",
+        "IPv6 includes built-in encryption replacing NAT security",
+        "IPv6 requires NAT64 for all connections"
+      ],
+      "correctAnswer": 1,
+      "explanation": "IPv6 provides 340 undecillion (2^128) addresses, completely eliminating address scarcity that necessitated NAT. Every device can have globally routable address, restoring end-to-end connectivity without translation. For privacy (some argue NAT provided privacy by hiding internal IPs), IPv6 uses SLAAC Privacy Extensions (RFC 4941)—temporary addresses that change periodically, preventing tracking while maintaining direct connectivity. IPv6 design emphasizes end-to-end reachability without middleboxes. NAT64 is transition technology (IPv6↔IPv4), not required for native IPv6. IPv6 doesn't include encryption (that's IPsec, which works with both IPv4/IPv6).",
+      "reference": "Lesson 22: Network Address Translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q43",
+      "type": "multiple-choice",
+      "question": "What is the purpose of PortFast in STP configuration?",
+      "points": 10,
+      "options": [
+        "Increase port speed to Fast Ethernet",
+        "Immediately transition port to Forwarding state, bypassing Listening/Learning (for end devices only)",
+        "Forward all traffic on fastest path",
+        "Prioritize specific ports for root bridge election"
+      ],
+      "correctAnswer": 1,
+      "explanation": "PortFast immediately transitions port to FORWARDING state, bypassing 30-second Listening/Learning process. ONLY use on access ports connected to END DEVICES (PCs, servers, printers)—NEVER on trunk/switch links (creates loops). Without PortFast, devices wait 30s after link up before network access (DHCP timeouts, slow boot). Configuration: 'spanning-tree portfast' (interface) or 'spanning-tree portfast default' (global for access ports). Combine with BPDU Guard: 'spanning-tree bpduguard enable' (err-disables port if BPDU received, preventing accidental loop).",
+      "reference": "Lesson 16: Spanning Tree Protocol",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q44",
+      "type": "multiple-choice",
+      "question": "What does BPDU Guard do when enabled on a port?",
+      "points": 10,
+      "options": [
+        "Encrypts all BPDUs for security",
+        "Prioritizes BPDU traffic over data",
+        "Puts port in err-disabled state if BPDU received (prevents loops from unauthorized switches)",
+        "Blocks all broadcast traffic"
+      ],
+      "correctAnswer": 2,
+      "explanation": "BPDU Guard puts port in ERR-DISABLED state if BPDU received, preventing loops from unauthorized switches/hubs connected to access ports. Use with PortFast on end-device ports. If someone connects switch to PortFast port (bypassing STP), loop could occur. BPDU Guard detects this (receives BPDU from connected switch) and shuts down port (err-disabled). Recovery: 'shutdown' then 'no shutdown' or enable err-disable recovery. Configuration: 'spanning-tree bpduguard enable'. Critical security feature preventing rogue switch attacks.",
+      "reference": "Lesson 16: Spanning Tree Protocol",
+      "difficulty": "medium"
+    },
+    {
+      "id": "ch2-q45",
+      "type": "multiple-choice",
+      "question": "In EIGRP, what is a Feasible Successor?",
+      "points": 10,
+      "options": [
+        "The best route to destination (lowest metric)",
+        "A backup route meeting feasibility condition, installed immediately if Successor fails",
+        "The router with highest priority",
+        "Any route in the topology table"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Feasible Successor is a BACKUP ROUTE meeting feasibility condition (Advertised Distance < Feasible Distance of Successor). Pre-computed and stored in topology table, installed IMMEDIATELY if Successor (best route) fails—no query process needed (fast convergence). Feasibility condition ensures loop-free backup. EIGRP can have multiple Feasible Successors. If Successor fails and no Feasible Successor exists, EIGRP sends queries (slower convergence). Understanding Successor/Feasible Successor critical for EIGRP operation and fast failover.",
+      "reference": "Lesson 18: Dynamic Routing Protocols",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q46",
+      "type": "multiple-choice",
+      "question": "What command shows the current VLAN assignments for all switch ports?",
+      "points": 10,
+      "options": [
+        "show vlan",
+        "show vlan brief",
+        "show interfaces trunk",
+        "show spanning-tree vlan"
+      ],
+      "correctAnswer": 1,
+      "explanation": "'show vlan brief' displays concise view of all VLANs and their port assignments (most commonly used). Shows VLAN ID, Name, Status, and Ports. 'show vlan' shows same info but more verbose. 'show interfaces trunk' shows trunk ports and allowed VLANs (not access ports). 'show spanning-tree vlan X' shows STP information for specific VLAN. For quick overview of VLAN assignments, 'show vlan brief' is go-to command. Essential for VLAN verification and troubleshooting.",
+      "reference": "Lesson 13: VLANs",
+      "difficulty": "easy"
+    },
+    {
+      "id": "ch2-q47",
+      "type": "multiple-choice",
+      "question": "What happens if the Native VLAN mismatches on two ends of a trunk link?",
+      "points": 10,
+      "options": [
+        "Trunk operates normally with degraded performance",
+        "Traffic for mismatched VLANs crosses VLANs (security risk) and CDP/VTP generate warnings",
+        "Trunk link is automatically disabled",
+        "All VLANs are blocked except VLAN 1"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Native VLAN mismatch causes traffic for mismatched VLANs to CROSS VLANS (serious security risk). Example: Native VLAN 1 on Switch A, Native VLAN 99 on Switch B—untagged frames from VLAN 1 interpreted as VLAN 99 on other side. CDP generates 'native VLAN mismatch' warnings. VTP domain/mode mismatches also generate warnings. Best practice: Verify native VLAN matches with 'show interfaces trunk'. Change native VLAN from default 1 to unused VLAN for security. Configuration: 'switchport trunk native vlan 99'.",
+      "reference": "Lesson 14: VLAN Trunking",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q48",
+      "type": "multiple-choice",
+      "question": "What is the purpose of the OSPF Designated Router (DR) on multi-access networks?",
+      "points": 10,
+      "options": [
+        "DR forwards all traffic between routers",
+        "DR reduces number of OSPF adjacencies by acting as central point for LSA distribution",
+        "DR automatically becomes root bridge in STP",
+        "DR provides redundancy if primary router fails"
+      ],
+      "correctAnswer": 1,
+      "explanation": "DR (Designated Router) on multi-access networks (Ethernet) reduces OSPF adjacencies from full mesh (n(n-1)/2) to hub-spoke (n-1). All routers form adjacency with DR (and BDR backup). DR collects LSAs from all routers and redistributes—reduces LSA flooding. Without DR on 10-router segment: 45 adjacencies needed. With DR: 9 adjacencies. DR election: highest priority (default 1), tiebreaker highest Router ID. BDR (Backup DR) takes over if DR fails. Point-to-point links don't need DR/BDR. Not related to STP or traffic forwarding.",
+      "reference": "Lesson 18: Dynamic Routing Protocols",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q49",
+      "type": "multiple-choice",
+      "question": "What BGP attribute controls OUTBOUND traffic preference within an AS?",
+      "points": 10,
+      "options": [
+        "AS_PATH",
+        "MED",
+        "LOCAL_PREF",
+        "NEXT_HOP"
+      ],
+      "correctAnswer": 2,
+      "explanation": "LOCAL_PREF (Local Preference) controls OUTBOUND traffic preference WITHIN an AS. Well-known discretionary attribute, LOCAL significance only (not advertised to eBGP peers). HIGHER LOCAL_PREF preferred (default 100). Use to influence which exit point AS uses. Example: Set LOCAL_PREF=150 on routes from preferred ISP. MED influences INBOUND traffic (advertised to peers, lower preferred). AS_PATH is path vector for loop prevention. NEXT_HOP indicates next-hop router. Understanding LOCAL_PREF vs MED critical for traffic engineering.",
+      "reference": "Lesson 19: BGP and Advanced Routing",
+      "difficulty": "hard"
+    },
+    {
+      "id": "ch2-q50",
+      "type": "multiple-choice",
+      "question": "What is the main difference between HSRP versions 1 and 2?",
+      "points": 10,
+      "options": [
+        "Version 2 is faster than version 1",
+        "Version 2 supports 4096 groups vs 256 in version 1, uses different multicast/MAC addresses, and supports IPv6",
+        "Version 2 provides load balancing; version 1 does not",
+        "Version 2 is standards-based; version 1 is proprietary"
+      ],
+      "correctAnswer": 1,
+      "explanation": "HSRP v2 improvements over v1: Supports 4096 groups (0-4095) vs 256 (0-255), uses multicast 224.0.0.102 vs 224.0.0.2, virtual MAC 0000.0c9f.fXXX vs 0000.0c07.acXX, supports IPv6, millisecond timers. Both use same Active/Standby mechanism (no load balancing—that's GLBP). Both are Cisco proprietary (VRRP is standards-based). Backward compatible (v2 can fall back to v1). Configuration: 'standby version 2'. Use v2 for new deployments (more groups, IPv6 support).",
+      "reference": "Lesson 20: First Hop Redundancy",
+      "difficulty": "hard"
+    }
+  ]
+}

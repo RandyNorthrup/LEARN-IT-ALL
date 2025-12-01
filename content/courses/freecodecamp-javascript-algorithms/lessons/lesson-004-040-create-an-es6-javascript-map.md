@@ -1,0 +1,46 @@
+---
+id: lesson-004-040
+title: Create an ES6 JavaScript Map
+chapterId: chapter-04
+order: 40
+duration: 5
+objectives:
+  - Create an ES6 JavaScript Map
+---
+
+# Create an ES6 JavaScript Map
+
+The new version of JavaScript provides us with a built-in Map object which provides much of the functionality we wrote by hand in the last challenge. This Map object, although similar to regular JavaScript objects, provides some useful functionality that normal objects lack. For example, an ES6 Map tracks the insertion order of items that are added to it. Here is a more complete overview of its methods: 
+
+- `.has(key)` returns true or false based on the presence of a key 
+- `.get(key)` returns the value associated with a key 
+- `.set(key, value)` sets a new key, value pair 
+- `.delete(key)` removes a key, value pair 
+- `.clear()` removes all key, value pairs 
+- `.keys()` returns a new map iterator object that contains all the keys in insertion order 
+- `.values()` returns a new map iterator object that contains all the values in insertion order 
+- `.entries()` returns a new map iterator object that contains all the key, value pairs in insertion order
+
+## Instructions
+
+Define a JavaScript Map object and assign to it a variable called myMap. Add the key, value pair `freeCodeCamp`, `Awesome!` to it.
+
+## Hints
+
+1. The `myMap` object should exist.
+2. `myMap` should contain the key value pair `freeCodeCamp`, `Awesome!`.
+
+## Solution
+
+```html
+```js
+const myMap = new Map();
+
+myMap.set("freeCodeCamp", "Awesome!");
+```
+```
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 587d825b367417b2b2512c8d*

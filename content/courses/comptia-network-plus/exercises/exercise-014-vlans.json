@@ -1,0 +1,89 @@
+{
+  "id": "exercise-014-vlans",
+  "lessonId": "lesson-014-vlans",
+  "title": "VLAN Deployment & Troubleshooting Workshop",
+  "description": "You are Meridian Logistics' lead network architect. Apply Lesson 014 concepts to a multi-floor deployment, trunking, inter-VLAN routing, private VLAN isolation, and dynamic VLAN membership so every team can communicate securely without relying on VLAN 1.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "# VLAN Design & Troubleshooting Scenarios - Network Architect Role\n# Based on Lesson 014: VLANs\n\n================================================================================\nSCENARIO 1: SEGMENTING THE NEW HEADQUARTERS FLOOR\n================================================================================\nMeridian Logistics is fitting out a new floor for Sales, Engineering, and Finance. The requirements are:\n- VLAN 10 for Sales desktops, VLAN 20 for Engineering workstations, VLAN 30 for Finance, VLAN 40 for the server rack, VLAN 150 for VoIP phones, and VLAN 99 for switch management.\n- Each access switch has 48 Gig ports; Sales uses Gi0/1-8, Engineering Gi0/9-24, Finance Gi0/25-32, Servers Gi0/33-36, and VoIP phones share the same ports with PCs.\n- Management teams must access switches without touching VLAN 1 and there must be a documented naming scheme.\nQUESTIONS:\n1. Which VLAN IDs and names would you standardize to match the requirements and keep VLAN 1 off the data path?\n2. Provide the CLI steps to create the VLANs and assign the access ranges, including the shared PC+phone ports.\n3. What commands configure the voice VLAN on a shared port so phones tag VLAN 150 while PCs stay in VLAN 10?\n4. How do you build the management VLAN 99 SVI with an IP address for switch access and keep it up?\n5. Which show commands verify the VLAN assignments, and how do they confirm VLAN 1 is untouched?\n\n================================================================================\nSCENARIO 2: TRUNK MISCONFIGURATION BETWEEN ACCESS AND DISTRIBUTION\n================================================================================\nTrunk between the floor switch and distribution switch uses Gi0/48. The floor switch reports Gi0/48 trunking, but Finance traffic never leaves VLAN 30.\n\nCurrent output snippets show:\n- The floor switch: native VLAN 99, allowed VLANs 10,20,30,150,99\n- The distribution switch: native VLAN 1, allowed VLANs 1-100\nQUESTIONS:\n1. What is the root cause of Finance traffic staying on the floor switch?\n2. Which commands normalize the trunk encapsulation, native VLAN, and allowed VLAN list so VLAN 30 packets cross the uplink?\n3. Why should you avoid carrying user data on VLAN 1, and how does changing the native VLAN to 99 help security?\n\n================================================================================\nSCENARIO 3: INTER-VLAN ROUTING FOR COLLABORATION\n================================================================================\nSales and Engineering need to reach shared file services in VLAN 40 and each other. The core switch is Layer 3 capable, so you can avoid router-on-a-stick bottlenecks.\nQUESTIONS:\n1. Why is enabling SVIs on the Layer 3 switch a better choice than a router-on-a-stick in this deployment?\n2. Provide the configuration steps to enable routing between VLANs 10, 20, and 40 on the core switch, including the commands to assign gateway addresses.\n3. How do you verify the switch is routing between VLANs and advertising routes to downstream switches?\n\n================================================================================\nSCENARIO 4: PRIVATE VLANS FOR CUSTOMER ISOLATION\n================================================================================\nA hosted services pod must isolate tenants from each other but still allow every VM to reach the gateway.\nQUESTIONS:\n1. Which VLAN constructs (primary, isolated, community, promiscuous) satisfy this requirement?\n2. Provide the CLI steps that create the PVLAN pair and attach a host port to the isolated VLAN while the uplink remains promiscuous.\n3. How does the design keep tenant VMs from talking to each other yet still reach the router?\n\n================================================================================\nSCENARIO 5: DYNAMIC VLANS FOR A BYOD TRAINING LAB\n================================================================================\nThe training lab uses 802.1X with a RADIUS server and VMPS to place devices into VLANs based on username. After a firmware update, some attendees fall back to VLAN 1 and cannot reach the internet.\nQUESTIONS:\n1. What services must you validate to restore dynamic VLAN assignments?\n2. How do you configure a fallback VLAN that still allows guests internet access when the VMPS or RADIUS server is unavailable?\n3. Which show commands confirm the switch still uses dynamic VLANs and that fallback traffic is present in the protective VLAN?\n\n================================================================================\nEND OF EXERCISE\n================================================================================",
+  "solution": "# VLAN Design & Troubleshooting Scenarios - Complete Solutions\n# Provide professional reasoning for each question below\n\n================================================================================\nSCENARIO 1: SEGMENTING THE NEW HEADQUARTERS FLOOR - SOLUTION\n================================================================================\n1. Use VLAN 10 (SALES) for the sales desks, VLAN 20 (ENGINEERING), VLAN 30 (FINANCE), VLAN 40 (SERVERS), VLAN 150 (VOICE), and VLAN 99 (MANAGEMENT). Document the purpose in a spreadsheet so every team knows the name and number, and keep VLAN 1 reserved for infrastructure protocols only.\n2.\n   vlan 10\n    name SALES\n    exit\n   vlan 20\n    name ENGINEERING\n    exit\n   vlan 30\n    name FINANCE\n    exit\n   vlan 40\n    name SERVERS\n    exit\n   vlan 150\n    name VOICE\n    exit\n   vlan 99\n    name MANAGEMENT\n   interface range gi0/1-8\n    switchport mode access\n    switchport access vlan 10\n   interface range gi0/9-24\n    switchport mode access\n    switchport access vlan 20\n   interface range gi0/25-32\n    switchport mode access\n    switchport access vlan 30\n   interface range gi0/33-36\n    switchport mode access\n    switchport access vlan 40\n3.\n   interface range gi0/1-8\n    switchport voice vlan 150\n    switchport access vlan 10\n    switchport mode access\n   interface range gi0/1-8 needed for phones that daisy-chain PCs so phones tag VLAN 150 while PCs remain untagged on VLAN 10.\n4.\n   interface vlan 99\n    ip address 10.99.0.2 255.255.255.0\n    no shutdown\n   ip default-gateway 10.99.0.1\n   Assigning an SVI keeps management traffic off VLAN 1 while giving admins a consistent gateway address.\n5. Use `show vlan brief` to see each VLAN and its ports, `show interfaces gi0/1 switchport` to verify the access assignment, and `show running-config interface vlan 99` so you can prove VLAN 1 is not carrying user ports.\n\n================================================================================\nSCENARIO 2: TRUNK MISCONFIGURATION - SOLUTION\n================================================================================\n1. Finance traffic never leaves because the distribution switch treats VLAN 1 as the native VLAN while the floor switch sends VLAN 99 untagged; mismatched native VLANs drop untagged frames and the allowed VLAN list is too broad on the floor switch.\n2.\n   interface gi0/48\n    switchport trunk encapsulation dot1q\n    switchport mode trunk\n    switchport trunk native vlan 99\n    switchport trunk allowed vlan 10,20,30,40,150,99\n   Repeat the same native VLAN 99 configuration on the distribution side and prune VLANs so only the business VLANs traverse the uplink.\n3. VLAN 1 is the default control VLAN and is often targeted by attacks, so keeping user data on VLAN 99 means CDP, STP, and VTP stay separated. Changing the native VLAN to 99 prevents untagged user frames from accidentally entering VLAN 1 and leaking into infrastructure protocols.\n\n================================================================================\nSCENARIO 3: INTER-VLAN ROUTING - SOLUTION\n================================================================================\n1. A Layer 3 switch keeps routing at wire speed, adds no bottleneck, and eliminates the single link router-on-a-stick choke, so SVIs are the modern approach.\n2.\n   ip routing\n   interface vlan 10\n    ip address 192.168.10.1 255.255.255.0\n    no shutdown\n   interface vlan 20\n    ip address 192.168.20.1 255.255.255.0\n    no shutdown\n   interface vlan 40\n    ip address 192.168.40.1 255.255.255.0\n    no shutdown\n   interface range gi0/1-24\n    switchport trunk encapsulation dot1q\n    switchport mode trunk\n    switchport trunk allowed vlan 10,20,40,150,99\n   Assign default gateways on the hosts (192.168.10.1, etc.) and keep `ip routing` enabled.\n3. Verify with `show ip route`, `show interfaces vlan 10 brief`, and `show ip interface brief` to ensure SVIs are up. Use `show running-config | include ip route` or `show ip route connected` to confirm every VLAN advertises a connected route.\n\n================================================================================\nSCENARIO 4: PRIVATE VLANS - SOLUTION\n================================================================================\n1. Use VLAN 500 as the primary, VLAN 501 as isolated, VLAN 502 as community (if needed), and designate the router-facing port as promiscuous.\n2.\n   vlan 500\n    private-vlan primary\n    private-vlan association 501\n   vlan 501\n    private-vlan isolated\n   interface gig0/1\n    switchport mode private-vlan host\n    switchport private-vlan host-association 500 501\n   interface gig0/48\n    switchport mode private-vlan promiscuous\n    switchport private-vlan mapping 500 501\n   The promiscuous port (upstream router) can reach every isolated tenant while the tenant ports cannot reach each other.\n3. Isolated VLAN members cannot communicate directly because they have no Layer 2 path to each other, yet the promiscuous port remains the only path to the gateway, so they still receive routing services.\n\n================================================================================\nSCENARIO 5: DYNAMIC VLANS - SOLUTION\n================================================================================\n1. Ensure the VMPS server, 802.1X/RADIUS service, and the authentication server certificates are healthy. Verify connectivity with `show dot1x all` or `show vmps status` and confirm the switch can reach the RADIUS server (ping the server IP).\n2. Configure a fallback VLAN: `interface range gi0/1-24`, `switchport access vlan 999`, `switchport mode access`, and `switchport fallback vlan 999` (or vendor equivalent) so devices fall into VLAN 999 when primary services are unreachable, giving them limited internet access until authentication returns.\n3. Use `show vlan brief` to see VLAN 999 activity, `show authentication sessions` to confirm dynamic VLAN assignment, and `show interface gi0/1 counters` to see traffic tagged with the fallback VLAN.\n\n================================================================================\nEND OF SOLUTIONS\n================================================================================",
+  "hints": [
+    "Match VLAN IDs with descriptive names so every team and automation policy understands which broadcast domain belongs to which department.",
+    "Assign access ports in ranges with `switchport mode access` and `switchport access vlan <id>` for predictable segmentation.",
+    "Enable `switchport voice vlan <id>` on shared PC+phone ports so phones tag frames while PCs remain on the data VLAN.",
+    "Build a management VLAN using an SVI (`interface vlan 99`, `ip address`, `no shutdown`) and keep it separate from VLAN 1.",
+    "Trunks need `switchport trunk encapsulation dot1q`, explicit `switchport mode trunk`, and a pruned allowed VLAN list to prevent unnecessary flooding.",
+    "Set consistent native VLANs on both ends of a trunk to prevent untagged frames from being misclassified or dropped.",
+    "Enable `ip routing` on the Layer 3 switch before configuring SVIs so VLANs can reach each other without an external router.",
+    "Each SVI needs an IP address that acts as the default gateway for hosts in that VLAN (e.g., `interface vlan 10` with 192.168.10.1).",
+    "Private VLANs use primary, secondary, isolated, community, and promiscuous ports to control communication patterns without adding extra routers.",
+    "Dynamic VLANs rely on VMPS, 802.1X, or RADIUS; make sure those servers are reachable and healthy before blaming the switch.",
+    "Use `show vlan brief`, `show interfaces switchport`, and `show interfaces trunk` to confirm VLANs are assigned as intended.",
+    "Avoid carrying user data on VLAN 1; change the native VLAN to a secure management VLAN to reduce exposure to control-plane traffic.",
+    "Configure fallback VLANs (e.g., VLAN 999) so authentication failures still allow limited access rather than leaving clients stuck on VLAN 1.",
+    "Monitor `show authentication sessions` or `show dot1x all` to verify dynamic VLAN assignments and fallback activity."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Confirms access port assignments reference switchport commands",
+      "validation": "assert 'switchport access vlan' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Ensures trunk normalization is addressed",
+      "validation": "assert 'switchport trunk' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Validates native VLAN and VLAN 1 security commentary",
+      "validation": "assert 'native vlan' in code.lower() and 'vlan 1' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Checks for SVI configuration and ip routing",
+      "validation": "assert 'interface vlan' in code.lower() and 'ip routing' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "Ensures private VLAN discussion is included",
+      "validation": "assert 'private-vlan' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "Confirms voice VLAN best practices",
+      "validation": "assert 'voice vlan' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc7",
+      "description": "Validates fallback or management VLAN mention",
+      "validation": "assert 'management vlan' in code.lower() or 'fallback vlan' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc8",
+      "description": "Checks for dynamic VLAN references",
+      "validation": "assert 'vmps' in code.lower() or '802.1x' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc9",
+      "description": "Ensures verification commands appear",
+      "validation": "assert 'show vlan brief' in code.lower() or 'show interfaces trunk' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc10",
+      "description": "Confirms the solution explains why VLAN 1 is avoided",
+      "validation": "assert 'avoid carrying user data on vlan 1' in code.lower() or 'keep vlan 1 reserved' in code.lower()",
+      "isHidden": false
+    }
+  ]
+}

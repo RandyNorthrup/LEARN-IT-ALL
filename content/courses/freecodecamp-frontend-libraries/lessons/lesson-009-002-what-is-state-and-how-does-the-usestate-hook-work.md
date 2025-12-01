@@ -1,0 +1,129 @@
+---
+id: lesson-009-002
+title: What is State, and How Does the useState Hook Work?
+chapterId: chapter-09
+order: 2
+duration: 5
+objectives:
+  - What is State, and How Does the useState Hook Work?
+---
+
+# What is State, and How Does the useState Hook Work?
+
+State is one of the most important fundamentals of React and other frontend frameworks. It's like the brain of a component, meaning it holds information that can change over time and controls how the components behave and look.
+
+Let's look into what state is and how the `useState` hook lets you work with it.
+
+State represents the dynamic data in your React component, like the value from a user input, data fetched from an API, or an item in a to-do list.
+
+Whenever the state changes, React re-renders the component without reloading the page to reflect those changes in the user interface. This reactivity makes your app interactive.
+
+The `useState` hook is a function that lets you declare state variables in functional components. 
+
+Before hooks, you could only use state in class components. But with the introduction of hooks since React 16.8, you can use state in functional components by using the `useState` hook.
+
+To use the `useState` hook, you need to import it from React:
+
+```js
+import { useState } from "react";
+```
+
+You can also import React itself and get access to the `useState` hook as a property:
+
+```js
+import React from "react";
+```
+
+Here's how you can declare a state variable when you import `useState`:
+
+```js
+const [stateVariable, setStateFunction] = useState(initialValue);
+```
+
+And here's how you can declare a state variable when you import React:
+
+```js
+const [stateVariable, setStateFunction] = React.useState(initialValue);
+```
+
+In the state variable you have the following:
+
+- `stateVariable` holds the current state value
+- `setStateFunction` (the setter function) updates the state variable
+- `initialValue` sets the initial state
+
+Note that the state in a React component is private, and is isolated to each component instance. This means that, if you render the same component twice, the state component of one does not affect the other. This also means that, if you'd like to share state between components, then you'd need to lift the state up to a common parent and pass it down as props.
+
+Another thing is that hooks must be called at the top level of a component, just before the `return` keyword, to keep the state and effects consistent across renders. This means you can't use state inside loops, conditions, or nested functions.
+
+Here's an example of managing state with the `useState` hook in a `Counter` component:
+
+```jsx
+// Importing the useState hook
+import { useState } from "react";
+
+function Counter() {
+  const initialValue = 0;
+
+  // The state variable and setter function
+  const [count, setCount] = useState(initialValue);
+
+  return (
+    <div>
+      {/* Display current state value */}
+      <h2>{count}</h2>
+
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+In the code above, we have the `useState` hook imported from React. In the `Counter` component, the `count` represents the current state while `setCount` is the set function responsible for updating state. The current state value is `0`. The `return` statement contains the count and two buttons to decrement and increment the count by `1`.
+
+You can manage multiple pieces of state by calling the `useState` hook multiple times. This is especially important when you have unrelated state variables:
+
+```jsx
+function UserProfile() {
+  const [isOnline, setIsOnline] = useState(false);
+  const [notifications, setNotifications] = useState(0);
+
+  // The rest of the component logic
+}
+```
+
+You can also call the `useState` hook multiple times when managing multiple states that update separately, like form fields:
+
+```jsx
+function SignUpForm() {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+
+  // The rest of the component logic
+}
+```
+
+But in this case, it's best to combine the states since they're all part of the same form:
+
+```jsx
+function SignUpForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    email: "",
+  });
+
+  // The rest of the component logic
+}
+```
+
+That's what state is and how you can use the `useState` hook.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/front-end-development-libraries/)*
+*Original Challenge ID: 67d1eaf77f510e15dfed7c14*

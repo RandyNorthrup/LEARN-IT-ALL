@@ -1,0 +1,65 @@
+---
+id: lesson-019-044
+title: Step 70
+chapterId: chapter-19
+order: 44
+duration: 5
+objectives:
+  - Step 70
+---
+
+# Step 70
+
+You can pass full expressions as an argument. The function will receive the result of evaluating that expression. For example, these two function calls below would yield the same result. (Note that the order of operations rule PEMDAS—Parenthesis, Exponents, Multiplication, Division, Addition, Subtraction—applies):
+
+```js
+test(2 * 3 + 1);
+test(7);
+```
+
+Looking at the pattern again:
+
+```md
+··#··
+·###·
+#####
+```
+
+Update the `character` value to be repeated `2 * rowNumber - 1` times.
+
+Open up the console again to see the updated result.
+
+## Starter Code
+
+```html
+const character = "#";
+const count = 8;
+const rows = [];
+
+--fcc-editable-region--
+function padRow(rowNumber, rowCount) {
+  return " ".repeat(rowCount - rowNumber) + character.repeat(rowNumber) + " ".repeat(rowCount - rowNumber);
+}
+--fcc-editable-region--
+
+for (let i = 0; i < count; i = i + 1) {
+  rows.push(padRow(i + 1, count));
+}
+
+let result = ""
+
+for (const row of rows) {
+  result = result + row + "\n";
+}
+
+console.log(result);
+```
+
+## Hints
+
+1. Your function should pass `2 * rowNumber - 1` to your `.repeat()` call.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 660f383d4c772c12ff59904b*

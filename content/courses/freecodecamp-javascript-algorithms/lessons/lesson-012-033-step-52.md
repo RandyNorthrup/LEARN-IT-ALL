@@ -1,0 +1,67 @@
+---
+id: lesson-012-033
+title: Step 52
+chapterId: chapter-12
+order: 33
+duration: 5
+objectives:
+  - Step 52
+---
+
+# Step 52
+
+The other bug is subtle. When a shorter distance is found for a neighbor node, `paths[current]` gets assigned to the neighbor node path, `paths[node]`. 
+
+This means both variables point to the same list. Since lists are mutable, when you append the neighbor node to its path, both `paths[node]` and `paths[current]` are modified because they are the same list. This results in wrong paths, although the distances are correct.
+
+You can fix that bug by assigning a copy of `paths[current]` to the neighbor node path. For that you can use the slice syntax:
+
+```py
+my_list[:]
+```
+
+Where `my_list` is the list you want to copy. Modify the existing `paths[node] = paths[current]` assignment inside your `if` block by slicing `paths[current]`.
+
+## Starter Code
+
+```html
+my_graph = {
+    'A': [('B', 3), ('D', 1)],
+    'B': [('A', 3), ('C', 4)],
+    'C': [('B', 4), ('D', 7)],
+    'D': [('A', 1), ('C', 7)]
+}
+
+def shortest_path(graph, start):
+    unvisited = list(graph)
+    distances = {node: 0 if node == start else float('inf') for node in graph}
+    paths = {node: [] for node in graph}
+    paths[start].append(start)
+    
+    while unvisited:
+        current = min(unvisited, key=distances.get)
+        for node, distance in graph[current]:
+            if distance + distances[current] < distances[node]:
+                distances[node] = distance + distances[current]
+--fcc-editable-region--                
+                if paths[node] and paths[node][-1] == node:
+                    paths[node] = paths[current]
+--fcc-editable-region--                    
+                else:
+                    paths[node].extend(paths[current])
+                paths[node].append(node)
+        unvisited.remove(current)
+    
+    print(f'Unvisited: {unvisited}\nDistances: {distances}\nPaths: {paths}')
+    
+shortest_path(my_graph, 'A')
+```
+
+## Hints
+
+1. You should assign `paths[current][:]` to the neighbor node path.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 65579228c669fcbebffd01d5*

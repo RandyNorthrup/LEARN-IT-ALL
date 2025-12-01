@@ -1,0 +1,50 @@
+---
+id: lesson-012-024
+title: Step 41
+chapterId: chapter-12
+order: 24
+duration: 5
+objectives:
+  - Step 41
+---
+
+# Step 41
+
+`min()` takes also a keyword-only argument. Passing a function as an additional argument to `min()`, you can modify the way the list items are compared.
+
+The result of the line you've just written in the previous step is the node that comes first in alphabetical order. Instead you want to select the unvisited node having the smallest distance from the starting node. 
+
+Pass `key=distances.get` as the second argument to your `min()` call. In this way, the comparison will take place depending on the value each `unvisited` list item has inside the `distances` dictionary.
+
+## Starter Code
+
+```html
+my_graph = {
+    'A': [('B', 3), ('D', 1)],
+    'B': [('A', 3), ('C', 4)],
+    'C': [('B', 4), ('D', 7)],
+    'D': [('A', 1), ('C', 7)]
+}
+
+def shortest_path(graph, start):
+    unvisited = list(graph)
+    distances = {node: 0 if node == start else float('inf') for node in graph}
+    paths = {node: [] for node in graph}
+    paths[start].append(start)
+--fcc-editable-region--    
+    while unvisited:
+        current = min(unvisited)
+--fcc-editable-region--    
+    print(f'Unvisited: {unvisited}\nDistances: {distances}\nPaths: {paths}')
+    
+#shortest_path(my_graph, 'A')
+```
+
+## Hints
+
+1. You should pass `key=distances.get` as the second argument to your `min()` call.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 65578d4fc3afc3b8f554c882*

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Map, BookOpen, TrendingUp, Gamepad2, Trophy } from 'lucide-react';
+import { Map, BookOpen, TrendingUp, Gamepad2, Trophy, Wrench } from 'lucide-react';
 
 async function getSettings() {
   try {
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5 mb-12">
+        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-6 mb-12">
           {/* Learning Tracks Card */}
           <Link
             href="/tracks"
@@ -224,6 +224,36 @@ export default async function DashboardPage() {
               </p>
               <div className="flex items-center text-sm font-semibold">
                 Take Challenge
+                <svg
+                  className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </Link>
+
+          {/* Projects Card - NEW */}
+          <Link
+            href="/projects"
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 p-8 text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          >
+            <div className="relative z-10">
+              <Wrench className="mb-4 h-12 w-12" />
+              <h3 className="mb-2 text-2xl font-bold">Projects</h3>
+              <p className="mb-4 text-teal-100">
+                Build real-world projects from scratch with guided tutorials
+              </p>
+              <div className="flex items-center text-sm font-semibold">
+                Browse Projects
                 <svg
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"

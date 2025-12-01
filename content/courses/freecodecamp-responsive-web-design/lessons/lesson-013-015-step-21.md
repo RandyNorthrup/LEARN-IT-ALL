@@ -1,0 +1,54 @@
+---
+id: lesson-013-015
+title: Step 21
+chapterId: chapter-13
+order: 15
+duration: 5
+objectives:
+  - Step 21
+---
+
+# Step 21
+
+When you add a lower rank heading element to the page, it's implied that you're starting a new subsection.
+
+After the last `h2` element of the second `section` element, add an `h3` element with this text:
+
+`Things cats love:`
+
+## Starter Code
+
+```html
+<html>
+  <body>
+    <main>
+      <h1>CatPhotoApp</h1>
+      <section>
+        <h2>Cat Photos</h2>
+        <p>Everyone loves <a href="https://cdn.freecodecamp.org/curriculum/cat-photo-app/running-cats.jpg">cute cats</a> online!</p>
+        <p>See more <a target="_blank" href="https://freecatphotoapp.com">cat photos</a> in our gallery.</p>
+        <a href="https://freecatphotoapp.com"><img src="https://cdn.freecodecamp.org/curriculum/cat-photo-app/relaxing-cat.jpg" alt="A cute orange cat lying on its back."></a>
+      </section>
+--fcc-editable-region--
+      <section>
+        <h2>Cat Lists</h2>
+        
+      </section>
+--fcc-editable-region--
+    </main>
+  </body>
+</html>
+```
+
+## Hints
+
+1. The second `section` element appears to be missing or does not have both an opening and closing tag.
+2. There should be an `h3` element right above the second `section` element's closing tag.
+3. Your `h3` element should have a closing tag. Closing tags have a `/` just after the `<` character.
+4. The `h3` element right above the second `section` element's closing tag should have the text `Things cats love:`. Make sure to include the colon at the end of the text.
+5. There should be an `h2` element with the text `Cat Lists` above the last `h3` element that is nested in the last `section` element'. You may have accidentally deleted the `h2` element.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/responsive-web-design/)*
+*Original Challenge ID: 5dfa371beacea3f48c6300af*

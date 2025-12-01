@@ -1,0 +1,59 @@
+---
+id: lesson-019-055
+title: Step 81
+chapterId: chapter-19
+order: 55
+duration: 5
+objectives:
+  - Step 81
+---
+
+# Step 81
+
+The text has appeared again! This is because `"false"` is a string, which when evaluated to a boolean becomes `true`. This means `"false"` is a truthy value.
+
+A <dfn>truthy value</dfn> is a value that is considered true when evaluated as a boolean. Most of the values you encounter in JavaScript will be truthy.
+
+A <dfn>falsy value</dfn> is the opposite - a value considered false when evaluated as a boolean. JavaScript has a defined list of falsy values. Some of them include `false`, `0`, `""`, `null`, `undefined`, and `NaN`.
+
+Try changing your `if` condition to an empty string `""`, which is a falsy value.
+
+## Starter Code
+
+```html
+const character = "#";
+const count = 8;
+const rows = [];
+
+function padRow(rowNumber, rowCount) {
+  return " ".repeat(rowCount - rowNumber) + character.repeat(2 * rowNumber - 1) + " ".repeat(rowCount - rowNumber);
+}
+
+// TODO: use a different type of loop
+/*for (let i = 1; i <= count; i++) {
+  rows.push(padRow(i, count));
+}*/
+
+--fcc-editable-region--
+if ("false") {
+  console.log("Condition is true");
+}
+--fcc-editable-region--
+
+let result = ""
+
+for (const row of rows) {
+  result = result + row + "\n";
+}
+
+console.log(result);
+```
+
+## Hints
+
+1. Your `if` statement should have `""` as the condition.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 660f447efc0e722f016c1be0*

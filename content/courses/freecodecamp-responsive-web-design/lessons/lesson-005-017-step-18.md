@@ -1,0 +1,67 @@
+---
+id: lesson-005-017
+title: Step 18
+chapterId: chapter-05
+order: 17
+duration: 5
+objectives:
+  - Step 18
+---
+
+# Step 18
+
+To be able to navigate within the page, give each anchor element an `href` corresponding to the `id` of the `h2` elements.
+
+## Starter Code
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="freeCodeCamp Accessibility Quiz practice project" />
+    <title>Accessibility Quiz</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" alt="freeCodeCamp" src="https://cdn.freecodecamp.org/platform/universal/fcc_primary.svg">
+      <h1>HTML/CSS Quiz</h1>
+      <nav>
+--fcc-editable-region--
+        <ul>
+          <li><a>INFO</a></li>
+          <li><a>HTML</a></li>
+          <li><a>CSS</a></li>
+        </ul>
+--fcc-editable-region--
+      </nav>
+    </header>
+    <main>
+      <form method="post" action="https://freecodecamp.org/practice-project/accessibility-quiz">
+        <section role="region" aria-labelledby="student-info">
+          <h2 id="student-info">Student Info</h2>
+        </section>
+        <section role="region" aria-labelledby="html-questions">
+          <h2 id="html-questions">HTML</h2>
+        </section>
+        <section role="region" aria-labelledby="css-questions">
+          <h2 id="css-questions">CSS</h2>
+        </section>
+      </form>
+    </main>
+  </body>
+</html>
+```
+
+## Hints
+
+1. You should give the first `a` element an `href` of `#student-info`.
+2. You should give the second `a` element an `href` of `#html-questions`.
+3. You should give the third `a` element an `href` of `#css-questions`.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/responsive-web-design/)*
+*Original Challenge ID: 61435e3c0679a306c20f1acc*

@@ -1,0 +1,113 @@
+{
+  "id": "exercise-028-high-availability",
+  "lessonId": "lesson-028-high-availability",
+  "title": "High Availability Network Design",
+  "description": "Your company's e-commerce platform experiences frequent outages due to single points of failure in the network infrastructure. The CEO demands 99.99% uptime (52 minutes downtime per year maximum). You need to redesign the network to eliminate all single points of failure, implement redundancy at every layer, and calculate the expected availability of your design.",
+  "difficulty": "hard",
+  "points": 100,
+  "language": "cisco-ios",
+  "scenario": {
+    "company": "OnlineRetail Corp",
+    "situation": "Current infrastructure has multiple SPOFs causing frequent outages",
+    "requirements": [
+      "Achieve 99.99% availability (four nines)",
+      "Eliminate all single points of failure",
+      "Implement automatic failover (no manual intervention)",
+      "Maintain performance during failover events"
+    ],
+    "current_problems": [
+      "Single internet connection",
+      "Single core switch",
+      "Single firewall",
+      "Single database server",
+      "No redundant power supplies"
+    ],
+    "budget": "$150,000 for infrastructure upgrades"
+  },
+  "starterCode": "! High Availability Network Configuration\n! OnlineRetail Corp - Eliminate Single Points of Failure\n\n! ========================================\n! Current Architecture Issues (SPOFs identified):\n! ========================================\n! 1. Single ISP connection - SPOF\n! 2. Single core switch - SPOF\n! 3. Single firewall - SPOF\n! 4. Single database server - SPOF\n! 5. Single power feed - SPOF\n\n! ========================================\n! HIGH AVAILABILITY DESIGN\n! ========================================\n\n! ========================================\n! 1. Dual Internet Connections (Active-Active)\n! ========================================\n! Primary ISP: FiberLink (1 Gbps)\ninterface GigabitEthernet0/0/0\n  description Primary ISP - FiberLink\n  ip address 203.0.113.2 255.255.255.252\n  ip nat outside\n  no shutdown\n\n! Secondary ISP: CableNet (500 Mbps)\ninterface GigabitEthernet0/0/1\n  description Secondary ISP - CableNet\n  ip address 198.51.100.2 255.255.255.252\n  ip nat outside\n  no shutdown\n\n! Configure BGP for active-active dual ISP\nrouter bgp 65001\n  neighbor 203.0.113.1 remote-as ___\n  neighbor 198.51.100.1 remote-as ___\n  network ___\n  ! Load balancing across both ISPs\n  maximum-paths ___\n\n! ========================================\n! 2. Redundant Core Switches with HSRP\n! ========================================\n! Core-SW-01 Configuration (Primary)\ninterface Vlan10\n  description Production VLAN\n  ip address 10.10.10.2 255.255.255.0\n  standby version ___\n  standby ___ ip 10.10.10.1\n  standby ___ priority ___\n  standby ___ preempt\n  standby ___ track GigabitEthernet1/0/1 ___\n  no shutdown\n\n! Core-SW-02 Configuration (Secondary)\ninterface Vlan10\n  description Production VLAN\n  ip address 10.10.10.3 255.255.255.0\n  standby version ___\n  standby ___ ip 10.10.10.1\n  standby ___ priority ___\n  standby ___ preempt\n  no shutdown\n\n! ========================================\n! 3. Link Aggregation (LACP) for Uplinks\n! ========================================\n! Core-SW-01 to Distribution Switch\ninterface Port-channel1\n  description EtherChannel to Dist-SW-01\n  switchport mode trunk\n  switchport trunk allowed vlan 10,20,30,50\n\ninterface range GigabitEthernet1/0/1-2\n  description Member of Po1 to Dist-SW-01\n  switchport mode trunk\n  switchport trunk allowed vlan 10,20,30,50\n  channel-group 1 mode ___\n  no shutdown\n\n! ========================================\n! 4. Spanning Tree Optimization\n! ========================================\n! Prevent loops while maintaining redundancy\nspanning-tree mode ___\nspanning-tree vlan 10,20,30,50 root ___\n\n! ========================================\n! 5. Redundant Firewalls (Active-Passive)\n! ========================================\n! Firewall-01 (Active) Configuration\nfailover\nfailover lan unit ___\nfailover lan interface FAILOVER GigabitEthernet0/3\nfailover interface ip FAILOVER ___ ___ standby ___ ___\nfailover link STATEFUL GigabitEthernet0/4\nfailover interface ip STATEFUL ___ ___ standby ___ ___\n\n! ========================================\n! AVAILABILITY CALCULATIONS\n! ========================================\n\n! Component Availability (given):\n! - ISP connection: 99.9% each\n! - Core switch: 99.99% each\n! - Firewall: 99.95% each\n! - Server: 99.9% each\n! - Power supply: 99.5% each\n\n! ========================================\n! Calculate Overall System Availability\n! ========================================\n\n! Formula for SERIAL components: A_total = A1 × A2 × A3\n! Formula for PARALLEL components: A_total = 1 - ((1-A1) × (1-A2))\n\n! Single ISP availability: 99.9% = 0.999\n! Dual ISP (parallel) availability:\n! A = 1 - ((1-0.999) × (1-0.999))\n! A = 1 - (0.001 × 0.001)\n! A = 1 - 0.000001\n! A = _______% (should be 99.9999%)\n\n! Single core switch: 99.99% = 0.9999\n! Dual core switches (parallel):\n! A = 1 - ((1-0.9999) × (1-0.9999))\n! A = _______% \n\n! Single firewall: 99.95% = 0.9995\n! Dual firewalls (parallel):\n! A = _______% \n\n! Overall system (all components in series):\n! A_system = A_ISP × A_CoreSW × A_Firewall × A_Server × A_Power\n! A_system = _______% \n\n! Expected downtime per year:\n! Downtime = (1 - A_system) × 525,600 minutes/year\n! Downtime = _______ minutes/year\n\n! ========================================\n! VERIFICATION COMMANDS\n! ========================================\n! show standby brief\n! show etherchannel summary\n! show spanning-tree summary\n! show failover\n! show ip bgp summary",
+  "solution": "! High Availability Network Configuration\n! OnlineRetail Corp - Eliminate Single Points of Failure\n\n! ========================================\n! Current Architecture Issues (SPOFs identified):\n! ========================================\n! 1. Single ISP connection - SPOF\n! 2. Single core switch - SPOF\n! 3. Single firewall - SPOF\n! 4. Single database server - SPOF\n! 5. Single power feed - SPOF\n\n! ========================================\n! HIGH AVAILABILITY DESIGN\n! ========================================\n\n! ========================================\n! 1. Dual Internet Connections (Active-Active)\n! ========================================\n! Primary ISP: FiberLink (1 Gbps)\ninterface GigabitEthernet0/0/0\n  description Primary ISP - FiberLink\n  ip address 203.0.113.2 255.255.255.252\n  ip nat outside\n  no shutdown\n\n! Secondary ISP: CableNet (500 Mbps)\ninterface GigabitEthernet0/0/1\n  description Secondary ISP - CableNet\n  ip address 198.51.100.2 255.255.255.252\n  ip nat outside\n  no shutdown\n\n! Configure BGP for active-active dual ISP\nrouter bgp 65001\n  neighbor 203.0.113.1 remote-as 65100\n  neighbor 198.51.100.1 remote-as 65200\n  network 10.0.0.0 mask 255.0.0.0\n  ! Load balancing across both ISPs\n  maximum-paths 2\n\n! ========================================\n! 2. Redundant Core Switches with HSRP\n! ========================================\n! Core-SW-01 Configuration (Primary)\ninterface Vlan10\n  description Production VLAN\n  ip address 10.10.10.2 255.255.255.0\n  standby version 2\n  standby 1 ip 10.10.10.1\n  standby 1 priority 110\n  standby 1 preempt\n  standby 1 track GigabitEthernet1/0/1 20\n  no shutdown\n\n! Core-SW-02 Configuration (Secondary)\ninterface Vlan10\n  description Production VLAN\n  ip address 10.10.10.3 255.255.255.0\n  standby version 2\n  standby 1 ip 10.10.10.1\n  standby 1 priority 100\n  standby 1 preempt\n  no shutdown\n\n! ========================================\n! 3. Link Aggregation (LACP) for Uplinks\n! ========================================\n! Core-SW-01 to Distribution Switch\ninterface Port-channel1\n  description EtherChannel to Dist-SW-01\n  switchport mode trunk\n  switchport trunk allowed vlan 10,20,30,50\n\ninterface range GigabitEthernet1/0/1-2\n  description Member of Po1 to Dist-SW-01\n  switchport mode trunk\n  switchport trunk allowed vlan 10,20,30,50\n  channel-group 1 mode active\n  no shutdown\n\n! ========================================\n! 4. Spanning Tree Optimization\n! ========================================\n! Prevent loops while maintaining redundancy\nspanning-tree mode rapid-pvst\nspanning-tree vlan 10,20,30,50 root primary\n\n! ========================================\n! 5. Redundant Firewalls (Active-Passive)\n! ========================================\n! Firewall-01 (Active) Configuration\nfailover\nfailover lan unit primary\nfailover lan interface FAILOVER GigabitEthernet0/3\nfailover interface ip FAILOVER 192.168.255.1 255.255.255.252 standby 192.168.255.2\nfailover link STATEFUL GigabitEthernet0/4\nfailover interface ip STATEFUL 192.168.254.1 255.255.255.252 standby 192.168.254.2\n\n! ========================================\n! AVAILABILITY CALCULATIONS\n! ========================================\n\n! Component Availability (given):\n! - ISP connection: 99.9% each\n! - Core switch: 99.99% each\n! - Firewall: 99.95% each\n! - Server: 99.9% each\n! - Power supply: 99.5% each\n\n! ========================================\n! Calculate Overall System Availability\n! ========================================\n\n! Formula for SERIAL components: A_total = A1 × A2 × A3\n! Formula for PARALLEL components: A_total = 1 - ((1-A1) × (1-A2))\n\n! Single ISP availability: 99.9% = 0.999\n! Dual ISP (parallel) availability:\n! A = 1 - ((1-0.999) × (1-0.999))\n! A = 1 - (0.001 × 0.001)\n! A = 1 - 0.000001\n! A = 0.999999 = 99.9999% (six nines)\n\n! Single core switch: 99.99% = 0.9999\n! Dual core switches (parallel):\n! A = 1 - ((1-0.9999) × (1-0.9999))\n! A = 1 - (0.0001 × 0.0001)\n! A = 1 - 0.00000001\n! A = 0.99999999 = 99.999999% (eight nines)\n\n! Single firewall: 99.95% = 0.9995\n! Dual firewalls (parallel):\n! A = 1 - ((1-0.9995) × (1-0.9995))\n! A = 1 - (0.0005 × 0.0005)\n! A = 1 - 0.00000025\n! A = 0.99999975 = 99.99998% \n\n! Redundant servers (parallel): \n! A = 1 - ((1-0.999) × (1-0.999)) = 99.9999%\n\n! Redundant power (parallel):\n! A = 1 - ((1-0.995) × (1-0.995)) = 99.9975%\n\n! Overall system (all components in series):\n! A_system = 0.999999 × 0.99999999 × 0.99999975 × 0.999999 × 0.999975\n! A_system = 0.999973 = 99.9973% (exceeds 99.99% target)\n\n! Expected downtime per year:\n! Downtime = (1 - 0.999973) × 525,600 minutes/year\n! Downtime = 0.000027 × 525,600\n! Downtime = 14.19 minutes/year (well under 52 minutes target)\n\n! ========================================\n! VERIFICATION COMMANDS\n! ========================================\n! show standby brief\n! show etherchannel summary\n! show spanning-tree summary\n! show failover\n! show ip bgp summary",
+  "hints": [
+    "HSRP priority: Higher value becomes active (default 100, set primary to 110+)",
+    "HSRP preempt: Allows higher priority device to take over when it comes back online",
+    "HSRP track: Decrements priority if tracked interface fails (typically decrement by 20)",
+    "LACP mode 'active': Actively negotiates EtherChannel (both sides should use active)",
+    "Parallel availability formula: A = 1 - ((1-A1) × (1-A2))",
+    "Serial availability formula: A = A1 × A2 × A3",
+    "99.99% uptime = 52.56 minutes downtime per year (four nines)",
+    "Redundant components dramatically improve availability (two 99.9% components = 99.9999%)",
+    "BGP maximum-paths enables load balancing across multiple ISP connections",
+    "Rapid-PVST convergence is faster than traditional STP (2-3 seconds vs 30-50 seconds)"
+  ],
+  "testCases": [
+    {
+      "id": "tc1-hsrp",
+      "description": "HSRP configuration",
+      "input": "HSRP setup",
+      "expected": "HSRP configured with version 2, virtual IP, priority, and preempt",
+      "assert": "assert 'standby' in solution and 'priority' in solution and 'preempt' in solution"
+    },
+    {
+      "id": "tc2-priority",
+      "description": "HSRP priority values",
+      "input": "Priority configuration",
+      "expected": "Primary switch has higher priority (110) than secondary (100)",
+      "assert": "assert '110' in solution and '100' in solution"
+    },
+    {
+      "id": "tc3-lacp",
+      "description": "LACP configuration",
+      "input": "EtherChannel setup",
+      "expected": "EtherChannel with LACP mode active",
+      "assert": "assert 'channel-group' in solution and 'active' in solution"
+    },
+    {
+      "id": "tc4-bgp",
+      "description": "Dual ISP with BGP",
+      "input": "BGP configuration",
+      "expected": "BGP configured with two ISP neighbors and maximum-paths for load balancing",
+      "assert": "assert 'router bgp' in solution and 'maximum-paths' in solution"
+    },
+    {
+      "id": "tc5-failover",
+      "description": "Firewall failover",
+      "input": "Failover setup",
+      "expected": "Firewall failover configured with primary unit, failover link, and stateful link",
+      "assert": "assert 'failover' in solution and ('primary' in solution or 'secondary' in solution)"
+    },
+    {
+      "id": "tc6-stp",
+      "description": "Spanning tree mode",
+      "input": "STP configuration",
+      "expected": "Rapid-PVST configured for faster convergence",
+      "assert": "assert 'rapid-pvst' in solution or 'rapid' in solution.lower()"
+    },
+    {
+      "id": "tc7-parallel",
+      "description": "Parallel availability calculation",
+      "input": "Availability math",
+      "expected": "Dual ISP availability calculated as 99.9999% (six nines)",
+      "assert": "assert '99.9999' in solution or '0.999999' in solution"
+    },
+    {
+      "id": "tc8-system",
+      "description": "Overall system availability",
+      "input": "System availability",
+      "expected": "System availability exceeds 99.99% (four nines) target",
+      "assert": "assert '99.99' in solution"
+    },
+    {
+      "id": "tc9-downtime",
+      "description": "Downtime calculation",
+      "input": "Downtime math",
+      "expected": "Annual downtime calculated in minutes (should be <52 minutes for 99.99%)",
+      "assert": "assert 'minutes/year' in solution or 'minutes per year' in solution"
+    },
+    {
+      "id": "tc10-track",
+      "description": "HSRP tracking",
+      "input": "HSRP tracking",
+      "expected": "HSRP tracking configured to decrement priority if uplink fails",
+      "assert": "assert 'track' in solution"
+    }
+  ]
+}

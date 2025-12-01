@@ -1,0 +1,87 @@
+{
+  "id": "exercise-013-switching-basics",
+  "lessonId": "lesson-013-switching-basics",
+  "title": "Switching Basics: MAC Learning, Frame Forwarding, and Loop Prevention",
+  "description": "You are the network lead for Meridian Logistics, which is expanding a campus LAN with new switches. Apply Lesson 013 concepts to manage MAC address tables, understand forwarding decisions, select the right switching method, and suppress broadcast problems. Each scenario represents a real deployment or troubleshooting task on a Layer 2 switch.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "# Switching Basics Scenarios - Network Engineer Role\n# Based on Lesson 013: Switching Basics\n\n================================================================================\nSCENARIO 1: NEW WING ROLL-OUT AND MAC LEARNING\n================================================================================\n\nMeridian Logistics is installing a 48-port switch to serve 80 new desks in the Finance wing. The switch boots with an empty CAM table. Within minutes, packets begin flowing. The initial \"show mac address-table dynamic\" output reads:\n\n````\nVlan    Mac Address       Type        Ports\n----    -----------       ----        -----\n1       00:11:22:33:44:55 DYNAMIC     Gi0/3\n1       00:11:22:33:AA:AA DYNAMIC     Gi0/7\n1       00:22:44:66:88:AA DYNAMIC     Gi0/12\n1       00:0C:29:7B:3F:12 DYNAMIC     Gi0/13\n````\n\nTraffic flows to devices that have already transmitted frames. The Finance team wants to move a pair of laptops from Gi0/3 to Gi0/18 without interruption.\n\nQUESTIONS:\n1. How did the switch create the four entries above, and which frame field is responsible for learning each port?\n2. Marketing moves the two laptops to Gi0/18 but their traffic still goes to Gi0/3. What mechanism controls how long the switch keeps the old port mapping, and how would you shorten the time so the table updates faster?\n3. Which command clears the stale entries for a VLAN so the next frame learns the new location instantly?\n4. Which Layer handles these decisions, and what is the PDU name at that layer?\n\n================================================================================\nSCENARIO 2: FRAME FORWARDING DECISIONS\n================================================================================\n\nYou are watching a frame capture while the LAN is idle. The switch has learned the following relevant entries:\n\n- Host A = 00:AA:AA:AA:AA:AA on Gi0/3\n- Host B = 00:BB:BB:BB:BB:BB on Gi0/7\n\nEvent A: Host A sends a frame to Host B; the frame arrives on Gi0/3.\nEvent B: Host A sends a frame to itself (same MAC) arriving on Gi0/3.\nEvent C: Host A sends a frame to 00:CC:CC:CC:CC:CC, which is not in the table.\n\nQUESTIONS:\n1. For Event A, what forwarding decision does the switch take and why?\n2. For Event B, what action occurs and why is it safe to drop the frame?\n3. Event C causes what behavior from the switch? Why does flooding occur instead of filtering?\n4. What long-term behavior keeps flooding rare once the network stabilizes?\n\n================================================================================\nSCENARIO 3: STORE-AND-FORWARD VS CUT-THROUGH\n================================================================================\n\nThe data center team is debating between enabling cut-through forwarding on the new 10-Gigabit uplinks for the virtualization cluster versus keeping the default store-and-forward mode. Their concerns:\n- Cut-through delivers 3-5 microseconds lower latency but forwards frames before CRC verification.\n- Store-and-forward verifies CRC and frame length, preventing corrupted data from propagating.\n- Error rates on the uplinks average 0.02% due to long multimode fiber runs.\n\nQUESTIONS:\n1. Which switching mode is safer for the virtualization workload, and why?\n2. What specific checks does store-and-forward perform before forwarding a frame?\n3. Under what conditions is cut-through appropriate, and what measurement should you monitor to decide?\n4. How would you configure the switch to enforce cut-through only when you trust the link quality?\n\n================================================================================\nSCENARIO 4: MAC TABLE AGING AND HOST MOVES\n================================================================================\n\nIn the lab, a developer moves from bench 12 (Gi0/12) to bench 18 (Gi0/18) but keeps the same laptop. The switch still insists that 00:DE:AD:BE:EF:00:10 lives on Gi0/12, so packets vanish into a black hole.\n\nQUESTIONS:\n1. What is the root cause of the black hole, and how does the switch process cause it?\n2. Which command reveals the current port mapped to the developer's MAC so you can confirm the stale entry?\n3. What quick CLI sequence clears only that MAC so the next frame relearns the correct port?\n4. How would you tweak the MAC aging timer to accelerate learning after future moves?\n\n================================================================================\nSCENARIO 5: LOOPY LINKFIX AND FLOODING\n================================================================================\n\nA redundant uplink between the Floor 1 switch and the Floor 2 switch was cabled manually while STP was disabled for troubleshooting. Within seconds, every port reports 100% CPU, and the broadcast LED blinks without end.\n\nQUESTIONS:\n1. What Layer 2 problem is occurring, and how does the disabled STP contribute?\n2. Why does broadcast traffic never stop, and how does the CAM table behave while the loop exists?\n3. What actions can you take to stop the flood immediately?\n4. What permanent features should you enable to prevent the same mistake in the future?\n\n================================================================================\nEND OF EXERCISE\n================================================================================",
+  "solution": "# Switching Basics Scenarios - Complete Solutions\n# Provide concise, professional reasoning for each question below\n\n================================================================================\nSCENARIO 1: NEW WING ROLL-OUT AND MAC LEARNING - SOLUTION\n================================================================================\n\n1. Each entry is created when the switch sees a frame arriving with a source MAC. The switch records the source MAC, the ingress port (Gi0/3, Gi0/7, etc.), the VLAN, and starts the aging timer. The source MAC field of the Ethernet header tells the switch where to reach that device next time.\n\n2. The switch keeps entries in CAM until the aging timer expires (default 300 seconds). Shortening the timer (e.g., `mac address-table aging-time 120`) reduces the window where the old port still exists, so after 2 minutes the move is relearned automatically.\n\n3. `clear mac address-table dynamic vlan 1` flushes stale entries for VLAN 1. The next inbound frame from the laptop is treated as unknown, so the switch relearns the new port immediately.\n\n4. Layer 2 is handling these decisions and operates on Frames. CAM table learning, aging timers, and forwarding/filtering logic all live at the Data Link layer.\n\n================================================================================\nSCENARIO 2: FRAME FORWARDING DECISIONS - SOLUTION\n================================================================================\n\n1. The switch forwards the frame out Gi0/7 because it finds Host B in the CAM table on that port and the destination VLAN matches. It sends only the destination port (forward).\n\n2. When the destination MAC matches the port the frame arrived on, the switch filters (drops) it because the frame already resides where it needs to be\u2014this avoids unnecessary traffic.\n\n3. The switch floods because it has no CAM entry for 00:CC:CC:CC:CC:CC. Flooding sends the frame out every other port so the unknown host can reply; when it does, the switch learns the port and future traffic is forwarded efficiently.\n\n4. Once the unknown host replies, its source MAC is learned, so the switch can forward rather than flood. Over time the CAM table fills with stable entries, preventing repeated flooding.\n\n================================================================================\nSCENARIO 3: STORE-AND-FORWARD VS CUT-THROUGH - SOLUTION\n================================================================================\n\n1. Store-and-forward is safer because it verifies CRCs and frame size before forwarding; in a virtualization cluster, a single corrupted packet can crash a VM if a doorbell interrupt hits the wrong VM kernel.\n\n2. Store-and-forward checks the destination MAC, source MAC, EtherType/length, and the Frame Check Sequence (CRC). Only when CRC matches and length is valid does it forward the frame.\n\n3. Cut-through is appropriate when error rates are extremely low (practice <0.01%) and latency is more critical than guarding against errors. Monitor RX error counters and CRC/align errors on the uplinks before trusting cut-through.\n\n4. Configure an access control list that triggers an automatic fallback (many vendors call it \"adaptive cut-through\"), or set the switch to store-and-forward and enable cut-through only on specific ports with commands like `switchport mode cut-through` plus `monitor error-threshold`. If errors exceed the threshold, the switch reverts to store-and-forward automatically.\n\n================================================================================\nSCENARIO 4: MAC TABLE AGING AND HOST MOVES - SOLUTION\n================================================================================\n\n1. The developer's MAC still maps to Gi0/12 because the CAM entry hasn\u2019t aged out yet. The new location (Gi0/18) sends frames, but outgoing traffic still uses the old entry, so frames go nowhere (black hole).\n\n2. `show mac address-table dynamic address 00:DE:AD:BE:EF:00:10` shows the current port. Confirm it still reports Gi0/12 despite the device sitting on Gi0/18.\n\n3. `clear mac address-table dynamic address 00:DE:AD:BE:EF:00:10 vlan 1` deletes only that entry. The next frame is flooded, the switch learns the new port, and connectivity returns instantly.\n\n4. Tweak the aging timer with `mac address-table aging-time 90` so entries expire after 90 seconds instead of 300. This gives the switch more agility when people move desks or re-cable machines.\n\n================================================================================\nSCENARIO 5: LOOPY LINKFIX AND FLOODING - SOLUTION\n================================================================================\n\n1. You have a Layer 2 loop. Disabling Spanning Tree Protocol means the two uplinks are both active, so frames circulate endlessly and every switch floods incoming broadcasts.\n\n2. Broadcast frames are propagated on every port and then loop back, so the CAM table sees the same MACs on multiple ports and begins thrashing. The switch floods because it cannot decide which port is correct, and CPU skyrockets as it processes repeated BPDUs and broadcasts.\n\n3. Shut down one uplink immediately or unplug it, then enable STP (`spanning-tree mode rapid-pvst`). Clear the CAM table so entries rebuild without loop artifacts.\n\n4. Enable STP, BPDU Guard on edge ports, and Loop Guard on uplinks. Configure PortFast on access ports and use `spanning-tree portfast bpduguard default` to protect the access layer. That way, accidental loops cannot create another broadcast storm.\n\n================================================================================\nEND OF SOLUTIONS\n================================================================================",
+  "hints": [
+    "Switches learn MAC addresses by examining the source MAC of every incoming frame and tie it to the ingress port.",
+    "MAC address table entries age out (default 300 seconds) to handle moves; use `mac address-table aging-time` to adjust the timeout.",
+    "The three forwarding actions are forward, filter, and flood\u2014understand when each applies based on the destination MAC entry.",
+    "Store-and-forward inspects the CRC/FCS and frame length before forwarding; cut-through begins forwarding early to save latency.",
+    "Flooding occurs when a destination MAC is unknown or the CAM table is full; minimize flooding by populating the table quickly.",
+    "Use `clear mac address-table dynamic` (optionally filtered by VLAN or MAC) to flush stale entries before reconciling moves.",
+    "Port security limits allowed MAC addresses per port to prevent MAC flooding attacks and keeps the CAM table clean.",
+    "Loop prevention relies on STP or similar protocols; never leave redundant paths enabled without a loop mitigation mechanism.",
+    "Monitor interface error counters (CRC, frame, input errors) to detect when a link is too noisy for cut-through mode.",
+    "Forwarding decisions and MAC table updates all occur at Layer 2 where the PDU is the Ethernet frame.",
+    "PortFast/BPDU Guard protects access ports while Loop Guard or root guard protects redundant uplinks in the core.",
+    "Adaptive cut-through allows the switch to fall back to store-and-forward when errors exceed a configured threshold."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Confirms text references MAC learning and source-port dependency",
+      "validation": "assert 'mac address-table' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Ensures aging-time behavior is considered",
+      "validation": "assert 'aging-time' in code.lower() or 'aging timer' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Validates coverage of forward/filter/flood decisions",
+      "validation": "assert 'forward' in code.lower() and 'filter' in code.lower() and 'flood' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Checks for store-and-forward mention",
+      "validation": "assert 'store-and-forward' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "Checks for cut-through consideration",
+      "validation": "assert 'cut-through' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "Verifies broadcast looping is noted",
+      "validation": "assert 'broadcast storm' in code.lower() or 'loop' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc7",
+      "description": "Ensures STP or loop guard recommendation is present",
+      "validation": "assert 'stp' in code.lower() or 'loop guard' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc8",
+      "description": "Validates mention of Layer 2 and frames",
+      "validation": "assert 'layer 2' in code.lower() and 'frame' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc9",
+      "description": "Confirms mention of clear mac address-table commands",
+      "validation": "assert 'clear mac address-table' in code.lower()",
+      "isHidden": false
+    },
+    {
+      "id": "tc10",
+      "description": "Ensures solutions include professional reasoning",
+      "validation": "assert len(code) > 600",
+      "isHidden": false
+    }
+  ]
+}

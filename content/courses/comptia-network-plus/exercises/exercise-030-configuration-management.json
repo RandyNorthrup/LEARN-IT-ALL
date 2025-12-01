@@ -1,0 +1,108 @@
+{
+  "id": "exercise-030",
+  "lessonId": "lesson-030-configuration-management",
+  "title": "Network Automation with Ansible",
+  "description": "Your company manages 50 network switches manually, and configuration errors are frequent. A recent outage was caused by an incorrect VLAN configuration on 10 switches. Management has approved implementing network automation using Ansible to ensure consistent configurations, reduce errors, and enable rapid deployment of changes. You need to create an Ansible playbook that automates the deployment of a standard security baseline across all switches.",
+  "difficulty": "hard",
+  "points": 100,
+  "language": "yaml",
+  "scenario": {
+    "company": "Enterprise Networks Inc",
+    "situation": "Manual configuration causing errors, need automation for consistency",
+    "requirements": [
+      "Create Ansible playbook for standard security configuration",
+      "Configure VLANs, trunk ports, and access ports",
+      "Implement security hardening (disable unused ports, enable port-security)",
+      "Configure SNMP v3 monitoring",
+      "Save configurations automatically"
+    ],
+    "target_devices": "Cisco Catalyst switches (IOS)",
+    "baseline_configuration": {
+      "vlans": [
+        "VLAN 10 Data",
+        "VLAN 20 Voice",
+        "VLAN 30 Guest",
+        "VLAN 99 Management"
+      ],
+      "trunk_ports": "GigabitEthernet1/0/1-2 (uplinks to core)",
+      "access_ports": "GigabitEthernet1/0/3-48",
+      "security": "Port-security, disable unused ports, no CDP on edge ports"
+    }
+  },
+  "starterCode": "---\n# Ansible Playbook: Deploy Standard Switch Configuration\n# Enterprise Networks Inc - Network Automation\n# Purpose: Deploy security baseline to all access switches\n\n- name: Configure Cisco Access Switches with Security Baseline\n  hosts: ___\n  gather_facts: ___\n  connection: ___\n  \n  vars:\n    # VLAN definitions\n    vlans:\n      - id: ___\n        name: ___\n      - id: ___\n        name: ___\n      - id: ___\n        name: ___\n      - id: ___\n        name: ___\n    \n    # Trunk port configuration\n    trunk_ports:\n      - ___\n      - ___\n    \n    # SNMPv3 configuration\n    snmp_group: ___\n    snmp_user: ___\n    snmp_auth_pass: ___\n    snmp_priv_pass: ___\n  \n  tasks:\n    # Task 1: Create VLANs\n    - name: Create VLANs on switch\n      cisco.ios.ios_vlans:\n        config:\n          - vlan_id: \"{{ item.id }}\"\n            name: \"{{ item.name }}\"\n            state: ___\n      loop: \"{{ ___ }}\"\n      register: vlan_result\n    \n    # Task 2: Configure trunk ports to core switches\n    - name: Configure uplink trunk ports\n      cisco.ios.ios_l2_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            mode: ___\n            trunk:\n              allowed_vlans: ___\n              native_vlan: ___\n      loop: \"{{ ___ }}\"\n    \n    # Task 3: Configure access ports for data VLAN\n    - name: Configure access ports for VLAN 10 (Data)\n      cisco.ios.ios_l2_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            mode: ___\n            access:\n              vlan: ___\n      loop: \"{{ ___ }}\"\n      # Example: Generate list of interfaces Gi1/0/3 through Gi1/0/24\n    \n    # Task 4: Enable port security on access ports\n    - name: Configure port security\n      cisco.ios.ios_config:\n        lines:\n          - switchport port-security\n          - switchport port-security maximum ___\n          - switchport port-security violation ___\n          - switchport port-security mac-address ___\n        parents: \"interface {{ item }}\"\n      loop: \"{{ ___ }}\"\n    \n    # Task 5: Disable unused ports (security hardening)\n    - name: Disable unused switch ports\n      cisco.ios.ios_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            enabled: ___\n            description: \"DISABLED - Unused Port\"\n      loop: \"{{ ___ }}\"\n      # Example: Ports Gi1/0/40-48 unused\n    \n    # Task 6: Configure SNMPv3 for monitoring\n    - name: Configure SNMPv3\n      cisco.ios.ios_config:\n        lines:\n          - snmp-server group {{ ___ }} v3 priv\n          - snmp-server user {{ ___ }} {{ ___ }} v3 auth sha {{ ___ }} priv aes 128 {{ ___ }}\n          - snmp-server host ___ version 3 priv {{ ___ }}\n    \n    # Task 7: Disable CDP on access ports (security)\n    - name: Disable CDP on edge ports\n      cisco.ios.ios_config:\n        lines:\n          - no cdp enable\n        parents: \"interface {{ item }}\"\n      loop: \"{{ ___ }}\"\n    \n    # Task 8: Configure management interface\n    - name: Configure management VLAN interface\n      cisco.ios.ios_l3_interfaces:\n        config:\n          - name: ___\n            ipv4:\n              - address: \"{{ ___ }}\"\n    \n    # Task 9: Set default gateway\n    - name: Configure default gateway\n      cisco.ios.ios_config:\n        lines:\n          - ip default-gateway ___\n    \n    # Task 10: Save configuration\n    - name: Save running configuration to startup\n      cisco.ios.ios_config:\n        save_when: ___\n    \n    # Task 11: Verify VLAN creation\n    - name: Verify VLANs are configured\n      cisco.ios.ios_command:\n        commands:\n          - ___\n      register: vlan_verify\n    \n    - name: Display VLAN verification output\n      debug:\n        var: ___\n\n# Inventory file (hosts.yml)\n# ---\n# all:\n#   children:\n#     access_switches:\n#       hosts:\n#         switch-01:\n#           ansible_host: ___\n#         switch-02:\n#           ansible_host: ___\n#         switch-03:\n#           ansible_host: ___\n#   vars:\n#     ansible_connection: ___\n#     ansible_network_os: ___\n#     ansible_user: ___\n#     ansible_password: ___\n\n# Run playbook:\n# ansible-playbook -i ___ deploy_switch_baseline.yml",
+  "solution": "---\n# Ansible Playbook: Deploy Standard Switch Configuration\n# Enterprise Networks Inc - Network Automation\n# Purpose: Deploy security baseline to all access switches\n\n- name: Configure Cisco Access Switches with Security Baseline\n  hosts: access_switches\n  gather_facts: false\n  connection: network_cli\n  \n  vars:\n    # VLAN definitions\n    vlans:\n      - id: 10\n        name: Data\n      - id: 20\n        name: Voice\n      - id: 30\n        name: Guest\n      - id: 99\n        name: Management\n    \n    # Trunk port configuration\n    trunk_ports:\n      - GigabitEthernet1/0/1\n      - GigabitEthernet1/0/2\n    \n    # Access ports (data VLAN)\n    data_access_ports: \"{{ range(3, 25) | map('regex_replace', '^(.*)$', 'GigabitEthernet1/0/\\\\1') | list }}\"\n    \n    # Unused ports to disable\n    unused_ports: \"{{ range(40, 49) | map('regex_replace', '^(.*)$', 'GigabitEthernet1/0/\\\\1') | list }}\"\n    \n    # SNMPv3 configuration\n    snmp_group: MONITORING\n    snmp_user: admin\n    snmp_auth_pass: AuthPass123!\n    snmp_priv_pass: PrivPass123!\n    snmp_server: 10.1.1.200\n  \n  tasks:\n    # Task 1: Create VLANs\n    - name: Create VLANs on switch\n      cisco.ios.ios_vlans:\n        config:\n          - vlan_id: \"{{ item.id }}\"\n            name: \"{{ item.name }}\"\n            state: active\n      loop: \"{{ vlans }}\"\n      register: vlan_result\n    \n    # Task 2: Configure trunk ports to core switches\n    - name: Configure uplink trunk ports\n      cisco.ios.ios_l2_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            mode: trunk\n            trunk:\n              allowed_vlans: \"10,20,30,99\"\n              native_vlan: 99\n      loop: \"{{ trunk_ports }}\"\n    \n    # Task 3: Configure access ports for data VLAN\n    - name: Configure access ports for VLAN 10 (Data)\n      cisco.ios.ios_l2_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            mode: access\n            access:\n              vlan: 10\n      loop: \"{{ data_access_ports }}\"\n    \n    # Task 4: Enable port security on access ports\n    - name: Configure port security\n      cisco.ios.ios_config:\n        lines:\n          - switchport port-security\n          - switchport port-security maximum 3\n          - switchport port-security violation restrict\n          - switchport port-security mac-address sticky\n        parents: \"interface {{ item }}\"\n      loop: \"{{ data_access_ports }}\"\n    \n    # Task 5: Disable unused ports (security hardening)\n    - name: Disable unused switch ports\n      cisco.ios.ios_interfaces:\n        config:\n          - name: \"{{ item }}\"\n            enabled: false\n            description: \"DISABLED - Unused Port\"\n      loop: \"{{ unused_ports }}\"\n    \n    # Task 6: Configure SNMPv3 for monitoring\n    - name: Configure SNMPv3\n      cisco.ios.ios_config:\n        lines:\n          - snmp-server group {{ snmp_group }} v3 priv\n          - snmp-server user {{ snmp_user }} {{ snmp_group }} v3 auth sha {{ snmp_auth_pass }} priv aes 128 {{ snmp_priv_pass }}\n          - snmp-server host {{ snmp_server }} version 3 priv {{ snmp_user }}\n    \n    # Task 7: Disable CDP on access ports (security)\n    - name: Disable CDP on edge ports\n      cisco.ios.ios_config:\n        lines:\n          - no cdp enable\n        parents: \"interface {{ item }}\"\n      loop: \"{{ data_access_ports }}\"\n    \n    # Task 8: Configure management interface\n    - name: Configure management VLAN interface\n      cisco.ios.ios_l3_interfaces:\n        config:\n          - name: Vlan99\n            ipv4:\n              - address: \"{{ ansible_host }}/24\"\n    \n    # Task 9: Set default gateway\n    - name: Configure default gateway\n      cisco.ios.ios_config:\n        lines:\n          - ip default-gateway 192.168.99.1\n    \n    # Task 10: Save configuration\n    - name: Save running configuration to startup\n      cisco.ios.ios_config:\n        save_when: always\n    \n    # Task 11: Verify VLAN creation\n    - name: Verify VLANs are configured\n      cisco.ios.ios_command:\n        commands:\n          - show vlan brief\n      register: vlan_verify\n    \n    - name: Display VLAN verification output\n      debug:\n        var: vlan_verify.stdout_lines\n\n# Inventory file (hosts.yml)\n# ---\n# all:\n#   children:\n#     access_switches:\n#       hosts:\n#         switch-01:\n#           ansible_host: 192.168.99.10\n#         switch-02:\n#           ansible_host: 192.168.99.11\n#         switch-03:\n#           ansible_host: 192.168.99.12\n#   vars:\n#     ansible_connection: network_cli\n#     ansible_network_os: ios\n#     ansible_user: admin\n#     ansible_password: \"{{ vault_switch_password }}\"\n\n# Run playbook:\n# ansible-playbook -i hosts.yml deploy_switch_baseline.yml",
+  "hints": [
+    "Ansible uses 'hosts' to specify target device group (defined in inventory file)",
+    "Connection type for network devices is 'network_cli' (not 'ssh')",
+    "Use 'gather_facts: false' for network devices (they don't support fact gathering)",
+    "cisco.ios collection provides modules for Cisco IOS configuration",
+    "Loop through lists using 'loop' keyword and access items with '{{ item }}'",
+    "Port security 'violation restrict' drops packets but keeps port up (vs shutdown)",
+    "Port security 'mac-address sticky' learns MACs dynamically and saves to config",
+    "SNMPv3 requires group (priv level), user (credentials), and host (destination)",
+    "Save config with 'save_when: always' to persist changes across reboots",
+    "Use 'register' to capture command output and 'debug' to display it"
+  ],
+  "testCases": [
+    {
+      "input": "Playbook structure",
+      "expected": "Valid Ansible playbook with name, hosts, connection, and tasks",
+      "assert": "assert 'hosts:' in solution and 'tasks:' in solution and 'connection:' in solution",
+      "id": "tc1"
+    },
+    {
+      "input": "VLAN configuration",
+      "expected": "VLANs 10, 20, 30, 99 defined with names",
+      "assert": "assert 'vlan_id:' in solution and 'vlans:' in solution",
+      "id": "tc2"
+    },
+    {
+      "input": "Trunk port configuration",
+      "expected": "Trunk ports configured with allowed VLANs and native VLAN",
+      "assert": "assert 'mode: trunk' in solution and 'allowed_vlans' in solution",
+      "id": "tc3"
+    },
+    {
+      "input": "Access port configuration",
+      "expected": "Access ports configured for VLAN 10",
+      "assert": "assert 'mode: access' in solution and 'vlan: 10' in solution",
+      "id": "tc4"
+    },
+    {
+      "input": "Port security",
+      "expected": "Port security enabled with maximum MACs, violation mode, and sticky",
+      "assert": "assert 'port-security' in solution and 'maximum' in solution and 'sticky' in solution",
+      "id": "tc5"
+    },
+    {
+      "input": "SNMPv3 configuration",
+      "expected": "SNMPv3 with group, user, auth, and priv configured",
+      "assert": "assert 'snmp-server group' in solution and 'v3 priv' in solution and 'auth sha' in solution",
+      "id": "tc6"
+    },
+    {
+      "input": "Disable unused ports",
+      "expected": "Unused ports disabled with 'enabled: false'",
+      "assert": "assert 'enabled: false' in solution or 'enabled: False' in solution",
+      "id": "tc7"
+    },
+    {
+      "input": "CDP disabled on edge",
+      "expected": "CDP disabled on access ports for security",
+      "assert": "assert 'no cdp enable' in solution",
+      "id": "tc8"
+    },
+    {
+      "input": "Save configuration",
+      "expected": "Configuration saved with 'save_when: always'",
+      "assert": "assert 'save_when' in solution and 'always' in solution",
+      "id": "tc9"
+    },
+    {
+      "input": "Network CLI connection",
+      "expected": "Connection type is 'network_cli' for Cisco devices",
+      "assert": "assert 'network_cli' in solution",
+      "id": "tc10"
+    }
+  ]
+}

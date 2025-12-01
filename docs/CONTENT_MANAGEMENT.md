@@ -286,7 +286,7 @@ Included example course with:
 - ✅ Course metadata
 - ✅ 2 lessons (What is Python, Variables)
 - ✅ 2 exercises (Hello World, Variables)
-- ✅ 1 quiz (8 questions, multiple types)
+- ✅ 1 quiz (50 questions, multiple types)
 
 Location: `content/courses/python-basics/`
 
@@ -298,25 +298,5 @@ npm run dev
 
 ---
 
-## 📚 Benefits of File-Based Content
-
-1. **Version Control**: Track changes with Git
-2. **No Database Required**: Content is portable
-3. **Easy Editing**: Use any text editor
-4. **Readable**: Markdown for lessons, JSON for data
-5. **Type-Safe**: Zod validation ensures correctness
-6. **Fast**: No database queries for content
-7. **Portable**: Copy entire `content/` folder to deploy
-
----
-
-## 🔄 Migration Note
-
-CourseHub previously used database seeding scripts. All seeding infrastructure has been removed in favor of this file-based system. The database now only stores:
-
-- User progress (lesson completion)
-- Exercise submissions
-- Quiz attempts
-- Enrollment data
 
 **Content lives in files, progress lives in database.**

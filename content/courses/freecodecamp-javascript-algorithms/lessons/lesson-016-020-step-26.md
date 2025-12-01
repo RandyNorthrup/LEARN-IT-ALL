@@ -1,0 +1,65 @@
+---
+id: lesson-016-020
+title: Step 26
+chapterId: chapter-16
+order: 20
+duration: 5
+objectives:
+  - Step 26
+---
+
+# Step 26
+
+Before testing the `merge_sort()` function, you need to create a base case that stops the function execution when the length of `array` is less than or equal to `1`.
+
+This base case will stop the recursion call. Without it, the merge sort operation would continue to run even when the list has been sorted or has no element in it.
+
+Right after the function declaration, create an `if` statement with this condition: `len(array) <= 1`. Use the `pass` keyword in the function's body.
+
+## Starter Code
+
+```html
+--fcc-editable-region--
+def merge_sort(array):
+
+--fcc-editable-region--
+   
+    middle_point = len(array) // 2
+    left_part = array[:middle_point]
+    right_part = array[middle_point:]
+
+    merge_sort(left_part)
+    merge_sort(right_part)
+
+    left_array_index = 0
+    right_array_index = 0
+    sorted_index = 0
+
+    while left_array_index < len(left_part) and right_array_index < len(right_part):
+        if left_part[left_array_index] < right_part[right_array_index]:
+            array[sorted_index] = left_part[left_array_index]
+            left_array_index += 1
+        else:
+            array[sorted_index] = right_part[right_array_index]
+            right_array_index += 1
+        sorted_index += 1
+
+    while left_array_index < len(left_part):
+        array[sorted_index] = left_part[left_array_index]
+        left_array_index += 1
+        sorted_index += 1
+   
+    while right_array_index < len(right_part):
+        array[sorted_index] = right_part[right_array_index]
+        right_array_index += 1
+        sorted_index += 1
+```
+
+## Hints
+
+1. You should create an `if` statement to check if `len(array) <= 1`. Don't forget to use the `pass` keyword in the body of the `if` statement.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 6569b743630ee592a65a7e2f*

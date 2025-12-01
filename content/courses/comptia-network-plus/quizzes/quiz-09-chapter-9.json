@@ -1,0 +1,764 @@
+{
+  "id": "quiz-09-chapter-9",
+  "chapterId": "ch9-network-troubleshooting",
+  "title": "Chapter 9 Quiz: Network Troubleshooting",
+  "description": "Comprehensive quiz covering troubleshooting methodology, command-line tools, hardware tools, common connectivity issues, performance problems, and systematic problem-solving",
+  "difficulty": "advanced",
+  "type": "multiple-choice",
+  "estimatedTime": 60,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "question": "What is the first step in the seven-step troubleshooting methodology?",
+      "options": [
+        "Establish a theory",
+        "Identify the problem",
+        "Test the theory",
+        "Implement the solution"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The seven steps are: 1) Identify the problem, 2) Establish a theory of probable cause, 3) Test the theory, 4) Establish a plan of action, 5) Implement the solution, 6) Verify functionality, 7) Document findings. Always start by gathering information and identifying symptoms before jumping to conclusions.",
+      "points": 2,
+      "references": ["Lesson 81: Troubleshooting Methodology"]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "question": "A user cannot ping the default gateway. What layer of the OSI model should you start troubleshooting?",
+      "options": [
+        "Layer 7 - Application",
+        "Layer 4 - Transport",
+        "Layer 3 - Network",
+        "Layer 1 - Physical"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Start at Layer 1 (Physical) and work up. Check cable connection, link lights, port status. Then Layer 2 (VLAN, MAC), Layer 3 (IP config, gateway). Bottom-up troubleshooting is systematic. Cannot ping gateway suggests Layer 1-3 issue. Application layer issues manifest differently.",
+      "points": 2,
+      "references": ["Lesson 81: Troubleshooting - OSI Model Approach"]
+    },
+    {
+      "id": "q3",
+      "type": "multiple-choice",
+      "question": "Which command displays the local computer's IP configuration on Windows?",
+      "options": [
+        "ifconfig",
+        "ipconfig",
+        "ip addr",
+        "show ip interface"
+      ],
+      "correctAnswer": 1,
+      "explanation": "ipconfig displays IP configuration on Windows. ipconfig /all shows detailed info including DNS, DHCP, MAC address. ifconfig is legacy Linux/Unix. ip addr is modern Linux. show ip interface is Cisco IOS. Troubleshooting begins with verifying IP configuration.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - ipconfig"]
+    },
+    {
+      "id": "q4",
+      "type": "multiple-choice",
+      "question": "What does the command 'ping 127.0.0.1' test?",
+      "options": [
+        "Default gateway connectivity",
+        "Internet connectivity",
+        "Local TCP/IP stack functionality",
+        "DNS resolution"
+      ],
+      "correctAnswer": 2,
+      "explanation": "127.0.0.1 (loopback) tests the local TCP/IP stack without sending packets on the network. If this fails, TCP/IP is not properly installed or configured. Next test: ping your own IP, then gateway, then remote host. Systematic approach isolates issue.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - ping"]
+    },
+    {
+      "id": "q5",
+      "type": "multiple-choice",
+      "question": "Which tool traces the path packets take from source to destination?",
+      "options": [
+        "ping",
+        "traceroute/tracert",
+        "netstat",
+        "arp"
+      ],
+      "correctAnswer": 1,
+      "explanation": "traceroute (Linux/Unix) or tracert (Windows) shows each hop in the path by manipulating TTL values. Each router returns ICMP Time Exceeded. Identifies where packet loss or latency occurs. Windows uses ICMP, Linux uses UDP by default. Essential for routing troubleshooting.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - traceroute"]
+    },
+    {
+      "id": "q6",
+      "type": "multiple-choice",
+      "question": "What does the 'netstat -an' command display?",
+      "options": [
+        "ARP cache",
+        "Routing table",
+        "Active connections and listening ports",
+        "DNS cache"
+      ],
+      "correctAnswer": 2,
+      "explanation": "netstat -an shows active TCP connections and listening ports with IP addresses (not DNS names). -a shows all connections, -n shows numerical addresses. Useful for identifying listening services, established connections, and security issues. Modern Linux uses ss command. netstat -r shows routing table.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - netstat"]
+    },
+    {
+      "id": "q7",
+      "type": "multiple-choice",
+      "question": "Which command queries DNS servers to resolve names to IP addresses?",
+      "options": [
+        "ping",
+        "nslookup/dig",
+        "traceroute",
+        "arp"
+      ],
+      "correctAnswer": 1,
+      "explanation": "nslookup (Windows/Unix) and dig (Linux/Unix) query DNS servers. Show which DNS server responded and the resolved address. Useful for troubleshooting name resolution. dig provides more detailed output. Can query specific record types (A, AAAA, MX, NS, etc.). Essential for DNS troubleshooting.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - nslookup/dig"]
+    },
+    {
+      "id": "q8",
+      "type": "multiple-choice",
+      "question": "What does the command 'arp -a' display?",
+      "options": [
+        "Routing table",
+        "IP-to-MAC address mappings",
+        "Active connections",
+        "Interface statistics"
+      ],
+      "correctAnswer": 1,
+      "explanation": "arp -a displays the ARP cache (IP-to-MAC address mappings) for local network communication. Useful for verifying Layer 2 connectivity and identifying duplicate IPs. ARP issues cause intermittent connectivity. arp -d deletes entries. Switches maintain MAC address tables; hosts maintain ARP cache.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - arp"]
+    },
+    {
+      "id": "q9",
+      "type": "multiple-choice",
+      "question": "A user can ping IP addresses but cannot browse websites. What is the most likely issue?",
+      "options": [
+        "Physical layer problem",
+        "Default gateway misconfigured",
+        "DNS resolution failure",
+        "Routing loop"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ping uses IP addresses; browsing uses domain names requiring DNS. If IP ping works but browsing fails, DNS resolution is likely broken. Check DNS server configuration (ipconfig /all), test with nslookup, try alternate DNS (8.8.8.8). Could also be firewall blocking HTTP/HTTPS.",
+      "points": 2,
+      "references": ["Lesson 83: Connectivity Issues - DNS Problems"]
+    },
+    {
+      "id": "q10",
+      "type": "multiple-choice",
+      "question": "What is the most common cause of intermittent connectivity issues?",
+      "options": [
+        "DNS problems",
+        "Routing loops",
+        "Physical layer issues (bad cables, connectors)",
+        "VLAN misconfiguration"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Physical layer issues (damaged cables, loose connectors, bad ports) cause intermittent connectivity. Constant issues indicate complete failure; intermittent suggests environmental factors (heat, movement, interference). Test with cable tester, swap cables, check interface statistics for errors.",
+      "points": 2,
+      "references": ["Lesson 83: Common Issues - Physical Layer"]
+    },
+    {
+      "id": "q11",
+      "type": "multiple-choice",
+      "question": "Which hardware tool tests cable continuity and wiring?",
+      "options": [
+        "Multimeter",
+        "Cable tester",
+        "Protocol analyzer",
+        "Tone generator"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Cable testers verify continuity, correct wiring (T568A/B), and detect opens, shorts, miswires, and split pairs. Advanced certifiers test cable performance (attenuation, crosstalk, return loss). Basic testers ($50-200), certifiers ($2000+). Essential for structured cabling.",
+      "points": 2,
+      "references": ["Lesson 84: Hardware Tools - Cable Tester"]
+    },
+    {
+      "id": "q12",
+      "type": "multiple-choice",
+      "question": "What tool generates a tone on a cable to locate it among many?",
+      "options": [
+        "Cable tester",
+        "Tone generator and probe (toner)",
+        "Multimeter",
+        "OTDR"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Tone generator (toner) and probe (inductive amplifier) locate cables in walls, ceilings, or patch panels. Toner sends signal, probe detects it. Also called 'fox and hound'. Does NOT test functionality, only identifies cables. Essential for cable tracing.",
+      "points": 2,
+      "references": ["Lesson 84: Hardware Tools - Tone Generator"]
+    },
+    {
+      "id": "q13",
+      "type": "multiple-choice",
+      "question": "Which tool is used to troubleshoot fiber optic cables?",
+      "options": [
+        "Cable tester",
+        "Multimeter",
+        "OTDR (Optical Time Domain Reflectometer)",
+        "Crimper"
+      ],
+      "correctAnswer": 2,
+      "explanation": "OTDR (Optical Time Domain Reflectometer) tests fiber by sending light pulses and measuring reflections to detect breaks, bends, and attenuation. Shows distance to faults. Expensive ($1000+). Fiber light meter measures signal strength. Visual Fault Locator (VFL) shines visible red light for shorts. Fiber different from copper testing.",
+      "points": 2,
+      "references": ["Lesson 84: Hardware Tools - OTDR"]
+    },
+    {
+      "id": "q14",
+      "type": "multiple-choice",
+      "question": "What does a protocol analyzer (packet sniffer) capture?",
+      "options": [
+        "Cable voltages",
+        "Network traffic/packets",
+        "Light levels in fiber",
+        "Temperature readings"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Protocol analyzers (Wireshark, tcpdump, OmniPeek) capture and analyze network packets. See source/destination, protocols, timing, errors. Essential for deep troubleshooting: performance issues, security incidents, protocol problems. Requires promiscuous mode or port mirroring. Learn packet analysis for advanced troubleshooting.",
+      "points": 2,
+      "references": ["Lesson 84: Hardware Tools - Protocol Analyzer"]
+    },
+    {
+      "id": "q15",
+      "type": "multiple-choice",
+      "question": "A switch port shows CRC errors. What does this indicate?",
+      "options": [
+        "Duplex mismatch",
+        "VLAN misconfiguration",
+        "Physical layer issues (bad cable/NIC)",
+        "DNS problems"
+      ],
+      "correctAnswer": 2,
+      "explanation": "CRC (Cyclic Redundancy Check) errors indicate corrupted frames from physical layer issues: bad cable, damaged connector, faulty NIC, or electrical interference. Check with cable tester, swap cable, test different port. Duplex mismatch causes late collisions, not CRC errors.",
+      "points": 2,
+      "references": ["Lesson 85: Interface Errors - CRC Errors"]
+    },
+    {
+      "id": "q16",
+      "type": "multiple-choice",
+      "question": "What does a duplex mismatch typically cause?",
+      "options": [
+        "Complete connectivity loss",
+        "Slow performance and late collisions",
+        "DNS resolution failure",
+        "Routing loops"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Duplex mismatch (one side full-duplex, other half-duplex) causes poor performance with late collisions. Auto-negotiation failures common. Both sides should match: both auto or both manually configured. Check with show interface. Causes 'works but slow' symptom. Modern gigabit requires full-duplex.",
+      "points": 2,
+      "references": ["Lesson 85: Common Issues - Duplex Mismatch"]
+    },
+    {
+      "id": "q17",
+      "type": "multiple-choice",
+      "question": "A user receives IP address 169.254.x.x. What does this indicate?",
+      "options": [
+        "Successful DHCP",
+        "APIPA - DHCP failure",
+        "Static IP configured",
+        "Duplicate IP"
+      ],
+      "correctAnswer": 1,
+      "explanation": "169.254.0.0/16 is APIPA (Automatic Private IP Addressing), assigned when DHCP fails. Windows self-assigns for local communication only. Troubleshoot DHCP: server down, network cable, DHCP scope exhausted, rogue DHCP server, DHCP relay not configured across routers.",
+      "points": 2,
+      "references": ["Lesson 83: Common Issues - APIPA"]
+    },
+    {
+      "id": "q18",
+      "type": "multiple-choice",
+      "question": "What command releases and renews DHCP leases on Windows?",
+      "options": [
+        "ipconfig /release and ipconfig /renew",
+        "dhclient -r and dhclient",
+        "ifconfig down and ifconfig up",
+        "netsh dhcp release"
+      ],
+      "correctAnswer": 0,
+      "explanation": "ipconfig /release releases current DHCP lease, ipconfig /renew requests new lease. Useful for troubleshooting DHCP issues and getting new IP after network changes. Linux uses dhclient -r (release) and dhclient or sudo dhclient eth0. Common troubleshooting step.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - ipconfig"]
+    },
+    {
+      "id": "q19",
+      "type": "multiple-choice",
+      "question": "What is broadcast storm?",
+      "options": [
+        "Too many users accessing network",
+        "Excessive broadcast traffic degrading performance",
+        "Router sending all traffic as broadcasts",
+        "DNS server failure"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Broadcast storm occurs when broadcast traffic multiplies uncontrollably, consuming all bandwidth. Common causes: spanning tree failures, network loops, malware. Symptoms: network becomes unusable, high CPU on switches. Solution: enable spanning tree, check for loops, segment with VLANs/routers. Storm control features limit broadcast rate.",
+      "points": 2,
+      "references": ["Lesson 85: Performance Issues - Broadcast Storm"]
+    },
+    {
+      "id": "q20",
+      "type": "multiple-choice",
+      "question": "Users in VLAN 10 cannot communicate with servers in VLAN 20. What is missing?",
+      "options": [
+        "Spanning tree protocol",
+        "DHCP server",
+        "Inter-VLAN routing (Layer 3)",
+        "DNS server"
+      ],
+      "correctAnswer": 2,
+      "explanation": "VLANs are separate broadcast domains requiring Layer 3 (routing) to communicate. Configure router-on-a-stick, Layer 3 switch (SVI), or separate router interfaces. VLANs provide segmentation but need routing for inter-VLAN traffic. Common misconfiguration in segmented networks.",
+      "points": 2,
+      "references": ["Lesson 83: VLAN Issues - Inter-VLAN Routing"]
+    },
+    {
+      "id": "q21",
+      "type": "multiple-choice",
+      "question": "What command displays the routing table on Windows?",
+      "options": [
+        "route print",
+        "show ip route",
+        "netstat -r",
+        "Both A and C"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Both 'route print' and 'netstat -r' display routing table on Windows. Shows destination networks, gateways, interfaces, and metrics. Linux uses 'route' or 'ip route'. Cisco uses 'show ip route'. Verify default gateway (0.0.0.0) is present. Missing/incorrect routes cause connectivity failures.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - route"]
+    },
+    {
+      "id": "q22",
+      "type": "multiple-choice",
+      "question": "What does high latency but low packet loss typically indicate?",
+      "options": [
+        "Cable damage",
+        "Network congestion or routing inefficiency",
+        "Duplex mismatch",
+        "DNS problems"
+      ],
+      "correctAnswer": 1,
+      "explanation": "High latency with low packet loss suggests congestion (buffers filling but not overflowing) or suboptimal routing (long path). Check link utilization, QoS, routing tables. Packet loss indicates more severe issues (errors, drops). Latency measured by ping RTT. Normal: <10ms LAN, <50ms WAN, <150ms satellite.",
+      "points": 2,
+      "references": ["Lesson 85: Performance Issues - Latency"]
+    },
+    {
+      "id": "q23",
+      "type": "multiple-choice",
+      "question": "What tool continuously monitors bandwidth utilization?",
+      "options": [
+        "ping",
+        "traceroute",
+        "SNMP-based monitoring (PRTG, Nagios, LibreNMS)",
+        "Cable tester"
+      ],
+      "correctAnswer": 2,
+      "explanation": "SNMP-based monitoring tools (PRTG, Nagios, LibreNMS, SolarWinds) continuously collect interface statistics, bandwidth utilization, errors, and uptime. Create baselines and alerts. NetFlow/sFlow provides detailed traffic analysis. Essential for proactive monitoring and capacity planning. Command-line tools provide point-in-time data only.",
+      "points": 2,
+      "references": ["Lesson 84: Monitoring Tools - SNMP"]
+    },
+    {
+      "id": "q24",
+      "type": "multiple-choice",
+      "question": "A device has correct IP config but cannot communicate. What should you check?",
+      "options": [
+        "Firewall rules",
+        "Cable and link status",
+        "VLAN assignment",
+        "All of the above"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Systematic troubleshooting checks: 1) Physical (cable, link lights, port status), 2) Data Link (VLAN, MAC address), 3) Network (IP, routing), 4) Transport/Application (firewall, services). Correct IP config doesn't guarantee connectivity. Check all layers. Common issues: wrong VLAN, disabled port, firewall blocking.",
+      "points": 2,
+      "references": ["Lesson 81: Troubleshooting Methodology"]
+    },
+    {
+      "id": "q25",
+      "type": "multiple-choice",
+      "question": "What does the 'pathping' command do (Windows)?",
+      "options": [
+        "Same as ping",
+        "Combines ping and traceroute with loss statistics per hop",
+        "Tests cable paths",
+        "Displays routing table"
+      ],
+      "correctAnswer": 1,
+      "explanation": "pathping combines traceroute (path discovery) with extended ping statistics per hop over time (typically 25 seconds per hop). Shows which hop has packet loss. More thorough than traceroute alone. Linux equivalent: mtr (My TraceRoute). Excellent for identifying problem links in path.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - pathping"]
+    },
+    {
+      "id": "q26",
+      "type": "multiple-choice",
+      "question": "What causes routing loops?",
+      "options": [
+        "Incorrect routing table entries",
+        "VLAN misconfiguration",
+        "DNS problems",
+        "Firewall rules"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Routing loops occur when routing tables create circular paths: router A sends to B, B sends to C, C sends back to A. Causes: misconfiguration, routing protocol issues. TTL prevents infinite loops by decrementing and dropping at 0. Symptoms: high latency, packet loss, ICMP Time Exceeded. Fix: correct routing tables, check routing protocol.",
+      "points": 2,
+      "references": ["Lesson 85: Routing Issues - Routing Loops"]
+    },
+    {
+      "id": "q27",
+      "type": "multiple-choice",
+      "question": "Which command flushes the DNS cache on Windows?",
+      "options": [
+        "ipconfig /flushdns",
+        "netsh dns flush",
+        "dns -flush",
+        "clear dns"
+      ],
+      "correctAnswer": 0,
+      "explanation": "ipconfig /flushdns clears DNS cache on Windows. Useful when DNS records change and old cached entries cause issues. ipconfig /displaydns shows cache. Linux uses systemd-resolve --flush-caches or service nscd restart. Mac uses dscacheutil -flushcache. Common troubleshooting step for DNS issues.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - ipconfig"]
+    },
+    {
+      "id": "q28",
+      "type": "multiple-choice",
+      "question": "What do you verify if ping works locally but not to remote networks?",
+      "options": [
+        "DNS configuration",
+        "Default gateway configuration and routing",
+        "DHCP server",
+        "VLAN assignment"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Local ping works (Layer 1-3 local OK), remote fails suggests default gateway or routing issue. Verify: default gateway IP correct (ipconfig), can ping gateway, routing table has 0.0.0.0 route, gateway forwards traffic. Could also be firewall or remote network issue. Test systematically.",
+      "points": 2,
+      "references": ["Lesson 83: Connectivity Issues - Default Gateway"]
+    },
+    {
+      "id": "q29",
+      "type": "multiple-choice",
+      "question": "What causes a port to enter err-disabled state?",
+      "options": [
+        "Port is administratively disabled",
+        "Security violation (port security, BPDU guard, etc.)",
+        "Cable is unplugged",
+        "Duplex mismatch"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Err-disabled state occurs when switch detects security violation: port security (too many MACs), BPDU guard (STP received on edge port), UDLD failure, or link flapping. Port shuts down automatically. Check 'show interface status' for reason. Recover: fix issue, 'shutdown' then 'no shutdown', or enable auto-recovery.",
+      "points": 2,
+      "references": ["Lesson 85: Switch Issues - Err-Disabled"]
+    },
+    {
+      "id": "q30",
+      "type": "multiple-choice",
+      "question": "What is jitter in network terms?",
+      "options": [
+        "Total packet loss",
+        "Variation in latency over time",
+        "Bandwidth utilization",
+        "Number of errors"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Jitter is variation in packet delay (latency variance). Critical for real-time applications (VoIP, video conferencing) that require consistent timing. Measured in milliseconds. Acceptable: <30ms for VoIP. Causes: congestion, queuing, route changes. Mitigation: QoS, jitter buffers, better bandwidth. Ping -t shows latency variation.",
+      "points": 2,
+      "references": ["Lesson 85: Performance Issues - Jitter"]
+    },
+    {
+      "id": "q31",
+      "type": "multiple-choice",
+      "question": "A wireless client shows strong signal but poor performance. What should you check?",
+      "options": [
+        "Signal strength only",
+        "SNR (Signal-to-Noise Ratio) and interference",
+        "SSID configuration",
+        "Encryption method"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Signal strength (RSSI) alone doesn't indicate quality. SNR (signal-to-noise ratio) is more important. Strong signal with high noise = poor performance. Check: interference sources (microwave, Bluetooth), co-channel interference, channel utilization. Use wireless analyzer. SNR >25 dB good for data, >40 dB excellent. Interference degrades SNR.",
+      "points": 2,
+      "references": ["Lesson 86: Wireless Troubleshooting - SNR"]
+    },
+    {
+      "id": "q32",
+      "type": "multiple-choice",
+      "question": "What command shows detailed NIC statistics on Linux?",
+      "options": [
+        "ipconfig",
+        "ifconfig or ip -s link",
+        "netstat",
+        "show interface"
+      ],
+      "correctAnswer": 1,
+      "explanation": "ifconfig (legacy) or 'ip -s link' shows interface statistics on Linux: packets, bytes, errors, drops, collisions. Modern command: 'ip -s -s link' for detailed stats. Windows uses 'netstat -e' for interface stats. Cisco uses 'show interface'. Monitor errors, drops, collisions for issues.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - ifconfig/ip"]
+    },
+    {
+      "id": "q33",
+      "type": "multiple-choice",
+      "question": "What does MTU (Maximum Transmission Unit) affect?",
+      "options": [
+        "Bandwidth speed",
+        "Packet fragmentation and performance",
+        "Encryption strength",
+        "DNS resolution"
+      ],
+      "correctAnswer": 1,
+      "explanation": "MTU defines maximum packet size before fragmentation. Standard Ethernet: 1500 bytes. VPN reduces effective MTU. Mismatch causes fragmentation (performance hit) or dropped packets if Don't Fragment set. Symptoms: some websites load, others timeout. Test: ping -f -l 1472 (Windows), ping -M do -s 1472 (Linux). Adjust MTU if needed.",
+      "points": 2,
+      "references": ["Lesson 85: Performance Issues - MTU"]
+    },
+    {
+      "id": "q34",
+      "type": "multiple-choice",
+      "question": "Which protocol does traceroute typically use on Linux?",
+      "options": [
+        "ICMP",
+        "UDP",
+        "TCP",
+        "ARP"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Linux/Unix traceroute uses UDP (high ports 33434+) by default. Windows tracert uses ICMP Echo. Can use ICMP (-I) or TCP (-T) on Linux if UDP blocked. Traceroute incrementally increases TTL to discover each hop. Each router returns ICMP Time Exceeded. Different implementations use different protocols.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - traceroute"]
+    },
+    {
+      "id": "q35",
+      "type": "multiple-choice",
+      "question": "What is packet loss most commonly caused by?",
+      "options": [
+        "DNS misconfiguration",
+        "Network congestion or errors",
+        "Wrong IP address",
+        "VLAN mismatch"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Packet loss caused by: congestion (buffers overflow), errors (CRC, interface), faulty hardware (cable, NIC, switch port), or wireless interference. Measure with ping (-n 100 for statistics). Acceptable: <1% for data, <0.1% for VoIP. High loss indicates problem. Check interface errors, utilization, cable quality.",
+      "points": 2,
+      "references": ["Lesson 85: Performance Issues - Packet Loss"]
+    },
+    {
+      "id": "q36",
+      "type": "multiple-choice",
+      "question": "What tool helps identify which process is using a specific port?",
+      "options": [
+        "netstat -ano (Windows) or netstat -anp (Linux)",
+        "ping",
+        "traceroute",
+        "arp"
+      ],
+      "correctAnswer": 0,
+      "explanation": "netstat -ano (Windows) or netstat -anp (Linux) shows listening ports with process ID (PID). Match PID in Task Manager/ps. Useful for identifying rogue services, port conflicts, or malware. Windows also: 'Get-NetTCPConnection' (PowerShell). Linux also: 'ss -anp' or 'lsof -i'.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - netstat"]
+    },
+    {
+      "id": "q37",
+      "type": "multiple-choice",
+      "question": "A switch shows input queue drops. What does this indicate?",
+      "options": [
+        "Output congestion",
+        "Input buffer overflow from too much traffic arriving",
+        "DNS problems",
+        "Cable damage"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Input queue drops indicate traffic arriving faster than switch can process (buffer overflow). Causes: traffic bursts, underpowered switch, traffic storm. Output drops indicate transmission congestion. Check: traffic sources, switch CPU, enable QoS. 'show interface' reveals drops. Small drops normal; high percentage indicates problem.",
+      "points": 2,
+      "references": ["Lesson 85: Switch Issues - Queue Drops"]
+    },
+    {
+      "id": "q38",
+      "type": "multiple-choice",
+      "question": "What command tests if a specific TCP port is open?",
+      "options": [
+        "ping",
+        "telnet <host> <port> or Test-NetConnection (PowerShell)",
+        "traceroute",
+        "nslookup"
+      ],
+      "correctAnswer": 1,
+      "explanation": "telnet <host> <port> attempts TCP connection to test port. Success = port open. Windows 10+: 'Test-NetConnection -ComputerName host -Port port'. Linux: 'nc -zv host port' or 'telnet host port'. Useful for testing web servers (80/443), SMTP (25), etc. Different from ping (ICMP).",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - telnet"]
+    },
+    {
+      "id": "q39",
+      "type": "multiple-choice",
+      "question": "What is the difference between speed and duplex issues?",
+      "options": [
+        "They are the same",
+        "Speed is bandwidth; duplex is simultaneous communication direction",
+        "Speed is latency; duplex is bandwidth",
+        "No difference in symptoms"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Speed (10/100/1000/10000 Mbps) is bandwidth capacity. Duplex (half/full) determines if device can send/receive simultaneously. Both should auto-negotiate or be manually matched. Mismatch symptoms differ: speed mismatch = no link; duplex mismatch = slow with collisions. Verify: 'show interface' or device properties.",
+      "points": 2,
+      "references": ["Lesson 85: Common Issues - Speed and Duplex"]
+    },
+    {
+      "id": "q40",
+      "type": "multiple-choice",
+      "question": "What does RMON (Remote Monitoring) provide?",
+      "options": [
+        "Remote desktop access",
+        "Advanced SNMP-based network monitoring and statistics",
+        "VPN connectivity",
+        "Wireless management"
+      ],
+      "correctAnswer": 1,
+      "explanation": "RMON (Remote Monitoring) extends SNMP with advanced monitoring: traffic statistics, history, alarms, events. Reduces polling overhead by processing data on device. RMON1 monitors Layer 1-2, RMON2 adds Layer 3+. Less common now; replaced by flow technologies (NetFlow, sFlow). Still supported on enterprise switches.",
+      "points": 2,
+      "references": ["Lesson 84: Monitoring Tools - RMON"]
+    },
+    {
+      "id": "q41",
+      "type": "multiple-choice",
+      "question": "What should you do after implementing a solution?",
+      "options": [
+        "Move to next problem immediately",
+        "Verify full system functionality",
+        "Shutdown equipment",
+        "Delete configuration"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Troubleshooting step 6: Verify full system functionality. Don't just test the immediate issue; verify related systems work. Implementation may have unintended consequences. Ask user to confirm resolution. Step 7: Document findings, actions, and outcome for future reference. Proper documentation helps with similar future issues.",
+      "points": 2,
+      "references": ["Lesson 81: Troubleshooting Methodology - Verify"]
+    },
+    {
+      "id": "q42",
+      "type": "multiple-choice",
+      "question": "What is baseline in network monitoring?",
+      "options": [
+        "Minimum acceptable performance",
+        "Normal performance metrics for comparison",
+        "Maximum bandwidth",
+        "Error threshold"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Baseline is normal performance profile (bandwidth utilization, latency, errors) captured over time. Comparing current performance to baseline identifies anomalies. Establish baselines during normal operation. Update periodically as network changes. Essential for proactive monitoring and troubleshooting. Tools: SNMP monitors, NetFlow.",
+      "points": 2,
+      "references": ["Lesson 84: Monitoring - Baselines"]
+    },
+    {
+      "id": "q43",
+      "type": "multiple-choice",
+      "question": "A device shows 'destination host unreachable'. What does this typically mean?",
+      "options": [
+        "DNS failure",
+        "No route to destination or destination offline",
+        "Cable unplugged",
+        "Firewall blocking"
+      ],
+      "correctAnswer": 1,
+      "explanation": "'Destination host unreachable' from router means no route. From host itself means local network issue (ARP failure, wrong subnet). 'Request timed out' means no response (firewall, device down). Different error messages provide troubleshooting clues. Check routing tables, verify device running, check subnet/VLAN.",
+      "points": 2,
+      "references": ["Lesson 83: Connectivity Issues - Ping Errors"]
+    },
+    {
+      "id": "q44",
+      "type": "multiple-choice",
+      "question": "What command shows the path and measures transit time on Linux?",
+      "options": [
+        "ping",
+        "mtr (My TraceRoute)",
+        "netstat",
+        "arp"
+      ],
+      "correctAnswer": 1,
+      "explanation": "mtr combines traceroute with continuous ping statistics per hop. Real-time updates showing packet loss and latency at each hop. Superior to traceroute for performance troubleshooting. Windows equivalent: pathping (but not real-time). mtr excellent for identifying problematic network segments.",
+      "points": 2,
+      "references": ["Lesson 82: Command-Line Tools - mtr"]
+    },
+    {
+      "id": "q45",
+      "type": "multiple-choice",
+      "question": "What is asymmetric routing and when is it problematic?",
+      "options": [
+        "Different speeds in each direction",
+        "Forward and return paths differ",
+        "Unequal load balancing",
+        "Half-duplex communication"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Asymmetric routing occurs when forward and return paths differ. Can work but problematic with: stateful firewalls (sees only one direction), IDS/IPS (incomplete traffic), packet captures (missing direction). Caused by: multiple paths, routing protocols, traffic engineering. Verify with traceroute from both directions.",
+      "points": 2,
+      "references": ["Lesson 85: Routing Issues - Asymmetric Routing"]
+    },
+    {
+      "id": "q46",
+      "type": "multiple-choice",
+      "question": "Which tool monitors wireless signal strength and interference?",
+      "options": [
+        "Cable tester",
+        "Multimeter",
+        "Wireless analyzer (Wi-Fi scanner)",
+        "OTDR"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Wireless analyzers (Wi-Fi scanners, spectrum analyzers) measure signal strength (RSSI), SNR, channel utilization, and interference. Tools: inSSIDer, NetSpot, Ekahau, Fluke AirCheck. Show all APs, channels, overlaps. Essential for wireless site surveys and troubleshooting. Can identify rogue APs and interference sources.",
+      "points": 2,
+      "references": ["Lesson 86: Wireless Tools - Wi-Fi Analyzer"]
+    },
+    {
+      "id": "q47",
+      "type": "multiple-choice",
+      "question": "What is the seven-step methodology's step 3?",
+      "options": [
+        "Identify the problem",
+        "Establish a theory",
+        "Test the theory to determine cause",
+        "Implement the solution"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Step 3: Test the theory to determine cause. If theory confirmed, proceed to step 4 (establish plan). If not confirmed, establish new theory or escalate. Don't skip testing before implementing! Making changes based on untested theories can worsen problems. Systematic approach prevents random changes.",
+      "points": 2,
+      "references": ["Lesson 81: Troubleshooting Methodology - Step 3"]
+    },
+    {
+      "id": "q48",
+      "type": "multiple-choice",
+      "question": "What is NetFlow used for?",
+      "options": [
+        "Cable testing",
+        "Traffic analysis and bandwidth monitoring",
+        "DNS resolution",
+        "Wireless management"
+      ],
+      "correctAnswer": 1,
+      "explanation": "NetFlow (Cisco) and alternatives (sFlow, IPFIX, jFlow) collect traffic flow statistics: source/destination IPs, ports, protocols, bytes, packets. Exports to collector for analysis. Uses: bandwidth monitoring, security analysis, capacity planning, billing. NetFlow v5 widely supported, v9/IPFIX are flexible. Requires collector/analyzer software.",
+      "points": 2,
+      "references": ["Lesson 84: Monitoring Tools - NetFlow"]
+    },
+    {
+      "id": "q49",
+      "type": "multiple-choice",
+      "question": "What causes split-horizon issues?",
+      "options": [
+        "DNS misconfiguration",
+        "External users using internal DNS names that resolve to private IPs",
+        "Cable damage",
+        "VLAN misconfiguration"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Split-horizon DNS: internal DNS returns private IPs, external returns public IPs. Issues occur when external users get internal DNS responses (private IPs unreachable). Solutions: split DNS infrastructure, VPN for remote users, hairpin NAT. Common in hybrid environments. Not to be confused with routing split-horizon (prevents routing loops).",
+      "points": 2,
+      "references": ["Lesson 83: DNS Issues - Split-Horizon"]
+    },
+    {
+      "id": "q50",
+      "type": "multiple-choice",
+      "question": "What should you check if devices can communicate within a subnet but not across subnets?",
+      "options": [
+        "DNS configuration",
+        "Routing between subnets (Layer 3)",
+        "Cable quality",
+        "DHCP server"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Communication within subnet uses Layer 2 (switching). Across subnets requires Layer 3 (routing). Check: default gateway configured, routing enabled on router/L3 switch, routing table has routes for destination subnets, ACLs not blocking traffic. Verify with traceroute. Common issue in new network deployments.",
+      "points": 2,
+      "references": ["Lesson 83: Routing Issues - Inter-Subnet Communication"]
+    }
+  ],
+  "passingScore": 70,
+  "tags": ["troubleshooting", "methodology", "command-line-tools", "ping", "traceroute", "netstat", "hardware-tools", "connectivity-issues", "performance-problems", "systematic-approach", "comprehensive"],
+  "timeLimit": 70
+}

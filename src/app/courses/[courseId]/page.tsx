@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, BookOpen, Clock, Code2, Lock, CheckCircle2, PlayCircle, Unlock } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { ArrowLeft, BookOpen, Clock, Code2, Lock, CheckCircle2, Unlock } from 'lucide-react';
 
 interface Chapter {
   id: string;
@@ -11,6 +11,7 @@ interface Chapter {
   description: string;
   order: number;
   lessons: string[];
+  quizId?: string;
 }
 
 interface CourseData {
@@ -26,7 +27,6 @@ interface CourseData {
 }
 
 interface CourseProgress {
-  enrolled: boolean;
   completedLessons: string[];
   completedExercises: string[];
   passedQuizzes: string[];
@@ -34,13 +34,26 @@ interface CourseProgress {
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const courseId = params.courseId as string;
 
   const [course, setCourse] = useState<CourseData | null>(null);
   const [progress, setProgress] = useState<CourseProgress | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isStructuredMode, setIsStructuredMode] = useState(true);
+  const [isStructuredMode, setIsStructuredMode] = useState(() => {
+    // Load learning mode preference from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('learningMode');
+      return saved === 'open' ? false : true; // Default to structured mode
+    }
+    return true;
+  });
+
+  // Persist learning mode preference to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('learningMode', isStructuredMode ? 'structured' : 'open');
+    }
+  }, [isStructuredMode]);
 
   useEffect(() => {
     async function fetchCourseData() {
@@ -60,7 +73,6 @@ export default function CourseDetailPage() {
           setProgress(progressData);
         } else {
           setProgress({
-            enrolled: false,
             completedLessons: [],
             completedExercises: [],
             passedQuizzes: [],
@@ -76,35 +88,24 @@ export default function CourseDetailPage() {
     fetchCourseData();
   }, [courseId]);
 
-  const handleBeginCourse = async () => {
-    try {
-      const response = await fetch(`/api/courses/${courseId}/enroll`, {
-        method: 'POST',
-      });
 
-      if (response.ok) {
-        if (course && course.chapters.length > 0 && course.chapters[0].lessons.length > 0) {
-          const firstLesson = course.chapters[0].lessons[0].replace('.md', '');
-          router.push(`/courses/${courseId}/lessons/${firstLesson}`);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to enroll:', error);
-    }
-  };
 
   const isLessonLocked = (chapterIndex: number, lessonIndex: number): boolean => {
     // In Open Mode, no lessons are locked
     if (!isStructuredMode) return false;
     
-    if (!progress?.enrolled) return true;
     if (chapterIndex === 0 && lessonIndex === 0) return false;
 
     if (lessonIndex === 0) {
       const prevChapter = course?.chapters[chapterIndex - 1];
       if (!prevChapter) return false;
-      const prevChapterQuizId = `quiz-${String(chapterIndex).padStart(2, '0')}-chapter-${chapterIndex}`;
-      return !progress?.passedQuizzes.includes(prevChapterQuizId);
+      const prevChapterQuizId = prevChapter.quizId;
+      // Only check quiz if previous chapter has one
+      if (prevChapterQuizId) {
+        return !progress?.passedQuizzes.includes(prevChapterQuizId);
+      }
+      // If no quiz, check if all previous chapter lessons are complete
+      return !prevChapter.lessons.every(l => progress?.completedLessons.includes(l.replace('.md', '')));
     }
 
     const currentChapter = course?.chapters[chapterIndex];
@@ -170,15 +171,6 @@ export default function CourseDetailPage() {
                 </span>
               </div>
             </div>
-            {!progress?.enrolled && (
-              <button
-                onClick={handleBeginCourse}
-                className="ml-6 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg transition-all hover:from-blue-700 hover:to-indigo-700 hover:scale-105 shadow-lg"
-              >
-                <PlayCircle className="inline h-6 w-6 mr-2" />
-                Begin Course
-              </button>
-            )}
           </div>
         </div>
       </header>
@@ -189,49 +181,47 @@ export default function CourseDetailPage() {
           {/* Course Content Sidebar */}
           <div className="lg:col-span-2">
             {/* Mode Toggle */}
-            {progress?.enrolled && (
-              <div className="mb-6 rounded-2xl bg-white shadow-xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">Learning Mode</h3>
-                    <p className="text-sm text-gray-600">
-                      {isStructuredMode 
-                        ? 'Complete lessons in order and pass quizzes to unlock chapters' 
-                        : 'Access any lesson in any order without restrictions'}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsStructuredMode(!isStructuredMode)}
-                    className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      isStructuredMode ? 'bg-blue-600' : 'bg-gray-300'
+            <div className="mb-6 rounded-2xl bg-white shadow-xl p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Learning Mode</h3>
+                  <p className="text-sm text-gray-600">
+                    {isStructuredMode 
+                      ? 'Complete lessons in order and pass quizzes to unlock chapters' 
+                      : 'Access any lesson in any order without restrictions'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsStructuredMode(!isStructuredMode)}
+                  className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                    isStructuredMode ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span className="sr-only">Toggle learning mode</span>
+                  <span
+                    className={`inline-block h-10 w-10 transform rounded-full bg-white shadow-lg transition-transform ${
+                      isStructuredMode ? 'translate-x-12' : 'translate-x-1'
                     }`}
                   >
-                    <span className="sr-only">Toggle learning mode</span>
-                    <span
-                      className={`inline-block h-10 w-10 transform rounded-full bg-white shadow-lg transition-transform ${
-                        isStructuredMode ? 'translate-x-12' : 'translate-x-1'
-                      }`}
-                    >
-                      {isStructuredMode ? (
-                        <Lock className="h-6 w-6 m-2 text-blue-600" />
-                      ) : (
-                        <Unlock className="h-6 w-6 m-2 text-gray-600" />
-                      )}
-                    </span>
-                  </button>
+                    {isStructuredMode ? (
+                      <Lock className="h-6 w-6 m-2 text-blue-600" />
+                    ) : (
+                      <Unlock className="h-6 w-6 m-2 text-gray-600" />
+                    )}
+                  </span>
+                </button>
+              </div>
+              <div className="mt-4 flex gap-4 text-xs">
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isStructuredMode ? 'bg-blue-100 text-blue-800 font-semibold' : 'bg-gray-100 text-gray-600'}`}>
+                  <Lock className="h-4 w-4" />
+                  Structured Mode
                 </div>
-                <div className="mt-4 flex gap-4 text-xs">
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isStructuredMode ? 'bg-blue-100 text-blue-800 font-semibold' : 'bg-gray-100 text-gray-600'}`}>
-                    <Lock className="h-4 w-4" />
-                    Structured Mode
-                  </div>
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${!isStructuredMode ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-600'}`}>
-                    <Unlock className="h-4 w-4" />
-                    Open Mode
-                  </div>
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${!isStructuredMode ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-600'}`}>
+                  <Unlock className="h-4 w-4" />
+                  Open Mode
                 </div>
               </div>
-            )}
+            </div>
             
             <div className="rounded-2xl bg-white shadow-xl p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Course Curriculum</h2>
@@ -287,9 +277,12 @@ export default function CourseDetailPage() {
                       })}
                     </div>
 
-                    {/* Chapter Quiz */}
-                    {chapterIndex < course.chapters.length - 1 && isStructuredMode && (
-                      <div className="bg-purple-50 px-6 py-4 border-t border-purple-100">
+                    {/* Chapter Quiz - Only show if chapter has a quiz */}
+                    {chapter.quizId && (
+                      <Link
+                        href={`/courses/${course.id}/quizzes/${chapter.quizId}`}
+                        className="block bg-purple-50 px-6 py-4 border-t border-purple-100 hover:bg-purple-100 transition-colors"
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <BookOpen className="h-5 w-5 text-purple-600 mr-3" />
@@ -297,14 +290,40 @@ export default function CourseDetailPage() {
                               Chapter {chapterIndex + 1} Quiz
                             </span>
                           </div>
-                          <span className="text-xs text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
-                            Pass to unlock next chapter
-                          </span>
+                          {isStructuredMode && (
+                            <span className="text-xs text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                              Pass to unlock next chapter
+                            </span>
+                          )}
                         </div>
-                      </div>
+                      </Link>
                     )}
                   </div>
                 ))}
+
+                {/* Final Exam */}
+                <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg overflow-hidden border-2 border-amber-200">
+                  <div className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 rounded-xl bg-amber-100 mr-4">
+                        <BookOpen className="h-6 w-6 text-amber-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-amber-900">Final Exam</h3>
+                        <p className="text-sm text-amber-700">Comprehensive assessment of all concepts</p>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/courses/${course.id}/quizzes/final-exam`}
+                      className="block w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg text-center"
+                    >
+                      Take Final Exam
+                    </Link>
+                    <p className="text-xs text-amber-700 mt-3 text-center">
+                      80% required to pass • Completes entire course
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -313,29 +332,27 @@ export default function CourseDetailPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-6 space-y-6">
               {/* Progress Card */}
-              {progress?.enrolled && (
-                <div className="rounded-2xl bg-white shadow-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Your Progress</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Lessons</span>
-                        <span className="font-semibold text-gray-900">
-                          {progress.completedLessons.length} / {course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all"
-                          style={{
-                            width: `${(progress.completedLessons.length / course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)) * 100}%`,
-                          }}
-                        />
-                      </div>
+              <div className="rounded-2xl bg-white shadow-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Your Progress</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600">Lessons</span>
+                      <span className="font-semibold text-gray-900">
+                        {progress?.completedLessons.length ?? 0} / {course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        style={{
+                          width: `${((progress?.completedLessons.length ?? 0) / course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)) * 100}%`,
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Course Info */}
               <div className="rounded-2xl bg-white shadow-xl p-6">

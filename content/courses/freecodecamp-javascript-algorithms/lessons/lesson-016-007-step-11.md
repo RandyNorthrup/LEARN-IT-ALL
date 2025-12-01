@@ -1,0 +1,52 @@
+---
+id: lesson-016-007
+title: Step 11
+chapterId: chapter-16
+order: 7
+duration: 5
+objectives:
+  - Step 11
+---
+
+# Step 11
+
+Inside your function, create a `while` loop that compares an element in `left_part` to an element in `right_part`, and merges the smaller element to the main `array` list. 
+
+Create two conditions for the loop: one that checks whether the `left_array_index` is less than the length of `left_part` and another condition that checks whether `right_array_index` is less than the length of `right_part`.
+
+## Starter Code
+
+```html
+def merge_sort(array):
+    
+    middle_point = len(array) // 2
+    left_part = array[:middle_point]
+    right_part = array[middle_point:]
+
+    merge_sort(left_part)
+    merge_sort(right_part)
+
+    left_array_index = 0
+    right_array_index = 0
+    sorted_index = 0
+
+--fcc-editable-region--
+
+--fcc-editable-region--
+```
+
+## Hints
+
+1. Your `while` loop should have these conditions: `left_array_index < len(left_part) and right_array_index < len(right_part)`. Don't forget to use the `pass` keyword in the body of the loop.
+2. assert.match(function_body, /while\s+left_array_index\s*<\s*len\(\s*left_part\s*\)\s+and\s+right_array_index\s*<\s*len\(\s*right_part\s*\):/);
+  }
+})
+3. Use the `pass` keyword in the body of the loop
+4. assert.match(function_body, /while\s+left_array_index\s*<\s*len\(\s*left_part\s*\)\s+and\s+right_array_index\s*<\s*len\(\s*right_part\s*\):\s*pass/);
+  }
+})
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 656702f8b4cbd8cbf0a433c6*

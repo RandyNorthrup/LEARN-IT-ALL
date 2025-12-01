@@ -1,0 +1,111 @@
+---
+id: lesson-002-077
+title: Step 96
+chapterId: chapter-02
+order: 77
+duration: 5
+objectives:
+  - Step 96
+---
+
+# Step 96
+
+Wait a minute! You cannot decrypt anything with the wrong key. Try with `'happycoding'`.
+
+With that, your cipher project is complete.
+
+## Starter Code
+
+```html
+--fcc-editable-region--
+text = 'mrttaqrhknsw ih puggrur'
+custom_key = 'python'
+
+def vigenere(message, key, direction=1):
+    key_index = 0
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    final_message = ''
+
+    for char in message.lower():
+
+        # Append any non-letter character to the message
+        if not char.isalpha():
+            final_message += char
+        else:        
+            # Find the right key character to encode/decode
+            key_char = key[key_index % len(key)]
+            key_index += 1
+
+            # Define the offset and the encrypted/decrypted letter
+            offset = alphabet.index(key_char)
+            index = alphabet.find(char)
+            new_index = (index + offset*direction) % len(alphabet)
+            final_message += alphabet[new_index]
+    
+    return final_message
+
+def encrypt(message, key):
+    return vigenere(message, key)
+    
+def decrypt(message, key):
+    return vigenere(message, key, -1)
+
+print(f'\nEncrypted text: {text}')
+print(f'Key: {custom_key}')
+decryption = decrypt(text, custom_key)
+print(f'\nDecrypted text: {decryption}\n')
+--fcc-editable-region--
+```
+
+## Hints
+
+1. You should still have a `custom_key` variable.
+2. You should modify the `custom_key` value into `'happycoding'`.
+
+## Solution
+
+```html
+```py
+text = 'mrttaqrhknsw ih puggrur'
+custom_key = 'happycoding'
+
+def vigenere(message, key, direction=1):
+    key_index = 0
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    final_message = ''
+
+    for char in message.lower():
+
+        # Append any non-letter character to the message
+        if not char.isalpha():
+            final_message += char
+        else:        
+            # Find the right key character to encode/decode
+            key_char = key[key_index % len(key)]
+            key_index += 1
+
+            # Define the offset and the encrypted/decrypted letter
+            offset = alphabet.index(key_char)
+            index = alphabet.find(char)
+            new_index = (index + offset*direction) % len(alphabet)
+            final_message += alphabet[new_index]
+    
+    return final_message
+
+def encrypt(message, key):
+    return vigenere(message, key)
+    
+def decrypt(message, key):
+    return vigenere(message, key, -1)
+
+print(f'\nEncrypted text: {text}')
+print(f'Key: {custom_key}')
+decryption = decrypt(text, custom_key)
+print(f'\nDecrypted text: {decryption}\n')
+```
+```
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/scientific-computing-with-python/)*
+*Original Challenge ID: 6555e5991af57d1ae0e35f0a*

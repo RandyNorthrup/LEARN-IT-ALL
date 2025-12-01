@@ -1,0 +1,100 @@
+---
+id: lesson-003-016
+title: Iterate Through the Keys of an Object with a for...in Statement
+chapterId: chapter-03
+order: 16
+duration: 5
+objectives:
+  - Iterate Through the Keys of an Object with a for...in Statement
+---
+
+# Iterate Through the Keys of an Object with a for...in Statement
+
+Sometimes you need to iterate through all the keys within an object. You can use a <dfn>for...in</dfn> loop to do this. The for...in loop looks like:
+
+```javascript
+const refrigerator = {
+  'milk': 1,
+  'eggs': 12,
+};
+
+for (const food in refrigerator) {
+  console.log(food, refrigerator[food]);
+}
+```
+
+This code logs `milk 1`  and `eggs 12`, with each key-value pair on its own line.
+
+We defined the variable `food` in the loop head and this variable was set to each of the object's keys on each iteration, resulting in each food's name being printed to the console.
+
+**NOTE:** Objects do not maintain an ordering to stored keys like arrays do; thus a key's position on an object, or the relative order in which it appears, is irrelevant when referencing or accessing that key.
+
+## Instructions
+
+We've defined a function `countOnline` which accepts one argument, `allUsers`. Use a <dfn>for...in</dfn> statement inside this function to loop through the `allUsers` object and return the number of users whose `online` property is set to `true`. An example of an object which could be passed to `countOnline` is shown below. Each user will have an `online` property set to either `true` or `false`.
+
+```js
+{
+  Alan: {
+    online: false
+  },
+  Jeff: {
+    online: true
+  },
+  Sarah: {
+    online: false
+  }
+}
+```
+
+## Starter Code
+
+```html
+const users = {
+  Alan: {
+    online: false
+  },
+  Jeff: {
+    online: true
+  },
+  Sarah: {
+    online: false
+  }
+}
+
+function countOnline(allUsers) {
+  // Only change code below this line
+
+  // Only change code above this line
+}
+
+console.log(countOnline(users));
+```
+
+## Hints
+
+1. The function `countOnline` should use a `for in` statement to iterate through the object keys of the object passed to it.
+2. The function `countOnline` should return `1` when the object `{ Alan: { online: false }, Jeff: { online: true }, Sarah: { online: false } }` is passed to it
+3. The function `countOnline` should return `2` when the object `{ Alan: { online: true }, Jeff: { online: false }, Sarah: { online: true } }` is passed to it
+4. The function `countOnline` should return `0` when the object `{ Alan: { online: false }, Jeff: { online: false }, Sarah: { online: false } }` is passed to it
+
+## Solution
+
+```html
+```js
+function countOnline(allUsers) {
+  let numOnline = 0;
+  for(const user in allUsers){
+    if(allUsers[user].online) {
+      numOnline++;
+    }
+  }
+  return numOnline;
+}
+```
+```
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 587d7b7d367417b2b2512b1d*

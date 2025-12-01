@@ -1,0 +1,75 @@
+---
+id: lesson-001-005
+title: Add Inline Styling to Elements
+chapterId: chapter-01
+order: 5
+duration: 5
+objectives:
+  - Add Inline Styling to Elements
+---
+
+# Add Inline Styling to Elements
+
+D3 lets you add inline CSS styles on dynamic elements with the `style()` method.
+
+The `style()` method takes a comma-separated key-value pair as an argument. Here's an example to set the selection's text color to blue:
+
+```js
+selection.style('color', 'blue');
+```
+
+## Instructions
+
+Add the `style()` method to the code in the editor to make all the displayed text have a `font-family` of `verdana`.
+
+## Starter Code
+
+```html
+<body>
+  <script>
+    const dataset = [12, 31, 22, 17, 25, 18, 29, 14, 9];
+
+    d3.select('body')
+      .selectAll('h2')
+      .data(dataset)
+      .enter()
+      .append('h2')
+      .text(d => d + ' USD');
+    // Add your code below this line
+
+
+
+    // Add your code above this line
+  </script>
+</body>
+```
+
+## Hints
+
+1. Your `h2` elements should have a `font-family` of `verdana`.
+2. Your code should use the `style()` method.
+
+## Solution
+
+```html
+```html
+<body>
+  <script>
+    const dataset = [12, 31, 22, 17, 25, 18, 29, 14, 9];
+
+    d3.select('body')
+      .selectAll('h2')
+      .data(dataset)
+      .enter()
+      .append('h2')
+      .text(d => d + ' USD')
+      .style('font-family', 'verdana');
+  </script>
+</body>
+```
+```
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/data-visualization/)*
+*Original Challenge ID: 587d7fa7367417b2b2512bc6*

@@ -8,17 +8,6 @@ export async function GET(
   try {
     const { courseId } = await params;
 
-    const enrollment = dbHelpers.getEnrollment(courseId);
-
-    if (!enrollment) {
-      return NextResponse.json({
-        enrolled: false,
-        completedLessons: [],
-        completedExercises: [],
-        passedQuizzes: [],
-      });
-    }
-
     const allProgress = dbHelpers.getCourseLessonProgress(courseId) as Array<{
       status: string;
       lessonId: string;
@@ -28,12 +17,9 @@ export async function GET(
       .map((p) => p.lessonId);
 
     return NextResponse.json({
-      enrolled: true,
       completedLessons,
       completedExercises: [],
       passedQuizzes: [],
-      completionPercentage:
-        (enrollment as { completionPercentage?: number }).completionPercentage || 0,
     });
   } catch (error) {
     console.error('Failed to fetch course progress:', error);

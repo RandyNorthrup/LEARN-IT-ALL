@@ -1,0 +1,46 @@
+---
+id: lesson-006-019
+title: Step 19
+chapterId: chapter-06
+order: 19
+duration: 5
+objectives:
+  - Step 19
+---
+
+# Step 19
+
+That brown background makes it hard to read the text. Change the `body` element's background color to `burlywood` so it has some color but you are still be able to read the text.
+
+## Starter Code
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cafe Menu</title>
+    <link href="styles.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <main>
+      <h1>CAMPER CAFE</h1>
+      <p>Est. 2020</p>
+      <section>
+        <h2>Coffee</h2>
+      </section>
+    </main>
+  </body>
+</html>
+```
+
+## Hints
+
+1. You should set the `background-color` property to `burlywood`.
+2. Your `body` element should have a `burlywood` background.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/responsive-web-design/)*
+*Original Challenge ID: 5f34a1fd611d003edeafd681*

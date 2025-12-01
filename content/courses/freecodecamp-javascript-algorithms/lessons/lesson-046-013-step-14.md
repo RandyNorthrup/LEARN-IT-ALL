@@ -1,0 +1,60 @@
+---
+id: lesson-046-013
+title: Step 14
+chapterId: chapter-46
+order: 13
+duration: 5
+objectives:
+  - Step 14
+---
+
+# Step 14
+
+After the loop that finds the nearest unvisited node, you need to check whether a valid node was actually found.
+
+If no such node exists, that means the remaining nodes are unreachable from the start node, and the algorithm should stop early.
+
+On the same level as the nested `for` loop, add an `if` statement that checks if `current == -1` and breaks out of the loop if true.
+
+## Starter Code
+
+```html
+INF = float('inf')
+adj_matrix = [
+    [0, 5, 3, INF, 11, INF],
+    [5, 0, 1, INF, INF, 2],
+    [3, 1, 0, 1, 5, INF],
+    [INF, INF, 1, 0, 9, 3],
+    [11, INF, 5, 9, 0, INF],
+    [INF, 2, INF, 3, INF, 0],
+]
+
+def shortest_path(matrix, start_node, target_node=None):
+    n = len(matrix)
+    distances = [INF] * n
+    distances[start_node] = 0
+    paths = [[node_no] for node_no in range(n)]
+    visited = [False] * n
+
+    for _ in range(n):
+        min_distance = INF  
+        current = -1  
+        for node_no in range(n):  
+            if not visited[node_no] and distances[node_no] < min_distance:  
+                min_distance = distances[node_no]  
+                current = node_no
+
+--fcc-editable-region--
+
+--fcc-editable-region--
+```
+
+## Hints
+
+1. You should have an `if` statement that checks if `current` is still `-1` after the inner `for` loop.
+2. You should use a `break` statement to break out of the loop.
+
+---
+
+*Source: [freeCodeCamp](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/)*
+*Original Challenge ID: 68760c4c2648e7832c5eef16*

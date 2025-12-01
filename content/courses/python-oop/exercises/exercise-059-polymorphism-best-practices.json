@@ -1,0 +1,27 @@
+{
+  "id": "exercise-059-polymorphism-best-practices",
+  "courseId": "python-oop",
+  "lessonId": "lesson-059-polymorphism-best-practices",
+  "title": "Apply SOLID Principles",
+  "description": "Follow Open/Closed Principle with polymorphism",
+  "difficulty": "advanced",
+  "points": 35,
+  "language": "python",
+  "starterCode": "from abc import ABC, abstractmethod\n\nclass Discount(ABC):\n    @abstractmethod\n    def calculate(self, price):\n        pass\n\n# Create PercentageDiscount and FixedDiscount\n\nclass PriceCalculator:\n    def calculate_final_price(self, price, discount):\n        return price - discount.calculate(price)\n\ncalc = PriceCalculator()\nprint(calc.calculate_final_price(100, PercentageDiscount(10)))\nprint(calc.calculate_final_price(100, FixedDiscount(15)))",
+  "solution": "from abc import ABC, abstractmethod\n\nclass Discount(ABC):\n    @abstractmethod\n    def calculate(self, price):\n        pass\n\nclass PercentageDiscount(Discount):\n    def __init__(self, percent):\n        self.percent = percent\n    \n    def calculate(self, price):\n        return price * (self.percent / 100)\n\nclass FixedDiscount(Discount):\n    def __init__(self, amount):\n        self.amount = amount\n    \n    def calculate(self, price):\n        return self.amount\n\nclass PriceCalculator:\n    def calculate_final_price(self, price, discount):\n        return price - discount.calculate(price)\n\ncalc = PriceCalculator()\nprint(calc.calculate_final_price(100, PercentageDiscount(10)))\nprint(calc.calculate_final_price(100, FixedDiscount(15)))",
+  "hints": [
+    "PercentageDiscount: percent of price",
+    "FixedDiscount: fixed amount",
+    "PriceCalculator is closed for modification",
+    "Open for extension (new discounts)"
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Should calculate discounts",
+      "input": "",
+      "expectedOutput": "90.0\n85",
+      "isHidden": false
+    }
+  ]
+}
