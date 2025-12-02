@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Gamepad2, Zap, Brain, Target, Code, Puzzle } from 'lucide-react';
+import { Gamepad2, Zap, Brain, Target, Code, Puzzle, Rocket } from 'lucide-react';
 
 interface Game {
   id: string;
@@ -11,6 +11,22 @@ interface Game {
 }
 
 const games: Game[] = [
+  {
+    id: 'lunar-lander',
+    title: 'Lunar Lander',
+    description: 'Master physics and precision landing. Control thrust and rotation to safely land your spacecraft on the platform.',
+    difficulty: 'Medium',
+    icon: <Rocket className="h-8 w-8" />,
+    color: 'from-orange-500 to-red-600',
+  },
+  {
+    id: 'code-lander',
+    title: 'Code Lander',
+    description: 'Land your spacecraft by writing code to control thrust and rotation. Learn physics and programming together.',
+    difficulty: 'Hard',
+    icon: <Code className="h-8 w-8" />,
+    color: 'from-purple-500 to-pink-600',
+  },
   {
     id: 'code-hunter',
     title: 'Code Hunter',
