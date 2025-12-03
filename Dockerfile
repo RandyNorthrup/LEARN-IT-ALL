@@ -3,12 +3,20 @@ FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat python3 make g++
+# Install build dependencies for better-sqlite3 and sharp
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    vips-dev \
+    pkgconfig
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
-RUN npm ci
+# Install with verbose logging to catch errors
+RUN npm ci --verbose
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -33,13 +41,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Create database directory with proper permissions
+RUN mkdir -p ./database && chown -R nextjs:nodejs ./database
+
 # Copy necessary files
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/content ./content
-COPY --from=builder /app/database ./database
-
-# Set proper permissions for database directory
-RUN chown -R nextjs:nodejs ./database
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
