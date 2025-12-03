@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 
 interface ClearProgressRequest {
   type: 'all' | 'course' | 'chapter' | 'lesson' | 'quiz';
@@ -20,6 +20,8 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const db = getDb();
 
     switch (type) {
       case 'all':
