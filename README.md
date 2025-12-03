@@ -67,8 +67,11 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for 
 - **Node.js** 18+ or 20+ LTS recommended
 - **npm** (comes with Node.js) or **yarn**
 - **Git** for cloning the repository
+- **Docker** (optional) for containerized deployment
 
 ### Installation
+
+#### Option 1: Local Development
 
 ```bash
 # Clone the repository
@@ -91,6 +94,21 @@ The platform will:
 4. Prompt you to set your display name on first visit
 
 **That's it!** No configuration, no environment variables, no authentication setup required.
+
+#### Option 2: Docker
+
+```bash
+# Using Docker Compose (recommended)
+docker-compose up -d
+
+# Or pull from GitHub Container Registry
+docker pull ghcr.io/randynorthrup/learn-it-all:latest
+docker run -p 3000:3000 \
+  -v $(pwd)/database:/app/database \
+  ghcr.io/randynorthrup/learn-it-all:latest
+```
+
+See [DOCKER.md](DOCKER.md) for complete Docker documentation and deployment options.
 
 ---
 

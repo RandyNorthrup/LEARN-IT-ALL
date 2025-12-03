@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  learn-it-all:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: learn-it-all:latest
+    container_name: learn-it-all
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount database directory for persistence
+      - ./database:/app/database
+      # Mount content directory (optional - for development)
+      - ./content:/app/content
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./database/learn-it-all.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
