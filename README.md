@@ -6,28 +6,29 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite)](https://www.sqlite.org/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Automated_Builds-2496ED?style=flat-square&logo=docker)](https://github.com/RandyNorthrup/LEARN-IT-ALL/pkgs/container/learn-it-all)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ---
 
 ## 📋 Overview
 
-LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for technical education. Built with cutting-edge web technologies, it provides an immersive environment for learning programming through structured courses, hands-on coding exercises, interactive quizzes, real-world projects, and gamified challenges.
+LEARN-IT-ALL is a comprehensive, **local-first learning platform** for mastering technology skills. Built with cutting-edge web technologies, it provides an immersive environment for learning programming, networking, data science, security, and more through structured courses, hands-on coding exercises, interactive quizzes, real-world projects, and gamified challenges.
 
-**Live Content**: 16 courses with 3,000+ lessons, 349 project guides across 26 categories, and 5 interactive learning games!
+**Live Content**: Multiple comprehensive courses with thousands of lessons, hundreds of project guides across dozens of categories, and interactive learning games!
 
 ### ✨ Key Features
 
 #### 📚 Learning Content
-- 🎯 **16 Complete Courses** - 3,000+ structured lessons across Python, JavaScript, Web Development, Networking, and more
+- 🎯 **Complete Courses** - Thousands of structured lessons across Python, JavaScript, Web Development, Networking, Data Science, and more
 - 💻 **Interactive Code Editor** - Built-in Monaco Editor (VS Code engine) with full syntax highlighting
 - ✅ **Automated Exercise Validation** - Real-time code execution and testing with instant feedback
 - 📝 **Quiz & Test Systems** - 15+ quizzes with comprehensive scoring and pass/fail criteria
-- 🛠️ **349 Project Guides** - Step-by-step tutorials for building real technologies from scratch
+- 🛠️ **Hundreds of Project Guides** - Step-by-step tutorials for building real technologies from scratch
 - 📊 **Progress Tracking** - Complete SQLite database tracking every lesson, exercise, quiz, and certificate
 
 #### 🎮 Interactive Features
-- 🕹️ **5 Learning Games** - Code Hunter, Algorithm Arena, Syntax Speed, Logic Maze, Code Builder
+- 🕹️ **Learning Games** - Code Hunter, Code Lander, Algorithm Arena, Lunar Lander, Syntax Speed, Logic Maze, Code Builder
 - 🏆 **Gamification System** - Points, badges, and achievements for completed work
 - 📈 **Visual Progress Dashboard** - Track your journey across all courses and projects
 - 🎯 **Learning Tracks** - Curated paths through related courses
@@ -38,6 +39,7 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for 
 - 💾 **SQLite Database** - Fast, reliable progress tracking with better-sqlite3
 - 🌐 **Offline-First** - Works without internet after initial setup
 - ⚡ **Blazing Fast** - Built on Next.js 16 with App Router and Turbopack
+- 🐳 **Docker Ready** - Pre-built images with automated CI/CD, ready to deploy anywhere
 - 🎓 **Self-Paced Learning** - Learn at your own speed, your own way
 
 ---
@@ -71,7 +73,60 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** designed for 
 
 ### Installation
 
-#### Option 1: Local Development
+#### Option 1: Docker (Recommended for Production)
+
+The fastest way to get started is using Docker. Pre-built images are automatically published to GitHub Container Registry on every push.
+
+```bash
+# Using Docker Compose (recommended)
+docker-compose up -d
+
+# Or pull from GitHub Container Registry
+docker pull ghcr.io/randynorthrup/learn-it-all:latest
+docker run -p 3000:3000 \
+  -v $(pwd)/database:/app/database \
+  -v $(pwd)/content:/app/content \
+  ghcr.io/randynorthrup/learn-it-all:latest
+```
+
+**Docker Benefits:**
+- 🚀 **Zero Configuration** - Everything pre-configured and ready to run
+- 📦 **Isolated Environment** - No conflicts with your local Node.js setup
+- 🔄 **Easy Updates** - Pull new image and restart container
+- 💾 **Persistent Data** - Database and content survive container restarts
+- 🏭 **Production-Ready** - Multi-stage builds with optimized Next.js standalone output
+
+See [DOCKER.md](DOCKER.md) for complete Docker documentation, troubleshooting, and advanced deployment options.
+
+**Building Your Own Image:**
+
+You can build the Docker image locally if you want to customize it or don't want to use the pre-built image:
+
+```bash
+# Build the image
+docker build -t learn-it-all:local .
+
+# Run your custom build
+docker run -p 3000:3000 \
+  -v $(pwd)/database:/app/database \
+  -v $(pwd)/content:/app/content \
+  learn-it-all:local
+```
+
+The Dockerfile uses a multi-stage build process:
+1. **deps stage** - Installs all dependencies including native packages (vips-dev for image processing)
+2. **builder stage** - Builds the Next.js application in standalone mode
+3. **runner stage** - Creates minimal production image with only necessary files
+
+**Automated Builds:**
+
+Every push to the `main` branch automatically triggers a GitHub Actions workflow that:
+- Builds the Docker image with build caching for speed
+- Tags with `latest`, `main`, and commit SHA
+- Pushes to GitHub Container Registry (ghcr.io)
+- Makes the image publicly available for anyone to pull
+
+#### Option 2: Local Development
 
 ```bash
 # Clone the repository
@@ -95,21 +150,6 @@ The platform will:
 
 **That's it!** No configuration, no environment variables, no authentication setup required.
 
-#### Option 2: Docker
-
-```bash
-# Using Docker Compose (recommended)
-docker-compose up -d
-
-# Or pull from GitHub Container Registry
-docker pull ghcr.io/randynorthrup/learn-it-all:latest
-docker run -p 3000:3000 \
-  -v $(pwd)/database:/app/database \
-  ghcr.io/randynorthrup/learn-it-all:latest
-```
-
-See [DOCKER.md](DOCKER.md) for complete Docker documentation and deployment options.
-
 ---
 
 ## 📁 Project Structure
@@ -117,13 +157,13 @@ See [DOCKER.md](DOCKER.md) for complete Docker documentation and deployment opti
 ```
 LEARN-IT-ALL/
 ├── content/                      # All learning content (JSON-based)
-│   ├── courses/                  # 16 courses with 3,000+ lessons
+│   ├── courses/                  # Complete courses with thousands of lessons
 │   │   ├── python-basics/        # 180 lessons, 14 chapters
 │   │   ├── python-oop/           # 61 lessons, 7 chapters
 │   │   ├── comptia-network-plus/ # 90 lessons, 10 chapters
 │   │   ├── freecodecamp-*/       # 13 freeCodeCamp certification courses
 │   │   └── ...                   # (lessons, exercises, quizzes per course)
-│   └── projects/                 # 349 project guides, 26 categories
+│   └── projects/                 # Hundreds of project guides, multiple categories
 │       ├── index.json            # Project catalog
 │       ├── database/             # Build Your Own Database guides
 │       ├── game/                 # Build Your Own Game guides
@@ -142,9 +182,11 @@ LEARN-IT-ALL/
 │   │   │   └── tracks/           # Learning tracks endpoints
 │   │   ├── courses/              # Course pages & lesson viewer
 │   │   ├── dashboard/            # Main dashboard (homepage)
-│   │   ├── games/                # 5 interactive learning games
+│   │   ├── games/                # Interactive learning games
 │   │   │   ├── code-hunter/      # Find bugs in code
+│   │   │   ├── code-lander/      # Guide code to safe landing
 │   │   │   ├── algorithm-arena/  # Solve algorithmic puzzles
+│   │   │   ├── lunar-lander/     # Physics-based challenges
 │   │   │   ├── syntax-speed/     # Speed coding challenges
 │   │   │   ├── logic-maze/       # Programming logic puzzles
 │   │   │   └── code-builder/     # Build projects step-by-step
@@ -180,7 +222,7 @@ LEARN-IT-ALL/
 
 ## 📚 Available Content
 
-### 🎓 Courses (16 Total - 3,000+ Lessons)
+### 🎓 Courses
 
 #### Python Programming (3 courses, 331 lessons)
 - **Learn Python - Fundamentals** (180 lessons, 14 chapters, 30 hours)
@@ -228,7 +270,7 @@ LEARN-IT-ALL/
   - VLANs, routing, switching, troubleshooting
 - **Information Security (freeCodeCamp)** (21 lessons, 2 chapters)
 
-### 🛠️ Project Guides (349 Projects - 26 Categories)
+### 🛠️ Project Guides
 
 Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://github.com/codecrafters-io/build-your-own-x):
 
@@ -269,10 +311,12 @@ Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://
 - 🔧 **Command Line Tool** - CLI applications
 - 🚁 **Emulator/Virtual Machine** - Hardware emulators
 
-### 🎮 Interactive Learning Games (5 Games)
+### 🎮 Interactive Learning Games
 
 - **Code Hunter** 🕵️ - Find and fix bugs in code snippets
+- **Code Lander** 🚀 - Guide your code to safe landing with correct syntax
 - **Algorithm Arena** ⚔️ - Solve algorithmic challenges and puzzles
+- **Lunar Lander** 🌙 - Navigate physics-based coding challenges
 - **Syntax Speed** ⚡ - Timed coding challenges for muscle memory
 - **Logic Maze** 🧩 - Navigate through programming logic puzzles
 - **Code Builder** 🏗️ - Build projects incrementally with guided steps
@@ -755,16 +799,17 @@ For security vulnerabilities, please email privately instead of opening a public
 
 ## 📊 Project Statistics
 
-- **Total Courses**: 16
-- **Total Lessons**: 3,000+
-- **Total Quizzes**: 15+
-- **Project Guides**: 349
-- **Project Categories**: 26
-- **Learning Games**: 5
-- **Estimated Learning Hours**: 3,000+
-- **Lines of Code**: ~15,000+
-- **Files**: 375+ content files
-- **Tech Stack Components**: 20+ packages
+- **Total Courses**: Growing library of comprehensive courses
+- **Total Lessons**: Thousands of structured lessons
+- **Total Quizzes**: Multiple quizzes per course
+- **Project Guides**: Hundreds of real-world project tutorials
+- **Project Categories**: Dozens of technology categories
+- **Learning Games**: Multiple interactive games
+- **Estimated Learning Hours**: Thousands of hours of content
+- **Lines of Code**: ~15,000+ platform code
+- **Content Files**: Hundreds of JSON-based content files
+- **Tech Stack**: Modern React/Next.js with 20+ packages
+- **Deployment**: Automated Docker CI/CD to GitHub Container Registry
 
 ---
 
