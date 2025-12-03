@@ -15,8 +15,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
-# Install with verbose logging to catch errors
-RUN npm ci --verbose
+# Install all dependencies (including dev deps needed for build)
+RUN npm ci && npm cache clean --force
 
 # Rebuild the source code only when needed
 FROM base AS builder
