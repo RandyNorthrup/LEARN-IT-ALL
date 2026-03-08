@@ -1,5 +1,7 @@
 ---
 id: lesson-047-subnetting-calculations
+chapterId: ch2-ip-addressing
+order: 47
 title: "Subnetting Calculations and Practice"
 sidebar_label: "Lesson 47: Subnetting Calculations"
 description: "Master binary subnetting methods, subnet calculations, and advanced problem-solving techniques"
@@ -22,6 +24,19 @@ While understanding subnetting concepts is essential, mastering the calculations
 We'll work through numerous examples, building your calculation speed and accuracy to professional levels.
 
 **Key Principle:** Practice makes perfect - subnetting becomes intuitive with repetition.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Perform binary subnetting calculations accurately
+- Apply multiple subnetting methods for efficiency
+- Calculate subnet requirements from host counts
+- Solve complex subnetting problems quickly
+- Design optimal subnet schemes
+- Troubleshoot subnet configuration issues
+
+---
 
 ## Binary Subnetting Method
 
@@ -774,14 +789,6 @@ This lesson provided intensive practice with:
 - Study route summarization
 - Apply to real network designs
 
-## Additional Resources
-
-- **Subnetting Practice**: SubnettingPractice.com
-- **Calculators**: ipcalc, sipcalc (for verification)
-- **CompTIA Network+ N10-008**: Domain 1.4 - Subnetting
-- **RFC 1878**: Variable Length Subnet Table
-- **Practice Apps**: Subnetting trainer mobile apps
-
 ## Challenge Problems
 
 **Expert Level:**
@@ -801,3 +808,147 @@ This lesson provided intensive practice with:
 5. How many usable /26 subnets can you create from 172.20.0.0/19 while leaving room for one /22 management network?
 
 **Work through these independently, then verify with binary method!**
+
+## Practice Questions
+
+**Q1.** A network administrator needs to subnet 192.168.10.0/24 into 8 equal subnets. What is the new subnet mask?
+
+A) 255.255.255.192
+B) 255.255.255.224
+C) 255.255.255.240
+D) 255.255.255.128
+
+<details>
+<summary>Answer</summary>
+
+**B)** 8 subnets require 3 borrowed bits (2³ = 8). Starting from /24, adding 3 bits gives /27, which is 255.255.255.224.
+</details>
+
+**Q2.** How many usable host addresses are available in a /28 subnet?
+
+A) 16
+B) 14
+C) 30
+D) 12
+
+<details>
+<summary>Answer</summary>
+
+**B)** A /28 has 4 host bits. 2⁴ = 16 total addresses minus 2 (network and broadcast) = 14 usable hosts.
+</details>
+
+**Q3.** Given the IP address 10.45.128.200/20, what is the network address?
+
+A) 10.45.128.0
+B) 10.45.0.0
+C) 10.45.144.0
+D) 10.45.112.0
+
+<details>
+<summary>Answer</summary>
+
+**A)** With a /20 mask (255.255.240.0), the magic number in the third octet is 256 - 240 = 16. 128 ÷ 16 = 8.0, so the network starts at 128. The network address is 10.45.128.0.
+</details>
+
+**Q4.** A host has IP 172.16.95.200/26. What is the broadcast address for this subnet?
+
+A) 172.16.95.192
+B) 172.16.95.223
+C) 172.16.95.255
+D) 172.16.95.128
+
+<details>
+<summary>Answer</summary>
+
+**C)** The /26 mask has a magic number of 64 (256 - 192). Subnets in the last octet: .0, .64, .128, .192. Host .200 is in subnet .192 (range 192–255). The broadcast address is 172.16.95.255.
+</details>
+
+**Q5.** Which method quickly identifies the subnet for any host address?
+
+A) Divide the host octet by the magic number and take the integer result times the magic number
+B) Convert all four octets to binary and compare
+C) Subtract the host address from 255
+D) Add the subnet mask to the IP address
+
+<details>
+<summary>Answer</summary>
+
+**A)** The magic number (speed) method divides the relevant host octet value by the magic number (256 minus the mask value), takes the integer result, and multiplies back by the magic number to find the subnet start.
+</details>
+
+**Q6.** An organization needs subnets that support exactly 100 hosts each. What is the minimum prefix length that satisfies this requirement?
+
+A) /24
+B) /25
+C) /26
+D) /27
+
+<details>
+<summary>Answer</summary>
+
+**B)** A /25 provides 2⁷ - 2 = 126 usable hosts, which supports 100 hosts. A /26 only provides 62 usable hosts, which is insufficient.
+</details>
+
+**Q7.** What is the valid host range for the subnet 192.168.5.64/27?
+
+A) 192.168.5.64 – 192.168.5.95
+B) 192.168.5.65 – 192.168.5.94
+C) 192.168.5.65 – 192.168.5.95
+D) 192.168.5.64 – 192.168.5.94
+
+<details>
+<summary>Answer</summary>
+
+**B)** The /27 subnet 192.168.5.64 has a broadcast address of 192.168.5.95 (64 + 31). Usable hosts range from .65 (network + 1) to .94 (broadcast - 1).
+</details>
+
+**Q8.** A network uses 10.0.0.0/8. How many /24 subnets can be created from this address space?
+
+A) 256
+B) 65,536
+C) 16,777,216
+D) 1,024
+
+<details>
+<summary>Answer</summary>
+
+**B)** Moving from /8 to /24 borrows 16 bits (24 - 8 = 16). 2¹⁶ = 65,536 possible /24 subnets.
+</details>
+
+**Q9.** A host at 172.16.33.100/21 wants to communicate with 172.16.40.50/21. Are they on the same subnet?
+
+A) Yes, both are in the 172.16.32.0/21 subnet
+B) Yes, both are in the 172.16.33.0/21 subnet
+C) No, the first is in 172.16.32.0/21 and the second is in 172.16.40.0/21
+D) No, they are in completely different Class B networks
+
+<details>
+<summary>Answer</summary>
+
+**C)** With /21 (255.255.248.0), the magic number is 8 in the third octet. 33 ÷ 8 = 4.125 → subnet starts at 32 (172.16.32.0). 40 ÷ 8 = 5.0 → subnet starts at 40 (172.16.40.0). They are in different subnets.
+</details>
+
+**Q10.** When using the "seven-second subnetting" speed method, what value do you subtract from 256 to find the magic number?
+
+A) The number of host bits
+B) The interesting octet value of the subnet mask
+C) The prefix length
+D) The number of borrowed bits
+
+<details>
+<summary>Answer</summary>
+
+**B)** The magic number is calculated as 256 minus the value of the subnet mask in the "interesting" octet (the octet where the mask transitions from 1s to 0s). For example, mask 255.255.255.224 → magic number = 256 - 224 = 32.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.4 – Given a scenario, configure a subnet and use appropriate IP addressing schemes
+- RFC 950: Internet Standard Subnetting Procedure
+- RFC 4632: Classless Inter-Domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan
+- RFC 1878: Variable Length Subnet Table For IPv4
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – Subnetting and Calculation Methods
+- Odom, W. (2021). *CCNA 200-301 Official Cert Guide, Volume 1*. Cisco Press – IP Subnetting Practice
+- Subnetting Practice: SubnettingPractice.com
+- Calculators: ipcalc, sipcalc (for verification)
+- Practice Apps: Subnetting trainer mobile apps

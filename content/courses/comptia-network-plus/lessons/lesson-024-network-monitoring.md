@@ -1,21 +1,7 @@
 ---
-id: network-monitoring
+id: lesson-024-network-monitoring
 title: Network Monitoring and Management
-chapterId: ch3-network-operations
-order: 24
-duration: 75
-objectives:
-  - Understand network monitoring protocols (SNMP, NetFlow, syslog)
-  - Implement network monitoring solutions
-  - Configure alerting and thresholds
-  - Analyze network performance metrics
-  - Use monitoring tools effectively
----
-
----
-id: network-monitoring
-title: Network Monitoring and Management
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 24
 duration: 75
 objectives:
@@ -31,6 +17,18 @@ objectives:
 ## Introduction
 
 Network monitoring is the continuous observation of network infrastructure to ensure availability, performance, and security. Effective monitoring enables proactive problem detection, capacity planning, security threat identification, and performance optimization. This lesson covers monitoring protocols (SNMP, NetFlow, syslog), monitoring tools, alerting mechanisms, and best practices for comprehensive network management.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand network monitoring protocols (SNMP, NetFlow, syslog)
+- Implement network monitoring solutions
+- Configure alerting and thresholds
+- Analyze network performance metrics
+- Use monitoring tools effectively
+
+---
 
 ## Why Network Monitoring is Critical
 
@@ -798,15 +796,78 @@ Effective network monitoring requires:
 
 Network monitoring is not "set and forget" - it requires ongoing tuning, analysis, and adjustment to provide maximum value while minimizing noise.
 
-## Review Questions
+## Practice Questions
 
-1. What are the three versions of SNMP and which should be used for secure monitoring?
-2. What is the difference between SNMP polling and SNMP traps?
-3. Explain what a NetFlow "flow" is and what seven fields define it.
-4. What are the eight syslog severity levels, from most to least severe?
-5. Why is time synchronization (NTP) critical for network logging?
-6. What is a network performance baseline and why is it important?
-7. What is the "five nines" availability percentage and how much downtime does it allow per year?
-8. Name three open-source network monitoring tools and one strength of each.
-9. What is the difference between NetFlow and sFlow?
-10. What are best practices to avoid "alert fatigue" in network monitoring?
+**Q1.** Which SNMP version provides both authentication and encryption for secure network monitoring?
+
+A) SNMPv1
+B) SNMPv2c
+C) SNMPv3 with authPriv
+D) SNMPv2c with community strings
+
+<details>
+<summary>Answer</summary>
+
+**C)** SNMPv3 with the authPriv security level provides both authentication (MD5/SHA) and encryption (DES/3DES/AES), making it the recommended version for secure monitoring. SNMPv1 and SNMPv2c use plaintext community strings with no encryption, making them vulnerable to eavesdropping. SNMPv2c with community strings still lacks encryption.
+</details>
+
+**Q2.** A network administrator notices intermittent link failures on a switch port but SNMP polling at 5-minute intervals never captures the events. What should be configured to detect these failures immediately?
+
+A) Increase the polling interval to 10 minutes
+B) Configure SNMP traps for link-down events
+C) Switch from SNMPv3 to SNMPv2c
+D) Disable NetFlow on the interface
+
+<details>
+<summary>Answer</summary>
+
+**B)** SNMP traps are agent-initiated notifications sent immediately when an event occurs (such as a link going down), providing real-time alerting that polling may miss between intervals. Increasing the polling interval would make detection even worse. Changing SNMP versions does not address the detection gap. Disabling NetFlow is unrelated to link state monitoring.
+</details>
+
+**Q3.** Which seven key fields define a NetFlow flow record?
+
+A) MAC address, VLAN, DSCP, TTL, frame size, protocol, timestamp
+B) Source IP, destination IP, source port, destination port, Layer 3 protocol, ToS byte, input interface
+C) Hostname, interface name, bandwidth, error count, discard count, uptime, location
+D) Community string, OID, MIB, sysName, sysLocation, sysContact, sysDescr
+
+<details>
+<summary>Answer</summary>
+
+**B)** A NetFlow flow is defined by source IP, destination IP, source port, destination port, Layer 3 protocol (TCP/UDP/ICMP), Type of Service (ToS) byte, and input logical interface. These seven fields uniquely identify a traffic flow. Option A describes frame-level fields. Option C describes SNMP monitoring metrics. Option D lists SNMP MIB objects.
+</details>
+
+**Q4.** A security team wants to detect a potential DDoS attack by analyzing traffic patterns to a specific server. Which monitoring technology is BEST suited for this analysis?
+
+A) Syslog
+B) SNMP polling
+C) NetFlow
+D) SNMP traps
+
+<details>
+<summary>Answer</summary>
+
+**C)** NetFlow provides detailed traffic flow data including source/destination IPs, ports, and traffic volumes, making it ideal for detecting DDoS attacks by identifying sudden spikes in connections to a single host from many sources. Syslog captures log messages but not traffic flow data. SNMP polling shows interface utilization but lacks per-flow granularity. SNMP traps alert on predefined thresholds but don't provide flow-level analysis.
+</details>
+
+**Q5.** An SNMP manager queries OID 1.3.6.1.2.1.2.2.1.10 (ifInOctets) and 1.3.6.1.2.1.2.2.1.16 (ifOutOctets) on a router interface every 5 minutes. What metric is being calculated from these values?
+
+A) CPU utilization
+B) Memory utilization
+C) Bandwidth utilization
+D) Error rate
+
+<details>
+<summary>Answer</summary>
+
+**C)** The ifInOctets and ifOutOctets MIB-II objects track bytes received and transmitted on an interface. By calculating the difference between two polling intervals and comparing against interface speed (ifSpeed), bandwidth utilization percentage can be derived using the formula: (delta octets × 8) / (ifSpeed × interval) × 100%. CPU and memory utilization use vendor-specific OIDs. Error rate uses ifInErrors/ifOutErrors.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.1 — Given a scenario, use the appropriate documentation and diagrams to manage the network
+- IETF RFC 3954: Cisco Systems NetFlow Services Export Version 9
+- IETF RFC 5424: The Syslog Protocol
+- NIST SP 800-137: Information Security Continuous Monitoring (ISCM) for Federal Information Systems and Organizations
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson
+- Mauro, D., & Schmidt, K. (2005). *Essential SNMP* (2nd ed.). O'Reilly Media

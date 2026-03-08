@@ -1,5 +1,5 @@
 ---
-id: "104-function-best-practices"
+id: lesson-081-function-best-practices
 title: "Function Best Practices and Design Patterns"
 chapterId: ch6-functions
 order: 13
@@ -231,28 +231,25 @@ def create_user(name, email, age, contact_info, preferences=None):
     """
     pass
 
-# Better: Use data class or typed dict
-from dataclasses import dataclass
-from typing import Optional
+# Better: Use namedtuple for grouped data
+from collections import namedtuple
 
-@dataclass
-class ContactInfo:
-    address: str
-    city: str
-    state: str
-    zip_code: str
-    phone: str
-    country: str
+ContactInfo = namedtuple('ContactInfo', [
+    'address', 'city', 'state', 'zip_code', 'phone', 'country'
+])
 
-@dataclass
-class UserPreferences:
-    newsletter: bool = False
-    notifications: bool = True
+UserPreferences = namedtuple('UserPreferences', [
+    'newsletter', 'notifications'
+])
 
-def create_user(name: str, email: str, age: int, 
-                contact: ContactInfo, 
-                preferences: Optional[UserPreferences] = None):
-    """Clean signature with typed objects."""
+def create_default_preferences():
+    """Create default user preferences."""
+    return UserPreferences(newsletter=False, notifications=True)
+
+def create_user(name, email, age, contact, preferences=None):
+    """Clean signature with structured data."""
+    if preferences is None:
+        preferences = create_default_preferences()
     pass
 
 # ❌ BAD - Boolean trap
@@ -276,20 +273,21 @@ def deactivate_user(user_id):
 activate_user(123)
 deactivate_user(456)
 
-# ✅ GOOD - Use enum for options
-from enum import Enum
+# ✅ GOOD - Use constants for options
+USER_STATUS_ACTIVE = "active"
+USER_STATUS_INACTIVE = "inactive"
+USER_STATUS_SUSPENDED = "suspended"
 
-class UserStatus(Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
-    SUSPENDED = "suspended"
+VALID_USER_STATUSES = {USER_STATUS_ACTIVE, USER_STATUS_INACTIVE, USER_STATUS_SUSPENDED}
 
-def set_user_status(user_id, status: UserStatus):
+def set_user_status(user_id, status):
     """Set user status explicitly."""
+    if status not in VALID_USER_STATUSES:
+        raise ValueError(f"Invalid status: {status}")
     pass
 
-# Usage is clear and type-safe
-set_user_status(123, UserStatus.ACTIVE)
+# Usage is clear and validated
+set_user_status(123, USER_STATUS_ACTIVE)
 ```
 
 ## Return Values Best Practices

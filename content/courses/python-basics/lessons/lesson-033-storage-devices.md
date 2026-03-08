@@ -1,8 +1,8 @@
 ---
-id: "75-storage-devices"
+id: lesson-033-storage-devices
 title: "Storage Devices and File Systems"
 chapterId: ch3-computing
-order: 6
+order: 7
 duration: 25
 objectives:
   - Understand different types of storage devices
@@ -171,111 +171,111 @@ def explain_data_storage():
 explain_data_storage()
 
 # Simulate simple block storage
-class BlockStorage:
-    """Simulate block-based storage."""
+BLOCK_SIZE = 64  # 64 bytes per block
+
+def create_block_storage(num_blocks):
+    """Create a block-based storage simulator."""
+    return {
+        'blocks': [None] * num_blocks,
+        'num_blocks': num_blocks,
+    }
+
+def storage_write_file(storage, filename, data):
+    """Write file data to blocks."""
+    # Calculate how many blocks needed
+    blocks_needed = (len(data) + BLOCK_SIZE - 1) // BLOCK_SIZE
     
-    BLOCK_SIZE = 64  # 64 bytes per block
+    # Find free blocks
+    free_blocks = [i for i, block in enumerate(storage['blocks']) if block is None]
     
-    def __init__(self, num_blocks):
-        self.blocks = [None] * num_blocks
-        self.num_blocks = num_blocks
+    if len(free_blocks) < blocks_needed:
+        print(f"ERROR: Not enough space for {filename}")
+        return False
     
-    def write_file(self, filename, data):
-        """Write file data to blocks."""
-        # Calculate how many blocks needed
-        blocks_needed = (len(data) + self.BLOCK_SIZE - 1) // self.BLOCK_SIZE
-        
-        # Find free blocks
-        free_blocks = [i for i, block in enumerate(self.blocks) if block is None]
-        
-        if len(free_blocks) < blocks_needed:
-            print(f"ERROR: Not enough space for {filename}")
-            return False
-        
-        # Allocate blocks
-        allocated_blocks = free_blocks[:blocks_needed]
-        
-        # Write data to blocks
-        for i, block_num in enumerate(allocated_blocks):
-            start = i * self.BLOCK_SIZE
-            end = start + self.BLOCK_SIZE
-            chunk = data[start:end]
-            self.blocks[block_num] = {
-                'filename': filename,
-                'data': chunk,
-                'block_index': i
-            }
-        
-        print(f"WROTE: {filename} ({len(data)} bytes) to blocks {allocated_blocks}")
-        return True
+    # Allocate blocks
+    allocated_blocks = free_blocks[:blocks_needed]
     
-    def read_file(self, filename):
-        """Read file data from blocks."""
-        # Find all blocks for this file
-        file_blocks = []
-        for block_num, block in enumerate(self.blocks):
-            if block and block['filename'] == filename:
-                file_blocks.append((block['block_index'], block['data']))
-        
-        if not file_blocks:
-            print(f"ERROR: File {filename} not found")
-            return None
-        
-        # Sort by block index and concatenate
-        file_blocks.sort(key=lambda x: x[0])
-        data = ''.join(chunk for _, chunk in file_blocks)
-        
-        print(f"READ: {filename} ({len(data)} bytes)")
-        return data
+    # Write data to blocks
+    for i, block_num in enumerate(allocated_blocks):
+        start = i * BLOCK_SIZE
+        end = start + BLOCK_SIZE
+        chunk = data[start:end]
+        storage['blocks'][block_num] = {
+            'filename': filename,
+            'data': chunk,
+            'block_index': i
+        }
     
-    def delete_file(self, filename):
-        """Delete file and free blocks."""
-        freed = 0
-        for i, block in enumerate(self.blocks):
-            if block and block['filename'] == filename:
-                self.blocks[i] = None
-                freed += 1
-        
-        if freed > 0:
-            print(f"DELETED: {filename} (freed {freed} blocks)")
+    print(f"WROTE: {filename} ({len(data)} bytes) to blocks {allocated_blocks}")
+    return True
+
+def storage_read_file(storage, filename):
+    """Read file data from blocks."""
+    # Find all blocks for this file
+    file_blocks = []
+    for block_num, block in enumerate(storage['blocks']):
+        if block and block['filename'] == filename:
+            file_blocks.append((block['block_index'], block['data']))
+    
+    if not file_blocks:
+        print(f"ERROR: File {filename} not found")
+        return None
+    
+    # Sort by block index and concatenate
+    file_blocks.sort(key=lambda x: x[0])
+    data = ''.join(chunk for _, chunk in file_blocks)
+    
+    print(f"READ: {filename} ({len(data)} bytes)")
+    return data
+
+def storage_delete_file(storage, filename):
+    """Delete file and free blocks."""
+    freed = 0
+    for i, block in enumerate(storage['blocks']):
+        if block and block['filename'] == filename:
+            storage['blocks'][i] = None
+            freed += 1
+    
+    if freed > 0:
+        print(f"DELETED: {filename} (freed {freed} blocks)")
+    else:
+        print(f"ERROR: File {filename} not found")
+
+def storage_show(storage):
+    """Visualize storage usage."""
+    print("\nStorage Map (. = free, letter = file):")
+    map_str = ""
+    for block in storage['blocks']:
+        if block is None:
+            map_str += "."
         else:
-            print(f"ERROR: File {filename} not found")
+            map_str += block['filename'][0]
     
-    def show_storage(self):
-        """Visualize storage usage."""
-        print("\nStorage Map (. = free, letter = file):")
-        map_str = ""
-        for block in self.blocks:
-            if block is None:
-                map_str += "."
-            else:
-                map_str += block['filename'][0]
-        
-        # Print in rows of 20
-        for i in range(0, len(map_str), 20):
-            print(f"  Blocks {i:2d}-{min(i+19, len(map_str)-1):2d}: {map_str[i:i+20]}")
-        
-        used = sum(1 for b in self.blocks if b is not None)
-        print(f"\nUsage: {used}/{self.num_blocks} blocks ({used/self.num_blocks*100:.1f}%)")
+    # Print in rows of 20
+    for i in range(0, len(map_str), 20):
+        print(f"  Blocks {i:2d}-{min(i+19, len(map_str)-1):2d}: {map_str[i:i+20]}")
+    
+    used = sum(1 for b in storage['blocks'] if b is not None)
+    print(f"\nUsage: {used}/{storage['num_blocks']} blocks ({used/storage['num_blocks']*100:.1f}%)")
 
 # Demonstrate storage operations
-storage = BlockStorage(20)
+storage = create_block_storage(20)
 
 # Write some files
-storage.write_file("readme.txt", "Hello, this is a readme file with some content!")
-storage.write_file("data.csv", "name,age,city\nAlice,30,NYC\nBob,25,LA")
-storage.write_file("notes.txt", "Short note")
+storage_write_file(storage, "readme.txt", "Hello, this is a readme file with some content!")
+storage_write_file(storage, "data.csv", "name,age,city\nAlice,30,NYC\nBob,25,LA")
+storage_write_file(storage, "notes.txt", "Short note")
 
-storage.show_storage()
+storage_show(storage)
 
 # Read a file
-content = storage.read_file("data.csv")
+content = storage_read_file(storage, "data.csv")
 print(f"Content: {content[:50]}...")
 
 # Delete a file
-storage.delete_file("readme.txt")
+storage_delete_file(storage, "readme.txt")
 
-storage.show_storage()
+storage_show(storage)
 ```
 
 ## File Systems
@@ -353,92 +353,89 @@ print(f"\nDeleted {temp_file}")
 
 ```python
 # Simulating a simple directory structure
-class FileSystem:
-    """Simple file system simulator."""
+
+def create_filesystem():
+    """Create a simple file system simulator."""
+    root = {
+        'type': 'directory',
+        'name': '/',
+        'contents': {}
+    }
+    return {
+        'root': root,
+        'current_dir': root,
+    }
+
+def fs_mkdir(fs, name):
+    """Create directory."""
+    if name in fs['current_dir']['contents']:
+        print(f"ERROR: {name} already exists")
+        return
     
-    def __init__(self):
-        self.root = {
-            'type': 'directory',
-            'name': '/',
-            'contents': {}
-        }
-        self.current_dir = self.root
+    fs['current_dir']['contents'][name] = {
+        'type': 'directory',
+        'name': name,
+        'contents': {}
+    }
+    print(f"Created directory: {name}")
+
+def fs_create_file(fs, name, size):
+    """Create file."""
+    if name in fs['current_dir']['contents']:
+        print(f"ERROR: {name} already exists")
+        return
     
-    def mkdir(self, name):
-        """Create directory."""
-        if name in self.current_dir['contents']:
-            print(f"ERROR: {name} already exists")
-            return
-        
-        self.current_dir['contents'][name] = {
-            'type': 'directory',
-            'name': name,
-            'contents': {}
-        }
-        print(f"Created directory: {name}")
+    fs['current_dir']['contents'][name] = {
+        'type': 'file',
+        'name': name,
+        'size': size
+    }
+    print(f"Created file: {name} ({size} bytes)")
+
+def fs_ls(fs):
+    """List directory contents."""
+    print(f"\nContents of {fs['current_dir']['name']}:")
+    if not fs['current_dir']['contents']:
+        print("  (empty)")
+        return
     
-    def create_file(self, name, size):
-        """Create file."""
-        if name in self.current_dir['contents']:
-            print(f"ERROR: {name} already exists")
-            return
-        
-        self.current_dir['contents'][name] = {
-            'type': 'file',
-            'name': name,
-            'size': size
-        }
-        print(f"Created file: {name} ({size} bytes)")
+    for name, item in fs['current_dir']['contents'].items():
+        if item['type'] == 'directory':
+            print(f"  [DIR]  {name}/")
+        else:
+            size_str = bytes_to_readable(item['size'])
+            print(f"  [FILE] {name} ({size_str})")
+
+def fs_tree(node=None, prefix="", is_root_call=True):
+    """Show tree structure."""
+    if is_root_call:
+        print("Directory Tree:")
     
-    def ls(self):
-        """List directory contents."""
-        print(f"\nContents of {self.get_path()}:")
-        if not self.current_dir['contents']:
-            print("  (empty)")
-            return
-        
-        for name, item in self.current_dir['contents'].items():
-            if item['type'] == 'directory':
-                print(f"  [DIR]  {name}/")
-            else:
-                size_str = bytes_to_readable(item['size'])
-                print(f"  [FILE] {name} ({size_str})")
-    
-    def get_path(self):
-        """Get current path (simplified)."""
-        return self.current_dir['name']
-    
-    def tree(self, node=None, prefix=""):
-        """Show tree structure."""
-        if node is None:
-            node = self.root
-            print("Directory Tree:")
-        
-        for name, item in node['contents'].items():
-            if item['type'] == 'directory':
-                print(f"{prefix}├── {name}/")
-                self.tree(item, prefix + "│   ")
-            else:
-                size_str = bytes_to_readable(item['size'])
-                print(f"{prefix}├── {name} ({size_str})")
+    for name, item in node['contents'].items():
+        if item['type'] == 'directory':
+            print(f"{prefix}├── {name}/")
+            fs_tree(item, prefix + "│   ", is_root_call=False)
+        else:
+            size_str = bytes_to_readable(item['size'])
+            print(f"{prefix}├── {name} ({size_str})")
 
 # Demonstrate file system
-fs = FileSystem()
+fs = create_filesystem()
 
 # Create directory structure
-fs.mkdir("documents")
-fs.mkdir("photos")
-fs.mkdir("music")
+fs_mkdir(fs, "documents")
+fs_mkdir(fs, "photos")
+fs_mkdir(fs, "music")
 
 # Create files
-fs.create_file("readme.txt", 1024)
-fs.create_file("notes.txt", 512)
+fs_create_file(fs, "readme.txt", 1024)
+fs_create_file(fs, "notes.txt", 512)
 
 # Show contents
-fs.ls()
+fs_ls(fs)
 
 # Show tree
-fs.tree()
+fs_tree(fs['root'])
 ```
 
 ## Storage Performance

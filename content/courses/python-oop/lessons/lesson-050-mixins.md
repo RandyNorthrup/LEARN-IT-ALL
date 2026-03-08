@@ -1,7 +1,7 @@
 ---
 id: "050"
 title: "Mixins"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 8
 duration: "18 minutes"
 objectives:

@@ -1,0 +1,56 @@
+{
+  "id": "exercise-217-pytest-basics",
+  "courseId": "python-basics",
+  "lessonId": "lesson-156-pytest-basics",
+  "chapterId": "ch12-testing",
+  "title": "Writing Test Functions",
+  "description": "Practice writing test functions following pytest patterns without importing pytest. Build a simple test runner that executes functions, compares actual vs expected results, generates test case reports, and produces summary statistics.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def test_addition():\n    \"\"\"Demonstrate a simple test assertion pattern.\n\n    Returns True if 2 + 2 equals 4. This models how a pytest test\n    function uses assertions to verify expected behavior.\n\n    Returns:\n        True if the assertion passes, False otherwise.\n    \"\"\"\n    pass\n\n\ndef run_test(func, input_val, expected):\n    \"\"\"Run a single test case by calling func with input_val.\n\n    Args:\n        func: A callable that takes one argument.\n        input_val: The input to pass to func.\n        expected: The expected return value.\n\n    Returns:\n        A dict with keys:\n        - 'passed': bool (whether actual == expected)\n        - 'actual': the value func returned\n        - 'expected': the expected value\n    \"\"\"\n    pass\n\n\ndef generate_test_cases(func, cases):\n    \"\"\"Run multiple test cases for a function.\n\n    Args:\n        func: A callable that takes one argument.\n        cases: A list of (input_val, expected) tuples.\n\n    Returns:\n        A list of result dicts (same format as run_test output).\n    \"\"\"\n    pass\n\n\ndef test_report(results):\n    \"\"\"Generate a summary report from test results.\n\n    Args:\n        results: A list of dicts, each with a 'passed' key (bool).\n\n    Returns:\n        A string like '3/4 tests passed'.\n    \"\"\"\n    pass\n",
+  "solution": "def test_addition():\n    return 2 + 2 == 4\n\n\ndef run_test(func, input_val, expected):\n    actual = func(input_val)\n    return {\n        'passed': actual == expected,\n        'actual': actual,\n        'expected': expected\n    }\n\n\ndef generate_test_cases(func, cases):\n    results = []\n    for input_val, expected in cases:\n        results.append(run_test(func, input_val, expected))\n    return results\n\n\ndef test_report(results):\n    passed = sum(1 for r in results if r['passed'])\n    total = len(results)\n    return f'{passed}/{total} tests passed'\n",
+  "hints": [
+    "test_addition simply returns the boolean result of the expression 2 + 2 == 4.",
+    "run_test calls func(input_val), stores the result as 'actual', and compares it with 'expected' to set 'passed'.",
+    "For test_report, count results where 'passed' is True using sum() with a generator expression."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "test_addition returns True",
+      "validation": "assert test_addition() == True",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "run_test detects passing test",
+      "validation": "result = run_test(abs, -5, 5); assert result['passed'] == True and result['actual'] == 5 and result['expected'] == 5",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "run_test detects failing test",
+      "validation": "result = run_test(abs, -3, 10); assert result['passed'] == False and result['actual'] == 3 and result['expected'] == 10",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "test_report generates correct summary string",
+      "validation": "assert test_report([{'passed': True}, {'passed': True}, {'passed': False}]) == '2/3 tests passed'",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "generate_test_cases runs multiple tests correctly",
+      "validation": "results = generate_test_cases(abs, [(-1, 1), (0, 0), (5, 5)]); assert len(results) == 3 and all(r['passed'] for r in results)",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "test_report handles empty results and all-pass results",
+      "validation": "assert test_report([]) == '0/0 tests passed' and test_report([{'passed': True}, {'passed': True}]) == '2/2 tests passed'",
+      "isHidden": true
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-id: 54-higher-order-functions
+id: lesson-078-higher-order-functions
 title: Higher-Order Functions
 chapterId: ch6-functions
 order: 10

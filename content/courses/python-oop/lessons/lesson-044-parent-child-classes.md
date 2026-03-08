@@ -1,7 +1,7 @@
 ---
 id: "044"
 title: "Parent and Child Class Relationships"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 2
 duration: "16 minutes"
 objectives:

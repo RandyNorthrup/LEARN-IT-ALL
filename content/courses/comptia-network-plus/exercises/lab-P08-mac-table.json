@@ -1,0 +1,75 @@
+{
+  "id": "lab-P08-mac-table",
+  "lessonId": "lab-P08-mac-table",
+  "title": "Lab: Switch MAC Address Table Simulator",
+  "description": "Simulate how a network switch learns MAC addresses and builds its CAM (Content Addressable Memory) table. Your simulator processes Ethernet frames arriving on switch ports and decides whether to flood, forward, or filter each frame based on the current MAC table.\n\nThis lab demonstrates the fundamental Layer 2 switching concept: switches learn source MACs and forward based on destination MACs.",
+  "difficulty": "advanced",
+  "points": 120,
+  "language": "python",
+  "starterCode": "class Switch:\n    def __init__(self, num_ports: int):\n        \"\"\"\n        Initialize a switch with the given number of ports.\n        \n        Args:\n            num_ports: Number of switch ports (e.g., 8, 24, 48)\n        \"\"\"\n        self.num_ports = num_ports\n        self.mac_table = {}  # MAC address -> port number\n        self.log = []        # List of action strings for each frame processed\n    \n    def process_frame(self, src_mac: str, dst_mac: str, ingress_port: int) -> str:\n        \"\"\"\n        Process an incoming Ethernet frame.\n        \n        1. LEARN: Add/update source MAC -> ingress_port in MAC table\n        2. FORWARD decision:\n           - If dst_mac is broadcast (ff:ff:ff:ff:ff:ff): FLOOD to all ports except ingress\n           - If dst_mac is in MAC table:\n             - If dst_port == ingress_port: FILTER (don't send back on same port)\n             - Else: FORWARD to specific port\n           - If dst_mac is NOT in MAC table: FLOOD to all ports except ingress\n        \n        Args:\n            src_mac: Source MAC address (e.g., 'aa:bb:cc:dd:ee:ff')\n            dst_mac: Destination MAC address\n            ingress_port: Port number the frame arrived on (1-based)\n        \n        Returns:\n            Action string: 'FLOOD', 'FORWARD:<port>', or 'FILTER'\n        \"\"\"\n        # Your code here\n        pass\n    \n    def get_mac_table(self) -> dict:\n        \"\"\"Return a copy of the current MAC address table.\"\"\"\n        return dict(self.mac_table)\n    \n    def clear_mac_table(self):\n        \"\"\"Clear the MAC address table (like 'clear mac address-table' on a switch).\"\"\"\n        self.mac_table.clear()\n\n\n# Simulate a small network:\nswitch = Switch(8)\n\n# Frame 1: PC-A (port 1) sends to PC-B (port unknown)\nprint(switch.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1))\n# Frame 2: PC-B (port 3) replies to PC-A (port now known)\nprint(switch.process_frame('bb:bb:bb:bb:bb:bb', 'aa:aa:aa:aa:aa:aa', 3))\n# Frame 3: PC-A sends to PC-B again (port now known)\nprint(switch.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1))\n# Frame 4: Broadcast from PC-A\nprint(switch.process_frame('aa:aa:aa:aa:aa:aa', 'ff:ff:ff:ff:ff:ff', 1))\n# Frame 5: PC-A sends to itself (arrives on same port)\nprint(switch.process_frame('cc:cc:cc:cc:cc:cc', 'cc:cc:cc:cc:cc:cc', 2))\n\nprint(f\"\\nMAC Table: {switch.get_mac_table()}\")\n",
+  "solution": "class Switch:\n    def __init__(self, num_ports: int):\n        self.num_ports = num_ports\n        self.mac_table = {}\n        self.log = []\n    \n    def process_frame(self, src_mac: str, dst_mac: str, ingress_port: int) -> str:\n        src = src_mac.lower()\n        dst = dst_mac.lower()\n        self.mac_table[src] = ingress_port\n        if dst == 'ff:ff:ff:ff:ff:ff':\n            action = 'FLOOD'\n        elif dst in self.mac_table:\n            if self.mac_table[dst] == ingress_port:\n                action = 'FILTER'\n            else:\n                action = f'FORWARD:{self.mac_table[dst]}'\n        else:\n            action = 'FLOOD'\n        self.log.append(action)\n        return action\n    \n    def get_mac_table(self) -> dict:\n        return dict(self.mac_table)\n    \n    def clear_mac_table(self):\n        self.mac_table.clear()\n",
+  "hints": [
+    "Always LEARN first: update mac_table[src_mac] = ingress_port, even before deciding what to do with the frame",
+    "Broadcast (ff:ff:ff:ff:ff:ff) always causes a FLOOD — it goes to every port except the one it came in on",
+    "Unknown unicast (destination not in MAC table) also causes a FLOOD",
+    "If the destination port equals the ingress port, FILTER the frame (don't send it back out the same port)",
+    "Normalize MAC addresses to lowercase for consistent comparison"
+  ],
+  "exerciseType": "lab",
+  "labType": "python-sandbox",
+  "environment": {
+    "runtime": "pyodide",
+    "preloadModules": [],
+    "setupCode": ""
+  },
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Unknown unicast is flooded",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1) == 'FLOOD'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Source MAC is learned after first frame",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1)\ns.get_mac_table().get('aa:aa:aa:aa:aa:aa') == 1",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Known unicast is forwarded to correct port",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1)\ns.process_frame('bb:bb:bb:bb:bb:bb', 'aa:aa:aa:aa:aa:aa', 3) == 'FORWARD:1'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Broadcast is always flooded",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'ff:ff:ff:ff:ff:ff', 1) == 'FLOOD'",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "Frame filtered when dst port equals ingress port",
+      "testCode": "s = Switch(8)\ns.process_frame('cc:cc:cc:cc:cc:cc', 'dd:dd:dd:dd:dd:dd', 2)\ns.process_frame('dd:dd:dd:dd:dd:dd', 'cc:cc:cc:cc:cc:cc', 2) == 'FILTER'",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "MAC table updates when host moves to new port",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'ff:ff:ff:ff:ff:ff', 1)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'ff:ff:ff:ff:ff:ff', 5)\ns.get_mac_table().get('aa:aa:aa:aa:aa:aa') == 5",
+      "isHidden": false
+    },
+    {
+      "id": "tc7",
+      "description": "clear_mac_table empties the table",
+      "testCode": "s = Switch(8)\ns.process_frame('aa:aa:aa:aa:aa:aa', 'bb:bb:bb:bb:bb:bb', 1)\ns.clear_mac_table()\nlen(s.get_mac_table()) == 0",
+      "isHidden": false
+    },
+    {
+      "id": "tc8",
+      "description": "Case-insensitive MAC handling",
+      "testCode": "s = Switch(8)\ns.process_frame('AA:BB:CC:DD:EE:FF', 'ff:ff:ff:ff:ff:ff', 1)\n'aa:bb:cc:dd:ee:ff' in s.get_mac_table()",
+      "isHidden": true
+    }
+  ]
+}

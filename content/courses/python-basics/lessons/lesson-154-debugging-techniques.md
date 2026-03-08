@@ -1,5 +1,5 @@
 ---
-id: debugging-techniques
+id: lesson-154-debugging-techniques
 title: Debugging Techniques
 chapterId: ch12-testing
 order: 2
@@ -464,4 +464,4 @@ def remove_evens_fixed2(numbers):
 
 ## What's Next?
 
-You've mastered debugging! Next, we'll explore **how computers work** at a fundamental level.
+You've mastered debugging! Next, continue with more advanced testing and debugging techniques.

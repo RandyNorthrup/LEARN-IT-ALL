@@ -1,7 +1,7 @@
 ---
-id: ethernet-standards
+id: lesson-012-ethernet-standards
 title: Ethernet Standards (10BASE-T to 400GBASE-T)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 12
 duration: 55
 objectives:
@@ -567,9 +567,143 @@ Ethernet has evolved from 10 Mbps coaxial networks to 400 Gbps fiber:
 
 ---
 
+## Practice Questions
+
+**Q1.** Which Ethernet standard requires a minimum of Cat5e cabling and uses all four pairs for data transmission at 1 Gbps?
+
+A) 100BASE-TX
+B) 1000BASE-T
+C) 10GBASE-T
+D) 100BASE-T4
+
+<details>
+<summary>Answer</summary>
+
+**B)** 1000BASE-T operates at 1 Gbps, requires Cat5e or better cabling, and uses all four twisted pairs simultaneously with 4D-PAM5 encoding. 100BASE-TX only uses two pairs. 10GBASE-T requires Cat6a for full 100m distance. 100BASE-T4 is an obsolete standard that used Cat3.
+</details>
+
+**Q2.** A network technician needs to run a 10 Gbps Ethernet link between two switches that are 80 meters apart using copper cabling. Which cable category is the MINIMUM required?
+
+A) Cat5e
+B) Cat6
+C) Cat6a
+D) Cat7
+
+<details>
+<summary>Answer</summary>
+
+**C)** Cat6a supports 10GBASE-T at distances up to 100 meters. Cat6 only supports 10GBASE-T up to 55 meters, so at 80 meters it would not work. Cat5e does not support 10 Gbps speeds at all. While Cat7 would also work, Cat6a is the minimum requirement.
+</details>
+
+**Q3.** What is the maximum standard Ethernet frame size, excluding the preamble and SFD?
+
+A) 64 bytes
+B) 1500 bytes
+C) 1518 bytes
+D) 1522 bytes
+
+<details>
+<summary>Answer</summary>
+
+**C)** The maximum standard Ethernet frame size is 1518 bytes (14 bytes header + 1500 bytes data + 4 bytes FCS), excluding preamble/SFD. 64 bytes is the minimum frame size. 1500 bytes is the MTU (data payload only). 1522 bytes is the maximum with an 802.1Q VLAN tag.
+</details>
+
+**Q4.** A switch port is experiencing late collisions and FCS errors. What is the MOST likely cause?
+
+A) A broadcast storm on the network
+B) A duplex mismatch between connected devices
+C) An incorrect VLAN assignment
+D) A faulty DNS configuration
+
+<details>
+<summary>Answer</summary>
+
+**B)** Late collisions and FCS errors are classic symptoms of a duplex mismatch, where one side is configured for full-duplex and the other for half-duplex. Broadcast storms cause high utilization but not late collisions. VLAN and DNS issues are Layer 2/3 problems unrelated to these Layer 1 symptoms.
+</details>
+
+**Q5.** Which fiber optic Ethernet standard uses single-mode fiber with a wavelength of 1310nm and supports distances up to 10 km?
+
+A) 10GBASE-SR
+B) 10GBASE-LR
+C) 10GBASE-ER
+D) 1000BASE-SX
+
+<details>
+<summary>Answer</summary>
+
+**B)** 10GBASE-LR (Long Reach) uses single-mode fiber at 1310nm wavelength and supports distances up to 10 km. 10GBASE-SR uses multimode fiber at 850nm for short distances. 10GBASE-ER uses single-mode at 1550nm for up to 40 km. 1000BASE-SX uses multimode fiber at 850nm for shorter distances.
+</details>
+
+**Q6.** What is the purpose of padding in an Ethernet frame?
+
+A) To encrypt the frame payload
+B) To ensure the frame meets the minimum 64-byte size requirement
+C) To add error correction data
+D) To increase the maximum transmission unit
+
+<details>
+<summary>Answer</summary>
+
+**B)** Padding is added when the payload is less than 46 bytes to ensure the minimum Ethernet frame size of 64 bytes (excluding preamble). This minimum size is required for proper collision detection in half-duplex mode. Padding does not provide encryption, error correction, or increase the MTU.
+</details>
+
+**Q7.** An organization wants to upgrade their wireless access point uplinks from 1 Gbps to support Wi-Fi 6 speeds without replacing their existing Cat5e cabling. Which Ethernet standard should they use?
+
+A) 1000BASE-T
+B) 10GBASE-T
+C) 2.5GBASE-T
+D) 100BASE-TX
+
+<details>
+<summary>Answer</summary>
+
+**C)** 2.5GBASE-T (IEEE 802.3bz) supports 2.5 Gbps over existing Cat5e cabling at distances up to 100 meters, making it ideal for Wi-Fi 6 access point uplinks that exceed 1 Gbps. 10GBASE-T requires Cat6a. 1000BASE-T only provides 1 Gbps. 100BASE-TX would be a downgrade.
+</details>
+
+**Q8.** Which process allows two Ethernet devices to automatically determine the best common speed and duplex mode?
+
+A) CSMA/CD
+B) Spanning Tree Protocol
+C) Auto-negotiation
+D) Flow control
+
+<details>
+<summary>Answer</summary>
+
+**C)** Auto-negotiation (IEEE 802.3u) allows Ethernet devices to automatically configure the best common speed and duplex mode. CSMA/CD is for collision detection in half-duplex. STP prevents Layer 2 loops. Flow control manages congestion using pause frames.
+</details>
+
+**Q9.** A server administrator wants to reduce CPU overhead when transferring large files over iSCSI to a storage array. Which Ethernet feature should be enabled on all devices in the path?
+
+A) Flow control
+B) Jumbo frames
+C) Half-duplex mode
+D) Auto-negotiation
+
+<details>
+<summary>Answer</summary>
+
+**B)** Jumbo frames (up to 9000+ bytes) reduce CPU overhead by allowing larger payloads per frame, reducing the number of frames needed for large data transfers. They are commonly used in storage networks (iSCSI, NFS). All devices in the path must support jumbo frames. Flow control manages congestion but doesn't reduce per-frame overhead.
+</details>
+
+**Q10.** In the Ethernet naming convention 10GBASE-SR, what does the "SR" designate?
+
+A) Single-mode, redundant fiber
+B) Short-reach, multimode fiber
+C) Standard rate, single-mode fiber
+D) Shared resource, twisted pair
+
+<details>
+<summary>Answer</summary>
+
+**B)** In Ethernet naming, "S" stands for short wavelength (850nm) which uses multimode fiber, and "R" indicates reach. 10GBASE-SR is a short-reach standard for multimode fiber with distances up to 400 meters depending on fiber type. "L" indicates long wavelength (1310nm, single-mode) and "E" indicates extended wavelength (1550nm).
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.3**: Ethernet standards
+- **CompTIA Network+ N10-009 Objective 1.3**: Ethernet standards
 - **IEEE 802.3**: Ethernet standards family
 - **IEEE 802.3af/at/bt**: Power over Ethernet
 - **IEEE 802.3bz**: 2.5GBASE-T and 5GBASE-T

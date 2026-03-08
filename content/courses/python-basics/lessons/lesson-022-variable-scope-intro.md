@@ -1,8 +1,8 @@
 ---
-id: 48-variable-scope-intro
+id: lesson-022-variable-scope-intro
 title: Variable Scope Basics
-chapterId: ch2-variables
-order: 9
+chapterId: ch7-scope
+order: 1
 duration: 25
 objectives:
   - Understand variable scope fundamentals

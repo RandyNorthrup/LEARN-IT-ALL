@@ -1,8 +1,8 @@
 ---
-id: "155-testing-error-handling"
+id: lesson-147-testing-error-handling
 title: "Testing Error Handling"
 chapterId: ch11-error-handling
-order: 10
+order: 8
 duration: 25
 objectives:
   - Test exception raising
@@ -50,39 +50,32 @@ def test_divide_success():
     assert result == 5.0
 ```
 
-## Testing Custom Exceptions
+## Testing Exceptions with Message Checks
 
 ```python
-class ValidationError(Exception):
-    """Validation error"""
-    def __init__(self, field: str, message: str):
-        self.field = field
-        self.message = message
-        super().__init__(f"{field}: {message}")
-
 def validate_email(email: str):
     """Validate email format"""
     if not isinstance(email, str):
         raise TypeError("Email must be string")
     
     if "@" not in email:
-        raise ValidationError("email", "Must contain @")
+        raise ValueError("email: Must contain @")
     
     if not email.endswith((".com", ".org", ".net")):
-        raise ValidationError("email", "Invalid domain")
+        raise ValueError("email: Invalid domain")
     
     return True
 
-# Test custom exception
+# Test exception messages
 def test_validate_email_no_at():
-    with pytest.raises(ValidationError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         validate_email("invalid_email")
     
-    assert exc_info.value.field == "email"
-    assert exc_info.value.message == "Must contain @"
+    assert "email" in str(exc_info.value)
+    assert "Must contain @" in str(exc_info.value)
 
 def test_validate_email_invalid_domain():
-    with pytest.raises(ValidationError, match="Invalid domain"):
+    with pytest.raises(ValueError, match="Invalid domain"):
         validate_email("user@example.xyz")
 
 def test_validate_email_type_error():
@@ -96,63 +89,61 @@ def test_validate_email_success():
 ## Testing Error Messages
 
 ```python
-class UserService:
-    """User service with validation"""
+def create_user_store():
+    """Create a user store (dictionary)"""
+    return {}
+
+def create_user(users, user_id: str, name: str, age: int):
+    """Create user with validation"""
+    if not user_id:
+        raise ValueError("User ID is required")
     
-    def __init__(self):
-        self.users = {}
+    if user_id in users:
+        raise ValueError(f"User {user_id} already exists")
     
-    def create_user(self, user_id: str, name: str, age: int):
-        """Create user"""
-        if not user_id:
-            raise ValueError("User ID is required")
-        
-        if user_id in self.users:
-            raise ValueError(f"User {user_id} already exists")
-        
-        if not name or not name.strip():
-            raise ValueError("Name is required and cannot be empty")
-        
-        if age < 0:
-            raise ValueError("Age cannot be negative")
-        
-        if age > 150:
-            raise ValueError("Age must be less than 150")
-        
-        self.users[user_id] = {"name": name, "age": age}
-        return self.users[user_id]
+    if not name or not name.strip():
+        raise ValueError("Name is required and cannot be empty")
+    
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    
+    if age > 150:
+        raise ValueError("Age must be less than 150")
+    
+    users[user_id] = {"name": name, "age": age}
+    return users[user_id]
 
 # Test error messages
 def test_create_user_no_id():
-    service = UserService()
+    users = create_user_store()
     with pytest.raises(ValueError, match="User ID is required"):
-        service.create_user("", "Alice", 30)
+        create_user(users, "", "Alice", 30)
 
 def test_create_user_duplicate():
-    service = UserService()
-    service.create_user("user1", "Alice", 30)
+    users = create_user_store()
+    create_user(users, "user1", "Alice", 30)
     
     with pytest.raises(ValueError, match="User user1 already exists"):
-        service.create_user("user1", "Bob", 25)
+        create_user(users, "user1", "Bob", 25)
 
 def test_create_user_empty_name():
-    service = UserService()
+    users = create_user_store()
     with pytest.raises(ValueError, match="Name is required"):
-        service.create_user("user1", "  ", 30)
+        create_user(users, "user1", "  ", 30)
 
 def test_create_user_negative_age():
-    service = UserService()
+    users = create_user_store()
     with pytest.raises(ValueError, match="Age cannot be negative"):
-        service.create_user("user1", "Alice", -5)
+        create_user(users, "user1", "Alice", -5)
 
 def test_create_user_invalid_age():
-    service = UserService()
+    users = create_user_store()
     with pytest.raises(ValueError, match="Age must be less than 150"):
-        service.create_user("user1", "Alice", 200)
+        create_user(users, "user1", "Alice", 200)
 
 def test_create_user_success():
-    service = UserService()
-    user = service.create_user("user1", "Alice", 30)
+    users = create_user_store()
+    user = create_user(users, "user1", "Alice", 30)
     assert user == {"name": "Alice", "age": 30}
 ```
 
@@ -204,139 +195,135 @@ def test_process_items_all_errors():
 ## Testing Cleanup
 
 ```python
-class Resource:
-    """Resource that needs cleanup"""
-    
-    def __init__(self, name: str):
-        self.name = name
-        self.opened = False
-        self.closed = False
-    
-    def open(self):
-        """Open resource"""
-        if self.opened:
-            raise RuntimeError(f"Resource {self.name} already open")
-        self.opened = True
-    
-    def close(self):
-        """Close resource"""
-        if not self.opened:
-            raise RuntimeError(f"Resource {self.name} not open")
-        if self.closed:
-            raise RuntimeError(f"Resource {self.name} already closed")
-        self.closed = True
-    
-    def __enter__(self):
-        self.open()
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-        return False
+from contextlib import contextmanager
+
+def create_resource(name: str):
+    """Create a resource that needs cleanup"""
+    return {"name": name, "opened": False, "closed": False}
+
+def open_resource(resource):
+    """Open resource"""
+    if resource["opened"]:
+        raise RuntimeError(f"Resource {resource['name']} already open")
+    resource["opened"] = True
+
+def close_resource(resource):
+    """Close resource"""
+    if not resource["opened"]:
+        raise RuntimeError(f"Resource {resource['name']} not open")
+    if resource["closed"]:
+        raise RuntimeError(f"Resource {resource['name']} already closed")
+    resource["closed"] = True
+
+@contextmanager
+def managed(resource):
+    """Context manager for resource with auto cleanup"""
+    open_resource(resource)
+    try:
+        yield resource
+    finally:
+        close_resource(resource)
 
 # Test cleanup on success
 def test_resource_cleanup_success():
-    resource = Resource("test")
+    resource = create_resource("test")
     
-    with resource:
-        assert resource.opened is True
-        assert resource.closed is False
+    with managed(resource):
+        assert resource["opened"] is True
+        assert resource["closed"] is False
     
-    assert resource.closed is True
+    assert resource["closed"] is True
 
 # Test cleanup on exception
 def test_resource_cleanup_on_exception():
-    resource = Resource("test")
+    resource = create_resource("test")
     
     with pytest.raises(ValueError):
-        with resource:
-            assert resource.opened is True
+        with managed(resource):
+            assert resource["opened"] is True
             raise ValueError("Test error")
     
     # Cleanup still happened
-    assert resource.closed is True
+    assert resource["closed"] is True
 
 # Test double open error
 def test_resource_double_open():
-    resource = Resource("test")
-    resource.open()
+    resource = create_resource("test")
+    open_resource(resource)
     
     with pytest.raises(RuntimeError, match="already open"):
-        resource.open()
+        open_resource(resource)
     
-    resource.close()
+    close_resource(resource)
 
 # Test close before open
 def test_resource_close_before_open():
-    resource = Resource("test")
+    resource = create_resource("test")
     
     with pytest.raises(RuntimeError, match="not open"):
-        resource.close()
+        close_resource(resource)
 ```
 
 ## Testing Retry Logic
 
 ```python
-class APIClient:
-    """API client with retry"""
+def create_api_client(max_retries=3):
+    """Create an API client with retry capability"""
+    return {"max_retries": max_retries, "call_count": 0}
+
+def call_api(client, endpoint: str, fail_until: int = 0):
+    """Call API (fails first N times for testing)"""
+    client["call_count"] += 1
     
-    def __init__(self, max_retries=3):
-        self.max_retries = max_retries
-        self.call_count = 0
+    if client["call_count"] <= fail_until:
+        raise ConnectionError(f"Connection failed (attempt {client['call_count']})")
     
-    def call_api(self, endpoint: str, fail_until: int = 0):
-        """Call API (fails first N times for testing)"""
-        self.call_count += 1
-        
-        if self.call_count <= fail_until:
-            raise ConnectionError(f"Connection failed (attempt {self.call_count})")
-        
-        return {"data": f"Success from {endpoint}"}
+    return {"data": f"Success from {endpoint}"}
+
+def call_with_retry(client, endpoint: str, fail_until: int = 0):
+    """Call API with retry"""
+    last_error = None
     
-    def call_with_retry(self, endpoint: str, fail_until: int = 0):
-        """Call API with retry"""
-        last_error = None
-        
-        for attempt in range(1, self.max_retries + 1):
-            try:
-                return self.call_api(endpoint, fail_until)
-            except ConnectionError as e:
-                last_error = e
-                if attempt == self.max_retries:
-                    raise
-        
-        if last_error:
-            raise last_error
+    for attempt in range(1, client["max_retries"] + 1):
+        try:
+            return call_api(client, endpoint, fail_until)
+        except ConnectionError as e:
+            last_error = e
+            if attempt == client["max_retries"]:
+                raise
+    
+    if last_error:
+        raise last_error
 
 # Test successful call
 def test_api_call_success():
-    client = APIClient()
-    result = client.call_with_retry("/users")
+    client = create_api_client()
+    result = call_with_retry(client, "/users")
     assert result["data"] == "Success from /users"
-    assert client.call_count == 1
+    assert client["call_count"] == 1
 
 # Test retry once
 def test_api_call_retry_once():
-    client = APIClient(max_retries=3)
-    result = client.call_with_retry("/users", fail_until=1)
+    client = create_api_client(max_retries=3)
+    result = call_with_retry(client, "/users", fail_until=1)
     assert result["data"] == "Success from /users"
-    assert client.call_count == 2
+    assert client["call_count"] == 2
 
 # Test retry twice
 def test_api_call_retry_twice():
-    client = APIClient(max_retries=3)
-    result = client.call_with_retry("/users", fail_until=2)
+    client = create_api_client(max_retries=3)
+    result = call_with_retry(client, "/users", fail_until=2)
     assert result["data"] == "Success from /users"
-    assert client.call_count == 3
+    assert client["call_count"] == 3
 
 # Test max retries exceeded
 def test_api_call_max_retries():
-    client = APIClient(max_retries=3)
+    client = create_api_client(max_retries=3)
     
     with pytest.raises(ConnectionError, match="attempt 3"):
-        client.call_with_retry("/users", fail_until=10)
+        call_with_retry(client, "/users", fail_until=10)
     
-    assert client.call_count == 3
+    assert client["call_count"] == 3
 ```
 
 ## Testing Exception Chaining
@@ -410,61 +397,39 @@ def test_deprecated_function_works():
 ```python
 from unittest.mock import Mock, patch
 
-class Database:
-    """Database class"""
-    
-    def connect(self):
-        """Connect to database"""
-        pass
-    
-    def query(self, sql: str):
-        """Execute query"""
-        pass
-
-class UserRepository:
-    """User repository"""
-    
-    def __init__(self, db: Database):
-        self.db = db
-    
-    def get_user(self, user_id: str):
-        """Get user by ID"""
-        try:
-            self.db.connect()
-            result = self.db.query(f"SELECT * FROM users WHERE id = '{user_id}'")
-            return result
-        except ConnectionError:
-            raise RuntimeError("Failed to connect to database")
-        except Exception as e:
-            raise RuntimeError(f"Failed to get user: {e}")
+def get_user_from_db(connect_fn, query_fn, user_id: str):
+    """Get user by ID from database"""
+    try:
+        connect_fn()
+        result = query_fn(f"SELECT * FROM users WHERE id = '{user_id}'")
+        return result
+    except ConnectionError:
+        raise RuntimeError("Failed to connect to database")
+    except Exception as e:
+        raise RuntimeError(f"Failed to get user: {e}")
 
 # Test connection error
 def test_get_user_connection_error():
-    mock_db = Mock(spec=Database)
-    mock_db.connect.side_effect = ConnectionError("Connection refused")
-    
-    repo = UserRepository(mock_db)
+    connect_fn = Mock(side_effect=ConnectionError("Connection refused"))
+    query_fn = Mock()
     
     with pytest.raises(RuntimeError, match="Failed to connect"):
-        repo.get_user("user1")
+        get_user_from_db(connect_fn, query_fn, "user1")
 
 # Test query error
 def test_get_user_query_error():
-    mock_db = Mock(spec=Database)
-    mock_db.query.side_effect = ValueError("Invalid query")
-    
-    repo = UserRepository(mock_db)
+    connect_fn = Mock()
+    query_fn = Mock(side_effect=ValueError("Invalid query"))
     
     with pytest.raises(RuntimeError, match="Failed to get user"):
-        repo.get_user("user1")
+        get_user_from_db(connect_fn, query_fn, "user1")
 
 # Test success
 def test_get_user_success():
-    mock_db = Mock(spec=Database)
-    mock_db.query.return_value = {"id": "user1", "name": "Alice"}
+    connect_fn = Mock()
+    query_fn = Mock(return_value={"id": "user1", "name": "Alice"})
     
-    repo = UserRepository(mock_db)
-    user = repo.get_user("user1")
+    user = get_user_from_db(connect_fn, query_fn, "user1")
     
     assert user["id"] == "user1"
     assert user["name"] == "Alice"
@@ -585,13 +550,13 @@ def test_both_paths():
 
 # ✅ GOOD - Test cleanup
 def test_cleanup():
-    resource = Resource("test")
+    resource = create_resource("test")
     
     with pytest.raises(ValueError):
-        with resource:
+        with managed(resource):
             raise ValueError()
     
-    assert resource.closed is True
+    assert resource["closed"] is True
 ```
 
 ## Summary

@@ -1,5 +1,5 @@
 ---
-id: 45-multiple-assignment
+id: lesson-019-multiple-assignment
 title: Multiple Assignment and Unpacking
 chapterId: ch2-variables
 order: 6

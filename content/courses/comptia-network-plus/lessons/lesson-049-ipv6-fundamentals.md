@@ -1,5 +1,7 @@
 ---
 id: lesson-049-ipv6-fundamentals
+chapterId: ch2-ip-addressing
+order: 49
 title: "IPv6 Fundamentals"
 sidebar_label: "Lesson 49: IPv6 Fundamentals"
 description: "Master IPv6 addressing, hexadecimal notation, address structure, and the transition from IPv4"
@@ -22,6 +24,19 @@ IPv6 (Internet Protocol version 6) represents the future of Internet addressing.
 This lesson introduces IPv6 fundamentals, addressing structure, notation rules, and the key differences from IPv4.
 
 **Key Principle:** IPv6 isn't just more addresses - it's a complete redesign of IP with modern requirements in mind.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand why IPv6 was developed and its advantages
+- Master IPv6 address notation and abbreviation rules
+- Identify IPv6 address components and structure
+- Compare IPv6 and IPv4 addressing architectures
+- Work with IPv6 prefix lengths and subnetting basics
+- Understand IPv6 header improvements
+
+---
 
 ## Why IPv6?
 
@@ -476,6 +491,148 @@ Added/Changed in IPv6:
 Result: Simpler, faster processing
 ```
 
+### IPv6 Extension Headers
+
+IPv6 moves optional features out of the main header into **extension headers**, which are chained together using the **Next Header** field. This keeps the base header fixed at 40 bytes while allowing flexible options.
+
+```
+Extension Header Chain:
+
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌─────────┐
+│ IPv6 Header  │──▶│ Routing Hdr  │──▶│ Fragment Hdr │──▶│ TCP/UDP │
+│ Next Hdr: 43 │   │ Next Hdr: 44 │   │ Next Hdr: 6  │   │ Payload │
+└──────────────┘   └──────────────┘   └──────────────┘   └─────────┘
+
+No extensions (common case):
+┌──────────────┐   ┌─────────┐
+│ IPv6 Header  │──▶│ TCP     │
+│ Next Hdr: 6  │   │ Payload │
+└──────────────┘   └─────────┘
+```
+
+**Common Extension Headers:**
+
+| Next Header Value | Name | Purpose |
+|-------------------|------|---------|
+| 0 | Hop-by-Hop Options | Processed by every router (e.g., jumbograms) |
+| 43 | Routing | Source routing, specifies intermediate nodes |
+| 44 | Fragment | Fragmentation (source only, not routers) |
+| 50 | ESP | Encapsulating Security Payload (IPsec encryption) |
+| 51 | AH | Authentication Header (IPsec authentication) |
+| 60 | Destination Options | Options for destination node only |
+| 6 | TCP | Upper-layer TCP payload |
+| 17 | UDP | Upper-layer UDP payload |
+| 58 | ICMPv6 | ICMP for IPv6 |
+
+**Key Difference from IPv4:** In IPv6, fragmentation is performed **only by the source host**, never by intermediate routers. The source uses Path MTU Discovery to determine the appropriate packet size before sending.
+
+---
+
+## Neighbor Discovery Protocol (NDP)
+
+NDP (RFC 4861) replaces several IPv4 protocols — ARP, ICMP Router Discovery, and ICMP Redirect — with a unified ICMPv6-based mechanism. NDP is essential for IPv6 operation on local links.
+
+### NDP Message Types
+
+| ICMPv6 Type | Message | Purpose |
+|-------------|---------|--------|
+| 133 | Router Solicitation (RS) | Host asks for router information |
+| 134 | Router Advertisement (RA) | Router announces prefix, gateway, flags |
+| 135 | Neighbor Solicitation (NS) | Address resolution (replaces ARP) |
+| 136 | Neighbor Advertisement (NA) | Response to NS with MAC address |
+| 137 | Redirect | Router informs host of better next-hop |
+
+**Address Resolution (Replacing ARP):**
+```
+IPv4 ARP (broadcast):
+  Host A: "Who has 192.168.1.5?" → Broadcast to ALL hosts
+  Host B: "I do, my MAC is xx:xx:xx:xx:xx:xx" → Unicast reply
+
+IPv6 NDP (multicast):
+  Host A: NS → "Who has 2001:db8::5?" 
+    Sent to solicited-node multicast ff02::1:ff00:0005
+    Only hosts with matching last 24 bits listen!
+  Host B: NA → "I do, MAC is xx:xx:xx:xx:xx:xx" → Unicast reply
+
+Advantage: Only relevant hosts process the request
+           Much more efficient than broadcast
+```
+
+**Duplicate Address Detection (DAD):**
+```
+Before using any IPv6 address:
+  1. Host sends NS for its OWN address
+  2. Destination: solicited-node multicast
+  3. If no reply → address is unique, safe to use
+  4. If reply received → duplicate detected, address not used
+
+Occurs for:
+  - Link-local addresses (auto-generated)
+  - SLAAC addresses
+  - Manually configured addresses
+  - DHCPv6-assigned addresses
+```
+
+---
+
+## IPv6 Address Autoconfiguration
+
+### SLAAC (Stateless Address Autoconfiguration)
+
+SLAAC (RFC 4862) allows hosts to automatically configure their own IPv6 addresses **without a DHCP server**. The router provides the network prefix, and the host generates its own interface ID.
+
+```
+SLAAC Process:
+
+1. Host generates link-local address (fe80::...)
+2. Host performs DAD on link-local
+3. Host sends Router Solicitation (RS) to ff02::2
+4. Router responds with Router Advertisement (RA):
+   - Network prefix (e.g., 2001:db8:1234:5678::/64)
+   - Prefix lifetime
+   - A flag = 1 (SLAAC enabled)
+   - Other flags (M, O)
+5. Host combines prefix + self-generated Interface ID
+6. Host performs DAD on new global address
+7. Address is ready to use!
+
+Result: 2001:db8:1234:5678:[Interface-ID]/64
+```
+
+### SLAAC vs DHCPv6 Comparison
+
+| Feature | SLAAC | Stateless DHCPv6 | Stateful DHCPv6 |
+|---------|-------|------------------|------------------|
+| **Address assignment** | Host self-assigns | Host self-assigns | Server assigns |
+| **Prefix source** | Router (RA) | Router (RA) | DHCPv6 server |
+| **DNS servers** | Via RA (RFC 8106) or DHCPv6 | DHCPv6 provides | DHCPv6 provides |
+| **Address tracking** | No central record | No central record | Server tracks all |
+| **RA Flags** | A=1, M=0, O=0 | A=1, M=0, O=1 | M=1 |
+| **Server required** | No (router only) | Yes (for options) | Yes |
+| **Use case** | Simple networks | Need DNS/NTP info | Enterprise control |
+
+**RA Flag Meanings:**
+```
+A (Autonomous) flag:
+  1 = Use SLAAC for address configuration
+  0 = Do NOT use this prefix for SLAAC
+
+M (Managed) flag:
+  1 = Use DHCPv6 for address assignment
+  0 = Do not use DHCPv6 for addresses
+
+O (Other) flag:
+  1 = Use DHCPv6 for other info (DNS, NTP)
+  0 = No additional DHCPv6 info needed
+
+Common Combinations:
+  A=1, M=0, O=0 → Pure SLAAC (simplest)
+  A=1, M=0, O=1 → SLAAC + DHCPv6 for DNS
+  A=0, M=1, O=1 → Full DHCPv6 (enterprise)
+```
+
+---
+
 ## IPv6 Special Addresses
 
 ### Reserved Addresses
@@ -746,37 +903,81 @@ IPv6 provides the foundation for future Internet growth:
 - Understand Neighbor Discovery Protocol
 - Explore IPv6 routing protocols
 
-## Additional Resources
+## Practice Questions
 
-- **RFC 4291**: IPv6 Addressing Architecture
-- **RFC 8200**: IPv6 Specification
-- **RFC 4193**: Unique Local IPv6 Unicast Addresses
-- **RFC 6164**: Using 127-Bit IPv6 Prefixes on Inter-Router Links
-- **CompTIA Network+ N10-008**: Domain 1.4 - IPv6 addressing
-- **IPv6 Tools**: Online address calculators and validators
-- **Test Sites**: test-ipv6.com, ipv6-test.com
+**Q1.** How many bits make up an IPv6 address?
 
-## Practice Exercises
+A) 32 bits
+B) 64 bits
+C) 128 bits
+D) 256 bits
 
-1. Abbreviate: 2001:0db8:0000:0000:0000:ff00:0042:8329
+<details>
+<summary>Answer</summary>
 
-2. Expand: fe80::1
+**C)** IPv6 addresses are 128 bits long, divided into 8 groups of 16 bits each written in hexadecimal. This provides approximately 3.4 × 10^38 unique addresses. IPv4 uses 32 bits (A), 64 bits (B) is only the interface ID portion, and 256 bits (D) is not used by any IP version.
+</details>
 
-3. Is this valid? 2001::db8::1 (Why or why not?)
+**Q2.** What is the correct abbreviated form of 2001:0db8:0000:0000:0000:ff00:0042:8329?
 
-4. Given 2001:db8:abcd::/48, list first 5 /64 subnets
+A) 2001:db8::ff00:42:8329
+B) 2001:db8::ff00:0042:8329
+C) 2001:db8:0:0:0:ff00:42:8329
+D) 2001:db8::ff00:42:8329 and 2001:db8:0:0:0:ff00:42:8329 are both valid
 
-5. Convert to binary: 2001:db8::1
+<details>
+<summary>Answer</summary>
 
-6. What type of address is fe80::1?
+**D)** IPv6 abbreviation rules allow removing leading zeros in each group (0db8 → db8, 0042 → 42) and replacing one consecutive sequence of all-zero groups with :: (the three 0000 groups). Both the fully compressed form (2001:db8::ff00:42:8329) and the partially abbreviated form (2001:db8:0:0:0:ff00:42:8329) are valid representations of the same address.
+</details>
 
-7. How many /64 subnets in a /56 prefix?
+**Q3.** A network administrator is comparing IPv4 and IPv6 headers. Which of the following is a key improvement in the IPv6 header?
 
-**Answers:**
-1. 2001:db8::ff00:42:8329
-2. fe80:0000:0000:0000:0000:0000:0000:0001
-3. Invalid - can only use :: once
-4. 2001:db8:abcd:0::/64, :1::/64, :2::/64, :3::/64, :4::/64
-5. 32 ones, 96 zeros (complex, use calculator)
-6. Link-local unicast address
-7. 256 subnets (2^8)
+A) The IPv6 header includes a checksum field for faster processing
+B) The IPv6 header is variable length to accommodate more options
+C) The IPv6 header is a fixed 40 bytes with only 8 fields, simplifying router processing
+D) The IPv6 header uses 20 fields for more detailed packet information
+
+<details>
+<summary>Answer</summary>
+
+**C)** The IPv6 header is a fixed 40 bytes with only 8 fields, compared to IPv4's variable-length 20-60 byte header with 13 fields. IPv6 removed the checksum (A is wrong—IPv6 has no checksum), uses extension headers instead of variable-length options (B is wrong), and reduced fields from 13 to 8 (D is wrong).
+</details>
+
+**Q4.** A company is migrating from IPv4 to IPv6. Which built-in IPv6 feature eliminates the need for NAT?
+
+A) IPsec encryption
+B) Multicast addressing replacing broadcast
+C) Virtually unlimited public address space allowing every device a globally routable address
+D) Stateless address autoconfiguration (SLAAC)
+
+<details>
+<summary>Answer</summary>
+
+**C)** IPv6's enormous 128-bit address space provides enough globally routable addresses for every device, eliminating the need for NAT (which was required in IPv4 to conserve limited public addresses). IPsec (A) provides security, not addressing. Multicast (B) replaces broadcast but doesn't address NAT. SLAAC (D) provides autoconfiguration but doesn't explain why NAT is unnecessary.
+</details>
+
+**Q5.** Which rule governs the use of the double colon (::) in IPv6 address abbreviation?
+
+A) It can be used multiple times in the same address to replace any group of zeros
+B) It can only be used once per address to replace one or more consecutive groups of all zeros
+C) It replaces exactly two consecutive groups of zeros
+D) It can only be used at the beginning or end of an address
+
+<details>
+<summary>Answer</summary>
+
+**B)** The double colon (::) can replace one or more consecutive groups of all-zero hextets, but it may only be used once per address. Using it more than once (A) would create ambiguity because the parser wouldn't know how many zero groups each :: represents. It can replace any number of consecutive zero groups, not just two (C), and it can appear anywhere in the address, not just at the start or end (D).
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.4 – Given a scenario, configure a subnet and use appropriate IP addressing schemes (IPv6)
+- RFC 8200: Internet Protocol, Version 6 (IPv6) Specification
+- RFC 4291: IP Version 6 Addressing Architecture
+- RFC 4193: Unique Local IPv6 Unicast Addresses
+- RFC 6164: Using 127-Bit IPv6 Prefixes on Inter-Router Links
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – IPv6 Addressing
+- IANA IPv6 Address Space Registry: https://www.iana.org/assignments/ipv6-address-space
+- IPv6 Tools: Online address calculators and validators
+- Test Sites: test-ipv6.com, ipv6-test.com

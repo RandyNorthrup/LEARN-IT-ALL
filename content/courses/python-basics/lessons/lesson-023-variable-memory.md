@@ -1,8 +1,8 @@
 ---
-id: 49-variable-memory
+id: lesson-023-variable-memory
 title: Variable Memory and Identity
 chapterId: ch2-variables
-order: 10
+order: 9
 duration: 25
 objectives:
   - Understand how Python stores variables in memory

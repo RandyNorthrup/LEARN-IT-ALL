@@ -1,5 +1,5 @@
 ---
-id: "111-list-indexing-access"
+id: lesson-097-list-indexing-access
 title: "List Indexing and Element Access"
 chapterId: ch8-lists
 order: 3
@@ -314,7 +314,7 @@ print(evens)  # [2, 4, 6, 8, 10]
 # Access element at calculated index
 middle_index = len(numbers) // 2
 middle = numbers[middle_index]
-print(middle)  # 5
+print(middle)  # 6
 
 # Access every nth element
 step = 2

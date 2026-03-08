@@ -1,8 +1,8 @@
 ---
-id: "114-list-iteration"
+id: lesson-100-list-iteration
 title: "List Iteration Techniques"
 chapterId: ch8-lists
-order: 6
+order: 8
 duration: 25
 objectives:
   - Master different list iteration patterns
@@ -381,7 +381,7 @@ numbers = [1, 2, 3, 4, 5]
 for num in numbers:
     if num % 2 == 0:
         numbers.remove(num)  # Causes issues!
-print(numbers)  # [1, 3, 4, 5] - Missed 4!
+print(numbers)  # [1, 3, 5] - Worked here by luck; skipped index 1 after removal
 
 # ✅ GOOD - Iterate over copy
 numbers = [1, 2, 3, 4, 5]

@@ -1,5 +1,5 @@
 ---
-id: variable-naming
+id: lesson-014-variable-naming
 title: Variable Naming Conventions
 chapterId: ch2-variables
 order: 1

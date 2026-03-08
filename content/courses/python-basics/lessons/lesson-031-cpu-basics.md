@@ -1,8 +1,8 @@
 ---
-id: "73-cpu-basics"
+id: lesson-031-cpu-basics
 title: "CPU Basics and Processing"
 chapterId: ch3-computing
-order: 4
+order: 5
 duration: 30
 objectives:
   - Understand what a CPU is and how it works
@@ -80,68 +80,69 @@ Every CPU instruction goes through this cycle:
 
 ```python
 # Simulating the fetch-decode-execute cycle
-class SimpleCPU:
-    """Simplified CPU simulation."""
+
+def create_cpu():
+    """Create a simplified CPU simulation."""
+    return {
+        'registers': {'A': 0, 'B': 0, 'RESULT': 0},
+        'instruction_pointer': 0,
+        'instructions': [],
+    }
+
+def cpu_load_program(cpu, instructions):
+    """Load instructions into memory."""
+    cpu['instructions'] = instructions
+    cpu['instruction_pointer'] = 0
+
+def cpu_fetch(cpu):
+    """Fetch next instruction."""
+    if cpu['instruction_pointer'] >= len(cpu['instructions']):
+        return None
+    instruction = cpu['instructions'][cpu['instruction_pointer']]
+    cpu['instruction_pointer'] += 1
+    print(f"FETCH: {instruction}")
+    return instruction
+
+def cpu_decode(instruction):
+    """Decode instruction into operation and operands."""
+    parts = instruction.split()
+    operation = parts[0]
+    operands = parts[1:] if len(parts) > 1 else []
+    print(f"DECODE: Operation={operation}, Operands={operands}")
+    return operation, operands
+
+def cpu_execute(cpu, operation, operands):
+    """Execute the instruction."""
+    if operation == "LOAD":
+        register, value = operands[0], int(operands[1])
+        cpu['registers'][register] = value
+        print(f"EXECUTE: Set {register} = {value}")
     
-    def __init__(self):
-        self.registers = {'A': 0, 'B': 0, 'RESULT': 0}
-        self.instruction_pointer = 0
-        self.instructions = []
+    elif operation == "ADD":
+        reg_a, reg_b, reg_result = operands[0], operands[1], operands[2]
+        cpu['registers'][reg_result] = cpu['registers'][reg_a] + cpu['registers'][reg_b]
+        print(f"EXECUTE: {reg_result} = {reg_a} + {reg_b} = {cpu['registers'][reg_result]}")
     
-    def load_program(self, instructions):
-        """Load instructions into memory."""
-        self.instructions = instructions
-        self.instruction_pointer = 0
-    
-    def fetch(self):
-        """Fetch next instruction."""
-        if self.instruction_pointer >= len(self.instructions):
-            return None
-        instruction = self.instructions[self.instruction_pointer]
-        self.instruction_pointer += 1
-        print(f"FETCH: {instruction}")
-        return instruction
-    
-    def decode(self, instruction):
-        """Decode instruction into operation and operands."""
-        parts = instruction.split()
-        operation = parts[0]
-        operands = parts[1:] if len(parts) > 1 else []
-        print(f"DECODE: Operation={operation}, Operands={operands}")
-        return operation, operands
-    
-    def execute(self, operation, operands):
-        """Execute the instruction."""
-        if operation == "LOAD":
-            register, value = operands[0], int(operands[1])
-            self.registers[register] = value
-            print(f"EXECUTE: Set {register} = {value}")
+    elif operation == "PRINT":
+        register = operands[0]
+        print(f"EXECUTE: Print {register} = {cpu['registers'][register]}")
+
+def cpu_run(cpu):
+    """Run the program."""
+    print("=== Starting CPU Execution ===\n")
+    while True:
+        instruction = cpu_fetch(cpu)
+        if instruction is None:
+            break
         
-        elif operation == "ADD":
-            reg_a, reg_b, reg_result = operands[0], operands[1], operands[2]
-            self.registers[reg_result] = self.registers[reg_a] + self.registers[reg_b]
-            print(f"EXECUTE: {reg_result} = {reg_a} + {reg_b} = {self.registers[reg_result]}")
-        
-        elif operation == "PRINT":
-            register = operands[0]
-            print(f"EXECUTE: Print {register} = {self.registers[register]}")
+        operation, operands = cpu_decode(instruction)
+        cpu_execute(cpu, operation, operands)
+        print(f"Registers: {cpu['registers']}\n")
     
-    def run(self):
-        """Run the program."""
-        print("=== Starting CPU Execution ===\n")
-        while True:
-            instruction = self.fetch()
-            if instruction is None:
-                break
-            
-            operation, operands = self.decode(instruction)
-            self.execute(operation, operands)
-            print(f"Registers: {self.registers}\n")
-        
-        print("=== Execution Complete ===")
+    print("=== Execution Complete ===")
 
 # Simulate a simple program: add two numbers
-cpu = SimpleCPU()
+cpu = create_cpu()
 program = [
     "LOAD A 10",
     "LOAD B 20",
@@ -149,8 +150,8 @@ program = [
     "PRINT RESULT"
 ]
 
-cpu.load_program(program)
-cpu.run()
+cpu_load_program(cpu, program)
+cpu_run(cpu)
 # === Starting CPU Execution ===
 #
 # FETCH: LOAD A 10
@@ -229,48 +230,48 @@ Registers are the fastest storage locations:
 
 ```python
 # Simulating CPU registers
-class CPURegisters:
-    """Simulate CPU registers."""
-    
-    def __init__(self):
+
+def create_cpu_registers():
+    """Create a CPU registers simulation."""
+    return {
         # General purpose registers
-        self.registers = {
+        'registers': {
             'R0': 0,  # Register 0
             'R1': 0,  # Register 1
             'R2': 0,  # Register 2
             'R3': 0,  # Register 3
-        }
-        
+        },
         # Special purpose registers
-        self.pc = 0    # Program Counter (next instruction address)
-        self.sp = 100  # Stack Pointer
-        self.flags = 0 # Status flags (zero, carry, overflow, etc.)
-    
-    def set_register(self, reg_name, value):
-        """Set register value."""
-        if reg_name in self.registers:
-            self.registers[reg_name] = value
-            print(f"Set {reg_name} = {value}")
-        else:
-            print(f"Invalid register: {reg_name}")
-    
-    def get_register(self, reg_name):
-        """Get register value."""
-        return self.registers.get(reg_name, 0)
-    
-    def show_registers(self):
-        """Display all register values."""
-        print("Registers:")
-        for reg, value in self.registers.items():
-            print(f"  {reg}: {value}")
-        print(f"  PC: {self.pc} (Program Counter)")
-        print(f"  SP: {self.sp} (Stack Pointer)")
+        'pc': 0,    # Program Counter (next instruction address)
+        'sp': 100,  # Stack Pointer
+        'flags': 0, # Status flags (zero, carry, overflow, etc.)
+    }
+
+def set_register(cpu_regs, reg_name, value):
+    """Set register value."""
+    if reg_name in cpu_regs['registers']:
+        cpu_regs['registers'][reg_name] = value
+        print(f"Set {reg_name} = {value}")
+    else:
+        print(f"Invalid register: {reg_name}")
+
+def get_register(cpu_regs, reg_name):
+    """Get register value."""
+    return cpu_regs['registers'].get(reg_name, 0)
+
+def show_registers(cpu_regs):
+    """Display all register values."""
+    print("Registers:")
+    for reg, value in cpu_regs['registers'].items():
+        print(f"  {reg}: {value}")
+    print(f"  PC: {cpu_regs['pc']} (Program Counter)")
+    print(f"  SP: {cpu_regs['sp']} (Stack Pointer)")
 
 # Example usage
-cpu_regs = CPURegisters()
-cpu_regs.set_register('R0', 42)
-cpu_regs.set_register('R1', 100)
-cpu_regs.show_registers()
+cpu_regs = create_cpu_registers()
+set_register(cpu_regs, 'R0', 42)
+set_register(cpu_regs, 'R1', 100)
+show_registers(cpu_regs)
 # Set R0 = 42
 # Set R1 = 100
 # Registers:
@@ -297,92 +298,78 @@ print("  Hard Drive:    ~10,000,000 nanoseconds")
 Basic operations the CPU can perform:
 
 ```python
-# CPU arithmetic and logic operations
-class ALU:
-    """Arithmetic Logic Unit simulation."""
-    
-    @staticmethod
-    def add(a, b):
-        """Addition."""
-        return a + b
-    
-    @staticmethod
-    def subtract(a, b):
-        """Subtraction."""
-        return a - b
-    
-    @staticmethod
-    def multiply(a, b):
-        """Multiplication."""
-        return a * b
-    
-    @staticmethod
-    def divide(a, b):
-        """Division."""
-        return a // b if b != 0 else 0
-    
-    @staticmethod
-    def bitwise_and(a, b):
-        """Bitwise AND."""
-        return a & b
-    
-    @staticmethod
-    def bitwise_or(a, b):
-        """Bitwise OR."""
-        return a | b
-    
-    @staticmethod
-    def bitwise_xor(a, b):
-        """Bitwise XOR."""
-        return a ^ b
-    
-    @staticmethod
-    def bitwise_not(a):
-        """Bitwise NOT (8-bit)."""
-        return ~a & 0xFF
-    
-    @staticmethod
-    def shift_left(a, bits):
-        """Left shift."""
-        return a << bits
-    
-    @staticmethod
-    def shift_right(a, bits):
-        """Right shift."""
-        return a >> bits
-    
-    @staticmethod
-    def compare(a, b):
-        """Compare two values."""
-        if a > b:
-            return 1   # Greater
-        elif a < b:
-            return -1  # Less
-        else:
-            return 0   # Equal
+# ALU (Arithmetic Logic Unit) operations as standalone functions
+
+def alu_add(a, b):
+    """Addition."""
+    return a + b
+
+def alu_subtract(a, b):
+    """Subtraction."""
+    return a - b
+
+def alu_multiply(a, b):
+    """Multiplication."""
+    return a * b
+
+def alu_divide(a, b):
+    """Division."""
+    return a // b if b != 0 else 0
+
+def alu_bitwise_and(a, b):
+    """Bitwise AND."""
+    return a & b
+
+def alu_bitwise_or(a, b):
+    """Bitwise OR."""
+    return a | b
+
+def alu_bitwise_xor(a, b):
+    """Bitwise XOR."""
+    return a ^ b
+
+def alu_bitwise_not(a):
+    """Bitwise NOT (8-bit)."""
+    return ~a & 0xFF
+
+def alu_shift_left(a, bits):
+    """Left shift."""
+    return a << bits
+
+def alu_shift_right(a, bits):
+    """Right shift."""
+    return a >> bits
+
+def alu_compare(a, b):
+    """Compare two values."""
+    if a > b:
+        return 1   # Greater
+    elif a < b:
+        return -1  # Less
+    else:
+        return 0   # Equal
 
 # Demonstrate ALU operations
-alu = ALU()
 a, b = 10, 5
 
 print("ALU Operations:")
-print(f"ADD {a} + {b} = {alu.add(a, b)}")
-print(f"SUB {a} - {b} = {alu.subtract(a, b)}")
-print(f"MUL {a} × {b} = {alu.multiply(a, b)}")
-print(f"DIV {a} ÷ {b} = {alu.divide(a, b)}")
+print(f"ADD {a} + {b} = {alu_add(a, b)}")
+print(f"SUB {a} - {b} = {alu_subtract(a, b)}")
+print(f"MUL {a} × {b} = {alu_multiply(a, b)}")
+print(f"DIV {a} ÷ {b} = {alu_divide(a, b)}")
 
 print(f"\nBitwise Operations (binary):")
 print(f"{a} = {bin(a)}, {b} = {bin(b)}")
-print(f"AND: {alu.bitwise_and(a, b)} = {bin(alu.bitwise_and(a, b))}")
-print(f"OR:  {alu.bitwise_or(a, b)} = {bin(alu.bitwise_or(a, b))}")
-print(f"XOR: {alu.bitwise_xor(a, b)} = {bin(alu.bitwise_xor(a, b))}")
+print(f"AND: {alu_bitwise_and(a, b)} = {bin(alu_bitwise_and(a, b))}")
+print(f"OR:  {alu_bitwise_or(a, b)} = {bin(alu_bitwise_or(a, b))}")
+print(f"XOR: {alu_bitwise_xor(a, b)} = {bin(alu_bitwise_xor(a, b))}")
 
 print(f"\nShift Operations:")
-print(f"{a} << 1 = {alu.shift_left(a, 1)} (multiply by 2)")
-print(f"{a} >> 1 = {alu.shift_right(a, 1)} (divide by 2)")
+print(f"{a} << 1 = {alu_shift_left(a, 1)} (multiply by 2)")
+print(f"{a} >> 1 = {alu_shift_right(a, 1)} (divide by 2)")
 
 print(f"\nCompare:")
-print(f"CMP {a} vs {b} = {alu.compare(a, b)} (1=greater, 0=equal, -1=less)")
+print(f"CMP {a} vs {b} = {alu_compare(a, b)} (1=greater, 0=equal, -1=less)")
 ```
 
 ## Multi-Core CPUs
@@ -443,60 +430,61 @@ Cache stores frequently accessed data for faster retrieval:
 
 ```python
 # Simulating CPU cache behavior
-class CPUCache:
-    """Simplified CPU cache simulation."""
+
+def create_cache(size):
+    """Create a simplified CPU cache simulation."""
+    return {
+        'size': size,
+        'cache': {},
+        'hits': 0,
+        'misses': 0,
+    }
+
+def cache_write(cache, address, value):
+    """Write to cache."""
+    if len(cache['cache']) >= cache['size']:
+        # Evict oldest entry (simplified LRU)
+        oldest = next(iter(cache['cache']))
+        del cache['cache'][oldest]
+        print(f"CACHE EVICT: Removed address {oldest}")
     
-    def __init__(self, size):
-        self.size = size
-        self.cache = {}
-        self.hits = 0
-        self.misses = 0
-    
-    def read(self, address):
-        """Read from cache (or miss if not present)."""
-        if address in self.cache:
-            self.hits += 1
-            print(f"CACHE HIT: Address {address} found in cache")
-            return self.cache[address]
-        else:
-            self.misses += 1
-            print(f"CACHE MISS: Address {address} not in cache, loading from RAM...")
-            # Simulate loading from RAM
-            value = f"Data_{address}"
-            self.write(address, value)
-            return value
-    
-    def write(self, address, value):
-        """Write to cache."""
-        if len(self.cache) >= self.size:
-            # Evict oldest entry (simplified LRU)
-            oldest = next(iter(self.cache))
-            del self.cache[oldest]
-            print(f"CACHE EVICT: Removed address {oldest}")
-        
-        self.cache[address] = value
-        print(f"CACHE WRITE: Stored address {address}")
-    
-    def stats(self):
-        """Show cache statistics."""
-        total = self.hits + self.misses
-        hit_rate = (self.hits / total * 100) if total > 0 else 0
-        print(f"\nCache Statistics:")
-        print(f"  Hits: {self.hits}")
-        print(f"  Misses: {self.misses}")
-        print(f"  Hit Rate: {hit_rate:.1f}%")
+    cache['cache'][address] = value
+    print(f"CACHE WRITE: Stored address {address}")
+
+def cache_read(cache, address):
+    """Read from cache (or miss if not present)."""
+    if address in cache['cache']:
+        cache['hits'] += 1
+        print(f"CACHE HIT: Address {address} found in cache")
+        return cache['cache'][address]
+    else:
+        cache['misses'] += 1
+        print(f"CACHE MISS: Address {address} not in cache, loading from RAM...")
+        # Simulate loading from RAM
+        value = f"Data_{address}"
+        cache_write(cache, address, value)
+        return value
+
+def cache_stats(cache):
+    """Show cache statistics."""
+    total = cache['hits'] + cache['misses']
+    hit_rate = (cache['hits'] / total * 100) if total > 0 else 0
+    print(f"\nCache Statistics:")
+    print(f"  Hits: {cache['hits']}")
+    print(f"  Misses: {cache['misses']}")
+    print(f"  Hit Rate: {hit_rate:.1f}%")
 
 # Demonstrate cache behavior
-cache = CPUCache(size=3)
+cache = create_cache(size=3)
 
 # Access memory addresses
 addresses = [100, 200, 300, 100, 200, 400, 100]
 
 print("Memory Access Pattern:")
 for addr in addresses:
-    cache.read(addr)
+    cache_read(cache, addr)
 
-cache.stats()
+cache_stats(cache)
 # CACHE MISS: Address 100 not in cache, loading from RAM...
 # CACHE WRITE: Stored address 100
 # CACHE MISS: Address 200 not in cache, loading from RAM...

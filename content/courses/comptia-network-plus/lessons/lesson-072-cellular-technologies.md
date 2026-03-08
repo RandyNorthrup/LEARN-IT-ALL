@@ -1,7 +1,7 @@
 ---
 id: lesson-072-cellular-technologies
 title: "Cellular Technologies (4G LTE, 5G, CDMA, GSM)"
-chapterId: "chapter-008-wan-technologies"
+chapterId: ch8-wan-technologies
 order: 72
 duration: 22
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Cellular Technologies (4G LTE, 5G, CDMA, GSM)
 
+## Introduction
+
 **Cellular networks** provide wireless voice and data services through a network of **cell towers** (base stations). Technologies have evolved from 1G (analog voice) to 5G (ultra-high-speed data, IoT).
 
-This lesson covers cellular fundamentals—important for the CompTIA Network+ N10-008 exam.
+This lesson covers cellular fundamentals—important for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand cellular network architecture and generations
+- Explain GSM and CDMA technologies
+- Describe 4G LTE characteristics and operation
+- Compare 5G capabilities and use cases
+- Identify cellular network components and terminology
 
 ---
 
@@ -532,7 +546,7 @@ Mobile Device (UE)
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **Cellular networks** divide coverage into cells, each served by base station (tower)
 2. **GSM** uses TDMA and SIM cards (80% of world); **CDMA** uses spread spectrum with no SIM (20%)
@@ -547,13 +561,147 @@ Mobile Device (UE)
 
 ---
 
+## Practice Questions
+
+**Q1.** Which cellular technology uses TDMA (Time Division Multiple Access) and SIM cards, and is used by approximately 80% of the world's mobile networks?
+
+A) CDMA
+B) GSM
+C) LTE
+D) WiMAX
+
+<details>
+<summary>Answer</summary>
+
+**B)** GSM (Global System for Mobile Communications) uses TDMA for channel access and SIM cards for subscriber identification. It is the dominant cellular standard worldwide, used by about 80% of networks.
+</details>
+
+**Q2.** Which 5G capability is designed specifically for applications requiring ultra-low latency, such as autonomous vehicles and remote surgery?
+
+A) eMBB (Enhanced Mobile Broadband)
+B) URLLC (Ultra-Reliable Low-Latency Communications)
+C) mMTC (Massive Machine-Type Communications)
+D) VoLTE
+
+<details>
+<summary>Answer</summary>
+
+**B)** URLLC (Ultra-Reliable Low-Latency Communications) is the 5G capability designed for mission-critical applications requiring latency as low as 1 ms and extremely high reliability.
+</details>
+
+**Q3.** What is the typical latency range for 4G LTE networks?
+
+A) 1-5 ms
+B) 10-30 ms
+C) 100-200 ms
+D) 500-700 ms
+
+<details>
+<summary>Answer</summary>
+
+**B)** 4G LTE typically provides latency of 10-30 ms, which is suitable for most applications including video streaming and VoIP, but not ideal for the ultra-low latency requirements of 5G URLLC applications.
+</details>
+
+**Q4.** Which 5G frequency range provides the fastest speeds but has the most limited coverage area?
+
+A) Low-band (below 1 GHz)
+B) Mid-band (1-6 GHz)
+C) mmWave (millimeter wave, 24-100 GHz)
+D) All 5G bands have equal range
+
+<details>
+<summary>Answer</summary>
+
+**C)** mmWave (millimeter wave) operates at 24-100 GHz and provides ultra-fast speeds (up to multi-Gbps) but has very limited range and poor penetration through walls and obstacles.
+</details>
+
+**Q5.** What does VoLTE enable?
+
+A) Video over LTE networks
+B) Voice calls carried over the LTE data network with HD quality
+C) VPN over LTE
+D) Virtual machines over LTE
+
+<details>
+<summary>Answer</summary>
+
+**B)** VoLTE (Voice over LTE) enables voice calls to be carried as data packets over the 4G LTE network. It provides HD voice quality and faster call setup compared to traditional circuit-switched voice.
+</details>
+
+**Q6.** Which 5G feature creates dedicated virtual networks on shared physical infrastructure for different use cases?
+
+A) Carrier aggregation
+B) MIMO
+C) Network slicing
+D) Beamforming
+
+<details>
+<summary>Answer</summary>
+
+**C)** Network slicing in 5G creates isolated virtual networks on shared infrastructure, each optimized for specific requirements (e.g., one slice for IoT with massive connections, another for video with high bandwidth).
+</details>
+
+**Q7.** An organization needs to provide internet access at a remote construction site with no wired infrastructure. Which solution is MOST appropriate?
+
+A) DSL
+B) Fiber to the premises
+C) Cellular router or mobile hotspot
+D) Cable modem
+
+<details>
+<summary>Answer</summary>
+
+**C)** A cellular router or mobile hotspot uses the cellular network (4G LTE or 5G) to provide internet access, making it ideal for remote or temporary locations without wired infrastructure.
+</details>
+
+**Q8.** Which 5G capability is designed to support billions of IoT devices with low power consumption?
+
+A) eMBB
+B) URLLC
+C) mMTC
+D) VoNR
+
+<details>
+<summary>Answer</summary>
+
+**C)** mMTC (Massive Machine-Type Communications) is designed to support up to 1 million devices per square kilometer, targeting IoT sensors and devices that require low power and small data transfers.
+</details>
+
+**Q9.** What is the PRIMARY reason 3G cellular networks are being shut down?
+
+A) 3G is not secure
+B) To reallocate spectrum for more efficient 4G LTE and 5G networks
+C) 3G does not support voice calls
+D) 3G equipment is too expensive
+
+<details>
+<summary>Answer</summary>
+
+**B)** Carriers are shutting down 3G networks to reallocate the radio spectrum for 4G LTE and 5G, which use the spectrum much more efficiently and provide significantly better performance.
+</details>
+
+**Q10.** What is carrier aggregation in LTE-Advanced, and what benefit does it provide?
+
+A) Combining multiple cell towers into a single base station to reduce costs
+B) Bonding multiple frequency bands simultaneously to increase available bandwidth for a device
+C) Encrypting voice calls using multiple carrier frequencies
+D) Aggregating multiple SIM cards into a single device
+
+<details>
+<summary>Answer</summary>
+
+**B)** Carrier aggregation in LTE-Advanced allows a device to simultaneously use multiple frequency bands (component carriers), effectively bonding them together for higher aggregate bandwidth. For example, combining two 20 MHz channels can double the available throughput, enabling speeds up to 1 Gbps on LTE-A.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.2:** Explain network types (Cellular)
-- **CompTIA Network+ N10-008 Objective 2.1:** Compare WAN technologies (Cellular, LTE, 5G)
+- **CompTIA Network+ N10-009 Objective 1.2:** Explain network types (Cellular)
+- **CompTIA Network+ N10-009 Objective 2.1:** Compare WAN technologies (Cellular, LTE, 5G)
 - 3GPP: LTE and 5G Specifications
 - GSM Association (GSMA)
-- Professor Messer: Network+ N10-008 - Cellular Technologies
+- Professor Messer: Network+ N10-009 - Cellular Technologies
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 id: "052"
 title: "Inheritance Capstone Project"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 10
 duration: "25 minutes"
 objectives:

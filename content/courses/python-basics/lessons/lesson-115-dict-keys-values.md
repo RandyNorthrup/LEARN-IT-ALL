@@ -1,5 +1,5 @@
 ---
-id: "124-dict-keys-values"
+id: lesson-115-dict-keys-values
 title: "Dictionary Keys and Values Requirements"
 chapterId: ch9-dictionaries
 order: 6
@@ -121,16 +121,13 @@ try:
 except TypeError as e:
     print(f"Error: {e}")  # unhashable type: 'list'
 
-# Custom mutable objects - NOT hashable by default
-class MutablePerson:
-    def __init__(self, name):
-        self.name = name
-
+# In general, any mutable data can't be used as dict keys.
+# Use immutable types (str, int, tuple, frozenset) instead.
 try:
-    person = MutablePerson("Alice")
-    d = {person: "value"}
+    person_data = ["Alice"]  # Lists are mutable
+    d = {person_data: "value"}  # Can't use list as key!
 except TypeError as e:
-    print(f"Error: {e}")
+    print(f"Error: {e}")  # unhashable type: 'list'
 ```
 
 ## Tuples as Keys
@@ -335,71 +332,49 @@ else:
 ## Custom Objects as Keys
 
 ```python
-# Objects are hashable by default (use id)
-class Person:
-    def __init__(self, name):
-        self.name = name
+# Tuples and namedtuples work well as composite dict keys
+# because they are immutable and hashable
 
-p1 = Person("Alice")
-p2 = Person("Alice")
+# Simple tuples as keys — identity vs equality
+t1 = ("Alice",)
+t2 = ("Alice",)
 
-d = {p1: "first person"}
-print(d[p1])  # first person
-print(p2 in d)  # False - different object!
+d = {t1: "first person"}
+print(d[t1])    # first person
+print(t2 in d)  # True — tuples with same values are equal!
 
-# Make custom class properly hashable and comparable
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    
-    def __hash__(self):
-        return hash((self.name, self.age))
-    
-    def __eq__(self, other):
-        if not isinstance(other, Person):
-            return False
-        return self.name == other.name and self.age == other.age
-    
-    def __repr__(self):
-        return f"Person('{self.name}', {self.age})"
+# namedtuple provides proper hash and equality automatically
+from collections import namedtuple
+
+Person = namedtuple('Person', ['name', 'age'])
 
 p1 = Person("Alice", 30)
 p2 = Person("Alice", 30)
 p3 = Person("Bob", 25)
 
 d = {p1: "first"}
-print(p2 in d)  # True - same hash and equal!
+print(p2 in d)  # True — same name and age means same key!
 
 d[p2] = "second"
-print(d)  # {Person('Alice', 30): 'second'} - overwrites
+print(d)  # {Person(name='Alice', age=30): 'second'} — overwrites
 
 d[p3] = "third"
-print(d)  # {Person('Alice', 30): 'second', Person('Bob', 25): 'third'}
+print(d)  # {Person(name='Alice', age=30): 'second', Person(name='Bob', age=25): 'third'}
 
-# ⚠️ WARNING: Don't modify hashable objects!
-class BadPerson:
-    def __init__(self, name):
-        self.name = name
-    
-    def __hash__(self):
-        return hash(self.name)
-    
-    def __eq__(self, other):
-        return self.name == other.name
+# ⚠️ WARNING: Keys should never change after being used in a dict!
+# Immutable types (str, int, tuple, frozenset, namedtuple) are safe
+# because they can't change. If a key could be modified after insertion,
+# the dict becomes corrupted — the value is stored but can't be found!
+#
+# Example of the concept:
+original_key = (1, 2, 3)
+d = {original_key: "value"}
+print(d[original_key])  # value
 
-p = BadPerson("Alice")
-d = {p: "value"}
-print(d[p])  # value
-
-p.name = "Bob"  # DANGER! Hash changed!
-print(p in d)  # False - can't find it anymore!
-
-# Dictionary is now corrupted
-for key in d:
-    print(f"Key: {key.name}")  # Bob
-    print(f"Can access: {d[key]}")  # Works during iteration
-    print(f"Direct access: {key in d}")  # False!
+# Creating a different tuple won't match:
+new_key = (1, 2, 3, 4)
+print(new_key in d)  # False — different content = different key
+print(original_key in d)  # True — the original tuple is unchanged
 ```
 
 ## Frozenset as Key
@@ -474,27 +449,28 @@ my_list = types["list"]([1, 2, 3])
 ## Key Collision and Resolution
 
 ```python
-# When hashes collide (rare)
-class AlwaysSameHash:
-    def __init__(self, value):
-        self.value = value
-    
-    def __hash__(self):
-        return 42  # Always same hash!
-    
-    def __eq__(self, other):
-        return isinstance(other, AlwaysSameHash) and self.value == other.value
+# When hashes collide (rare with built-in types)
+# Python uses both hash AND equality to distinguish keys
 
-a = AlwaysSameHash(1)
-b = AlwaysSameHash(2)
+# Built-in types have excellent hash functions with rare collisions
+a = "hello"
+b = "world"
+print(hash(a) != hash(b))  # True — different hashes (usually)
 
-d = {a: "first", b: "second"}
-print(len(d))  # 2 - both stored despite same hash
-print(d[a])    # first
-print(d[b])    # second
+# Even if two keys had the same hash value, Python stores both
+# correctly as long as they are not equal (==).
+# Same hash but different equality = different keys stored separately.
 
-# Python uses hash + equality for key lookup
-# Same hash but different equality = different keys
+# In practice, Python handles collisions transparently:
+d = {"hello": "first", "world": "second"}
+print(len(d))      # 2 — both stored correctly
+print(d["hello"])  # first
+print(d["world"])  # second
+
+# Python uses hash + equality for key lookup:
+# 1. Compute hash(key) to find the bucket
+# 2. Compare key == stored_key to find the exact match
+# This is why keys need both __hash__ and __eq__ support
 ```
 
 ## Best Practices
@@ -525,37 +501,28 @@ except TypeError:
     # Convert to tuple instead
     d = {tuple([1, 2]): "value"}  # OK
 
-# ❌ BAD: Modify object after using as key
-class Mutable:
-    def __init__(self, x):
-        self.x = x
-    def __hash__(self):
-        return hash(self.x)
+# ❌ BAD: Modify data used as key after insertion
+# If a key's underlying data changes, the dict can't find it anymore!
+# This is why you should only use truly immutable types as keys.
+original_key = (1, 2, 3)
+d = {original_key: "value"}
+print(d[original_key])  # value
+# Tuples can't be modified, so this problem never occurs with them.
 
-obj = Mutable(5)
-d = {obj: "value"}
-obj.x = 10  # DON'T DO THIS!
+# ✅ GOOD: Use namedtuple for immutable composite keys
+from collections import namedtuple
 
-# ✅ GOOD: Make custom keys immutable
-class ImmutablePoint:
-    def __init__(self, x, y):
-        self._x = x
-        self._y = y
-    
-    @property
-    def x(self):
-        return self._x
-    
-    @property
-    def y(self):
-        return self._y
-    
-    def __hash__(self):
-        return hash((self._x, self._y))
-    
-    def __eq__(self, other):
-        return isinstance(other, ImmutablePoint) and \
-               self._x == other._x and self._y == other._y
+Point = namedtuple('Point', ['x', 'y'])
+
+p1 = Point(1, 2)
+p2 = Point(1, 2)
+
+d = {p1: "origin area"}
+print(d[p2])  # origin area — same values = same key
+
+# namedtuple is immutable, hashable, and provides equality by value
+print(hash(p1) == hash(p2))  # True
+print(p1 == p2)              # True
 ```
 
 ## Summary

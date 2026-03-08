@@ -1,8 +1,8 @@
 ---
-id: 11-version-control-intro
+id: lesson-011-version-control-intro
 title: Introduction to Version Control
 chapterId: ch1-intro
-order: 11
+order: 10
 duration: 25
 objectives:
   - Understand version control concepts

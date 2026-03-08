@@ -1,5 +1,5 @@
 ---
-id: "89-guard-clauses"
+id: lesson-051-guard-clauses
 title: "Guard Clauses and Early Returns"
 chapterId: ch4-comparisons
 order: 11
@@ -437,82 +437,82 @@ print(f"${calculate_price_good(10, True, 25)}")
 # $225.0
 ```
 
-## Guard Clauses in Classes
+## Guard Clauses in Functions
 
 ```python
-class BankAccount:
-    """Bank account with guard clauses."""
+def create_bank_account(account_number, initial_balance=0):
+    """Create a bank account."""
+    return {
+        "account_number": account_number,
+        "balance": initial_balance,
+        "is_active": True,
+    }
+
+def deposit(account, amount):
+    """Deposit money with guards."""
+    # Guard: check account status
+    if not account["is_active"]:
+        return "Account is not active"
     
-    def __init__(self, account_number, initial_balance=0):
-        self.account_number = account_number
-        self.balance = initial_balance
-        self.is_active = True
+    # Guard: validate amount
+    if amount is None:
+        return "Amount cannot be None"
     
-    def deposit(self, amount):
-        """Deposit money with guards."""
-        # Guard: check account status
-        if not self.is_active:
-            return "Account is not active"
-        
-        # Guard: validate amount
-        if amount is None:
-            return "Amount cannot be None"
-        
-        if amount <= 0:
-            return "Amount must be positive"
-        
-        # Perform deposit
-        self.balance += amount
-        return f"Deposited ${amount}. New balance: ${self.balance}"
+    if amount <= 0:
+        return "Amount must be positive"
     
-    def withdraw(self, amount):
-        """Withdraw money with guards."""
-        # Guard: check account status
-        if not self.is_active:
-            return "Account is not active"
-        
-        # Guard: validate amount
-        if amount is None:
-            return "Amount cannot be None"
-        
-        if amount <= 0:
-            return "Amount must be positive"
-        
-        # Guard: sufficient funds
-        if amount > self.balance:
-            return f"Insufficient funds. Balance: ${self.balance}"
-        
-        # Perform withdrawal
-        self.balance -= amount
-        return f"Withdrew ${amount}. New balance: ${self.balance}"
+    # Perform deposit
+    account["balance"] += amount
+    return f"Deposited ${amount}. New balance: ${account['balance']}"
+
+def withdraw(account, amount):
+    """Withdraw money with guards."""
+    # Guard: check account status
+    if not account["is_active"]:
+        return "Account is not active"
     
-    def close_account(self):
-        """Close account with guards."""
-        # Guard: already closed
-        if not self.is_active:
-            return "Account already closed"
-        
-        # Guard: outstanding balance
-        if self.balance > 0:
-            return f"Cannot close account with balance ${self.balance}"
-        
-        # Close account
-        self.is_active = False
-        return "Account closed"
+    # Guard: validate amount
+    if amount is None:
+        return "Amount cannot be None"
+    
+    if amount <= 0:
+        return "Amount must be positive"
+    
+    # Guard: sufficient funds
+    if amount > account["balance"]:
+        return f"Insufficient funds. Balance: ${account['balance']}"
+    
+    # Perform withdrawal
+    account["balance"] -= amount
+    return f"Withdrew ${amount}. New balance: ${account['balance']}"
+
+def close_account(account):
+    """Close account with guards."""
+    # Guard: already closed
+    if not account["is_active"]:
+        return "Account already closed"
+    
+    # Guard: outstanding balance
+    if account["balance"] > 0:
+        return f"Cannot close account with balance ${account['balance']}"
+    
+    # Close account
+    account["is_active"] = False
+    return "Account closed"
 
 # Usage
-account = BankAccount("ACC123", 100)
+account = create_bank_account("ACC123", 100)
 
-print(account.deposit(50))
+print(deposit(account, 50))
 # Deposited $50. New balance: $150
 
-print(account.withdraw(200))
+print(withdraw(account, 200))
 # Insufficient funds. Balance: $150
 
-print(account.withdraw(50))
+print(withdraw(account, 50))
 # Withdrew $50. New balance: $100
 
-print(account.deposit(-10))
+print(deposit(account, -10))
 # Amount must be positive
 ```
 

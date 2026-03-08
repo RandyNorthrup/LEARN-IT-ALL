@@ -1,7 +1,7 @@
 ---
 id: lesson-076-troubleshooting-methodology
 title: "Network Troubleshooting Methodology"
-chapterId: "chapter-009-network-troubleshooting"
+chapterId: ch9-network-troubleshooting
 order: 76
 duration: 20
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Network Troubleshooting Methodology
 
+## Introduction
+
 **Network troubleshooting** requires a systematic approach to identify and resolve issues efficiently. The **CompTIA troubleshooting methodology** provides a structured 7-step process for diagnosing and fixing network problems.
 
-This lesson covers troubleshooting fundamentals—essential for the CompTIA Network+ N10-008 exam.
+This lesson covers troubleshooting fundamentals—essential for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand structured troubleshooting approach
+- Apply the CompTIA troubleshooting methodology
+- Explain each step of the troubleshooting process
+- Differentiate problem identification from solution implementation
+- Document troubleshooting steps and resolutions
 
 ---
 
@@ -547,7 +561,7 @@ Time to resolution: 1.5 hours
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **CompTIA troubleshooting methodology** has 7 steps: Identify, Theory, Test, Plan, Implement, Verify, Document
 2. **Step 1: Identify the problem** by gathering information, asking questions, and determining scope
@@ -562,12 +576,146 @@ Time to resolution: 1.5 hours
 
 ---
 
+## Practice Questions
+
+**Q1.** What is the FIRST step in the CompTIA troubleshooting methodology?
+
+A) Establish a theory of probable cause
+B) Test the theory to determine the cause
+C) Identify the problem
+D) Implement the solution
+
+<details>
+<summary>Answer</summary>
+
+**C)** The CompTIA troubleshooting methodology begins with identifying the problem by gathering information, questioning users, and determining the scope of the issue.
+</details>
+
+**Q2.** A user reports that they cannot access the internet, but they can access local file shares. What does this information help you determine?
+
+A) The user's NIC has failed
+B) The problem is likely beyond the local network
+C) The switch port is down
+D) The user's cable is disconnected
+
+<details>
+<summary>Answer</summary>
+
+**B)** Since local resources work but internet does not, LAN connectivity is fine. The issue is likely with the router, WAN connection, or ISP—beyond the local network.
+</details>
+
+**Q3.** During troubleshooting, you test a theory and it is NOT confirmed. What should you do next?
+
+A) Implement the solution anyway
+B) Escalate to management immediately
+C) Re-establish a new theory of probable cause
+D) Document the findings and close the ticket
+
+<details>
+<summary>Answer</summary>
+
+**C)** If a theory is not confirmed, you should return to Step 2 and establish a new theory of probable cause, considering other possible causes.
+</details>
+
+**Q4.** Which troubleshooting approach starts at the Physical layer and works upward through the OSI model?
+
+A) Top-down
+B) Divide and conquer
+C) Bottom-up
+D) Random approach
+
+<details>
+<summary>Answer</summary>
+
+**C)** The bottom-up approach starts at Layer 1 (Physical) and works up through the OSI layers—checking cables, then switches, then routing, then applications.
+</details>
+
+**Q5.** Why is it important to make only ONE change at a time during troubleshooting?
+
+A) To keep costs low
+B) To avoid needing approval
+C) To identify which specific change resolved the issue
+D) To speed up the troubleshooting process
+
+<details>
+<summary>Answer</summary>
+
+**C)** Making one change at a time allows you to isolate which specific change fixed the problem. Multiple simultaneous changes make it impossible to determine the actual solution.
+</details>
+
+**Q6.** In which step of the CompTIA methodology should you identify potential effects of your planned solution?
+
+A) Step 1: Identify the problem
+B) Step 3: Test the theory
+C) Step 4: Establish a plan of action
+D) Step 7: Document findings
+
+<details>
+<summary>Answer</summary>
+
+**C)** Step 4 requires you to establish a plan of action to resolve the problem AND identify potential effects of the solution before implementing it.
+</details>
+
+**Q7.** A network issue affects all users across all company locations. What is the most likely scope of the problem?
+
+A) A single workstation issue
+B) A department switch failure
+C) A core network or service provider issue
+D) A VLAN misconfiguration
+
+<details>
+<summary>Answer</summary>
+
+**C)** When all users at all locations are affected, the problem is most likely at the core network level, a central service (like email server), or an internet service provider issue.
+</details>
+
+**Q8.** After implementing a solution that resolves the reported problem, what should you do NEXT according to the methodology?
+
+A) Document the findings
+B) Verify full system functionality and implement preventive measures
+C) Close the trouble ticket
+D) Notify the user the issue is resolved
+
+<details>
+<summary>Answer</summary>
+
+**B)** Step 6 requires verifying full system functionality (not just the reported symptom) and implementing preventive measures to avoid recurrence, before moving to documentation.
+</details>
+
+**Q9.** Which of the following is a benefit of the "question the obvious" principle?
+
+A) It speeds up troubleshooting by skipping investigation
+B) It prevents assumptions from leading to incorrect conclusions
+C) It eliminates the need for testing tools
+D) It allows you to skip documentation
+
+<details>
+<summary>Answer</summary>
+
+**B)** Questioning the obvious prevents assumptions like "no one touched it" or "it was working yesterday" from leading you to skip potential root causes.
+</details>
+
+**Q10.** When should you escalate a problem rather than implement a solution yourself?
+
+A) When the issue requires more than 5 minutes to fix
+B) When the problem is beyond your expertise or authority
+C) When the user requests a specific technician
+D) When documentation is incomplete
+
+<details>
+<summary>Answer</summary>
+
+**B)** Step 5 states you should implement the solution OR escalate as necessary—escalation is appropriate when the issue is beyond your expertise, authority, or access level.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 5.1:** Explain the network troubleshooting methodology
+- **CompTIA Network+ N10-009 Objective 5.1:** Explain the network troubleshooting methodology
 - CompTIA A+ and Network+ Troubleshooting Methodology
 - ITIL Incident Management Best Practices
-- Professor Messer: Network+ N10-008 - Troubleshooting Methodology
+- Professor Messer: Network+ N10-009 - Troubleshooting Methodology
 
 ---
 

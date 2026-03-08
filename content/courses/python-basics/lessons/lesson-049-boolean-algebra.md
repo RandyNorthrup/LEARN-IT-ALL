@@ -1,5 +1,5 @@
 ---
-id: "87-boolean-algebra"
+id: lesson-049-boolean-algebra
 title: "Boolean Algebra and Logic Laws"
 chapterId: ch4-comparisons
 order: 9
@@ -511,37 +511,35 @@ print_truth_table()
 ## Practical Application: Query Builder
 
 ```python
-class QueryBuilder:
-    """Build database queries with boolean logic."""
-    
-    def __init__(self):
-        self.conditions = []
-    
-    def where(self, condition):
-        """Add condition."""
-        self.conditions.append(condition)
-        return self
-    
-    def or_where(self, condition):
-        """Add OR condition."""
-        if self.conditions:
-            self.conditions.append(f"OR {condition}")
-        else:
-            self.conditions.append(condition)
-        return self
-    
-    def build(self):
-        """Build query string."""
-        if not self.conditions:
-            return "SELECT * FROM table"
-        return f"SELECT * FROM table WHERE {' '.join(self.conditions)}"
+def create_query_builder():
+    """Create a query builder."""
+    return {"conditions": []}
+
+def where(builder, condition):
+    """Add condition."""
+    builder["conditions"].append(condition)
+    return builder
+
+def or_where(builder, condition):
+    """Add OR condition."""
+    if builder["conditions"]:
+        builder["conditions"].append(f"OR {condition}")
+    else:
+        builder["conditions"].append(condition)
+    return builder
+
+def build_query(builder):
+    """Build query string."""
+    if not builder["conditions"]:
+        return "SELECT * FROM table"
+    return f"SELECT * FROM table WHERE {' '.join(builder['conditions'])}"
 
 # Build complex query
-query = (QueryBuilder()
-         .where("age >= 18")
-         .where("AND city = 'NYC'")
-         .or_where("country = 'USA'")
-         .build())
+builder = create_query_builder()
+where(builder, "age >= 18")
+where(builder, "AND city = 'NYC'")
+or_where(builder, "country = 'USA'")
+query = build_query(builder)
 
 print(query)
 # SELECT * FROM table WHERE age >= 18 AND city = 'NYC' OR country = 'USA'
@@ -549,10 +547,10 @@ print(query)
 # Applying De Morgan for optimization
 # Original: NOT (age < 18 OR city != 'NYC')
 # Simplified: (age >= 18) AND (city = 'NYC')
-query2 = (QueryBuilder()
-          .where("age >= 18")
-          .where("AND city = 'NYC'")
-          .build())
+builder2 = create_query_builder()
+where(builder2, "age >= 18")
+where(builder2, "AND city = 'NYC'")
+query2 = build_query(builder2)
 
 print(query2)
 # SELECT * FROM table WHERE age >= 18 AND city = 'NYC'

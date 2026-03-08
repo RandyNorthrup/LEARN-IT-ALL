@@ -1,7 +1,7 @@
 ---
 id: "054"
 title: "Duck Typing and Protocols"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 2
 duration: "18 minutes"
 objectives:

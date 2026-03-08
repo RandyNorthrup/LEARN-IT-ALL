@@ -1,7 +1,7 @@
 ---
-id: high-availability
+id: lesson-028-high-availability
 title: High Availability and Fault Tolerance
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 28
 duration: 70
 objectives:
@@ -17,6 +17,18 @@ objectives:
 ## Introduction
 
 High availability (HA) and fault tolerance are architectural approaches to minimize downtime and ensure continuous service delivery. While related, they represent different levels of resilience: high availability aims to maximize uptime through redundancy and rapid failover, while fault tolerance ensures uninterrupted operation even during component failures. This lesson covers HA design principles, fault tolerance mechanisms, redundancy strategies, and implementation techniques.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand high availability concepts
+- Implement fault tolerance mechanisms
+- Configure redundancy strategies
+- Design for minimal downtime
+- Test failover procedures
+
+---
 
 ## High Availability vs. Fault Tolerance
 
@@ -660,6 +672,100 @@ Introduce packet loss         | Application retries successfully
 Fail database primary         | Replica promoted automatically
 ```
 
+## First Hop Redundancy Protocols (FHRPs)
+
+### Why FHRPs Are Needed
+
+End devices are typically configured with a single **default gateway** — the router that forwards traffic destined for other networks. If that router fails, every host pointing to it loses connectivity beyond the local subnet, even when a second router exists on the same segment. The default gateway becomes a **single point of failure** at Layer 3.
+
+**First Hop Redundancy Protocols (FHRPs)** solve this by allowing two or more routers to share a **virtual IP (VIP)** address. Hosts use the VIP as their default gateway. One router actively forwards traffic while the others stand by. If the active router fails, a standby router assumes the VIP within seconds — transparently, with no configuration change required on the hosts.
+
+### HSRP (Hot Standby Router Protocol)
+
+**HSRP** is a **Cisco-proprietary** FHRP defined in RFC 2281 (informational). Key characteristics:
+
+- **Roles:** One router is **Active**, one is **Standby**, and any additional routers are in the **Listen** state.
+- **Virtual IP and MAC:** The group shares a VIP and a **virtual MAC address** (HSRPv1: `0000.0c07.acXX`, HSRPv2: `0000.0c9f.fXXX`, where XX/XXX is the group number in hex).
+- **Timers:** Hello interval defaults to **3 seconds**; hold timer defaults to **10 seconds** (3× hello). If the standby router misses three hellos, it assumes the active role.
+- **Priority:** Range 0–255, default **100**. The router with the highest priority becomes active. Ties are broken by the highest IP address.
+- **Preemption:** Disabled by default. When enabled, a higher-priority router reclaims the active role after recovering from a failure.
+- **State transitions:** Init → Listen → Speak → Standby → Active.
+- **HSRPv1 vs HSRPv2:** Version 2 expands the group range from 0–255 to 0–4095, uses a different multicast address (224.0.0.102 vs 224.0.0.2), and supports IPv6.
+
+### VRRP (Virtual Router Redundancy Protocol)
+
+**VRRP** is an **open-standard** protocol defined in **RFC 5798**. It operates similarly to HSRP but with important differences:
+
+- **Roles:** One router is **Master**, all others are **Backup** routers.
+- **Virtual IP:** The VIP **can** be the same as the physical IP of one router (that router becomes the **IP owner** with priority 255).
+- **Priority:** Range 1–254 (configurable), default **100**. Priority **255** is automatically assigned to the IP owner.
+- **Preemption:** **Enabled by default** — a higher-priority router will always preempt the current master once it comes online.
+- **Advertisement interval:** Default **1 second** (faster convergence than HSRP's 3-second hello).
+- **Multicast address:** 224.0.0.18.
+- **Vendor-neutral:** Supported across Cisco, Juniper, Arista, and virtually all enterprise routers and Layer 3 switches.
+
+### GLBP (Gateway Load Balancing Protocol)
+
+**GLBP** is a **Cisco-proprietary** protocol that goes beyond simple redundancy to provide **active-active load balancing** across multiple routers:
+
+- **AVG (Active Virtual Gateway):** One router is elected AVG and is responsible for answering ARP requests for the VIP. It assigns **Active Virtual Forwarder (AVF)** roles to participating routers.
+- **AVF (Active Virtual Forwarder):** Each AVF is given a unique **virtual MAC address**. When a host ARPs for the VIP, the AVG replies with the virtual MAC of the next AVF in rotation.
+- **Load balancing:** Traffic is distributed across all GLBP routers using **round-robin**, **weighted**, or **host-dependent** algorithms — unlike HSRP and VRRP where the standby/backup routers sit idle.
+- **Failover:** If an AVF fails, another router assumes its virtual MAC and continues forwarding.
+
+### FHRP Comparison Table
+
+```
+Feature            | HSRP                   | VRRP                   | GLBP
+-------------------|------------------------|------------------------|------------------------
+Type               | Cisco proprietary      | Open standard (RFC5798)| Cisco proprietary
+Roles              | Active / Standby       | Master / Backup        | AVG / AVF
+Default Priority   | 100 (range 0-255)      | 100 (range 1-254)      | 100 (range 1-255)
+Default Timers     | Hello 3s / Hold 10s    | Advert 1s              | Hello 3s / Hold 10s
+Preemption Default | Disabled               | Enabled                | Disabled
+Load Balancing     | No (active/standby)    | No (master/backup)     | Yes (round-robin, etc.)
+Multicast Address  | 224.0.0.2 (v1)         | 224.0.0.18             | 224.0.0.102
+                   | 224.0.0.102 (v2)       |                        |
+Virtual MAC Format | 0000.0c07.acXX (v1)    | 0000.5e00.01XX         | 0007.b400.XXYY
+```
+
+### FHRP Configuration Examples
+
+**HSRP Configuration (Cisco IOS):**
+```cisco
+! Router A (Active)
+interface GigabitEthernet0/1
+ ip address 192.168.1.2 255.255.255.0
+ standby 1 ip 192.168.1.1
+ standby 1 priority 110
+ standby 1 preempt
+ standby 1 timers 3 10
+
+! Router B (Standby)
+interface GigabitEthernet0/1
+ ip address 192.168.1.3 255.255.255.0
+ standby 1 ip 192.168.1.1
+ standby 1 priority 100
+ standby 1 preempt
+```
+
+**VRRP Configuration (Cisco IOS):**
+```cisco
+! Router A (Master)
+interface GigabitEthernet0/1
+ ip address 192.168.1.2 255.255.255.0
+ vrrp 1 ip 192.168.1.1
+ vrrp 1 priority 110
+
+! Router B (Backup)
+interface GigabitEthernet0/1
+ ip address 192.168.1.3 255.255.255.0
+ vrrp 1 ip 192.168.1.1
+ vrrp 1 priority 100
+```
+
+In both examples, hosts use **192.168.1.1** as their default gateway. If the higher-priority router fails, the lower-priority router takes over the VIP seamlessly.
+
 ## Summary
 
 High availability and fault tolerance are achieved through:
@@ -692,15 +798,78 @@ High availability and fault tolerance are achieved through:
 
 High availability is not just technology - it's a mindset of designing for failure, testing regularly, and continuously improving resilience.
 
-## Review Questions
+## Practice Questions
 
-1. What is the difference between high availability and fault tolerance?
-2. How much downtime per year is allowed for "five nines" (99.999%) availability?
-3. What happens to overall availability when components are arranged in series vs. parallel?
-4. What is a single point of failure (SPOF) and how do you identify them?
-5. What are the benefits and drawbacks of RAID 5 vs. RAID 10?
-6. How does switch stacking improve availability?
-7. What is the purpose of UPS systems in high availability design?
-8. Why should high availability systems be tested regularly?
-9. What is MPIO and why is it important for SAN redundancy?
-10. Calculate: If you have two redundant servers, each with 99.9% availability, what is the overall system availability?
+**Q1.** What is the maximum allowable downtime per year for a system with 99.99% availability ("four nines")?
+
+A) 8.76 hours
+B) 52.6 minutes
+C) 5.26 minutes
+D) 3.65 days
+
+<details>
+<summary>Answer</summary>
+
+**B)** At 99.99% availability (four nines), the maximum downtime per year is 52.6 minutes. This is calculated as: (1 - 0.9999) × 8,760 hours = 0.876 hours = 52.6 minutes. Option A (8.76 hours) corresponds to 99.9% (three nines). Option C (5.26 minutes) corresponds to 99.999% (five nines). Option D (3.65 days) corresponds to 99% (two nines).
+</details>
+
+**Q2.** A web application has three serial components: a load balancer (99.99%), web server (99.9%), and database (99.9%). What is the overall system availability?
+
+A) 99.99%
+B) 99.9%
+C) 99.79%
+D) 99.7%
+
+<details>
+<summary>Answer</summary>
+
+**C)** For serial (chained) components, overall availability equals the product of individual availabilities: 0.9999 × 0.999 × 0.999 = 0.99790 = approximately 99.79%. Serial components always reduce overall availability because the system fails if any single component fails. This demonstrates why each component in series is a potential weak link that lowers total reliability.
+</details>
+
+**Q3.** A network engineer discovers that the entire office loses internet connectivity when the single core router fails. What has the engineer identified?
+
+A) A redundancy group
+B) A failover cluster
+C) A single point of failure (SPOF)
+D) A load-balanced configuration
+
+<details>
+<summary>Answer</summary>
+
+**C)** A single point of failure (SPOF) is any component whose failure causes the entire system to fail. A single core router handling all internet traffic is a classic SPOF — its failure takes down internet connectivity for the entire office. The solution is to deploy a second core router in an HA pair. A redundancy group and failover cluster are solutions to eliminate SPOFs, not descriptions of the problem.
+</details>
+
+**Q4.** An organization deploys two redundant firewalls, each with 99.9% individual availability, in an active-passive configuration. What is the combined availability of the firewall pair?
+
+A) 99.9%
+B) 99.99%
+C) 99.9999%
+D) 99.8%
+
+<details>
+<summary>Answer</summary>
+
+**C)** For parallel (redundant) components, availability = 1 - (1 - A₁) × (1 - A₂) = 1 - (0.001 × 0.001) = 1 - 0.000001 = 0.999999 = 99.9999% (six nines). Redundancy dramatically improves availability because both components must fail simultaneously for a system outage. This is why deploying redundant pairs is a fundamental high availability strategy.
+</details>
+
+**Q5.** What is the KEY difference between high availability (HA) and fault tolerance (FT)?
+
+A) HA is cheaper than FT
+B) HA allows brief downtime during failover while FT provides zero interruption
+C) FT uses software while HA uses hardware
+D) HA is only used for databases while FT is for all systems
+
+<details>
+<summary>Answer</summary>
+
+**B)** The key difference is that high availability accepts brief service interruptions (seconds to minutes) during failover to a redundant system, while fault tolerance ensures zero interruption because redundant components synchronously process the same data simultaneously. While HA is generally less expensive (option A is partially true but not the key difference), the defining distinction is the tolerance for downtime. Both use hardware and software, and both apply to various system types.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.3 — Explain high availability and disaster recovery concepts and summarize which is the best solution
+- IEEE 802.1AX: Link Aggregation Standard
+- IEEE 802.1D/802.1w: Spanning Tree Protocol and Rapid Spanning Tree Protocol
+- ITIL v4 Foundation: Availability Management and Infrastructure and Platform Management Practices
+- Tanenbaum, A. S., & Wetherall, D. J. (2021). *Computer Networks* (6th ed.). Pearson — Chapter 5: Reliability and Redundancy
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — CP (Contingency Planning) Family

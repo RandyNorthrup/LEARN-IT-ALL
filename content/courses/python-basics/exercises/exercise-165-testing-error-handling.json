@@ -1,63 +1,70 @@
 {
   "id": "exercise-165-testing-error-handling",
-  "lessonId": "lesson-155-testing-error-handling",
+  "lessonId": "lesson-147-testing-error-handling",
   "title": "Testing Error Handling",
-  "description": "Test exception raising, verify error messages, test error recovery paths, and ensure cleanup happens correctly.",
+  "description": "Build utilities to test error handling: verify exceptions are raised, check error messages, catalog errors across inputs, and verify handler correctness.",
   "difficulty": "intermediate",
   "points": 20,
-  "starterCode": "# Exercise: Testing Error Handling\nimport pytest\n\ndef validate_age(age):\n    \"\"\"Validate age - raises ValueError if invalid.\"\"\"\n    pass\n\nclass Resource:\n    \"\"\"Resource that needs cleanup.\"\"\"\n    pass\n\ndef test_validate_age_negative():\n    \"\"\"Test that negative age raises ValueError.\"\"\"\n    pass\n\ndef test_resource_cleanup_on_exception():\n    \"\"\"Test resource cleanup happens even on exception.\"\"\"\n    pass\n\ndef test_exception_message_content():\n    \"\"\"Test exception message contains expected text.\"\"\"\n    pass\n\ndef test_exception_chaining():\n    \"\"\"Test exception chaining with 'from'.\"\"\"\n    pass\n",
-  "solution": "# Solution: Testing Error Handling\nimport pytest\n\ndef validate_age(age):\n    \"\"\"\n    Validate age - raises ValueError if invalid.\n    \n    Raises:\n        TypeError: If age is not an integer\n        ValueError: If age is negative or too large\n    \"\"\"\n    if not isinstance(age, int):\n        raise TypeError(\"Age must be an integer\")\n    \n    if age < 0:\n        raise ValueError(\"Age cannot be negative\")\n    \n    if age > 150:\n        raise ValueError(\"Age is unrealistic\")\n    \n    return age\n\nclass Resource:\n    \"\"\"Resource that needs cleanup.\"\"\"\n    \n    def __init__(self, name: str):\n        self.name = name\n        self.opened = False\n        self.closed = False\n    \n    def open(self):\n        \"\"\"Open resource.\"\"\"\n        self.opened = True\n    \n    def close(self):\n        \"\"\"Close resource.\"\"\"\n        self.closed = True\n    \n    def __enter__(self):\n        self.open()\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.close()\n        return False\n\ndef test_validate_age_negative():\n    \"\"\"\n    Test that negative age raises ValueError.\n    \n    Uses pytest.raises to verify exception is raised.\n    \"\"\"\n    with pytest.raises(ValueError) as exc_info:\n        validate_age(-5)\n    \n    assert \"cannot be negative\" in str(exc_info.value).lower()\n\ndef test_resource_cleanup_on_exception():\n    \"\"\"\n    Test resource cleanup happens even on exception.\n    \n    Verifies cleanup in __exit__ is called.\n    \"\"\"\n    resource = Resource(\"test\")\n    \n    with pytest.raises(ValueError):\n        with resource:\n            assert resource.opened is True\n            raise ValueError(\"Test error\")\n    \n    # Cleanup should have happened\n    assert resource.closed is True\n\ndef test_exception_message_content():\n    \"\"\"\n    Test exception message contains expected text.\n    \n    Uses match parameter to verify message content.\n    \"\"\"\n    with pytest.raises(ValueError, match=\"unrealistic\"):\n        validate_age(200)\n\ndef test_exception_chaining():\n    \"\"\"\n    Test exception chaining with 'from'.\n    \n    Verifies __cause__ attribute is set.\n    \"\"\"\n    def load_config(filename):\n        try:\n            with open(filename) as f:\n                return f.read()\n        except FileNotFoundError as e:\n            raise RuntimeError(f\"Config not found: {filename}\") from e\n    \n    with pytest.raises(RuntimeError) as exc_info:\n        load_config(\"missing.txt\")\n    \n    # Check original exception is chained\n    assert exc_info.value.__cause__.__class__ is FileNotFoundError\n\n# Additional test functions for comprehensive coverage\n\ndef test_validate_age_success():\n    \"\"\"Test valid age passes.\"\"\"\n    assert validate_age(25) == 25\n\ndef test_validate_age_type_error():\n    \"\"\"Test non-integer raises TypeError.\"\"\"\n    with pytest.raises(TypeError, match=\"must be an integer\"):\n        validate_age(\"25\")\n\ndef test_resource_cleanup_success():\n    \"\"\"Test resource cleanup on success.\"\"\"\n    resource = Resource(\"test\")\n    \n    with resource:\n        assert resource.opened is True\n    \n    assert resource.closed is True\n\ndef parametrized_age_tests():\n    \"\"\"Parametrized tests for multiple invalid ages.\"\"\"\n    @pytest.mark.parametrize(\"age,exception,message\", [\n        (-1, ValueError, \"negative\"),\n        (-100, ValueError, \"negative\"),\n        (151, ValueError, \"unrealistic\"),\n        (1000, ValueError, \"unrealistic\"),\n        (\"30\", TypeError, \"integer\"),\n        (30.5, TypeError, \"integer\"),\n    ])\n    def test_invalid_ages(age, exception, message):\n        with pytest.raises(exception, match=message):\n            validate_age(age)\n    \n    return test_invalid_ages\n",
+  "starterCode": "# Exercise: Testing Error Handling\n\ndef expect_error(func, error_type, *args):\n    \"\"\"Return True if func(*args) raises error_type, False otherwise.\"\"\"\n    pass\n\ndef expect_message(func, expected_msg, *args):\n    \"\"\"Return True if func(*args) raises an error whose message contains expected_msg.\"\"\"\n    pass\n\ndef error_catalog(func, test_inputs):\n    \"\"\"Return dict mapping each input to the error type name (or \"success\").\"\"\"\n    pass\n\ndef verify_handler(func, error_inputs, success_inputs):\n    \"\"\"Return dict with correctly_handled, incorrectly_handled, false_positive counts.\"\"\"\n    pass\n",
+  "solution": "# Solution: Testing Error Handling\n\ndef expect_error(func, error_type, *args):\n    \"\"\"Return True if func(*args) raises error_type, False otherwise.\"\"\"\n    try:\n        func(*args)\n        return False\n    except error_type:\n        return True\n    except Exception:\n        return False\n\ndef expect_message(func, expected_msg, *args):\n    \"\"\"Return True if func(*args) raises an error whose message contains expected_msg.\"\"\"\n    try:\n        func(*args)\n        return False\n    except Exception as e:\n        return expected_msg in str(e)\n\ndef error_catalog(func, test_inputs):\n    \"\"\"Return dict mapping each input to the error type name (or \"success\").\"\"\"\n    catalog = {}\n    for inp in test_inputs:\n        try:\n            func(inp)\n            catalog[inp] = \"success\"\n        except Exception as e:\n            catalog[inp] = type(e).__name__\n    return catalog\n\ndef verify_handler(func, error_inputs, success_inputs):\n    \"\"\"Return dict with correctly_handled, incorrectly_handled, false_positive counts.\"\"\"\n    correctly_handled = 0\n    incorrectly_handled = 0\n    false_positive = 0\n    for inp in error_inputs:\n        try:\n            func(inp)\n            incorrectly_handled += 1\n        except Exception:\n            correctly_handled += 1\n    for inp in success_inputs:\n        try:\n            func(inp)\n        except Exception:\n            false_positive += 1\n    return {\"correctly_handled\": correctly_handled, \"incorrectly_handled\": incorrectly_handled, \"false_positive\": false_positive}\n",
   "hints": [
-    "Use pytest.raises() context manager to catch expected exceptions",
-    "Access exception with exc_info.value to check message content",
-    "match parameter in pytest.raises() checks message with regex",
-    "Test cleanup: Verify resource.closed is True after exception",
-    "Exception chaining: Check exc_info.value.__cause__ for original exception",
-    "Parametrize tests with @pytest.mark.parametrize for multiple test cases"
+    "In expect_error, catch the specific error_type first, then catch Exception for other errors",
+    "Use str(e) to get the error message and check with 'in' operator",
+    "type(e).__name__ gives you the exception class name as a string",
+    "error_catalog maps each input to either 'success' or the error type name",
+    "correctly_handled: error inputs that correctly raised exceptions",
+    "false_positive: success inputs that incorrectly raised exceptions"
   ],
   "testCases": [
     {
-      "input": "validate_age(30)",
-      "description": "Test validate_age with valid input",
+      "input": "expect_error(int, ValueError, 'abc')",
+      "description": "Test expect_error detects ValueError",
       "id": "test1",
-      "expectedOutput": "30",
-      "isHidden": false
+      "expectedOutput": "True",
+      "isHidden": false,
+      "validation": "assert expect_error(int, ValueError, 'abc') == True"
     },
     {
-      "input": "try:\\n    validate_age(-5)\\n    result = 'no error'\\nexcept ValueError:\\n    result = 'error raised'\\nresult",
-      "description": "Test validate_age raises on negative",
+      "input": "expect_error(int, ValueError, '42')",
+      "description": "Test expect_error returns False when no error",
       "id": "test2",
-      "expectedOutput": "'error raised'",
-      "isHidden": false
+      "expectedOutput": "False",
+      "isHidden": false,
+      "validation": "assert expect_error(int, ValueError, '42') == False"
     },
     {
-      "input": "r = Resource('test')\\nwith r:\\n    pass\\nr.closed",
-      "description": "Test Resource cleanup on success",
+      "input": "def bad():\\n    raise ValueError('invalid input')\\nexpect_message(bad, 'invalid')",
+      "description": "Test expect_message finds expected substring",
       "id": "test3",
       "expectedOutput": "True",
-      "isHidden": false
+      "isHidden": false,
+      "validation": "def bad():\n    raise ValueError('invalid input')\nassert expect_message(bad, 'invalid') == True"
     },
     {
-      "input": "r = Resource('test')\\ntry:\\n    with r:\\n        raise ValueError()\\nexcept ValueError:\\n    pass\\nr.closed",
-      "description": "Test Resource cleanup on exception",
+      "input": "error_catalog(int, ['1', 'abc'])['abc']",
+      "description": "Test error_catalog maps error inputs correctly",
       "id": "test4",
-      "expectedOutput": "True",
-      "isHidden": true
+      "expectedOutput": "'ValueError'",
+      "isHidden": false,
+      "validation": "assert error_catalog(int, ['1', 'abc'])['abc'] == 'ValueError'"
     },
     {
-      "input": "try:\\n    validate_age('25')\\nexcept TypeError as e:\\n    'integer' in str(e).lower()",
-      "description": "Test validate_age type error",
+      "input": "def strict_int(x):\\n    if not isinstance(x, int):\\n        raise TypeError('not int')\\n    return x\\nverify_handler(strict_int, ['hello', 3.14], [1, 2])['correctly_handled']",
+      "description": "Test verify_handler counts correctly handled errors",
       "id": "test5",
-      "expectedOutput": "True",
-      "isHidden": true
+      "expectedOutput": "2",
+      "isHidden": true,
+      "validation": "def strict_int(x):\n    if not isinstance(x, int):\n        raise TypeError('not int')\n    return x\nassert verify_handler(strict_int, ['hello', 3.14], [1, 2])['correctly_handled'] == 2"
     },
     {
-      "input": "try:\\n    validate_age(200)\\nexcept ValueError as e:\\n    'unrealistic' in str(e).lower()",
-      "description": "Test validate_age unrealistic",
+      "input": "expect_error(int, TypeError, 'abc')",
+      "description": "Test expect_error returns False for wrong error type",
       "id": "test6",
-      "expectedOutput": "True",
-      "isHidden": true
+      "expectedOutput": "False",
+      "isHidden": true,
+      "validation": "assert expect_error(int, TypeError, 'abc') == False"
     }
   ],
-  "language": "python"
+  "language": "python",
+  "chapterId": "ch11-error-handling"
 }

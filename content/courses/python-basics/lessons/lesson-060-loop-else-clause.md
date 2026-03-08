@@ -1,8 +1,8 @@
 ---
-id: "95-loop-else-clause"
+id: lesson-060-loop-else-clause
 title: "Loop else Clause"
 chapterId: ch5-loops
-order: 6
+order: 7
 duration: 20
 objectives:
   - Understand the loop else clause

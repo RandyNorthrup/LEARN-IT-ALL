@@ -1,5 +1,5 @@
 ---
-id: layer1-physical
+id: lesson-002-layer1-physical
 title: Layer 1 - The Physical Layer
 chapterId: ch1-networking-fundamentals
 order: 2
@@ -532,9 +532,143 @@ Remember: **No Layer 1, no network!** Always start troubleshooting at the Physic
 
 ---
 
+## Practice Questions
+
+**Q1.** A network technician needs to run cable through an air handling space above a drop ceiling. Which type of cable is required by building codes for this installation?
+
+A) PVC-jacketed UTP
+B) Plenum-rated cable
+C) Direct burial cable
+D) Riser-rated cable
+
+<details>
+<summary>Answer</summary>
+
+**B)** Plenum-rated cable is required by building codes for installation in plenum spaces (air handling areas such as above drop ceilings and in HVAC ducts). Plenum cable uses fire-retardant materials that produce low smoke when burned, unlike standard PVC cable which releases toxic fumes.
+</details>
+
+**Q2.** Which fiber optic cable type uses a laser light source and has a core diameter of 8-10 microns?
+
+A) Multi-mode fiber (MMF)
+B) Single-mode fiber (SMF)
+C) Plastic optical fiber (POF)
+D) OM3 fiber
+
+<details>
+<summary>Answer</summary>
+
+**B)** Single-mode fiber (SMF) has a very small core diameter of 8-10 microns and uses a laser light source. This allows it to transmit data over much longer distances (up to 100+ km) compared to multi-mode fiber, which has a larger core (50 or 62.5 microns) and uses LED or VCSEL light sources.
+</details>
+
+**Q3.** A company needs to install Ethernet cabling that supports 10 Gbps speeds at a full 100-meter distance. Which cable category is the minimum they should use?
+
+A) Cat5e
+B) Cat6
+C) Cat6a
+D) Cat7
+
+<details>
+<summary>Answer</summary>
+
+**C)** Cat6a supports 10 Gbps at the full 100-meter distance. While Cat6 can also support 10 Gbps, it is limited to only 55 meters at that speed. Cat5e only supports up to 1 Gbps. Cat7 also supports 10 Gbps at 100m but Cat6a is the minimum requirement.
+</details>
+
+**Q4.** What is the primary reason that wires are twisted together in pairs in twisted pair cabling?
+
+A) To increase the maximum cable length
+B) To reduce electromagnetic interference (EMI) and crosstalk
+C) To allow higher voltage transmission
+D) To simplify connector termination
+
+<details>
+<summary>Answer</summary>
+
+**B)** The twisting of wire pairs is specifically designed to reduce electromagnetic interference (EMI) and crosstalk (signal bleeding between pairs). The twist creates a balanced circuit where external interference affects both wires equally and is cancelled out. Tighter twists provide better protection.
+</details>
+
+**Q5.** A technician is connecting a switch to a fiber SFP port that needs to support 10 Gbps. Which transceiver module should be used?
+
+A) SFP (Small Form-factor Pluggable)
+B) SFP+ (Enhanced Small Form-factor Pluggable)
+C) GBIC (Gigabit Interface Converter)
+D) SFP28
+
+<details>
+<summary>Answer</summary>
+
+**B)** SFP+ supports speeds up to 10 Gbps and is the appropriate transceiver for this scenario. Standard SFP supports only up to 1 Gbps, GBIC is an older, larger form factor also limited to 1 Gbps, and SFP28 supports 25 Gbps which exceeds what is needed.
+</details>
+
+**Q6.** Which connector type is most commonly associated with cable television and cable Internet connections?
+
+A) RJ45
+B) BNC
+C) F-connector
+D) LC
+
+<details>
+<summary>Answer</summary>
+
+**C)** The F-connector is a screw-on connector used with RG-6 coaxial cable for cable TV and cable Internet connections. RJ45 is used for twisted pair Ethernet, BNC is an older connector used with legacy coaxial networks and video equipment, and LC is a fiber optic connector.
+</details>
+
+**Q7.** What is the maximum segment length for standard copper Ethernet cabling (twisted pair)?
+
+A) 55 meters
+B) 100 meters
+C) 185 meters
+D) 300 meters
+
+<details>
+<summary>Answer</summary>
+
+**B)** The maximum segment length for twisted pair copper Ethernet cabling is 100 meters (328 feet). This includes the horizontal cable run plus patch cables on both ends. Beyond 100 meters, signal degradation (attenuation) becomes too great for reliable communication. Repeaters or switches are needed to extend the distance.
+</details>
+
+**Q8.** A network administrator needs cabling for an industrial environment near heavy machinery that generates significant electromagnetic interference. Which cable type would be MOST appropriate?
+
+A) UTP Cat6
+B) STP or S/FTP
+C) RG-59 coaxial
+D) Cat5e plenum
+
+<details>
+<summary>Answer</summary>
+
+**B)** Shielded Twisted Pair (STP) or Screened Foiled Twisted Pair (S/FTP) provides the best protection against electromagnetic interference. S/FTP has individual foil shields around each pair plus an overall braid shield, offering maximum EMI protection ideal for industrial environments. UTP has no shielding and would be susceptible to interference from heavy machinery.
+</details>
+
+**Q9.** Which of the following is an advantage of fiber optic cabling over copper cabling?
+
+A) Lower installation cost
+B) Easier termination
+C) Immunity to electromagnetic interference
+D) Greater flexibility when bending
+
+<details>
+<summary>Answer</summary>
+
+**C)** Fiber optic cable transmits data as light pulses, making it completely immune to electromagnetic interference (EMI). Copper cables, which use electrical signals, are susceptible to EMI. Fiber is actually more expensive to install (A), more complex to terminate (B), and more fragile when bent (D) compared to copper.
+</details>
+
+**Q10.** A fiber optic cable with an orange jacket is being used for a short-distance connection within a data center. What type of fiber is this most likely?
+
+A) Single-mode fiber
+B) Multi-mode fiber
+C) Plastic optical fiber
+D) Coaxial fiber
+
+<details>
+<summary>Answer</summary>
+
+**B)** Multi-mode fiber (MMF) typically has an orange or aqua jacket. It has a larger core (50 or 62.5 microns), uses LED or VCSEL light sources, and is designed for shorter distances (up to 2 km), making it ideal for data center connections. Single-mode fiber usually has a yellow jacket.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.5**: Transmission Media
+- **CompTIA Network+ N10-009 Objective 1.5**: Transmission Media
 - **TIA/EIA-568**: Commercial Building Telecommunications Cabling Standard
 - **IEEE 802.3**: Ethernet Standards
-- **Professor Messer**: "Copper Cabling" and "Optical Fiber" - N10-008 Course
+- **Professor Messer**: "Copper Cabling" and "Optical Fiber" - N10-009 Course

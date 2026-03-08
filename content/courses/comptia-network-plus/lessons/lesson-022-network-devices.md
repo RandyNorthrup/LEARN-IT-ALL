@@ -1,7 +1,7 @@
 ---
-id: network-devices
+id: lesson-022-network-devices
 title: Network Devices (Hubs, Switches, Routers, Firewalls, Load Balancers)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 22
 duration: 50
 objectives:
@@ -27,7 +27,7 @@ objectives:
 
 **Network devices** are hardware components that enable connectivity, security, and traffic management in computer networks. Understanding the purpose, operation, and appropriate placement of each device is essential for network design and troubleshooting.
 
-This lesson covers fundamental and advanced network devices tested on the CompTIA Network+ N10-008 exam.
+This lesson covers fundamental and advanced network devices tested on the CompTIA Network+ N10-009 exam.
 
 ---
 
@@ -117,7 +117,62 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 - **Managed:** VLAN, QoS, SNMP, port security features
 - **Smart/Web-managed:** Limited management via web interface
 
+### Managed vs Unmanaged Switches: Detailed Comparison
+
+| Feature | Unmanaged Switch | Managed Switch | Smart/Web-Managed |
+|---|---|---|---|
+| **Configuration** | None (plug & play) | Full CLI/GUI | Limited web GUI |
+| **VLANs** | No | Yes | Basic VLAN support |
+| **QoS** | No | Yes (802.1p, DSCP) | Limited |
+| **Port Security** | No | Yes (MAC filtering, 802.1X) | Some models |
+| **SNMP Monitoring** | No | Yes (v1/v2c/v3) | Basic |
+| **Spanning Tree** | Basic or none | Full (STP/RSTP/MSTP) | Basic STP |
+| **PoE** | Some models | Yes (PoE/PoE+/PoE++) | Some models |
+| **Remote Management** | No | SSH, Telnet, Web | Web only |
+| **Cost** | $50-200 | $500-10,000+ | $150-500 |
+| **Use Case** | Home, small office | Enterprise, data center | Small business |
+
+### Power over Ethernet (PoE) Switches
+
+PoE switches deliver electrical power over Ethernet cables, eliminating the need for separate power supplies:
+
+| Standard | IEEE | Power per Port | Total Power (typical) |
+|---|---|---|---|
+| **PoE** | 802.3af | 15.4W | 150-370W |
+| **PoE+** | 802.3at | 30W | 370-740W |
+| **PoE++** | 802.3bt | 60W (Type 3) / 100W (Type 4) | 1000W+ |
+
+**Common PoE-powered devices:**
+- VoIP phones (PoE: ~7W)
+- Wireless access points (PoE+: ~15-25W)
+- IP cameras (PoE+: ~15-25W)
+- Door access controllers
+- Thin clients
+
+```
+PoE Switch Deployment Example:
+
+    [PoE Switch - 48 ports, 740W budget]
+      |       |       |        |        |
+    [VoIP]  [VoIP]  [WAP]   [Camera] [Camera]
+     7W      7W     22W      15W      15W
+                            Total: 66W of 740W budget
+```
+
 **Use Case:** Standard LAN connectivity (most common network device)
+
+### Switch Selection Criteria
+
+When selecting switches for a network deployment:
+
+1. **Port count and speed:** 8, 24, 48 ports at 1G, 10G, 25G
+2. **Uplink speed:** 10G or higher uplinks to core/distribution
+3. **PoE budget:** Calculate total wattage needed for powered devices
+4. **Management level:** Unmanaged for simple, managed for enterprise
+5. **Layer 2 vs Layer 3:** L3 needed for inter-VLAN routing
+6. **Stackable:** Multiple switches managed as single unit
+7. **Form factor:** Desktop, rack-mount (1U, 2U)
+8. **Redundancy:** Dual power supplies for critical deployments
 
 ---
 
@@ -206,6 +261,80 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 
 ---
 
+### Wireless LAN Controller (WLC)
+
+**Function:** Centrally manages multiple wireless access points
+
+**OSI Layer:** Layer 2-3
+
+**Characteristics:**
+- Manages configuration of all lightweight APs from a single console
+- Provides roaming support across APs (seamless handoff)
+- Centralized security policy enforcement (802.1X, WPA3)
+- RF management (auto channel selection, power adjustment)
+- Guest wireless management with captive portal
+- Firmware updates pushed to all APs simultaneously
+
+**Architecture:**
+```
+             [Wireless LAN Controller]
+              /       |        \
+          [LWAP]   [LWAP]    [LWAP]
+          Floor 1  Floor 2   Floor 3
+           /  \      |  \       |  \
+        Clients  Clients  Clients  Clients
+
+  CAPWAP Tunnel: Control + Data traffic
+  between each LWAP and the WLC
+```
+
+**Autonomous AP vs Lightweight AP (with WLC):**
+
+| Feature | Autonomous AP | Lightweight AP + WLC |
+|---|---|---|
+| **Configuration** | Individual per AP | Centralized on WLC |
+| **Firmware Updates** | Manual per AP | Automatic from WLC |
+| **Roaming** | Limited | Seamless |
+| **RF Management** | Manual | Automatic |
+| **Scalability** | Poor (10+ APs) | Excellent (1000s of APs) |
+| **Cost** | Lower (small scale) | Higher but efficient at scale |
+
+**Use Case:** Enterprise campus, large office, hospitality, education
+
+---
+
+### Content Filter/Web Filter
+
+**Function:** Controls access to web content based on policies
+
+**OSI Layer:** Layer 7 (Application)
+
+**Characteristics:**
+- Blocks websites by category (gambling, adult, social media)
+- URL filtering and domain blacklisting/whitelisting
+- Can inspect HTTPS traffic (SSL/TLS decryption)
+- User and group-based policies
+- Logging and reporting of web activity
+
+**Deployment Options:**
+- **On-premises appliance:** Hardware device inline with traffic
+- **Cloud-based:** DNS-level filtering (e.g., Cisco Umbrella, OpenDNS)
+- **Proxy-based:** Integrated with proxy server
+- **Endpoint agent:** Software on each device
+
+**Example Policies:**
+```
+ Rule 1: Block category "Gambling" for all users
+ Rule 2: Allow category "Social Media" for Marketing group only
+ Rule 3: Block file downloads > 100MB during business hours
+ Rule 4: Allow all categories for IT Admin group
+ Rule 5: Log all HTTPS traffic for compliance
+```
+
+**Use Case:** Corporate policy enforcement, CIPA compliance (schools/libraries), parental controls
+
+---
+
 ## Security Devices
 
 ### Firewall
@@ -243,6 +372,56 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 **Deployment:**
 - **Network firewall:** Between zones (DMZ, internal, external)
 - **Host firewall:** On individual computers (Windows Firewall)
+
+### Firewall Deployment Topologies
+
+**Single Firewall with DMZ (Three-Legged):**
+```
+        [Internet]
+            |
+        [Firewall]
+       /     |     \
+  Outside   DMZ    Inside
+  Zone     Zone    Zone
+   |        |        |
+  WAN    Web/Mail   LAN
+         Servers   Users
+```
+
+**Dual Firewall DMZ (Sandwich Architecture):**
+```
+        [Internet]
+            |
+    [Outer Firewall]  ← Less restrictive
+            |
+          [DMZ]
+       Web Servers
+       Mail Servers
+            |
+    [Inner Firewall]  ← More restrictive
+            |
+       [Internal LAN]
+       User Workstations
+       Database Servers
+```
+
+**Firewall Rule Example (ACL-style):**
+
+| Rule # | Action | Source | Destination | Protocol | Port | Description |
+|---|---|---|---|---|---|---|
+| 1 | PERMIT | Any | DMZ Web Server | TCP | 80, 443 | Allow web traffic |
+| 2 | PERMIT | Internal | Any | TCP | 80, 443 | Allow outbound web |
+| 3 | PERMIT | Internal | DNS Server | UDP | 53 | Allow DNS queries |
+| 4 | DENY | DMZ | Internal | Any | Any | Block DMZ to LAN |
+| 5 | DENY | Any | Any | Any | Any | Implicit deny all |
+
+**Firewall Selection Criteria:**
+- **Throughput:** Gbps capacity with full inspection enabled
+- **Concurrent sessions:** How many active connections supported
+- **VPN capacity:** Number of simultaneous VPN tunnels
+- **Features:** IPS, URL filtering, application control, sandboxing
+- **High availability:** Active/passive or active/active failover
+- **Management:** Central management for multiple firewalls
 
 **Use Case:** Protect network perimeter, segment internal networks
 
@@ -351,6 +530,61 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 
 **Use Case:** Web servers, application servers, high-availability systems
 
+### Layer 4 vs Layer 7 Load Balancing
+
+| Feature | Layer 4 (Transport) | Layer 7 (Application) |
+|---|---|---|
+| **Decision Based On** | IP address, TCP/UDP port | URL, HTTP headers, cookies, content |
+| **Speed** | Faster (less inspection) | Slower (deep inspection) |
+| **SSL Termination** | No (pass-through) | Yes (offloads SSL from servers) |
+| **Content Routing** | No | Yes (route /api to API servers, /images to CDN) |
+| **Session Persistence** | Source IP only | Cookie-based, URL-based |
+| **Use Case** | Simple TCP services, databases | Web applications, microservices |
+
+**Layer 7 Load Balancing Example:**
+```
+  Client Request: https://app.example.com/api/users
+                         |
+                  [L7 Load Balancer]
+                  Inspects URL path
+                   /          \
+             /api/*          /static/*
+               |                |
+        [API Server Pool]  [CDN/Static Servers]
+        Server 1, 2, 3    Server A, B
+```
+
+### Load Balancer Deployment Architecture
+
+```
+              [Internet]
+                  |
+             [Firewall]
+                  |
+          [Load Balancer Pair]
+          Active / Standby
+            /    |    \
+        [Web1] [Web2] [Web3]
+                  |
+          [App Load Balancer]
+            /    |    \
+        [App1] [App2] [App3]
+                  |
+          [Database Cluster]
+        Primary / Replica
+```
+
+**Health Check Types:**
+- **ICMP Ping:** Basic connectivity check
+- **TCP Connect:** Verifies port is open
+- **HTTP GET:** Checks for specific response code (200 OK)
+- **Custom Script:** Application-specific health verification
+
+**Session Persistence (Sticky Sessions):**
+- Ensures a client always reaches the same server
+- Methods: Source IP hash, cookie insertion, URL parameter
+- Important for applications that store state locally
+
 ---
 
 ### Content Delivery Network (CDN)
@@ -451,10 +685,74 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 | Firewall | 3-7 | Filter traffic | Varies | Varies |
 | IDS/IPS | 2-7 | Detect/prevent threats | N/A (monitor/inline) | N/A |
 | Load Balancer | 4/7 | Distribute traffic | Varies | Varies |
+| WAP | 2 | Wireless connectivity | Shared (wireless) | 1 per SSID/VLAN |
+| WLC | 2-3 | Manage APs centrally | N/A | N/A |
+| Proxy Server | 7 | Intermediary for web | N/A | N/A |
+| Content Filter | 7 | Control web access | N/A | N/A |
+| VPN Concentrator | 3-7 | Terminate VPN tunnels | N/A | N/A |
+
+### Multi-Vendor Device Management Comparison
+
+Network engineers must manage devices from multiple vendors. While concepts are the same, each vendor has its own CLI and management model:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | HP/Aruba |
+|------|-----------|---------------|------------|----------|
+| Access CLI | `enable` → `configure terminal` | `cli` → `configure` | `enable` → `configure terminal` | `enable` → `configure terminal` |
+| Show running config | `show running-config` | `show configuration` | `show running-config` | `show running-config` |
+| Save config | `copy running-config startup-config` | `commit` (auto-saves) | `copy running-config startup-config` | `write memory` |
+| Rollback config | `configure replace` (limited) | `rollback 1` (built-in) | `configure replace` | `cfg-restore` |
+| Show interfaces | `show ip interface brief` | `show interfaces terse` | `show ip interface brief` | `show interfaces brief` |
+| Show version | `show version` | `show version` | `show version` | `show version` |
+| Show logs | `show logging` | `show log messages` | `show logging` | `show logging` |
+| Config model | Imperative (changes apply immediately) | Candidate-commit (stage → commit) | Imperative (like Cisco) | Imperative |
+
+> **Key Insight:** Juniper's **candidate-commit model** is considered safer for production networks — you stage all changes in a candidate configuration, review them with `show | compare`, then apply atomically with `commit`. If something breaks, `rollback 1` instantly reverts. Cisco and Arista apply changes immediately as you type them.
 
 ---
 
-## Key Takeaways
+## Device Selection and Placement Guide
+
+Choosing the right network device depends on several factors. Here is a decision framework:
+
+### By Network Tier
+
+```
+                        [Internet]
+                            |
+  PERIMETER TIER:     [Firewall/NGFW] + [IDS/IPS]
+                            |
+  DMZ TIER:           [Load Balancer] → [Web Servers]
+                      [Reverse Proxy]
+                      [Content Filter]
+                            |
+  CORE TIER:          [Core L3 Switch] (routing between VLANs)
+                      [WAN Router] (branch connectivity)
+                            |
+  DISTRIBUTION TIER:  [Distribution L3 Switches]
+                      [Wireless LAN Controller]
+                            |
+  ACCESS TIER:        [Access L2 Switches (PoE)]
+                      [Wireless APs]
+                      [VoIP Phones]
+```
+
+### Device Selection by Requirement
+
+| Requirement | Primary Device | Alternative |
+|---|---|---|
+| Connect 48 users to LAN | 48-port managed switch | Stackable switches |
+| Provide WiFi for 200 users | WLC + lightweight APs | Autonomous APs (small scale) |
+| Block unauthorized internet access | NGFW or content filter | Proxy server |
+| Distribute web traffic across servers | Load balancer | DNS round-robin |
+| Connect branch office to HQ | Router with VPN | SD-WAN appliance |
+| Monitor for intrusions | IDS (passive) | IPS (active blocking) |
+| Route between VLANs | Layer 3 switch | Router-on-a-stick |
+| Power IP phones and cameras | PoE+ switch (802.3at) | PoE injectors |
+| Centralize file storage | NAS | SAN (block-level) |
+
+---
+
+## Summary
 
 1. **Hubs** are obsolete (replaced by switches)
 2. **Switches** forward frames based on MAC addresses (Layer 2)
@@ -468,62 +766,79 @@ This lesson covers fundamental and advanced network devices tested on the CompTI
 
 ## Practice Questions
 
-**1. At which OSI layer does a router operate?**
-- A) Layer 1
-- B) Layer 2
-- C) Layer 3 ✓
-- D) Layer 7
 
-**Answer:** C - Routers operate at Layer 3 (Network Layer), making forwarding decisions based on IP addresses.
+**Q1.** At which OSI layer does a router operate?
 
----
+A) Layer 1
+B) Layer 2
+C) Layer 3
+D) Layer 7
 
-**2. What is the primary difference between an IDS and an IPS?**
-- A) IDS operates at Layer 2, IPS at Layer 3
-- B) IDS monitors and alerts, IPS blocks traffic ✓
-- C) IDS is faster than IPS
-- D) IPS cannot detect zero-day attacks
+<details>
+<summary>Answer</summary>
 
-**Answer:** B - IDS (Intrusion Detection System) passively monitors and alerts, while IPS (Intrusion Prevention System) actively blocks malicious traffic inline.
+**C)** ** C - Routers operate at Layer 3 (Network Layer), making forwarding decisions based on IP addresses.
+</details>
 
----
+**Q2.** What is the primary difference between an IDS and an IPS?
 
-**3. Which device creates a separate collision domain for each port?**
-- A) Hub
-- B) Switch ✓
-- C) Repeater
-- D) Bridge (per segment, not per port)
+A) IDS operates at Layer 2, IPS at Layer 3
+B) IDS monitors and alerts, IPS blocks traffic
+C) IDS is faster than IPS
+D) IPS cannot detect zero-day attacks
 
-**Answer:** B - Switches create a separate collision domain for each port, allowing full-duplex communication and eliminating collisions.
+<details>
+<summary>Answer</summary>
 
----
+**B)** ** B - IDS (Intrusion Detection System) passively monitors and alerts, while IPS (Intrusion Prevention System) actively blocks malicious traffic inline.
+</details>
 
-**4. What is the primary function of a load balancer?**
-- A) Filter traffic based on security rules
-- B) Distribute traffic across multiple servers ✓
-- C) Convert analog signals to digital
-- D) Encrypt network traffic
+**Q3.** Which device creates a separate collision domain for each port?
 
-**Answer:** B - Load balancers distribute incoming traffic across multiple servers to improve performance, reliability, and availability.
+A) Hub
+B) Switch
+C) Repeater
+D) Bridge (per segment, not per port)
 
----
+<details>
+<summary>Answer</summary>
 
-**5. Which type of firewall can inspect application-layer protocols?**
-- A) Packet-filtering firewall
-- B) Stateful firewall
-- C) Next-Generation Firewall (NGFW) ✓
-- D) Circuit-level firewall
+**B)** ** B - Switches create a separate collision domain for each port, allowing full-duplex communication and eliminating collisions.
+</details>
 
-**Answer:** C - Next-Generation Firewalls (NGFWs) perform deep packet inspection at Layer 7 (Application Layer), allowing them to identify and control specific applications.
+**Q4.** What is the primary function of a load balancer?
 
----
+A) Filter traffic based on security rules
+B) Distribute traffic across multiple servers
+C) Convert analog signals to digital
+D) Encrypt network traffic
+
+<details>
+<summary>Answer</summary>
+
+**B)** ** B - Load balancers distribute incoming traffic across multiple servers to improve performance, reliability, and availability.
+</details>
+
+**Q5.** Which type of firewall can inspect application-layer protocols?
+
+A) Packet-filtering firewall
+B) Stateful firewall
+C) Next-Generation Firewall (NGFW)
+D) Circuit-level firewall
+
+<details>
+<summary>Answer</summary>
+
+**C)** ** C - Next-Generation Firewalls (NGFWs) perform deep packet inspection at Layer 7 (Application Layer), allowing them to identify and control specific applications.
+</details>
+
 
 ## References
 
-- **CompTIA Network+ N10-008 Objective 2.1:** Compare and contrast various devices, their features, and their appropriate placement on the network
-- **CompTIA Network+ N10-008 Objective 2.3:** Explain the purposes and use cases for advanced networking devices
+- **CompTIA Network+ N10-009 Objective 2.1:** Compare and contrast various devices, their features, and their appropriate placement on the network
+- **CompTIA Network+ N10-009 Objective 2.3:** Explain the purposes and use cases for advanced networking devices
 - Cisco CCNA: Network Devices Overview
-- Professor Messer: Network+ N10-008 - Network Devices
+- Professor Messer: Network+ N10-009 - Network Devices
 
 ---
 

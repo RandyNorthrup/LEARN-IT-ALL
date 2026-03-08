@@ -1,5 +1,5 @@
 ---
-id: function-scope
+id: lesson-072-function-scope
 title: Function Scope and Variable Visibility
 chapterId: ch6-functions
 order: 4

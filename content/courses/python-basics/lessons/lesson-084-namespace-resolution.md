@@ -1,8 +1,8 @@
 ---
-id: namespace-resolution
+id: lesson-084-namespace-resolution
 title: Namespace and Scope Resolution
 chapterId: ch7-scope
-order: 3
+order: 4
 duration: 25
 objectives:
   - Understand Python namespaces
@@ -222,13 +222,13 @@ print(dir(name))
 Returns `__dict__` attribute of an object:
 
 ```python
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+# Without arguments, vars() is like locals()
+def show_vars():
+    name = "Alice"
+    age = 25
+    print(vars())
 
-person = Person("Alice", 25)
-print(vars(person))
+show_vars()
 # {'name': 'Alice', 'age': 25}
 ```
 

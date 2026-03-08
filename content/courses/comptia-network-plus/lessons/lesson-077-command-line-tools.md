@@ -1,9 +1,9 @@
 ---
-id: "lesson-077"
+id: lesson-077-command-line-tools
 title: "Command-Line Troubleshooting Tools"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 77
-duration: 25
+duration: 60
 objectives:
   - "Use ping to test network connectivity and measure latency"
   - "Analyze traceroute/tracert output to identify routing issues"
@@ -18,6 +18,17 @@ objectives:
 Command-line tools are the foundation of network troubleshooting. These utilities provide direct access to network functions and generate detailed diagnostic information that helps identify connectivity issues, routing problems, and configuration errors. Network administrators rely on these tools daily for quick diagnostics and problem resolution.
 
 In this lesson, we'll explore the essential command-line tools that every network professional must master: **ping**, **traceroute/tracert**, **ipconfig/ifconfig**, and **pathping/mtr**. These tools work on various operating systems and provide critical insights into network behavior.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Use ping to test network connectivity and measure latency
+- Analyze traceroute/tracert output to identify routing issues
+- Interpret ipconfig/ifconfig output for IP configuration troubleshooting
+- Apply command-line tools to diagnose common network problems
 
 ---
 
@@ -1103,9 +1114,143 @@ These tools form the foundation of network troubleshooting. Master them to quick
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** A technician pings 8.8.8.8 successfully but cannot ping google.com. What is the most likely cause?
+
+A) The default gateway is incorrect
+B) The NIC is disabled
+C) DNS resolution is failing
+D) The ISP connection is down
+
+<details>
+<summary>Answer</summary>
+
+**C)** If pinging an IP address works but pinging a hostname fails, the issue is DNS resolution. The device can reach the internet but cannot translate domain names to IP addresses.
+</details>
+
+**Q2.** What does a "TTL expired in transit" message from ping indicate?
+
+A) The destination host is down
+B) The packet exceeded its Time to Live before reaching the destination
+C) The DNS server is unreachable
+D) The firewall is blocking ICMP
+
+<details>
+<summary>Answer</summary>
+
+**B)** "TTL expired in transit" means the packet's TTL counter reached 0 before arriving at the destination, which typically indicates a routing loop or an excessively long path.
+</details>
+
+**Q3.** A technician runs `ping 127.0.0.1` and receives no reply. What does this indicate?
+
+A) The network cable is unplugged
+B) The TCP/IP stack on the local machine is not functioning
+C) The default gateway is unreachable
+D) The DNS server is down
+
+<details>
+<summary>Answer</summary>
+
+**B)** 127.0.0.1 is the loopback address that tests the local TCP/IP stack. If this fails, the network stack itself has a problem—reinstalling network drivers or the TCP/IP stack may be needed.
+</details>
+
+**Q4.** Which command is used to trace the path packets take to a destination on a Windows system?
+
+A) traceroute
+B) tracert
+C) pathping
+D) mtr
+
+<details>
+<summary>Answer</summary>
+
+**B)** Windows uses `tracert` (traceroute on Linux/macOS). It sends packets with incrementing TTL values to discover each router hop along the path.
+</details>
+
+**Q5.** In a traceroute output, one hop shows `* * *` for all three probes. What does this mean?
+
+A) The destination has been reached
+B) That router is not responding to the traceroute probes
+C) There is definitely a network outage at that hop
+D) The packet was delivered successfully
+
+<details>
+<summary>Answer</summary>
+
+**B)** Asterisks indicate the router did not respond within the timeout period. This can be caused by firewalls blocking ICMP, rate limiting, or the router being configured not to respond—it does not necessarily indicate an outage.
+</details>
+
+**Q6.** Which `ipconfig` command releases the current DHCP-assigned IP address on Windows?
+
+A) ipconfig /flushdns
+B) ipconfig /renew
+C) ipconfig /release
+D) ipconfig /all
+
+<details>
+<summary>Answer</summary>
+
+**C)** `ipconfig /release` releases the current DHCP lease, removing the IP address configuration. It is typically followed by `ipconfig /renew` to obtain a new address.
+</details>
+
+**Q7.** What is the primary advantage of pathping over a standard traceroute?
+
+A) It completes faster
+B) It uses TCP instead of ICMP
+C) It combines traceroute with sustained ping to show packet loss at each hop
+D) It works without administrator privileges
+
+<details>
+<summary>Answer</summary>
+
+**C)** pathping first performs a traceroute to discover the path, then sends multiple pings to each hop over a period of time to measure packet loss and latency statistics at each router.
+</details>
+
+**Q8.** A ping to the default gateway succeeds, but a ping to an external IP address fails. Where is the problem most likely located?
+
+A) Between the workstation and the switch
+B) At the local NIC
+C) Between the gateway and the internet (routing, NAT, or firewall)
+D) At the DNS server
+
+<details>
+<summary>Answer</summary>
+
+**C)** If the gateway is reachable but external IPs are not, the problem lies beyond the gateway—likely a routing issue, NAT misconfiguration, firewall rule, or ISP problem.
+</details>
+
+**Q9.** Which ping option on Windows sends packets continuously until manually stopped?
+
+A) ping -n 100
+B) ping -t
+C) ping -l 1500
+D) ping -i 1
+
+<details>
+<summary>Answer</summary>
+
+**B)** The `-t` flag on Windows sends ICMP Echo Requests continuously until stopped with Ctrl+C. This is useful for monitoring intermittent connectivity issues.
+</details>
+
+**Q10.** What is the Linux equivalent of the Windows `ipconfig` command for viewing IP configuration?
+
+A) netstat
+B) ifconfig or ip addr
+C) traceroute
+D) nslookup
+
+<details>
+<summary>Answer</summary>
+
+**B)** Linux uses `ifconfig` (legacy) or `ip addr` (modern) to display IP configuration. The `ip` command is the recommended modern replacement.
+</details>
+
+---
+
+## References
 
 - **RFC 792**: Internet Control Message Protocol (ICMP) - https://tools.ietf.org/html/rfc792
 - **RFC 1122**: Requirements for Internet Hosts - Communication Layers - https://tools.ietf.org/html/rfc1122
 - **RFC 2151**: A Primer On Internet and TCP/IP Tools and Utilities - https://tools.ietf.org/html/rfc2151
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.3 - Use the appropriate tool
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.3 - Use the appropriate tool

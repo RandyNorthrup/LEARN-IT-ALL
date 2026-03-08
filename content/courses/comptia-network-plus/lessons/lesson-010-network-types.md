@@ -1,5 +1,5 @@
 ---
-id: network-types
+id: lesson-010-network-types
 title: Network Types and Classifications
 chapterId: ch1-networking-fundamentals
 order: 10
@@ -650,6 +650,97 @@ A **Storage Area Network** is a dedicated high-speed network for storage devices
 
 ---
 
+## Internet of Things (IoT) Networks
+
+### What Is IoT?
+
+The **Internet of Things (IoT)** refers to the vast network of physical devices — sensors, actuators, embedded systems, and everyday objects — that are equipped with network connectivity, allowing them to collect and exchange data. IoT extends internet connectivity beyond traditional computers and smartphones to items like thermostats, door locks, medical devices, and industrial machinery.
+
+IoT devices typically share common traits: limited processing power, low memory, constrained battery life, and the need for lightweight communication protocols. The sheer scale of IoT deployments — billions of devices worldwide — introduces unique networking and security challenges.
+
+### IoT Protocols
+
+Because IoT devices are resource-constrained, they rely on lightweight protocols optimized for low bandwidth and power:
+
+**MQTT (Message Queuing Telemetry Transport):**
+- Lightweight **publish/subscribe** messaging protocol
+- Designed for constrained devices and unreliable networks
+- Uses a central **broker** to relay messages between publishers and subscribers
+- Runs over TCP, minimal overhead
+- Common in smart home and industrial telemetry applications
+
+**CoAP (Constrained Application Protocol):**
+- RESTful protocol designed for constrained nodes
+- Runs over **UDP** (lightweight alternative to HTTP)
+- Supports GET, PUT, POST, DELETE methods
+- Built-in resource discovery
+
+**Zigbee (IEEE 802.15.4):**
+- Low-power, low-data-rate wireless protocol
+- Operates at **2.4 GHz** (global), 868 MHz (Europe), 915 MHz (Americas)
+- Supports **mesh networking** — devices relay traffic for each other
+- Speed: 250 kbps; Range: 10-100 meters
+- Common in smart lighting (Philips Hue), sensors, and home automation
+
+**Z-Wave:**
+- **Sub-1 GHz** frequency band (908 MHz in the US) — less interference than 2.4 GHz
+- Designed specifically for **home automation**
+- Mesh networking with up to 232 devices per network
+- Low power consumption, reliable in-building range
+
+**Bluetooth Low Energy (BLE):**
+- Extension of Bluetooth optimized for low power consumption
+- Short bursts of data transfer
+- Common in wearables, medical devices, beacons, and asset tracking
+- Range: up to 100 meters (Bluetooth 5.0)
+
+### IoT Network Architecture
+
+IoT deployments follow a layered architecture:
+
+```
+[Edge Devices / Sensors]  →  [Gateways]  →  [Cloud / Data Center]
+  (temperature, motion,       (aggregate,       (storage, analytics,
+   cameras, locks)             translate,         dashboards)
+                               filter data)
+```
+
+**Hub-and-spoke model:** IoT devices (spokes) connect to a local **gateway or hub** that aggregates data before forwarding it to the cloud. This reduces the number of direct internet connections and conserves bandwidth.
+
+**Fog / Edge computing:** Processing occurs closer to the data source — at the gateway or edge device — rather than sending everything to the cloud. This reduces latency, conserves bandwidth, and allows real-time decision-making (e.g., shutting off a valve immediately when a pressure threshold is exceeded).
+
+### IoT Security Concerns
+
+IoT devices are notorious targets for attackers. Common vulnerabilities include:
+
+- **Default credentials:** Many IoT devices ship with factory-set usernames and passwords (e.g., admin/admin) that are never changed
+- **Unpatched firmware:** Manufacturers may not provide updates, or devices lack automatic update mechanisms
+- **Lack of encryption:** Some devices transmit data in plain text due to processing constraints
+- **Botnet recruitment:** The **Mirai** botnet demonstrated how compromised IoT devices (cameras, routers) can be weaponized for massive DDoS attacks
+- **Large attack surface:** Every connected device is a potential entry point into the network
+
+**Mitigation strategies:**
+- **Network segmentation:** Place IoT devices on a separate **VLAN** isolated from production and user networks
+- Change default credentials immediately upon deployment
+- Regularly update and patch firmware
+- Disable unused services and ports on IoT devices
+- Monitor IoT traffic for anomalies
+- Use encrypted protocols whenever the device supports them
+
+### IoT in Enterprise Networks
+
+IoT is increasingly prevalent in enterprise and industrial environments:
+
+- **Smart building systems:** HVAC controls, automated lighting, environmental sensors, and energy management
+- **Physical security:** IP cameras, electronic badge readers, smart locks
+- **Industrial Control Systems (ICS/SCADA):** Supervisory Control and Data Acquisition systems that manage manufacturing processes, power grids, and water treatment facilities
+- **Healthcare:** Patient monitors, infusion pumps, asset tracking tags
+- **Retail:** Point-of-sale terminals, inventory sensors, digital signage
+
+In all cases, IoT devices should be treated as **untrusted endpoints** and segmented from critical network infrastructure.
+
+---
+
 ## Summary
 
 Networks are classified by geographic scope and purpose:
@@ -676,10 +767,144 @@ Networks are classified by geographic scope and purpose:
 
 ---
 
+## Practice Questions
+
+**Q1.** A user connects their smartphone to wireless earbuds using Bluetooth. What type of network does this create?
+
+A) LAN
+B) PAN
+C) MAN
+D) WAN
+
+<details>
+<summary>Answer</summary>
+
+**B)** A PAN (Personal Area Network) connects personal devices within a very short range, typically within 10 meters. Bluetooth connections between a smartphone and earbuds, wireless keyboards, or fitness trackers are classic PAN examples. LANs cover buildings, MANs cover cities, and WANs span large geographic areas.
+</details>
+
+**Q2.** A company has offices in New York, London, and Tokyo connected through leased MPLS circuits. What type of network connects these offices?
+
+A) LAN
+B) CAN
+C) MAN
+D) WAN
+
+<details>
+<summary>Answer</summary>
+
+**D)** A WAN (Wide Area Network) connects networks across large geographic areas, including different cities and countries. MPLS circuits, VPN tunnels over the Internet, and leased lines are common WAN technologies. LANs are single-building networks, CANs cover a campus, and MANs cover a metropolitan area.
+</details>
+
+**Q3.** A university connects multiple buildings across its grounds using fiber optic backbone links. What type of network is this?
+
+A) PAN
+B) LAN
+C) CAN
+D) WAN
+
+<details>
+<summary>Answer</summary>
+
+**C)** A CAN (Campus Area Network) connects multiple buildings within a limited geographic area such as a university campus, corporate campus, or military base. It is larger than a single LAN but smaller than a MAN. CANs typically use high-speed fiber optic backbone connections between buildings.
+</details>
+
+**Q4.** Which network type provides dedicated high-speed storage connectivity using protocols like Fibre Channel and iSCSI?
+
+A) LAN
+B) WAN
+C) SAN
+D) PAN
+
+<details>
+<summary>Answer</summary>
+
+**C)** A SAN (Storage Area Network) is a dedicated high-speed network specifically designed for storage traffic. SANs use protocols like Fibre Channel (FC), iSCSI, and FCoE to provide block-level storage access to servers. SANs are separate from the general-purpose LAN to ensure storage performance is not affected by regular network traffic.
+</details>
+
+**Q5.** A city government deploys a fiber optic network spanning the entire metropolitan area to provide connectivity between government buildings, libraries, and public services. What type of network is this?
+
+A) LAN
+B) CAN
+C) MAN
+D) WAN
+
+<details>
+<summary>Answer</summary>
+
+**C)** A MAN (Metropolitan Area Network) covers a city or metropolitan area, typically spanning up to about 50 km. Metro Ethernet and fiber optic rings are common MAN technologies. MANs are larger than CANs (campus) but smaller than WANs (multi-city/country). City-wide government networks are a classic MAN use case.
+</details>
+
+**Q6.** Which statement correctly describes the relationship between network type and speed?
+
+A) WANs are generally faster than LANs
+B) LANs are generally faster than WANs due to shorter distances and private ownership
+C) All network types have the same speed
+D) PANs are the fastest network type
+
+<details>
+<summary>Answer</summary>
+
+**B)** LANs generally offer higher speeds than WANs because they cover shorter distances, use high-speed technologies like Gigabit/10G Ethernet, and are privately owned. WAN connections are typically slower and more expensive because they must traverse long distances, often over leased circuits. As network scope increases, speed generally decreases and cost increases.
+</details>
+
+**Q7.** An employee working from home connects to their company's internal network securely over the Internet. What technology is most likely being used?
+
+A) SAN
+B) PAN
+C) VPN
+D) NFC
+
+<details>
+<summary>Answer</summary>
+
+**C)** A VPN (Virtual Private Network) creates a secure, encrypted tunnel over a public network (the Internet) to connect remote users to a private corporate network. This allows employees to access internal resources as if they were on the LAN. SANs are for storage, PANs are short-range personal networks, and NFC is a very short-range wireless technology.
+</details>
+
+**Q8.** What does WLAN stand for, and what technology does it primarily use?
+
+A) Wide Local Area Network, using Ethernet
+B) Wireless Local Area Network, using Wi-Fi (IEEE 802.11)
+C) Wired Local Area Network, using fiber optic
+D) Wireless Large Area Network, using cellular
+
+<details>
+<summary>Answer</summary>
+
+**B)** WLAN stands for Wireless Local Area Network and primarily uses Wi-Fi technology based on the IEEE 802.11 standards. WLANs provide network connectivity within a building or campus without physical cables, using radio frequencies in the 2.4 GHz, 5 GHz, and 6 GHz bands.
+</details>
+
+**Q9.** A small business has a single office with 10 computers, a printer, and a router. What type of network describes this setup?
+
+A) WAN
+B) MAN
+C) SOHO LAN
+D) SAN
+
+<details>
+<summary>Answer</summary>
+
+**C)** This describes a SOHO (Small Office/Home Office) LAN. SOHO networks typically have 1-20 devices, use a single router or switch, and employ consumer-grade equipment. LANs cover a single building or limited area and are privately owned. WANs and MANs cover much larger geographic areas, and SANs are dedicated storage networks.
+</details>
+
+**Q10.** Which technology is used for contactless mobile payments and operates at a range of less than 10 cm?
+
+A) Bluetooth
+B) Zigbee
+C) NFC
+D) Wi-Fi
+
+<details>
+<summary>Answer</summary>
+
+**C)** NFC (Near Field Communication) operates at a range of less than 10 cm and is used for contactless payments (Apple Pay, Google Pay), device pairing, and small data exchanges. Bluetooth has a range of up to 10-100 meters, Zigbee is for IoT/smart home devices, and Wi-Fi has a range of 30-100 meters indoors.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.2**: Network types and characteristics
+- **CompTIA Network+ N10-009 Objective 1.2**: Network types and characteristics
 - **IEEE 802.3**: Ethernet (LAN)
 - **IEEE 802.11**: Wireless LAN (WLAN)
 - **IEEE 802.16**: WiMAX (MAN)
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course

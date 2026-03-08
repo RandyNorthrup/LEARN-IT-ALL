@@ -1,5 +1,5 @@
 ---
-id: "85-short-circuit-evaluation"
+id: lesson-047-short-circuit-evaluation
 title: "Short-Circuit Evaluation"
 chapterId: ch4-comparisons
 order: 7
@@ -111,36 +111,32 @@ print(f"Result: {result}")
 
 ## Practical Applications
 
-### Safe Attribute Access
+### Safe Key Access in Nested Dictionaries
 
 ```python
-# Problem: Accessing nested attributes can cause errors
+# Problem: Accessing nested keys can cause errors
 user = None
 
-# ❌ This will raise AttributeError
-# name = user.profile.name
+# ❌ This will raise TypeError
+# name = user["profile"]["name"]
 
 # ✅ Short-circuit saves us
-name = user and user.profile and user.profile.name
+name = user and user.get("profile") and user["profile"].get("name")
 print(name)  # None (safely handled)
 
 # When user exists
-class Profile:
-    def __init__(self, name):
-        self.name = name
-
-class User:
-    def __init__(self, profile):
-        self.profile = profile
-
-user = User(Profile("Alice"))
-name = user and user.profile and user.profile.name
+user = {"profile": {"name": "Alice"}}
+name = user and user.get("profile") and user["profile"].get("name")
 print(name)  # "Alice"
 
-# Alternative: getattr with default
+# Alternative: chained .get() with defaults
 user = None
-name = getattr(getattr(user, 'profile', None), 'name', 'Unknown')
+name = (user or {}).get("profile", {}).get("name", "Unknown")
 print(name)  # "Unknown"
+
+user = {"profile": {"name": "Alice"}}
+name = (user or {}).get("profile", {}).get("name", "Unknown")
+print(name)  # "Alice"
 ```
 
 ### Avoiding Division by Zero
@@ -185,8 +181,8 @@ valid = {"email": "alice@example.com"}
 print(validate_user(valid))  # True
 
 # Invalid users (stops early)
-print(validate_user(None))              # False (stops at first check)
-print(validate_user({}))                # False (stops at 'email' in user)
+print(validate_user(None))              # None (None is falsy, short-circuits)
+print(validate_user({}))                # {} (empty dict is falsy, short-circuits)
 print(validate_user({"email": ""}))    # False (stops at len check)
 print(validate_user({"email": "bad"})) # False (stops at @ check)
 ```
@@ -283,11 +279,10 @@ print(find_first_valid_short(None, "", 0, "Found!", "Ignored"))
 
 # More concise with reduce
 from functools import reduce
-import operator
 
 def find_first_valid_reduce(*args):
-    """Using reduce with OR."""
-    return reduce(operator.or_, args, None)
+    """Using reduce with logical OR."""
+    return reduce(lambda a, b: a or b, args)
 
 print(find_first_valid_reduce(None, "", 0, "Found!", "Ignored"))
 # "Found!"

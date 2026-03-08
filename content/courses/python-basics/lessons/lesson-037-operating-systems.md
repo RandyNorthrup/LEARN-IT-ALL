@@ -1,8 +1,8 @@
 ---
-id: "79-operating-systems"
+id: lesson-037-operating-systems
 title: "Operating Systems Basics"
 chapterId: ch3-computing
-order: 10
+order: 11
 duration: 30
 objectives:
   - Understand what operating systems do and why they're needed
@@ -111,87 +111,88 @@ def explain_processes():
 
 explain_processes()
 
-class Process:
-    """Simulate a process."""
+_next_pid = [1000]  # Counter for process IDs
+
+def create_process(name, parent_pid=None):
+    """Create a process simulation."""
+    pid = _next_pid[0]
+    _next_pid[0] += 1
     
-    next_pid = 1000
-    
-    def __init__(self, name, parent_pid=None):
-        self.pid = Process.next_pid
-        Process.next_pid += 1
-        
-        self.name = name
-        self.parent_pid = parent_pid
-        self.state = "New"
-        self.memory_mb = 0
-        self.cpu_time = 0
-        self.files = []
-        self.created_at = time.time()
-    
-    def start(self):
-        """Start process."""
-        self.state = "Ready"
-        print(f"Process {self.pid} ({self.name}) started")
-    
-    def run(self, duration):
-        """Simulate running."""
-        self.state = "Running"
-        print(f"Process {self.pid} ({self.name}) running for {duration}s")
-        self.cpu_time += duration
-    
-    def wait_io(self):
-        """Wait for I/O."""
-        self.state = "Waiting"
-        print(f"Process {self.pid} ({self.name}) waiting for I/O")
-    
-    def allocate_memory(self, mb):
-        """Allocate memory."""
-        self.memory_mb += mb
-        print(f"Process {self.pid} allocated {mb} MB (total: {self.memory_mb} MB)")
-    
-    def open_file(self, filename):
-        """Open file."""
-        self.files.append(filename)
-        print(f"Process {self.pid} opened file: {filename}")
-    
-    def terminate(self):
-        """Terminate process."""
-        self.state = "Terminated"
-        print(f"Process {self.pid} ({self.name}) terminated")
-    
-    def get_info(self):
-        """Get process information."""
-        return {
-            'pid': self.pid,
-            'name': self.name,
-            'state': self.state,
-            'parent_pid': self.parent_pid,
-            'memory_mb': self.memory_mb,
-            'cpu_time': self.cpu_time,
-            'open_files': len(self.files),
-        }
+    return {
+        'pid': pid,
+        'name': name,
+        'parent_pid': parent_pid,
+        'state': "New",
+        'memory_mb': 0,
+        'cpu_time': 0,
+        'files': [],
+        'created_at': time.time(),
+    }
+
+def process_start(proc):
+    """Start process."""
+    proc['state'] = "Ready"
+    print(f"Process {proc['pid']} ({proc['name']}) started")
+
+def process_run(proc, duration):
+    """Simulate running."""
+    proc['state'] = "Running"
+    print(f"Process {proc['pid']} ({proc['name']}) running for {duration}s")
+    proc['cpu_time'] += duration
+
+def process_wait_io(proc):
+    """Wait for I/O."""
+    proc['state'] = "Waiting"
+    print(f"Process {proc['pid']} ({proc['name']}) waiting for I/O")
+
+def process_allocate_memory(proc, mb):
+    """Allocate memory."""
+    proc['memory_mb'] += mb
+    print(f"Process {proc['pid']} allocated {mb} MB (total: {proc['memory_mb']} MB)")
+
+def process_open_file(proc, filename):
+    """Open file."""
+    proc['files'].append(filename)
+    print(f"Process {proc['pid']} opened file: {filename}")
+
+def process_terminate(proc):
+    """Terminate process."""
+    proc['state'] = "Terminated"
+    print(f"Process {proc['pid']} ({proc['name']}) terminated")
+
+def process_get_info(proc):
+    """Get process information."""
+    return {
+        'pid': proc['pid'],
+        'name': proc['name'],
+        'state': proc['state'],
+        'parent_pid': proc['parent_pid'],
+        'memory_mb': proc['memory_mb'],
+        'cpu_time': proc['cpu_time'],
+        'open_files': len(proc['files']),
+    }
 
 # Simulate processes
 print("\nProcess Simulation:")
-parent = Process("python", parent_pid=1)
-parent.start()
-parent.allocate_memory(50)
-parent.open_file("script.py")
-parent.run(2)
+parent = create_process("python", parent_pid=1)
+process_start(parent)
+process_allocate_memory(parent, 50)
+process_open_file(parent, "script.py")
+process_run(parent, 2)
 
 print()
-child = Process("subprocess", parent_pid=parent.pid)
-child.start()
-child.allocate_memory(10)
-child.run(1)
-child.terminate()
+child = create_process("subprocess", parent_pid=parent['pid'])
+process_start(child)
+process_allocate_memory(child, 10)
+process_run(child, 1)
+process_terminate(child)
 
 print()
-parent.terminate()
+process_terminate(parent)
 
 print("\nProcess Information:")
 for proc in [parent, child]:
-    info = proc.get_info()
+    info = process_get_info(proc)
     print(f"\nPID {info['pid']}: {info['name']}")
     print(f"  State: {info['state']}")
     print(f"  Parent PID: {info['parent_pid']}")
@@ -233,115 +234,116 @@ def explain_threads():
 
 explain_threads()
 
-class Thread:
-    """Simulate a thread."""
+_next_tid = [1]  # Counter for thread IDs
+
+def create_thread(process_pid, name):
+    """Create a thread simulation."""
+    tid = _next_tid[0]
+    _next_tid[0] += 1
     
-    next_tid = 1
-    
-    def __init__(self, process_pid, name):
-        self.tid = Thread.next_tid
-        Thread.next_tid += 1
-        
-        self.process_pid = process_pid
-        self.name = name
-        self.state = "New"
-    
-    def start(self):
-        """Start thread."""
-        self.state = "Running"
-        print(f"Thread {self.tid} ({self.name}) started in process {self.process_pid}")
-    
-    def run_task(self, task):
-        """Run a task."""
-        print(f"Thread {self.tid} executing: {task}")
-    
-    def join(self):
-        """Wait for thread to complete."""
-        self.state = "Terminated"
-        print(f"Thread {self.tid} ({self.name}) completed")
+    return {
+        'tid': tid,
+        'process_pid': process_pid,
+        'name': name,
+        'state': "New",
+    }
+
+def thread_start(thread):
+    """Start thread."""
+    thread['state'] = "Running"
+    print(f"Thread {thread['tid']} ({thread['name']}) started in process {thread['process_pid']}")
+
+def thread_run_task(thread, task):
+    """Run a task."""
+    print(f"Thread {thread['tid']} executing: {task}")
+
+def thread_join(thread):
+    """Wait for thread to complete."""
+    thread['state'] = "Terminated"
+    print(f"Thread {thread['tid']} ({thread['name']}) completed")
 
 # Simulate multi-threading
 print("\nMulti-threading Example:")
 process_pid = 1234
 
-main_thread = Thread(process_pid, "main")
-main_thread.start()
+main_thread = create_thread(process_pid, "main")
+thread_start(main_thread)
 
-worker1 = Thread(process_pid, "worker-1")
-worker1.start()
-worker1.run_task("Download file")
-worker1.join()
+worker1 = create_thread(process_pid, "worker-1")
+thread_start(worker1)
+thread_run_task(worker1, "Download file")
+thread_join(worker1)
 
-worker2 = Thread(process_pid, "worker-2")
-worker2.start()
-worker2.run_task("Process data")
-worker2.join()
+worker2 = create_thread(process_pid, "worker-2")
+thread_start(worker2)
+thread_run_task(worker2, "Process data")
+thread_join(worker2)
 
-main_thread.run_task("Display results")
-main_thread.join()
+thread_run_task(main_thread, "Display results")
+thread_join(main_thread)
 ```
 
 ## Multitasking
 
 ```python
-class ProcessScheduler:
-    """Simulate process scheduling."""
+def create_scheduler():
+    """Create a process scheduler simulation."""
+    return {
+        'processes': [],
+        'current_time': 0,
+    }
+
+def scheduler_add_process(scheduler, process):
+    """Add process to scheduler."""
+    scheduler['processes'].append(process)
+    print(f"Added process {process['pid']} ({process['name']})")
+
+def scheduler_round_robin(scheduler, time_quantum):
+    """Round-robin scheduling."""
+    print(f"\nRound-Robin Scheduling (time quantum: {time_quantum}s):")
+    print("=" * 60)
     
-    def __init__(self):
-        self.processes = []
-        self.current_time = 0
+    ready_queue = [p for p in scheduler['processes'] if p['state'] == "Ready"]
     
-    def add_process(self, process):
-        """Add process to scheduler."""
-        self.processes.append(process)
-        print(f"Added process {process.pid} ({process.name})")
+    while ready_queue:
+        for process in ready_queue[:]:
+            if process['state'] != "Ready":
+                ready_queue.remove(process)
+                continue
+            
+            print(f"\nTime {scheduler['current_time']}s: Running process {process['pid']} ({process['name']})")
+            process['state'] = "Running"
+            process['cpu_time'] += time_quantum
+            scheduler['current_time'] += time_quantum
+            
+            # Simulate random termination
+            if process['cpu_time'] >= 3:
+                process['state'] = "Terminated"
+                ready_queue.remove(process)
+                print(f"  → Process {process['pid']} completed (total CPU: {process['cpu_time']}s)")
+            else:
+                process['state'] = "Ready"
+                print(f"  → Process {process['pid']} preempted (CPU time: {process['cpu_time']}s)")
     
-    def round_robin(self, time_quantum):
-        """Round-robin scheduling."""
-        print(f"\nRound-Robin Scheduling (time quantum: {time_quantum}s):")
-        print("=" * 60)
-        
-        ready_queue = [p for p in self.processes if p.state == "Ready"]
-        
-        while ready_queue:
-            for process in ready_queue[:]:
-                if process.state != "Ready":
-                    ready_queue.remove(process)
-                    continue
-                
-                print(f"\nTime {self.current_time}s: Running process {process.pid} ({process.name})")
-                process.state = "Running"
-                process.cpu_time += time_quantum
-                self.current_time += time_quantum
-                
-                # Simulate random termination
-                if process.cpu_time >= 3:
-                    process.state = "Terminated"
-                    ready_queue.remove(process)
-                    print(f"  → Process {process.pid} completed (total CPU: {process.cpu_time}s)")
-                else:
-                    process.state = "Ready"
-                    print(f"  → Process {process.pid} preempted (CPU time: {process.cpu_time}s)")
-        
-        print(f"\nAll processes completed at time {self.current_time}s")
+    print(f"\nAll processes completed at time {scheduler['current_time']}s")
 
 # Simulate scheduling
 print("\nProcess Scheduling:")
-scheduler = ProcessScheduler()
+scheduler = create_scheduler()
 
-p1 = Process("Process-1")
-p1.state = "Ready"
-scheduler.add_process(p1)
+p1 = create_process("Process-1")
+p1['state'] = "Ready"
+scheduler_add_process(scheduler, p1)
 
-p2 = Process("Process-2")
-p2.state = "Ready"
-scheduler.add_process(p2)
+p2 = create_process("Process-2")
+p2['state'] = "Ready"
+scheduler_add_process(scheduler, p2)
 
-p3 = Process("Process-3")
-p3.state = "Ready"
-scheduler.add_process(p3)
+p3 = create_process("Process-3")
+p3['state'] = "Ready"
+scheduler_add_process(scheduler, p3)
 
-scheduler.round_robin(time_quantum=1)
+scheduler_round_robin(scheduler, time_quantum=1)
 ```
 
 ## File Systems
@@ -382,66 +384,66 @@ def explain_file_systems():
 
 explain_file_systems()
 
-class File:
-    """Simulate a file."""
-    
-    def __init__(self, name, owner, size_bytes=0):
-        self.name = name
-        self.owner = owner
-        self.size_bytes = size_bytes
-        self.permissions = {
+def create_file_entry(name, owner, size_bytes=0):
+    """Create a file simulation."""
+    return {
+        'name': name,
+        'owner': owner,
+        'size_bytes': size_bytes,
+        'permissions': {
             'owner': {'read': True, 'write': True, 'execute': False},
             'group': {'read': True, 'write': False, 'execute': False},
             'others': {'read': False, 'write': False, 'execute': False},
-        }
-        self.created_at = time.time()
-        self.modified_at = time.time()
+        },
+        'created_at': time.time(),
+        'modified_at': time.time(),
+    }
+
+def file_chmod(f, user_type, permission, value):
+    """Change file permissions."""
+    if user_type in f['permissions'] and permission in f['permissions'][user_type]:
+        f['permissions'][user_type][permission] = value
+        print(f"Changed {f['name']}: {user_type}.{permission} = {value}")
+
+def file_can_access(f, user, action):
+    """Check if user can perform action."""
+    if user == f['owner']:
+        return f['permissions']['owner'].get(action, False)
+    else:
+        return f['permissions']['others'].get(action, False)
+
+def file_get_permission_string(f):
+    """Get Unix-style permission string."""
+    def perms_to_str(perms):
+        r = 'r' if perms['read'] else '-'
+        w = 'w' if perms['write'] else '-'
+        x = 'x' if perms['execute'] else '-'
+        return r + w + x
     
-    def chmod(self, user_type, permission, value):
-        """Change file permissions."""
-        if user_type in self.permissions and permission in self.permissions[user_type]:
-            self.permissions[user_type][permission] = value
-            print(f"Changed {self.name}: {user_type}.{permission} = {value}")
+    owner = perms_to_str(f['permissions']['owner'])
+    group = perms_to_str(f['permissions']['group'])
+    others = perms_to_str(f['permissions']['others'])
     
-    def can_access(self, user, action):
-        """Check if user can perform action."""
-        if user == self.owner:
-            return self.permissions['owner'].get(action, False)
-        else:
-            return self.permissions['others'].get(action, False)
-    
-    def get_permission_string(self):
-        """Get Unix-style permission string."""
-        def perms_to_str(perms):
-            r = 'r' if perms['read'] else '-'
-            w = 'w' if perms['write'] else '-'
-            x = 'x' if perms['execute'] else '-'
-            return r + w + x
-        
-        owner = perms_to_str(self.permissions['owner'])
-        group = perms_to_str(self.permissions['group'])
-        others = perms_to_str(self.permissions['others'])
-        
-        return owner + group + others
+    return owner + group + others
 
 # File permissions example
 print("\nFile Permissions Example:")
-file = File("script.py", "alice", size_bytes=1024)
+file = create_file_entry("script.py", "alice", size_bytes=1024)
 
-print(f"File: {file.name}")
-print(f"Owner: {file.owner}")
-print(f"Permissions: {file.get_permission_string()}")
+print(f"File: {file['name']}")
+print(f"Owner: {file['owner']}")
+print(f"Permissions: {file_get_permission_string(file)}")
 
 print("\nAccess Tests:")
-print(f"Alice can read: {file.can_access('alice', 'read')}")
-print(f"Alice can write: {file.can_access('alice', 'write')}")
-print(f"Bob can read: {file.can_access('bob', 'read')}")
-print(f"Bob can write: {file.can_access('bob', 'write')}")
+print(f"Alice can read: {file_can_access(file, 'alice', 'read')}")
+print(f"Alice can write: {file_can_access(file, 'alice', 'write')}")
+print(f"Bob can read: {file_can_access(file, 'bob', 'read')}")
+print(f"Bob can write: {file_can_access(file, 'bob', 'write')}")
 
 print("\nChanging permissions:")
-file.chmod('others', 'read', True)
-print(f"New permissions: {file.get_permission_string()}")
-print(f"Bob can read now: {file.can_access('bob', 'read')}")
+file_chmod(file, 'others', 'read', True)
+print(f"New permissions: {file_get_permission_string(file)}")
+print(f"Bob can read now: {file_can_access(file, 'bob', 'read')}")
 ```
 
 ## Python OS Interaction
@@ -523,78 +525,78 @@ def explain_memory_management():
 
 explain_memory_management()
 
-class MemoryManager:
-    """Simulate memory management."""
+def create_memory_manager(total_mb):
+    """Create a memory manager simulation."""
+    return {
+        'total_mb': total_mb,
+        'free_mb': total_mb,
+        'allocations': {},
+    }
+
+def mm_allocate(mm, process_pid, size_mb):
+    """Allocate memory to process."""
+    if size_mb > mm['free_mb']:
+        print(f"ERROR: Cannot allocate {size_mb}MB (only {mm['free_mb']}MB free)")
+        return False
     
-    def __init__(self, total_mb):
-        self.total_mb = total_mb
-        self.free_mb = total_mb
-        self.allocations = {}
+    if process_pid not in mm['allocations']:
+        mm['allocations'][process_pid] = 0
     
-    def allocate(self, process_pid, size_mb):
-        """Allocate memory to process."""
-        if size_mb > self.free_mb:
-            print(f"ERROR: Cannot allocate {size_mb}MB (only {self.free_mb}MB free)")
-            return False
-        
-        if process_pid not in self.allocations:
-            self.allocations[process_pid] = 0
-        
-        self.allocations[process_pid] += size_mb
-        self.free_mb -= size_mb
-        
-        print(f"Allocated {size_mb}MB to process {process_pid}")
-        print(f"  Process total: {self.allocations[process_pid]}MB")
-        print(f"  System free: {self.free_mb}MB / {self.total_mb}MB")
-        
-        return True
+    mm['allocations'][process_pid] += size_mb
+    mm['free_mb'] -= size_mb
     
-    def free(self, process_pid):
-        """Free all memory for process."""
-        if process_pid in self.allocations:
-            freed = self.allocations[process_pid]
-            self.free_mb += freed
-            del self.allocations[process_pid]
-            
-            print(f"Freed {freed}MB from process {process_pid}")
-            print(f"  System free: {self.free_mb}MB / {self.total_mb}MB")
-        else:
-            print(f"Process {process_pid} has no allocations")
+    print(f"Allocated {size_mb}MB to process {process_pid}")
+    print(f"  Process total: {mm['allocations'][process_pid]}MB")
+    print(f"  System free: {mm['free_mb']}MB / {mm['total_mb']}MB")
     
-    def get_stats(self):
-        """Get memory statistics."""
-        used_mb = self.total_mb - self.free_mb
-        used_percent = (used_mb / self.total_mb) * 100
+    return True
+
+def mm_free(mm, process_pid):
+    """Free all memory for process."""
+    if process_pid in mm['allocations']:
+        freed = mm['allocations'][process_pid]
+        mm['free_mb'] += freed
+        del mm['allocations'][process_pid]
         
-        return {
-            'total': self.total_mb,
-            'used': used_mb,
-            'free': self.free_mb,
-            'used_percent': used_percent,
-            'processes': len(self.allocations),
-        }
+        print(f"Freed {freed}MB from process {process_pid}")
+        print(f"  System free: {mm['free_mb']}MB / {mm['total_mb']}MB")
+    else:
+        print(f"Process {process_pid} has no allocations")
+
+def mm_get_stats(mm):
+    """Get memory statistics."""
+    used_mb = mm['total_mb'] - mm['free_mb']
+    used_percent = (used_mb / mm['total_mb']) * 100
+    
+    return {
+        'total': mm['total_mb'],
+        'used': used_mb,
+        'free': mm['free_mb'],
+        'used_percent': used_percent,
+        'processes': len(mm['allocations']),
+    }
 
 # Simulate memory management
 print("\nMemory Management Simulation:")
-mem = MemoryManager(1024)  # 1GB RAM
+mem = create_memory_manager(1024)  # 1GB RAM
 
 print("\nAllocating memory:")
-mem.allocate(1001, 100)  # Process 1001 needs 100MB
-mem.allocate(1002, 200)  # Process 1002 needs 200MB
-mem.allocate(1003, 300)  # Process 1003 needs 300MB
+mm_allocate(mem, 1001, 100)  # Process 1001 needs 100MB
+mm_allocate(mem, 1002, 200)  # Process 1002 needs 200MB
+mm_allocate(mem, 1003, 300)  # Process 1003 needs 300MB
 
 print("\nMemory Statistics:")
-stats = mem.get_stats()
+stats = mm_get_stats(mem)
 print(f"Total: {stats['total']}MB")
 print(f"Used: {stats['used']}MB ({stats['used_percent']:.1f}%)")
 print(f"Free: {stats['free']}MB")
 print(f"Active processes: {stats['processes']}")
 
 print("\nFreeing memory:")
-mem.free(1002)
+mm_free(mem, 1002)
 
 print("\nFinal Statistics:")
-stats = mem.get_stats()
+stats = mm_get_stats(mem)
 print(f"Used: {stats['used']}MB ({stats['used_percent']:.1f}%)")
 print(f"Free: {stats['free']}MB")
 ```

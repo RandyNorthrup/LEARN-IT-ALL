@@ -1,0 +1,114 @@
+{
+  "id": "lab-L02-dns-resolution",
+  "lessonId": "lab-L02-dns-resolution",
+  "title": "Lab: DNS Query and Response Analysis",
+  "description": "Analyze DNS traffic showing different query types (A, AAAA), a CNAME chain, and an NXDOMAIN error. Understand how DNS resolution works at the packet level, including transaction IDs, recursion, record types, and TTL values.\n\nUse the PCAP viewer below to examine each DNS packet and answer the analysis questions.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "",
+  "solution": "",
+  "hints": [
+    "DNS uses UDP port 53 for standard queries (TCP port 53 for zone transfers or large responses)",
+    "The Transaction ID links a query to its response — they must match",
+    "QR=0 means Query, QR=1 means Response",
+    "CNAME records create aliases — the resolver follows the chain to get the final IP",
+    "NXDOMAIN (response code 3) means the domain does not exist"
+  ],
+  "exerciseType": "lab",
+  "labType": "pcap-analysis",
+  "resources": [
+    { "type": "pcap", "url": "/labs/pcaps/dns-query.json", "label": "DNS Resolution Capture" }
+  ],
+  "labQuestions": [
+    {
+      "id": "q1",
+      "question": "What transport protocol does DNS use for standard queries?",
+      "type": "multiple-choice",
+      "options": ["TCP", "UDP", "ICMP", "Both TCP and UDP equally"],
+      "correctAnswer": "UDP",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q2",
+      "question": "What is the Transaction ID of the first DNS query, and how is it used?",
+      "type": "multiple-choice",
+      "options": [
+        "0xa1b2 — it matches the query to its response",
+        "0xa1b2 — it identifies the DNS server",
+        "0xc3d4 — it is the source port number",
+        "0x0100 — it sets the recursion flag"
+      ],
+      "correctAnswer": "0xa1b2 — it matches the query to its response",
+      "relatedPackets": [1, 2]
+    },
+    {
+      "id": "q3",
+      "question": "What is the difference between the A record query (packet #1) and the AAAA record query (packet #3)?",
+      "type": "multiple-choice",
+      "options": [
+        "A records are for IPv4 addresses, AAAA records are for IPv6 addresses",
+        "A records are authoritative, AAAA records are non-authoritative",
+        "A records use TCP, AAAA records use UDP",
+        "A records have longer TTL than AAAA records"
+      ],
+      "correctAnswer": "A records are for IPv4 addresses, AAAA records are for IPv6 addresses",
+      "relatedPackets": [1, 3]
+    },
+    {
+      "id": "q4",
+      "question": "What is the resolved IPv4 address for www.example.com?",
+      "type": "short-answer",
+      "correctAnswer": "93.184.216.34",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q5",
+      "question": "In packet #6, the response for shop.example.com contains a CNAME record. What does this mean?",
+      "type": "multiple-choice",
+      "options": [
+        "shop.example.com is an alias that redirects to cdn.example.net",
+        "shop.example.com has been blocked by the DNS server",
+        "The DNS cache has expired for this domain",
+        "cdn.example.net is the authoritative DNS server"
+      ],
+      "correctAnswer": "shop.example.com is an alias that redirects to cdn.example.net",
+      "relatedPackets": [6]
+    },
+    {
+      "id": "q6",
+      "question": "Why does the CNAME answer (TTL=300s) have a shorter TTL than the A record answer (TTL=3600s)?",
+      "type": "multiple-choice",
+      "options": [
+        "CNAME records always have shorter TTLs",
+        "Shorter TTLs allow CDN operators to redirect traffic more quickly",
+        "It's a DNS server error",
+        "The A record is more important so it gets a longer TTL"
+      ],
+      "correctAnswer": "Shorter TTLs allow CDN operators to redirect traffic more quickly",
+      "relatedPackets": [6]
+    },
+    {
+      "id": "q7",
+      "question": "What response code does the DNS server return for nonexistent.example.com (packet #8)?",
+      "type": "multiple-choice",
+      "options": ["0 (No Error)", "1 (Format Error)", "2 (Server Failure)", "3 (NXDOMAIN)"],
+      "correctAnswer": "3 (NXDOMAIN)",
+      "relatedPackets": [7, 8]
+    },
+    {
+      "id": "q8",
+      "question": "In packet #8, the Authoritative Answer flag is set to 1. What does this tell us?",
+      "type": "multiple-choice",
+      "options": [
+        "The answer came from the resolver's cache",
+        "The authoritative server directly confirmed the domain does not exist",
+        "The DNS query was recursive",
+        "The response contains encrypted data"
+      ],
+      "correctAnswer": "The authoritative server directly confirmed the domain does not exist",
+      "relatedPackets": [8]
+    }
+  ],
+  "testCases": []
+}

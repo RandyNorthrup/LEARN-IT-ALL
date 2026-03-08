@@ -1,5 +1,7 @@
 ---
 id: lesson-046-subnetting-basics
+chapterId: ch2-ip-addressing
+order: 46
 title: "Subnetting Basics"
 sidebar_label: "Lesson 46: Subnetting Basics"
 description: "Master subnet mask calculation, network boundaries, CIDR notation, and subnetting fundamentals"
@@ -22,6 +24,19 @@ Subnetting is the process of dividing a large network into smaller, more managea
 In this lesson, we'll build a solid foundation in subnetting mechanics, from understanding subnet masks to calculating network boundaries and working with CIDR notation.
 
 **Key Principle:** Subnetting is simply borrowing bits from the host portion to create network divisions.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the purpose and benefits of subnetting
+- Calculate subnet masks in binary and decimal notation
+- Determine network and broadcast addresses
+- Master CIDR notation and prefix lengths
+- Calculate the number of hosts per subnet
+- Apply subnetting to solve network design problems
+
+---
 
 ## Why Subnet?
 
@@ -668,6 +683,206 @@ From SMB pool, create /24s for individual businesses:
 Hierarchical addressing enables route aggregation
 ```
 
+## Supernetting and Route Aggregation (CIDR)
+
+### What is Supernetting?
+
+**Supernetting** (also called **route aggregation** or **route summarization**) is the reverse of subnetting: it combines multiple smaller networks into a single, larger network for more efficient routing.
+
+**Key Concept:** While subnetting borrows bits from the host portion, supernetting returns bits from the network portion to create a shorter prefix.
+
+**Why Supernetting Matters:**
+- Reduces the size of routing tables (fewer entries)
+- Decreases router CPU and memory usage
+- Speeds up routing lookups
+- Critical for internet-scale routing (BGP)
+
+### Supernetting Example
+
+```
+Problem: A router has 4 separate routes:
+  192.168.0.0/24  → Interface 1
+  192.168.1.0/24  → Interface 1
+  192.168.2.0/24  → Interface 1
+  192.168.3.0/24  → Interface 1
+
+All 4 routes go to the same next hop.
+Can we summarize them into one route?
+
+Step 1: Convert network addresses to binary (third octet matters):
+  192.168.0.0    →  00000000
+  192.168.1.0    →  00000001
+  192.168.2.0    →  00000010
+  192.168.3.0    →  00000011
+
+Step 2: Find common bits:
+  000000 00  ← these 6 bits are the same in all 4
+  000000 01
+  000000 10
+  000000 11
+
+  Common prefix: first two octets (16 bits) + 6 bits = 22 bits
+
+Step 3: Supernet route:
+  192.168.0.0/22 (replaces all 4 /24 routes)
+
+Verification:
+  /22 mask = 255.255.252.0
+  Block size: 256 - 252 = 4
+  Range: 192.168.0.0 - 192.168.3.255 ✓ (covers all 4 networks)
+```
+
+### When Aggregation Works
+
+**Requirements for successful aggregation:**
+```
+✓ Networks must be contiguous (no gaps)
+✓ Networks must fall on a natural power-of-2 boundary
+✓ All summarized routes must use the same next hop
+
+Can aggregate:
+  10.0.0.0/24, 10.0.1.0/24  → 10.0.0.0/23 ✓
+
+Cannot aggregate:
+  10.0.0.0/24, 10.0.2.0/24  → Gap at 10.0.1.0/24 ✗
+  10.0.1.0/24, 10.0.2.0/24  → Not on /23 boundary ✗
+```
+
+---
+
+## Common Subnet Sizes Quick-Reference Table
+
+Memorize these common subnet allocations for the Network+ exam and real-world deployment planning:
+
+```
+┌─────────┬─────────────────────┬────────┬──────────────┬──────────────────────────┐
+│ Prefix  │ Subnet Mask         │ Block  │ Usable Hosts │ Typical Use              │
+├─────────┼─────────────────────┼────────┼──────────────┼──────────────────────────┤
+│ /30     │ 255.255.255.252     │ 4      │ 2            │ Point-to-point WAN link  │
+│ /29     │ 255.255.255.248     │ 8      │ 6            │ Small DMZ, printer VLAN  │
+│ /28     │ 255.255.255.240     │ 16     │ 14           │ Management network       │
+│ /27     │ 255.255.255.224     │ 32     │ 30           │ Conference rooms, IoT    │
+│ /26     │ 255.255.255.192     │ 64     │ 62           │ Small department         │
+│ /25     │ 255.255.255.128     │ 128    │ 126          │ Medium department        │
+│ /24     │ 255.255.255.0       │ 256    │ 254          │ Standard LAN segment     │
+│ /23     │ 255.255.254.0       │ 512    │ 510          │ Large floor / building   │
+│ /22     │ 255.255.252.0       │ 1024   │ 1022         │ Campus, large VLAN       │
+│ /21     │ 255.255.248.0       │ 2048   │ 2046         │ Campus aggregate         │
+│ /20     │ 255.255.240.0       │ 4096   │ 4094         │ Datacenter or large site │
+│ /16     │ 255.255.0.0         │ 65536  │ 65534        │ Major campus or region   │
+└─────────┴─────────────────────┴────────┴──────────────┴──────────────────────────┘
+```
+
+**Exam Tip:** The /24, /25, /26, /27, /28, /29, and /30 prefixes are most commonly tested on the CompTIA Network+ exam. Be able to calculate subnets for any of these from memory.
+
+---
+
+## Subnet Planning Best Practices
+
+### 1. Start with Requirements, Not Addresses
+
+Before assigning any addresses, document:
+- Number of subnets needed (departments, VLANs, WAN links)
+- Number of hosts per subnet (current and projected growth)
+- Any special requirements (/30 for WAN links, /32 for loopbacks)
+
+### 2. Allocate Largest Subnets First
+
+Always assign the largest subnet first, then fill in smaller ones. This prevents fragmentation of your address space and avoids situations where a large block is needed but the space is split by smaller allocations.
+
+```
+Correct order (largest to smallest):
+  10.1.0.0/24   (254 hosts) — Production VLAN
+  10.1.1.0/25   (126 hosts) — Development VLAN
+  10.1.1.128/26 (62 hosts)  — Guest WiFi
+  10.1.1.192/27 (30 hosts)  — Server VLAN
+  10.1.1.224/28 (14 hosts)  — Management
+  10.1.1.240/30 (2 hosts)   — WAN link 1
+  10.1.1.244/30 (2 hosts)   — WAN link 2
+```
+
+### 3. Reserve Space for Growth
+
+Plan for 50–100% growth in each subnet. A department with 40 users today should get a /26 (62 hosts) rather than a /26 at exactly 80% utilization—or even a /25 (126 hosts) if budget allows.
+
+### 4. Use Consistent Numbering Schemes
+
+Adopt a logical numbering pattern so administrators can identify subnets at a glance:
+
+```
+Convention example:
+  10.{site}.{function}.0/24
+
+  Site codes:    1 = HQ,  2 = Branch A,  3 = Branch B
+  Function:      10 = Users, 20 = Servers, 30 = VoIP, 40 = Guest
+
+  Result:
+  10.1.10.0/24 = HQ Users
+  10.1.20.0/24 = HQ Servers
+  10.2.10.0/24 = Branch A Users
+  10.2.30.0/24 = Branch A VoIP
+```
+
+### 5. Document Everything
+
+Maintain an IP Address Management (IPAM) spreadsheet or tool that records:
+- Subnet address and prefix length
+- VLAN assignment
+- Gateway address (typically .1 or .254)
+- DHCP scope range
+- Purpose and responsible team
+
+---
+
+## Introduction to Variable-Length Subnet Masking (VLSM)
+
+### What is VLSM?
+
+**Variable-Length Subnet Masking (VLSM)** allows different subnets within the same network to use different prefix lengths. Without VLSM (classful subnetting), every subnet must be the same size—which wastes addresses.
+
+### VLSM vs Fixed-Length Subnetting
+
+```
+Fixed-Length Subnetting (wasteful):
+  Given: 192.168.1.0/24
+  Requirement: 100 hosts, 50 hosts, 10 hosts, 2 hosts (WAN link)
+
+  All subnets use /26 (62 hosts each):
+  192.168.1.0/26   → 62 hosts (for 100-host dept — NOT ENOUGH!)
+  
+  Must use /25 for all:
+  192.168.1.0/25   → 126 hosts (for 100) — wastes 26
+  192.168.1.128/25 → 126 hosts (for 50)  — wastes 76
+  Only 2 subnets possible — NOT ENOUGH for 4 needs!
+
+VLSM (efficient):
+  192.168.1.0/25   → 126 hosts (for 100 users)   ✓
+  192.168.1.128/26 → 62 hosts  (for 50 users)    ✓
+  192.168.1.192/28 → 14 hosts  (for 10 users)    ✓
+  192.168.1.208/30 → 2 hosts   (for WAN link)    ✓
+  Remaining: 192.168.1.212 – 192.168.1.255 (free for growth)
+```
+
+### VLSM Design Steps
+
+1. **List all subnets** with required host counts
+2. **Sort by size** (largest first)
+3. **Assign the largest subnet** starting at the base network address
+4. **Assign the next largest** starting at the first available address after the previous subnet
+5. **Repeat** until all subnets are assigned
+6. **Verify** no subnets overlap
+
+### VLSM and Routing Protocols
+
+VLSM requires a **classless routing protocol** that carries subnet mask information in routing updates:
+
+- **Supports VLSM:** OSPF, EIGRP, BGP, IS-IS, RIPv2
+- **Does NOT support VLSM:** RIPv1, IGRP (legacy protocols)
+
+**Exam Tip:** If a question asks about a routing protocol that supports VLSM or CIDR, look for classless protocols (OSPF, EIGRP, BGP, RIPv2). RIPv1 is classful and cannot carry subnet mask information.
+
+---
+
 ## Summary
 
 Subnetting is a fundamental networking skill that enables:
@@ -699,30 +914,80 @@ Subnetting is a fundamental networking skill that enables:
 - Learn Variable Length Subnet Masking (VLSM)
 - Study route summarization (supernetting)
 
-## Additional Resources
+## Practice Questions
 
-- **RFC 950**: Internet Standard Subnetting Procedure
-- **RFC 1878**: Variable Length Subnet Table For IPv4
-- **RFC 4632**: Classless Inter-Domain Routing (CIDR)
-- **CompTIA Network+ N10-008:** Domain 1.4 - IPv4 addressing and subnetting
-- **Interactive Tools**: SubnettingPractice.com, subnetting calculators
-- **Subnet Calculators**: ipcalc, sipcalc (verify your work)
+**Q1.** What is the primary purpose of subnetting a network?
 
-## Practice Problems
+A) To increase the total number of available IP addresses
+B) To divide a large network into smaller, more manageable sub-networks
+C) To convert IPv4 addresses into IPv6 addresses
+D) To encrypt traffic between network segments
 
-1. Given 192.168.1.0/24, create 4 equal subnets. What are the network addresses?
+<details>
+<summary>Answer</summary>
 
-2. How many usable hosts in 10.0.0.0/22?
+**B)** Subnetting divides a large network into smaller sub-networks (subnets) to improve manageability, reduce broadcast domains, enhance security through segmentation, and allocate IP addresses more efficiently. It does not increase the total address count (A), convert between IP versions (C), or provide encryption (D).
+</details>
 
-3. What is the broadcast address for 172.16.45.0/26?
+**Q2.** A host has the IP address 192.168.10.45 with a subnet mask of 255.255.255.224 (/27). What is the network address for this host?
 
-4. Which subnet does 192.168.10.75/27 belong to?
+A) 192.168.10.0
+B) 192.168.10.32
+C) 192.168.10.48
+D) 192.168.10.64
 
-5. Design subnets for 50, 25, and 10 hosts from 10.1.1.0/24.
+<details>
+<summary>Answer</summary>
 
-**Answers:**
-1. 192.168.1.0/26, 192.168.1.64/26, 192.168.1.128/26, 192.168.1.192/26
-2. 1,022 hosts (2^10 - 2)
-3. 172.16.45.63
-4. 172.16.10.64/27 (range .64-.95)
-5. /26 for 50 hosts, /27 for 25 hosts, /28 for 10 hosts
+**B)** With a /27 mask (255.255.255.224), subnets increment by 32 (256 − 224 = 32). The subnet boundaries are .0, .32, .64, .96, etc. The host address .45 falls between .32 and .64, so the network address is 192.168.10.32. Options A (.0), C (.48), and D (.64) are not valid network addresses for this mask.
+</details>
+
+**Q3.** How many usable host addresses are available on a /26 subnet?
+
+A) 30
+B) 62
+C) 64
+D) 126
+
+<details>
+<summary>Answer</summary>
+
+**B)** A /26 subnet has 6 host bits (32 − 26 = 6), giving 2^6 = 64 total addresses. Subtracting 2 for the network and broadcast addresses yields 62 usable host addresses. Option A (30) corresponds to /27, C (64) doesn't subtract reserved addresses, and D (126) corresponds to /25.
+</details>
+
+**Q4.** A company needs to create 8 subnets from the 10.1.0.0/16 network. What is the minimum subnet mask they should use?
+
+A) /17
+B) /18
+C) /19
+D) /20
+
+<details>
+<summary>Answer</summary>
+
+**C)** To create 8 subnets, you need to borrow 3 bits from the host portion (2^3 = 8). Starting from /16 and adding 3 borrowed bits gives /19. A /17 (A) creates only 2 subnets, /18 (B) creates 4 subnets, and /20 (D) creates 16 subnets—more than needed and wastes address space per subnet.
+</details>
+
+**Q5.** Which of the following is NOT a valid subnet mask?
+
+A) 255.255.255.128
+B) 255.255.254.0
+C) 255.255.255.100
+D) 255.255.240.0
+
+<details>
+<summary>Answer</summary>
+
+**C)** A valid subnet mask must consist of contiguous 1-bits followed by contiguous 0-bits in binary. 255.255.255.100 in binary is 11111111.11111111.11111111.01100100, which has non-contiguous 1-bits in the last octet, making it invalid. Options A (/25), B (/23), and D (/20) all have contiguous 1-bits and are valid masks.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.4 – Given a scenario, configure a subnet and use appropriate IP addressing schemes
+- RFC 950: Internet Standard Subnetting Procedure
+- RFC 4632: Classless Inter-Domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan
+- RFC 1878: Variable Length Subnet Table For IPv4
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – Chapter on IP Subnetting
+- IEEE 802: LAN/MAN Standards Committee – Network addressing fundamentals
+- Interactive Tools: SubnettingPractice.com, subnetting calculators
+- Subnet Calculators: ipcalc, sipcalc (verify your work)

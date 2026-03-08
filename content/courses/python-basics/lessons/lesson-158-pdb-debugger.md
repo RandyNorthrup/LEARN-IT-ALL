@@ -1,8 +1,8 @@
 ---
-id: 65-pdb-debugger
+id: lesson-158-pdb-debugger
 title: The pdb Debugger
 chapterId: ch12-testing
-order: 6
+order: 4
 duration: 25
 objectives:
   - Master the pdb debugger
@@ -249,33 +249,31 @@ def process_numbers():
 ## Practical Debugging Example
 
 ```python
-class BankAccount:
-    def __init__(self, balance):
-        self.balance = balance
-        self.transactions = []
-    
-    def deposit(self, amount):
-        breakpoint()  # Debug deposit
-        self.balance += amount
-        self.transactions.append(f"Deposit: ${amount}")
-    
-    def withdraw(self, amount):
-        if amount > self.balance:
-            print("Insufficient funds")
-            return False
-        
-        breakpoint()  # Debug withdraw
-        self.balance -= amount
-        self.transactions.append(f"Withdraw: ${amount}")
-        return True
+def create_account(balance):
+    return {"balance": balance, "transactions": []}
 
-account = BankAccount(100)
-account.deposit(50)
-account.withdraw(30)
+def deposit(account, amount):
+    breakpoint()  # Debug deposit
+    account["balance"] += amount
+    account["transactions"].append(f"Deposit: ${amount}")
+
+def withdraw(account, amount):
+    if amount > account["balance"]:
+        print("Insufficient funds")
+        return False
+    
+    breakpoint()  # Debug withdraw
+    account["balance"] -= amount
+    account["transactions"].append(f"Withdraw: ${amount}")
+    return True
+
+account = create_account(100)
+deposit(account, 50)
+withdraw(account, 30)
 
 # In debugger, can inspect:
-# (Pdb) p self.balance
-# (Pdb) p self.transactions
+# (Pdb) p account["balance"]
+# (Pdb) p account["transactions"]
 # (Pdb) p amount
 ```
 

@@ -14,6 +14,8 @@ import {
   CodeCompletionQuestion,
   CodingExerciseQuestion,
   MultiPartQuestion,
+  EssayQuestion,
+  DesignQuestion,
   TestResult,
 } from '@/types/quiz';
 
@@ -66,7 +68,7 @@ export async function POST(
                 }
               }
             }
-            console.log(`Auto-completed entire course (${totalLessons} lessons) after passing final exam`);
+            console.info(`Auto-completed entire course (${totalLessons} lessons) after passing final exam`);
           } else {
             // Chapter quiz: mark only that chapter's lessons as complete
             const chapterMatch = quizId.match(/chapter-(\d+)/i);
@@ -81,7 +83,7 @@ export async function POST(
                     const lessonId = lessonFile.replace(/\.md$/, '');
                     markLessonComplete(lessonId, courseId);
                   }
-                  console.log(`Auto-completed ${chapter.lessons.length} lessons in ${chapter.title} after passing ${quizId}`);
+                  console.info(`Auto-completed ${chapter.lessons.length} lessons in ${chapter.title} after passing ${quizId}`);
                 }
               }
             }
@@ -168,6 +170,10 @@ function gradeQuestion(
       return gradeCodingExercise(question as CodingExerciseQuestion, userAnswer);
     case 'multi-part':
       return gradeMultiPart(question as MultiPartQuestion, userAnswer);
+    case 'essay':
+      return gradeEssay(question as EssayQuestion, userAnswer);
+    case 'design':
+      return gradeDesign(question as DesignQuestion, userAnswer);
     default:
       return {
         correct: false,
@@ -311,6 +317,49 @@ function gradeMultiPart(
   return {
     correct: allCorrect,
     pointsEarned: totalEarned,
+    userAnswer,
+  };
+}
+
+// Essay questions are self-assessed: full points if a substantive answer is provided
+function gradeEssay(
+  question: EssayQuestion,
+  userAnswer: UserAnswer
+): Omit<QuestionResult, 'questionId' | 'pointsPossible' | 'explanation'> {
+  if (userAnswer.type !== 'essay') {
+    return { correct: false, pointsEarned: 0, userAnswer };
+  }
+
+  const text = userAnswer.text?.trim() || '';
+  const wordCount = text ? text.split(/\s+/).length : 0;
+  const minWords = question.minWords || 50;
+  // Award full points if answer meets minimum word threshold, otherwise proportional
+  const answered = wordCount >= Math.max(minWords * 0.5, 10);
+
+  return {
+    correct: answered,
+    pointsEarned: answered ? question.points : 0,
+    userAnswer,
+  };
+}
+
+// Design questions follow the same self-assessment model as essays
+function gradeDesign(
+  question: DesignQuestion,
+  userAnswer: UserAnswer
+): Omit<QuestionResult, 'questionId' | 'pointsPossible' | 'explanation'> {
+  if (userAnswer.type !== 'design') {
+    return { correct: false, pointsEarned: 0, userAnswer };
+  }
+
+  const text = userAnswer.text?.trim() || '';
+  const wordCount = text ? text.split(/\s+/).length : 0;
+  const minWords = question.minWords || 50;
+  const answered = wordCount >= Math.max(minWords * 0.5, 10);
+
+  return {
+    correct: answered,
+    pointsEarned: answered ? question.points : 0,
     userAnswer,
   };
 }

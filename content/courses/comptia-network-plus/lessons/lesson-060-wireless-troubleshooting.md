@@ -1,478 +1,1023 @@
 ---
 id: lesson-060-wireless-troubleshooting
 title: "Wireless Troubleshooting"
-chapterId: "chapter-006-wireless-networking"
+chapterId: ch6-wireless-networking
 order: 60
-duration: 16
+duration: 65
 objectives:
-  - Identify common wireless connectivity issues
-  - Understand interference sources and mitigation
-  - Troubleshoot signal strength and coverage problems
-  - Use wireless diagnostic tools effectively
-  - Resolve authentication and security issues
+  - Identify common wireless connectivity issues and classify by scope
+  - Analyze RF metrics including RSSI, SNR, retry rate, and channel utilization
+  - Diagnose interference using Wi-Fi analyzers and spectrum analyzers
+  - Perform link budget calculations for coverage planning
+  - Troubleshoot 802.1X enterprise authentication failures
+  - Configure fast roaming with 802.11r/k/v
+  - Detect and mitigate rogue APs and evil twin attacks
+  - Apply the CompTIA 7-step troubleshooting methodology to wireless scenarios
 ---
 
 # Wireless Troubleshooting
 
-Wireless networks present unique troubleshooting challenges due to RF propagation, interference, and environmental factors. Understanding common issues and diagnostic approaches enables efficient problem resolution.
+## Introduction
+
+Wireless networks present unique troubleshooting challenges due to RF propagation, interference, and environmental factors. Unlike wired networks where connectivity is deterministic, wireless performance varies with distance, obstacles, atmospheric conditions, and electromagnetic environment. This lesson provides structured diagnostic approaches, real-world scenarios, and hands-on tool usage to systematically identify and resolve wireless network issues—skills essential for both the CompTIA Network+ exam and professional practice.
 
 ---
 
-## Common Wireless Issues
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Identify common wireless connectivity issues and classify by scope
+- Analyze RF metrics including RSSI, SNR, retry rate, and channel utilization
+- Diagnose interference using Wi-Fi analyzers and spectrum analyzers
+- Perform link budget calculations for coverage planning
+- Troubleshoot 802.1X enterprise authentication failures
+- Configure fast roaming with 802.11r/k/v
+- Detect and mitigate rogue APs and evil twin attacks
+- Apply the CompTIA 7-step troubleshooting methodology to wireless scenarios
+
+---
+
+## Understanding Wireless Performance Metrics
+
+Before troubleshooting, you must understand the metrics that define wireless health:
+
+### RSSI (Received Signal Strength Indicator)
+
+RSSI measures signal power arriving at the receiver, expressed in dBm (negative values closer to zero = stronger).
+
+```
+RSSI Classification:
+─────────────────────────────────────────────────
+Signal Level       RSSI Range       Quality
+─────────────────────────────────────────────────
+Excellent          -30 to -50 dBm   Full speed, no issues
+Good               -50 to -60 dBm   Reliable, high throughput
+Fair               -60 to -70 dBm   Usable, moderate throughput
+Poor               -70 to -80 dBm   Unreliable, low data rates
+Unusable           Below -80 dBm    Drops, timeouts, no connection
+─────────────────────────────────────────────────
+```
+
+**Application-Specific Minimums:**
+
+| Application | Minimum RSSI | Minimum SNR | Reason |
+|-------------|-------------|-------------|--------|
+| VoIP/Video  | -65 dBm     | 25 dB       | Real-time = zero tolerance |
+| Enterprise data | -70 dBm | 20 dB       | Standard reliability |
+| Email/web browsing | -75 dBm | 15 dB    | Tolerates retransmissions |
+| Basic connectivity | -80 dBm | 10 dB    | Absolute minimum |
+
+### SNR (Signal-to-Noise Ratio)
+
+SNR = Signal Strength (dBm) - Noise Floor (dBm)
+
+```
+Example Calculation:
+  Signal:  -60 dBm
+  Noise:   -90 dBm
+  SNR:     -60 - (-90) = 30 dB (Excellent)
+
+SNR Quality Guide:
+  > 40 dB    Exceptional (rarely achieved outside near-field)
+  25-40 dB   Excellent performance
+  15-25 dB   Good, acceptable for most uses
+  10-15 dB   Poor, connection marginal
+  < 10 dB    Very poor, frequent drops and errors
+```
+
+**Critical insight**: A strong RSSI with poor SNR indicates heavy interference. You can have -55 dBm signal strength but if the noise floor is -65 dBm, your SNR is only 10 dB—barely usable despite seemingly good signal.
+
+### Retry Rate and Error Counters
+
+Retry rate indicates how often frames must be retransmitted:
+
+```
+Retry Rate Assessment:
+  0-5%     Normal operation
+  5-10%    Minor interference or marginal signal
+  10-20%   Significant issue requiring investigation
+  > 20%    Critical—major interference or hardware problem
+```
+
+### Channel Utilization
+
+Measures how busy the RF channel is (percentage of airtime in use):
+
+```
+Channel Utilization:
+  0-30%    Light usage, no concern
+  30-50%   Moderate, monitor for growth
+  50-70%   Heavy, consider load balancing or adding APs
+  > 70%    Congested, performance degradation inevitable
+```
+
+---
+
+## Common Wireless Issues: Diagnosis and Resolution
 
 ### 1. No Connectivity
 
-**Symptoms**:
-- Unable to see SSID
-- Can't connect to network
-- Connected but no internet access
+**Symptoms:**
+- Unable to see SSID in available networks
+- Can see SSID but connection attempts fail
+- Connected to SSID but no internet access
 
-**Causes**:
-- **AP powered off** or network down
-- **Out of range** - too far from AP
-- **Wrong password** (PSK)
-- **Authentication failure** (Enterprise)
-- **DHCP failure** - no IP address
-- **Hidden SSID** - client not configured
-- **MAC filtering** blocking device
+**Systematic Diagnostic Process:**
 
-**Troubleshooting Steps**:
-1. Verify AP is powered and operational
-2. Check if SSID is visible (scan for networks)
-3. Move closer to AP (test signal strength)
-4. Verify correct password
-5. Check IP address (`ipconfig` / `ifconfig`)
-6. Test with another device (isolate client vs AP issue)
-7. Review AP logs for authentication errors
+```
+Step 1: Layer 1 Verification
+─────────────────────────────
+□ AP powered on? (Check LED indicators)
+□ Ethernet uplink connected and active?
+□ PoE switch port providing power?
+□ AP LED status codes (manufacturer-specific):
+  - Cisco: Solid green = normal, blinking amber = booting
+  - Aruba: Solid green = normal, solid red = error
+  - Ubiquiti: Solid white = normal, off = no power
+
+Step 2: Client-Side Checks
+─────────────────────────────
+□ Wi-Fi adapter enabled? (Airplane mode off?)
+□ In range of AP? (Within RSSI > -80 dBm)
+□ Correct SSID and password?
+□ Client device has known-good driver?
+
+Step 3: Network Configuration
+─────────────────────────────
+□ DHCP server operational and has available leases?
+□ DNS resolution working?
+□ Default gateway reachable?
+□ Internet connectivity from gateway?
+```
+
+**Command-Line Diagnostics:**
+
+```cmd
+# Windows: Check Wi-Fi adapter status
+netsh wlan show interfaces
+# Look for: State, SSID, Signal, Receive rate, Channel
+
+# Windows: Check IP configuration
+ipconfig /all
+# Verify: IPv4 address assigned (not 169.254.x.x APIPA)
+# Check: Default gateway, DNS servers configured
+
+# Windows: Test connectivity
+ping 10.0.0.1          (gateway)
+ping 8.8.8.8           (internet - IP)
+nslookup google.com    (DNS resolution)
+```
+
+```bash
+# Linux: Check wireless interface
+iwconfig wlan0
+# Look for: ESSID, Frequency, Signal level, Bit Rate
+
+# Linux: Check IP configuration
+ip addr show wlan0
+# Verify: Valid IP address in expected subnet
+
+# Linux: Scan for available networks
+sudo iwlist wlan0 scan | grep -E "ESSID|Signal|Channel"
+```
+
+**Common "No Connectivity" Scenarios:**
+
+| Scenario | Diagnosis | Resolution |
+|----------|-----------|------------|
+| No SSIDs visible | Wi-Fi adapter off or driver issue | Enable adapter, reinstall driver |
+| See SSIDs but not ours | Out of range or SSID hidden | Move closer; configure hidden SSID manually |
+| "Can't connect" on click | Wrong password or security mismatch | Verify PSK, check WPA2 vs WPA3 |
+| Connected, no internet | DHCP failure or DNS issue | Release/renew IP, check DNS settings |
+| 169.254.x.x address | DHCP server unreachable | Check AP VLAN, DHCP relay, server status |
 
 ---
 
-### 2. Weak Signal / Poor Coverage
+### 2. Weak Signal and Poor Coverage
 
-**Symptoms**:
-- Low RSSI (below -70 dBm)
-- Frequent disconnections
-- Slow speeds
-- Intermittent connectivity
+**Root Cause Analysis:**
 
-**Causes**:
-- **Distance** from AP
-- **Obstacles** (walls, metal, concrete)
-- **AP transmit power** too low
-- **Insufficient APs** for coverage area
-- **Antenna orientation** incorrect
-- **Building materials** attenuating signal
+**Distance and Free Space Path Loss (FSPL):**
+Signal degrades with distance according to the inverse-square law. The FSPL formula:
 
-**Troubleshooting**:
-1. Measure RSSI at problem location
-   - **Good**: -30 to -60 dBm
-   - **Fair**: -60 to -70 dBm
-   - **Poor**: Below -70 dBm
-2. Identify obstacles between client and AP
-3. Reposition AP (central, elevated location)
-4. Increase transmit power (if too low)
-5. Add additional APs for coverage
-6. Use higher-gain or directional antennas
-7. Change client antenna orientation
-
-**RSSI Targets**:
 ```
-Application        Minimum RSSI
-------------------------------
-VoIP, Video        -65 dBm
-Normal use         -70 dBm
-Basic connectivity -75 dBm
+FSPL (dB) = 20 × log₁₀(d) + 20 × log₁₀(f) - 147.55
+  where d = distance in meters, f = frequency in Hz
+
+Example: 30 meters at 5 GHz
+  FSPL = 20 × log₁₀(30) + 20 × log₁₀(5×10⁹) - 147.55
+  FSPL = 29.5 + 194.0 - 147.55
+  FSPL = 75.95 dB
+
+Compare: 30 meters at 2.4 GHz
+  FSPL = 29.5 + 187.6 - 147.55
+  FSPL = 69.55 dB
+
+Difference: 5 GHz loses ~6.4 dB more than 2.4 GHz at the same distance
+```
+
+**Material Attenuation Reference Table:**
+
+```
+Material Attenuation (approximate dB loss per barrier):
+────────────────────────────────────────────────
+Material                2.4 GHz    5 GHz
+────────────────────────────────────────────────
+Drywall (standard)      2-3 dB     3-4 dB
+Plasterboard            3-4 dB     4-5 dB
+Office window (glass)   2-4 dB     3-5 dB
+Tinted/low-e glass      6-8 dB     8-12 dB
+Hollow wooden door      2-3 dB     3-4 dB
+Solid wooden door       3-5 dB     4-6 dB
+Concrete (6 inch)       6-12 dB    10-18 dB
+Concrete with rebar     10-18 dB   15-25 dB
+Cinder block            4-6 dB     5-8 dB
+Brick (single layer)    4-8 dB     5-10 dB
+Metal door/elevator     15-20 dB   20-30 dB
+Metal filing cabinet    6-10 dB    8-15 dB
+Floor (concrete/steel)  15-20 dB   20-30 dB
+Bulletproof glass       10-18 dB   12-20 dB
+Water (aquarium, body)  6-14 dB    8-18 dB
+────────────────────────────────────────────────
+```
+
+**Link Budget Calculation Walkthrough:**
+
+```
+Link Budget Scenario:
+  AP transmit power:        20 dBm
+  AP antenna gain:          +4 dBi
+  Cable/connector loss:     -1 dB
+  EIRP:                     23 dBm
+  
+  FSPL (25m, 5 GHz):       -74 dB
+  2 drywall partitions:     -8 dB
+  1 glass window:           -4 dB
+  
+  Client antenna gain:      +2 dBi
+  
+  Received signal:          23 - 74 - 8 - 4 + 2 = -61 dBm
+  Noise floor:              -90 dBm
+  SNR:                      29 dB ✓ Good
+  
+  Client minimum sensitivity: -80 dBm
+  Link margin:              -61 - (-80) = 19 dB ✓ Adequate
+```
+
+**Resolution Strategies:**
+
+1. **Reposition APs**: Mount centrally, elevated (ceiling preferred), away from metal
+2. **Increase transmit power**: Carefully—too high causes interference to neighbors
+3. **Add APs**: For large areas, add APs with 15-20% coverage overlap
+4. **Upgrade antennas**: Higher gain, directional where appropriate
+5. **Switch bands**: 2.4 GHz penetrates better through obstacles
+6. **External antennas**: For warehouse/industrial environments with metal obstructions
+
+---
+
+### 3. Interference Analysis and Mitigation
+
+#### Types of Interference
+
+**Co-Channel Interference (CCI):**
+Multiple APs or neighboring networks on the same channel compete for airtime.
+
+```
+Co-Channel Interference Scenario:
+                    ┌──────────┐
+     Your AP ──────►│ Channel 6│
+                    └──────────┘
+                    ┌──────────┐
+  Neighbor AP ─────►│ Channel 6│  ← Same channel: devices defer to each other
+                    └──────────┘
+
+Result: Both APs share airtime → 50% throughput reduction
+Fix: Change one AP to Channel 1 or 11
+```
+
+**Adjacent Channel Interference (ACI):**
+APs on overlapping channels corrupt each other's signals (worse than CCI because devices can't defer—they just see noise).
+
+```
+Adjacent Channel Interference:
+  Channel 1: ████████████████
+  Channel 3:     ████████████████       ← OVERLAPS with Ch 1!
+  Channel 6:              ████████████████   ← OK, no overlap
+
+  CRITICAL RULE: In 2.4 GHz, ONLY use channels 1, 6, 11.
+  Using channels 2-5 or 7-10 CREATES interference (worse than CCI).
+```
+
+**Non-Wi-Fi Interference Sources:**
+
+| Source | Frequency | Severity | Detection | Mitigation |
+|--------|-----------|----------|-----------|------------|
+| Microwave oven | 2.4 GHz (Ch 4-9) | Severe (during use) | Spectrum analyzer: burst pattern | Move AP, use 5 GHz, Channel 1 or 11 |
+| Bluetooth | 2.4 GHz (FHSS) | Low-moderate | Spectrum: wideband noise | Minimal impact on modern Wi-Fi |
+| Baby monitor | 2.4 GHz | Moderate-high | Spectrum: constant signal | Switch to 5 GHz |
+| Cordless phones | 2.4 or 5.8 GHz | Moderate | Spectrum: intermittent | Replace with DECT (1.9 GHz) |
+| Radar (DFS) | 5 GHz UNII-2/2C | Variable | AP DFS event logs | Leave DFS enabled, add non-DFS channels |
+| Fluorescent lights | Broadband noise | Low | Spectrum: impulse noise | Move AP away from fixtures |
+| Jammer (illegal) | Any Wi-Fi band | Critical | Spectrum: blanket signal | Locate with directional antenna, contact authorities |
+
+**Interference Troubleshooting with Spectrum Analysis:**
+
+```
+Healthy Spectrum (2.4 GHz):
+  Noise Floor:  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁  (-90 dBm baseline)
+  Our Signal:   ▁▁▁▁▁█████▁▁▁▁▁▁▁▁  (Ch 6, -50 dBm peak)
+                Ch1    Ch6    Ch11
+
+Interference from Microwave (2.4 GHz):
+  Noise Floor:  ▁▁▁▁▃▆█████▆▃▁▁▁▁▁  (-65 dBm noise!)
+  Our Signal:   ▁▁▁▁▁█████▁▁▁▁▁▁▁▁  (Ch 6, -50 dBm peak)
+                Ch1    Ch6    Ch11
+  SNR dropped: From 40 dB → 15 dB (microwave on during lunch)
+  
+  ACTION: Move to Channel 1 or 11, or switch to 5 GHz
 ```
 
 ---
 
-### 3. Interference
+### 4. Slow Performance and Throughput Issues
 
-**RF interference** degrades wireless performance:
-
-#### Sources of Interference
-
-**Co-Channel Interference**:
-- Multiple APs on same channel
-- Neighboring networks overlapping
-- **Solution**: Change channels (use 1, 6, 11 in 2.4 GHz)
-
-**Adjacent Channel Interference**:
-- Overlapping channels (e.g., 1 and 2)
-- **Solution**: Use only non-overlapping channels
-
-**Non-Wi-Fi Interference** (2.4 GHz):
-- **Microwave ovens**: 2.4 GHz, very strong interference
-- **Bluetooth**: 2.4 GHz, frequency hopping
-- **Cordless phones**: 2.4 GHz or 5 GHz
-- **Baby monitors**: 2.4 GHz
-- **Wireless video cameras**: 2.4 GHz
-- **Zigbee/Z-Wave**: 2.4 GHz or sub-GHz
-
-**Environmental Interference**:
-- **Weather radar** (DFS channels in 5 GHz)
-- **Microwave relay links**
-- **Outdoor wireless equipment**
-
-#### Symptoms of Interference
-
-- High retry rates
-- Increased latency
-- Packet loss
-- Slow throughput despite good RSSI
-- Intermittent connectivity
-
-#### Troubleshooting Interference
-
-**Tools**:
-1. **Wi-Fi Analyzer** (see SSIDs, channels, signal strength)
-2. **Spectrum Analyzer** (see non-Wi-Fi RF energy)
-3. **AP statistics** (retry rate, errors)
-
-**Steps**:
-1. Identify interfering devices/networks
-2. Check channel utilization
-3. Measure noise floor (background RF)
-4. Calculate SNR (Signal-to-Noise Ratio)
-   - **Good SNR**: 20+ dB
-   - **Poor SNR**: <10 dB
-5. Change to cleaner channel
-6. Move to 5 GHz (less congestion)
-7. Remove/relocate interfering devices
-8. Use 20 MHz channels (reduces overlap)
+**Diagnostic Decision Tree:**
 
 ```
-Channel Overlap Example (2.4 GHz):
-Bad:  [AP1-Ch1] [AP2-Ch2] [AP3-Ch3]
-       └─overlap──┘└─overlap──┘
-
-Good: [AP1-Ch1]    [AP2-Ch6]    [AP3-Ch11]
-       (no overlap between APs)
+Slow Wireless Performance?
+    │
+    ├── Check RSSI → Below -70 dBm?
+    │       └── YES → Signal problem (see Section 2)
+    │
+    ├── Check SNR → Below 20 dB?
+    │       └── YES → Interference problem (see Section 3)
+    │
+    ├── Check Channel Utilization → Above 60%?
+    │       └── YES → Congestion → Add APs or load balance
+    │
+    ├── Check Client Count per AP → Above capacity?
+    │       └── YES → Oversubscribed → Add APs, band steering
+    │
+    ├── Test wired speed → Also slow?
+    │       └── YES → Backhaul/internet issue, not wireless
+    │
+    ├── Check client Wi-Fi standard → 802.11n or older?
+    │       └── YES → Legacy client dragging performance
+    │
+    └── Check AP CPU/memory → High utilization?
+            └── YES → AP overloaded → Upgrade or distribute load
 ```
 
----
+**The Hidden Node Problem:**
 
-### 4. Slow Performance
+```
+Hidden Node Scenario:
+  Client A ←──── AP ────► Client B
+  (Signal)              (Signal)
+  
+  Client A cannot hear Client B (obstructed)
+  Both transmit simultaneously → COLLISION at AP
+  
+  Solution: Enable RTS/CTS or CTS-to-Self
+  
+  With RTS/CTS:
+  1. Client A sends RTS (Request to Send) to AP
+  2. AP responds with CTS (Clear to Send) — heard by ALL clients
+  3. Client B hears CTS, defers transmission
+  4. Client A transmits without collision
+  
+  Trade-off: RTS/CTS adds overhead (20-30% throughput reduction)
+  Only enable when hidden node problem confirmed
+```
 
-**Symptoms**:
-- Low throughput
-- High latency
-- Slow file transfers
-- Buffering during streaming
+**The Near-Far Problem:**
 
-**Causes**:
-- **Weak signal** (low RSSI)
-- **Interference** (low SNR)
-- **Channel congestion** (too many clients)
-- **AP oversubscription** (bandwidth exceeded)
-- **Backhaul bottleneck** (wired network slow)
-- **Client limitations** (old Wi-Fi adapter)
-- **Multipath** (signal reflections)
+```
+Near-Far Scenario:
+  Client A (5 meters from AP): RSSI -35 dBm
+  Client B (50 meters from AP): RSSI -78 dBm
+  
+  Problem: AP always "hears" Client A better
+  Client B's signals may be below AP's receive threshold
+  Client B constantly loses contention for channel access
+  
+  Solution:
+  1. Reduce AP transmit power (clients must match)
+  2. Add APs to reduce cell size
+  3. Client minimum RSSI configuration on AP (kick weak clients)
+  4. Band steering (force near clients to 5 GHz, leave 2.4 for far)
+```
 
-**Troubleshooting**:
-1. Test RSSI and SNR
-2. Check channel utilization
-3. Count clients per AP (capacity issue?)
-4. Test wired speed (isolate wireless vs network)
-5. Check AP CPU/memory usage
-6. Verify client supports current Wi-Fi standard
-7. Test with different channel width
-8. Enable QoS for critical traffic
+**Throughput Benchmarking:**
+
+```
+Expected Real-World Throughput vs Standard:
+──────────────────────────────────────────────
+Standard      Max Theory   Typical Real-World
+──────────────────────────────────────────────
+802.11b       11 Mbps      5-6 Mbps
+802.11g       54 Mbps      22-25 Mbps
+802.11n       600 Mbps     100-200 Mbps
+802.11ac W1   1.3 Gbps     300-500 Mbps
+802.11ac W2   3.5 Gbps     500-800 Mbps
+802.11ax      9.6 Gbps     800-2000 Mbps
+──────────────────────────────────────────────
+Rule of thumb: Expect 30-50% of theoretical maximum
+```
 
 ---
 
 ### 5. Authentication Failures
 
-**Symptoms**:
-- "Unable to connect"
-- "Authentication failed"
-- "Incorrect password"
-- Repeated disconnections
+**PSK Authentication Troubleshooting Flowchart:**
 
-**Causes**:
+```
+PSK Auth Failure
+    │
+    ├── "Incorrect password" → Verify PSK (case-sensitive, no trailing spaces)
+    │                          Forget network → Re-enter credentials
+    │
+    ├── "Security mismatch" → Verify both sides: WPA2-PSK or WPA3-SAE?
+    │                         Client must support AP's security level
+    │
+    └── Connects then drops → Possible PMK mismatch after AP config change
+                              Clear saved profiles, reconnect
+```
 
-**PSK Issues**:
-- **Wrong password**
-- **Incorrect security mode** (WPA vs WPA2)
-- **Key mismatch** after password change
+**802.1X Enterprise Authentication Troubleshooting:**
 
-**Enterprise (802.1X) Issues**:
-- **RADIUS server unreachable**
-- **Certificate expired** or untrusted
-- **Wrong EAP method** configured
-- **Incorrect credentials**
-- **Time sync issue** (Kerberos)
-- **RADIUS shared secret** mismatch
+```
+802.1X Auth Failure
+    │
+    ├── RADIUS Server Reachable?
+    │   └── Test: ping <RADIUS-IP>
+    │       Test: telnet <RADIUS-IP> 1812
+    │       If NO → Check network path, firewall rules, RADIUS service
+    │
+    ├── Shared Secret Match?
+    │   └── AP config shared secret MUST match RADIUS config
+    │       (Most common enterprise auth failure cause!)
+    │       Check: RADIUS log for "shared secret mismatch"
+    │
+    ├── Certificate Valid?
+    │   └── Server cert: Check expiration date, CA chain
+    │       Client cert (EAP-TLS): Check expiration, enrollment
+    │       Root CA: Must be trusted on client device
+    │       Check: openssl x509 -in cert.pem -noout -dates
+    │
+    ├── EAP Method Match?
+    │   └── Client and RADIUS must use same EAP method
+    │       Common: PEAP-MSCHAPv2, EAP-TLS, EAP-TTLS
+    │       Verify: Client supplicant configuration
+    │
+    └── Time Sync Issue?
+        └── Kerberos requires <5 minute clock skew
+            RADIUS timeout: Check server clock (NTP configured?)
+            Certificate validation: Clock must be within cert validity period
+```
 
-**Troubleshooting**:
+**RADIUS Log Analysis (FreeRADIUS example):**
 
-**PSK**:
-1. Verify correct password (case-sensitive)
-2. Check security mode matches (WPA2-PSK)
-3. Forget network and re-add
-4. Verify AP configuration
+```
+# Successful authentication:
+(0) Login OK: [jsmith] (from client AP-LOBBY port 1 cli AA:BB:CC:DD:EE:FF)
 
-**Enterprise**:
-1. Check RADIUS server reachability (ping, telnet)
-2. Verify RADIUS shared secret matches
-3. Check certificate validity (not expired)
-4. Verify CA certificate trusted on client
-5. Confirm correct EAP method (PEAP, EAP-TLS)
-6. Check RADIUS logs for errors
-7. Test with known-good credentials
-8. Verify time sync (NTP) - critical for certificates
+# Failed - wrong password:
+(0) eap_mschapv2: FAILED: MS-CHAP2-Response is incorrect
+
+# Failed - shared secret mismatch:
+(0) Dropping packet without response: shared secret is incorrect
+
+# Failed - expired certificate:
+(0) tls: ERROR: TLS Alert: certificate has expired
+
+# Failed - unknown user:
+(0) [ldap] User not found
+(0) Invalid user: [unknown.user]
+```
 
 ---
 
 ### 6. Roaming Issues
 
-**Symptoms**:
-- Disconnects when moving between APs
-- Slow handoff (VoIP drops during roaming)
-- Client "sticks" to far AP instead of closer one
+**Understanding 802.11r/k/v:**
 
-**Causes**:
-- **No 802.11r/k/v** enabled (slow roaming)
-- **Client roaming algorithm** aggressive or sticky
-- **Different SSIDs** per AP (not ESS)
-- **Inconsistent configuration** across APs
-- **Poor overlap** between AP coverage
+```
+802.11r (Fast BSS Transition - FT):
+  Problem: Standard roam = full re-authentication (500-2000 ms)
+  Solution: Pre-negotiates encryption keys before roaming
+  Result: Roaming < 50 ms (VoIP quality maintained)
+  
+  Without 802.11r:
+  [AP1] ──── Full auth (800ms) ────► [AP2]
+        VoIP call drops during transition
+  
+  With 802.11r:
+  [AP1] ──── Fast transition (30ms) ──► [AP2]
+        VoIP call continues seamlessly
 
-**Troubleshooting**:
-1. Enable **802.11r** (Fast BSS Transition)
-2. Enable **802.11k** (Neighbor Reports)
-3. Enable **802.11v** (BSS Transition Management)
-4. Verify same SSID across all APs
-5. Check AP coverage overlap (15-20%)
-6. Adjust transmit power (prevent sticky clients)
-7. Enable load balancing on controller
-8. Update client Wi-Fi drivers
+802.11k (Neighbor Reports):
+  Problem: Client scans all channels looking for next AP (slow)
+  Solution: AP sends neighbor AP list with channels/signal strength
+  Result: Client knows exactly where to roam → faster discovery
 
-**Fast Roaming Requirements**:
-- **<50 ms handoff** for VoIP
-- 15-20% coverage overlap between APs
-- 802.11r/k/v enabled
-- Wireless controller managing roaming
+802.11v (BSS Transition Management):
+  Problem: "Sticky client" stays connected to far AP, ignoring closer AP
+  Solution: AP recommends client roam to better AP
+  Result: Better load distribution, improved client experience
+```
+
+**Roaming Troubleshooting Checklist:**
+
+| Issue | Check | Resolution |
+|-------|-------|------------|
+| VoIP drops while walking | 802.11r enabled? | Enable Fast BSS Transition |
+| Slow roam (>500 ms) | PMK caching? | Enable OKC or 802.11r |
+| Client sticks to far AP | 802.11v supported? | Enable BSS Transition Mgmt |
+| Roams to wrong AP | Min RSSI threshold? | Configure min RSSI on AP |
+| Roams back and forth | Coverage overlap? | Ensure 15-20% overlap, adjust power |
+| Fails after roam (802.1X) | Pre-auth configured? | Enable PMK caching or 802.11r |
 
 ---
 
 ### 7. Rogue APs and Evil Twins
 
-**Rogue AP**:
-- Unauthorized AP on network
-- Security risk (bypasses controls)
+**Detection Methods:**
 
-**Evil Twin**:
-- Fake AP impersonating legitimate network
-- Man-in-the-middle attack
+```
+Rogue AP Detection Workflow:
+    │
+    ├── Wireless IPS (Automated)
+    │   └── Dedicated WIPS sensors scan for unknown BSSIDs
+    │       Compare against authorized AP inventory
+    │       Alert on: New SSIDs, MAC spoofing, unauthorized channels
+    │
+    ├── Wired-Side Detection
+    │   └── NAC (802.1X) on switch ports
+    │       Monitor for unexpected DHCP servers
+    │       Check for ARP anomalies (MITM indicators)
+    │
+    ├── Wi-Fi Scan Comparison
+    │   └── Regular site surveys → compare against baseline
+    │       Look for: Duplicate SSIDs with different BSSIDs
+    │       Check: Signal strength anomalies
+    │
+    └── RF Triangulation
+        └── Use multiple sensors to triangulate rogue location
+            Handheld spectrum analyzer for physical location
+```
 
-**Detection**:
-1. **Wireless IPS** - automatic rogue detection
-2. **Regular scans** - site surveys
-3. **Wired side detection** - discover unauthorized devices
-4. **MAC address monitoring** - track connected devices
+**Evil Twin Attack Identification:**
 
-**Mitigation**:
-1. **802.1X NAC** - prevent unauthorized AP connection
-2. **WIPS containment** - send deauth to rogue clients
-3. **Physical security** - control Ethernet jacks
-4. **User awareness** - train users to recognize fake networks
+```
+Legitimate AP:
+  SSID: "CorpWiFi"   BSSID: AA:BB:CC:11:22:33   Security: WPA2-Enterprise
+
+Evil Twin:
+  SSID: "CorpWiFi"   BSSID: DE:AD:BE:EF:00:01   Security: WPA2-PSK (or Open!)
+  
+  Red Flags:
+  ✗ Different BSSID than known APs
+  ✗ Weaker security (PSK instead of Enterprise, or Open)
+  ✗ Unusually strong signal (attacker is close)
+  ✗ Captive portal requesting corporate credentials
+```
 
 ---
 
-## Wireless Diagnostic Tools
+## Wireless Diagnostic Tools: Hands-On Usage
 
-### 1. Built-in OS Tools
+### Built-in OS Diagnostic Commands
 
-**Windows**:
+**Windows Wireless Diagnostics:**
+
 ```cmd
-# View available networks
+:: View all available SSIDs with details (BSSID, channel, signal)
 netsh wlan show networks mode=bssid
 
-# View current connection info
+:: Sample output:
+:: SSID 1 : CorpWiFi
+::   Network type   : Infrastructure
+::   BSSID 1        : AA:BB:CC:11:22:33
+::     Signal        : 85%
+::     Channel       : 36
+::     Radio type    : 802.11ax
+
+:: Current connection details
 netsh wlan show interfaces
 
-# View Wi-Fi adapter properties
-netsh wlan show drivers
+:: Key fields to check:
+::   State:          connected
+::   SSID:           CorpWiFi
+::   Signal:         85%        (Convert: 85% ≈ -55 dBm)
+::   Receive rate:   866.7 Mbps (negotiated PHY rate)
+::   Channel:        36
+::   Radio type:     802.11ax
 
-# View wireless profiles (saved networks)
+:: Generate detailed wireless report (HTML)
+netsh wlan show wlanreport
+:: Opens report at: C:\ProgramData\Microsoft\Windows\WlanReport\wlan-report.html
+:: Shows: Connection timeline, errors, driver info, session history
+
+:: Check saved Wi-Fi profiles
 netsh wlan show profiles
+netsh wlan show profile name="CorpWiFi" key=clear
 ```
 
-**macOS/Linux**:
+**Linux Wireless Diagnostics:**
+
 ```bash
-# View current connection (macOS)
-/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I
-
-# Scan for networks (Linux)
-sudo iwlist wlan0 scan
-
-# View connection info (Linux)
+# View interface details
 iwconfig wlan0
+# Key fields: ESSID, Frequency, Bit Rate, Signal level, Noise level
+
+# Detailed scan with signal strength
+sudo iwlist wlan0 scan | grep -E "ESSID|Signal|Channel|Encryption"
+
+# Modern alternative: iw
+sudo iw dev wlan0 scan | grep -E "SSID|signal|freq|capability"
+
+# Connection statistics
+iw dev wlan0 station dump
+# Shows: signal, tx/rx bitrate, tx/rx packets, tx retries, tx failed
+
+# Check for driver issues
+dmesg | grep -i "wlan\|wifi\|wireless\|firmware"
+lspci -k | grep -A3 "Network"  # PCI wireless adapter info
+lsusb                           # USB wireless adapter info
+
+# Monitor mode for packet capture
+sudo ip link set wlan0 down
+sudo iw dev wlan0 set type monitor
+sudo ip link set wlan0 up
+sudo tcpdump -i wlan0 -w capture.pcap
 ```
 
-### 2. Wi-Fi Analyzer Apps
+### Wireshark Wireless Capture and Analysis
 
-**Purpose**: Visualize Wi-Fi networks, channels, signal strength
+**Essential Wireshark Display Filters for Wireless:**
 
-**Features**:
-- SSID list with RSSI
-- Channel graph (overlapping networks)
-- Signal strength meter
-- Best channel recommendation
+```
+# Filter by SSID
+wlan.ssid == "CorpWiFi"
 
-**Popular Tools**:
-- **Wi-Fi Analyzer** (Android)
-- **NetSpot** (Windows, macOS)
-- **inSSIDer** (Windows)
-- **WiFi Explorer** (macOS)
+# Show only management frames (beacons, probes, auth, assoc)
+wlan.fc.type == 0
 
-**Use Cases**:
-- Find clearest channel
-- Measure signal strength
-- Identify interference sources
-- Verify AP coverage
+# Show only control frames (ACK, RTS, CTS)
+wlan.fc.type == 1
 
-### 3. Spectrum Analyzer
+# Show only data frames
+wlan.fc.type == 2
 
-**Purpose**: Detect non-Wi-Fi RF interference
+# Show authentication frames only
+wlan.fc.type_subtype == 0x0b
 
-**Features**:
-- View all RF energy (not just Wi-Fi)
-- Identify microwave ovens, Bluetooth, etc.
-- Measure noise floor
-- Real-time RF spectrum display
+# Show deauthentication frames (possible attack)
+wlan.fc.type_subtype == 0x0c
 
-**Tools**:
-- **Chanalyzer** + Wi-Spy adapter
-- **AirMagnet Spectrum XT**
-- **Aruba AirWave**
+# Show specific client traffic by MAC
+wlan.addr == AA:BB:CC:DD:EE:FF
 
-**Use Cases**:
-- Troubleshoot unexplained interference
-- Detect hidden RF sources
-- Plan deployments in noisy environments
+# Show retries (indicator of interference/poor signal)
+wlan.fc.retry == 1
 
-### 4. Enterprise Wi-Fi Tools
+# Show all probe requests (clients searching for networks)
+wlan.fc.type_subtype == 0x04
 
-**Packet Capture**:
-- **Wireshark** with monitor mode
-- Capture 802.11 frames
-- Analyze handshakes, retries, errors
+# Combine: Show retries from specific client
+wlan.addr == AA:BB:CC:DD:EE:FF && wlan.fc.retry == 1
 
-**Site Survey Tools**:
-- **Ekahau** Site Survey Pro
-- **AirMagnet Survey**
-- Create heat maps
-- Validate coverage
+# EAPOL frames (802.1X authentication handshake)
+eapol
+```
 
-**Wireless IPS**:
-- **Cisco CleanAir**
-- **Aruba RFProtect**
-- Automatic rogue detection
-- Spectrum analysis
+**Interpreting Wireless Captures:**
 
----
+```
+Normal 802.11 Association Sequence:
+1. Probe Request    (Client → Broadcast)
+2. Probe Response   (AP → Client)
+3. Authentication   (Client → AP, Open System)
+4. Authentication   (AP → Client, Success)
+5. Association Req  (Client → AP)
+6. Association Resp (AP → Client, Success)
+7. EAPOL frames     (if 802.1X: 4-way handshake)
+8. Data frames      (Normal traffic begins)
 
-## Troubleshooting Methodology
+Failure Indicators in Capture:
+✗ No Probe Response     → AP not broadcasting or client out of range
+✗ Auth frame Status ≠ 0 → Authentication rejected
+✗ Assoc Status ≠ 0      → Association failed (capacity, policy)
+✗ Deauth frame present  → Client kicked (or deauth attack!)
+✗ High retry rate       → Interference or poor signal
+✗ EAPOL timeout         → RADIUS unreachable
+```
 
-### CompTIA 7-Step Process
+### AP/Controller Management Interface Checks
 
-1. **Identify the problem**
-   - Gather information
-   - Question users
-   - Identify symptoms
-   - Determine recent changes
-
-2. **Establish a theory** of probable cause
-   - Question the obvious
-   - Consider multiple approaches
-
-3. **Test the theory** to determine cause
-   - If confirmed: plan action
-   - If not confirmed: establish new theory
-
-4. **Establish a plan of action** to resolve
-   - Identify effects of solution
-
-5. **Implement the solution** or escalate
-   - Make one change at a time
-
-6. **Verify full system functionality**
-   - Test with user
-   - Implement preventive measures
-
-7. **Document findings**, actions, and outcomes
-
-### Wireless-Specific Approach
-
-**Quick Checks** (First 5 minutes):
-1. Is the AP powered on?
-2. Can other devices connect?
-3. What's the RSSI at problem location?
-4. Has anything changed recently?
-5. Is the correct SSID/password used?
-
-**Isolation**:
-- **Client-side issue**: Only one device affected
-- **AP issue**: All clients on one AP affected
-- **Network issue**: All APs affected
-- **Interference**: Specific location/time affected
-
-**Testing**:
-- **Test with known-good device**
-- **Test in different location**
-- **Test on different band** (2.4 vs 5 GHz)
-- **Test with ethernet** (isolate wireless vs network)
+```
+Key AP Statistics to Check:
+────────────────────────────────────────────────────
+Metric              Good            Investigate
+────────────────────────────────────────────────────
+Client count        < 25/radio      > 50/radio
+Channel utilization < 50%           > 70%
+Retry rate          < 5%            > 10%
+CRC errors          < 1%            > 5%
+Noise floor         < -90 dBm       > -80 dBm
+Tx power            Appropriate     Max (may interfere)
+CPU utilization     < 30%           > 60%
+Memory usage        < 50%           > 80%
+Uptime              Stable          Frequent reboots
+────────────────────────────────────────────────────
+```
 
 ---
 
-## Common Scenarios and Solutions
+## Troubleshooting Methodology for Wireless
 
-| Symptom | Likely Cause | Solution |
-|---------|--------------|----------|
-| Can't see SSID | Out of range, SSID hidden | Move closer, unhide SSID |
-| Low speed, good signal | Interference, congestion | Change channel, use 5 GHz |
-| Good at desk, poor in corner | Weak coverage | Add AP, reposition existing |
-| Drops every few minutes | Interference, channel | Change channel, spectrum analyze |
-| VoIP drops during walking | Slow roaming | Enable 802.11r/k/v |
-| Auth fails enterprise | RADIUS issue, cert expired | Check RADIUS logs, renew cert |
-| Works early, fails afternoon | Interference (microwave lunch) | Move AP, use 5 GHz |
-| Good RSSI, high latency | High retry rate, interference | Change channel, reduce power |
+### CompTIA 7-Step Process Applied to Wireless
+
+**Step 1: Identify the Problem**
+- Interview affected users: What changed? When did it start? How many affected?
+- Gather metrics: RSSI, SNR, retry rate, channel utilization
+- Classify: Single user, single AP, single area, or network-wide?
+
+**Step 2: Establish a Theory of Probable Cause**
+
+```
+Wireless Issue Classification Matrix:
+──────────────────────────────────────────────────────
+Scope              Likely Cause
+──────────────────────────────────────────────────────
+One device         Client driver, configuration, hardware
+All on one AP      AP failure, AP configuration, local interference
+One area           Coverage gap, localized interference
+All on one band    Band-specific interference, DFS event
+Entire WLAN        Controller issue, RADIUS down, backhaul failure
+Time-based         Environmental interference (microwave, radar)
+──────────────────────────────────────────────────────
+```
+
+**Step 3: Test the Theory**
+- Swap client device (isolate client vs network)
+- Move to different location (isolate coverage vs interference)
+- Test different band (isolate 2.4 vs 5 GHz issue)
+- Test wired (isolate wireless vs network problem)
+
+**Step 4: Establish a Plan of Action**
+- Document proposed changes before implementing
+- Schedule change window if production impacting
+- Prepare rollback plan
+
+**Step 5: Implement the Solution**
+- Make ONE change at a time
+- Verify after each change
+- Allow time for propagation (clients reassociate)
+
+**Step 6: Verify Full System Functionality**
+- Test from the affected user's device and location
+- Verify no unintended side effects
+- Monitor for recurrence
+
+**Step 7: Document Findings**
+- Record: Symptom, root cause, resolution, time to resolve
+- Update baseline documentation if configuration changed
+- Add to knowledge base for future reference
+
+---
+
+## Real-World Troubleshooting Case Studies
+
+### Case Study 1: "Lunch Hour Slowdown"
+
+```
+Report: "Wi-Fi is slow every day between 12-1 PM in the break room area"
+
+Investigation:
+  12:00 - SNR drops from 30 dB to 8 dB on Channel 6
+  12:05 - Spectrum analyzer shows broadband 2.4 GHz noise (Ch 4-9)
+  12:10 - Source identified: Microwave oven in break room
+  
+Diagnosis: Microwave oven (2.4 GHz magnetron) causes massive 
+           interference on adjacent channels during lunch hour
+
+Resolution:
+  1. Changed break room AP from Channel 6 to Channel 1 (still affected)
+  2. Moved AP away from break room (still some effect)
+  3. Final fix: Configured AP for 5 GHz only near break room
+     Result: Problem eliminated—microwave doesn't affect 5 GHz
+```
+
+### Case Study 2: "Conference Room Black Hole"
+
+```
+Report: "No Wi-Fi in the large conference room since renovation"
+
+Investigation:
+  RSSI at conference room entrance: -62 dBm (good)
+  RSSI inside conference room: -88 dBm (no signal!)
+  Renovation included: New energy-efficient glazing on windows,
+    metallic wallpaper, and metal-backed whiteboard covering wall
+
+Diagnosis: Energy-efficient glass (low-e coating) and metallic 
+           wallpaper created a Faraday cage effect
+
+Resolution:
+  1. Installed ceiling-mounted AP inside conference room
+  2. Connected via Ethernet cable through ceiling plenum
+  3. Set to 5 GHz, low power (small room, don't need range)
+  Result: Full coverage, -45 dBm throughout room
+```
+
+### Case Study 3: "Random Disconnections at the Warehouse"
+
+```
+Report: "Scanners disconnect randomly in warehouse, especially near dock"
+
+Investigation:
+  RSSI survey: -55 to -72 dBm (acceptable range)
+  SNR: Variable, 12-28 dB (inconsistent)
+  AP logs: DFS events on channels 52-64 every 2-3 hours
+  Location: Near airport (5 miles from runway)
+
+Diagnosis: Airport weather radar causes DFS channel evacuation
+  APs detect radar → vacate channel for 30 minutes → clients disconnect
+
+Resolution:
+  1. Moved APs to non-DFS 5 GHz channels (36, 40, 44, 48)
+  2. Supplemented with 2.4 GHz (Ch 1, 6, 11) for fallback
+  3. Enabled 802.11r for fast roaming between frequencies
+  Result: No more disconnections
+```
 
 ---
 
 ## Summary
 
-**Key Takeaways**:
+### Key Takeaways
 
-1. **RSSI**: Minimum -70 dBm for normal use, -65 dBm for VoIP
-2. **SNR**: 20+ dB for good performance
-3. **Interference**: Co-channel (same channel), adjacent (overlapping), non-Wi-Fi (microwave)
-4. **2.4 GHz Channels**: Use only 1, 6, 11 (non-overlapping)
-5. **5 GHz**: Less congestion, more channels, shorter range
-6. **Authentication**: Verify RADIUS reachability, certificate validity, credentials
-7. **Roaming**: Enable 802.11r/k/v for fast handoff (<50ms)
-8. **Tools**: Wi-Fi Analyzer (networks), Spectrum Analyzer (RF), Packet Capture (details)
-9. **Isolation**: Test one device, one location, one change at a time
-10. **Documentation**: Log issues, solutions, and changes
+1. **RSSI thresholds**: Minimum -65 dBm for VoIP, -70 dBm for enterprise data, -75 dBm for basic browsing
+2. **SNR interpretation**: 25+ dB excellent, 15-25 dB acceptable, below 10 dB unusable—high RSSI with low SNR means interference
+3. **Interference types**: Co-channel (same channel, manageable), adjacent channel (overlapping channels, avoid), non-Wi-Fi (microwave, Bluetooth)
+4. **2.4 GHz golden rule**: Only use channels 1, 6, 11—using any other channel causes adjacent channel interference
+5. **Troubleshooting isolation**: Swap device (client vs network), change location (coverage vs interference), test wired (wireless vs backhaul)
+6. **802.1X failures**: Check RADIUS reachability, shared secret, certificates, EAP method match, and time synchronization
+7. **Roaming**: Enable 802.11r for fast handoff (<50ms for VoIP), maintain 15-20% AP coverage overlap
+8. **Link budget**: Calculate total signal path: TX power + antenna gain - cable loss - FSPL - material attenuation + client antenna gain
+9. **Diagnostic commands**: `netsh wlan show interfaces` (Windows), `iwconfig`/`iw` (Linux), Wireshark with `wlan.fc.retry == 1` for retries
+10. **Document everything**: Record symptoms, metrics, root cause, resolution, and update baselines after changes
 
-**Troubleshooting Checklist**:
-- [ ] Verify AP powered and operational
-- [ ] Check RSSI (target -30 to -70 dBm)
-- [ ] Measure SNR (target 20+ dB)
-- [ ] Scan for channel congestion
-- [ ] Check for interference sources
-- [ ] Verify correct channel usage (1, 6, 11)
-- [ ] Test authentication (PSK or RADIUS)
-- [ ] Confirm DHCP assignment
-- [ ] Test with known-good device
-- [ ] Review AP/controller logs
+### References
 
-**Quick Fixes**:
-- **Slow speed**: Change to 5 GHz, change channel
-- **Drops**: Reduce transmit power, enable load balancing
-- **Can't connect**: Verify password, check MAC filtering
-- **Roaming issues**: Enable 802.11r, adjust power levels
+- CompTIA Network+ N10-009 Objectives: 5.4 — Given a scenario, troubleshoot common wireless connectivity issues
+- CompTIA Network+ N10-009 Objectives: 5.3 — Given a scenario, use the appropriate network software tools and commands
+- IEEE 802.11-2020 Standard
+- CWNA Study Guide, 5th Edition (Sybex)
 
-Effective wireless troubleshooting requires understanding RF propagation, interference sources, and systematic diagnostic approaches to quickly identify and resolve issues.
+---
+
+## Practice Questions
+
+**Q1.** A user reports that their laptop connects to the corporate Wi-Fi but receives a 169.254.x.x IP address. What is the most likely cause?
+
+A) The wireless password is incorrect
+B) The DHCP server is unreachable or has no available leases
+C) The wireless adapter driver is outdated
+D) The AP is broadcasting on the wrong channel
+
+<details>
+<summary>Answer</summary>
+
+**B)** A 169.254.x.x address is an APIPA (Automatic Private IP Addressing) address, which Windows assigns when it cannot reach a DHCP server. The client has successfully authenticated and associated with the AP (it's connected), but cannot obtain an IP lease — indicating the DHCP server is down, unreachable, or has exhausted its address pool.
+</details>
+
+**Q2.** A wireless network shows -55 dBm RSSI but users report extremely slow performance. A spectrum analyzer reveals a noise floor of -60 dBm. What is the SNR, and what does it indicate?
+
+A) 55 dB — excellent performance expected
+B) 5 dB — severe interference degrading performance
+C) 115 dB — signal is too strong
+D) -5 dB — signal is below the noise floor
+
+<details>
+<summary>Answer</summary>
+
+**B)** SNR = Signal - Noise = -55 - (-60) = 5 dB. An SNR of 5 dB is extremely poor (below the 10 dB minimum for usable connectivity). Despite the seemingly good RSSI of -55 dBm, the high noise floor (-60 dBm) from interference sources makes the channel nearly unusable. The solution is to identify and eliminate the interference source or move to a cleaner channel/band.
+</details>
+
+**Q3.** An office experiences Wi-Fi slowdowns every weekday between 12:00 and 1:00 PM, primarily on channels 4 through 9 in the 2.4 GHz band. What is the most likely cause?
+
+A) Too many users connecting during lunch
+B) A microwave oven operating in the break room
+C) Adjacent channel interference from a neighboring office
+D) DFS radar detection on 5 GHz channels
+
+<details>
+<summary>Answer</summary>
+
+**B)** Microwave ovens operate at 2.4 GHz and cause broadband interference primarily on channels 4-9. The time-based pattern (lunch hour) and frequency-specific impact (2.4 GHz mid-band) are classic indicators of microwave interference. Solutions include moving APs to channels 1 or 11, switching to 5 GHz, or relocating the AP away from the break room.
+</details>
+
+**Q4.** After a building renovation that installed energy-efficient windows, users in a conference room lose all Wi-Fi connectivity. The AP is in the hallway outside. What most likely occurred?
+
+A) The AP firmware needs updating after power cycling
+B) Low-emissivity (low-e) glass and metallic materials created a Faraday cage effect
+C) The renovation caused a change in DHCP scopes
+D) The AP's channel was automatically changed by DFS
+
+<details>
+<summary>Answer</summary>
+
+**B)** Energy-efficient (low-e) windows have metallic coatings that attenuate RF signals by 8-12 dB or more per pane. Combined with metallic wallpaper or metal-backed whiteboards, the room can become a virtual Faraday cage, blocking wireless signals almost entirely. The solution is to install a dedicated AP inside the conference room connected via Ethernet.
+</details>
+
+**Q5.** A warehouse near an airport experiences random wireless disconnections every 2-3 hours on 5 GHz channels 52-64. What feature is causing this, and what is the solution?
+
+A) Band steering is forcing clients to 2.4 GHz; disable band steering
+B) DFS (Dynamic Frequency Selection) is detecting airport radar; use non-DFS channels 36-48
+C) 802.11r fast roaming is failing; disable fast BSS transition
+D) The AP is overloaded; add more access points
+
+<details>
+<summary>Answer</summary>
+
+**B)** Channels 52-144 in the 5 GHz UNII-2 and UNII-2C bands require DFS (Dynamic Frequency Selection). When APs detect radar signals (common near airports), they must vacate the channel for 30 minutes, causing all connected clients to disconnect. The solution is to configure APs to use only non-DFS channels (36, 40, 44, 48) in the UNII-1 band, supplemented by 2.4 GHz for fallback.
+</details>
+
+**Q6.** Which Wireshark display filter would you use to identify excessive wireless frame retransmissions from a specific client with MAC address AA:BB:CC:DD:EE:FF?
+
+A) `ip.addr == AA:BB:CC:DD:EE:FF && tcp.retransmission`
+B) `wlan.addr == AA:BB:CC:DD:EE:FF && wlan.fc.retry == 1`
+C) `eth.addr == AA:BB:CC:DD:EE:FF && frame.retry`
+D) `wlan.sa == AA:BB:CC:DD:EE:FF && wlan.flags.retry`
+
+<details>
+<summary>Answer</summary>
+
+**B)** `wlan.addr` filters by 802.11 MAC address (matches source, destination, or BSSID), and `wlan.fc.retry == 1` filters for frames with the retry bit set in the frame control field. High retry rates (>10%) indicate interference, poor signal quality, or hidden node problems. The `ip.addr` and `eth.addr` filters are for wired Ethernet analysis, not 802.11 wireless frames.
+</details>
+
+**Q7.** A VoIP user experiences call drops while walking between floors. The SSID is the same on all APs, and signal coverage overlap is adequate at 20%. What should be enabled to fix this?
+
+A) MAC address filtering on all APs
+B) 802.11r (Fast BSS Transition)
+C) WPA3-SAE authentication
+D) Channel bonding to 80 MHz
+
+<details>
+<summary>Answer</summary>
+
+**B)** 802.11r (Fast BSS Transition) pre-negotiates encryption keys with the target AP before roaming, reducing handoff time from 500-2000 ms to under 50 ms. VoIP requires seamless roaming (<50 ms) to avoid call drops. The infrastructure is otherwise correct (same SSID, adequate overlap), but without 802.11r, the full re-authentication during roaming takes too long for real-time voice traffic.
+</details>
+
+**Q8.** An enterprise WLAN using 802.1X authentication suddenly stops authenticating all users. The AP logs show "shared secret mismatch." What is the most likely cause?
+
+A) All user passwords have expired simultaneously
+B) The RADIUS shared secret was changed on either the AP or RADIUS server without updating the other
+C) The AP's SSL certificate has expired
+D) The DHCP server is assigning incorrect DNS servers
+
+<details>
+<summary>Answer</summary>
+
+**B)** The RADIUS shared secret is a pre-shared key configured on both the AP (RADIUS client) and the RADIUS server. If either side's shared secret is changed without updating the other, all authentication requests will fail with a "shared secret mismatch" error. This is the single most common cause of enterprise wireless authentication failures. The fix is to ensure the shared secret matches exactly on both the AP and RADIUS server configurations.
+</details>
+
+**Q9.** In the 2.4 GHz band, an administrator configures three APs on channels 1, 4, and 8. Users report intermittent connectivity issues. What is the problem?
+
+A) The APs need firmware updates
+B) Channels 4 and 8 overlap with channels 1 and 11, causing adjacent channel interference
+C) Three APs are insufficient for any deployment
+D) The 2.4 GHz band does not support three simultaneous APs
+
+<details>
+<summary>Answer</summary>
+
+**B)** In the 2.4 GHz band, only channels 1, 6, and 11 are non-overlapping (each channel is 22 MHz wide with 5 MHz spacing). Channels 4 and 8 overlap with both their neighbors, causing adjacent channel interference — which is worse than co-channel interference because devices cannot coordinate via CSMA/CA. The APs should be reconfigured to channels 1, 6, and 11.
+</details>
+
+**Q10.** A technician measures -72 dBm RSSI at a client location. The AP transmit power is 20 dBm with 3 dBi antenna gain, and there are two drywall partitions (3 dB loss each) between the client and AP. What is the approximate free space path loss?
+
+A) 83 dB
+B) 89 dB
+C) 95 dB
+D) 72 dB
+
+<details>
+<summary>Answer</summary>
+
+**B)** Using the link budget equation: Received Signal = TX Power + Antenna Gain - FSPL - Material Losses. Plugging in: -72 = 20 + 3 - FSPL - (2 × 3). Solving: -72 = 23 - FSPL - 6, so -72 = 17 - FSPL, giving FSPL = 17 + 72 = 89 dB. The free space path loss accounts for the signal attenuation due to distance alone, separate from the material losses through the drywall.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Objectives: 5.4 — Given a scenario, troubleshoot common wireless connectivity issues
+- CompTIA Network+ N10-009 Objectives: 2.4 — Given a scenario, install and configure the appropriate wireless standards and technologies
+- IEEE 802.11-2020 — Wireless LAN Medium Access Control and Physical Layer Specifications
+- Cisco Wireless LAN Controller Configuration Guide — [cisco.com](https://www.cisco.com/c/en/us/support/wireless/wireless-lan-controller-software/products-installation-and-configuration-guides-list.html)
+- Ekahau Wi-Fi Design Documentation — [ekahau.com](https://www.ekahau.com/)
+- MetaGeek inSSIDer and Wi-Spy Documentation — [metageek.com](https://www.metageek.com/)
+- CWNA: Certified Wireless Network Administrator Study Guide (Sybex)
+- RFC 8110 — Opportunistic Wireless Encryption

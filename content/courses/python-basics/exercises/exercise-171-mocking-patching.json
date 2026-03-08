@@ -1,63 +1,58 @@
 {
   "id": "exercise-171-mocking-patching",
-  "lessonId": "lesson-161-mocking-patching",
-  "title": "Mocking and Patching",
-  "description": "Mock external dependencies, patch functions and methods, control test behavior, and test isolated units effectively.",
-  "difficulty": "advanced",
-  "points": 25,
-  "starterCode": "# Exercise: Mocking and Patching\nfrom unittest.mock import Mock, patch\n\ndef test_mock_return_value():\n    \"\"\"Test mock with return value.\"\"\"\n    pass\n\ndef test_mock_side_effect():\n    \"\"\"Test mock with side effect.\"\"\"\n    pass\n\ndef test_patch_function():\n    \"\"\"Test patching a function.\"\"\"\n    pass\n\ndef test_patch_method():\n    \"\"\"Test patching a class method.\"\"\"\n    pass\n\ndef test_verify_mock_calls():\n    \"\"\"Test verifying mock was called correctly.\"\"\"\n    pass\n\ndef test_mock_exception():\n    \"\"\"Test mock raising exception.\"\"\"\n    pass\n",
-  "solution": "# Solution: Mocking and Patching\nfrom unittest.mock import Mock, patch, MagicMock\nimport pytest\n\ndef test_mock_return_value():\n    \"\"\"\n    Test mock with return value.\n    \n    Creates a mock and configures its return value.\n    \"\"\"\n    mock_api = Mock()\n    mock_api.get_user.return_value = {\"id\": \"user1\", \"name\": \"Alice\"}\n    \n    # Use mock\n    result = mock_api.get_user(\"user1\")\n    \n    assert result[\"name\"] == \"Alice\"\n    mock_api.get_user.assert_called_once_with(\"user1\")\n\ndef test_mock_side_effect():\n    \"\"\"\n    Test mock with side effect.\n    \n    Side effect provides different values for multiple calls.\n    \"\"\"\n    mock_counter = Mock()\n    mock_counter.get_count.side_effect = [1, 2, 3]\n    \n    # Multiple calls return different values\n    assert mock_counter.get_count() == 1\n    assert mock_counter.get_count() == 2\n    assert mock_counter.get_count() == 3\n    \n    assert mock_counter.get_count.call_count == 3\n\ndef get_current_timestamp():\n    \"\"\"Function to be patched.\"\"\"\n    from datetime import datetime\n    return datetime.now()\n\ndef format_log_entry(message: str) -> str:\n    \"\"\"Format log entry with timestamp.\"\"\"\n    timestamp = get_current_timestamp()\n    return f\"[{timestamp}] {message}\"\n\ndef test_patch_function():\n    \"\"\"\n    Test patching a function.\n    \n    Patches get_current_timestamp to return fixed value.\n    \"\"\"\n    from datetime import datetime\n    fixed_time = datetime(2024, 1, 15, 10, 30, 0)\n    \n    with patch('__main__.get_current_timestamp') as mock_timestamp:\n        mock_timestamp.return_value = fixed_time\n        \n        result = format_log_entry(\"Test message\")\n        \n        assert \"2024-01-15 10:30:00\" in result\n        assert \"Test message\" in result\n        mock_timestamp.assert_called_once()\n\nclass DataService:\n    \"\"\"Service to be tested with mocked methods.\"\"\"\n    \n    def __init__(self, database):\n        self.database = database\n    \n    def get_data(self, key: str):\n        \"\"\"Get data from database.\"\"\"\n        return self.database.query(key)\n    \n    def process_data(self, key: str) -> dict:\n        \"\"\"Process data with transformation.\"\"\"\n        data = self.get_data(key)\n        return {\"processed\": True, \"data\": data}\n\ndef test_patch_method():\n    \"\"\"\n    Test patching a class method.\n    \n    Patches DataService.get_data method.\n    \"\"\"\n    with patch.object(DataService, 'get_data') as mock_get_data:\n        mock_get_data.return_value = {\"value\": 42}\n        \n        service = DataService(None)  # Database not needed\n        result = service.process_data(\"key1\")\n        \n        assert result[\"processed\"] is True\n        assert result[\"data\"][\"value\"] == 42\n        mock_get_data.assert_called_once_with(\"key1\")\n\ndef test_verify_mock_calls():\n    \"\"\"\n    Test verifying mock was called correctly.\n    \n    Demonstrates various assertion methods.\n    \"\"\"\n    mock_service = Mock()\n    \n    # Make calls\n    mock_service.create_user(\"alice\", \"alice@example.com\")\n    mock_service.create_user(\"bob\", \"bob@example.com\")\n    mock_service.delete_user(\"alice\")\n    \n    # Verify called\n    assert mock_service.create_user.called\n    assert mock_service.delete_user.called\n    \n    # Verify call count\n    assert mock_service.create_user.call_count == 2\n    assert mock_service.delete_user.call_count == 1\n    \n    # Verify called with specific arguments (last call)\n    mock_service.create_user.assert_called_with(\"bob\", \"bob@example.com\")\n    \n    # Verify any call with arguments\n    mock_service.create_user.assert_any_call(\"alice\", \"alice@example.com\")\n    \n    # Verify called once\n    mock_service.delete_user.assert_called_once_with(\"alice\")\n\ndef test_mock_exception():\n    \"\"\"\n    Test mock raising exception.\n    \n    Configures mock to raise exception when called.\n    \"\"\"\n    mock_api = Mock()\n    mock_api.fetch_data.side_effect = ConnectionError(\"API unavailable\")\n    \n    with pytest.raises(ConnectionError) as exc_info:\n        mock_api.fetch_data()\n    \n    assert \"API unavailable\" in str(exc_info.value)\n    mock_api.fetch_data.assert_called_once()\n\n# Additional comprehensive mocking examples\n\ndef test_patch_builtin_open():\n    \"\"\"\n    Test patching built-in open function.\n    \n    Uses mock_open to simulate file operations.\n    \"\"\"\n    from unittest.mock import mock_open\n    \n    with patch('builtins.open', mock_open(read_data='file content')):\n        with open('test.txt') as f:\n            content = f.read()\n        \n        assert content == 'file content'\n\ndef test_multiple_patches():\n    \"\"\"\n    Test using multiple patches together.\n    \n    Patches multiple functions simultaneously.\n    \"\"\"\n    with patch('__main__.get_current_timestamp') as mock_time, \\\n         patch('builtins.print') as mock_print:\n        \n        from datetime import datetime\n        mock_time.return_value = datetime(2024, 1, 1)\n        \n        timestamp = get_current_timestamp()\n        print(f\"Time: {timestamp}\")\n        \n        mock_time.assert_called_once()\n        mock_print.assert_called_once()\n\ndef test_mock_spec():\n    \"\"\"\n    Test mock with spec to enforce interface.\n    \n    Spec prevents calling non-existent methods.\n    \"\"\"\n    class APIClient:\n        def get(self, url):\n            pass\n        \n        def post(self, url, data):\n            pass\n    \n    mock_api = Mock(spec=APIClient)\n    mock_api.get.return_value = {\"status\": \"ok\"}\n    \n    result = mock_api.get(\"/users\")\n    assert result[\"status\"] == \"ok\"\n    \n    # This would raise AttributeError if uncommented:\n    # mock_api.nonexistent_method()\n\ndef test_magic_mock():\n    \"\"\"\n    Test MagicMock for magic methods.\n    \n    MagicMock supports __len__, __getitem__, etc.\n    \"\"\"\n    mock_list = MagicMock()\n    mock_list.__len__.return_value = 3\n    mock_list.__getitem__.return_value = \"item\"\n    \n    assert len(mock_list) == 3\n    assert mock_list[0] == \"item\"\n\ndef test_spy_on_function():\n    \"\"\"\n    Test spying on function (verify calls without changing behavior).\n    \n    Creates a mock callback to verify it was called.\n    \"\"\"\n    def process_items(items, callback):\n        for item in items:\n            callback(item * 2)\n    \n    spy_callback = Mock()\n    process_items([1, 2, 3], spy_callback)\n    \n    assert spy_callback.call_count == 3\n    spy_callback.assert_any_call(2)\n    spy_callback.assert_any_call(4)\n    spy_callback.assert_any_call(6)\n",
+  "lessonId": "lesson-162-mocking-patching",
+  "chapterId": "ch12-testing",
+  "title": "Manual Test Doubles",
+  "description": "Build your own test double utilities using plain functions — no classes, no pytest, no unittest.mock required. These patterns demonstrate the core ideas behind mocking libraries.\n\nImplement these functions:\n- `create_fake(return_value)` — Return a function that always returns `return_value`, no matter what arguments are passed\n- `create_spy()` — Return a tuple `(spy_func, call_log)`. `spy_func` is a function that records each call's args as a tuple into the `call_log` list\n- `create_stub(responses)` — Return a function that returns items from `responses` in order (popping from the front). Returns `None` once the list is exhausted\n- `test_with_fake(target_func, fake_dependency, test_input)` — Call `target_func(tracked_fake, test_input)` where `tracked_fake` wraps `fake_dependency` to detect if it was called. Return `{'called': bool, 'result': value}`\n\nExample:\n```python\nfake = create_fake(42)\nfake()          # 42\nfake('a', 'b')  # 42\n\nspy, log = create_spy()\nspy(1, 2)\nspy('hello')\nlog  # [(1, 2), ('hello',)]\n\nstub = create_stub([10, 20])\nstub()  # 10\nstub()  # 20\nstub()  # None\n```",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def create_fake(return_value):\n    \"\"\"Create a fake function that always returns return_value.\n\n    The fake should accept any number of positional and keyword arguments\n    and always return the same value.\n    \"\"\"\n    # TODO: Define and return an inner function\n    pass\n\n\ndef create_spy():\n    \"\"\"Create a spy that records calls.\n\n    Return a tuple of (spy_func, call_log).\n    spy_func should accept any positional args and append them\n    as a tuple to the call_log list.\n    \"\"\"\n    # TODO: Create call_log list and spy function, return both\n    pass\n\n\ndef create_stub(responses):\n    \"\"\"Create a stub that returns responses in sequence.\n\n    Make a copy of responses. On each call, pop and return\n    the first item. Return None when the list is exhausted.\n    \"\"\"\n    # TODO: Copy responses and return a function that pops from it\n    pass\n\n\ndef test_with_fake(target_func, fake_dependency, test_input):\n    \"\"\"Test target_func by injecting a tracked fake dependency.\n\n    target_func signature: target_func(dependency, input)\n    Wrap fake_dependency so we can detect whether it was called.\n    Return {'called': True/False, 'result': return_value_of_target}.\n    \"\"\"\n    # TODO: Create a tracking wrapper, call target_func, return results dict\n    pass\n\n\n# Test your implementation\nprint('--- create_fake ---')\nfake = create_fake(42)\nprint(fake())          # 42\nprint(fake('a', 'b'))  # 42\n\nprint('\\n--- create_spy ---')\nspy, log = create_spy()\nspy(1, 2)\nspy('hello')\nprint('Call log:', log)   # [(1, 2), ('hello',)]\n\nprint('\\n--- create_stub ---')\nstub = create_stub([10, 20, 30])\nprint(stub(), stub(), stub(), stub())  # 10 20 30 None\n\nprint('\\n--- test_with_fake ---')\ndef double_it(dep, x):\n    return dep(x) * 2\nfake5 = create_fake(5)\nprint(test_with_fake(double_it, fake5, 99))  # {'called': True, 'result': 10}",
+  "solution": "def create_fake(return_value):\n    \"\"\"Create a fake function that always returns return_value.\n\n    The fake should accept any number of positional and keyword arguments\n    and always return the same value.\n    \"\"\"\n    def fake(*args, **kwargs):\n        return return_value\n    return fake\n\n\ndef create_spy():\n    \"\"\"Create a spy that records calls.\n\n    Return a tuple of (spy_func, call_log).\n    spy_func should accept any positional args and append them\n    as a tuple to the call_log list.\n    \"\"\"\n    call_log = []\n    def spy(*args):\n        call_log.append(args)\n    return (spy, call_log)\n\n\ndef create_stub(responses):\n    \"\"\"Create a stub that returns responses in sequence.\n\n    Make a copy of responses. On each call, pop and return\n    the first item. Return None when the list is exhausted.\n    \"\"\"\n    remaining = list(responses)\n    def stub(*args):\n        if remaining:\n            return remaining.pop(0)\n        return None\n    return stub\n\n\ndef test_with_fake(target_func, fake_dependency, test_input):\n    \"\"\"Test target_func by injecting a tracked fake dependency.\n\n    target_func signature: target_func(dependency, input)\n    Wrap fake_dependency so we can detect whether it was called.\n    Return {'called': True/False, 'result': return_value_of_target}.\n    \"\"\"\n    called = [False]\n    def tracked_fake(*args, **kwargs):\n        called[0] = True\n        return fake_dependency(*args, **kwargs)\n    result = target_func(tracked_fake, test_input)\n    return {'called': called[0], 'result': result}\n\n\n# Test your implementation\nprint('--- create_fake ---')\nfake = create_fake(42)\nprint(fake())          # 42\nprint(fake('a', 'b'))  # 42\n\nprint('\\n--- create_spy ---')\nspy, log = create_spy()\nspy(1, 2)\nspy('hello')\nprint('Call log:', log)   # [(1, 2), ('hello',)]\n\nprint('\\n--- create_stub ---')\nstub = create_stub([10, 20, 30])\nprint(stub(), stub(), stub(), stub())  # 10 20 30 None\n\nprint('\\n--- test_with_fake ---')\ndef double_it(dep, x):\n    return dep(x) * 2\nfake5 = create_fake(5)\nprint(test_with_fake(double_it, fake5, 99))  # {'called': True, 'result': 10}",
   "hints": [
-    "Mock return_value: Set mock.method.return_value = your_value",
-    "Mock side_effect: Use list for multiple calls, or exception class",
-    "Patch function: Use @patch decorator or 'with patch()' context manager",
-    "Patch method: Use patch.object(ClassName, 'method_name')",
-    "Verify calls: Use assert_called_once_with(), assert_any_call()",
-    "Mock exception: Set side_effect to exception class or instance"
+    "create_fake: Define an inner function with *args, **kwargs that ignores all arguments and returns the captured return_value",
+    "create_spy: Create call_log = [] outside the inner function — the inner function appends args as a tuple via call_log.append(args)",
+    "create_stub: Use list(responses) to make a copy, then pop(0) removes and returns the first item each call",
+    "test_with_fake: Use a mutable list like called = [False] to track state from inside the inner tracked_fake function",
+    "target_func expects two arguments: the dependency function and the test_input value",
+    "The tracked_fake wrapper should pass all arguments through to fake_dependency and return its result"
   ],
   "testCases": [
     {
-      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.get.return_value = 42\\nmock.get()",
-      "description": "Test Mock with return_value",
-      "id": "test1",
-      "expectedOutput": "42",
+      "id": "tc1",
+      "description": "create_fake returns the same value regardless of arguments",
+      "validation": "fake = create_fake(42)\nassert fake() == 42\nassert fake('a', 'b') == 42\nassert fake(key='val') == 42",
       "isHidden": false
     },
     {
-      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.count.side_effect = [1, 2, 3]\\n(mock.count(), mock.count(), mock.count())",
-      "description": "Test Mock with side_effect list",
-      "id": "test2",
-      "expectedOutput": "(1, 2, 3)",
+      "id": "tc2",
+      "description": "create_spy records all calls with their arguments",
+      "validation": "spy, log = create_spy()\nspy(1, 2)\nspy(3)\nassert log == [(1, 2), (3,)]",
       "isHidden": false
     },
     {
-      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.func('arg')\\nmock.func.called",
-      "description": "Test Mock call verification",
-      "id": "test3",
-      "expectedOutput": "True",
+      "id": "tc3",
+      "description": "create_stub returns responses in order then None",
+      "validation": "stub = create_stub([10, 20, 30])\nassert stub() == 10\nassert stub() == 20\nassert stub() == 30\nassert stub() is None",
       "isHidden": false
     },
     {
-      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.fail.side_effect = ValueError('error')\\ntry:\\n    mock.fail()\\nexcept ValueError as e:\\n    str(e)",
-      "description": "Test Mock exception",
-      "id": "test4",
-      "expectedOutput": "'error'",
+      "id": "tc4",
+      "description": "test_with_fake detects dependency call and returns result",
+      "validation": "def target(dep, x):\n    return dep(x) + 1\nfake = create_fake(5)\nresult = test_with_fake(target, fake, 10)\nassert result == {'called': True, 'result': 6}",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "create_fake works with different return types",
+      "validation": "assert create_fake('hello')() == 'hello'\nassert create_fake(None)() is None\nassert create_fake([1, 2])() == [1, 2]",
       "isHidden": true
     },
     {
-      "input": "from unittest.mock import Mock\\nmock = Mock()\\nmock.func()\\nmock.func()\\nmock.func.call_count",
-      "description": "Test Mock call_count",
-      "id": "test5",
-      "expectedOutput": "2",
-      "isHidden": true
-    },
-    {
-      "input": "from unittest.mock import MagicMock\\nmock = MagicMock()\\nmock.__len__.return_value = 5\\nlen(mock)",
-      "description": "Test MagicMock __len__",
-      "id": "test6",
-      "expectedOutput": "5",
+      "id": "tc6",
+      "description": "create_spy tracks multiple calls correctly",
+      "validation": "spy, log = create_spy()\nspy('a')\nspy('b', 'c')\nspy()\nassert len(log) == 3\nassert log[0] == ('a',)\nassert log[1] == ('b', 'c')\nassert log[2] == ()",
       "isHidden": true
     }
-  ],
-  "language": "python"
+  ]
 }

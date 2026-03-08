@@ -1,5 +1,5 @@
 ---
-id: logical-operators
+id: lesson-043-logical-operators
 title: Logical Operators and Boolean Logic
 chapterId: ch4-comparisons
 order: 3

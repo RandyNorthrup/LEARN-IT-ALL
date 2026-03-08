@@ -1,0 +1,76 @@
+{
+  "id": "lab-P04-config-parser",
+  "lessonId": "lab-P04-config-parser",
+  "title": "Lab: Cisco Config Parser",
+  "description": "Build a Python function that parses Cisco IOS 'show running-config' output and extracts structured interface information. This is a common network automation task — parsing CLI output into machine-readable data.\n\nYour parser should extract interface names, IP addresses, subnet masks, and status for each interface.",
+  "difficulty": "advanced",
+  "points": 120,
+  "language": "python",
+  "starterCode": "import re\n\ndef parse_interfaces(config: str) -> list:\n    \"\"\"\n    Parse Cisco IOS running config and extract interface information.\n    \n    Args:\n        config: Multi-line string of Cisco 'show running-config' output\n    \n    Returns:\n        List of dictionaries, each with:\n        - 'name': Interface name (e.g., 'GigabitEthernet0/0')\n        - 'ip_address': IP address or None if not configured\n        - 'subnet_mask': Subnet mask or None\n        - 'description': Interface description or ''\n        - 'shutdown': True if interface is shut down, False otherwise\n        - 'vlan': VLAN ID (int) or None for non-VLAN interfaces\n    \"\"\"\n    # Your code here\n    pass\n\n\ndef find_default_gateway(config: str) -> str:\n    \"\"\"\n    Extract the default gateway (ip route 0.0.0.0 0.0.0.0 ...) from config.\n    \n    Returns:\n        Next-hop IP address string, or 'not configured'\n    \"\"\"\n    # Your code here\n    pass\n\n\n# Sample Cisco config:\nsample_config = '''\nhostname Router1\n!\ninterface GigabitEthernet0/0\n description Uplink to ISP\n ip address 203.0.113.2 255.255.255.252\n no shutdown\n!\ninterface GigabitEthernet0/1\n description LAN Connection\n ip address 192.168.1.1 255.255.255.0\n no shutdown\n!\ninterface GigabitEthernet0/2\n description DMZ\n ip address 10.10.10.1 255.255.255.0\n shutdown\n!\ninterface Vlan10\n description Management VLAN\n ip address 172.16.10.1 255.255.255.0\n no shutdown\n!\ninterface Loopback0\n ip address 1.1.1.1 255.255.255.255\n no shutdown\n!\nip route 0.0.0.0 0.0.0.0 203.0.113.1\n!\n'''\n\ninterfaces = parse_interfaces(sample_config)\nfor iface in interfaces:\n    status = 'DOWN' if iface['shutdown'] else 'UP'\n    ip = iface['ip_address'] or 'no ip'\n    print(f\"{iface['name']:30s} {ip:20s} {status}  {iface['description']}\")\n\nprint(f\"\\nDefault Gateway: {find_default_gateway(sample_config)}\")\n",
+  "solution": "import re\n\ndef parse_interfaces(config: str) -> list:\n    interfaces = []\n    current = None\n    for line in config.split('\\n'):\n        iface_match = re.match(r'^interface\\s+(\\S+)', line)\n        if iface_match:\n            if current:\n                interfaces.append(current)\n            name = iface_match.group(1)\n            vlan_match = re.match(r'Vlan(\\d+)', name)\n            current = {\n                'name': name,\n                'ip_address': None,\n                'subnet_mask': None,\n                'description': '',\n                'shutdown': False,\n                'vlan': int(vlan_match.group(1)) if vlan_match else None,\n            }\n        elif current:\n            ip_match = re.match(r'\\s+ip address\\s+(\\S+)\\s+(\\S+)', line)\n            desc_match = re.match(r'\\s+description\\s+(.+)', line)\n            if ip_match:\n                current['ip_address'] = ip_match.group(1)\n                current['subnet_mask'] = ip_match.group(2)\n            elif desc_match:\n                current['description'] = desc_match.group(1).strip()\n            elif re.match(r'\\s+shutdown', line):\n                current['shutdown'] = True\n    if current:\n        interfaces.append(current)\n    return interfaces\n\ndef find_default_gateway(config: str) -> str:\n    match = re.search(r'ip route\\s+0\\.0\\.0\\.0\\s+0\\.0\\.0\\.0\\s+(\\S+)', config)\n    return match.group(1) if match else 'not configured'\n",
+  "hints": [
+    "Split the config into lines and process line-by-line, tracking the current interface block",
+    "Use regex: r'^interface\\s+(\\S+)' to detect interface declarations",
+    "Use regex: r'\\s+ip address\\s+(\\S+)\\s+(\\S+)' to extract IP and mask",
+    "A 'shutdown' line (without 'no') means the interface is administratively down",
+    "VLAN interfaces have names like 'Vlan10' — extract the number with regex",
+    "The default route is: 'ip route 0.0.0.0 0.0.0.0 <next-hop>'"
+  ],
+  "exerciseType": "lab",
+  "labType": "python-sandbox",
+  "environment": {
+    "runtime": "pyodide",
+    "preloadModules": [],
+    "setupCode": "import re"
+  },
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Finds all 5 interfaces in sample config",
+      "testCode": "config = 'interface GigabitEthernet0/0\\n ip address 1.1.1.1 255.255.255.0\\n!\\ninterface GigabitEthernet0/1\\n ip address 2.2.2.2 255.255.255.0\\n!\\ninterface Vlan10\\n ip address 3.3.3.3 255.255.255.0\\n!'\nresult = parse_interfaces(config)\nlen(result) == 3",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Extracts correct IP address",
+      "testCode": "config = 'interface GigabitEthernet0/0\\n ip address 203.0.113.2 255.255.255.252\\n!'\nresult = parse_interfaces(config)\nresult[0]['ip_address'] == '203.0.113.2'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Extracts correct subnet mask",
+      "testCode": "config = 'interface GigabitEthernet0/0\\n ip address 203.0.113.2 255.255.255.252\\n!'\nresult = parse_interfaces(config)\nresult[0]['subnet_mask'] == '255.255.255.252'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Detects shutdown status",
+      "testCode": "config = 'interface GigabitEthernet0/0\\n ip address 1.1.1.1 255.255.255.0\\n shutdown\\n!\\ninterface GigabitEthernet0/1\\n ip address 2.2.2.2 255.255.255.0\\n no shutdown\\n!'\nresult = parse_interfaces(config)\nresult[0]['shutdown'] == True and result[1]['shutdown'] == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "Extracts interface description",
+      "testCode": "config = 'interface GigabitEthernet0/0\\n description Uplink to ISP\\n ip address 1.1.1.1 255.255.255.0\\n!'\nresult = parse_interfaces(config)\nresult[0]['description'] == 'Uplink to ISP'",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "Detects VLAN interface and extracts VLAN ID",
+      "testCode": "config = 'interface Vlan10\\n ip address 172.16.10.1 255.255.255.0\\n!'\nresult = parse_interfaces(config)\nresult[0]['vlan'] == 10 and result[0]['name'] == 'Vlan10'",
+      "isHidden": false
+    },
+    {
+      "id": "tc7",
+      "description": "Finds default gateway from ip route",
+      "testCode": "config = 'ip route 0.0.0.0 0.0.0.0 203.0.113.1\\n!'\nfind_default_gateway(config) == '203.0.113.1'",
+      "isHidden": false
+    },
+    {
+      "id": "tc8",
+      "description": "Returns 'not configured' when no default route exists",
+      "testCode": "find_default_gateway('hostname Router1\\n!') == 'not configured'",
+      "isHidden": true
+    }
+  ]
+}

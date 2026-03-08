@@ -1,8 +1,8 @@
 ---
-id: 57-legb-rule
+id: lesson-085-legb-rule
 title: The LEGB Rule
 chapterId: ch7-scope
-order: 4
+order: 5
 duration: 30
 objectives:
   - Master the LEGB scope resolution rule

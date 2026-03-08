@@ -1,7 +1,7 @@
 ---
-id: vlans
+id: lesson-014-vlans
 title: VLANs (Virtual Local Area Networks)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 14
 duration: 55
 objectives:
@@ -12,7 +12,7 @@ objectives:
   - Troubleshoot common VLAN issues
 ---
 
-# Lesson 13: VLANs (Virtual Local Area Networks)
+# Lesson 14: VLANs (Virtual Local Area Networks)
 
 ## Learning Objectives
 - Understand VLAN concepts and benefits
@@ -362,6 +362,20 @@ Switch# delete vlan.dat
 Switch# reload
 ```
 
+### Multi-Vendor VLAN Configuration Comparison
+
+Real enterprise networks use equipment from multiple vendors. VLAN concepts are the same, but CLI syntax differs:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | Linux (iproute2) |
+|------|-----------|---------------|------------|------------------|
+| Create VLAN 100 | `vlan 100` `name Sales` | `set vlans Sales vlan-id 100` | `vlan 100` `name Sales` | `ip link add link eth0 name eth0.100 type vlan id 100` |
+| Assign access port | `switchport mode access` `switchport access vlan 100` | `set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members Sales` | `switchport mode access` `switchport access vlan 100` | `bridge vlan add dev eth0 vid 100 pvid untagged` |
+| Configure trunk | `switchport mode trunk` `switchport trunk allowed vlan 10,20` | `set interfaces ge-0/0/1 unit 0 family ethernet-switching port-mode trunk` `set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members [Sales Engineering]` | `switchport mode trunk` `switchport trunk allowed vlan 10,20` | `bridge vlan add dev eth0 vid 10` `bridge vlan add dev eth0 vid 20` |
+| Show VLANs | `show vlan brief` | `show vlans` | `show vlan` | `bridge vlan show` |
+| Show trunk ports | `show interfaces trunk` | `show ethernet-switching interface` | `show interfaces trunk` | `bridge link show` |
+
+> **Key Insight:** Arista EOS uses nearly identical syntax to Cisco IOS because it was designed by former Cisco engineers. Juniper Junos uses a hierarchical set-based configuration model. Linux networking is increasingly important for SDN, cloud, and container networking.
+
 ---
 
 ## Inter-VLAN Routing
@@ -588,8 +602,142 @@ interface gi0/5
 
 ---
 
+## Practice Questions
+
+**Q1.** A network administrator creates VLAN 10 and VLAN 20 on a switch. A PC in VLAN 10 needs to communicate with a server in VLAN 20. What is required for this communication to occur?
+
+A) A crossover cable between the two devices
+B) A Layer 3 device to route between the VLANs
+C) A trunk port configured on the PC's switch port
+D) Both devices must be assigned to VLAN 1
+
+<details>
+<summary>Answer</summary>
+
+**B)** VLANs create separate broadcast domains at Layer 2. Communication between different VLANs requires Layer 3 routing, either through a router (router-on-a-stick) or a Layer 3 switch with SVIs. A crossover cable doesn't solve Layer 3 separation. Trunk ports carry multiple VLANs between switches, not to PCs. Moving devices to VLAN 1 defeats the purpose of segmentation.
+</details>
+
+**Q2.** Which IEEE standard defines VLAN tagging on trunk links?
+
+A) 802.1D
+B) 802.1Q
+C) 802.3ad
+D) 802.11
+
+<details>
+<summary>Answer</summary>
+
+**B)** IEEE 802.1Q is the standard for VLAN tagging on trunk links. It adds a 4-byte tag to Ethernet frames that identifies the VLAN. 802.1D is the Spanning Tree Protocol standard. 802.3ad is the Link Aggregation standard. 802.11 is the wireless LAN standard.
+</details>
+
+**Q3.** An IP phone is connected to a switch port, and a PC is connected through the phone. How does the switch differentiate between phone and PC traffic?
+
+A) The phone uses a different IP subnet
+B) The phone sends tagged frames on the voice VLAN and the PC sends untagged frames on the data VLAN
+C) The phone uses a different MAC address format
+D) The switch uses port security to separate the traffic
+
+<details>
+<summary>Answer</summary>
+
+**B)** In a typical voice/data VLAN configuration, the IP phone sends 802.1Q-tagged frames on the voice VLAN while the PC sends untagged frames that are assigned to the access (data) VLAN. This allows QoS prioritization for voice traffic. While phones do use different subnets, that's a result of the VLAN separation, not the differentiating mechanism at Layer 2.
+</details>
+
+**Q4.** What is the valid range for normal VLAN IDs that can be stored in the vlan.dat file?
+
+A) 0-1005
+B) 1-1005
+C) 1-4094
+D) 1006-4094
+
+<details>
+<summary>Answer</summary>
+
+**B)** Normal range VLANs are 1-1005 and are stored in the vlan.dat file in flash memory. VLAN 0 is reserved and not usable. Extended range VLANs (1006-4094) are stored in the running configuration and require VTP transparent or off mode. The full range 1-4094 includes both normal and extended VLANs.
+</details>
+
+**Q5.** A network administrator notices that a newly created VLAN 30 is not passing traffic between two switches. The trunk link between the switches is operational. What should be checked FIRST?
+
+A) Whether VLAN 30 exists on both switches
+B) Whether the spanning tree root bridge is configured
+C) Whether the IP addresses are in the correct subnet
+D) Whether DHCP is configured for VLAN 30
+
+<details>
+<summary>Answer</summary>
+
+**A)** The most common cause of a VLAN not working between switches is that the VLAN hasn't been created on all switches. Each switch must have the VLAN defined locally for traffic to pass. Use `show vlan brief` to verify. STP, IP configuration, and DHCP are valid concerns but come after confirming the VLAN exists on both switches.
+</details>
+
+**Q6.** Why is it considered a security best practice to avoid using VLAN 1 for user traffic?
+
+A) VLAN 1 has limited bandwidth capacity
+B) VLAN 1 cannot be assigned to access ports
+C) VLAN 1 carries control traffic (CDP, VTP, STP BPDUs) by default and is the default native VLAN
+D) VLAN 1 does not support 802.1Q tagging
+
+<details>
+<summary>Answer</summary>
+
+**C)** VLAN 1 is the default VLAN on all switches and carries control plane traffic such as CDP, VTP, and STP BPDUs. Using it for user data increases the attack surface and risk of VLAN hopping attacks. It can be assigned to access ports and supports tagging, but best practice is to use separate VLANs for user traffic and change the native VLAN from VLAN 1.
+</details>
+
+**Q7.** A company wants users to be automatically assigned to a VLAN based on their Active Directory group membership when they connect to the network. Which technology should be implemented?
+
+A) Static VLAN assignment
+B) Private VLANs
+C) Dynamic VLAN assignment with 802.1X and RADIUS
+D) VTP (VLAN Trunking Protocol)
+
+<details>
+<summary>Answer</summary>
+
+**C)** Dynamic VLAN assignment using 802.1X authentication with a RADIUS server allows automatic VLAN assignment based on user credentials and group membership. Static VLANs require manual port configuration. Private VLANs isolate ports within a VLAN, not assign them. VTP propagates VLAN databases between switches but doesn't assign ports.
+</details>
+
+**Q8.** Which inter-VLAN routing method provides the highest performance and is preferred in modern enterprise networks?
+
+A) Router-on-a-stick with subinterfaces
+B) Router with separate physical interfaces per VLAN
+C) Layer 3 switch with SVIs (Switched Virtual Interfaces)
+D) Proxy ARP between VLANs
+
+<details>
+<summary>Answer</summary>
+
+**C)** Layer 3 switches with SVIs perform inter-VLAN routing at wire speed using hardware-based switching, making them the highest-performance and most scalable option. Router-on-a-stick creates a single-link bottleneck. Separate physical interfaces waste ports and don't scale. Proxy ARP is not a proper inter-VLAN routing solution.
+</details>
+
+**Q9.** In a Private VLAN (PVLAN) configuration, which port type can communicate with all other ports including isolated and community ports?
+
+A) Isolated port
+B) Community port
+C) Promiscuous port
+D) Trunk port
+
+<details>
+<summary>Answer</summary>
+
+**C)** A promiscuous port can communicate with all ports in the primary VLAN, including both isolated and community ports. It is typically assigned to gateways or routers. Isolated ports can only communicate with promiscuous ports. Community ports can communicate within their community and with promiscuous ports. Trunk ports carry VLANs between switches but are not a PVLAN port type.
+</details>
+
+**Q10.** What command would you use to verify which VLAN a specific switch port is assigned to?
+
+A) show vlan brief
+B) show interfaces switchport
+C) show interfaces trunk
+D) show ip interface brief
+
+<details>
+<summary>Answer</summary>
+
+**B)** `show interfaces <interface> switchport` displays detailed port information including the assigned access VLAN, administrative mode, and operational mode. While `show vlan brief` shows all VLANs and their port assignments, `show interfaces switchport` provides the most specific per-port information. `show interfaces trunk` shows trunk port details. `show ip interface brief` shows IP addressing, not VLAN assignment.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 2.3**: VLANs and inter-VLAN routing
+- **CompTIA Network+ N10-009 Objective 2.3**: VLANs and inter-VLAN routing
 - **IEEE 802.1Q**: VLAN tagging standard
 - **Cisco VLAN Configuration Guide**

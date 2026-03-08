@@ -1,8 +1,8 @@
 ---
-id: "113-list-operations"
+id: lesson-099-list-operations
 title: "List Operations and Operators"
 chapterId: ch8-lists
-order: 5
+order: 7
 duration: 20
 objectives:
   - Master list arithmetic operators

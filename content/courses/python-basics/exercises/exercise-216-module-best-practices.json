@@ -1,0 +1,56 @@
+{
+  "id": "exercise-216-module-best-practices",
+  "courseId": "python-basics",
+  "lessonId": "lesson-197-modules-best-practices",
+  "chapterId": "ch17-modules",
+  "title": "Module Organization Patterns",
+  "description": "Practice module design best practices by building tools to organize imports according to PEP 8 (stdlib, third-party, local separated by blank lines), extract public API names from source code, validate module names, and generate __init__.py content.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def sort_imports(import_lines):\n    \"\"\"Sort import lines into PEP 8 groups.\n\n    Groups: stdlib first, then third-party, then local (relative) imports.\n    Each group is sorted alphabetically. Groups are separated by blank\n    lines (empty strings). Blank input lines are skipped.\n\n    Local imports start with 'from .' or 'from ..'.\n    Stdlib modules are identified from a known set of common modules.\n    Everything else is considered third-party.\n\n    Args:\n        import_lines: List of import statement strings.\n\n    Returns:\n        List of sorted import strings with blank line separators.\n    \"\"\"\n    pass\n\n\ndef extract_public_api(source_lines):\n    \"\"\"Extract public function and class names from source code lines.\n\n    Looks for lines starting with 'def ' or 'class ' (at any indentation).\n    Returns names that do NOT start with underscore.\n\n    Args:\n        source_lines: List of Python source code line strings.\n\n    Returns:\n        List of public function/class name strings.\n    \"\"\"\n    pass\n\n\ndef validate_module_name(name):\n    \"\"\"Check if a string is a valid Python module name.\n\n    Valid module names:\n    - Are not empty\n    - Start with a lowercase letter\n    - Contain only lowercase letters, digits, and underscores\n    - Do not contain hyphens\n    - Are not Python keywords\n\n    Args:\n        name: The module name to validate.\n\n    Returns:\n        True if valid, False otherwise.\n    \"\"\"\n    pass\n\n\ndef create_init_content(module_names):\n    \"\"\"Generate __init__.py content for a package.\n\n    Creates a string with an __all__ declaration listing the sorted\n    module names, followed by a blank line, then 'from .name import *'\n    for each module (also sorted).\n\n    Args:\n        module_names: List of module name strings.\n\n    Returns:\n        String content suitable for an __init__.py file.\n    \"\"\"\n    pass\n",
+  "solution": "import keyword\nimport re\n\nSTDLIB_MODULES = {\n    'abc', 'argparse', 'ast', 'asyncio', 'base64', 'bisect',\n    'collections', 'contextlib', 'copy', 'csv', 'dataclasses',\n    'datetime', 'decimal', 'enum', 'functools', 'glob', 'hashlib',\n    'heapq', 'http', 'io', 'itertools', 'json', 'keyword',\n    'logging', 'math', 'operator', 'os', 'pathlib', 'pickle',\n    'pprint', 're', 'random', 'shutil', 'socket', 'sqlite3',\n    'string', 'struct', 'subprocess', 'sys', 'tempfile', 'threading',\n    'time', 'typing', 'unittest', 'urllib', 'uuid', 'warnings',\n    'xml', 'zipfile'\n}\n\n\ndef sort_imports(import_lines):\n    stdlib = []\n    third_party = []\n    local = []\n\n    for line in import_lines:\n        stripped = line.strip()\n        if not stripped:\n            continue\n        if stripped.startswith('from .') or stripped.startswith('from ..'):\n            local.append(stripped)\n        else:\n            if stripped.startswith('import '):\n                module = stripped.split()[1].split('.')[0]\n            elif stripped.startswith('from '):\n                module = stripped.split()[1].split('.')[0]\n            else:\n                module = ''\n\n            if module in STDLIB_MODULES:\n                stdlib.append(stripped)\n            else:\n                third_party.append(stripped)\n\n    result = []\n    if stdlib:\n        result.extend(sorted(stdlib))\n    if third_party:\n        if result:\n            result.append('')\n        result.extend(sorted(third_party))\n    if local:\n        if result:\n            result.append('')\n        result.extend(sorted(local))\n\n    return result\n\n\ndef extract_public_api(source_lines):\n    public = []\n    for line in source_lines:\n        stripped = line.strip()\n        if stripped.startswith('def ') or stripped.startswith('class '):\n            rest = stripped.split(None, 1)[1]\n            name = rest.split('(')[0].split(':')[0].strip()\n            if not name.startswith('_'):\n                public.append(name)\n    return public\n\n\ndef validate_module_name(name):\n    if not name:\n        return False\n    if keyword.iskeyword(name):\n        return False\n    return bool(re.match(r'^[a-z][a-z0-9_]*$', name))\n\n\ndef create_init_content(module_names):\n    sorted_names = sorted(module_names)\n    all_items = ', '.join(repr(n) for n in sorted_names)\n    header = '__all__ = [' + all_items + ']'\n    imports = []\n    for name in sorted_names:\n        imports.append('from .' + name + ' import *')\n    return header + '\\n\\n' + '\\n'.join(imports)\n",
+  "hints": [
+    "For sort_imports, classify each line: 'from .' means local; check the module name against a known set of stdlib modules; everything else is third-party.",
+    "For extract_public_api, look for lines starting with 'def ' or 'class ', extract the name before '(' or ':', and filter out names starting with '_'.",
+    "For validate_module_name, use keyword.iskeyword() to reject Python keywords and a regex to enforce lowercase-with-underscores naming."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "sort_imports groups and sorts stdlib before third-party before local",
+      "validation": "result = sort_imports(['import requests', 'import os', 'from . import utils', 'import sys']); assert result == ['import os', 'import sys', '', 'import requests', '', 'from . import utils']",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "extract_public_api finds public functions and classes, skips private",
+      "validation": "lines = ['def hello():', '    pass', 'def _private():', '    pass', 'class MyClass:', '    pass']; assert extract_public_api(lines) == ['hello', 'MyClass']",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "validate_module_name accepts valid names and rejects invalid ones",
+      "validation": "assert validate_module_name('my_module') == True and validate_module_name('my-module') == False and validate_module_name('class') == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "create_init_content generates proper __all__ and imports",
+      "validation": "result = create_init_content(['utils', 'models']); assert \"__all__ = ['models', 'utils']\" in result and 'from .models import *' in result and 'from .utils import *' in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "validate_module_name rejects empty strings and keywords",
+      "validation": "assert validate_module_name('') == False and validate_module_name('for') == False and validate_module_name('True') == False and validate_module_name('utils2') == True",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "extract_public_api handles class with base class",
+      "validation": "lines = ['class Animal(Base):', '    pass', 'class _Internal:', '    pass']; assert extract_public_api(lines) == ['Animal']",
+      "isHidden": true
+    }
+  ]
+}

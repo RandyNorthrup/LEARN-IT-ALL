@@ -1,0 +1,57 @@
+{
+  "id": "exercise-199-csv-analysis",
+  "courseId": "python-basics",
+  "lessonId": "lesson-189-csv-files",
+  "chapterId": "ch16-file-io",
+  "title": "CSV Data Analysis",
+  "description": "Build analytical functions for CSV data. Calculate column averages across specified numeric columns, find the row with the maximum value in a column, sort CSV data by a column, and compute descriptive statistics — practical skills for data analysis workflows.",
+  "difficulty": "intermediate",
+  "points": 25,
+  "language": "python",
+  "starterCode": "import csv\nimport io\n\ndef calculate_averages(csv_text, numeric_cols):\n    \"\"\"Calculate the average for each specified numeric column.\n    Return a dict mapping column name to average (rounded to 2 decimals).\"\"\"\n    pass\n\ndef find_max_row(csv_text, column):\n    \"\"\"Find and return the row (as a dict) with the maximum value in the specified column.\"\"\"\n    pass\n\ndef sort_csv(csv_text, column):\n    \"\"\"Sort CSV rows by the specified column (ascending, numeric-aware).\n    Return the sorted CSV text.\"\"\"\n    pass\n\ndef csv_stats(csv_text, column):\n    \"\"\"Return a dict with 'min', 'max', 'mean', 'count' for the specified numeric column.\n    All values rounded to 2 decimals where applicable.\"\"\"\n    pass\n",
+  "solution": "import csv\nimport io\n\ndef calculate_averages(csv_text, numeric_cols):\n    \"\"\"Calculate the average for each specified numeric column.\n    Return a dict mapping column name to average (rounded to 2 decimals).\"\"\"\n    reader = csv.DictReader(io.StringIO(csv_text))\n    totals = {col: 0.0 for col in numeric_cols}\n    count = 0\n    for row in reader:\n        count += 1\n        for col in numeric_cols:\n            totals[col] += float(row[col])\n    if count == 0:\n        return {col: 0.0 for col in numeric_cols}\n    return {col: round(totals[col] / count, 2) for col in numeric_cols}\n\ndef find_max_row(csv_text, column):\n    \"\"\"Find and return the row (as a dict) with the maximum value in the specified column.\"\"\"\n    reader = csv.DictReader(io.StringIO(csv_text))\n    rows = list(reader)\n    if not rows:\n        return None\n    return max(rows, key=lambda r: float(r[column]))\n\ndef sort_csv(csv_text, column):\n    \"\"\"Sort CSV rows by the specified column (ascending, numeric-aware).\n    Return the sorted CSV text.\"\"\"\n    reader = csv.DictReader(io.StringIO(csv_text))\n    headers = reader.fieldnames\n    rows = list(reader)\n    try:\n        rows.sort(key=lambda r: float(r[column]))\n    except ValueError:\n        rows.sort(key=lambda r: r[column])\n    output = io.StringIO()\n    writer = csv.DictWriter(output, fieldnames=headers)\n    writer.writeheader()\n    writer.writerows(rows)\n    return output.getvalue().strip()\n\ndef csv_stats(csv_text, column):\n    \"\"\"Return a dict with 'min', 'max', 'mean', 'count' for the specified numeric column.\n    All values rounded to 2 decimals where applicable.\"\"\"\n    reader = csv.DictReader(io.StringIO(csv_text))\n    values = [float(row[column]) for row in reader]\n    if not values:\n        return {'min': 0, 'max': 0, 'mean': 0, 'count': 0}\n    return {\n        'min': round(min(values), 2),\n        'max': round(max(values), 2),\n        'mean': round(sum(values) / len(values), 2),\n        'count': len(values)\n    }\n",
+  "hints": [
+    "Use csv.DictReader with io.StringIO to parse CSV text — remember all values are strings, so convert to float for numeric operations.",
+    "The built-in max() function with a key parameter can find the row with the highest value in a specific column.",
+    "For sort_csv, try sorting numerically first (float conversion), and fall back to string sorting on ValueError.",
+    "In csv_stats, collect all values into a list first, then apply min(), max(), sum()/len() for the statistics."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "calculate_averages computes correct averages",
+      "validation": "csv_text = 'name,math,science\\nAlice,90,85\\nBob,80,95'\nresult = calculate_averages(csv_text, ['math', 'science'])\nassert result == {'math': 85.0, 'science': 90.0}",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "find_max_row returns row with highest value",
+      "validation": "csv_text = 'name,score\\nAlice,85\\nBob,92\\nCarol,78'\nresult = find_max_row(csv_text, 'score')\nassert result['name'] == 'Bob'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "sort_csv sorts rows by numeric column",
+      "validation": "csv_text = 'name,age\\nCarol,35\\nAlice,25\\nBob,30'\nresult = sort_csv(csv_text, 'age')\nlines = result.strip().split('\\n')\nassert 'Alice' in lines[1]\nassert 'Carol' in lines[3]",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "csv_stats returns correct statistics",
+      "validation": "csv_text = 'item,price\\nA,10\\nB,20\\nC,30\\nD,40'\nresult = csv_stats(csv_text, 'price')\nassert result == {'min': 10.0, 'max': 40.0, 'mean': 25.0, 'count': 4}",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "calculate_averages handles single row",
+      "validation": "csv_text = 'name,val\\nAlice,42'\nresult = calculate_averages(csv_text, ['val'])\nassert result == {'val': 42.0}",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "csv_stats handles single value",
+      "validation": "csv_text = 'x,y\\na,7'\nresult = csv_stats(csv_text, 'y')\nassert result['min'] == result['max'] == 7.0\nassert result['count'] == 1",
+      "isHidden": true
+    }
+  ]
+}

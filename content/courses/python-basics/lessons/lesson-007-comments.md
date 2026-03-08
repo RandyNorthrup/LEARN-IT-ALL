@@ -1,5 +1,5 @@
 ---
-id: comments
+id: lesson-007-comments
 title: Writing Comments
 chapterId: ch1-intro
 order: 7

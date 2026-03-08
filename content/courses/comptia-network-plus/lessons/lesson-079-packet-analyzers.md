@@ -1,9 +1,9 @@
 ---
-id: "lesson-079"
+id: lesson-079-packet-analyzers
 title: "Packet Analyzers: Wireshark and tcpdump"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 79
-duration: 28
+duration: 55
 objectives:
   - "Use Wireshark to capture and analyze network traffic"
   - "Apply capture and display filters to isolate specific traffic"
@@ -20,6 +20,17 @@ Packet analyzers (also called protocol analyzers or packet sniffers) are essenti
 In this lesson, we'll explore the two most widely used packet analyzers: **Wireshark** (GUI-based, available on Windows, Linux, and macOS) and **tcpdump** (command-line tool for Linux/Unix). You'll learn how to capture traffic, apply filters to isolate specific packets, and interpret packet details to diagnose network problems.
 
 **WARNING**: Packet capture tools can capture sensitive information including passwords, private data, and confidential communications. Always obtain proper authorization before capturing network traffic, and handle captured data securely according to your organization's security policies.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Use Wireshark to capture and analyze network traffic
+- Apply capture and display filters to isolate specific traffic
+- Use tcpdump for command-line packet capture on Linux/Unix systems
+- Interpret packet details to troubleshoot network issues
 
 ---
 
@@ -1033,11 +1044,145 @@ Packet analyzers are powerful diagnostic tools. Combined with other network util
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** Which Wireshark filter would display only HTTP traffic to or from IP address 192.168.1.100?
+
+A) http && ip.addr == 192.168.1.100
+B) tcp port 80 and host 192.168.1.100
+C) filter http 192.168.1.100
+D) ip.addr = 192.168.1.100 + http
+
+<details>
+<summary>Answer</summary>
+
+**A)** Wireshark display filters use `&&` for AND logic. `http && ip.addr == 192.168.1.100` shows only HTTP traffic involving that IP address. Option B uses BPF/capture filter syntax, not display filter syntax.
+</details>
+
+**Q2.** What is the difference between a capture filter and a display filter in Wireshark?
+
+A) They are the same thing with different names
+B) Capture filters apply during packet capture and cannot be changed; display filters apply to already-captured packets
+C) Display filters reduce file size; capture filters do not
+D) Capture filters use Wireshark syntax; display filters use BPF syntax
+
+<details>
+<summary>Answer</summary>
+
+**B)** Capture filters use BPF syntax and are applied during capture (limiting what's saved). Display filters use Wireshark syntax and can be changed at any time without losing data.
+</details>
+
+**Q3.** Which command captures packets on interface eth0 and saves them to a file called capture.pcap using tcpdump?
+
+A) tcpdump -i eth0 -w capture.pcap
+B) tcpdump -r capture.pcap eth0
+C) tcpdump --save eth0 capture.pcap
+D) tcpdump -o capture.pcap -i eth0
+
+<details>
+<summary>Answer</summary>
+
+**A)** `tcpdump -i eth0 -w capture.pcap` uses `-i` to specify the interface and `-w` to write captured packets to a file. The `-r` flag is for reading a saved capture.
+</details>
+
+**Q4.** In Wireshark, what does the display filter `tcp.analysis.retransmission` help identify?
+
+A) Successful TCP connections
+B) DNS query failures
+C) TCP packets that had to be retransmitted due to loss or timeout
+D) ARP broadcast storms
+
+<details>
+<summary>Answer</summary>
+
+**C)** `tcp.analysis.retransmission` filters for TCP segments that were retransmitted, indicating packet loss, network congestion, or connectivity issues.
+</details>
+
+**Q5.** What must you do BEFORE capturing network traffic with a packet analyzer in a production environment?
+
+A) Install Wireshark on the server
+B) Obtain proper authorization from management
+C) Disable the firewall
+D) Switch the network to hub-based topology
+
+<details>
+<summary>Answer</summary>
+
+**B)** Packet capture tools can capture sensitive information including passwords and confidential data. Always obtain proper authorization before capturing traffic and handle captured data according to security policies.
+</details>
+
+**Q6.** What does enabling promiscuous mode on a network adapter allow Wireshark to do?
+
+A) Capture only broadcast traffic
+B) Capture all packets on the network segment, not just those destined for the local machine
+C) Encrypt captured traffic
+D) Increase capture speed
+
+<details>
+<summary>Answer</summary>
+
+**B)** Promiscuous mode allows the NIC to capture all packets on the network segment, including those not addressed to the capturing device. On switched networks, visibility is still limited to the local port's traffic unless port mirroring is configured.
+</details>
+
+**Q7.** Which Wireshark feature allows you to view the complete data exchange in a TCP session as readable text?
+
+A) Packet Bytes Pane
+B) Follow TCP Stream
+C) Protocol Hierarchy
+D) IO Graph
+
+<details>
+<summary>Answer</summary>
+
+**B)** Follow TCP Stream reconstructs the entire TCP conversation and displays the data exchanged between client and server as readable text, making it easy to analyze application-level communication.
+</details>
+
+**Q8.** Which tcpdump flag suppresses DNS resolution to display numeric IP addresses and port numbers?
+
+A) -v
+B) -c
+C) -nn
+D) -q
+
+<details>
+<summary>Answer</summary>
+
+**C)** The `-nn` flag tells tcpdump not to resolve hostnames (`-n`) or port names (second `-n`), resulting in faster output with numeric addresses and port numbers.
+</details>
+
+**Q9.** What does a Wireshark display filter of `tcp.flags.syn == 1 && tcp.flags.ack == 0` show?
+
+A) Established TCP connections
+B) TCP connection termination packets
+C) Initial TCP SYN packets (new connection requests)
+D) TCP reset packets
+
+<details>
+<summary>Answer</summary>
+
+**C)** This filter shows packets with the SYN flag set but NOT the ACK flag, which represents the initial SYN packet of a TCP three-way handshake—a new connection request.
+</details>
+
+**Q10.** In Wireshark's default color coding, what does black coloring typically indicate?
+
+A) UDP traffic
+B) HTTP traffic
+C) Packets with errors
+D) DNS queries
+
+<details>
+<summary>Answer</summary>
+
+**C)** In Wireshark's default color scheme, black indicates packets with errors such as TCP errors, bad checksums, or malformed packets.
+</details>
+
+---
+
+## References
 
 - **Wireshark Official Website**: https://www.wireshark.org/
 - **Wireshark User Guide**: https://www.wireshark.org/docs/wsug_html_chunked/
 - **tcpdump Manual**: https://www.tcpdump.org/manpages/tcpdump.1.html
 - **BPF Filter Syntax**: https://biot.com/capstats/bpf.html
 - **RFC 826**: Ethernet Address Resolution Protocol (ARP) - https://tools.ietf.org/html/rfc826
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.3 - Use the appropriate tool
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.3 - Use the appropriate tool

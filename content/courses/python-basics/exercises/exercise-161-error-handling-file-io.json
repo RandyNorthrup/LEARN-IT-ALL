@@ -1,6 +1,6 @@
 {
   "id": "exercise-161-error-handling-file-io",
-  "lessonId": "lesson-151-error-handling-file-io",
+  "lessonId": "lesson-144-error-handling-file-io",
   "title": "Error Handling in File Operations",
   "description": "Handle file operation errors gracefully, manage permissions issues, work with file paths safely, implement robust file processing.",
   "difficulty": "intermediate",
@@ -21,43 +21,50 @@
       "description": "Test safe_read_file missing file",
       "id": "test1",
       "expectedOutput": "(True, True)",
-      "isHidden": false
+      "isHidden": false,
+      "validation": "content, error = safe_read_file('nonexistent.txt')\nassert content is None\nassert 'not found' in error.lower()"
     },
     {
       "input": "data, error = read_json_safe('missing.json')\\n(data is None, 'not found' in error.lower())",
       "description": "Test read_json_safe missing file",
       "id": "test2",
       "expectedOutput": "(True, True)",
-      "isHidden": false
+      "isHidden": false,
+      "validation": "data, error = read_json_safe('missing.json')\nassert data is None\nassert 'not found' in error.lower()"
     },
     {
       "input": "validate_file_path('/tmp/test.txt', '/tmp')",
       "description": "Test validate_file_path valid",
       "id": "test3",
       "expectedOutput": "(True, None)",
-      "isHidden": false
+      "isHidden": false,
+      "validation": "assert validate_file_path('/tmp/test.txt', '/tmp') == (True, None)"
     },
     {
       "input": "valid, error = validate_file_path('/etc/passwd', '/tmp')\\n(valid, 'outside' in error.lower())",
       "description": "Test validate_file_path traversal attempt",
       "id": "test4",
       "expectedOutput": "(False, True)",
-      "isHidden": true
+      "isHidden": true,
+      "validation": "valid, error = validate_file_path('/etc/passwd', '/tmp')\nassert valid == False\nassert 'outside' in error.lower()"
     },
     {
       "input": "import tempfile, os\\ntemp_dir = tempfile.mkdtemp()\\npath = os.path.join(temp_dir, 'sub', 'file.txt')\\nsuccess, error = safe_write_file(path, 'test')\\n(success, os.path.exists(path))",
       "description": "Test safe_write_file creates directories",
       "id": "test5",
       "expectedOutput": "(True, True)",
-      "isHidden": true
+      "isHidden": true,
+      "validation": "import tempfile, os\ntemp_dir = tempfile.mkdtemp()\npath = os.path.join(temp_dir, 'sub', 'file.txt')\nsuccess, error = safe_write_file(path, 'test')\nassert success == True\nassert os.path.exists(path)"
     },
     {
       "input": "results, errors = process_csv_robust('missing.csv')\\n(results is None, len(errors) > 0)",
       "description": "Test process_csv_robust missing file",
       "id": "test6",
       "expectedOutput": "(True, True)",
-      "isHidden": true
+      "isHidden": true,
+      "validation": "results, errors = process_csv_robust('missing.csv')\nassert results is None\nassert len(errors) > 0"
     }
   ],
-  "language": "python"
+  "language": "python",
+  "chapterId": "ch11-error-handling"
 }

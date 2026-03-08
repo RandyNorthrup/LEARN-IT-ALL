@@ -1,5 +1,5 @@
 ---
-id: "136-set-methods-comprehensive"
+id: lesson-127-set-methods-comprehensive
 title: "Set Methods: Complete Reference"
 chapterId: ch10-sets
 order: 3
@@ -323,61 +323,60 @@ unique = collect_unique_words(texts)
 print(unique)  # {'hello', 'world', 'python', 'programming'}
 
 # Example 2: Maintain active sessions
-class SessionManager:
-    def __init__(self):
-        self.active = set()
-    
-    def start_session(self, session_id):
-        self.active.add(session_id)
-    
-    def end_session(self, session_id):
-        self.active.discard(session_id)  # No error if not found
-    
-    def is_active(self, session_id):
-        return session_id in self.active
-    
-    def get_random_session(self):
-        if self.active:
-            return self.active.pop()
-        return None
-    
-    def end_all_sessions(self):
-        self.active.clear()
+def create_session_manager():
+    """Create a session manager with an active sessions set"""
+    return {"active": set()}
 
-manager = SessionManager()
-manager.start_session("s1")
-manager.start_session("s2")
-print(manager.is_active("s1"))  # True
-manager.end_session("s1")
-print(manager.is_active("s1"))  # False
+def start_session(manager, session_id):
+    manager["active"].add(session_id)
+
+def end_session(manager, session_id):
+    manager["active"].discard(session_id)  # No error if not found
+
+def is_active(manager, session_id):
+    return session_id in manager["active"]
+
+def get_random_session(manager):
+    if manager["active"]:
+        return manager["active"].pop()
+    return None
+
+def end_all_sessions(manager):
+    manager["active"].clear()
+
+manager = create_session_manager()
+start_session(manager, "s1")
+start_session(manager, "s2")
+print(is_active(manager, "s1"))  # True
+end_session(manager, "s1")
+print(is_active(manager, "s1"))  # False
 
 # Example 3: Tag management
-class Post:
-    def __init__(self, title):
-        self.title = title
-        self.tags = set()
-    
-    def add_tag(self, tag):
-        self.tags.add(tag.lower())
-    
-    def add_tags(self, tags):
-        self.tags.update(t.lower() for t in tags)
-    
-    def remove_tag(self, tag):
-        self.tags.discard(tag.lower())
-    
-    def has_tag(self, tag):
-        return tag.lower() in self.tags
-    
-    def common_tags(self, other_post):
-        return self.tags & other_post.tags
+def create_post(title):
+    """Create a post with a title and empty tags set"""
+    return {"title": title, "tags": set()}
 
-post1 = Post("Python Tutorial")
-post1.add_tags(["Python", "Programming", "Tutorial"])
-post2 = Post("Web Development")
-post2.add_tags(["Python", "Web", "Flask"])
+def add_tag(post, tag):
+    post["tags"].add(tag.lower())
 
-common = post1.common_tags(post2)
+def add_tags(post, tags):
+    post["tags"].update(t.lower() for t in tags)
+
+def remove_tag(post, tag):
+    post["tags"].discard(tag.lower())
+
+def has_tag(post, tag):
+    return tag.lower() in post["tags"]
+
+def common_tags(post1, post2):
+    return post1["tags"] & post2["tags"]
+
+post1 = create_post("Python Tutorial")
+add_tags(post1, ["Python", "Programming", "Tutorial"])
+post2 = create_post("Web Development")
+add_tags(post2, ["Python", "Web", "Flask"])
+
+common = common_tags(post1, post2)
 print(common)  # {"python"}
 
 # Example 4: Bulk operations

@@ -1,5 +1,5 @@
 ---
-id: "128-defaultdict-counter"
+id: lesson-118-defaultdict-counter
 title: "defaultdict and Counter Collections"
 chapterId: ch9-dictionaries
 order: 9

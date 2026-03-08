@@ -1,674 +1,366 @@
 ---
-id: "159-error-handling-apis"
-title: "Error Handling in APIs and Web Services"
+id: lesson-151-error-handling-apis
+title: "Error Handling in Real Projects"
 chapterId: ch11-error-handling
-order: 14
-duration: 25
+order: 12
+duration: 30
 objectives:
-  - Handle API errors properly
-  - Return appropriate HTTP status codes
-  - Create error response formats
-  - Implement API error middleware
+  - Handle errors in file operations, user input, and data processing
+  - Build robust CLI applications with proper error handling
+  - Apply error handling strategies in loops and during shutdown
+  - Create a complete file processing script with comprehensive error handling
 ---
 
-# Error Handling in APIs and Web Services
+# Error Handling in Real Projects
 
-Proper error handling is crucial for API reliability and usability.
+You've learned `try`/`except` syntax and error handling patterns. Now it's time to apply them to real code. This lesson walks through file I/O, user input, data processing, and command-line tools — the scenarios where error handling matters most.
 
-## HTTP Status Codes
+## Error Handling in File Operations
+
+File operations are the most common source of errors. Files might not exist, permissions might be wrong, or encoding might be unexpected:
 
 ```python
-from enum import IntEnum
-
-class HTTPStatus(IntEnum):
-    """Common HTTP status codes"""
-    # Success
-    OK = 200
-    CREATED = 201
-    NO_CONTENT = 204
-    
-    # Client errors
-    BAD_REQUEST = 400
-    UNAUTHORIZED = 401
-    FORBIDDEN = 403
-    NOT_FOUND = 404
-    METHOD_NOT_ALLOWED = 405
-    CONFLICT = 409
-    UNPROCESSABLE_ENTITY = 422
-    TOO_MANY_REQUESTS = 429
-    
-    # Server errors
-    INTERNAL_SERVER_ERROR = 500
-    BAD_GATEWAY = 502
-    SERVICE_UNAVAILABLE = 503
-    GATEWAY_TIMEOUT = 504
-
-# Map exception types to status codes
-EXCEPTION_TO_STATUS = {
-    ValueError: HTTPStatus.BAD_REQUEST,
-    KeyError: HTTPStatus.NOT_FOUND,
-    PermissionError: HTTPStatus.FORBIDDEN,
-    NotImplementedError: HTTPStatus.NOT_IMPLEMENTED,
-    TimeoutError: HTTPStatus.GATEWAY_TIMEOUT,
-}
-
-def get_status_code(exception: Exception) -> int:
-    """Get appropriate status code for exception"""
-    return EXCEPTION_TO_STATUS.get(type(exception), HTTPStatus.INTERNAL_SERVER_ERROR)
+def read_file_safely(filepath):
+    """Read a file and return its contents, or None on failure."""
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"Error: File '{filepath}' does not exist.")
+    except PermissionError:
+        print(f"Error: No permission to read '{filepath}'.")
+    except UnicodeDecodeError:
+        print(f"Error: '{filepath}' contains invalid text encoding.")
+    return None
 ```
 
-## Structured Error Responses
+For writing, handle missing directories too:
 
 ```python
-from dataclasses import dataclass, asdict
-from typing import Optional, List, Dict, Any
-from datetime import datetime
+import os
 
-@dataclass
-class ErrorDetail:
-    """Single error detail"""
-    field: Optional[str]
-    message: str
-    code: Optional[str] = None
-
-@dataclass
-class APIError:
-    """
-    Structured API error response.
-    
-    Follows RFC 7807 Problem Details format.
-    """
-    status: int
-    title: str
-    detail: str
-    type: Optional[str] = None
-    instance: Optional[str] = None
-    timestamp: str = None
-    errors: List[ErrorDetail] = None
-    
-    def __post_init__(self):
-        if self.timestamp is None:
-            self.timestamp = datetime.utcnow().isoformat() + "Z"
-        if self.errors is None:
-            self.errors = []
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for JSON response"""
-        result = asdict(self)
-        # Remove None values
-        return {k: v for k, v in result.items() if v is not None}
-
-# Create error responses
-def bad_request_error(detail: str, errors: List[ErrorDetail] = None) -> APIError:
-    """400 Bad Request"""
-    return APIError(
-        status=400,
-        title="Bad Request",
-        detail=detail,
-        type="/errors/bad-request",
-        errors=errors or []
-    )
-
-def not_found_error(resource: str, resource_id: str) -> APIError:
-    """404 Not Found"""
-    return APIError(
-        status=404,
-        title="Not Found",
-        detail=f"{resource} with ID '{resource_id}' not found",
-        type="/errors/not-found"
-    )
-
-def internal_error(detail: str = "An unexpected error occurred") -> APIError:
-    """500 Internal Server Error"""
-    return APIError(
-        status=500,
-        title="Internal Server Error",
-        detail=detail,
-        type="/errors/internal"
-    )
-
-# Examples
-validation_error = bad_request_error(
-    "Validation failed",
-    errors=[
-        ErrorDetail(field="email", message="Invalid email format", code="invalid_format"),
-        ErrorDetail(field="age", message="Must be at least 18", code="min_value")
-    ]
-)
-
-print(validation_error.to_dict())
+def write_file_safely(filepath, content):
+    """Write content to a file, creating directories if needed."""
+    try:
+        directory = os.path.dirname(filepath)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(content)
+        return True
+    except PermissionError:
+        print(f"Error: No permission to write to '{filepath}'.")
+    except OSError as e:
+        print(f"Error writing to '{filepath}': {e}")
+    return False
 ```
 
-## API Exception Classes
+## Error Handling with User Input
+
+When your program takes input from a user, assume they'll type anything:
 
 ```python
-class APIException(Exception):
-    """Base API exception"""
-    status_code = 500
-    default_detail = "An error occurred"
-    default_code = "error"
-    
-    def __init__(self, detail: str = None, code: str = None):
-        self.detail = detail or self.default_detail
-        self.code = code or self.default_code
-        super().__init__(self.detail)
-
-class BadRequest(APIException):
-    """400 Bad Request"""
-    status_code = 400
-    default_detail = "Bad request"
-    default_code = "bad_request"
-
-class Unauthorized(APIException):
-    """401 Unauthorized"""
-    status_code = 401
-    default_detail = "Authentication required"
-    default_code = "unauthorized"
-
-class Forbidden(APIException):
-    """403 Forbidden"""
-    status_code = 403
-    default_detail = "Permission denied"
-    default_code = "forbidden"
-
-class NotFound(APIException):
-    """404 Not Found"""
-    status_code = 404
-    default_detail = "Resource not found"
-    default_code = "not_found"
-
-class Conflict(APIException):
-    """409 Conflict"""
-    status_code = 409
-    default_detail = "Resource conflict"
-    default_code = "conflict"
-
-class ValidationError(BadRequest):
-    """422 Unprocessable Entity"""
-    status_code = 422
-    default_detail = "Validation failed"
-    default_code = "validation_error"
-    
-    def __init__(self, errors: List[ErrorDetail]):
-        self.errors = errors
-        super().__init__("Validation failed")
-
-# Usage in API endpoints
-def create_user(data: dict):
-    """Create user endpoint"""
-    # Validate email
-    if "email" not in data:
-        raise BadRequest("Email is required")
-    
-    if not "@" in data["email"]:
-        raise ValidationError([
-            ErrorDetail(field="email", message="Invalid email format")
-        ])
-    
-    # Check if user exists
-    if user_exists(data["email"]):
-        raise Conflict(f"User with email {data['email']} already exists")
-    
-    # Create user
-    return {"id": "user123", "email": data["email"]}
-
-def get_user(user_id: str):
-    """Get user endpoint"""
-    user = find_user(user_id)
-    
-    if not user:
-        raise NotFound(f"User {user_id} not found")
-    
-    return user
-
-# Mock functions
-def user_exists(email: str) -> bool:
-    return email == "existing@example.com"
-
-def find_user(user_id: str):
-    return None if user_id == "missing" else {"id": user_id, "name": "Alice"}
-```
-
-## Error Handler Middleware
-
-```python
-import logging
-import traceback
-from typing import Callable
-
-logger = logging.getLogger(__name__)
-
-class ErrorHandlerMiddleware:
-    """
-    Middleware to handle errors consistently across API.
-    
-    Features:
-    - Catch all exceptions
-    - Convert to APIError
-    - Log with context
-    - Return structured response
-    """
-    
-    def __init__(self, app: Callable):
-        self.app = app
-    
-    def __call__(self, request: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle request with error catching"""
+def get_integer(prompt, min_val=None, max_val=None):
+    """Keep asking until the user enters a valid integer."""
+    while True:
+        user_input = input(prompt)
         try:
-            # Call the actual handler
-            response = self.app(request)
-            return response
-        
-        except APIException as e:
-            # Known API exception
-            logger.warning(
-                f"API error: {e.detail}",
-                extra={
-                    "status_code": e.status_code,
-                    "error_code": e.code,
-                    "path": request.get("path"),
-                    "method": request.get("method")
-                }
-            )
-            
-            error = APIError(
-                status=e.status_code,
-                title=e.__class__.__name__,
-                detail=e.detail,
-                type=f"/errors/{e.code}",
-                instance=request.get("path")
-            )
-            
-            if isinstance(e, ValidationError):
-                error.errors = e.errors
-            
-            return {
-                "status": e.status_code,
-                "body": error.to_dict()
-            }
-        
-        except ValueError as e:
-            # Validation error
-            logger.warning(f"Validation error: {e}")
-            error = bad_request_error(str(e))
-            return {
-                "status": 400,
-                "body": error.to_dict()
-            }
-        
-        except KeyError as e:
-            # Missing resource
-            logger.warning(f"Resource not found: {e}")
-            error = not_found_error("Resource", str(e))
-            return {
-                "status": 404,
-                "body": error.to_dict()
-            }
-        
-        except Exception as e:
-            # Unexpected error
-            logger.error(
-                f"Unexpected error: {e}",
-                exc_info=True,
-                extra={
-                    "path": request.get("path"),
-                    "method": request.get("method")
-                }
-            )
-            
-            # Don't expose internal error details
-            error = internal_error()
-            
-            return {
-                "status": 500,
-                "body": error.to_dict()
-            }
+            value = int(user_input)
+        except ValueError:
+            print(f"'{user_input}' is not a valid number. Try again.")
+            continue
 
-# Example API handler
-def user_handler(request: Dict[str, Any]) -> Dict[str, Any]:
-    """Handle user requests"""
-    method = request["method"]
-    path = request["path"]
-    
-    if method == "GET" and "/users/" in path:
-        user_id = path.split("/")[-1]
-        user = get_user(user_id)
-        return {"status": 200, "body": user}
-    
-    elif method == "POST" and path == "/users":
-        user = create_user(request["body"])
-        return {"status": 201, "body": user}
-    
-    else:
-        raise NotFound(f"Endpoint {method} {path} not found")
-
-# Wrap with middleware
-protected_handler = ErrorHandlerMiddleware(user_handler)
-
-# Test requests
-test_requests = [
-    {
-        "method": "GET",
-        "path": "/users/user123",
-        "body": None
-    },
-    {
-        "method": "GET",
-        "path": "/users/missing",
-        "body": None
-    },
-    {
-        "method": "POST",
-        "path": "/users",
-        "body": {"email": "invalid"}
-    }
-]
-
-for req in test_requests:
-    print(f"\n{req['method']} {req['path']}")
-    response = protected_handler(req)
-    print(f"Status: {response['status']}")
-    print(f"Body: {response['body']}")
-```
-
-## Request Validation
-
-```python
-from typing import Dict, Any, List
-
-class RequestValidator:
-    """Validate API requests"""
-    
-    @staticmethod
-    def validate_required_fields(data: Dict[str, Any], required: List[str]):
-        """Validate required fields present"""
-        errors = []
-        
-        for field in required:
-            if field not in data or data[field] is None:
-                errors.append(ErrorDetail(
-                    field=field,
-                    message=f"{field} is required",
-                    code="required"
-                ))
-        
-        if errors:
-            raise ValidationError(errors)
-    
-    @staticmethod
-    def validate_email(email: str, field: str = "email") -> str:
-        """Validate email format"""
-        import re
-        email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-        
-        if not re.match(email_pattern, email):
-            raise ValidationError([
-                ErrorDetail(
-                    field=field,
-                    message="Invalid email format",
-                    code="invalid_format"
-                )
-            ])
-        
-        return email
-    
-    @staticmethod
-    def validate_string_length(value: str, field: str, 
-                              min_length: int = None, max_length: int = None):
-        """Validate string length"""
-        errors = []
-        
-        if min_length and len(value) < min_length:
-            errors.append(ErrorDetail(
-                field=field,
-                message=f"Must be at least {min_length} characters",
-                code="min_length"
-            ))
-        
-        if max_length and len(value) > max_length:
-            errors.append(ErrorDetail(
-                field=field,
-                message=f"Must be at most {max_length} characters",
-                code="max_length"
-            ))
-        
-        if errors:
-            raise ValidationError(errors)
-    
-    @staticmethod
-    def validate_range(value: int, field: str, 
-                      minimum: int = None, maximum: int = None):
-        """Validate numeric range"""
-        errors = []
-        
-        if minimum is not None and value < minimum:
-            errors.append(ErrorDetail(
-                field=field,
-                message=f"Must be at least {minimum}",
-                code="min_value"
-            ))
-        
-        if maximum is not None and value > maximum:
-            errors.append(ErrorDetail(
-                field=field,
-                message=f"Must be at most {maximum}",
-                code="max_value"
-            ))
-        
-        if errors:
-            raise ValidationError(errors)
+        if min_val is not None and value < min_val:
+            print(f"Value must be at least {min_val}.")
+            continue
+        if max_val is not None and value > max_val:
+            print(f"Value must be at most {max_val}.")
+            continue
+        return value
 
 # Usage
-def validate_user_data(data: dict):
-    """Validate user creation data"""
-    validator = RequestValidator()
-    
-    # Required fields
-    validator.validate_required_fields(data, ["email", "name", "age"])
-    
-    # Email format
-    validator.validate_email(data["email"])
-    
-    # Name length
-    validator.validate_string_length(data["name"], "name", min_length=2, max_length=100)
-    
-    # Age range
-    validator.validate_range(data["age"], "age", minimum=18, maximum=120)
-
-# Test validation
-try:
-    validate_user_data({
-        "email": "invalid",
-        "name": "A",
-        "age": 15
-    })
-except ValidationError as e:
-    print("Validation errors:")
-    for error in e.errors:
-        print(f"  {error.field}: {error.message}")
+age = get_integer("Enter your age: ", min_val=0, max_val=150)
 ```
 
-## Rate Limiting
+For menus, use a similar loop with `str(c) for c in valid_choices` to validate against allowed options.
 
-```python
-from collections import defaultdict
-from time import time
+## Error Handling with Data Processing
 
-class RateLimiter:
-    """Rate limit API requests"""
-    
-    def __init__(self, max_requests: int, window_seconds: int):
-        self.max_requests = max_requests
-        self.window_seconds = window_seconds
-        self.requests = defaultdict(list)
-    
-    def is_allowed(self, client_id: str) -> tuple[bool, Dict[str, Any]]:
-        """
-        Check if request is allowed.
-        
-        Returns:
-            Tuple of (allowed, headers)
-        """
-        now = time()
-        window_start = now - self.window_seconds
-        
-        # Clean old requests
-        self.requests[client_id] = [
-            req_time for req_time in self.requests[client_id]
-            if req_time > window_start
-        ]
-        
-        # Check limit
-        current_count = len(self.requests[client_id])
-        
-        if current_count >= self.max_requests:
-            # Rate limited
-            oldest_request = min(self.requests[client_id])
-            retry_after = int(oldest_request + self.window_seconds - now)
-            
-            return False, {
-                "X-RateLimit-Limit": self.max_requests,
-                "X-RateLimit-Remaining": 0,
-                "X-RateLimit-Reset": int(oldest_request + self.window_seconds),
-                "Retry-After": retry_after
-            }
-        
-        # Allow request
-        self.requests[client_id].append(now)
-        
-        return True, {
-            "X-RateLimit-Limit": self.max_requests,
-            "X-RateLimit-Remaining": self.max_requests - current_count - 1,
-            "X-RateLimit-Reset": int(now + self.window_seconds)
-        }
-
-# Usage
-limiter = RateLimiter(max_requests=5, window_seconds=60)
-
-def handle_request_with_rate_limit(client_id: str, request: Dict[str, Any]):
-    """Handle request with rate limiting"""
-    allowed, headers = limiter.is_allowed(client_id)
-    
-    if not allowed:
-        error = APIError(
-            status=429,
-            title="Too Many Requests",
-            detail=f"Rate limit exceeded. Retry after {headers['Retry-After']} seconds",
-            type="/errors/rate-limit"
-        )
-        
-        return {
-            "status": 429,
-            "headers": headers,
-            "body": error.to_dict()
-        }
-    
-    # Process request
-    response = user_handler(request)
-    response["headers"] = headers
-    
-    return response
-
-# Test rate limiting
-client_id = "client123"
-for i in range(7):
-    request = {
-        "method": "GET",
-        "path": "/users/user123",
-        "body": None
-    }
-    
-    response = handle_request_with_rate_limit(client_id, request)
-    print(f"Request {i + 1}: Status {response['status']}")
-    if "headers" in response:
-        print(f"  Remaining: {response['headers']['X-RateLimit-Remaining']}")
-```
-
-## API Error Logging
+When processing JSON or CSV, expect malformed data:
 
 ```python
 import json
+import csv
 
-class APILogger:
-    """Log API errors with context"""
-    
-    @staticmethod
-    def log_error(request: Dict[str, Any], error: Exception, response: Dict[str, Any]):
-        """Log API error with full context"""
-        log_entry = {
-            "timestamp": datetime.utcnow().isoformat(),
-            "request": {
-                "method": request.get("method"),
-                "path": request.get("path"),
-                "client_id": request.get("client_id"),
-                "headers": request.get("headers", {}),
-                "body": request.get("body")
-            },
-            "error": {
-                "type": type(error).__name__,
-                "message": str(error),
-                "status_code": response.get("status")
-            },
-            "response": {
-                "status": response.get("status"),
-                "body": response.get("body")
-            }
-        }
-        
-        # Log as JSON
-        logger.error(json.dumps(log_entry))
-        
-        # In production, send to:
-        # - ELK Stack
-        # - Splunk
-        # - CloudWatch
-        # - Application Insights
-        # etc.
+def load_json_file(filepath):
+    """Load JSON with clear error messages."""
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Data file not found: {filepath}")
+    except json.JSONDecodeError as e:
+        raise ValueError(
+            f"Invalid JSON in '{filepath}' at line {e.lineno}: {e.msg}"
+        )
+
+def load_csv_records(filepath):
+    """Load CSV records, skipping invalid rows."""
+    records = []
+    errors = []
+    with open(filepath, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        for row_num, row in enumerate(reader, start=2):
+            try:
+                if not row.get("name", "").strip():
+                    raise ValueError("Missing 'name'")
+                records.append({"name": row["name"].strip()})
+            except (ValueError, KeyError) as e:
+                errors.append(f"Row {row_num}: {e}")
+
+    if errors:
+        print(f"Warning: {len(errors)} rows skipped:")
+        for err in errors[:5]:
+            print(f"  - {err}")
+    return records
 ```
 
-## Summary
+## Building a Robust CLI Application
 
-**API Error Handling:**
-- Use appropriate HTTP status codes
-- Return structured error responses (RFC 7807)
-- Create custom exception classes
-- Implement error middleware
-- Validate requests thoroughly
-- Rate limit to prevent abuse
-- Log errors with context
+Command-line tools need structured error handling:
 
-**Error Response Format:**
-```json
-{
-  "status": 400,
-  "title": "Bad Request",
-  "detail": "Validation failed",
-  "type": "/errors/validation",
-  "instance": "/users",
-  "timestamp": "2024-01-01T12:00:00Z",
-  "errors": [
-    {
-      "field": "email",
-      "message": "Invalid email format",
-      "code": "invalid_format"
-    }
-  ]
-}
+```python
+import sys
+import os
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python tool.py <input_file> [output_file]")
+        sys.exit(1)
+
+    input_path = sys.argv[1]
+    output_path = sys.argv[2] if len(sys.argv) > 2 else "report.txt"
+
+    if not os.path.isfile(input_path):
+        print(f"Error: '{input_path}' not found.", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        results = process_file(input_path)
+    except ValueError as e:
+        print(f"Error: Invalid data: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        write_report(output_path, results)
+    except PermissionError:
+        print(f"Error: Cannot write to '{output_path}'.", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Report saved to {output_path}")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted.", file=sys.stderr)
+        sys.exit(130)
 ```
 
-**Best Practices:**
-- Return consistent error format
-- Include helpful error messages
-- Don't expose internal details
-- Use proper status codes
-- Validate all input
-- Rate limit endpoints
-- Log all errors with context
-- Version your API
-- Document error responses
-- Test error scenarios
+Key patterns: validate args early, print errors to stderr, use exit codes (0 = success), and catch `KeyboardInterrupt` at the top level.
 
-**Status Code Guidelines:**
-- **2xx**: Success
-- **4xx**: Client error (bad request, not found, etc.)
-- **5xx**: Server error (internal error, service unavailable)
+## Error Handling in Loops
+
+When processing many items, decide whether to skip or abort on failure:
+
+```python
+def process_all_files(file_list):
+    """Process files, skipping failures."""
+    results = []
+    failed = []
+    for filepath in file_list:
+        try:
+            results.append(process_file(filepath))
+        except Exception as e:
+            failed.append((filepath, str(e)))
+            continue
+
+    if failed:
+        print(f"{len(failed)} file(s) failed:")
+        for path, error in failed:
+            print(f"  {path}: {error}")
+    return results
+```
+
+You can also track `error_count` and `raise RuntimeError` once it exceeds a threshold to abort batch processing.
+
+## Graceful Shutdown
+
+Use `try`/`finally` to ensure cleanup happens even on errors:
+
+```python
+def run_file_processor(output_path, items):
+    """Process items and write results to a file with guaranteed cleanup."""
+    output_file = None
+    processed = 0
+    try:
+        output_file = open(output_path, "w")
+        for item in items:
+            result = process(item)
+            output_file.write(f"{result}\n")
+            processed += 1
+    finally:
+        if output_file and not output_file.closed:
+            output_file.close()
+        print(f"Processed {processed} items.")
+```
+
+## Error Handling Checklist
+
+Before shipping any Python script, verify:
+
+- [ ] **Files**: Handle `FileNotFoundError`, `PermissionError`, encoding errors
+- [ ] **Input**: Validate and re-prompt on bad input
+- [ ] **Data**: Handle malformed JSON, CSV, or other formats
+- [ ] **Resources**: Use `with` statements for files and connections
+- [ ] **Loops**: Decide skip vs abort strategy for individual failures
+- [ ] **Exit codes**: Return 0 on success, non-zero on failure
+- [ ] **Messages**: Error messages explain what went wrong and how to fix it
+- [ ] **Ctrl+C**: Handle `KeyboardInterrupt` gracefully
+
+## Complete Worked Example
+
+A file processing script tying all patterns together:
+
+```python
+"""Word frequency analyzer with comprehensive error handling."""
+import os
+import sys
+import logging
+from collections import Counter
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+logger = logging.getLogger("word_counter")
+
+
+def read_text_file(filepath):
+    """Read a text file with encoding fallback."""
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return f.read()
+    except UnicodeDecodeError:
+        logger.warning(f"Encoding error in {filepath}, trying latin-1")
+        with open(filepath, "r", encoding="latin-1") as f:
+            return f.read()
+
+
+def count_words(text):
+    """Count word frequencies."""
+    if not text or not text.strip():
+        return Counter()
+    words = text.lower().split()
+    cleaned = [w.strip(".,!?;:\"'()-[]{}") for w in words]
+    return Counter(w for w in cleaned if w)
+
+
+def process_directory(directory):
+    """Process all .txt files in a directory."""
+    if not os.path.isdir(directory):
+        raise FileNotFoundError(f"Directory not found: {directory}")
+
+    total_counts = Counter()
+    processed = 0
+    failed = []
+
+    for filename in sorted(os.listdir(directory)):
+        if not filename.endswith(".txt"):
+            continue
+        filepath = os.path.join(directory, filename)
+        try:
+            text = read_text_file(filepath)
+            counts = count_words(text)
+            total_counts.update(counts)
+            processed += 1
+            logger.info(f"Processed {filename}: {sum(counts.values())} words")
+        except PermissionError:
+            failed.append((filename, "permission denied"))
+        except OSError as e:
+            failed.append((filename, str(e)))
+
+    return {"counts": total_counts, "processed": processed, "failed": failed}
+
+
+def write_report(filepath, results, top_n=20):
+    """Write a word frequency report."""
+    counts = results["counts"]
+    lines = [
+        "Word Frequency Report",
+        f"Files processed: {results['processed']}",
+        f"Unique words: {len(counts)}",
+        f"Total words: {sum(counts.values())}",
+        "",
+    ]
+    for word, count in counts.most_common(top_n):
+        lines.append(f"  {word:<20} {count:>6}")
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    logger.info(f"Report written to {filepath}")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python word_counter.py <directory> [report_file]")
+        sys.exit(1)
+
+    input_dir = sys.argv[1]
+    report_path = sys.argv[2] if len(sys.argv) > 2 else "word_report.txt"
+
+    try:
+        results = process_directory(input_dir)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    if results["processed"] == 0:
+        print(f"No .txt files found in '{input_dir}'.", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        write_report(report_path, results)
+    except PermissionError:
+        print(f"Error: Cannot write to '{report_path}'.", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Done. {results['processed']} files processed. Report: {report_path}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted.", file=sys.stderr)
+        sys.exit(130)
+```
+
+## Try It Yourself
+
+1. **Input validator**: Write `get_date(prompt)` that keeps asking until the user enters a valid `YYYY-MM-DD` date using `datetime.strptime()`.
+
+2. **CSV cleaner**: Write a script that reads a CSV, validates rows, writes valid rows to `clean.csv` and invalid rows to `errors.csv`.
+
+3. **Robust copier**: Write a script that copies files between directories, handling permission errors, existing files, and missing directories.
+
+## Key Takeaways
+
+- **File operations need specific handlers** — always catch `FileNotFoundError`, `PermissionError`, and encoding errors separately.
+- **User input requires validation loops** — use `while True` with `try`/`except` and `continue` to re-prompt.
+- **Data processing should be fault-tolerant** — skip bad records, collect errors, report at the end.
+- **CLI tools need structure** — validate early, use stderr for errors, return proper exit codes.
+- **Choose your loop strategy** — skip-and-continue for batch processing, abort-after-N for critical pipelines.
+- **Always clean up** — use `try`/`finally` and context managers to release resources on any exit path.
+- **Use the checklist** — verify files, input, parsing, cleanup, exit codes, and Ctrl+C handling before shipping.

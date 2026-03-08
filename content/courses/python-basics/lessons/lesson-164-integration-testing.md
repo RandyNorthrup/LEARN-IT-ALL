@@ -1,8 +1,8 @@
 ---
-id: "163-integration-testing"
+id: lesson-164-integration-testing
 title: "Integration Testing"
 chapterId: ch12-testing
-order: 12
+order: 10
 duration: 25
 objectives:
   - Write integration tests
@@ -82,56 +82,45 @@ def test_db():
     yield conn
     conn.close()
 
-class UserRepository:
-    def __init__(self, conn):
-        self.conn = conn
-    
-    def create_user(self, username, email):
-        cursor = self.conn.cursor()
-        cursor.execute(
-            "INSERT INTO users (username, email) VALUES (?, ?)",
-            (username, email)
-        )
-        self.conn.commit()
-        return cursor.lastrowid
-    
-    def get_user(self, user_id):
-        cursor = self.conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-        row = cursor.fetchone()
-        if row:
-            return {"id": row[0], "username": row[1], "email": row[2]}
-        return None
+def create_user(conn, username, email):
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO users (username, email) VALUES (?, ?)",
+        (username, email)
+    )
+    conn.commit()
+    return cursor.lastrowid
 
-class OrderRepository:
-    def __init__(self, conn):
-        self.conn = conn
-    
-    def create_order(self, user_id, total):
-        cursor = self.conn.cursor()
-        cursor.execute(
-            "INSERT INTO orders (user_id, total, status) VALUES (?, ?, ?)",
-            (user_id, total, "pending")
-        )
-        self.conn.commit()
-        return cursor.lastrowid
+def get_user(conn, user_id):
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    if row:
+        return {"id": row[0], "username": row[1], "email": row[2]}
+    return None
+
+def create_order(conn, user_id, total):
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO orders (user_id, total, status) VALUES (?, ?, ?)",
+        (user_id, total, "pending")
+    )
+    conn.commit()
+    return cursor.lastrowid
 
 # Integration tests
 def test_create_user_and_order(test_db):
     """Test user and order creation together"""
-    user_repo = UserRepository(test_db)
-    order_repo = OrderRepository(test_db)
-    
     # Create user
-    user_id = user_repo.create_user("alice", "alice@example.com")
+    user_id = create_user(test_db, "alice", "alice@example.com")
     assert user_id is not None
     
     # Verify user exists
-    user = user_repo.get_user(user_id)
+    user = get_user(test_db, user_id)
     assert user["username"] == "alice"
     
     # Create order for user
-    order_id = order_repo.create_order(user_id, 100.0)
+    order_id = create_order(test_db, user_id, 100.0)
     assert order_id is not None
     
     # Verify order in database
@@ -219,51 +208,49 @@ import tempfile
 import os
 from pathlib import Path
 
-class FileManager:
-    """Manage file operations"""
-    
-    def __init__(self, base_dir):
-        self.base_dir = Path(base_dir)
-        self.base_dir.mkdir(exist_ok=True)
-    
-    def save_file(self, filename, content):
-        file_path = self.base_dir / filename
-        file_path.write_text(content)
-        return str(file_path)
-    
-    def read_file(self, filename):
-        file_path = self.base_dir / filename
-        if file_path.exists():
-            return file_path.read_text()
-        return None
-    
-    def list_files(self):
-        return [f.name for f in self.base_dir.iterdir() if f.is_file()]
+def create_file_manager(base_dir):
+    """Create a file manager for the given directory."""
+    base = Path(base_dir)
+    base.mkdir(exist_ok=True)
+    return {"base_dir": base}
+
+def save_file(manager, filename, content):
+    file_path = manager["base_dir"] / filename
+    file_path.write_text(content)
+    return str(file_path)
+
+def read_managed_file(manager, filename):
+    file_path = manager["base_dir"] / filename
+    if file_path.exists():
+        return file_path.read_text()
+    return None
+
+def list_files(manager):
+    return [f.name for f in manager["base_dir"].iterdir() if f.is_file()]
 
 @pytest.fixture
-def temp_file_manager(tmp_path):
+def file_manager(tmp_path):
     """File manager with temporary directory"""
-    manager = FileManager(tmp_path)
-    yield manager
+    yield create_file_manager(tmp_path)
     # Cleanup handled by tmp_path fixture
 
-def test_save_and_read_file(temp_file_manager):
+def test_save_and_read_file(file_manager):
     """Test file save and read integration"""
     # Save file
-    path = temp_file_manager.save_file("test.txt", "Hello, World!")
+    path = save_file(file_manager, "test.txt", "Hello, World!")
     assert os.path.exists(path)
     
     # Read file
-    content = temp_file_manager.read_file("test.txt")
+    content = read_managed_file(file_manager, "test.txt")
     assert content == "Hello, World!"
 
-def test_list_multiple_files(temp_file_manager):
+def test_list_multiple_files(file_manager):
     """Test listing multiple files"""
-    temp_file_manager.save_file("file1.txt", "content1")
-    temp_file_manager.save_file("file2.txt", "content2")
-    temp_file_manager.save_file("file3.txt", "content3")
+    save_file(file_manager, "file1.txt", "content1")
+    save_file(file_manager, "file2.txt", "content2")
+    save_file(file_manager, "file3.txt", "content3")
     
-    files = temp_file_manager.list_files()
+    files = list_files(file_manager)
     assert len(files) == 3
     assert "file1.txt" in files
     assert "file2.txt" in files
@@ -276,37 +263,24 @@ def test_list_multiple_files(temp_file_manager):
 import requests
 from unittest.mock import patch
 
-class WeatherService:
-    """Service that calls external weather API"""
-    
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.base_url = "https://api.weather.com"
-    
-    def get_temperature(self, city):
-        response = requests.get(
-            f"{self.base_url}/current",
-            params={"city": city, "key": self.api_key}
-        )
-        data = response.json()
-        return data["temperature"]
+def get_temperature(api_key, city):
+    """Fetch temperature from external weather API."""
+    base_url = "https://api.weather.com"
+    response = requests.get(
+        f"{base_url}/current",
+        params={"city": city, "key": api_key}
+    )
+    data = response.json()
+    return data["temperature"]
 
-class TemperatureAlert:
-    """Send alert if temperature is extreme"""
+def check_and_alert(api_key, notification_fn, city, threshold=100):
+    """Send alert if temperature is extreme."""
+    temp = get_temperature(api_key, city)
     
-    def __init__(self, weather_service, notification_service):
-        self.weather = weather_service
-        self.notifications = notification_service
-    
-    def check_and_alert(self, city, threshold=100):
-        temp = self.weather.get_temperature(city)
-        
-        if temp > threshold:
-            self.notifications.send_alert(
-                f"High temperature in {city}: {temp}°F"
-            )
-            return True
-        return False
+    if temp > threshold:
+        notification_fn(f"High temperature in {city}: {temp}°F")
+        return True
+    return False
 
 # Integration test with mocked external service
 @patch('requests.get')
@@ -317,19 +291,15 @@ def test_temperature_alert_integration(mock_get):
         "temperature": 105
     }
     
-    # Real notification service (or mock)
-    mock_notifications = Mock()
-    
-    # Create services
-    weather = WeatherService("test_key")
-    alert = TemperatureAlert(weather, mock_notifications)
+    # Mock notification function
+    mock_notify = Mock()
     
     # Test integration
-    result = alert.check_and_alert("Phoenix", threshold=100)
+    result = check_and_alert("test_key", mock_notify, "Phoenix", threshold=100)
     
     assert result is True
-    mock_notifications.send_alert.assert_called_once()
-    call_args = mock_notifications.send_alert.call_args[0][0]
+    mock_notify.assert_called_once()
+    call_args = mock_notify.call_args[0][0]
     assert "Phoenix" in call_args
     assert "105" in call_args
 ```
@@ -337,82 +307,70 @@ def test_temperature_alert_integration(mock_get):
 ## Multi-Component Integration
 
 ```python
-class Database:
-    def __init__(self):
-        self.users = {}
-        self.sessions = {}
-    
-    def create_user(self, username, password_hash):
-        user_id = len(self.users) + 1
-        self.users[user_id] = {
-            "id": user_id,
-            "username": username,
-            "password_hash": password_hash
-        }
-        return user_id
-    
-    def get_user_by_username(self, username):
-        for user in self.users.values():
-            if user["username"] == username:
-                return user
+def create_database():
+    """Create an in-memory database store."""
+    return {"users": {}, "sessions": {}}
+
+def db_create_user(db, username, password_hash):
+    user_id = len(db["users"]) + 1
+    db["users"][user_id] = {
+        "id": user_id,
+        "username": username,
+        "password_hash": password_hash
+    }
+    return user_id
+
+def db_get_user_by_username(db, username):
+    for user in db["users"].values():
+        if user["username"] == username:
+            return user
+    return None
+
+def db_create_session(db, user_id, token):
+    db["sessions"][token] = user_id
+
+def auth_register(db, username, password):
+    # Hash password (simplified)
+    password_hash = hash(password)
+    user_id = db_create_user(db, username, password_hash)
+    return user_id
+
+def auth_login(db, username, password):
+    user = db_get_user_by_username(db, username)
+    if not user:
         return None
     
-    def create_session(self, user_id, token):
-        self.sessions[token] = user_id
+    # Verify password
+    if user["password_hash"] == hash(password):
+        token = f"token_{user['id']}"
+        db_create_session(db, user["id"], token)
+        return token
+    return None
 
-class AuthService:
-    def __init__(self, database):
-        self.db = database
-    
-    def register(self, username, password):
-        # Hash password (simplified)
-        password_hash = hash(password)
-        user_id = self.db.create_user(username, password_hash)
-        return user_id
-    
-    def login(self, username, password):
-        user = self.db.get_user_by_username(username)
-        if not user:
-            return None
-        
-        # Verify password
-        if user["password_hash"] == hash(password):
-            token = f"token_{user['id']}"
-            self.db.create_session(user["id"], token)
-            return token
-        return None
-
-class UserService:
-    def __init__(self, database, auth_service):
-        self.db = database
-        self.auth = auth_service
-    
-    def register_and_login(self, username, password):
-        """Register user and automatically log in"""
-        user_id = self.auth.register(username, password)
-        token = self.auth.login(username, password)
-        return {"user_id": user_id, "token": token}
+def register_and_login(db, username, password):
+    """Register user and automatically log in."""
+    user_id = auth_register(db, username, password)
+    token = auth_login(db, username, password)
+    return {"user_id": user_id, "token": token}
 
 # Integration test
 def test_full_user_flow():
     """Test registration, login, and session creation together"""
-    db = Database()
-    auth = AuthService(db)
-    user_service = UserService(db, auth)
+    db = create_database()
     
     # Register and login
-    result = user_service.register_and_login("alice", "password123")
+    result = register_and_login(db, "alice", "password123")
     
     # Verify user created
     assert result["user_id"] is not None
-    user = db.get_user_by_username("alice")
+    user = db_get_user_by_username(db, "alice")
     assert user is not None
     assert user["username"] == "alice"
     
     # Verify session created
     assert result["token"] is not None
-    assert result["token"] in db.sessions
-    assert db.sessions[result["token"]] == result["user_id"]
+    assert result["token"] in db["sessions"]
+    assert db["sessions"][result["token"]] == result["user_id"]
 ```
 
 ## Test Data Management
@@ -420,36 +378,28 @@ def test_full_user_flow():
 ```python
 import json
 
-class TestDataManager:
-    """Manage test data for integration tests"""
-    
-    @staticmethod
-    def load_test_users():
-        """Load test user data"""
-        return [
-            {"username": "alice", "email": "alice@example.com", "role": "admin"},
-            {"username": "bob", "email": "bob@example.com", "role": "user"},
-            {"username": "charlie", "email": "charlie@example.com", "role": "user"}
-        ]
-    
-    @staticmethod
-    def load_test_products():
-        """Load test product data"""
-        return [
-            {"id": 1, "name": "Product A", "price": 10.00},
-            {"id": 2, "name": "Product B", "price": 20.00},
-            {"id": 3, "name": "Product C", "price": 30.00}
-        ]
+def load_test_users():
+    """Load test user data for integration tests."""
+    return [
+        {"username": "alice", "email": "alice@example.com", "role": "admin"},
+        {"username": "bob", "email": "bob@example.com", "role": "user"},
+        {"username": "charlie", "email": "charlie@example.com", "role": "user"}
+    ]
+
+def load_test_products():
+    """Load test product data for integration tests."""
+    return [
+        {"id": 1, "name": "Product A", "price": 10.00},
+        {"id": 2, "name": "Product B", "price": 20.00},
+        {"id": 3, "name": "Product C", "price": 30.00}
+    ]
 
 @pytest.fixture
 def populated_system(test_db):
     """System populated with test data"""
-    data_manager = TestDataManager()
-    
     # Add test users
-    user_repo = UserRepository(test_db)
-    for user_data in data_manager.load_test_users():
-        user_repo.create_user(user_data["username"], user_data["email"])
+    for user_data in load_test_users():
+        create_user(test_db, user_data["username"], user_data["email"])
     
     yield test_db
 

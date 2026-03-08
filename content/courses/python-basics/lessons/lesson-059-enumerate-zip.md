@@ -1,8 +1,8 @@
 ---
-id: "94-enumerate-zip"
+id: lesson-059-enumerate-zip
 title: "enumerate() and zip() Functions"
 chapterId: ch5-loops
-order: 5
+order: 6
 duration: 25
 objectives:
   - Master enumerate() for indexed iteration
@@ -380,7 +380,7 @@ weights = [0.2, 0.3, 0.2, 0.3]
 
 weighted_sum = sum(grade * weight for grade, weight in zip(grades, weights))
 print(f"Weighted average: {weighted_sum:.1f}")
-# Weighted average: 87.1
+# Weighted average: 87.2
 
 # Merging sorted lists
 def merge_sorted(list1, list2):

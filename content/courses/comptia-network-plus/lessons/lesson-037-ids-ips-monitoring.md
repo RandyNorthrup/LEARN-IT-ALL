@@ -1,7 +1,7 @@
 ---
-id: ids-ips-monitoring
+id: lesson-037-ids-ips-monitoring
 title: IDS/IPS and Network Security Monitoring
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 37
 duration: 90
 objectives:
@@ -21,6 +21,18 @@ Intrusion Detection Systems (IDS) and Intrusion Prevention Systems (IPS) are cri
 In this lesson, we'll explore detection methods, IDS/IPS architectures, signature-based and anomaly-based detection, security monitoring strategies, and Security Information and Event Management (SIEM) systems.
 
 **Key Principle:** Defense in depth - IDS/IPS provide additional security layer beyond firewalls.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand IDS vs IPS technologies
+- Configure signature and anomaly-based detection
+- Implement security monitoring solutions
+- Analyze security alerts and logs
+- Deploy SIEM systems
+
+---
 
 ## IDS vs IPS
 
@@ -1038,55 +1050,82 @@ Load Balancing:
    - GPU acceleration
 ```
 
-## Review Questions
+## Summary
 
-1. **What is the difference between IDS and IPS?**
-   - IDS detects and alerts (passive), IPS detects and blocks (active, inline)
+In this lesson, we explored intrusion detection and prevention systems and their role in network security monitoring. An IDS monitors passively out-of-band (via SPAN port or TAP) and generates alerts only, while an IPS sits inline in the traffic path and actively blocks malicious packets in real time — at the risk of false positives disrupting legitimate traffic. Signature-based detection matches traffic against known attack patterns (e.g., Snort rules matching specific hex byte sequences) and has low false positives but cannot detect zero-day attacks. Anomaly-based detection establishes behavioral baselines over 1–4 weeks and flags deviations, catching unknown threats but producing more false positives. Deployment types include NIDS/NIPS (network-wide, cannot inspect encrypted traffic), HIDS/HIPS (per-host, sees traffic before encryption), and WIDS/WIPS (detects rogue APs and deauthentication attacks). SIEM systems aggregate logs from all security tools, correlate events across sources, and provide centralized alerting and forensic analysis.
 
-2. **What are the two main detection methods?**
-   - Signature-based (known attacks), anomaly-based (deviations from normal)
+## Practice Questions
 
-3. **What is a false positive?**
-   - Legitimate traffic incorrectly flagged as malicious
+**Q1.** What is the primary difference between an IDS and an IPS?
 
-4. **What is a false negative?**
-   - Malicious traffic that goes undetected
+A) An IDS is placed inline and blocks traffic, while an IPS only generates alerts
+B) An IDS passively monitors and alerts on threats, while an IPS is placed inline and can actively block malicious traffic
+C) An IPS cannot detect zero-day attacks, but an IDS can
+D) An IDS and IPS are identical in function and differ only in cost
 
-5. **Where should perimeter IPS be placed?**
-   - Between firewall and internal network (or integrated with firewall)
+<details>
+<summary>Answer</summary>
 
-6. **What is SIEM?**
-   - Security Information and Event Management - centralized log collection, correlation, and analysis
+**B)** An IDS (Intrusion Detection System) passively monitors network traffic out-of-band (via SPAN port or TAP) and generates alerts but cannot block attacks. An IPS (Intrusion Prevention System) is deployed inline in the traffic path and can actively drop or block malicious packets in real time. Option A reverses the definitions. Both can detect zero-day attacks using anomaly detection (C is wrong). They have fundamentally different operational modes (D is wrong).
+</details>
 
-7. **What is the advantage of Suricata over Snort?**
-   - Multi-threaded (better performance on multi-core systems)
+**Q2.** Which detection method compares network traffic against a database of known attack patterns?
 
-8. **What is full packet capture used for?**
-   - Forensic analysis, evidence, detailed investigation of incidents
+A) Anomaly-based detection
+B) Heuristic analysis
+C) Signature-based detection
+D) Behavioral analysis
 
-9. **What is correlation in SIEM?**
-   - Connecting related events from multiple sources to detect complex attacks
+<details>
+<summary>Answer</summary>
 
-10. **What is the NSM philosophy?**
-    - Assume breach, focus on detection and response, not just prevention
+**C)** Signature-based detection uses a database of known attack patterns (signatures) and compares network traffic against them. When a match is found, an alert is generated or the traffic is blocked. Anomaly-based detection (A) establishes a baseline of normal behavior and alerts on deviations. Heuristic analysis (B) uses rules and algorithms to identify potentially malicious behavior. Behavioral analysis (D) monitors entity behavior patterns over time. Only signature-based explicitly matches against a pre-built pattern database.
+</details>
 
-## Key Takeaways
+**Q3.** A network administrator notices that the IPS is blocking legitimate customer traffic to the company's web server. What type of error is occurring, and how should the administrator address it?
 
-- **IDS detects, IPS prevents** - choose based on risk tolerance
-- **Signature-based** detects known attacks, **anomaly-based** detects unknown attacks
-- **Tuning is critical** - reduce false positives, prevent false negatives
-- **Defense in depth** - IDS/IPS supplement firewalls, don't replace them
-- **SIEM provides visibility** - centralized monitoring and correlation
-- **NSM assumes breach** - focus on detection and response
-- **Performance matters** - size appropriately for bandwidth
-- **Regular updates** - keep signatures current for latest threats
-- **Multi-layered approach** - combine network and host-based detection
-- **Alert fatigue** - too many alerts = ignored alerts (tune aggressively)
+A) True positive — the IPS is correctly identifying an attack that should be investigated
+B) False negative — the IPS is failing to detect actual attacks
+C) False positive — the IPS is incorrectly identifying legitimate traffic as malicious, and the relevant signature should be tuned or disabled
+D) True negative — the IPS is correctly allowing normal traffic
 
-## Next Steps
+<details>
+<summary>Answer</summary>
 
-In the next lesson, we'll explore **Wireless Security**, including WPA3, 802.1X, wireless attacks, and secure wireless deployment.
+**C)** A false positive occurs when the IPS incorrectly classifies legitimate traffic as malicious and blocks it. The administrator should tune the IPS by adjusting the triggering signature's threshold, creating an exception for the legitimate traffic pattern, or disabling overly broad signatures. A true positive (A) would be correct detection of actual attacks. A false negative (B) is failing to detect real attacks. A true negative (D) is correctly passing legitimate traffic.
+</details>
 
----
+**Q4.** What is the primary function of a SIEM (Security Information and Event Management) system in network security monitoring?
 
-**Lesson Complete!** You now understand intrusion detection and prevention systems that provide deep traffic inspection and threat detection.
+A) To replace firewalls and IDS/IPS devices entirely
+B) To aggregate, correlate, and analyze security logs from multiple sources to detect complex threats
+C) To encrypt all network traffic between security devices
+D) To perform packet-level filtering on network traffic
+
+<details>
+<summary>Answer</summary>
+
+**B)** A SIEM collects and aggregates security logs and events from multiple sources (firewalls, IDS/IPS, servers, switches, endpoints), correlates related events to detect complex multi-stage attacks, provides dashboards and alerting, and supports compliance reporting and forensic investigation. SIEMs complement but do not replace other security devices (A). They do not encrypt traffic (C) or perform packet filtering (D) — those are functions of VPNs and firewalls respectively.
+</details>
+
+**Q5.** An anomaly-based IDS generates numerous alerts after the IT department deploys a new application that significantly changes network traffic patterns. What is the best course of action?
+
+A) Immediately shut down the new application since the IDS flagged it
+B) Disable the anomaly-based IDS and rely solely on signature-based detection
+C) Re-baseline the IDS to incorporate the new normal traffic patterns from the legitimate application
+D) Ignore all IDS alerts until the application deployment is complete
+
+<details>
+<summary>Answer</summary>
+
+**C)** Anomaly-based detection relies on a baseline of normal behavior. When legitimate changes alter traffic patterns (such as deploying a new application), the baseline must be updated to reflect the new normal. Shutting down the application (A) is unnecessary if it's legitimate. Disabling anomaly detection entirely (B) eliminates the ability to detect zero-day attacks. Ignoring all alerts (D) risks missing real attacks mixed in with the false positives.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.1 — Explain common security concepts (IDS/IPS)
+- NIST SP 800-94 Rev. 1: Guide to Intrusion Detection and Prevention Systems (IDPS)
+- NIST SP 800-137: Information Security Continuous Monitoring (ISCM)
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Chapter 10: Intrusion Detection
+- MITRE ATT&CK Framework: Adversarial Tactics, Techniques, and Common Knowledge
+- Snort Official Documentation: https://www.snort.org/documents

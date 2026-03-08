@@ -1,5 +1,5 @@
 ---
-id: 50-args-kwargs
+id: lesson-074-args-kwargs
 title: Variable Arguments (*args and **kwargs)
 chapterId: ch6-functions
 order: 6
@@ -364,12 +364,13 @@ def do_something(mode, threshold, debug=False):
 
 ```python
 # Pattern 1: Optional positional arguments
-def format_name(first, last, *middles):
-    name = first
-    if middles:
-        name += " " + " ".join(middles)
-    name += " " + last
-    return name
+def format_name(first, *rest):
+    """Format name: first [middles...] last."""
+    if not rest:
+        return first
+    *middles, last = rest
+    parts = [first] + list(middles) + [last]
+    return " ".join(parts)
 
 print(format_name("John", "Doe"))              # John Doe
 print(format_name("John", "Jacob", "Doe"))     # John Jacob Doe

@@ -1,5 +1,5 @@
 ---
-id: tcpip-model
+id: lesson-007-tcpip-model
 title: The TCP/IP Model
 chapterId: ch1-networking-fundamentals
 order: 7
@@ -634,10 +634,154 @@ The TCP/IP model is the practical implementation model for modern networking:
 
 ---
 
+## Practice Questions
+
+**Q1.** How many layers does the TCP/IP model have, and what are they from bottom to top?
+
+A) 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application
+B) 4 layers: Network Access, Internet, Transport, Application
+C) 5 layers: Physical, Data Link, Network, Transport, Application
+D) 4 layers: Physical, Network, Transport, Application
+
+<details>
+<summary>Answer</summary>
+
+**B)** The TCP/IP model has 4 layers: Network Access (Link), Internet, Transport, and Application. The Network Access layer combines OSI Layers 1-2, the Internet layer maps to OSI Layer 3, the Transport layer maps to OSI Layer 4, and the Application layer combines OSI Layers 5-7. Option A describes the OSI model.
+</details>
+
+**Q2.** Which TCP/IP layer is equivalent to the OSI model's Network layer (Layer 3)?
+
+A) Network Access layer
+B) Internet layer
+C) Transport layer
+D) Application layer
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Internet layer in the TCP/IP model is equivalent to the OSI Network layer (Layer 3). It handles logical addressing (IP addresses), routing, and packet forwarding. Key protocols at this layer include IP, ICMP, ARP, and IGMP.
+</details>
+
+**Q3.** ARP (Address Resolution Protocol) operates at which TCP/IP layer?
+
+A) Application
+B) Transport
+C) Internet
+D) Network Access
+
+<details>
+<summary>Answer</summary>
+
+**C)** ARP operates at the Internet layer of the TCP/IP model. It resolves IPv4 addresses to MAC addresses by broadcasting a request on the local network. While ARP bridges between Layer 2 and Layer 3 functions (sometimes called "Layer 2.5"), it is categorized under the Internet layer in the TCP/IP model.
+</details>
+
+**Q4.** A network administrator is troubleshooting a connectivity issue. The device can ping its own loopback address (127.0.0.1) but cannot reach other devices on the local network. At which TCP/IP layer is the problem most likely occurring?
+
+A) Application
+B) Transport
+C) Internet
+D) Network Access
+
+<details>
+<summary>Answer</summary>
+
+**D)** Since the loopback test succeeds, the TCP/IP stack is functioning at the Internet and Transport layers. The inability to reach local devices suggests a problem at the Network Access layer, which handles physical connectivity, cabling, NIC configuration, and MAC-level communication. This could be a bad cable, disabled NIC, or driver issue.
+</details>
+
+**Q5.** Which of the following protocols operates at the Application layer of the TCP/IP model?
+
+A) TCP
+B) IP
+C) Ethernet
+D) DNS
+
+<details>
+<summary>Answer</summary>
+
+**D)** DNS (Domain Name System) operates at the Application layer of the TCP/IP model. The Application layer combines the functions of OSI Layers 5-7 and includes protocols like HTTP, FTP, SMTP, DNS, and DHCP. TCP operates at the Transport layer, IP at the Internet layer, and Ethernet at the Network Access layer.
+</details>
+
+**Q6.** What is the main advantage of the TCP/IP model over the OSI model?
+
+A) It has more layers for better granularity
+B) It is a theoretical model designed for teaching
+C) It is based on actual protocols in use and is the standard for the Internet
+D) It separates Session and Presentation functions into distinct layers
+
+<details>
+<summary>Answer</summary>
+
+**C)** The TCP/IP model is implementation-focused, based on actual protocols used in real-world networking, and is the universal standard for the Internet. The OSI model is more of a theoretical/conceptual framework. TCP/IP has fewer layers (4 vs 7), not more, and it combines the Session and Presentation layers into the Application layer.
+</details>
+
+**Q7.** Which protocol at the TCP/IP Internet layer is used for error reporting and network diagnostics?
+
+A) ARP
+B) IGMP
+C) ICMP
+D) TCP
+
+<details>
+<summary>Answer</summary>
+
+**C)** ICMP (Internet Control Message Protocol) operates at the Internet layer and is used for error reporting and network diagnostics. It generates messages such as Destination Unreachable, Time Exceeded, and Echo Reply (used by ping). ARP resolves IP to MAC addresses, IGMP manages multicast groups, and TCP is a Transport layer protocol.
+</details>
+
+**Q8.** In the TCP/IP model, which layer is responsible for end-to-end reliability and flow control?
+
+A) Network Access
+B) Internet
+C) Transport
+D) Application
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Transport layer provides end-to-end communication services including reliability (TCP) and flow control. TCP ensures data arrives intact and in order through acknowledgments, sequencing, and retransmission. UDP also operates at this layer but without reliability guarantees. This is the same function as OSI Layer 4.
+</details>
+
+**Q9.** A switch operating at Layer 2 and using MAC addresses for forwarding decisions operates at which TCP/IP layer?
+
+A) Application
+B) Internet
+C) Transport
+D) Network Access
+
+<details>
+<summary>Answer</summary>
+
+**D)** The Network Access layer (also called the Link layer) in the TCP/IP model combines OSI Layers 1 and 2. It handles physical transmission, MAC addressing, framing, and media access control. A Layer 2 switch using MAC addresses for forwarding operates within this layer.
+</details>
+
+**Q10.** Which routing protocol is used for routing between autonomous systems on the Internet backbone?
+
+A) RIP
+B) OSPF
+C) EIGRP
+D) BGP
+
+<details>
+<summary>Answer</summary>
+
+**D)** BGP (Border Gateway Protocol) is the routing protocol used for the Internet backbone, routing between autonomous systems (AS). It is the only exterior gateway protocol (EGP) widely used today. RIP, OSPF, and EIGRP are interior gateway protocols (IGPs) used within a single autonomous system.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.1**: Compare and contrast OSI and TCP/IP models
+- **CompTIA Network+ N10-009 Objective 1.1**: Compare and contrast OSI and TCP/IP models
 - **RFC 1122**: Requirements for Internet Hosts (Communication Layers)
 - **RFC 1123**: Requirements for Internet Hosts (Application and Support)
 - **RFC 791**: Internet Protocol (IPv4)
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course
+
+### Required Reading
+
+- **RFC 1122** — Requirements for Internet Hosts — Communication Layers (1989)
+  - Read: Sections 1.1–1.3 (General, Communication Layers, General Considerations)
+  - Available at: https://www.rfc-editor.org/rfc/rfc1122
+  - Focus questions:
+    1. How does RFC 1122's layering (Link, Internet, Transport, Application) differ from the OSI model, and why did the IETF choose this simpler architecture?
+    2. What does the "Robustness Principle" (Postel's Law) state, and what are its implications for protocol implementation?
+    3. Why does RFC 1122 combine OSI Layers 5–7 into a single Application layer?

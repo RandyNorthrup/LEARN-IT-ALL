@@ -1,5 +1,5 @@
 ---
-id: "83-match-case-statements"
+id: lesson-045-match-case-statements
 title: "Match-Case Statements (Pattern Matching)"
 chapterId: ch4-comparisons
 order: 5
@@ -259,21 +259,18 @@ print(describe_shape({"type": "triangle", "base": 10, "height": 8}))
 # Triangle base 10, height 8, area = 40.0
 ```
 
-## Matching Classes
+## Matching Named Tuples
+
+Named tuples work seamlessly with pattern matching, giving you structured data without needing to define full classes:
 
 ```python
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+from collections import namedtuple
 
-class Circle:
-    def __init__(self, center, radius):
-        self.center = center
-        self.radius = radius
+Point = namedtuple('Point', ['x', 'y'])
+Circle = namedtuple('Circle', ['center', 'radius'])
 
 def describe_shape_object(shape):
-    """Describe shape object using match-case."""
+    """Describe shape using match-case with named tuples."""
     match shape:
         case Point(x=0, y=0):
             return "Origin point"

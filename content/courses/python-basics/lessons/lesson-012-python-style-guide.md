@@ -1,8 +1,8 @@
 ---
-id: 12-python-style-guide
+id: lesson-012-python-style-guide
 title: Python Style Guide and PEP 8
 chapterId: ch1-intro
-order: 12
+order: 11
 duration: 25
 objectives:
   - Understand PEP 8 style guide
@@ -85,8 +85,8 @@ result = some_function(parameter1, parameter2, parameter3, parameter4, parameter
 ## Blank Lines
 
 ```python
-# 2 blank lines before top-level functions and classes
-# 1 blank line between methods inside a class
+# 2 blank lines before top-level functions
+# Helps visually separate unrelated code blocks
 
 # ✓ Correct:
 def first_function():
@@ -97,12 +97,8 @@ def second_function():  # 2 blank lines above
     pass
 
 
-class MyClass:  # 2 blank lines above
-    def method_one(self):
-        pass
-    
-    def method_two(self):  # 1 blank line above
-        pass
+def third_function():  # 2 blank lines above
+    pass
 
 # ✗ Wrong: No spacing
 def first_function():
@@ -153,12 +149,11 @@ MAX_RETRIES = 3
 API_KEY = "secret123"
 DEFAULT_TIMEOUT = 30
 
-# Classes: PascalCase
-class UserAccount:
-    pass
+# Named types: PascalCase (also used for classes in OOP)
+from collections import namedtuple
 
-class DatabaseConnection:
-    pass
+UserAccount = namedtuple('UserAccount', ['username', 'email'])
+DatabaseConnection = namedtuple('DatabaseConnection', ['host', 'port'])
 
 # Private (internal use): _leading_underscore
 def _internal_function():
@@ -345,36 +340,36 @@ def add_item(item, items=[]):  # Same list used for all calls!
     return items
 ```
 
-## Class Definitions
+## Data Structure Definitions
 
 ```python
-# ✓ Correct: Proper class structure
-class BankAccount:
-    """Represents a bank account with basic operations."""
-    
-    def __init__(self, initial_balance=0):
-        """Initialize account with optional starting balance."""
-        self.balance = initial_balance
-        self._transactions = []
-    
-    def deposit(self, amount):
-        """Add money to account."""
-        if amount > 0:
-            self.balance += amount
-            self._transactions.append(f"Deposit: ${amount}")
-            return True
-        return False
-    
-    def get_balance(self):
-        """Return current balance."""
-        return self.balance
+# ✓ Correct: Proper structure with docstrings and clear naming
+def create_bank_account(initial_balance=0):
+    """Create a bank account with basic operations."""
+    return {
+        "balance": initial_balance,
+        "transactions": [],
+    }
+
+
+def deposit(account, amount):
+    """Add money to account."""
+    if amount > 0:
+        account["balance"] += amount
+        account["transactions"].append(f"Deposit: ${amount}")
+        return True
+    return False
+
+
+def get_balance(account):
+    """Return current balance."""
+    return account["balance"]
 
 # ✗ Wrong: Poor structure
-class bankaccount:  # Should be BankAccount
-    def __init__(self,balance):  # No space after comma
-        self.balance=balance  # No spaces around =
-    def deposit(self,amount):  # No space after comma
-        self.balance+=amount  # No spaces around +=
+def createbankaccount(balance):  # Should be create_bank_account
+    return {"balance":balance}  # No spaces around colon
+def deposit(acct,amount):  # No space after comma
+    acct["balance"]+=amount  # No spaces around +=
 ```
 
 ## Practical Example: Before and After
@@ -387,10 +382,8 @@ def calcAvg(nums):
     total=total+n
   return total/len(nums)
 
-class user:
-  def __init__(self,name,age):
-    self.name=name
-    self.age=age
+def mkUser(n,a):
+  return {"name":n,"age":a}
 
 # ✓ After (Good style):
 def calculate_average(numbers):
@@ -401,13 +394,9 @@ def calculate_average(numbers):
     return total / len(numbers)
 
 
-class User:
-    """Represents a user with name and age."""
-    
-    def __init__(self, name, age):
-        """Initialize user with name and age."""
-        self.name = name
-        self.age = age
+def create_user(name, age):
+    """Create a user dictionary with name and age."""
+    return {"name": name, "age": age}
 ```
 
 ## Linting Tools
@@ -469,7 +458,7 @@ error_message = (
 - 4 spaces for indentation
 - 79 characters max line length
 - snake_case for variables/functions
-- PascalCase for classes
+- PascalCase for named types
 - UPPER_CASE for constants
 - 2 blank lines between functions
 - Spaces around operators
@@ -477,7 +466,7 @@ error_message = (
 
 **Naming Conventions:**
 - `variable_name`, `function_name()`: snake_case
-- `ClassName`: PascalCase
+- `TypeName`: PascalCase (e.g., namedtuples)
 - `CONSTANT_NAME`: UPPER_CASE
 - `_private_name`: leading underscore
 

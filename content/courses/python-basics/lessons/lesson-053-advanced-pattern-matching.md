@@ -1,5 +1,5 @@
 ---
-id: "91-advanced-pattern-matching"
+id: lesson-053-advanced-pattern-matching
 title: "Advanced Pattern Matching Applications"
 chapterId: ch4-comparisons
 order: 13
@@ -183,26 +183,16 @@ print(analyze_config({"debug": False, "extra": "ignored"}))
 # Production mode
 ```
 
-## Class Pattern Matching
+## Named Tuple Pattern Matching
+
+Named tuples support pattern matching just like other structured types, giving you descriptive field names with tuple efficiency:
 
 ```python
-from dataclasses import dataclass
+from collections import namedtuple
 
-@dataclass
-class Point:
-    x: float
-    y: float
-
-@dataclass
-class Circle:
-    center: Point
-    radius: float
-
-@dataclass
-class Rectangle:
-    top_left: Point
-    width: float
-    height: float
+Point = namedtuple('Point', ['x', 'y'])
+Circle = namedtuple('Circle', ['center', 'radius'])
+Rectangle = namedtuple('Rectangle', ['top_left', 'width', 'height'])
 
 def describe_shape(shape):
     """Describe geometric shapes."""
@@ -454,58 +444,50 @@ print(parse_command("set theme dark"))
 
 ## State Machine with Pattern Matching
 
+Using dictionaries for state representation works naturally with pattern matching:
+
 ```python
-@dataclass
-class State:
-    """Base state class."""
-    name: str
+def create_idle():
+    return {"state": "idle"}
 
-@dataclass
-class Idle(State):
-    pass
+def create_running(process_id):
+    return {"state": "running", "process_id": process_id}
 
-@dataclass
-class Running(State):
-    process_id: int
+def create_paused(process_id, reason):
+    return {"state": "paused", "process_id": process_id, "reason": reason}
 
-@dataclass
-class Paused(State):
-    process_id: int
-    reason: str
-
-@dataclass
-class Error(State):
-    error_message: str
+def create_error(error_message):
+    return {"state": "error", "error_message": error_message}
 
 def handle_state_transition(current_state, action):
     """Handle state transitions."""
     match (current_state, action):
-        case (Idle(), "start"):
-            return Running("running", 12345)
+        case ({"state": "idle"}, "start"):
+            return create_running(12345)
         
-        case (Running(pid=pid), "pause"):
-            return Paused("paused", pid, "User requested")
+        case ({"state": "running", "process_id": pid}, "pause"):
+            return create_paused(pid, "User requested")
         
-        case (Running(), "stop"):
-            return Idle("idle")
+        case ({"state": "running"}, "stop"):
+            return create_idle()
         
-        case (Paused(pid=pid), "resume"):
-            return Running("running", pid)
+        case ({"state": "paused", "process_id": pid}, "resume"):
+            return create_running(pid)
         
-        case (Paused(), "stop"):
-            return Idle("idle")
+        case ({"state": "paused"}, "stop"):
+            return create_idle()
         
         case (_, "error"):
-            return Error("error", "An error occurred")
+            return create_error("An error occurred")
         
-        case (Error(), "reset"):
-            return Idle("idle")
+        case ({"state": "error"}, "reset"):
+            return create_idle()
         
         case (state, action):
-            return Error("error", f"Invalid action '{action}' in state '{state.name}'")
+            return create_error(f"Invalid action '{action}' in state '{state['state']}'")
 
 # Simulate state machine
-state = Idle("idle")
+state = create_idle()
 print(f"State: {state}")
 
 state = handle_state_transition(state, "start")
@@ -641,7 +623,7 @@ def process_user_clean(data):
 **Advanced Pattern Features:**
 - **Sequence patterns**: Match lists/tuples with `[first, *middle, last]`
 - **Dictionary patterns**: Match dict structure with partial matching
-- **Class patterns**: Match dataclass/class instances
+- **Named tuple patterns**: Match namedtuple instances by field
 - **Guards**: Add `if` conditions to patterns
 - **OR patterns**: Use `|` for multiple matches
 - **Nested patterns**: Match complex nested structures

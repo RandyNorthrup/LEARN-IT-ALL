@@ -1,5 +1,5 @@
 ---
-id: 61-global-keyword
+id: lesson-089-global-keyword
 title: The global Keyword
 chapterId: ch7-scope
 order: 8
@@ -153,7 +153,7 @@ result = calculate(5, 3)
 print(result)
 ```
 
-### Use Class Instead
+### Use Closure Instead
 
 ```python
 # ❌ BAD: Multiple related globals
@@ -167,27 +167,27 @@ def add_value(value):
     total += value
     average = total / counter
 
-# ✅ GOOD: Use a class
-class Statistics:
-    def __init__(self):
-        self.counter = 0
-        self.total = 0
+# ✅ GOOD: Use a closure
+def create_statistics():
+    """Create a statistics tracker with encapsulated state."""
+    data = {'counter': 0, 'total': 0}
     
-    def add_value(self, value):
-        self.counter += 1
-        self.total += value
+    def add_value(value):
+        data['counter'] += 1
+        data['total'] += value
     
-    @property
-    def average(self):
-        return self.total / self.counter if self.counter > 0 else 0
+    def average():
+        return data['total'] / data['counter'] if data['counter'] > 0 else 0
+    
+    return add_value, average
 
-stats = Statistics()
-stats.add_value(10)
-stats.add_value(20)
-print(stats.average)  # 15.0
+add_value, average = create_statistics()
+add_value(10)
+add_value(20)
+print(average())  # 15.0
 ```
 
-### Use Closure Instead
+### Use nonlocal for Encapsulated State
 
 ```python
 # ❌ BAD: Global for state
@@ -323,7 +323,7 @@ def fetch(endpoint, base_url="https://api.example.com"):
     return f"{base_url}/{endpoint}"
 ```
 
-### Alternative 2: Configuration Objects
+### Alternative 2: Configuration Dictionaries
 
 ```python
 # Instead of multiple globals:
@@ -331,18 +331,19 @@ def fetch(endpoint, base_url="https://api.example.com"):
 # port = 8000
 # debug = True
 
-# Use configuration object:
-class Config:
-    host = "localhost"
-    port = 8000
-    debug = True
+# Use configuration dictionary:
+config = {
+    "host": "localhost",
+    "port": 8000,
+    "debug": True,
+}
 
 def start_server(config):
-    print(f"Starting server on {config.host}:{config.port}")
-    if config.debug:
+    print(f"Starting server on {config['host']}:{config['port']}")
+    if config['debug']:
         print("Debug mode enabled")
 
-start_server(Config())
+start_server(config)
 ```
 
 ### Alternative 3: Function Attributes

@@ -1,5 +1,5 @@
 ---
-id: "133-dict-mastery-capstone"
+id: lesson-124-dict-mastery-capstone
 title: "Dictionary Mastery: Comprehensive Capstone"
 chapterId: ch9-dictionaries
 order: 15
@@ -22,95 +22,96 @@ from collections import defaultdict, Counter
 from typing import Dict, List, Any
 import json
 
-class DataPipeline:
-    """Complete data processing with dicts"""
+# Complete data processing pipeline using functions and dicts
+def create_pipeline():
+    """Create a data processing pipeline"""
+    return {
+        "data": [],
+        "indexes": {},
+        "stats": {}
+    }
+
+def pipeline_load_data(pipeline, records):
+    """Load and index data"""
+    pipeline["data"] = records
+    _pipeline_build_indexes(pipeline)
+    _pipeline_calculate_stats(pipeline)
+
+def _pipeline_build_indexes(pipeline):
+    """Build indexes for fast lookups"""
+    for field in ["id", "category", "status"]:
+        pipeline["indexes"][field] = defaultdict(list)
+        for idx, record in enumerate(pipeline["data"]):
+            if field in record:
+                pipeline["indexes"][field][record[field]].append(idx)
+
+def _pipeline_calculate_stats(pipeline):
+    """Calculate statistics"""
+    data = pipeline["data"]
+    pipeline["stats"] = {
+        "total_records": len(data),
+        "categories": Counter(r.get("category") for r in data),
+        "status": Counter(r.get("status") for r in data),
+        "avg_value": sum(r.get("value", 0) for r in data) / len(data) if data else 0
+    }
+
+def pipeline_find_by(pipeline, **kwargs):
+    """Find records by criteria"""
+    # Use index if available
+    if len(kwargs) == 1:
+        field, value = next(iter(kwargs.items()))
+        if field in pipeline["indexes"]:
+            indices = pipeline["indexes"][field].get(value, [])
+            return [pipeline["data"][i] for i in indices]
     
-    def __init__(self):
-        self.data: List[Dict[str, Any]] = []
-        self.indexes: Dict[str, Dict[Any, List[int]]] = {}
-        self.stats: Dict[str, Any] = {}
+    # Full scan for multiple criteria
+    return [
+        record for record in pipeline["data"]
+        if all(record.get(k) == v for k, v in kwargs.items())
+    ]
+
+def pipeline_aggregate(pipeline, group_by, agg_field, operation="sum"):
+    """Aggregate data by field"""
+    groups = defaultdict(list)
+    for record in pipeline["data"]:
+        key = record.get(group_by)
+        value = record.get(agg_field, 0)
+        groups[key].append(value)
     
-    def load_data(self, records: List[Dict[str, Any]]):
-        """Load and index data"""
-        self.data = records
-        self._build_indexes()
-        self._calculate_stats()
-    
-    def _build_indexes(self):
-        """Build indexes for fast lookups"""
-        # Index by each field
-        for field in ["id", "category", "status"]:
-            self.indexes[field] = defaultdict(list)
-            for idx, record in enumerate(self.data):
-                if field in record:
-                    self.indexes[field][record[field]].append(idx)
-    
-    def _calculate_stats(self):
-        """Calculate statistics"""
-        self.stats = {
-            "total_records": len(self.data),
-            "categories": Counter(r.get("category") for r in self.data),
-            "status": Counter(r.get("status") for r in self.data),
-            "avg_value": sum(r.get("value", 0) for r in self.data) / len(self.data) if self.data else 0
-        }
-    
-    def find_by(self, **kwargs) -> List[Dict[str, Any]]:
-        """Find records by criteria"""
-        # Use index if available
-        if len(kwargs) == 1:
-            field, value = next(iter(kwargs.items()))
-            if field in self.indexes:
-                indices = self.indexes[field].get(value, [])
-                return [self.data[i] for i in indices]
-        
-        # Full scan for multiple criteria
-        return [
-            record for record in self.data
-            if all(record.get(k) == v for k, v in kwargs.items())
-        ]
-    
-    def aggregate(self, group_by: str, agg_field: str, operation: str = "sum") -> Dict[Any, float]:
-        """Aggregate data by field"""
-        groups = defaultdict(list)
-        for record in self.data:
-            key = record.get(group_by)
-            value = record.get(agg_field, 0)
-            groups[key].append(value)
-        
-        if operation == "sum":
-            return {k: sum(v) for k, v in groups.items()}
-        elif operation == "avg":
-            return {k: sum(v) / len(v) for k, v in groups.items()}
-        elif operation == "count":
-            return {k: len(v) for k, v in groups.items()}
-        elif operation == "max":
-            return {k: max(v) for k, v in groups.items()}
-        elif operation == "min":
-            return {k: min(v) for k, v in groups.items()}
-        return {}
-    
-    def transform(self, transformers: Dict[str, callable]) -> List[Dict[str, Any]]:
-        """Transform records"""
-        transformed = []
-        for record in self.data:
-            new_record = {}
-            for field, transformer in transformers.items():
-                if field in record:
-                    new_record[field] = transformer(record[field])
-            transformed.append(new_record)
-        return transformed
-    
-    def export_summary(self) -> Dict[str, Any]:
-        """Export complete summary"""
-        return {
-            "stats": self.stats,
-            "sample": self.data[:5],
-            "category_breakdown": dict(self.stats["categories"]),
-            "top_categories": self.stats["categories"].most_common(3)
-        }
+    if operation == "sum":
+        return {k: sum(v) for k, v in groups.items()}
+    elif operation == "avg":
+        return {k: sum(v) / len(v) for k, v in groups.items()}
+    elif operation == "count":
+        return {k: len(v) for k, v in groups.items()}
+    elif operation == "max":
+        return {k: max(v) for k, v in groups.items()}
+    elif operation == "min":
+        return {k: min(v) for k, v in groups.items()}
+    return {}
+
+def pipeline_transform(pipeline, transformers):
+    """Transform records"""
+    transformed = []
+    for record in pipeline["data"]:
+        new_record = {}
+        for field, transformer in transformers.items():
+            if field in record:
+                new_record[field] = transformer(record[field])
+        transformed.append(new_record)
+    return transformed
+
+def pipeline_export_summary(pipeline):
+    """Export complete summary"""
+    return {
+        "stats": pipeline["stats"],
+        "sample": pipeline["data"][:5],
+        "category_breakdown": dict(pipeline["stats"]["categories"]),
+        "top_categories": pipeline["stats"]["categories"].most_common(3)
+    }
 
 # Example usage
-pipeline = DataPipeline()
+pipeline = create_pipeline()
 
 records = [
     {"id": 1, "category": "A", "status": "active", "value": 100},
@@ -120,24 +121,24 @@ records = [
     {"id": 5, "category": "A", "status": "active", "value": 125},
 ]
 
-pipeline.load_data(records)
+pipeline_load_data(pipeline, records)
 
 # Find records
-active_records = pipeline.find_by(status="active")
+active_records = pipeline_find_by(pipeline, status="active")
 print(f"Active records: {len(active_records)}")
 
 # Aggregate
-totals = pipeline.aggregate("category", "value", "sum")
+totals = pipeline_aggregate(pipeline, "category", "value", "sum")
 print(f"Totals by category: {totals}")  # {'A': 300, 'B': 150, 'C': 200}
 
 # Transform
-transformed = pipeline.transform({
+transformed = pipeline_transform(pipeline, {
     "value": lambda x: x * 1.1  # 10% increase
 })
 print(f"Transformed: {transformed[0]}")
 
 # Export summary
-summary = pipeline.export_summary()
+summary = pipeline_export_summary(pipeline)
 print(json.dumps(summary, indent=2))
 ```
 
@@ -145,115 +146,116 @@ print(json.dumps(summary, indent=2))
 
 ```python
 from collections import OrderedDict
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Dict
 import time
 import functools
 
-class AdvancedCache:
-    """Multi-level cache with LRU and TTL"""
+# Multi-level cache with LRU and TTL using functions
+def create_advanced_cache(max_size=100, ttl=3600):
+    """Create an advanced cache with LRU eviction and TTL expiration"""
+    return {
+        "_max_size": max_size,
+        "_ttl": ttl,
+        "_cache": OrderedDict(),
+        "_timestamps": {},
+        "_hits": 0,
+        "_misses": 0
+    }
+
+def cache_get(cache, key):
+    """Get with LRU and TTL check"""
+    if key not in cache["_cache"]:
+        cache["_misses"] += 1
+        return None
     
-    def __init__(self, max_size=100, ttl=3600):
-        self.max_size = max_size
-        self.ttl = ttl
-        self.cache: OrderedDict = OrderedDict()
-        self.timestamps: Dict[str, float] = {}
-        self.hits = 0
-        self.misses = 0
+    # Check TTL
+    if time.time() - cache["_timestamps"][key] > cache["_ttl"]:
+        _cache_remove(cache, key)
+        cache["_misses"] += 1
+        return None
     
-    def get(self, key: str) -> Optional[Any]:
-        """Get with LRU and TTL check"""
-        if key not in self.cache:
-            self.misses += 1
-            return None
-        
-        # Check TTL
-        if time.time() - self.timestamps[key] > self.ttl:
-            self._remove(key)
-            self.misses += 1
-            return None
-        
-        # Move to end (most recently used)
-        self.cache.move_to_end(key)
-        self.hits += 1
-        return self.cache[key]
+    # Move to end (most recently used)
+    cache["_cache"].move_to_end(key)
+    cache["_hits"] += 1
+    return cache["_cache"][key]
+
+def cache_set(cache, key, value):
+    """Set with LRU eviction"""
+    if key in cache["_cache"]:
+        cache["_cache"].move_to_end(key)
+    else:
+        if len(cache["_cache"]) >= cache["_max_size"]:
+            # Remove least recently used
+            oldest = next(iter(cache["_cache"]))
+            _cache_remove(cache, oldest)
     
-    def set(self, key: str, value: Any):
-        """Set with LRU eviction"""
-        if key in self.cache:
-            self.cache.move_to_end(key)
-        else:
-            if len(self.cache) >= self.max_size:
-                # Remove least recently used
-                oldest = next(iter(self.cache))
-                self._remove(oldest)
-        
-        self.cache[key] = value
-        self.timestamps[key] = time.time()
-    
-    def _remove(self, key: str):
-        """Remove from cache"""
-        del self.cache[key]
-        del self.timestamps[key]
-    
-    def clear_expired(self):
-        """Remove all expired entries"""
-        current_time = time.time()
-        expired = [
-            k for k, t in self.timestamps.items()
-            if current_time - t > self.ttl
-        ]
-        for key in expired:
-            self._remove(key)
-    
-    def stats(self) -> Dict[str, Any]:
-        """Cache statistics"""
-        total = self.hits + self.misses
-        hit_rate = self.hits / total if total > 0 else 0
-        return {
-            "size": len(self.cache),
-            "max_size": self.max_size,
-            "hits": self.hits,
-            "misses": self.misses,
-            "hit_rate": f"{hit_rate:.2%}"
-        }
+    cache["_cache"][key] = value
+    cache["_timestamps"][key] = time.time()
+
+def _cache_remove(cache, key):
+    """Remove from cache"""
+    del cache["_cache"][key]
+    del cache["_timestamps"][key]
+
+def cache_clear_expired(cache):
+    """Remove all expired entries"""
+    current_time = time.time()
+    expired = [
+        k for k, t in cache["_timestamps"].items()
+        if current_time - t > cache["_ttl"]
+    ]
+    for key in expired:
+        _cache_remove(cache, key)
+
+def cache_stats(cache):
+    """Cache statistics"""
+    total = cache["_hits"] + cache["_misses"]
+    hit_rate = cache["_hits"] / total if total > 0 else 0
+    return {
+        "size": len(cache["_cache"]),
+        "max_size": cache["_max_size"],
+        "hits": cache["_hits"],
+        "misses": cache["_misses"],
+        "hit_rate": f"{hit_rate:.2%}"
+    }
 
 # Usage
-cache = AdvancedCache(max_size=3, ttl=60)
+cache = create_advanced_cache(max_size=3, ttl=60)
 
-cache.set("user:1", {"name": "Alice", "age": 30})
-cache.set("user:2", {"name": "Bob", "age": 25})
-cache.set("user:3", {"name": "Charlie", "age": 35})
+cache_set(cache, "user:1", {"name": "Alice", "age": 30})
+cache_set(cache, "user:2", {"name": "Bob", "age": 25})
+cache_set(cache, "user:3", {"name": "Charlie", "age": 35})
 
-print(cache.get("user:1"))  # Hit
-cache.set("user:4", {"name": "David", "age": 28})  # Evicts user:2 (LRU)
-print(cache.get("user:2"))  # None (evicted)
+print(cache_get(cache, "user:1"))  # Hit
+cache_set(cache, "user:4", {"name": "David", "age": 28})  # Evicts user:2 (LRU)
+print(cache_get(cache, "user:2"))  # None (evicted)
 
-print(cache.stats())
+print(cache_stats(cache))
 # {'size': 3, 'max_size': 3, 'hits': 1, 'misses': 1, 'hit_rate': '50.00%'}
 
 # Decorator for function caching
-def cached(cache_instance: AdvancedCache):
+def cached(cache_instance):
     """Decorator for caching function results"""
-    def decorator(func: Callable):
+    def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             # Create cache key from args
             key = f"{func.__name__}:{args}:{sorted(kwargs.items())}"
             
             # Try cache first
-            result = cache_instance.get(key)
+            result = cache_get(cache_instance, key)
             if result is not None:
                 return result
             
             # Compute and cache
             result = func(*args, **kwargs)
-            cache_instance.set(key, result)
+            cache_set(cache_instance, key, result)
             return result
         return wrapper
     return decorator
 
 @cached(cache)
-def expensive_computation(n: int) -> int:
+def expensive_computation(n):
     """Simulated expensive function"""
     time.sleep(0.1)  # Simulate work
     return n * n
@@ -272,113 +274,113 @@ print(f"Cached call: {time.time() - start:.4f}s")
 ## Complex State Machine
 
 ```python
-from typing import Dict, List, Callable, Any
+from typing import Dict, List, Callable, Any, Optional
 from collections import defaultdict
 
-class StateMachine:
-    """Production-ready state machine"""
+# Production-ready state machine using functions and dicts
+def create_state_machine(initial_state):
+    """Create a production-ready state machine"""
+    return {
+        "state": initial_state,
+        "transitions": defaultdict(dict),
+        "handlers": {},
+        "guards": {},
+        "history": []
+    }
+
+def sm_add_transition(sm, from_state, event, to_state, guard=None):
+    """Add state transition with optional guard"""
+    sm["transitions"][from_state][event] = to_state
+    if guard:
+        sm["guards"][(from_state, event)] = guard
+
+def sm_add_handler(sm, state, handler):
+    """Add state entry handler"""
+    sm["handlers"][state] = handler
+
+def sm_trigger(sm, event, **context):
+    """Trigger event with context"""
+    if event not in sm["transitions"][sm["state"]]:
+        return False
     
-    def __init__(self, initial_state: str):
-        self.state = initial_state
-        self.transitions: Dict[str, Dict[str, str]] = defaultdict(dict)
-        self.handlers: Dict[str, Callable] = {}
-        self.guards: Dict[tuple, Callable] = {}
-        self.history: List[Dict[str, Any]] = []
-    
-    def add_transition(self, from_state: str, event: str, to_state: str,
-                      guard: Optional[Callable] = None):
-        """Add state transition"""
-        self.transitions[from_state][event] = to_state
-        if guard:
-            self.guards[(from_state, event)] = guard
-    
-    def add_handler(self, state: str, handler: Callable):
-        """Add state entry handler"""
-        self.handlers[state] = handler
-    
-    def trigger(self, event: str, **context) -> bool:
-        """Trigger event with context"""
-        if event not in self.transitions[self.state]:
+    # Check guard condition
+    guard_key = (sm["state"], event)
+    if guard_key in sm["guards"]:
+        if not sm["guards"][guard_key](context):
             return False
-        
-        # Check guard condition
-        guard_key = (self.state, event)
-        if guard_key in self.guards:
-            if not self.guards[guard_key](context):
-                return False
-        
-        # Execute transition
-        old_state = self.state
-        self.state = self.transitions[self.state][event]
-        
-        # Record history
-        self.history.append({
-            "from": old_state,
-            "event": event,
-            "to": self.state,
-            "context": context.copy()
-        })
-        
-        # Execute handler
-        if self.state in self.handlers:
-            self.handlers[self.state](context)
-        
-        return True
     
-    def can_trigger(self, event: str, **context) -> bool:
-        """Check if event can be triggered"""
-        if event not in self.transitions[self.state]:
-            return False
-        
-        guard_key = (self.state, event)
-        if guard_key in self.guards:
-            return self.guards[guard_key](context)
-        
-        return True
+    # Execute transition
+    old_state = sm["state"]
+    sm["state"] = sm["transitions"][sm["state"]][event]
     
-    def get_available_events(self) -> List[str]:
-        """Get available events in current state"""
-        return list(self.transitions[self.state].keys())
+    # Record history
+    sm["history"].append({
+        "from": old_state,
+        "event": event,
+        "to": sm["state"],
+        "context": context.copy()
+    })
     
-    def get_history(self) -> List[Dict[str, Any]]:
-        """Get state transition history"""
-        return self.history.copy()
+    # Execute handler
+    if sm["state"] in sm["handlers"]:
+        sm["handlers"][sm["state"]](context)
+    
+    return True
+
+def sm_can_trigger(sm, event, **context):
+    """Check if event can be triggered"""
+    if event not in sm["transitions"][sm["state"]]:
+        return False
+    
+    guard_key = (sm["state"], event)
+    if guard_key in sm["guards"]:
+        return sm["guards"][guard_key](context)
+    
+    return True
+
+def sm_get_available_events(sm):
+    """Get available events in current state"""
+    return list(sm["transitions"][sm["state"]].keys())
+
+def sm_get_history(sm):
+    """Get state transition history"""
+    return sm["history"].copy()
 
 # Order processing system
-order_sm = StateMachine("pending")
+order_sm = create_state_machine("pending")
 
 # Define transitions
-order_sm.add_transition("pending", "confirm", "confirmed")
-order_sm.add_transition("confirmed", "ship", "shipped", 
-                       guard=lambda ctx: ctx.get("payment_received", False))
-order_sm.add_transition("shipped", "deliver", "delivered")
-order_sm.add_transition("delivered", "return", "returned",
-                       guard=lambda ctx: ctx.get("within_return_window", False))
-order_sm.add_transition("pending", "cancel", "cancelled")
-order_sm.add_transition("confirmed", "cancel", "cancelled")
+sm_add_transition(order_sm, "pending", "confirm", "confirmed")
+sm_add_transition(order_sm, "confirmed", "ship", "shipped",
+                 guard=lambda ctx: ctx.get("payment_received", False))
+sm_add_transition(order_sm, "shipped", "deliver", "delivered")
+sm_add_transition(order_sm, "delivered", "return", "returned",
+                 guard=lambda ctx: ctx.get("within_return_window", False))
+sm_add_transition(order_sm, "pending", "cancel", "cancelled")
+sm_add_transition(order_sm, "confirmed", "cancel", "cancelled")
 
 # Add handlers
-order_sm.add_handler("confirmed", lambda ctx: print(f"Order confirmed: {ctx.get('order_id')}"))
-order_sm.add_handler("shipped", lambda ctx: print(f"Order shipped: {ctx.get('tracking')}"))
-order_sm.add_handler("delivered", lambda ctx: print(f"Order delivered to: {ctx.get('address')}"))
+sm_add_handler(order_sm, "confirmed", lambda ctx: print(f"Order confirmed: {ctx.get('order_id')}"))
+sm_add_handler(order_sm, "shipped", lambda ctx: print(f"Order shipped: {ctx.get('tracking')}"))
+sm_add_handler(order_sm, "delivered", lambda ctx: print(f"Order delivered to: {ctx.get('address')}"))
 
 # Process order
-print(f"Current state: {order_sm.state}")
-print(f"Available events: {order_sm.get_available_events()}")
+print(f"Current state: {order_sm['state']}")
+print(f"Available events: {sm_get_available_events(order_sm)}")
 
-order_sm.trigger("confirm", order_id="ORD-001")
-print(f"State: {order_sm.state}")
+sm_trigger(order_sm, "confirm", order_id="ORD-001")
+print(f"State: {order_sm['state']}")
 
 # Try shipping without payment
-can_ship = order_sm.can_trigger("ship", payment_received=False)
+can_ship = sm_can_trigger(order_sm, "ship", payment_received=False)
 print(f"Can ship without payment: {can_ship}")  # False
 
 # Ship with payment
-order_sm.trigger("ship", payment_received=True, tracking="TRK-123")
-order_sm.trigger("deliver", address="123 Main St")
+sm_trigger(order_sm, "ship", payment_received=True, tracking="TRK-123")
+sm_trigger(order_sm, "deliver", address="123 Main St")
 
 # View history
-for entry in order_sm.get_history():
+for entry in sm_get_history(order_sm):
     print(f"{entry['from']} --[{entry['event']}]--> {entry['to']}")
 ```
 
@@ -388,292 +390,295 @@ for entry in order_sm.get_history():
 from typing import Dict, List, Set, Any, Optional
 from collections import defaultdict
 
-class MultiIndexDB:
-    """In-memory database with multiple indexes"""
+# In-memory database with multiple indexes using functions
+def create_multi_index_db():
+    """Create an in-memory database with multiple indexes"""
+    return {
+        "_data": {},               # Primary key -> record
+        "_indexes": defaultdict(lambda: defaultdict(set)),
+        "_unique_indexes": defaultdict(dict),
+        "_next_id": 1
+    }
+
+def db_create_index(db, field, unique=False):
+    """Create index on field"""
+    if unique:
+        db["_unique_indexes"][field] = {}
+    else:
+        db["_indexes"][field] = defaultdict(set)
     
-    def __init__(self):
-        self.data: Dict[str, Dict[str, Any]] = {}  # Primary key -> record
-        self.indexes: Dict[str, Dict[Any, Set[str]]] = defaultdict(lambda: defaultdict(set))
-        self.unique_indexes: Dict[str, Dict[Any, str]] = defaultdict(dict)
-        self.next_id = 1
+    # Build index for existing data
+    for pk, record in db["_data"].items():
+        if field in record:
+            value = record[field]
+            if unique:
+                db["_unique_indexes"][field][value] = pk
+            else:
+                db["_indexes"][field][value].add(pk)
+
+def db_insert(db, record):
+    """Insert record"""
+    pk = str(db["_next_id"])
+    db["_next_id"] += 1
     
-    def create_index(self, field: str, unique: bool = False):
-        """Create index on field"""
-        if unique:
-            self.unique_indexes[field] = {}
-        else:
-            self.indexes[field] = defaultdict(set)
-        
-        # Build index for existing data
-        for pk, record in self.data.items():
-            if field in record:
-                value = record[field]
-                if unique:
-                    self.unique_indexes[field][value] = pk
-                else:
-                    self.indexes[field][value].add(pk)
+    # Check unique constraints
+    for field, index in db["_unique_indexes"].items():
+        if field in record:
+            value = record[field]
+            if value in index:
+                raise ValueError(f"Duplicate value for unique field {field}: {value}")
     
-    def insert(self, record: Dict[str, Any]) -> str:
-        """Insert record"""
-        # Generate primary key
-        pk = str(self.next_id)
-        self.next_id += 1
-        
-        # Check unique constraints
-        for field, index in self.unique_indexes.items():
-            if field in record:
-                value = record[field]
-                if value in index:
-                    raise ValueError(f"Duplicate value for unique field {field}: {value}")
-        
-        # Store record
-        self.data[pk] = record
-        
-        # Update indexes
-        for field, value in record.items():
-            if field in self.indexes:
-                self.indexes[field][value].add(pk)
-            if field in self.unique_indexes:
-                self.unique_indexes[field][value] = pk
-        
-        return pk
+    # Store record
+    db["_data"][pk] = record
     
-    def find_by_pk(self, pk: str) -> Optional[Dict[str, Any]]:
-        """Find by primary key"""
-        return self.data.get(pk)
+    # Update indexes
+    for field, value in record.items():
+        if field in db["_indexes"]:
+            db["_indexes"][field][value].add(pk)
+        if field in db["_unique_indexes"]:
+            db["_unique_indexes"][field][value] = pk
     
-    def find_by_index(self, field: str, value: Any) -> List[Dict[str, Any]]:
-        """Find using index"""
-        if field in self.unique_indexes:
-            pk = self.unique_indexes[field].get(value)
-            return [self.data[pk]] if pk else []
-        
-        if field in self.indexes:
-            pks = self.indexes[field].get(value, set())
-            return [self.data[pk] for pk in pks]
-        
-        # Full scan
-        return [r for r in self.data.values() if r.get(field) == value]
+    return pk
+
+def db_find_by_pk(db, pk):
+    """Find by primary key"""
+    return db["_data"].get(pk)
+
+def db_find_by_index(db, field, value):
+    """Find using index"""
+    if field in db["_unique_indexes"]:
+        pk = db["_unique_indexes"][field].get(value)
+        return [db["_data"][pk]] if pk else []
     
-    def update(self, pk: str, updates: Dict[str, Any]) -> bool:
-        """Update record"""
-        if pk not in self.data:
-            return False
-        
-        old_record = self.data[pk]
-        
-        # Remove from old indexes
-        for field, value in old_record.items():
-            if field in self.indexes:
-                self.indexes[field][value].discard(pk)
-            if field in self.unique_indexes and field not in updates:
-                del self.unique_indexes[field][value]
-        
-        # Update record
-        self.data[pk].update(updates)
-        
-        # Update indexes
-        for field, value in self.data[pk].items():
-            if field in self.indexes:
-                self.indexes[field][value].add(pk)
-            if field in self.unique_indexes:
-                self.unique_indexes[field][value] = pk
-        
-        return True
+    if field in db["_indexes"]:
+        pks = db["_indexes"][field].get(value, set())
+        return [db["_data"][pk] for pk in pks]
     
-    def delete(self, pk: str) -> bool:
-        """Delete record"""
-        if pk not in self.data:
-            return False
-        
-        record = self.data[pk]
-        
-        # Remove from indexes
-        for field, value in record.items():
-            if field in self.indexes:
-                self.indexes[field][value].discard(pk)
-            if field in self.unique_indexes:
-                del self.unique_indexes[field][value]
-        
-        del self.data[pk]
-        return True
+    # Full scan
+    return [r for r in db["_data"].values() if r.get(field) == value]
+
+def db_update(db, pk, updates):
+    """Update record"""
+    if pk not in db["_data"]:
+        return False
     
-    def stats(self) -> Dict[str, Any]:
-        """Database statistics"""
-        return {
-            "total_records": len(self.data),
-            "indexes": list(self.indexes.keys()),
-            "unique_indexes": list(self.unique_indexes.keys())
-        }
+    old_record = db["_data"][pk]
+    
+    # Remove from old indexes
+    for field, value in old_record.items():
+        if field in db["_indexes"]:
+            db["_indexes"][field][value].discard(pk)
+        if field in db["_unique_indexes"] and field not in updates:
+            del db["_unique_indexes"][field][value]
+    
+    # Update record
+    db["_data"][pk].update(updates)
+    
+    # Update indexes
+    for field, value in db["_data"][pk].items():
+        if field in db["_indexes"]:
+            db["_indexes"][field][value].add(pk)
+        if field in db["_unique_indexes"]:
+            db["_unique_indexes"][field][value] = pk
+    
+    return True
+
+def db_delete(db, pk):
+    """Delete record"""
+    if pk not in db["_data"]:
+        return False
+    
+    record = db["_data"][pk]
+    
+    # Remove from indexes
+    for field, value in record.items():
+        if field in db["_indexes"]:
+            db["_indexes"][field][value].discard(pk)
+        if field in db["_unique_indexes"]:
+            del db["_unique_indexes"][field][value]
+    
+    del db["_data"][pk]
+    return True
+
+def db_stats(db):
+    """Database statistics"""
+    return {
+        "total_records": len(db["_data"]),
+        "indexes": list(db["_indexes"].keys()),
+        "unique_indexes": list(db["_unique_indexes"].keys())
+    }
 
 # Usage
-db = MultiIndexDB()
+db = create_multi_index_db()
 
 # Create indexes
-db.create_index("email", unique=True)
-db.create_index("city", unique=False)
+db_create_index(db, "email", unique=True)
+db_create_index(db, "city", unique=False)
 
 # Insert records
-pk1 = db.insert({"name": "Alice", "email": "alice@example.com", "city": "NYC"})
-pk2 = db.insert({"name": "Bob", "email": "bob@example.com", "city": "LA"})
-pk3 = db.insert({"name": "Charlie", "email": "charlie@example.com", "city": "NYC"})
+pk1 = db_insert(db, {"name": "Alice", "email": "alice@example.com", "city": "NYC"})
+pk2 = db_insert(db, {"name": "Bob", "email": "bob@example.com", "city": "LA"})
+pk3 = db_insert(db, {"name": "Charlie", "email": "charlie@example.com", "city": "NYC"})
 
 # Find by unique index (fast O(1))
-users = db.find_by_index("email", "alice@example.com")
+users = db_find_by_index(db, "email", "alice@example.com")
 print(f"Found by email: {users[0]['name']}")
 
 # Find by non-unique index (fast O(k) where k = matching records)
-nyc_users = db.find_by_index("city", "NYC")
+nyc_users = db_find_by_index(db, "city", "NYC")
 print(f"NYC users: {[u['name'] for u in nyc_users]}")
 
 # Update
-db.update(pk1, {"city": "SF"})
+db_update(db, pk1, {"city": "SF"})
 
 # Stats
-print(db.stats())
+print(db_stats(db))
 ```
 
 ## Integration Example: Complete Application
 
 ```python
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import json
+import time
 
-class UserManagementSystem:
-    """Complete user management with all dict techniques"""
+# Complete user management system using functions and dicts
+def create_user_system():
+    """Create a user management system"""
+    return {
+        "users": {},
+        "email_index": {},           # email -> user_id
+        "cache": create_advanced_cache(max_size=50, ttl=300),
+        "activity_log": []
+    }
+
+def ums_create_user(system, user_data):
+    """Create new user"""
+    # Validate
+    required = ["name", "email"]
+    if not all(f in user_data for f in required):
+        raise ValueError("Missing required fields")
     
-    def __init__(self):
-        self.users: Dict[str, Dict[str, Any]] = {}
-        self.email_index: Dict[str, str] = {}  # email -> user_id
-        self.cache = AdvancedCache(max_size=50, ttl=300)
-        self.activity_log: List[Dict[str, Any]] = []
+    # Check duplicate
+    if user_data["email"] in system["email_index"]:
+        raise ValueError("Email already exists")
     
-    def create_user(self, user_data: Dict[str, Any]) -> str:
-        """Create new user"""
-        # Validate
-        required = ["name", "email"]
-        if not all(f in user_data for f in required):
-            raise ValueError("Missing required fields")
-        
-        # Check duplicate
-        if user_data["email"] in self.email_index:
-            raise ValueError("Email already exists")
-        
-        # Generate ID
-        user_id = f"user_{len(self.users) + 1}"
-        
-        # Store user
-        user = {
-            "id": user_id,
-            "name": user_data["name"],
-            "email": user_data["email"],
-            "created_at": time.time(),
-            "profile": user_data.get("profile", {}),
-            "preferences": user_data.get("preferences", {})
-        }
-        
-        self.users[user_id] = user
-        self.email_index[user["email"]] = user_id
-        
-        # Log activity
-        self._log_activity("create_user", user_id)
-        
-        return user_id
+    # Generate ID
+    user_id = f"user_{len(system['users']) + 1}"
     
-    def get_user(self, user_id: str) -> Optional[Dict[str, Any]]:
-        """Get user with caching"""
-        # Try cache
-        cached = self.cache.get(f"user:{user_id}")
-        if cached:
-            return cached
-        
-        # Load from storage
-        user = self.users.get(user_id)
-        if user:
-            self.cache.set(f"user:{user_id}", user.copy())
-        
-        return user
+    # Store user
+    user = {
+        "id": user_id,
+        "name": user_data["name"],
+        "email": user_data["email"],
+        "created_at": time.time(),
+        "profile": user_data.get("profile", {}),
+        "preferences": user_data.get("preferences", {})
+    }
     
-    def update_user(self, user_id: str, updates: Dict[str, Any]) -> bool:
-        """Update user"""
-        if user_id not in self.users:
-            return False
-        
-        # Update
-        self.users[user_id].update(updates)
-        
-        # Invalidate cache
-        self.cache._remove(f"user:{user_id}")
-        
-        # Log
-        self._log_activity("update_user", user_id, updates)
-        
-        return True
+    system["users"][user_id] = user
+    system["email_index"][user["email"]] = user_id
     
-    def find_by_email(self, email: str) -> Optional[Dict[str, Any]]:
-        """Find user by email (indexed)"""
-        user_id = self.email_index.get(email)
-        return self.get_user(user_id) if user_id else None
+    # Log activity
+    _ums_log_activity(system, "create_user", user_id)
     
-    def get_statistics(self) -> Dict[str, Any]:
-        """Get system statistics"""
-        return {
-            "total_users": len(self.users),
-            "cache_stats": self.cache.stats(),
-            "recent_activity": self.activity_log[-10:],
-            "emails_registered": len(self.email_index)
-        }
+    return user_id
+
+def ums_get_user(system, user_id):
+    """Get user with caching"""
+    # Try cache
+    cached = cache_get(system["cache"], f"user:{user_id}")
+    if cached:
+        return cached
     
-    def export_data(self) -> str:
-        """Export all data as JSON"""
-        export = {
-            "users": list(self.users.values()),
-            "statistics": self.get_statistics()
-        }
-        return json.dumps(export, indent=2)
+    # Load from storage
+    user = system["users"].get(user_id)
+    if user:
+        cache_set(system["cache"], f"user:{user_id}", user.copy())
     
-    def _log_activity(self, action: str, user_id: str, details: Any = None):
-        """Log user activity"""
-        self.activity_log.append({
-            "action": action,
-            "user_id": user_id,
-            "details": details,
-            "timestamp": time.time()
-        })
+    return user
+
+def ums_update_user(system, user_id, updates):
+    """Update user"""
+    if user_id not in system["users"]:
+        return False
+    
+    # Update
+    system["users"][user_id].update(updates)
+    
+    # Invalidate cache
+    if f"user:{user_id}" in system["cache"]["_cache"]:
+        _cache_remove(system["cache"], f"user:{user_id}")
+    
+    # Log
+    _ums_log_activity(system, "update_user", user_id, updates)
+    
+    return True
+
+def ums_find_by_email(system, email):
+    """Find user by email (indexed)"""
+    user_id = system["email_index"].get(email)
+    return ums_get_user(system, user_id) if user_id else None
+
+def ums_get_statistics(system):
+    """Get system statistics"""
+    return {
+        "total_users": len(system["users"]),
+        "cache_stats": cache_stats(system["cache"]),
+        "recent_activity": system["activity_log"][-10:],
+        "emails_registered": len(system["email_index"])
+    }
+
+def ums_export_data(system):
+    """Export all data as JSON"""
+    export = {
+        "users": list(system["users"].values()),
+        "statistics": ums_get_statistics(system)
+    }
+    return json.dumps(export, indent=2)
+
+def _ums_log_activity(system, action, user_id, details=None):
+    """Log user activity"""
+    system["activity_log"].append({
+        "action": action,
+        "user_id": user_id,
+        "details": details,
+        "timestamp": time.time()
+    })
 
 # Usage
-system = UserManagementSystem()
+system = create_user_system()
 
 # Create users
-user1_id = system.create_user({
+user1_id = ums_create_user(system, {
     "name": "Alice",
     "email": "alice@example.com",
     "profile": {"age": 30, "city": "NYC"}
 })
 
-user2_id = system.create_user({
+user2_id = ums_create_user(system, {
     "name": "Bob",
     "email": "bob@example.com",
     "preferences": {"theme": "dark", "notifications": True}
 })
 
 # Get user (cached)
-user = system.get_user(user1_id)
+user = ums_get_user(system, user1_id)
 print(f"User: {user['name']}")
 
 # Find by email (indexed)
-user = system.find_by_email("alice@example.com")
+user = ums_find_by_email(system, "alice@example.com")
 print(f"Found: {user['name']}")
 
 # Update
-system.update_user(user1_id, {"profile": {"age": 31, "city": "SF"}})
+ums_update_user(system, user1_id, {"profile": {"age": 31, "city": "SF"}})
 
 # Statistics
-stats = system.get_statistics()
+stats = ums_get_statistics(system)
 print(json.dumps(stats, indent=2))
 
 # Export
-exported = system.export_data()
+exported = ums_export_data(system)
 print("Data exported successfully")
 ```
 

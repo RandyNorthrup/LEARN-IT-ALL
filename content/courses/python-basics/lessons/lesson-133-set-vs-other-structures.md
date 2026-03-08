@@ -1,5 +1,5 @@
 ---
-id: "142-set-vs-other-structures"
+id: lesson-133-set-vs-other-structures
 title: "Sets vs Other Data Structures"
 chapterId: ch10-sets
 order: 9
@@ -121,15 +121,19 @@ my_set.add(4)  # Can modify
 set_of_tuples = {(1, 2), (3, 4), (5, 6)}
 print(set_of_tuples)  # Valid
 
-# Set cannot be tuple element (unhashable)
+# Tuple CAN contain sets (sets are elements, not keys)
+tuple_of_sets = ({1, 2}, {3, 4})
+print(tuple_of_sets)  # ({1, 2}, {3, 4})
+
+# But set CANNOT contain sets (unhashable)
 try:
-    tuple_of_sets = ({1, 2}, {3, 4})  # Error!
+    set_of_sets = {{1, 2}, {3, 4}}  # Error!
 except TypeError as e:
     print(f"Error: {e}")
 
-# But frozenset can be in tuple
-tuple_of_frozensets = (frozenset([1, 2]), frozenset([3, 4]))
-print(tuple_of_frozensets)  # Valid
+# Use frozenset to put sets inside sets
+set_of_frozensets = {frozenset([1, 2]), frozenset([3, 4])}
+print(set_of_frozensets)  # Valid
 ```
 
 ## When to Use Tuple vs Set
@@ -345,17 +349,20 @@ def get_unique_sorted(items):
     return sorted(unique)  # Return sorted list
 
 # Pattern 5: Multiple structure combination
-class DataProcessor:
-    def __init__(self):
-        self.data = []  # List for ordered data
-        self.index = {}  # Dict for fast key lookup
-        self.seen_ids = set()  # Set for duplicate detection
-    
-    def add(self, item):
-        if item.id not in self.seen_ids:
-            self.data.append(item)  # Preserve order
-            self.index[item.id] = item  # Fast lookup
-            self.seen_ids.add(item.id)  # Track seen
+def create_data_processor():
+    """Create a data processor with ordered storage, fast lookup, and dedup"""
+    return {
+        "data": [],         # List for ordered data
+        "index": {},        # Dict for fast key lookup
+        "seen_ids": set()   # Set for duplicate detection
+    }
+
+def add_to_processor(processor, item):
+    """Add item if not already seen"""
+    if item["id"] not in processor["seen_ids"]:
+        processor["data"].append(item)             # Preserve order
+        processor["index"][item["id"]] = item      # Fast lookup
+        processor["seen_ids"].add(item["id"])       # Track seen
 ```
 
 ## Decision Matrix

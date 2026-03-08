@@ -1,0 +1,256 @@
+{
+  "filename": "dns-query.pcap",
+  "description": "DNS resolution of www.example.com showing recursive query from client to local resolver, with A and AAAA responses, plus a CNAME chain example.",
+  "captureInfo": {
+    "duration": "0.156s",
+    "totalPackets": 8,
+    "interface": "eth0",
+    "captureFilter": "port 53"
+  },
+  "packets": [
+    {
+      "number": 1,
+      "timestamp": "0.000000",
+      "source": "192.168.1.100",
+      "destination": "192.168.1.1",
+      "protocol": "DNS",
+      "length": 82,
+      "info": "Standard query A www.example.com",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Type", "value": "0x0800", "description": "IPv4" }
+          ]
+        },
+        {
+          "name": "Internet Protocol Version 4",
+          "fields": [
+            { "name": "Source Address", "value": "192.168.1.100" },
+            { "name": "Destination Address", "value": "192.168.1.1", "description": "Local DNS resolver (gateway)" },
+            { "name": "TTL", "value": "64" },
+            { "name": "Protocol", "value": "UDP (17)" }
+          ]
+        },
+        {
+          "name": "User Datagram Protocol",
+          "fields": [
+            { "name": "Source Port", "value": "51234", "description": "Ephemeral port" },
+            { "name": "Destination Port", "value": "53", "highlight": true, "description": "DNS" },
+            { "name": "Length", "value": "48" }
+          ]
+        },
+        {
+          "name": "Domain Name System (query)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xa1b2", "highlight": true, "description": "Matches request to response" },
+            { "name": "Flags", "value": "0x0100", "description": "Standard query, Recursion Desired (RD=1)" },
+            { "name": "QR", "value": "0 (Query)", "highlight": true },
+            { "name": "Opcode", "value": "0 (Standard Query)" },
+            { "name": "Recursion Desired", "value": "1", "highlight": true, "description": "Client asks resolver to do full resolution" },
+            { "name": "Questions", "value": "1" },
+            { "name": "Query Name", "value": "www.example.com", "highlight": true },
+            { "name": "Query Type", "value": "A (1)", "highlight": true, "description": "IPv4 address record" },
+            { "name": "Query Class", "value": "IN (1)", "description": "Internet class" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "timestamp": "0.032111",
+      "source": "192.168.1.1",
+      "destination": "192.168.1.100",
+      "protocol": "DNS",
+      "length": 98,
+      "info": "Standard query response A www.example.com A 93.184.216.34",
+      "layers": [
+        {
+          "name": "Internet Protocol Version 4",
+          "fields": [
+            { "name": "Source Address", "value": "192.168.1.1" },
+            { "name": "Destination Address", "value": "192.168.1.100" }
+          ]
+        },
+        {
+          "name": "User Datagram Protocol",
+          "fields": [
+            { "name": "Source Port", "value": "53" },
+            { "name": "Destination Port", "value": "51234" }
+          ]
+        },
+        {
+          "name": "Domain Name System (response)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xa1b2", "highlight": true, "description": "Matches the query in packet #1" },
+            { "name": "Flags", "value": "0x8180" },
+            { "name": "QR", "value": "1 (Response)", "highlight": true },
+            { "name": "Authoritative Answer", "value": "0", "description": "Answer from cache, not authoritative" },
+            { "name": "Recursion Available", "value": "1", "description": "Resolver supports recursion" },
+            { "name": "Response Code", "value": "0 (No Error)", "highlight": true },
+            { "name": "Answer RRs", "value": "1" },
+            { "name": "Answer: www.example.com", "value": "A 93.184.216.34", "highlight": true },
+            { "name": "Answer TTL", "value": "3600", "description": "Cache for 1 hour" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "timestamp": "0.001200",
+      "source": "192.168.1.100",
+      "destination": "192.168.1.1",
+      "protocol": "DNS",
+      "length": 82,
+      "info": "Standard query AAAA www.example.com",
+      "layers": [
+        {
+          "name": "Internet Protocol Version 4",
+          "fields": [
+            { "name": "Source Address", "value": "192.168.1.100" },
+            { "name": "Destination Address", "value": "192.168.1.1" }
+          ]
+        },
+        {
+          "name": "User Datagram Protocol",
+          "fields": [
+            { "name": "Source Port", "value": "51235" },
+            { "name": "Destination Port", "value": "53" }
+          ]
+        },
+        {
+          "name": "Domain Name System (query)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xc3d4" },
+            { "name": "QR", "value": "0 (Query)" },
+            { "name": "Recursion Desired", "value": "1" },
+            { "name": "Query Name", "value": "www.example.com" },
+            { "name": "Query Type", "value": "AAAA (28)", "highlight": true, "description": "IPv6 address record" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "timestamp": "0.034520",
+      "source": "192.168.1.1",
+      "destination": "192.168.1.100",
+      "protocol": "DNS",
+      "length": 110,
+      "info": "Standard query response AAAA www.example.com AAAA 2606:2800:220:1:248:1893:25c8:1946",
+      "layers": [
+        {
+          "name": "User Datagram Protocol",
+          "fields": [
+            { "name": "Source Port", "value": "53" },
+            { "name": "Destination Port", "value": "51235" }
+          ]
+        },
+        {
+          "name": "Domain Name System (response)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xc3d4" },
+            { "name": "QR", "value": "1 (Response)" },
+            { "name": "Response Code", "value": "0 (No Error)" },
+            { "name": "Answer: www.example.com", "value": "AAAA 2606:2800:220:1:248:1893:25c8:1946", "highlight": true },
+            { "name": "Answer TTL", "value": "3600" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "timestamp": "0.050000",
+      "source": "192.168.1.100",
+      "destination": "192.168.1.1",
+      "protocol": "DNS",
+      "length": 78,
+      "info": "Standard query A shop.example.com",
+      "layers": [
+        {
+          "name": "User Datagram Protocol",
+          "fields": [
+            { "name": "Source Port", "value": "51236" },
+            { "name": "Destination Port", "value": "53" }
+          ]
+        },
+        {
+          "name": "Domain Name System (query)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xe5f6" },
+            { "name": "QR", "value": "0 (Query)" },
+            { "name": "Query Name", "value": "shop.example.com", "highlight": true },
+            { "name": "Query Type", "value": "A (1)" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "timestamp": "0.085200",
+      "source": "192.168.1.1",
+      "destination": "192.168.1.100",
+      "protocol": "DNS",
+      "length": 130,
+      "info": "Standard query response A shop.example.com CNAME cdn.example.net A 104.16.132.229",
+      "layers": [
+        {
+          "name": "Domain Name System (response)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0xe5f6" },
+            { "name": "QR", "value": "1 (Response)" },
+            { "name": "Response Code", "value": "0 (No Error)" },
+            { "name": "Answers", "value": "2" },
+            { "name": "Answer 1: shop.example.com", "value": "CNAME cdn.example.net", "highlight": true, "description": "Canonical name alias — redirects to CDN" },
+            { "name": "Answer 1 TTL", "value": "300", "description": "Cache for 5 minutes (short for CDN flexibility)" },
+            { "name": "Answer 2: cdn.example.net", "value": "A 104.16.132.229", "highlight": true, "description": "Resolved IP of the CDN endpoint" },
+            { "name": "Answer 2 TTL", "value": "60", "description": "Very short TTL for CDN load balancing" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "timestamp": "0.100000",
+      "source": "192.168.1.100",
+      "destination": "192.168.1.1",
+      "protocol": "DNS",
+      "length": 78,
+      "info": "Standard query A nonexistent.example.com",
+      "layers": [
+        {
+          "name": "Domain Name System (query)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0x1234" },
+            { "name": "QR", "value": "0 (Query)" },
+            { "name": "Query Name", "value": "nonexistent.example.com", "highlight": true },
+            { "name": "Query Type", "value": "A (1)" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "timestamp": "0.156300",
+      "source": "192.168.1.1",
+      "destination": "192.168.1.100",
+      "protocol": "DNS",
+      "length": 106,
+      "info": "Standard query response A nonexistent.example.com — NXDOMAIN",
+      "layers": [
+        {
+          "name": "Domain Name System (response)",
+          "fields": [
+            { "name": "Transaction ID", "value": "0x1234" },
+            { "name": "QR", "value": "1 (Response)" },
+            { "name": "Authoritative Answer", "value": "1", "highlight": true, "description": "Authoritative server confirms: domain does not exist" },
+            { "name": "Response Code", "value": "3 (NXDOMAIN)", "highlight": true, "description": "Name Error — this domain does not exist" },
+            { "name": "Answer RRs", "value": "0" },
+            { "name": "Authority RRs", "value": "1", "description": "SOA record proving authority" },
+            { "name": "Authority: example.com", "value": "SOA ns1.example.com admin.example.com", "description": "Start of Authority for the zone" }
+          ]
+        }
+      ]
+    }
+  ]
+}

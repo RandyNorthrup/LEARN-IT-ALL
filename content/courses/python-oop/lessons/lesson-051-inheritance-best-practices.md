@@ -1,7 +1,7 @@
 ---
 id: "051"
 title: "Inheritance Best Practices"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 9
 duration: "16 minutes"
 objectives:

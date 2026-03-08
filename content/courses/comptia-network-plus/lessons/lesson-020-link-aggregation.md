@@ -1,7 +1,7 @@
 ---
-id: link-aggregation
+id: lesson-020-link-aggregation
 title: Link Aggregation (EtherChannel/LACP)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 20
 duration: 50
 objectives:
@@ -12,7 +12,7 @@ objectives:
   - Recognize load balancing methods
 ---
 
-# Lesson 15: Link Aggregation (EtherChannel/LACP)
+# Lesson 20: Link Aggregation (EtherChannel/LACP)
 
 ## Learning Objectives
 - Understand link aggregation concepts and benefits
@@ -552,8 +552,147 @@ Link aggregation bundles multiple links into one logical link:
 
 ---
 
+## Practice Questions
+
+**Q1.** Which IEEE standard defines the Link Aggregation Control Protocol (LACP)?
+
+A) 802.1Q
+B) 802.1D
+C) 802.3ad / 802.1AX
+D) 802.1w
+
+<details>
+<summary>Answer</summary>
+
+**C)** LACP is defined in IEEE 802.3ad (later moved to 802.1AX). It is the industry-standard protocol for link aggregation and works across multiple vendors. 802.1Q defines VLAN tagging. 802.1D defines Spanning Tree Protocol. 802.1w defines Rapid Spanning Tree Protocol.
+</details>
+
+**Q2.** A network engineer configures LACP in passive mode on both sides of a link aggregation bundle. What will happen?
+
+A) The EtherChannel will form successfully
+B) The EtherChannel will not form because both sides are waiting for the other to initiate
+C) The links will operate as individual ports with STP blocking all but one
+D) LACP will automatically switch one side to active mode
+
+<details>
+<summary>Answer</summary>
+
+**B)** When both sides are set to LACP passive mode, neither switch initiates LACP negotiation — both wait for the other to send LACP packets. The channel will never form. At least one side must be set to active mode. Best practice is to set both sides to active for reliable bundle formation.
+</details>
+
+**Q3.** Which of the following is a prerequisite for ports to be bundled into an EtherChannel?
+
+A) All ports must be on the same line card
+B) All ports must have identical speed, duplex, VLAN, and trunk configuration
+C) All ports must use different VLAN assignments for load balancing
+D) All ports must be configured as access ports
+
+<details>
+<summary>Answer</summary>
+
+**B)** All member ports in an EtherChannel must have identical configuration, including speed, duplex, VLAN assignment (for access ports), or trunk settings (native VLAN, allowed VLANs, and trunk mode for trunk ports). Mismatched settings will cause ports to be suspended. Ports don't need to be on the same line card, and they can be either access or trunk ports.
+</details>
+
+**Q4.** A switch shows the following output for `show etherchannel summary`:
+```
+Group  Port-channel  Protocol    Ports
+1      Po1(SD)       LACP        Gi0/1(D)    Gi0/2(D)
+```
+What does the "SD" flag indicate?
+
+A) The port-channel is in standby mode
+B) The port-channel is a Layer 2 EtherChannel that is down
+C) The port-channel is using static mode with DHCP
+D) The port-channel is a Layer 2 EtherChannel that is operational
+
+<details>
+<summary>Answer</summary>
+
+**B)** In EtherChannel summary output, "S" means Layer 2 (switched) and "D" means Down. So "SD" indicates a Layer 2 port-channel that is currently down. The member ports also show "D" (Down). "SU" would indicate a Layer 2 port-channel that is Up and in use. "RU" would indicate a Layer 3 (routed) port-channel that is Up.
+</details>
+
+**Q5.** How does EtherChannel distribute traffic across member links?
+
+A) Round-robin, sending each frame on the next available link
+B) Using a hash algorithm based on packet headers (e.g., source/destination IP)
+C) Randomly selecting a link for each frame
+D) Sending all traffic on the link with the lowest utilization
+
+<details>
+<summary>Answer</summary>
+
+**B)** EtherChannel uses a hash algorithm based on configurable packet header fields (source/destination MAC, IP, or port) to determine which member link carries each flow. This ensures packets within the same flow always use the same link, maintaining packet order. It is NOT round-robin, as that could cause out-of-order delivery.
+</details>
+
+**Q6.** What is the maximum number of active links allowed in a single LACP EtherChannel bundle?
+
+A) 4
+B) 8
+C) 16
+D) 32
+
+<details>
+<summary>Answer</summary>
+
+**B)** LACP supports a maximum of 8 active links per EtherChannel bundle, with up to 8 additional standby links (16 total). Standby links activate automatically if an active link fails. The active vs standby selection is determined by LACP port priority. This provides both bandwidth aggregation and automatic failover capability.
+</details>
+
+**Q7.** An administrator notices that an EtherChannel with 4 member links is not distributing traffic evenly — one link carries most of the traffic. What is the MOST likely cause and solution?
+
+A) A faulty cable on one of the links; replace the cable
+B) The load balancing hash method doesn't match the traffic pattern; change the load balancing algorithm
+C) STP is blocking some of the member links; reconfigure STP
+D) The LACP timers are misconfigured; set fast LACP rate
+
+<details>
+<summary>Answer</summary>
+
+**B)** Uneven traffic distribution is typically caused by a mismatch between the hash algorithm and the traffic pattern. For example, if using src-mac hashing but most traffic comes from a single source, all traffic hashes to one link. Changing to src-dst-ip or src-dst-port can improve distribution. STP treats the entire EtherChannel as one logical link and doesn't block individual members.
+</details>
+
+**Q8.** What happens to traffic flow if one of four active links in an EtherChannel bundle fails?
+
+A) All traffic stops until the link is restored
+B) The entire EtherChannel is disabled and traffic uses alternate paths
+C) Traffic is redistributed across the remaining three active links automatically
+D) STP must reconverge before traffic can resume
+
+<details>
+<summary>Answer</summary>
+
+**C)** When a member link fails, traffic is automatically redistributed across the remaining active links. The logical port-channel stays up as long as at least one member link is active. The failover is transparent to upper layers. If LACP standby links are configured, a standby link will become active to replace the failed one. No STP reconvergence is needed.
+</details>
+
+**Q9.** Which EtherChannel mode should be avoided in production environments due to the risk of creating loops from misconfiguration?
+
+A) LACP active
+B) LACP passive
+C) PAgP desirable
+D) Static (On mode)
+
+<details>
+<summary>Answer</summary>
+
+**D)** Static "On" mode forces bundling without any negotiation protocol. If one side is misconfigured or the cables are connected incorrectly, it can create a Layer 2 loop because there is no protocol to detect the mismatch. LACP active/passive and PAgP desirable/auto all use negotiation to verify proper configuration before forming the channel.
+</details>
+
+**Q10.** A server needs high-bandwidth connectivity to a switch. The server has four 1 Gbps NICs. Using LACP link aggregation, what is the maximum aggregate bandwidth?
+
+A) 1 Gbps
+B) 2 Gbps
+C) 4 Gbps
+D) 10 Gbps
+
+<details>
+<summary>Answer</summary>
+
+**C)** Link aggregation combines the bandwidth of all member links into a single logical link. Four 1 Gbps links provide 4 Gbps aggregate bandwidth. However, actual throughput per individual flow is still limited to a single link's bandwidth (1 Gbps) because the hash algorithm assigns each flow to one link. Multiple simultaneous flows can collectively utilize the full 4 Gbps.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 2.3**: Link aggregation
+- **CompTIA Network+ N10-009 Objective 2.3**: Link aggregation
 - **IEEE 802.3ad / 802.1AX**: LACP standard
 - **Cisco EtherChannel Configuration Guide**

@@ -1,0 +1,56 @@
+{
+  "id": "exercise-202-import-basics",
+  "courseId": "python-basics",
+  "lessonId": "lesson-192-imports-basics",
+  "chapterId": "ch17-modules",
+  "title": "Import Statement Basics",
+  "description": "Practice parsing and analyzing Python import statements. Build functions that dissect import syntax into structured data, validate import statements, categorize them by source (stdlib, third-party, local), and sort them following PEP 8 conventions.",
+  "difficulty": "beginner",
+  "points": 20,
+  "language": "python",
+  "starterCode": "# Standard library modules (partial list for categorization)\nSTDLIB_MODULES = {\n    'os', 'sys', 'math', 'json', 're', 'datetime', 'collections',\n    'itertools', 'functools', 'pathlib', 'typing', 'unittest',\n    'random', 'string', 'io', 'csv', 'hashlib', 'logging',\n    'argparse', 'subprocess', 'threading', 'socket', 'http',\n    'urllib', 'email', 'abc', 'copy', 'time', 'calendar'\n}\n\nTHIRD_PARTY_MODULES = {\n    'numpy', 'pandas', 'requests', 'flask', 'django', 'pytest',\n    'sqlalchemy', 'celery', 'redis', 'boto3', 'pillow', 'scipy',\n    'matplotlib', 'seaborn', 'fastapi', 'pydantic'\n}\n\n\ndef parse_import(import_str):\n    \"\"\"Parse a single import statement into a dictionary.\n\n    Handles:\n      - 'import module'\n      - 'import module as alias'\n      - 'from module import name1, name2'\n      - 'from module import name as alias'\n\n    Returns a dict with keys:\n      - 'module': the module name (str)\n      - 'alias': alias if present, else None\n      - 'names': list of imported names (empty list for plain imports)\n    \"\"\"\n    pass\n\n\ndef is_valid_import(import_str):\n    \"\"\"Check whether an import statement string is syntactically valid.\n\n    Valid forms:\n      - 'import <identifier>'\n      - 'import <identifier> as <identifier>'\n      - 'from <identifier> import <identifier>[, <identifier>]*'\n      - 'from <identifier> import <identifier> as <identifier>'\n\n    Identifiers may contain dots (e.g. 'os.path').\n    Returns True or False.\n    \"\"\"\n    pass\n\n\ndef categorize_imports(import_lines):\n    \"\"\"Categorize a list of import statement strings.\n\n    Returns a dict with keys 'stdlib', 'third_party', 'local',\n    each mapping to a list of the original import strings.\n\n    - stdlib: module name found in STDLIB_MODULES\n    - third_party: module name found in THIRD_PARTY_MODULES\n    - local: everything else (assumed project-local)\n    \"\"\"\n    pass\n\n\ndef sort_imports(import_lines):\n    \"\"\"Sort import lines following PEP 8 style.\n\n    Ordering rules:\n      1. stdlib imports first\n      2. third-party imports second\n      3. local imports last\n    Within each group, sort alphabetically (case-insensitive).\n    Return a flat list of sorted import strings.\n    \"\"\"\n    pass\n",
+  "solution": "STDLIB_MODULES = {\n    'os', 'sys', 'math', 'json', 're', 'datetime', 'collections',\n    'itertools', 'functools', 'pathlib', 'typing', 'unittest',\n    'random', 'string', 'io', 'csv', 'hashlib', 'logging',\n    'argparse', 'subprocess', 'threading', 'socket', 'http',\n    'urllib', 'email', 'abc', 'copy', 'time', 'calendar'\n}\n\nTHIRD_PARTY_MODULES = {\n    'numpy', 'pandas', 'requests', 'flask', 'django', 'pytest',\n    'sqlalchemy', 'celery', 'redis', 'boto3', 'pillow', 'scipy',\n    'matplotlib', 'seaborn', 'fastapi', 'pydantic'\n}\n\n\ndef parse_import(import_str):\n    parts = import_str.strip().split()\n    result = {'module': '', 'alias': None, 'names': []}\n\n    if parts[0] == 'from':\n        result['module'] = parts[1]\n        # skip 'import' at index 2\n        names_part = ' '.join(parts[3:])\n        names = [n.strip() for n in names_part.split(',')]\n        cleaned = []\n        i = 0\n        while i < len(names):\n            if i + 1 < len(names) and names[i + 1] == 'as':\n                i += 1\n                continue\n            cleaned.append(names[i].split(' as ')[0].strip() if ' as ' in names[i] else names[i])\n            i += 1\n        result['names'] = cleaned\n    elif parts[0] == 'import':\n        result['module'] = parts[1]\n        if 'as' in parts:\n            as_idx = parts.index('as')\n            result['alias'] = parts[as_idx + 1]\n\n    return result\n\n\ndef is_valid_import(import_str):\n    import re\n    s = import_str.strip()\n    identifier = r'[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*'\n    patterns = [\n        rf'^import\\s+{identifier}$',\n        rf'^import\\s+{identifier}\\s+as\\s+{identifier}$',\n        rf'^from\\s+{identifier}\\s+import\\s+{identifier}(\\s+as\\s+{identifier})?(\\s*,\\s*{identifier}(\\s+as\\s+{identifier})?)*$'\n    ]\n    return any(re.match(p, s) for p in patterns)\n\n\ndef categorize_imports(import_lines):\n    result = {'stdlib': [], 'third_party': [], 'local': []}\n    for line in import_lines:\n        parsed = parse_import(line)\n        base_module = parsed['module'].split('.')[0]\n        if base_module in STDLIB_MODULES:\n            result['stdlib'].append(line)\n        elif base_module in THIRD_PARTY_MODULES:\n            result['third_party'].append(line)\n        else:\n            result['local'].append(line)\n    return result\n\n\ndef sort_imports(import_lines):\n    categorized = categorize_imports(import_lines)\n    result = []\n    for group in ['stdlib', 'third_party', 'local']:\n        result.extend(sorted(categorized[group], key=lambda s: s.lower()))\n    return result\n",
+  "hints": [
+    "Use str.split() to break the import string into tokens. The first token tells you whether it's 'import' or 'from ... import'.",
+    "For is_valid_import, consider using regular expressions to match valid Python identifier patterns (letters, digits, underscores, dots for submodules).",
+    "For categorize_imports, extract the base module name (before any dot) and look it up in STDLIB_MODULES and THIRD_PARTY_MODULES."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "parse_import handles a plain import statement",
+      "validation": "assert parse_import('import os') == {'module': 'os', 'alias': None, 'names': []}",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "parse_import handles import with alias",
+      "validation": "assert parse_import('import numpy as np') == {'module': 'numpy', 'alias': 'np', 'names': []}",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "parse_import handles from...import with multiple names",
+      "validation": "assert parse_import('from os.path import join, exists') == {'module': 'os.path', 'alias': None, 'names': ['join', 'exists']}",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "is_valid_import rejects invalid statements",
+      "validation": "assert is_valid_import('import os') == True and is_valid_import('import 123bad') == False and is_valid_import('from import x') == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "categorize_imports correctly groups imports",
+      "validation": "result = categorize_imports(['import os', 'import numpy', 'import myapp']); assert result == {'stdlib': ['import os'], 'third_party': ['import numpy'], 'local': ['import myapp']}",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "sort_imports returns stdlib first, then third-party, then local, each sorted alphabetically",
+      "validation": "result = sort_imports(['import myapp', 'import numpy', 'import sys', 'import os', 'import pandas']); assert result == ['import os', 'import sys', 'import numpy', 'import pandas', 'import myapp']",
+      "isHidden": true
+    }
+  ]
+}

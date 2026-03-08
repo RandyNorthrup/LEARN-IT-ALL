@@ -1,0 +1,57 @@
+{
+  "id": "exercise-195-file-writing",
+  "courseId": "python-basics",
+  "lessonId": "lesson-187-file-writing",
+  "chapterId": "ch16-file-io",
+  "title": "File Writing Utilities",
+  "description": "Implement formatting functions used when writing structured data to files. Build utilities to format CSV rows, create styled headers, generate receipt text from item data, and produce properly formatted log entries with timestamps and severity levels.",
+  "difficulty": "beginner",
+  "points": 20,
+  "language": "python",
+  "starterCode": "from datetime import datetime\n\ndef format_csv_row(values):\n    \"\"\"Convert a list of values to a CSV-formatted string.\n    Values containing commas should be wrapped in double quotes.\"\"\"\n    pass\n\ndef format_header(title, width=40):\n    \"\"\"Create a decorative header with the title centered.\n    Use '#' for the border, with blank bordered lines above and below the title.\"\"\"\n    pass\n\ndef create_receipt(items):\n    \"\"\"Create a receipt string from a list of (item_name, price) tuples.\n    Include each item right-justified to 30 chars, a separator, and a total.\"\"\"\n    pass\n\ndef generate_log_entry(level, message):\n    \"\"\"Generate a formatted log entry string.\n    Format: '[YYYY-MM-DD HH:MM:SS] LEVEL: message'\"\"\"\n    pass\n",
+  "solution": "from datetime import datetime\n\ndef format_csv_row(values):\n    \"\"\"Convert a list of values to a CSV-formatted string.\n    Values containing commas should be wrapped in double quotes.\"\"\"\n    formatted = []\n    for v in values:\n        s = str(v)\n        if ',' in s:\n            formatted.append(f'\"{ s}\"')\n        else:\n            formatted.append(s)\n    return ','.join(formatted)\n\ndef format_header(title, width=40):\n    \"\"\"Create a decorative header with the title centered.\n    Use '#' for the border, with blank bordered lines above and below the title.\"\"\"\n    border = '#' * width\n    empty = '#' + ' ' * (width - 2) + '#'\n    title_line = '#' + title.center(width - 2) + '#'\n    return '\\n'.join([border, empty, title_line, empty, border])\n\ndef create_receipt(items):\n    \"\"\"Create a receipt string from a list of (item_name, price) tuples.\n    Include each item right-justified to 30 chars, a separator, and a total.\"\"\"\n    lines = []\n    total = 0\n    for name, price in items:\n        price_str = f'${price:.2f}'\n        line = f'{name}{price_str:>{30 - len(name)}}'\n        lines.append(line)\n        total += price\n    lines.append('-' * 30)\n    total_str = f'${total:.2f}'\n    lines.append(f'{\"Total\"}{total_str:>{25}}')\n    return '\\n'.join(lines)\n\ndef generate_log_entry(level, message):\n    \"\"\"Generate a formatted log entry string.\n    Format: '[YYYY-MM-DD HH:MM:SS] LEVEL: message'\"\"\"\n    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n    return f'[{now}] {level}: {message}'\n",
+  "hints": [
+    "For format_csv_row, check if a comma exists in the string value with 'in', and wrap it in double quotes if so.",
+    "In format_header, use '#' * width for borders and str.center(width - 2) for the title line.",
+    "For create_receipt, use f-string alignment like f'{price_str:>10}' to right-justify the price.",
+    "Use datetime.now().strftime('%Y-%m-%d %H:%M:%S') to generate the timestamp for log entries."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "format_csv_row formats simple values correctly",
+      "validation": "assert format_csv_row(['Alice', '30', 'NY']) == 'Alice,30,NY'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "format_csv_row wraps values with commas in quotes",
+      "validation": "assert format_csv_row(['Smith, John', '45']) == '\"Smith, John\",45'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "format_header creates a centered header with borders",
+      "validation": "result = format_header('Report', 20)\nassert result.startswith('#' * 20)\nassert 'Report' in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "create_receipt includes all items and correct total",
+      "validation": "result = create_receipt([('Coffee', 4.50), ('Muffin', 3.25)])\nassert 'Coffee' in result\nassert '$7.75' in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "generate_log_entry has correct format with brackets and level",
+      "validation": "result = generate_log_entry('ERROR', 'disk full')\nassert result.startswith('[')\nassert '] ERROR: disk full' in result",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "create_receipt handles single item",
+      "validation": "result = create_receipt([('Tea', 2.00)])\nassert '$2.00' in result\nassert 'Total' in result",
+      "isHidden": true
+    }
+  ]
+}

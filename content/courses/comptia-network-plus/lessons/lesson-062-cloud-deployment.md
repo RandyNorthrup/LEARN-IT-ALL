@@ -1,7 +1,7 @@
 ---
 id: lesson-062-cloud-deployment
 title: "Cloud Deployment Models (Public, Private, Hybrid, Community)"
-chapterId: "chapter-007-cloud-datacenter"
+chapterId: ch7-cloud-datacenter
 order: 62
 duration: 20
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Cloud Deployment Models (Public, Private, Hybrid, Community)
 
+## Introduction
+
 **Cloud deployment models** define where cloud infrastructure is located, who owns it, and who can access it. The deployment model determines security, control, cost, and scalability characteristics of the cloud environment.
 
-This lesson covers the four primary cloud deployment models—**public, private, hybrid, and community clouds**—essential for the CompTIA Network+ N10-008 exam.
+This lesson covers the four primary cloud deployment models—**public, private, hybrid, and community clouds**—essential for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the four cloud deployment models
+- Compare public, private, hybrid, and community clouds
+- Identify advantages and disadvantages of each model
+- Recognize appropriate use cases for each deployment model
+- Understand multi-cloud strategies
 
 ---
 
@@ -457,6 +471,132 @@ Cloud deployment models describe the **ownership**, **location**, and **access**
 
 ---
 
+## Cloud Migration Strategies (The 6 R's)
+
+When organizations move workloads to the cloud, they use one or more **migration strategies** known as the **6 R's**. Understanding these strategies is essential for planning effective cloud deployments.
+
+### The 6 R's of Cloud Migration
+
+| Strategy | Description | Effort | Risk | Best For |
+|----------|-------------|--------|------|----------|
+| **Rehost** (Lift and Shift) | Move as-is to cloud VMs | Low | Low | Quick migration, legacy apps |
+| **Replatform** (Lift and Reshape) | Minor optimizations during migration | Medium | Low-Med | Apps that benefit from managed services |
+| **Repurchase** (Drop and Shop) | Replace with SaaS product | Low | Medium | CRM, email, HR systems |
+| **Refactor** (Re-architect) | Redesign for cloud-native | High | High | Apps needing cloud scalability |
+| **Retire** | Decommission unused applications | Low | Low | Redundant or obsolete systems |
+| **Retain** (Revisit) | Keep on-premises for now | None | Low | Regulated or recently upgraded apps |
+
+**Migration Strategy Decision Flow:**
+```
+Start: Assess Application
+  │
+  ├─ No longer needed? → RETIRE
+  │
+  ├─ SaaS replacement available? → REPURCHASE
+  │
+  ├─ Regulatory/compliance block? → RETAIN
+  │
+  ├─ Needs cloud-native features? → REFACTOR
+  │
+  ├─ Minor tweaks improve it? → REPLATFORM
+  │
+  └─ Just move it quickly? → REHOST
+```
+
+**Real-World Examples:**
+```
+Rehost:   Move on-prem VMware VMs to AWS EC2 instances
+Replatform: Move MySQL on VM to AWS RDS (managed database)
+Repurchase: Replace on-prem Exchange with Microsoft 365
+Refactor:  Rewrite monolithic app as microservices on Kubernetes
+Retire:    Shut down legacy reporting tool nobody uses
+Retain:    Keep mainframe banking app on-premises (for now)
+```
+
+---
+
+## Cloud Landing Zone Concepts
+
+A **landing zone** is a pre-configured, secure cloud environment that provides the foundation for migrating workloads. Think of it as the "prepared infrastructure" that follows organizational best practices before any applications are deployed.
+
+### Landing Zone Components
+
+```
+Cloud Landing Zone Architecture:
+┌─────────────────────────────────────────────────┐
+│                Landing Zone                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌───────────┐  │
+│  │ Identity &  │  │ Network     │  │ Logging & │  │
+│  │ Access Mgmt │  │ Topology    │  │ Monitoring│  │
+│  └─────────────┘  └─────────────┘  └───────────┘  │
+│  ┌─────────────┐  ┌─────────────┐  ┌───────────┐  │
+│  │ Security    │  │ Governance  │  │ Cost Mgmt │  │
+│  │ Policies    │  │ & Guardrails│  │ & Billing │  │
+│  └─────────────┘  └─────────────┘  └───────────┘  │
+└─────────────────────────────────────────────────┘
+
+Key Elements:
+  • Account structure (multi-account strategy)
+  • VPC/VNet design with proper CIDR planning
+  • IAM roles and security baselines
+  • Centralized logging (CloudTrail, Azure Monitor)
+  • Network connectivity (VPN, Direct Connect)
+  • Compliance guardrails (SCPs, Azure Policy)
+  • Cost controls and budgets
+```
+
+---
+
+## Cloud-Native Design Patterns
+
+Cloud-native applications are designed specifically to take advantage of cloud computing characteristics. These patterns differ significantly from traditional on-premises application design.
+
+### Key Cloud-Native Patterns
+
+| Pattern | Description | Benefit |
+|---------|-------------|---------|
+| **Microservices** | Break application into small, independent services | Independent scaling and deployment |
+| **Containerization** | Package app with dependencies in containers | Consistency across environments |
+| **Serverless** | Run code without managing servers | Zero idle cost, automatic scaling |
+| **Event-driven** | Services communicate via events/messages | Loose coupling, better resilience |
+| **Auto-scaling** | Automatically adjust resources to demand | Cost optimization, performance |
+| **Infrastructure as Code** | Define infrastructure in version-controlled files | Reproducibility, audit trail |
+
+---
+
+## Multi-Cloud vs Hybrid Cloud Comparison
+
+| Aspect | Multi-Cloud | Hybrid Cloud |
+|--------|-------------|---------------|
+| **Definition** | Multiple public cloud providers | Public cloud + private/on-prem |
+| **Example** | AWS + Azure + GCP | AWS + on-premises datacenter |
+| **Primary Goal** | Avoid vendor lock-in, best-of-breed | Balance security/control with scale |
+| **Data Location** | Across multiple public clouds | Split between on-prem and cloud |
+| **Complexity** | Very high (multiple APIs, tools) | High (two different environments) |
+| **Cost** | Potentially higher (less volume discount) | Medium (optimize per workload) |
+| **Compliance** | Challenging (multiple providers) | Easier (sensitive data stays private) |
+| **Networking** | Cloud-to-cloud interconnects | VPN/Direct Connect to cloud |
+| **Skills Needed** | Expertise in multiple platforms | Cloud + on-prem expertise |
+| **Redundancy** | Excellent (provider-level failover) | Good (environment-level failover) |
+
+**Can You Have Both?**
+```
+Yes! Many enterprises use multi-cloud AND hybrid strategies:
+
+  On-Premises              AWS                 Azure
+  ┌─────────────┐    ┌───────────┐    ┌───────────┐
+  │ Databases   │<--->│ Web Apps  │    │ AI/ML     │
+  │ Legacy Apps │    │ Storage   │    │ Office365 │
+  │ Compliance  │    │ Lambda    │    │ DevOps    │
+  └─────────────┘    └───────────┘    └───────────┘
+       │                   │               │
+       └─────────────────┴───────────────┘
+         Hybrid (on-prem + cloud)
+           + Multi-cloud (AWS + Azure)
+```
+
+---
+
 ## Comparison of Deployment Models
 
 | Aspect | Public | Private | Hybrid | Community |
@@ -471,7 +611,7 @@ Cloud deployment models describe the **ownership**, **location**, and **access**
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **Public cloud** offers low cost and high scalability but limited control
 2. **Private cloud** provides security and control but higher cost
@@ -483,12 +623,146 @@ Cloud deployment models describe the **ownership**, **location**, and **access**
 
 ---
 
+## Practice Questions
+
+**Q1.** A healthcare organization wants to keep patient data on its own infrastructure while using cloud resources for its public website. Which cloud deployment model BEST fits this scenario?
+
+A) Public cloud
+B) Private cloud
+C) Hybrid cloud
+D) Community cloud
+
+<details>
+<summary>Answer</summary>
+
+**C)** Hybrid cloud combines private cloud (for sensitive patient data) with public cloud (for the website), allowing organizations to place workloads based on security and compliance requirements.
+</details>
+
+**Q2.** Which cloud deployment model provides the HIGHEST level of scalability at the LOWEST cost?
+
+A) Private cloud
+B) Public cloud
+C) Community cloud
+D) Hybrid cloud
+
+<details>
+<summary>Answer</summary>
+
+**B)** Public cloud offers the highest scalability and lowest cost because resources are shared among many tenants, leveraging economies of scale.
+</details>
+
+**Q3.** Several government agencies share a cloud infrastructure that meets their common regulatory compliance requirements. Which deployment model does this describe?
+
+A) Public cloud
+B) Private cloud
+C) Hybrid cloud
+D) Community cloud
+
+<details>
+<summary>Answer</summary>
+
+**D)** Community cloud is shared among organizations with common concerns such as regulatory compliance, security requirements, or mission objectives.
+</details>
+
+**Q4.** An organization uses AWS for compute, Azure for AI services, and Google Cloud for big data analytics. Which strategy does this describe?
+
+A) Hybrid cloud
+B) Multi-cloud
+C) Community cloud
+D) Private cloud
+
+<details>
+<summary>Answer</summary>
+
+**B)** Multi-cloud uses multiple public cloud providers to avoid vendor lock-in, leverage best-of-breed services, and improve redundancy.
+</details>
+
+**Q5.** Which cloud deployment model gives the organization the MOST control over security and customization?
+
+A) Public cloud
+B) Private cloud
+C) Hybrid cloud
+D) Community cloud
+
+<details>
+<summary>Answer</summary>
+
+**B)** Private cloud provides the most control since the infrastructure is dedicated to a single organization, allowing full customization of security, networking, and compute resources.
+</details>
+
+**Q6.** A company normally runs all workloads on-premises but uses public cloud resources during peak shopping seasons to handle increased traffic. What is this technique called?
+
+A) Multi-cloud
+B) Cloud bursting
+C) Cloud-native
+D) Community cloud
+
+<details>
+<summary>Answer</summary>
+
+**B)** Cloud bursting is a hybrid cloud technique where workloads "burst" from private infrastructure to public cloud during periods of high demand, then return to private when demand decreases.
+</details>
+
+**Q7.** What is the PRIMARY disadvantage of a private cloud compared to a public cloud?
+
+A) Less security
+B) Higher cost
+C) Less customization
+D) More vendor lock-in
+
+<details>
+<summary>Answer</summary>
+
+**B)** Private cloud has higher capital and operational costs because the organization must purchase, maintain, and manage its own infrastructure rather than sharing costs with other tenants.
+</details>
+
+**Q8.** Which factor is MOST important when choosing between public and private cloud deployment?
+
+A) Internet bandwidth
+B) Number of users
+C) Data sensitivity and compliance requirements
+D) Programming language
+
+<details>
+<summary>Answer</summary>
+
+**C)** Data sensitivity and compliance requirements are the most important factors. Highly regulated data (healthcare, financial) may require private cloud, while less sensitive workloads can use public cloud.
+</details>
+
+**Q9.** What is the PRIMARY risk of a multi-cloud strategy that uses services from several different cloud providers simultaneously?
+
+A) Reduced redundancy
+B) Increased management complexity and the need for staff skilled in multiple platforms
+C) Inability to meet compliance requirements
+D) Loss of internet connectivity
+
+<details>
+<summary>Answer</summary>
+
+**B)** Multi-cloud increases management complexity because each provider has different APIs, billing, tooling, and security models. Staff must be trained across multiple platforms. However, multi-cloud improves redundancy (not reduces it), and compliance can still be met with proper configuration.
+</details>
+
+**Q10.** An organization is migrating to the cloud and decides to replace its on-premises CRM software with Salesforce. Which cloud migration strategy (from the 6 R's) does this represent?
+
+A) Rehost
+B) Replatform
+C) Repurchase
+D) Refactor
+
+<details>
+<summary>Answer</summary>
+
+**C)** Repurchase (also called "Drop and Shop") involves replacing an existing application with a cloud-based SaaS product such as Salesforce. Rehost moves the app as-is, replatform makes minor optimizations, and refactor redesigns the application for cloud-native architecture.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.8:** Summarize cloud concepts and connectivity options
+- **CompTIA Network+ N10-009 Objective 1.8:** Summarize cloud concepts and connectivity options
 - **NIST SP 800-145:** The NIST Definition of Cloud Computing
 - AWS, Azure, Google Cloud documentation
-- Professor Messer: Network+ N10-008 - Cloud Deployment Models
+- Professor Messer: Network+ N10-009 - Cloud Deployment Models
 
 ---
 

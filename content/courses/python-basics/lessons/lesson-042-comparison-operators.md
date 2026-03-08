@@ -1,5 +1,5 @@
 ---
-id: comparison-operators
+id: lesson-042-comparison-operators
 title: Comparison Operators Deep Dive
 chapterId: ch4-comparisons
 order: 2
@@ -172,10 +172,14 @@ print(result)  # False
 All comparison operators have equal precedence:
 
 ```python
-# Evaluated left to right
+# ⚠️ Comparison chaining applies even with ==
 result = 5 < 10 == True
-# (5 < 10) == True
-# True == True = True
+# Python chains this as: (5 < 10) and (10 == True)
+# True and False = False  (True equals 1, not 10)
+print(result)  # False
+
+# Use parentheses to clarify intent
+result = (5 < 10) == True
 print(result)  # True
 ```
 

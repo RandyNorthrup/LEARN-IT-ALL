@@ -1,7 +1,7 @@
 ---
-id: ipv4-address-classes
+id: lesson-044-ipv4-address-classes
 title: IPv4 Address Classes
-chapterId: ch5-ip-addressing
+chapterId: ch2-ip-addressing
 order: 44
 duration: 70
 objectives:
@@ -340,6 +340,176 @@ Network → Clients (replicated by routers)
 Bandwidth: 1x video bitrate
 ```
 
+### Multicast Address Scoping
+
+Multicast addresses are organized into scopes that control how far multicast traffic travels:
+
+| Range | Scope | Forwarded by Routers? | Purpose |
+|-------|-------|----------------------|---------|
+| 224.0.0.0/24 | Link-local | No | Protocols on the local segment (OSPF, RIP, HSRP) |
+| 224.0.1.0 – 238.255.255.255 | Globally scoped | Yes | Internet-wide multicast (rare in practice) |
+| 239.0.0.0/8 | Administratively scoped | Controlled | Enterprise-internal multicast (SSM) |
+
+**Link-local multicast** (224.0.0.0/24) is critical for network protocols. These packets have TTL=1 and are **never forwarded** by routers:
+
+```
+224.0.0.1  → All hosts on the local subnet
+224.0.0.2  → All multicast-capable routers
+224.0.0.5  → OSPF all routers (Hello packets)
+224.0.0.6  → OSPF designated routers (DR/BDR)
+224.0.0.9  → RIPv2 routers
+224.0.0.10 → EIGRP routers
+224.0.0.13 → PIM routers
+224.0.0.18 → VRRP routers
+224.0.0.102 → HSRP routers (v2)
+224.0.0.251 → mDNS (Bonjour/Avahi)
+224.0.0.252 → LLMNR (Link-Local Multicast Name Resolution)
+```
+
+### IGMP (Internet Group Management Protocol)
+
+**IGMP** operates between hosts and their local router, allowing hosts to join and leave multicast groups dynamically. It operates at Layer 3 (Network) and uses IP protocol number 2.
+
+**IGMPv2 Operation (RFC 2236):**
+
+```
+┌──────────┐                           ┌──────────┐
+│  Router   │                           │   Host   │
+│ (Querier) │                           │ (Client) │
+└─────┬─────┘                           └─────┬────┘
+      │                                       │
+      │  1. Membership Query (224.0.0.1)       │
+      │──────────────────────────────────────►│
+      │     "Who wants multicast traffic?"     │
+      │                                       │
+      │  2. Membership Report (group addr)     │
+      │◄──────────────────────────────────────│
+      │     "I want to receive 239.1.1.1"     │
+      │                                       │
+      │  3. Router forwards multicast traffic  │
+      │  ════════════════════════════════════►│
+      │                                       │
+      │  4. Leave Group (224.0.0.2)            │
+      │◄──────────────────────────────────────│
+      │     "I no longer want 239.1.1.1"      │
+      │                                       │
+      │  5. Group-Specific Query (239.1.1.1)   │
+      │──────────────────────────────────────►│
+      │     "Does anyone still want this?"     │
+      │                                       │
+      │  (No response → stop forwarding)       │
+      │                                       │
+```
+
+| IGMP Message | Destination | Purpose |
+|--------------|-------------|---------|
+| General Query | 224.0.0.1 (all hosts) | Router polls: "Which groups are wanted?" |
+| Membership Report | Group address | Host replies: "I want this group" |
+| Leave Group | 224.0.0.2 (all routers) | Host signals: "I'm leaving this group" |
+| Group-Specific Query | Specific group | Router verifies: "Anyone still listening?" |
+
+**IGMPv3 (RFC 3376)** adds **source filtering** — hosts can specify which sources they want to receive from:
+```
+IGMPv2: "I want group 239.1.1.1"         (any source)
+IGMPv3: "I want group 239.1.1.1 from 10.0.0.5"  (specific source)
+```
+
+This enables **Source-Specific Multicast (SSM)**, where receivers choose both the group and the source. SSM uses the 232.0.0.0/8 range and eliminates the need for a Rendezvous Point.
+
+### IGMP Snooping
+
+Switches (Layer 2) don't understand multicast by default — they flood multicast frames to all ports like broadcast. **IGMP snooping** solves this:
+
+```
+Without IGMP Snooping:                With IGMP Snooping:
+Switch floods to ALL ports             Switch forwards only to members
+
+  ┌────┐                                ┌────┐
+  │ SW │→ Port 1 (wants it) ✓           │ SW │→ Port 1 (wants it) ✓
+  │    │→ Port 2 (doesn't want it) ✗    │    │  Port 2 (not forwarded) 
+  │    │→ Port 3 (doesn't want it) ✗    │    │→ Port 3 (wants it) ✓
+  │    │→ Port 4 (wants it) ✓           │    │  Port 4 (not forwarded)
+  └────┘                                └────┘
+  Bandwidth wasted on ports 2,3         Only members receive traffic
+```
+
+The switch inspects IGMP join/leave messages and builds a multicast forwarding table mapping groups to ports. IGMP snooping is enabled by default on most managed switches.
+
+### PIM (Protocol Independent Multicast)
+
+While IGMP operates between hosts and their local router, **PIM** operates between routers to build multicast distribution trees across the network. PIM is "protocol independent" because it uses the existing unicast routing table (from OSPF, EIGRP, etc.) rather than maintaining its own.
+
+**PIM Sparse Mode (PIM-SM)** is the dominant multicast routing protocol in enterprise networks:
+
+```
+Key Concepts:
+
+Rendezvous Point (RP): Central router where senders register and
+                       receivers join. Acts as the meeting point.
+
+Shared Tree (*,G):     Traffic flows: Source → RP → Receivers
+                       Represented as (*,G) — any source, group G
+                       Less efficient but simple setup
+
+Shortest-Path Tree:    Traffic flows: Source → Receivers (direct)
+(S,G)                  Represented as (S,G) — specific source S, group G
+                       More efficient, built after traffic threshold
+
+PIM Join:  Router signals upstream "I have receivers for group G"
+PIM Prune: Router signals upstream "No more receivers — stop sending"
+```
+
+```
+PIM-SM Shared Tree vs Shortest-Path Tree:
+
+Shared Tree (*,G):                Shortest-Path Tree (S,G):
+                                  
+    Source                            Source
+      │                                │
+      ▼                                ▼
+     RP ◄── All traffic via RP       Router A (direct path)
+    / \                               │
+   ▼   ▼                              ▼
+ Rcv1  Rcv2                         Rcv1   Rcv2 ← via Router B
+                                           (direct from source)
+```
+
+### Enterprise Multicast Use Cases
+
+| Use Case | Protocol | Why Multicast? |
+|----------|----------|----------------|
+| **IPTV / Video streaming** | IGMP + PIM-SM | One stream serves thousands of viewers simultaneously |
+| **Video conferencing** | RTP multicast | Reduces bandwidth vs N separate unicast streams |
+| **OS deployment** (WDS/SCCM) | IGMP | Deploy a disk image to 100 PCs simultaneously |
+| **Financial market data** | Multicast | Ultra-low-latency one-to-many price distribution |
+| **Network protocol discovery** | Link-local multicast | OSPF, EIGRP, RIPv2 use multicast for neighbor communication |
+| **Service discovery** | mDNS (224.0.0.251) | Apple Bonjour, Linux Avahi for zero-config networking |
+
+### Multicast vs Unicast vs Broadcast vs Anycast
+
+```
+┌────────────┬─────────────────┬──────────────────┬────────────────┐
+│   Type     │ Destinations    │ Efficiency       │ Example        │
+├────────────┼─────────────────┼──────────────────┼────────────────┤
+│ Unicast    │ Exactly one     │ Scales poorly    │ HTTP request   │
+│            │                 │ (N streams for   │ to web server  │
+│            │                 │  N receivers)    │                │
+├────────────┼─────────────────┼──────────────────┼────────────────┤
+│ Broadcast  │ All hosts on    │ Wastes bandwidth │ ARP request,   │
+│            │ subnet          │ (forces all to   │ DHCP discover  │
+│            │                 │  process)        │                │
+├────────────┼─────────────────┼──────────────────┼────────────────┤
+│ Multicast  │ Subscribed      │ Efficient        │ IPTV, OSPF,    │
+│            │ group members   │ (1 stream,       │ video conf.    │
+│            │ only            │  replicated at   │                │
+│            │                 │  branch points)  │                │
+├────────────┼─────────────────┼──────────────────┼────────────────┤
+│ Anycast    │ Nearest one     │ Load balancing   │ DNS root       │
+│            │ (of many with   │ and geolocation  │ servers,       │
+│            │  same address)  │                  │ CDN endpoints  │
+└────────────┴─────────────────┴──────────────────┴────────────────┘
+```
+
 ---
 
 ## Class E Addresses (Experimental)
@@ -493,6 +663,80 @@ Public Network (direct):
 
 ---
 
+## Detailed Classful Addressing Reference
+
+### Complete Network and Host Bit Breakdown
+
+The following table provides a comprehensive reference for all five IPv4 address classes, including binary patterns, bit allocation, and capacity:
+
+```
+┌───────┬─────────────┬──────────┬────────────┬──────────┬───────────────────┬──────────────┐
+│ Class │ First Octet │ Leading  │ Net Bits / │ Default  │ # of Networks     │ Hosts/Network│
+│       │ Range       │ Bits     │ Host Bits  │ Mask     │                   │              │
+├───────┼─────────────┼──────────┼────────────┼──────────┼───────────────────┼──────────────┤
+│ A     │ 1 - 126     │ 0        │ 8 / 24     │ /8       │ 126               │ 16,777,214   │
+│ B     │ 128 - 191   │ 10       │ 16 / 16    │ /16      │ 16,384            │ 65,534       │
+│ C     │ 192 - 223   │ 110      │ 24 / 8     │ /24      │ 2,097,152         │ 254          │
+│ D     │ 224 - 239   │ 1110     │ N/A        │ N/A      │ N/A (multicast)   │ N/A          │
+│ E     │ 240 - 255   │ 1111     │ N/A        │ N/A      │ N/A (reserved)    │ N/A          │
+└───────┴─────────────┴──────────┴────────────┴──────────┴───────────────────┴──────────────┘
+```
+
+### Special Reserved Address Ranges
+
+Several address ranges have special purposes and cannot be assigned to regular hosts:
+
+| Address Range | Name | Purpose |
+|---------------|------|---------|
+| 0.0.0.0/8 | This Network | Used as source before IP is assigned |
+| 10.0.0.0/8 | Private (RFC 1918) | Internal networks, not Internet-routable |
+| 100.64.0.0/10 | Shared Address (RFC 6598) | Carrier-Grade NAT (CGNAT) space |
+| 127.0.0.0/8 | Loopback | Local host testing (127.0.0.1 = localhost) |
+| 169.254.0.0/16 | Link-Local (APIPA) | Auto-assigned when DHCP fails |
+| 172.16.0.0/12 | Private (RFC 1918) | Internal networks (172.16-172.31) |
+| 192.0.2.0/24 | TEST-NET-1 | Documentation and examples |
+| 192.88.99.0/24 | 6to4 Relay | IPv6 transition (deprecated) |
+| 192.168.0.0/16 | Private (RFC 1918) | Home/small office networks |
+| 198.51.100.0/24 | TEST-NET-2 | Documentation and examples |
+| 203.0.113.0/24 | TEST-NET-3 | Documentation and examples |
+| 224.0.0.0/4 | Multicast (Class D) | One-to-many communication |
+| 240.0.0.0/4 | Reserved (Class E) | Experimental, future use |
+| 255.255.255.255/32 | Limited Broadcast | Local subnet broadcast only |
+
+### Historical Context: Why Classful Addressing Was Created
+
+```
+Timeline of Classful Addressing:
+
+1981: RFC 791 defines IPv4 with classful architecture
+  → Simple allocation: Organization size determines class
+  → Easy routing: Class determines mask automatically
+  → Internet was small (~200 hosts)
+
+1985-1990: Internet grows rapidly
+  → Class B addresses in high demand (medium organizations)
+  → Class A blocks mostly wasted (16M addresses each)
+  → Class C too small for many organizations
+
+1992: Class B address space nearly exhausted
+  → "Class B crisis" - only ~6,000 Class B networks available
+  → Projected complete exhaustion within 2 years
+
+1993: RFC 1519 introduces CIDR
+  → Classless addressing replaces classful
+  → Variable-length prefixes /1 through /32
+  → Route aggregation reduces routing table size
+
+1996: RFC 1918 formalizes private address ranges
+  → Combined with NAT, extends IPv4 lifetime
+
+2011: IANA exhausts top-level IPv4 pool
+  → Regional registries begin running out
+  → IPv6 deployment accelerates
+```
+
+---
+
 ## Classful Addressing Problems
 
 ### Issue 1: Wasteful Allocation
@@ -503,6 +747,16 @@ Class C: 254 hosts (too small) ❌
 Class B: 65,534 hosts (wastes 65,034 addresses!) ❌
 
 Result: Either too small or extremely wasteful
+
+Waste Calculation Examples:
+┌────────────┬─────────┬──────────┬──────────┬───────────┐
+│ Need       │ Class   │ Given    │ Wasted   │ Efficiency│
+├────────────┼─────────┼──────────┼──────────┼───────────┤
+│ 500 hosts  │ B (/16) │ 65,534   │ 65,034   │ 0.76%     │
+│ 2,000      │ B (/16) │ 65,534   │ 63,534   │ 3.05%     │
+│ 30 hosts   │ C (/24) │ 254      │ 224      │ 11.8%     │
+│ 5,000      │ A (/8)  │ 16.7M   │ 16.7M    │ 0.03%     │
+└────────────┴─────────┴──────────┴──────────┴───────────┘
 ```
 
 ### Issue 2: Rapid IPv4 Exhaustion
@@ -539,6 +793,19 @@ Key Changes:
 ✅ Route aggregation (supernetting)
 ```
 
+### Classful vs CIDR Comparison
+
+| Feature | Classful | CIDR (Classless) |
+|---------|----------|------------------|
+| **Subnet Mask** | Fixed per class (A=/8, B=/16, C=/24) | Any prefix length (/1 to /32) |
+| **Allocation** | Entire class blocks only | Any size block |
+| **Flexibility** | Three sizes only | Exact fit possible |
+| **Route Aggregation** | Not possible | Supernetting supported |
+| **VLSM** | Not supported | Fully supported |
+| **Efficiency** | Very low (3-12% typical) | High (80-95% typical) |
+| **Routing** | Each network = 1 entry | Aggregated entries |
+| **Era** | 1981-1993 | 1993-present |
+
 ### CIDR Examples
 
 ```
@@ -551,6 +818,17 @@ New CIDR:
 Company gets 192.168.0.0/23 (510 hosts)
 Single allocation, single routing entry
 More efficient!
+
+CIDR Right-Sizing Examples:
+┌────────────┬────────────┬──────────┬───────────┐
+│ Need       │ CIDR Block │ Hosts    │ Efficiency│
+├────────────┼────────────┼──────────┼───────────┤
+│ 500 hosts  │ /23        │ 510      │ 98.0%     │
+│ 2,000      │ /21        │ 2,046    │ 97.8%     │
+│ 30 hosts   │ /27        │ 30       │ 100%      │
+│ 5,000      │ /19        │ 8,190    │ 61.1%     │
+│ 2 (PtP)    │ /30        │ 2        │ 100%      │
+└────────────┴────────────┴──────────┴───────────┘
 ```
 
 ### Modern Usage
@@ -614,42 +892,6 @@ Solution:
 
 ---
 
-## Practice Problems
-
-### Problem 1: Identify the class and network
-**Given:** 150.100.50.200
-
-**Solution:**
-```
-First octet: 150
-Range: 128-191 = Class B
-Default mask: 255.255.0.0 (/16)
-Network: 150.100.0.0
-Host range: 150.100.0.1 - 150.100.255.254
-```
-
-### Problem 2: Private or public?
-**Classify these addresses:**
-
-```
-a) 10.5.5.5 → Private (Class A private range)
-b) 172.20.10.50 → Private (Class B private range)
-c) 192.168.100.1 → Private (Class C private range)
-d) 200.50.100.200 → Public (not in private ranges)
-e) 169.254.1.1 → APIPA (link-local, not private)
-```
-
-### Problem 3: Calculate hosts
-**How many usable hosts in each default class network?**
-
-```
-Class A (/8): 2^24 - 2 = 16,777,214 hosts
-Class B (/16): 2^16 - 2 = 65,534 hosts
-Class C (/24): 2^8 - 2 = 254 hosts
-```
-
----
-
 ## Summary
 
 IPv4 address classes provide historical context and quick identification:
@@ -667,34 +909,82 @@ While classful addressing is obsolete, understanding classes helps with troubles
 
 ---
 
-## Review Questions
+## Practice Questions
 
-1. **What class is 172.16.50.100?**
-   - Answer: Class B (172 is in range 128-191)
 
-2. **What is the default subnet mask for Class C?**
-   - Answer: 255.255.255.0 (/24)
+**Q1.** Which first-octet range identifies a Class B IPv4 address?
 
-3. **Is 192.168.1.1 a private or public address?**
-   - Answer: Private (RFC 1918)
+A) 1–126
+B) 128–191
+C) 192–223
+D) 224–239
 
-4. **What does 169.254.x.x indicate?**
-   - Answer: APIPA - DHCP failure
+<details>
+<summary>Answer</summary>
 
-5. **How many usable hosts in a default Class B network?**
-   - Answer: 65,534 (2^16 - 2)
+**B)** Class B addresses have a first octet in the range 128–191 (binary pattern 10xxxxxx). Class A is 1–126, Class C is 192–223, and Class D (multicast) is 224–239.
+</details>
 
-6. **What is 224.0.0.5 used for?**
-   - Answer: Multicast (Class D) - OSPF routers
 
-7. **What replaced classful addressing?**
-   - Answer: CIDR (Classless Inter-Domain Routing)
+**Q2.** What is the purpose of Class D addresses (224–239)?
 
----
+A) Unicast addressing for large organizations
+B) Experimental and reserved use
+C) Multicast group communication
+D) Private network addressing
+
+<details>
+<summary>Answer</summary>
+
+**C)** Class D addresses (224.0.0.0–239.255.255.255) are reserved for multicast communication, where data is sent to a group of interested receivers simultaneously. Examples include OSPF (224.0.0.5/224.0.0.6) and streaming media. Class E (240–255) is experimental/reserved. Class A handles large unicast networks, and private addressing is defined by RFC 1918 across multiple classes.
+</details>
+
+
+**Q3.** An IP address begins with 200. What is its default classful subnet mask?
+
+A) 255.0.0.0
+B) 255.255.0.0
+C) 255.255.255.0
+D) 255.255.255.128
+
+<details>
+<summary>Answer</summary>
+
+**C)** An address starting with 200 falls in the Class C range (192–223). The default Class C subnet mask is 255.255.255.0 (/24), providing 8 host bits. 255.0.0.0 is the Class A default, 255.255.0.0 is the Class B default, and 255.255.255.128 is a subnetted mask (/25).
+</details>
+
+
+**Q4.** A Class A network using its default /8 subnet mask can support how many usable host addresses?
+
+A) 254
+B) 65,534
+C) 16,777,214
+D) 4,294,967,294
+
+<details>
+<summary>Answer</summary>
+
+**C)** A Class A /8 network has 24 host bits, yielding 2^24 − 2 = 16,777,214 usable host addresses (subtracting the network and broadcast addresses). 254 is the count for a /24 (Class C default), 65,534 is for a /16 (Class B default), and the last option would require 32 host bits.
+</details>
+
+
+**Q5.** Why was classful IPv4 addressing replaced by CIDR (Classless Inter-Domain Routing)?
+
+A) Classful addressing did not support binary notation
+B) Classful addressing wasted large blocks of address space because organizations were assigned entire Class A, B, or C networks regardless of actual need
+C) CIDR eliminated the need for subnet masks entirely
+D) Classful addressing could not support more than 254 total networks
+
+<details>
+<summary>Answer</summary>
+
+**B)** Classful addressing was highly inefficient because organizations received fixed-size blocks (Class A = 16M hosts, Class B = 65K hosts, Class C = 254 hosts) regardless of actual requirements, leading to massive address waste and accelerating IPv4 exhaustion. CIDR (introduced in 1993) allows variable-length subnet allocation (e.g., /20, /22) to match actual needs. CIDR still uses subnet masks — it does not eliminate them.
+</details>
+
 
 ## References
 
-- **CompTIA Network+ N10-008:** Domain 1.4 - IPv4 addressing
+- **CompTIA Network+ N10-009:** Domain 1.4 - IPv4 addressing
 - **RFC 791:** Internet Protocol specification
 - **RFC 1918:** Private address allocation
 - **RFC 3927:** APIPA (Link-Local addressing)

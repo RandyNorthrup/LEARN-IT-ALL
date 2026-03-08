@@ -1,63 +1,70 @@
 {
   "id": "exercise-169-error-handling-apis",
-  "lessonId": "lesson-159-error-handling-apis",
-  "title": "Error Handling in APIs",
-  "description": "Handle API errors, use HTTP status codes, create structured error responses, implement error middleware, and validate requests.",
-  "difficulty": "advanced",
-  "points": 25,
-  "starterCode": "# Exercise: Error Handling in APIs\n\nclass APIError(Exception):\n    \"\"\"Base API error with HTTP status.\"\"\"\n    pass\n\nclass ValidationError(APIError):\n    \"\"\"Validation error (400).\"\"\"\n    pass\n\nclass NotFoundError(APIError):\n    \"\"\"Not found error (404).\"\"\"\n    pass\n\ndef create_error_response(exception):\n    \"\"\"Create structured error response.\"\"\"\n    pass\n\ndef validate_request(data, schema):\n    \"\"\"Validate request data against schema.\"\"\"\n    pass\n\nclass RateLimiter:\n    \"\"\"Rate limiter with error handling.\"\"\"\n    pass\n",
-  "solution": "# Solution: Error Handling in APIs\nfrom typing import Dict, Any, Optional\nfrom dataclasses import dataclass\nfrom collections import defaultdict\nfrom time import time\n\nclass APIError(Exception):\n    \"\"\"Base API error with HTTP status.\"\"\"\n    \n    def __init__(self, message: str, status_code: int = 500, details: Dict = None):\n        super().__init__(message)\n        self.message = message\n        self.status_code = status_code\n        self.details = details or {}\n    \n    def to_dict(self) -> Dict[str, Any]:\n        \"\"\"Convert to dictionary.\"\"\"\n        return {\n            \"error\": self.__class__.__name__,\n            \"message\": self.message,\n            \"status_code\": self.status_code,\n            \"details\": self.details\n        }\n\nclass ValidationError(APIError):\n    \"\"\"Validation error (400).\"\"\"\n    \n    def __init__(self, message: str, field: str = None, details: Dict = None):\n        super().__init__(message, status_code=400, details=details or {})\n        if field:\n            self.details[\"field\"] = field\n\nclass NotFoundError(APIError):\n    \"\"\"Not found error (404).\"\"\"\n    \n    def __init__(self, resource: str, resource_id: str):\n        message = f\"{resource} not found: {resource_id}\"\n        super().__init__(message, status_code=404, details={\n            \"resource\": resource,\n            \"resource_id\": resource_id\n        })\n\nclass UnauthorizedError(APIError):\n    \"\"\"Unauthorized error (401).\"\"\"\n    \n    def __init__(self, message: str = \"Unauthorized\"):\n        super().__init__(message, status_code=401)\n\nclass RateLimitError(APIError):\n    \"\"\"Rate limit exceeded error (429).\"\"\"\n    \n    def __init__(self, retry_after: int):\n        message = f\"Rate limit exceeded. Retry after {retry_after}s\"\n        super().__init__(message, status_code=429, details={\n            \"retry_after\": retry_after\n        })\n\nclass ConflictError(APIError):\n    \"\"\"Conflict error (409).\"\"\"\n    \n    def __init__(self, message: str):\n        super().__init__(message, status_code=409)\n\ndef create_error_response(exception: Exception) -> Dict[str, Any]:\n    \"\"\"\n    Create structured error response.\n    \n    Returns:\n        Dictionary with error details and status code\n    \"\"\"\n    if isinstance(exception, APIError):\n        return exception.to_dict()\n    \n    # Generic server error for unexpected exceptions\n    return {\n        \"error\": \"InternalServerError\",\n        \"message\": \"An unexpected error occurred\",\n        \"status_code\": 500,\n        \"details\": {}\n    }\n\ndef validate_request(data: Dict[str, Any], schema: Dict[str, type]) -> None:\n    \"\"\"\n    Validate request data against schema.\n    \n    Args:\n        data: Request data to validate\n        schema: Schema mapping field names to expected types\n    \n    Raises:\n        ValidationError: If validation fails\n    \"\"\"\n    # Check required fields\n    for field, expected_type in schema.items():\n        if field not in data:\n            raise ValidationError(\n                f\"Missing required field: {field}\",\n                field=field\n            )\n        \n        # Check type\n        if not isinstance(data[field], expected_type):\n            raise ValidationError(\n                f\"Invalid type for {field}: expected {expected_type.__name__}\",\n                field=field,\n                details={\n                    \"expected_type\": expected_type.__name__,\n                    \"actual_type\": type(data[field]).__name__\n                }\n            )\n\nclass RateLimiter:\n    \"\"\"Rate limiter with error handling.\"\"\"\n    \n    def __init__(self, max_requests: int = 100, window_seconds: int = 60):\n        self.max_requests = max_requests\n        self.window_seconds = window_seconds\n        self.requests = defaultdict(list)\n    \n    def check_rate_limit(self, client_id: str) -> None:\n        \"\"\"\n        Check if client is within rate limit.\n        \n        Raises:\n            RateLimitError: If rate limit exceeded\n        \"\"\"\n        now = time()\n        \n        # Clean old requests\n        cutoff = now - self.window_seconds\n        self.requests[client_id] = [\n            req_time for req_time in self.requests[client_id]\n            if req_time > cutoff\n        ]\n        \n        # Check limit\n        if len(self.requests[client_id]) >= self.max_requests:\n            raise RateLimitError(retry_after=self.window_seconds)\n        \n        # Record request\n        self.requests[client_id].append(now)\n\n# Additional API error handling utilities\n\nclass ErrorMiddleware:\n    \"\"\"Middleware to handle API errors.\"\"\"\n    \n    def __init__(self, handler):\n        self.handler = handler\n    \n    def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"Process request with error handling.\"\"\"\n        try:\n            return {\n                \"status\": \"success\",\n                \"data\": self.handler(request),\n                \"status_code\": 200\n            }\n        except APIError as e:\n            return create_error_response(e)\n        except Exception as e:\n            return create_error_response(e)\n\ndef validate_pagination(page: int, page_size: int) -> None:\n    \"\"\"\n    Validate pagination parameters.\n    \n    Raises:\n        ValidationError: If invalid\n    \"\"\"\n    if page < 1:\n        raise ValidationError(\"Page must be >= 1\", field=\"page\")\n    \n    if page_size < 1 or page_size > 100:\n        raise ValidationError(\n            \"Page size must be between 1 and 100\",\n            field=\"page_size\"\n        )\n\ndef safe_json_parse(data: str) -> Dict:\n    \"\"\"\n    Safely parse JSON with proper error.\n    \n    Returns:\n        Parsed dictionary\n    \n    Raises:\n        ValidationError: If JSON is invalid\n    \"\"\"\n    import json\n    \n    try:\n        return json.loads(data)\n    except json.JSONDecodeError as e:\n        raise ValidationError(\n            \"Invalid JSON\",\n            details={\"error\": str(e)}\n        )\n",
+  "lessonId": "lesson-151-error-handling-apis",
+  "title": "Error Handling in Real Projects",
+  "description": "Apply error handling to real-world tasks: parse configuration files, validate required keys, safely convert types with descriptive errors, and process records with error collection.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "starterCode": "# Exercise: Error Handling in Real Projects\n\ndef parse_config(config_str):\n    \"\"\"Parse key=value lines into a dict. Raise ValueError for malformed lines.\"\"\"\n    pass\n\ndef validate_config(config, required_keys):\n    \"\"\"Return a list of keys from required_keys that are missing in config.\"\"\"\n    pass\n\ndef safe_parse_int(value, field_name=\"value\"):\n    \"\"\"Parse value as int. Raise ValueError with field_name in the message.\"\"\"\n    pass\n\ndef process_records(records, processor):\n    \"\"\"Process records collecting results and failures.\n    Return dict with \"processed\" and \"failed\" lists.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling in Real Projects\n\ndef parse_config(config_str):\n    \"\"\"Parse key=value lines into a dict. Raise ValueError for malformed lines.\"\"\"\n    result = {}\n    for line in config_str.strip().split(\"\\n\"):\n        line = line.strip()\n        if not line:\n            continue\n        if \"=\" not in line:\n            raise ValueError(f\"Malformed config line: {line}\")\n        key, value = line.split(\"=\", 1)\n        result[key.strip()] = value.strip()\n    return result\n\ndef validate_config(config, required_keys):\n    \"\"\"Return a list of keys from required_keys that are missing in config.\"\"\"\n    return [key for key in required_keys if key not in config]\n\ndef safe_parse_int(value, field_name=\"value\"):\n    \"\"\"Parse value as int. Raise ValueError with field_name in the message.\"\"\"\n    try:\n        return int(value)\n    except (ValueError, TypeError):\n        raise ValueError(f\"Invalid integer for {field_name}: {value!r}\")\n\ndef process_records(records, processor):\n    \"\"\"Process records collecting results and failures.\n    Return dict with \"processed\" and \"failed\" lists.\"\"\"\n    processed = []\n    failed = []\n    for record in records:\n        try:\n            processed.append(processor(record))\n        except Exception as e:\n            failed.append({\"record\": record, \"error\": str(e)})\n    return {\"processed\": processed, \"failed\": failed}\n",
   "hints": [
-    "APIError: Base class with status_code, message, details, to_dict() method",
-    "Subclass APIError: Set appropriate status codes (400/404/401/429/409)",
-    "create_error_response: Check isinstance(exception, APIError), return to_dict()",
-    "validate_request: Loop through schema, check 'field in data' and isinstance()",
-    "RateLimiter: Store timestamps per client, clean old ones, check count >= max",
-    "HTTP status codes: 400 (bad request), 404 (not found), 401 (unauthorized), 429 (rate limit), 409 (conflict), 500 (server error)"
+    "Split config_str by newlines, then split each line by '=' with maxsplit=1",
+    "Strip whitespace from keys and values after splitting",
+    "Use a list comprehension to find missing keys in validate_config",
+    "Catch both ValueError and TypeError in safe_parse_int for robustness",
+    "Include field_name in the error message so callers know which field failed",
+    "process_records should continue after failures, collecting both results and errors"
   ],
   "testCases": [
     {
-      "input": "err = ValidationError('Invalid email', field='email')\\n(err.status_code, err.details['field'])",
-      "description": "Test ValidationError",
+      "input": "config = 'host=localhost' + chr(10) + 'port=8080'\\nparse_config(config)['host']",
+      "description": "Test parse_config parses key=value lines",
       "id": "test1",
-      "expectedOutput": "(400, 'email')",
-      "isHidden": false
+      "expectedOutput": "'localhost'",
+      "isHidden": false,
+      "validation": "assert parse_config('host=localhost\\nport=8080')['host'] == 'localhost'"
     },
     {
-      "input": "err = NotFoundError('User', '123')\\n(err.status_code, 'User not found' in err.message)",
-      "description": "Test NotFoundError",
+      "input": "validate_config({'host': 'localhost'}, ['host', 'port', 'db'])",
+      "description": "Test validate_config finds missing keys",
       "id": "test2",
-      "expectedOutput": "(404, True)",
-      "isHidden": false
+      "expectedOutput": "['port', 'db']",
+      "isHidden": false,
+      "validation": "assert validate_config({'host': 'localhost'}, ['host', 'port', 'db']) == ['port', 'db']"
     },
     {
-      "input": "err = ValidationError('test')\\nresponse = create_error_response(err)\\n(response['status_code'], response['error'])",
-      "description": "Test create_error_response APIError",
+      "input": "safe_parse_int('42')",
+      "description": "Test safe_parse_int with valid integer string",
       "id": "test3",
-      "expectedOutput": "(400, 'ValidationError')",
-      "isHidden": false
+      "expectedOutput": "42",
+      "isHidden": false,
+      "validation": "assert safe_parse_int('42') == 42"
     },
     {
-      "input": "try:\\n    validate_request({'name': 'John', 'age': 30}, {'name': str, 'age': int})\\n    result = 'valid'\\nexcept ValidationError:\\n    result = 'invalid'\\nresult",
-      "description": "Test validate_request success",
+      "input": "try:\\n    safe_parse_int('abc', 'age')\\nexcept ValueError as e:\\n    'age' in str(e)",
+      "description": "Test safe_parse_int includes field name in error",
       "id": "test4",
-      "expectedOutput": "'valid'",
-      "isHidden": true
-    },
-    {
-      "input": "try:\\n    validate_request({'name': 'John'}, {'name': str, 'age': int})\\nexcept ValidationError as e:\\n    'Missing' in e.message",
-      "description": "Test validate_request missing field",
-      "id": "test5",
       "expectedOutput": "True",
-      "isHidden": true
+      "isHidden": false,
+      "validation": "try:\n    safe_parse_int('abc', 'age')\n    assert False\nexcept ValueError as e:\n    assert 'age' in str(e)"
     },
     {
-      "input": "limiter = RateLimiter(max_requests=2)\\ntry:\\n    for _ in range(3):\\n        limiter.check_rate_limit('client1')\\nexcept RateLimitError as e:\\n    e.status_code",
-      "description": "Test RateLimiter exceeds limit",
+      "input": "len(process_records([1, 2, 3], lambda x: x * 2)['processed'])",
+      "description": "Test process_records with all successful records",
+      "id": "test5",
+      "expectedOutput": "3",
+      "isHidden": true,
+      "validation": "assert len(process_records([1, 2, 3], lambda x: x * 2)['processed']) == 3"
+    },
+    {
+      "input": "try:\\n    parse_config('badline')\\nexcept ValueError as e:\\n    'Malformed' in str(e)",
+      "description": "Test parse_config raises ValueError for malformed lines",
       "id": "test6",
-      "expectedOutput": "429",
-      "isHidden": true
+      "expectedOutput": "True",
+      "isHidden": true,
+      "validation": "try:\n    parse_config('badline')\n    assert False\nexcept ValueError as e:\n    assert 'Malformed' in str(e)"
     }
   ],
-  "language": "python"
+  "language": "python",
+  "chapterId": "ch11-error-handling"
 }

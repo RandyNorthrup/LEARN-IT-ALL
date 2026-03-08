@@ -1,5 +1,5 @@
 ---
-id: "110-list-creation-initialization"
+id: lesson-096-list-creation-initialization
 title: "List Creation and Initialization Patterns"
 chapterId: ch8-lists
 order: 2

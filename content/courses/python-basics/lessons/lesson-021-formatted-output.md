@@ -1,5 +1,5 @@
 ---
-id: 47-formatted-output
+id: lesson-021-formatted-output
 title: Formatted Output and Print Options
 chapterId: ch2-variables
 order: 8
@@ -306,9 +306,9 @@ def print_box(text):
     print("+" + "-" * (len(text) + 2) + "+")
 
 print_box("Hello, World!")
-# +----------------+
+# +---------------+
 # | Hello, World! |
-# +----------------+
+# +---------------+
 ```
 
 ## Output Redirection

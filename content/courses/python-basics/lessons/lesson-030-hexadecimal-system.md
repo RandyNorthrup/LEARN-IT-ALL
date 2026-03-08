@@ -1,8 +1,8 @@
 ---
-id: "72-hexadecimal-system"
+id: lesson-030-hexadecimal-system
 title: "Hexadecimal Number System"
 chapterId: ch3-computing
-order: 3
+order: 4
 duration: 25
 objectives:
   - Understand the hexadecimal (base-16) number system

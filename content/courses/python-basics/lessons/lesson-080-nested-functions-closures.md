@@ -1,5 +1,5 @@
 ---
-id: 56-nested-functions-closures
+id: lesson-080-nested-functions-closures
 title: Nested Functions and Closures
 chapterId: ch6-functions
 order: 12

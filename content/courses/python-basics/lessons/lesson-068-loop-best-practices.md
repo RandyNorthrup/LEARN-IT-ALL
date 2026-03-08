@@ -1,8 +1,8 @@
 ---
-id: "103-loop-best-practices"
+id: lesson-068-loop-best-practices
 title: "Loop Best Practices and Anti-Patterns"
 chapterId: ch5-loops
-order: 14
+order: 11
 duration: 25
 objectives:
   - Learn loop best practices
@@ -126,20 +126,20 @@ high_value = filter_high_value(valid_orders)
 
 ```python
 # ❌ BAD - Modifying list during iteration
-numbers = [1, 2, 3, 4, 5, 6]
+numbers = [2, 4, 1, 6, 3, 5]
 for num in numbers:
     if num % 2 == 0:
         numbers.remove(num)  # Dangerous! Skips elements
 
-print(numbers)  # [1, 3, 5, 6] - Not what you expected!
+print(numbers)  # [4, 1, 3, 5] - 4 was not removed!
 
 # ✅ GOOD - Create new list
-numbers = [1, 2, 3, 4, 5, 6]
+numbers = [2, 4, 1, 6, 3, 5]
 numbers = [num for num in numbers if num % 2 != 0]
 print(numbers)  # [1, 3, 5]
 
 # ✅ GOOD - Iterate over copy
-numbers = [1, 2, 3, 4, 5, 6]
+numbers = [2, 4, 1, 6, 3, 5]
 for num in numbers[:]:  # Iterate over copy
     if num % 2 == 0:
         numbers.remove(num)

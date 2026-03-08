@@ -1,8 +1,8 @@
 ---
-id: "69-variable-unpacking-patterns"
+id: lesson-025-variable-unpacking-patterns
 title: "Variable Unpacking Patterns"
 chapterId: ch2-variables
-order: 12
+order: 11
 duration: 25
 objectives:
   - Master sequence unpacking with multiple assignment

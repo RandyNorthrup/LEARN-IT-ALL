@@ -1,24 +1,36 @@
 ---
-id: "lesson-086"
-title: "CompTIA Network+ N10-008 Exam Overview"
-chapterId: "chapter-10"
+id: lesson-086-exam-overview
+title: "CompTIA Network+ N10-009 Exam Overview"
+chapterId: ch10-exam-prep
 order: 86
-duration: 22
+duration: 40
 objectives:
-  - "Understand the CompTIA Network+ N10-008 exam format and structure"
+  - "Understand the CompTIA Network+ N10-009 exam format and structure"
   - "Learn about Performance-Based Questions (PBQs) and their requirements"
   - "Review exam domains and their weight in the certification"
   - "Develop effective time management strategies for the exam"
   - "Understand scoring, passing requirements, and retake policies"
 ---
 
-# CompTIA Network+ N10-008 Exam Overview
+# CompTIA Network+ N10-009 Exam Overview
 
 ## Introduction
 
-The CompTIA Network+ certification is a vendor-neutral credential that validates the essential knowledge and skills needed to design, configure, manage, and troubleshoot wired and wireless networks. The N10-008 exam is the current version (as of 2025) and is recognized globally as a foundational networking certification.
+The CompTIA Network+ certification is a vendor-neutral credential that validates the essential knowledge and skills needed to design, configure, manage, and troubleshoot wired and wireless networks. The N10-009 exam is recognized globally as a foundational networking certification.
 
 This lesson provides a comprehensive overview of the exam, including its format, structure, content domains, question types, scoring, and administrative details. Understanding what to expect on exam day reduces anxiety and helps you prepare effectively.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the CompTIA Network+ N10-009 exam format and structure
+- Learn about Performance-Based Questions (PBQs) and their requirements
+- Review exam domains and their weight in the certification
+- Develop effective time management strategies for the exam
+- Understand scoring, passing requirements, and retake policies
 
 ---
 
@@ -26,9 +38,9 @@ This lesson provides a comprehensive overview of the exam, including its format,
 
 ### Basic Information
 
-**Exam Code**: N10-008
+**Exam Code**: N10-009
 
-**Exam Name**: CompTIA Network+ (N10-008)
+**Exam Name**: CompTIA Network+ (N10-009)
 
 **Number of Questions**: Maximum 90 questions
 - Typically 75-85 questions
@@ -61,9 +73,9 @@ This lesson provides a comprehensive overview of the exam, including its format,
 
 ## Exam Domains and Weights
 
-The N10-008 exam is organized into five domains, each covering specific networking topics. Questions are distributed across these domains based on their assigned weights.
+The N10-009 exam is organized into five domains, each covering specific networking topics. Questions are distributed across these domains based on their assigned weights.
 
-### Domain 1: Networking Fundamentals (20%)
+### Domain 1: Networking Fundamentals (23%)
 
 **Coverage**: Foundational networking concepts and protocols
 
@@ -101,9 +113,9 @@ The N10-008 exam is organized into five domains, each covering specific networki
   - DNS (Domain Name System)
   - NTP (Network Time Protocol)
 
-**Typical Question Count**: ~15-18 questions (20% of 75-90 questions)
+**Typical Question Count**: ~17-21 questions (23% of 75-90 questions)
 
-### Domain 2: Network Implementations (19%)
+### Domain 2: Network Implementation (20%)
 
 **Coverage**: Network infrastructure design and implementation
 
@@ -134,9 +146,9 @@ The N10-008 exam is organized into five domains, each covering specific networki
   - Network segmentation
   - DMZ (Demilitarized Zone)
 
-**Typical Question Count**: ~14-17 questions (19% of exam)
+**Typical Question Count**: ~15-18 questions (20% of exam)
 
-### Domain 3: Network Operations (16%)
+### Domain 3: Network Operations (17%)
 
 **Coverage**: Network management, monitoring, and documentation
 
@@ -176,9 +188,9 @@ The N10-008 exam is organized into five domains, each covering specific networki
   - Password policies
   - Data Loss Prevention (DLP)
 
-**Typical Question Count**: ~12-14 questions (16% of exam)
+**Typical Question Count**: ~13-15 questions (17% of exam)
 
-### Domain 4: Network Security (19%)
+### Domain 4: Network Security (18%)
 
 **Coverage**: Network security concepts, devices, and best practices
 
@@ -221,9 +233,9 @@ The N10-008 exam is organized into five domains, each covering specific networki
   - Digital signatures and certificates
   - PKI (Public Key Infrastructure)
 
-**Typical Question Count**: ~14-17 questions (19% of exam)
+**Typical Question Count**: ~14-16 questions (18% of exam)
 
-### Domain 5: Network Troubleshooting (26%)
+### Domain 5: Network Troubleshooting (22%)
 
 **Coverage**: Troubleshooting methodology and common network issues
 
@@ -279,7 +291,7 @@ The N10-008 exam is organized into five domains, each covering specific networki
   - Wrong SSID or passphrase
   - Security type mismatches
 
-**Typical Question Count**: ~20-23 questions (26% of exam - largest domain)
+**Typical Question Count**: ~17-20 questions (22% of exam — largest domain)
 
 ---
 
@@ -471,7 +483,7 @@ Task: Drag protocols to matching functions
 - Score is **scaled**, not a raw percentage
 - Scaled scoring accounts for exam difficulty variations
 - Different exam versions may have slightly different difficulty
-- Your score is comparable across all N10-008 exam versions
+- Your score is comparable across all N10-009 exam versions
 
 ### Score Calculation
 
@@ -725,18 +737,18 @@ Advanced certs (CCNA, CISSP, AWS, Azure, etc.)
 ## Summary
 
 **Exam Overview**:
-- **Code**: N10-008
+- **Code**: N10-009
 - **Questions**: Maximum 90 (typically 75-85)
 - **Duration**: 90 minutes
 - **Passing**: 720/900 (scaled score)
 - **Cost**: ~$358 USD
 
 **Five Domains**:
-1. Networking Fundamentals (20%)
-2. Network Implementations (19%)
-3. Network Operations (16%)
-4. Network Security (19%)
-5. Network Troubleshooting (26%) - largest domain
+1. Networking Fundamentals (23%)
+2. Network Implementation (20%)
+3. Network Operations (17%)
+4. Network Security (18%)
+5. Network Troubleshooting (22%) — largest domain
 
 **Question Types**:
 - Multiple choice (single answer)
@@ -771,9 +783,143 @@ Understanding the exam format, content, and logistics prepares you for success o
 
 ---
 
-## Additional References
+## Practice Questions
 
-- **CompTIA Network+ N10-008 Exam Objectives**: https://www.comptia.org/certifications/network
+**Q1.** How many questions are on the CompTIA Network+ N10-009 exam at maximum?
+
+A) 60
+B) 75
+C) 90
+D) 120
+
+<details>
+<summary>Answer</summary>
+
+**C)** The CompTIA Network+ N10-009 exam contains a maximum of 90 questions, typically ranging from 75-85 questions depending on the exam version.
+</details>
+
+**Q2.** What is the passing score for the Network+ N10-009 exam?
+
+A) 650 on a scale of 100-900
+B) 720 on a scale of 100-900
+C) 75% correct
+D) 800 on a scale of 100-900
+
+<details>
+<summary>Answer</summary>
+
+**B)** The passing score is 720 on a scale of 100-900. This is a scaled score, not a direct percentage, and accounts for question difficulty.
+</details>
+
+**Q3.** Which exam domain carries the HIGHEST weight on the Network+ N10-009 exam?
+
+A) Networking Fundamentals (Domain 1)
+B) Network Implementations (Domain 2)
+C) Network Security (Domain 4)
+D) Network Troubleshooting (Domain 5)
+
+<details>
+<summary>Answer</summary>
+
+**D)** Network Troubleshooting (Domain 5) carries the highest weight at 22%, reflecting the importance of practical troubleshooting skills for network professionals.
+</details>
+
+**Q4.** What are Performance-Based Questions (PBQs) on the Network+ exam?
+
+A) Essay questions requiring written explanations
+B) Interactive simulations that test hands-on skills in a virtual environment
+C) Group discussion questions
+D) Questions that require coding
+
+<details>
+<summary>Answer</summary>
+
+**B)** PBQs are interactive simulations where candidates must perform tasks like configuring network devices, analyzing diagrams, or completing drag-and-drop exercises in a virtual environment.
+</details>
+
+**Q5.** How long do candidates have to complete the Network+ N10-009 exam?
+
+A) 60 minutes
+B) 90 minutes
+C) 120 minutes
+D) 180 minutes
+
+<details>
+<summary>Answer</summary>
+
+**B)** Candidates have 90 minutes to complete the exam, which includes all question types: multiple choice, multiple select, drag-and-drop, and performance-based questions.
+</details>
+
+**Q6.** What is the recommended strategy for handling PBQs during the exam?
+
+A) Complete them first since they are worth more points
+B) Skip them initially and return after completing multiple-choice questions
+C) Spend at least 30 minutes on each PBQ
+D) Guess randomly to save time
+
+<details>
+<summary>Answer</summary>
+
+**B)** The recommended strategy is to skip PBQs on the first pass and complete the multiple-choice questions first. Then return to PBQs with remaining time, as PBQs typically take longer and can consume disproportionate time.
+</details>
+
+**Q7.** How many domains does the Network+ N10-009 exam cover?
+
+A) 3
+B) 4
+C) 5
+D) 7
+
+<details>
+<summary>Answer</summary>
+
+**C)** The exam covers 5 domains: Networking Fundamentals, Network Implementations, Network Operations, Network Security, and Network Troubleshooting.
+</details>
+
+**Q8.** What is a prerequisite for taking the CompTIA Network+ exam?
+
+A) CompTIA A+ certification
+B) A college degree in IT
+C) 2 years of professional experience
+D) There are no formal prerequisites
+
+<details>
+<summary>Answer</summary>
+
+**D)** There are no formal prerequisites for the Network+ exam. However, CompTIA recommends having A+ certification or equivalent knowledge and 9-12 months of networking experience.
+</details>
+
+**Q9.** Which testing provider administers the CompTIA Network+ exam?
+
+A) Prometric
+B) Pearson VUE
+C) PSI
+D) Kryterion
+
+<details>
+<summary>Answer</summary>
+
+**B)** CompTIA exams are administered through Pearson VUE, which operates testing centers worldwide and also offers online proctored testing.
+</details>
+
+**Q10.** On the Network+ exam, what type of question may have MORE than one correct answer that must be selected?
+
+A) Performance-Based Question
+B) Drag-and-drop
+C) Multiple select
+D) True/False
+
+<details>
+<summary>Answer</summary>
+
+**C)** Multiple select questions require candidates to choose two or more correct answers from the options provided. The question typically states how many answers to select (e.g., "Choose TWO").
+</details>
+
+---
+
+## References
+
+- **CompTIA Network+ N10-009 Exam Objectives**: https://www.comptia.org/certifications/network
 - **Pearson VUE Testing Centers**: https://home.pearsonvue.com/comptia
 - **CompTIA CertMaster Practice**: Official practice questions
 - **Professor Messer's Network+ Course**: Free video series on YouTube

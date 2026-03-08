@@ -1,0 +1,56 @@
+{
+  "id": "exercise-212-style-guide",
+  "courseId": "python-basics",
+  "lessonId": "lesson-012-python-style-guide",
+  "chapterId": "ch1-intro",
+  "title": "PEP 8 Style Checker",
+  "description": "Build tools to check and fix common PEP 8 style violations. Implement functions to fix indentation by converting tabs to spaces, validate snake_case naming conventions, split long lines at word boundaries, and count style issues in code.",
+  "difficulty": "beginner",
+  "points": 15,
+  "language": "python",
+  "starterCode": "def fix_indentation(code_line, spaces=4):\n    \"\"\"Fix the indentation of a code line to use consistent spaces.\n\n    Converts any existing indentation (tabs or spaces) to the specified\n    number of spaces per indent level. Tabs count as `spaces` spaces.\n    Returns empty string for blank lines.\n\n    Args:\n        code_line: A line of code possibly with mixed indentation.\n        spaces: Number of spaces per indent level (default 4).\n\n    Returns:\n        The line with corrected indentation.\n    \"\"\"\n    pass\n\n\ndef is_snake_case(name):\n    \"\"\"Check if a name follows snake_case convention.\n\n    Valid snake_case: starts with lowercase letter, contains only\n    lowercase letters, digits, and single underscores between words.\n    No leading/trailing underscores, no consecutive underscores.\n\n    Args:\n        name: The identifier name to check.\n\n    Returns:\n        True if the name is valid snake_case, False otherwise.\n    \"\"\"\n    pass\n\n\ndef fix_line_length(line, max_len=79):\n    \"\"\"Split a long line into multiple lines at word boundaries.\n\n    If the line is within max_len, return it as a single-element list.\n    Otherwise, split at whitespace so each chunk is at most max_len chars.\n\n    Args:\n        line: The line to potentially split.\n        max_len: Maximum allowed line length (default 79).\n\n    Returns:\n        A list of strings, each within the max_len limit.\n    \"\"\"\n    pass\n\n\ndef count_style_issues(lines):\n    \"\"\"Count PEP 8 style issues in a list of code lines.\n\n    Checks for:\n    - trailing_whitespace: lines with trailing spaces or tabs\n    - tabs: lines containing tab characters\n    - long_lines: lines exceeding 79 characters\n\n    Args:\n        lines: List of code line strings to analyze.\n\n    Returns:\n        Dict with issue names as keys and counts as values.\n    \"\"\"\n    pass\n",
+  "solution": "import re\n\n\ndef fix_indentation(code_line, spaces=4):\n    stripped = code_line.lstrip()\n    if not stripped:\n        return ''\n    leading = code_line[:len(code_line) - len(stripped)]\n    indent_count = 0\n    for ch in leading:\n        if ch == '\\t':\n            indent_count += spaces\n        else:\n            indent_count += 1\n    level = indent_count // spaces\n    return ' ' * (level * spaces) + stripped\n\n\ndef is_snake_case(name):\n    if not name:\n        return False\n    return bool(re.match(r'^[a-z][a-z0-9]*(_[a-z0-9]+)*$', name))\n\n\ndef fix_line_length(line, max_len=79):\n    if len(line) <= max_len:\n        return [line]\n    words = line.split()\n    chunks = []\n    current = ''\n    for word in words:\n        if not current:\n            current = word\n        elif len(current) + 1 + len(word) <= max_len:\n            current += ' ' + word\n        else:\n            chunks.append(current)\n            current = word\n    if current:\n        chunks.append(current)\n    return chunks\n\n\ndef count_style_issues(lines):\n    issues = {'trailing_whitespace': 0, 'tabs': 0, 'long_lines': 0}\n    for line in lines:\n        if line != line.rstrip():\n            issues['trailing_whitespace'] += 1\n        if '\\t' in line:\n            issues['tabs'] += 1\n        if len(line) > 79:\n            issues['long_lines'] += 1\n    return issues\n",
+  "hints": [
+    "For fix_indentation, count leading whitespace treating each tab as `spaces` spaces, then calculate the indent level with integer division.",
+    "Use a regex like ^[a-z][a-z0-9]*(_[a-z0-9]+)*$ to validate snake_case — it ensures lowercase start, no leading/trailing underscores, and no double underscores.",
+    "For fix_line_length, iterate over words and build chunks, starting a new chunk when adding the next word would exceed max_len."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "fix_indentation converts tabs to spaces",
+      "validation": "assert fix_indentation('\\thello') == '    hello' and fix_indentation('\\t\\tworld') == '        world'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "is_snake_case validates naming conventions",
+      "validation": "assert is_snake_case('my_variable') == True and is_snake_case('myVariable') == False and is_snake_case('my_var_2') == True",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "fix_line_length splits long lines at word boundaries",
+      "validation": "assert fix_line_length('aaa bbb ccc ddd', 7) == ['aaa bbb', 'ccc ddd'] and fix_line_length('short', 79) == ['short']",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "count_style_issues detects trailing whitespace and tabs",
+      "validation": "assert count_style_issues(['hello  ', '\\tworld', 'ok']) == {'trailing_whitespace': 1, 'tabs': 1, 'long_lines': 0}",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "fix_indentation respects custom spaces parameter",
+      "validation": "assert fix_indentation('\\thello', spaces=2) == '  hello' and fix_indentation('', spaces=4) == ''",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "is_snake_case rejects edge cases",
+      "validation": "assert is_snake_case('a') == True and is_snake_case('') == False and is_snake_case('_private') == False and is_snake_case('has__double') == False",
+      "isHidden": true
+    }
+  ]
+}

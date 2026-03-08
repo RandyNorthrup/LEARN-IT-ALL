@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { Map, BookOpen, TrendingUp, Gamepad2, Trophy, Wrench } from 'lucide-react';
+import { dbHelpers } from '@/lib/db';
+import { getCourseData } from '@/lib/courseLoader';
+import fs from 'fs';
+import path from 'path';
 
 async function getSettings() {
   try {
-    const response = await fetch('http://localhost:3000/api/settings', {
-      cache: 'no-store',
-    });
-    if (response.ok) {
-      return await response.json();
-    }
+    const settings = dbHelpers.getSettings() as { displayName?: string } | undefined;
+    return settings || { displayName: 'Learner' };
   } catch (error) {
     console.error('Failed to fetch settings:', error);
   }
@@ -17,18 +17,18 @@ async function getSettings() {
 
 async function getStats() {
   try {
-    const response = await fetch('http://localhost:3000/api/progress', {
-      cache: 'no-store',
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        coursesStarted: data.coursesStarted || 0,
-        lessonsCompleted: data.lessonsCompleted || 0,
-        exercisesPassed: data.exercisesPassed || 0,
-        quizzesPassed: data.quizzesPassed || 0,
-      };
-    }
+    const stats = dbHelpers.getProgressStats() as {
+      coursesStarted?: number;
+      lessonsCompleted?: number;
+      exercisesPassed?: number;
+      quizzesPassed?: number;
+    } | undefined;
+    return {
+      coursesStarted: stats?.coursesStarted || 0,
+      lessonsCompleted: stats?.lessonsCompleted || 0,
+      exercisesPassed: stats?.exercisesPassed || 0,
+      quizzesPassed: stats?.quizzesPassed || 0,
+    };
   } catch (error) {
     console.error('Failed to fetch stats:', error);
   }
@@ -42,13 +42,10 @@ async function getStats() {
 
 async function getCourseCount() {
   try {
-    const response = await fetch('http://localhost:3000/api/courses', {
-      cache: 'no-store',
-    });
-    if (response.ok) {
-      const courses = await response.json();
-      return courses.length;
-    }
+    const coursesDir = path.join(process.cwd(), 'content', 'courses');
+    if (!fs.existsSync(coursesDir)) return 0;
+    const dirs = fs.readdirSync(coursesDir, { withFileTypes: true });
+    return dirs.filter(d => d.isDirectory()).length;
   } catch (error) {
     console.error('Failed to fetch course count:', error);
   }

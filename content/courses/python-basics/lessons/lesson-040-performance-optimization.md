@@ -1,8 +1,8 @@
 ---
-id: "82-performance-optimization"
+id: lesson-040-performance-optimization
 title: "Performance and Optimization Concepts"
 chapterId: ch3-computing
-order: 13
+order: 14
 duration: 30
 objectives:
   - Understand performance measurement and profiling

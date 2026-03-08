@@ -1,8 +1,8 @@
 ---
-id: "80-algorithms-intro"
+id: lesson-038-algorithms-intro
 title: "Introduction to Algorithms"
 chapterId: ch3-computing
-order: 11
+order: 12
 duration: 30
 objectives:
   - Understand what algorithms are and why they matter

@@ -1,8 +1,8 @@
 ---
-id: practice-projects
+id: lesson-180-practice-projects
 title: Practice Projects
 chapterId: ch13-practice
-order: 42
+order: 15
 duration: 60
 objectives:
   - Apply all Python fundamentals to real projects
@@ -94,110 +94,111 @@ Create a command-line to-do list application.
 ```python
 import json
 
-class TodoList:
-    """Simple to-do list manager"""
-    
-    def __init__(self, filename="todos.json"):
-        self.filename = filename
-        self.tasks = self.load_tasks()
-    
-    def load_tasks(self):
-        """Load tasks from file"""
-        try:
-            with open(self.filename, 'r') as file:
-                return json.load(file)
-        except FileNotFoundError:
-            return []
-    
-    def save_tasks(self):
-        """Save tasks to file"""
-        with open(self.filename, 'w') as file:
-            json.dump(self.tasks, file, indent=2)
-    
-    def add_task(self, description):
-        """Add new task"""
-        task = {
-            "id": len(self.tasks) + 1,
-            "description": description,
-            "completed": False
-        }
-        self.tasks.append(task)
-        self.save_tasks()
-        print(f"Added task: {description}")
-    
-    def view_tasks(self):
-        """Display all tasks"""
-        if not self.tasks:
-            print("No tasks yet!")
+
+def load_tasks(filename="todos.json"):
+    """Load tasks from file"""
+    try:
+        with open(filename, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+
+def save_tasks(tasks, filename="todos.json"):
+    """Save tasks to file"""
+    with open(filename, 'w') as file:
+        json.dump(tasks, file, indent=2)
+
+
+def add_task(tasks, description):
+    """Add new task"""
+    task = {
+        "id": len(tasks) + 1,
+        "description": description,
+        "completed": False
+    }
+    tasks.append(task)
+    save_tasks(tasks)
+    print(f"Added task: {description}")
+
+
+def view_tasks(tasks):
+    """Display all tasks"""
+    if not tasks:
+        print("No tasks yet!")
+        return
+
+    print("\nYour Tasks:")
+    for task in tasks:
+        status = "✓" if task["completed"] else " "
+        print(f"[{status}] {task['id']}. {task['description']}")
+    print()
+
+
+def complete_task(tasks, task_id):
+    """Mark task as complete"""
+    for task in tasks:
+        if task["id"] == task_id:
+            task["completed"] = True
+            save_tasks(tasks)
+            print(f"Completed: {task['description']}")
             return
-        
-        print("\nYour Tasks:")
-        for task in self.tasks:
-            status = "✓" if task["completed"] else " "
-            print(f"[{status}] {task['id']}. {task['description']}")
-        print()
-    
-    def complete_task(self, task_id):
-        """Mark task as complete"""
-        for task in self.tasks:
-            if task["id"] == task_id:
-                task["completed"] = True
-                self.save_tasks()
-                print(f"Completed: {task['description']}")
-                return
-        print("Task not found!")
-    
-    def delete_task(self, task_id):
-        """Delete task"""
-        for i, task in enumerate(self.tasks):
-            if task["id"] == task_id:
-                deleted = self.tasks.pop(i)
-                self.save_tasks()
-                print(f"Deleted: {deleted['description']}")
-                return
-        print("Task not found!")
-    
-    def run(self):
-        """Main program loop"""
-        while True:
-            print("\n=== To-Do List Manager ===")
-            print("1. View tasks")
-            print("2. Add task")
-            print("3. Complete task")
-            print("4. Delete task")
-            print("5. Exit")
-            
-            choice = input("\nEnter choice (1-5): ")
-            
-            if choice == "1":
-                self.view_tasks()
-            elif choice == "2":
-                description = input("Enter task description: ")
-                self.add_task(description)
-            elif choice == "3":
-                self.view_tasks()
-                try:
-                    task_id = int(input("Enter task ID to complete: "))
-                    self.complete_task(task_id)
-                except ValueError:
-                    print("Invalid ID!")
-            elif choice == "4":
-                self.view_tasks()
-                try:
-                    task_id = int(input("Enter task ID to delete: "))
-                    self.delete_task(task_id)
-                except ValueError:
-                    print("Invalid ID!")
-            elif choice == "5":
-                print("Goodbye!")
-                break
-            else:
-                print("Invalid choice!")
+    print("Task not found!")
+
+
+def delete_task(tasks, task_id):
+    """Delete task"""
+    for i, task in enumerate(tasks):
+        if task["id"] == task_id:
+            deleted = tasks.pop(i)
+            save_tasks(tasks)
+            print(f"Deleted: {deleted['description']}")
+            return
+    print("Task not found!")
+
+
+def run_todo_app():
+    """Main program loop"""
+    tasks = load_tasks()
+
+    while True:
+        print("\n=== To-Do List Manager ===")
+        print("1. View tasks")
+        print("2. Add task")
+        print("3. Complete task")
+        print("4. Delete task")
+        print("5. Exit")
+
+        choice = input("\nEnter choice (1-5): ")
+
+        if choice == "1":
+            view_tasks(tasks)
+        elif choice == "2":
+            description = input("Enter task description: ")
+            add_task(tasks, description)
+        elif choice == "3":
+            view_tasks(tasks)
+            try:
+                task_id = int(input("Enter task ID to complete: "))
+                complete_task(tasks, task_id)
+            except ValueError:
+                print("Invalid ID!")
+        elif choice == "4":
+            view_tasks(tasks)
+            try:
+                task_id = int(input("Enter task ID to delete: "))
+                delete_task(tasks, task_id)
+            except ValueError:
+                print("Invalid ID!")
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice!")
 
 # Run the app
 if __name__ == "__main__":
-    app = TodoList()
-    app.run()
+    run_todo_app()
 ```
 
 ### Enhancements
@@ -311,118 +312,107 @@ Build an interactive calculator with history.
 ### Solution
 
 ```python
-class Calculator:
-    """Simple calculator with history"""
-    
-    def __init__(self):
-        self.history = []
-    
-    def add(self, a, b):
-        """Addition"""
-        result = a + b
-        self.record_operation(f"{a} + {b} = {result}")
-        return result
-    
-    def subtract(self, a, b):
-        """Subtraction"""
-        result = a - b
-        self.record_operation(f"{a} - {b} = {result}")
-        return result
-    
-    def multiply(self, a, b):
-        """Multiplication"""
-        result = a * b
-        self.record_operation(f"{a} × {b} = {result}")
-        return result
-    
-    def divide(self, a, b):
-        """Division"""
-        try:
-            result = a / b
-            self.record_operation(f"{a} ÷ {b} = {result}")
-            return result
-        except ZeroDivisionError:
-            print("Error: Cannot divide by zero!")
-            return None
-    
-    def power(self, a, b):
-        """Exponentiation"""
-        result = a ** b
-        self.record_operation(f"{a} ^ {b} = {result}")
-        return result
-    
-    def record_operation(self, operation):
-        """Add operation to history"""
-        self.history.append(operation)
-    
-    def show_history(self):
-        """Display calculation history"""
-        if not self.history:
-            print("No history yet!")
-            return
-        
-        print("\n=== Calculation History ===")
-        for i, operation in enumerate(self.history, 1):
-            print(f"{i}. {operation}")
-        print()
-    
-    def clear_history(self):
-        """Clear calculation history"""
-        self.history = []
-        print("History cleared!")
-    
-    def run(self):
-        """Main calculator loop"""
-        print("=== Simple Calculator ===")
-        
-        while True:
-            print("\nOperations:")
-            print("1. Add")
-            print("2. Subtract")
-            print("3. Multiply")
-            print("4. Divide")
-            print("5. Power")
-            print("6. Show history")
-            print("7. Clear history")
-            print("8. Exit")
-            
-            choice = input("\nChoose operation (1-8): ")
-            
-            if choice in ["1", "2", "3", "4", "5"]:
-                try:
-                    a = float(input("Enter first number: "))
-                    b = float(input("Enter second number: "))
-                    
-                    if choice == "1":
-                        result = self.add(a, b)
-                    elif choice == "2":
-                        result = self.subtract(a, b)
-                    elif choice == "3":
-                        result = self.multiply(a, b)
-                    elif choice == "4":
-                        result = self.divide(a, b)
-                    elif choice == "5":
-                        result = self.power(a, b)
-                    
-                    if result is not None:
-                        print(f"Result: {result}")
-                
-                except ValueError:
-                    print("Invalid input! Please enter numbers.")
-            
-            elif choice == "6":
-                self.show_history()
-            elif choice == "7":
-                self.clear_history()
-            elif choice == "8":
-                print("Goodbye!")
-                break
-            else:
-                print("Invalid choice!")
+def calculator_add(a, b):
+    """Addition"""
+    return a + b
+
+
+def calculator_subtract(a, b):
+    """Subtraction"""
+    return a - b
+
+
+def calculator_multiply(a, b):
+    """Multiplication"""
+    return a * b
+
+
+def calculator_divide(a, b):
+    """Division"""
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("Error: Cannot divide by zero!")
+        return None
+
+
+def calculator_power(a, b):
+    """Exponentiation"""
+    return a ** b
+
+
+def format_operation(a, b, operator, result):
+    """Format an operation as a readable string"""
+    return f"{a} {operator} {b} = {result}"
+
+
+def show_history(history):
+    """Display calculation history"""
+    if not history:
+        print("No history yet!")
+        return
+
+    print("\n=== Calculation History ===")
+    for i, operation in enumerate(history, 1):
+        print(f"{i}. {operation}")
+    print()
+
+
+def run_calculator():
+    """Main calculator loop"""
+    print("=== Simple Calculator ===")
+    history = []
+
+    operations = {
+        "1": ("Add", "+", calculator_add),
+        "2": ("Subtract", "-", calculator_subtract),
+        "3": ("Multiply", "×", calculator_multiply),
+        "4": ("Divide", "÷", calculator_divide),
+        "5": ("Power", "^", calculator_power),
+    }
+
+    while True:
+        print("\nOperations:")
+        print("1. Add")
+        print("2. Subtract")
+        print("3. Multiply")
+        print("4. Divide")
+        print("5. Power")
+        print("6. Show history")
+        print("7. Clear history")
+        print("8. Exit")
+
+        choice = input("\nChoose operation (1-8): ")
+
+        if choice in operations:
+            try:
+                a = float(input("Enter first number: "))
+                b = float(input("Enter second number: "))
+
+                name, operator, func = operations[choice]
+                result = func(a, b)
+
+                if result is not None:
+                    record = format_operation(a, b, operator, result)
+                    history.append(record)
+                    print(f"Result: {result}")
+
+            except ValueError:
+                print("Invalid input! Please enter numbers.")
+
+        elif choice == "6":
+            show_history(history)
+        elif choice == "7":
+            history = []
+            print("History cleared!")
+        elif choice == "8":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice!")
 
 if __name__ == "__main__":
-    calc = Calculator()
-    calc.run()
+    run_calculator()
 ```
 
 ## Key Learning Points

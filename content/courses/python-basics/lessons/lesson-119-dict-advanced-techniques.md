@@ -1,5 +1,5 @@
 ---
-id: "129-dict-advanced-techniques"
+id: lesson-119-dict-advanced-techniques
 title: "Advanced Dictionary Techniques"
 chapterId: ch9-dictionaries
 order: 10
@@ -45,32 +45,33 @@ print(list(ordered.keys()))  # ['a', 'b']
 ordered.popitem(last=False)  # Remove from front
 print(list(ordered.keys()))  # ['b']
 
-# Use case: LRU Cache implementation
-class LRUCache:
-    def __init__(self, capacity):
-        self.cache = OrderedDict()
-        self.capacity = capacity
-    
-    def get(self, key):
-        if key not in self.cache:
-            return None
-        self.cache.move_to_end(key)  # Mark as recently used
-        return self.cache[key]
-    
-    def put(self, key, value):
-        if key in self.cache:
-            self.cache.move_to_end(key)
-        self.cache[key] = value
-        if len(self.cache) > self.capacity:
-            self.cache.popitem(last=False)  # Remove least recently used
+# Use case: LRU Cache implementation using functions
+def create_lru_cache(capacity):
+    """Create a new LRU cache"""
+    return {"_store": OrderedDict(), "_capacity": capacity}
 
-cache = LRUCache(3)
-cache.put("a", 1)
-cache.put("b", 2)
-cache.put("c", 3)
-cache.get("a")  # Access "a"
-cache.put("d", 4)  # Evicts "b" (least recently used)
-print(list(cache.cache.keys()))  # ['c', 'a', 'd']
+def lru_get(cache, key):
+    """Get value, mark as recently used"""
+    if key not in cache["_store"]:
+        return None
+    cache["_store"].move_to_end(key)  # Mark as recently used
+    return cache["_store"][key]
+
+def lru_put(cache, key, value):
+    """Put value, evict if over capacity"""
+    if key in cache["_store"]:
+        cache["_store"].move_to_end(key)
+    cache["_store"][key] = value
+    if len(cache["_store"]) > cache["_capacity"]:
+        cache["_store"].popitem(last=False)  # Remove least recently used
+
+cache = create_lru_cache(3)
+lru_put(cache, "a", 1)
+lru_put(cache, "b", 2)
+lru_put(cache, "c", 3)
+lru_get(cache, "a")  # Access "a"
+lru_put(cache, "d", 4)  # Evicts "b" (least recently used)
+print(list(cache["_store"].keys()))  # ['c', 'a', 'd']
 ```
 
 ## ChainMap - Layered Lookups
@@ -180,62 +181,60 @@ different = dict1.items() ^ dict2.items()
 print(different)  # {('b', 2), ('b', 20)}
 ```
 
-## Dictionary Subclassing
+## Dictionary Subclassing Alternatives
 
 ```python
-# Create custom dictionary behavior
-class DefaultDict(dict):
-    """Dict that returns a default value for missing keys"""
-    def __init__(self, default_value, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.default_value = default_value
-    
-    def __missing__(self, key):
-        """Called when key not found"""
-        return self.default_value
+# Custom dictionary behavior using functions and built-in types
 
-d = DefaultDict("N/A", {"a": 1, "b": 2})
-print(d["a"])  # 1
+# Default value for missing keys — use collections.defaultdict
+from collections import defaultdict
+
+d = defaultdict(lambda: "N/A", {"a": 1, "b": 2})
+print(d["a"])        # 1
 print(d["missing"])  # N/A
 
-# Case-insensitive dictionary
-class CaseInsensitiveDict(dict):
-    def __setitem__(self, key, value):
-        super().__setitem__(key.lower(), value)
-    
-    def __getitem__(self, key):
-        return super().__getitem__(key.lower())
-    
-    def __contains__(self, key):
-        return super().__contains__(key.lower())
+# Or use a helper function with a regular dict
+def get_with_default(d, key, default_value="N/A"):
+    """Get value with a default for missing keys"""
+    return d.get(key, default_value)
 
-d = CaseInsensitiveDict()
-d["Name"] = "Alice"
-print(d["name"])  # Alice
-print(d["NAME"])  # Alice
-print("NaMe" in d)  # True
+plain = {"a": 1, "b": 2}
+print(get_with_default(plain, "a"))        # 1
+print(get_with_default(plain, "missing"))  # N/A
 
-# Immutable dictionary
-class FrozenDict(dict):
-    def __setitem__(self, key, value):
-        raise TypeError("FrozenDict is immutable")
-    
-    def __delitem__(self, key):
-        raise TypeError("FrozenDict is immutable")
-    
-    def __hash__(self):
-        return hash(frozenset(self.items()))
+# Case-insensitive dictionary using helper functions
+def ci_set(d, key, value):
+    """Set key-value with case-insensitive key"""
+    d[key.lower()] = value
 
-frozen = FrozenDict({"a": 1, "b": 2})
+def ci_get(d, key):
+    """Get value with case-insensitive key"""
+    return d[key.lower()]
+
+def ci_contains(d, key):
+    """Check membership case-insensitively"""
+    return key.lower() in d
+
+d = {}
+ci_set(d, "Name", "Alice")
+print(ci_get(d, "name"))  # Alice
+print(ci_get(d, "NAME"))  # Alice
+print(ci_contains(d, "NaMe"))  # True
+
+# Immutable (read-only) dictionary using types.MappingProxyType
+from types import MappingProxyType
+
+mutable_data = {"a": 1, "b": 2}
+frozen = MappingProxyType(mutable_data)
 print(frozen["a"])  # 1
 
 try:
     frozen["c"] = 3
 except TypeError as e:
-    print(e)  # FrozenDict is immutable
+    print(e)  # 'mappingproxy' object does not support item assignment
 
-# Can use as dict key!
-outer = {frozen: "value"}
+# MappingProxyType provides a read-only view of a dict
+# Useful when you want to expose data without allowing modification
 ```
 
 ## Dictionary Unpacking Patterns

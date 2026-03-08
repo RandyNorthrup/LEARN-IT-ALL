@@ -1,8 +1,8 @@
 ---
-id: "160-test-fixtures"
+id: lesson-161-test-fixtures
 title: "Test Fixtures and Setup"
 chapterId: ch12-testing
-order: 9
+order: 7
 duration: 25
 objectives:
   - Create reusable test fixtures
@@ -172,27 +172,25 @@ def test_user_creation(user_data):
 ```python
 import pytest
 
-class TestUserService:
-    """Test class with setup/teardown"""
-    
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        """Runs before each test method"""
-        self.service = UserService()
-        self.service.connect()
-        yield
-        # Teardown
-        self.service.disconnect()
-        self.service.clear_cache()
-    
-    def test_create_user(self):
-        user = self.service.create_user("alice")
-        assert user.username == "alice"
-    
-    def test_get_user(self):
-        self.service.create_user("bob")
-        user = self.service.get_user("bob")
-        assert user is not None
+# Per-test setup/teardown with fixture
+@pytest.fixture(autouse=True)
+def user_service():
+    """Runs before each test, yields service, then cleans up"""
+    service = UserService()
+    service.connect()
+    yield service
+    # Teardown
+    service.disconnect()
+    service.clear_cache()
+
+def test_create_user(user_service):
+    user = user_service.create_user("alice")
+    assert user.username == "alice"
+
+def test_get_user(user_service):
+    user_service.create_user("bob")
+    user = user_service.get_user("bob")
+    assert user is not None
 
 # Module-level setup/teardown
 def setup_module(module):
@@ -205,22 +203,18 @@ def teardown_module(module):
     print("\nTearing down module")
     del module.test_data
 
-# Class-level setup/teardown
-class TestDatabase:
-    @classmethod
-    def setup_class(cls):
-        """Runs once before all tests in class"""
-        cls.db = Database(":memory:")
-        cls.db.create_tables()
-    
-    @classmethod
-    def teardown_class(cls):
-        """Runs once after all tests in class"""
-        cls.db.close()
-    
-    def test_insert(self):
-        self.db.insert("users", {"name": "alice"})
-        assert self.db.count("users") == 1
+# Module-scoped fixture (shared across all tests in module)
+@pytest.fixture(scope="module")
+def database():
+    """Create database once, close after all tests"""
+    db = Database(":memory:")
+    db.create_tables()
+    yield db
+    db.close()
+
+def test_insert(database):
+    database.insert("users", {"name": "alice"})
+    assert database.count("users") == 1
 ```
 
 ## Temporary Files and Directories

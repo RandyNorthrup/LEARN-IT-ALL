@@ -1,8 +1,8 @@
 ---
-id: "77-input-output-devices"
+id: lesson-035-input-output-devices
 title: "Input and Output Devices"
 chapterId: ch3-computing
-order: 8
+order: 9
 duration: 25
 objectives:
   - Understand how input devices work and communicate with computers
@@ -30,59 +30,53 @@ def simulate_keyboard():
         'ENTER': 0x1C, 'SPACE': 0x39, 'SHIFT': 0x2A, 'CTRL': 0x1D,
     }
     
-    class Keyboard:
-        """Simplified keyboard simulation."""
+    # Keyboard state as a dictionary
+    keyboard = {
+        'keys_pressed': set(),
+        'modifiers': {'shift': False, 'ctrl': False, 'alt': False},
+    }
+    
+    def key_down(kb, key):
+        """Simulate key press."""
+        kb['keys_pressed'].add(key)
         
-        def __init__(self):
-            self.keys_pressed = set()
-            self.modifiers = {'shift': False, 'ctrl': False, 'alt': False}
+        # Handle modifiers
+        if key.upper() == 'SHIFT':
+            kb['modifiers']['shift'] = True
+        elif key.upper() == 'CTRL':
+            kb['modifiers']['ctrl'] = True
         
-        def key_down(self, key):
-            """Simulate key press."""
-            self.keys_pressed.add(key)
-            
-            # Handle modifiers
-            if key.upper() == 'SHIFT':
-                self.modifiers['shift'] = True
-            elif key.upper() == 'CTRL':
-                self.modifiers['ctrl'] = True
-            
-            print(f"Key down: {key} (scan code: {scan_codes.get(key.upper(), '0x00')})")
+        print(f"Key down: {key} (scan code: {scan_codes.get(key.upper(), '0x00')})")
+    
+    def key_up(kb, key):
+        """Simulate key release."""
+        kb['keys_pressed'].discard(key)
         
-        def key_up(self, key):
-            """Simulate key release."""
-            self.keys_pressed.discard(key)
-            
-            # Handle modifiers
-            if key.upper() == 'SHIFT':
-                self.modifiers['shift'] = False
-            elif key.upper() == 'CTRL':
-                self.modifiers['ctrl'] = False
-            
-            print(f"Key up: {key}")
+        # Handle modifiers
+        if key.upper() == 'SHIFT':
+            kb['modifiers']['shift'] = False
+        elif key.upper() == 'CTRL':
+            kb['modifiers']['ctrl'] = False
         
-        def get_character(self, key):
-            """Convert key to character considering modifiers."""
-            if self.modifiers['shift']:
-                return key.upper()
-            return key.lower()
-        
-        def is_modifier_pressed(self, modifier):
-            """Check if modifier key is pressed."""
-            return self.modifiers.get(modifier, False)
+        print(f"Key up: {key}")
+    
+    def get_character(kb, key):
+        """Convert key to character considering modifiers."""
+        if kb['modifiers']['shift']:
+            return key.upper()
+        return key.lower()
 
     # Simulate typing "Hello"
-    keyboard = Keyboard()
     
     print("Simulating typing 'Hello':")
     keys = ['SHIFT', 'H', 'SHIFT', 'e', 'l', 'l', 'o']
     
     for key in keys:
-        keyboard.key_down(key)
+        key_down(keyboard, key)
         if key not in ['SHIFT', 'CTRL', 'ALT']:
-            char = keyboard.get_character(key)
+            char = get_character(keyboard, key)
             print(f"  Character: '{char}'")
-        keyboard.key_up(key)
+        key_up(keyboard, key)
         print()
 
 simulate_keyboard()
@@ -91,169 +85,167 @@ simulate_keyboard()
 ### Mouse
 
 ```python
-class Mouse:
-    """Simulate mouse input."""
+def create_mouse(screen_width=1920, screen_height=1080):
+    """Create a mouse input simulator."""
+    return {
+        'x': 0,
+        'y': 0,
+        'screen_width': screen_width,
+        'screen_height': screen_height,
+        'left_button': False,
+        'right_button': False,
+        'middle_button': False,
+    }
+
+def mouse_move(mouse, dx, dy):
+    """Move mouse by delta (relative movement)."""
+    mouse['x'] += dx
+    mouse['y'] += dy
     
-    def __init__(self, screen_width=1920, screen_height=1080):
-        self.x = 0
-        self.y = 0
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.left_button = False
-        self.right_button = False
-        self.middle_button = False
+    # Constrain to screen bounds
+    mouse['x'] = max(0, min(mouse['x'], mouse['screen_width'] - 1))
+    mouse['y'] = max(0, min(mouse['y'], mouse['screen_height'] - 1))
     
-    def move(self, dx, dy):
-        """Move mouse by delta (relative movement)."""
-        self.x += dx
-        self.y += dy
-        
-        # Constrain to screen bounds
-        self.x = max(0, min(self.x, self.screen_width - 1))
-        self.y = max(0, min(self.y, self.screen_height - 1))
-        
-        print(f"Mouse moved to ({self.x}, {self.y})")
+    print(f"Mouse moved to ({mouse['x']}, {mouse['y']})")
+
+def mouse_move_to(mouse, x, y):
+    """Move mouse to absolute position."""
+    mouse['x'] = max(0, min(x, mouse['screen_width'] - 1))
+    mouse['y'] = max(0, min(y, mouse['screen_height'] - 1))
     
-    def move_to(self, x, y):
-        """Move mouse to absolute position."""
-        self.x = max(0, min(x, self.screen_width - 1))
-        self.y = max(0, min(y, self.screen_height - 1))
-        
-        print(f"Mouse at ({self.x}, {self.y})")
+    print(f"Mouse at ({mouse['x']}, {mouse['y']})")
+
+def mouse_button_down(mouse, button='left'):
+    """Simulate button press."""
+    if button == 'left':
+        mouse['left_button'] = True
+    elif button == 'right':
+        mouse['right_button'] = True
+    elif button == 'middle':
+        mouse['middle_button'] = True
     
-    def click(self, button='left'):
-        """Simulate mouse click."""
-        print(f"{button.capitalize()} click at ({self.x}, {self.y})")
-        
-        # Button down, then up
-        self.button_down(button)
-        self.button_up(button)
+    print(f"  {button} button down")
+
+def mouse_button_up(mouse, button='left'):
+    """Simulate button release."""
+    if button == 'left':
+        mouse['left_button'] = False
+    elif button == 'right':
+        mouse['right_button'] = False
+    elif button == 'middle':
+        mouse['middle_button'] = False
     
-    def button_down(self, button='left'):
-        """Simulate button press."""
-        if button == 'left':
-            self.left_button = True
-        elif button == 'right':
-            self.right_button = True
-        elif button == 'middle':
-            self.middle_button = True
-        
-        print(f"  {button} button down")
-    
-    def button_up(self, button='left'):
-        """Simulate button release."""
-        if button == 'left':
-            self.left_button = False
-        elif button == 'right':
-            self.right_button = False
-        elif button == 'middle':
-            self.middle_button = False
-        
-        print(f"  {button} button up")
-    
-    def scroll(self, amount):
-        """Simulate scroll wheel."""
-        direction = "up" if amount > 0 else "down"
-        print(f"Scroll {direction} by {abs(amount)}")
-    
-    def double_click(self):
-        """Simulate double click."""
-        print(f"Double click at ({self.x}, {self.y})")
-        self.click('left')
-        self.click('left')
+    print(f"  {button} button up")
+
+def mouse_click(mouse, button='left'):
+    """Simulate mouse click."""
+    print(f"{button.capitalize()} click at ({mouse['x']}, {mouse['y']})")
+    mouse_button_down(mouse, button)
+    mouse_button_up(mouse, button)
+
+def mouse_scroll(mouse, amount):
+    """Simulate scroll wheel."""
+    direction = "up" if amount > 0 else "down"
+    print(f"Scroll {direction} by {abs(amount)}")
+
+def mouse_double_click(mouse):
+    """Simulate double click."""
+    print(f"Double click at ({mouse['x']}, {mouse['y']})")
+    mouse_click(mouse, 'left')
+    mouse_click(mouse, 'left')
 
 # Simulate mouse operations
-mouse = Mouse()
+mouse = create_mouse()
 
 print("Mouse Operations:")
-mouse.move_to(100, 200)
-mouse.click('left')
-mouse.move(50, 30)  # Relative movement
-mouse.click('right')
-mouse.scroll(3)
-mouse.double_click()
+mouse_move_to(mouse, 100, 200)
+mouse_click(mouse, 'left')
+mouse_move(mouse, 50, 30)  # Relative movement
+mouse_click(mouse, 'right')
+mouse_scroll(mouse, 3)
+mouse_double_click(mouse)
 ```
 
 ### Touchscreen
 
 ```python
-class Touchscreen:
-    """Simulate touchscreen input."""
+def create_touchscreen(width=1920, height=1080):
+    """Create a touchscreen input simulator."""
+    return {
+        'width': width,
+        'height': height,
+        'active_touches': {},
+        'next_touch_id': 0,
+    }
+
+def touch_down(ts, x, y):
+    """Start a touch."""
+    touch_id = ts['next_touch_id']
+    ts['next_touch_id'] += 1
     
-    def __init__(self, width=1920, height=1080):
-        self.width = width
-        self.height = height
-        self.active_touches = {}
-        self.next_touch_id = 0
+    ts['active_touches'][touch_id] = {'x': x, 'y': y, 'start': (x, y)}
+    print(f"Touch {touch_id} down at ({x}, {y})")
     
-    def touch_down(self, x, y):
-        """Start a touch."""
-        touch_id = self.next_touch_id
-        self.next_touch_id += 1
+    return touch_id
+
+def touch_move(ts, touch_id, x, y):
+    """Move an active touch."""
+    if touch_id in ts['active_touches']:
+        old_x = ts['active_touches'][touch_id]['x']
+        old_y = ts['active_touches'][touch_id]['y']
         
-        self.active_touches[touch_id] = {'x': x, 'y': y, 'start': (x, y)}
-        print(f"Touch {touch_id} down at ({x}, {y})")
+        ts['active_touches'][touch_id]['x'] = x
+        ts['active_touches'][touch_id]['y'] = y
         
-        return touch_id
-    
-    def touch_move(self, touch_id, x, y):
-        """Move an active touch."""
-        if touch_id in self.active_touches:
-            old_x = self.active_touches[touch_id]['x']
-            old_y = self.active_touches[touch_id]['y']
-            
-            self.active_touches[touch_id]['x'] = x
-            self.active_touches[touch_id]['y'] = y
-            
-            dx = x - old_x
-            dy = y - old_y
-            
-            print(f"Touch {touch_id} moved to ({x}, {y}) [Δ: ({dx}, {dy})]")
-    
-    def touch_up(self, touch_id):
-        """End a touch."""
-        if touch_id in self.active_touches:
-            touch = self.active_touches[touch_id]
-            start_x, start_y = touch['start']
-            end_x, end_y = touch['x'], touch['y']
-            
-            # Calculate swipe distance
-            distance = ((end_x - start_x)**2 + (end_y - start_y)**2)**0.5
-            
-            if distance > 50:
-                print(f"Touch {touch_id} up - SWIPE detected (distance: {distance:.0f})")
-            else:
-                print(f"Touch {touch_id} up - TAP at ({end_x}, {end_y})")
-            
-            del self.active_touches[touch_id]
-    
-    def pinch(self, x1, y1, x2, y2):
-        """Simulate pinch gesture (zoom)."""
-        distance = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
-        center_x = (x1 + x2) // 2
-        center_y = (y1 + y2) // 2
+        dx = x - old_x
+        dy = y - old_y
         
-        print(f"Pinch gesture at ({center_x}, {center_y})")
-        print(f"  Distance between fingers: {distance:.0f} pixels")
+        print(f"Touch {touch_id} moved to ({x}, {y}) [Δ: ({dx}, {dy})]")
+
+def touch_up(ts, touch_id):
+    """End a touch."""
+    if touch_id in ts['active_touches']:
+        touch_info = ts['active_touches'][touch_id]
+        start_x, start_y = touch_info['start']
+        end_x, end_y = touch_info['x'], touch_info['y']
+        
+        # Calculate swipe distance
+        distance = ((end_x - start_x)**2 + (end_y - start_y)**2)**0.5
+        
+        if distance > 50:
+            print(f"Touch {touch_id} up - SWIPE detected (distance: {distance:.0f})")
+        else:
+            print(f"Touch {touch_id} up - TAP at ({end_x}, {end_y})")
+        
+        del ts['active_touches'][touch_id]
+
+def touch_pinch(x1, y1, x2, y2):
+    """Simulate pinch gesture (zoom)."""
+    distance = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+    center_x = (x1 + x2) // 2
+    center_y = (y1 + y2) // 2
+    
+    print(f"Pinch gesture at ({center_x}, {center_y})")
+    print(f"  Distance between fingers: {distance:.0f} pixels")
 
 # Simulate touch operations
-touch = Touchscreen()
+ts = create_touchscreen()
 
 print("\nTouch Operations:")
 # Single tap
-tid = touch.touch_down(500, 300)
-touch.touch_up(tid)
+tid = touch_down(ts, 500, 300)
+touch_up(ts, tid)
 
 print()
 # Swipe
-tid = touch.touch_down(100, 500)
-touch.touch_move(tid, 200, 500)
-touch.touch_move(tid, 400, 500)
-touch.touch_up(tid)
+tid = touch_down(ts, 100, 500)
+touch_move(ts, tid, 200, 500)
+touch_move(ts, tid, 400, 500)
+touch_up(ts, tid)
 
 print()
 # Pinch zoom
-touch.pinch(400, 500, 600, 700)
+touch_pinch(400, 500, 600, 700)
 ```
 
 ## Output Devices
@@ -304,190 +296,190 @@ def explain_display_technology():
 
 explain_display_technology()
 
-class Display:
-    """Simulate display output."""
+def create_display(width, height, refresh_rate=60):
+    """Create a display output simulator."""
+    return {
+        'width': width,
+        'height': height,
+        'refresh_rate': refresh_rate,
+        'frame_buffer': [[(0, 0, 0) for _ in range(width)] for _ in range(height)],
+        'frames_rendered': 0,
+    }
+
+def display_set_pixel(display, x, y, rgb):
+    """Set pixel color."""
+    if 0 <= x < display['width'] and 0 <= y < display['height']:
+        display['frame_buffer'][y][x] = rgb
+
+def display_clear(display, rgb=(0, 0, 0)):
+    """Clear screen to color."""
+    display['frame_buffer'] = [[rgb for _ in range(display['width'])] for _ in range(display['height'])]
+
+def display_draw_rectangle(display, x, y, width, height, rgb):
+    """Draw filled rectangle."""
+    for dy in range(height):
+        for dx in range(width):
+            display_set_pixel(display, x + dx, y + dy, rgb)
+
+def display_render_frame(display):
+    """Render current frame."""
+    display['frames_rendered'] += 1
+    print(f"Frame {display['frames_rendered']} rendered ({display['width']}×{display['height']} @ {display['refresh_rate']}Hz)")
+
+def display_get_specs(display):
+    """Get display specifications."""
+    total_pixels = display['width'] * display['height']
+    bytes_per_frame = total_pixels * 3  # RGB
+    bytes_per_second = bytes_per_frame * display['refresh_rate']
     
-    def __init__(self, width, height, refresh_rate=60):
-        self.width = width
-        self.height = height
-        self.refresh_rate = refresh_rate
-        self.frame_buffer = [[(0, 0, 0) for _ in range(width)] for _ in range(height)]
-        self.frames_rendered = 0
-    
-    def set_pixel(self, x, y, rgb):
-        """Set pixel color."""
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.frame_buffer[y][x] = rgb
-    
-    def clear(self, rgb=(0, 0, 0)):
-        """Clear screen to color."""
-        self.frame_buffer = [[rgb for _ in range(self.width)] for _ in range(self.height)]
-    
-    def draw_rectangle(self, x, y, width, height, rgb):
-        """Draw filled rectangle."""
-        for dy in range(height):
-            for dx in range(width):
-                self.set_pixel(x + dx, y + dy, rgb)
-    
-    def render_frame(self):
-        """Render current frame."""
-        self.frames_rendered += 1
-        print(f"Frame {self.frames_rendered} rendered ({self.width}×{self.height} @ {self.refresh_rate}Hz)")
-    
-    def get_specs(self):
-        """Get display specifications."""
-        total_pixels = self.width * self.height
-        bytes_per_frame = total_pixels * 3  # RGB
-        bytes_per_second = bytes_per_frame * self.refresh_rate
-        
-        return {
-            'resolution': f"{self.width}×{self.height}",
-            'total_pixels': total_pixels,
-            'refresh_rate': f"{self.refresh_rate} Hz",
-            'bytes_per_frame': bytes_per_frame,
-            'bandwidth': f"{bytes_per_second / (1024**2):.1f} MB/s"
-        }
+    return {
+        'resolution': f"{display['width']}×{display['height']}",
+        'total_pixels': total_pixels,
+        'refresh_rate': f"{display['refresh_rate']} Hz",
+        'bytes_per_frame': bytes_per_frame,
+        'bandwidth': f"{bytes_per_second / (1024**2):.1f} MB/s"
+    }
 
 # Create display
-display = Display(1920, 1080, 60)
+display = create_display(1920, 1080, 60)
 
-specs = display.get_specs()
+specs = display_get_specs(display)
 print("\nDisplay Specifications:")
 for key, value in specs.items():
     print(f"  {key}: {value}")
 
 # Draw something
-display.clear((0, 0, 0))  # Clear to black
-display.draw_rectangle(100, 100, 200, 150, (255, 0, 0))  # Red rectangle
-display.render_frame()
+display_clear(display, (0, 0, 0))  # Clear to black
+display_draw_rectangle(display, 100, 100, 200, 150, (255, 0, 0))  # Red rectangle
+display_render_frame(display)
 ```
 
 ### Printer
 
 ```python
-class Printer:
-    """Simulate printer operations."""
+def create_printer(printer_type='inkjet'):
+    """Create a printer simulator."""
+    return {
+        'printer_type': printer_type,  # 'inkjet', 'laser', '3d'
+        'paper_loaded': True,
+        'ink_level': 100,  # percentage
+        'pages_printed': 0,
+    }
+
+def printer_check_status(printer):
+    """Check printer status."""
+    print(f"{printer['printer_type'].upper()} Printer Status:")
+    print(f"  Paper: {'Loaded' if printer['paper_loaded'] else 'Empty'}")
+    print(f"  Ink: {printer['ink_level']}%")
+    print(f"  Pages printed: {printer['pages_printed']}")
+
+def printer_print_page(printer, content):
+    """Print a page."""
+    if not printer['paper_loaded']:
+        print("ERROR: No paper loaded")
+        return False
     
-    def __init__(self, printer_type='inkjet'):
-        self.printer_type = printer_type  # 'inkjet', 'laser', '3d'
-        self.paper_loaded = True
-        self.ink_level = 100  # percentage
-        self.pages_printed = 0
+    if printer['ink_level'] < 5:
+        print("ERROR: Low ink")
+        return False
     
-    def check_status(self):
-        """Check printer status."""
-        print(f"{self.printer_type.upper()} Printer Status:")
-        print(f"  Paper: {'Loaded' if self.paper_loaded else 'Empty'}")
-        print(f"  Ink: {self.ink_level}%")
-        print(f"  Pages printed: {self.pages_printed}")
+    print(f"\nPrinting page {printer['pages_printed'] + 1}...")
+    print(f"Content: {content[:50]}...")
     
-    def print_page(self, content):
-        """Print a page."""
-        if not self.paper_loaded:
-            print("ERROR: No paper loaded")
-            return False
-        
-        if self.ink_level < 5:
-            print("ERROR: Low ink")
-            return False
-        
-        print(f"\nPrinting page {self.pages_printed + 1}...")
-        print(f"Content: {content[:50]}...")
-        
-        # Simulate printing process
-        if self.printer_type == 'inkjet':
-            print("  - Moving print head...")
-            print("  - Spraying ink droplets...")
-            self.ink_level -= 2
-        elif self.printer_type == 'laser':
-            print("  - Charging drum...")
-            print("  - Applying toner...")
-            print("  - Fusing with heat...")
-            self.ink_level -= 1
-        elif self.printer_type == '3d':
-            print("  - Heating nozzle...")
-            print("  - Extruding filament...")
-            print("  - Building layer by layer...")
-            self.ink_level -= 5
-        
-        print("  - Feeding paper...")
-        print("  ✓ Page printed")
-        
-        self.pages_printed += 1
-        return True
+    # Simulate printing process
+    if printer['printer_type'] == 'inkjet':
+        print("  - Moving print head...")
+        print("  - Spraying ink droplets...")
+        printer['ink_level'] -= 2
+    elif printer['printer_type'] == 'laser':
+        print("  - Charging drum...")
+        print("  - Applying toner...")
+        print("  - Fusing with heat...")
+        printer['ink_level'] -= 1
+    elif printer['printer_type'] == '3d':
+        print("  - Heating nozzle...")
+        print("  - Extruding filament...")
+        print("  - Building layer by layer...")
+        printer['ink_level'] -= 5
     
-    def refill_ink(self):
-        """Refill ink/toner."""
-        self.ink_level = 100
-        print("Ink refilled to 100%")
+    print("  - Feeding paper...")
+    print("  ✓ Page printed")
     
-    def load_paper(self, sheets):
-        """Load paper."""
-        self.paper_loaded = True
-        print(f"Loaded {sheets} sheets of paper")
+    printer['pages_printed'] += 1
+    return True
+
+def printer_refill_ink(printer):
+    """Refill ink/toner."""
+    printer['ink_level'] = 100
+    print("Ink refilled to 100%")
+
+def printer_load_paper(printer, sheets):
+    """Load paper."""
+    printer['paper_loaded'] = True
+    print(f"Loaded {sheets} sheets of paper")
 
 # Simulate printing
-printer = Printer('inkjet')
-printer.check_status()
-printer.print_page("Hello, World! This is a test document.")
-printer.print_page("Second page content here.")
-printer.check_status()
+printer = create_printer('inkjet')
+printer_check_status(printer)
+printer_print_page(printer, "Hello, World! This is a test document.")
+printer_print_page(printer, "Second page content here.")
+printer_check_status(printer)
 ```
 
 ### Speaker
 
 ```python
-class Speaker:
-    """Simulate audio output."""
-    
-    def __init__(self):
-        self.volume = 50  # 0-100
-        self.muted = False
-        self.sample_rate = 44100  # Hz
-        self.bit_depth = 16
-    
-    def set_volume(self, volume):
-        """Set volume level."""
-        self.volume = max(0, min(100, volume))
-        print(f"Volume set to {self.volume}%")
-    
-    def mute(self):
-        """Mute audio."""
-        self.muted = True
-        print("Audio muted")
-    
-    def unmute(self):
-        """Unmute audio."""
-        self.muted = False
-        print("Audio unmuted")
-    
-    def play_tone(self, frequency, duration):
-        """Play a tone at given frequency."""
-        if self.muted:
-            print(f"Playing {frequency}Hz tone (muted)")
-        else:
-            print(f"Playing {frequency}Hz tone for {duration}s at {self.volume}% volume")
-            print(f"  Sample rate: {self.sample_rate} Hz")
-            print(f"  Bit depth: {self.bit_depth} bit")
-            
-            # Calculate samples needed
-            samples = self.sample_rate * duration
-            print(f"  Samples: {samples:,}")
-    
-    def play_audio(self, filename):
-        """Play audio file."""
-        if self.muted:
-            print(f"Playing '{filename}' (muted)")
-        else:
-            print(f"Playing '{filename}' at {self.volume}% volume")
+def create_speaker():
+    """Create an audio output simulator."""
+    return {
+        'volume': 50,  # 0-100
+        'muted': False,
+        'sample_rate': 44100,  # Hz
+        'bit_depth': 16,
+    }
+
+def speaker_set_volume(speaker, volume):
+    """Set volume level."""
+    speaker['volume'] = max(0, min(100, volume))
+    print(f"Volume set to {speaker['volume']}%")
+
+def speaker_mute(speaker):
+    """Mute audio."""
+    speaker['muted'] = True
+    print("Audio muted")
+
+def speaker_unmute(speaker):
+    """Unmute audio."""
+    speaker['muted'] = False
+    print("Audio unmuted")
+
+def speaker_play_tone(speaker, frequency, duration):
+    """Play a tone at given frequency."""
+    if speaker['muted']:
+        print(f"Playing {frequency}Hz tone (muted)")
+    else:
+        print(f"Playing {frequency}Hz tone for {duration}s at {speaker['volume']}% volume")
+        print(f"  Sample rate: {speaker['sample_rate']} Hz")
+        print(f"  Bit depth: {speaker['bit_depth']} bit")
+        
+        # Calculate samples needed
+        samples = speaker['sample_rate'] * duration
+        print(f"  Samples: {samples:,}")
+
+def speaker_play_audio(speaker, filename):
+    """Play audio file."""
+    if speaker['muted']:
+        print(f"Playing '{filename}' (muted)")
+    else:
+        print(f"Playing '{filename}' at {speaker['volume']}% volume")
 
 # Simulate audio
-speaker = Speaker()
-speaker.set_volume(75)
-speaker.play_tone(440, 1)  # A4 note, 1 second
-speaker.mute()
-speaker.play_audio("song.mp3")
-speaker.unmute()
+speaker = create_speaker()
+speaker_set_volume(speaker, 75)
+speaker_play_tone(speaker, 440, 1)  # A4 note, 1 second
+speaker_mute(speaker)
+speaker_play_audio(speaker, "song.mp3")
+speaker_unmute(speaker)
 ```
 
 ## Device Interfaces
@@ -520,55 +512,55 @@ explain_device_interfaces()
 ## Device Drivers
 
 ```python
-class DeviceDriver:
-    """Simplified device driver concept."""
+def create_device_driver(device_name, device_type):
+    """Create a simplified device driver."""
+    return {
+        'device_name': device_name,
+        'device_type': device_type,
+        'initialized': False,
+    }
+
+def driver_initialize(driver):
+    """Initialize device."""
+    print(f"Initializing {driver['device_type']}: {driver['device_name']}")
+    print(f"  - Loading driver")
+    print(f"  - Detecting hardware")
+    print(f"  - Configuring settings")
+    print(f"  ✓ Device ready")
+    driver['initialized'] = True
+
+def driver_read(driver):
+    """Read data from device."""
+    if not driver['initialized']:
+        return "ERROR: Device not initialized"
     
-    def __init__(self, device_name, device_type):
-        self.device_name = device_name
-        self.device_type = device_type
-        self.initialized = False
+    print(f"Reading from {driver['device_name']}...")
+    return f"Data from {driver['device_name']}"
+
+def driver_write(driver, data):
+    """Write data to device."""
+    if not driver['initialized']:
+        print("ERROR: Device not initialized")
+        return False
     
-    def initialize(self):
-        """Initialize device."""
-        print(f"Initializing {self.device_type}: {self.device_name}")
-        print(f"  - Loading driver")
-        print(f"  - Detecting hardware")
-        print(f"  - Configuring settings")
-        print(f"  ✓ Device ready")
-        self.initialized = True
-    
-    def read(self):
-        """Read data from device."""
-        if not self.initialized:
-            return "ERROR: Device not initialized"
-        
-        print(f"Reading from {self.device_name}...")
-        return f"Data from {self.device_name}"
-    
-    def write(self, data):
-        """Write data to device."""
-        if not self.initialized:
-            print("ERROR: Device not initialized")
-            return False
-        
-        print(f"Writing to {self.device_name}: {data}")
-        return True
-    
-    def shutdown(self):
-        """Shutdown device safely."""
-        print(f"Shutting down {self.device_name}")
-        print(f"  - Flushing buffers")
-        print(f"  - Releasing resources")
-        print(f"  ✓ Device stopped")
-        self.initialized = False
+    print(f"Writing to {driver['device_name']}: {data}")
+    return True
+
+def driver_shutdown(driver):
+    """Shutdown device safely."""
+    print(f"Shutting down {driver['device_name']}")
+    print(f"  - Flushing buffers")
+    print(f"  - Releasing resources")
+    print(f"  ✓ Device stopped")
+    driver['initialized'] = False
 
 # Simulate device driver
 print("\nDevice Driver Example:")
-keyboard_driver = DeviceDriver("USB Keyboard", "Input Device")
-keyboard_driver.initialize()
-data = keyboard_driver.read()
+keyboard_driver = create_device_driver("USB Keyboard", "Input Device")
+driver_initialize(keyboard_driver)
+data = driver_read(keyboard_driver)
 print(f"Received: {data}")
-keyboard_driver.shutdown()
+driver_shutdown(keyboard_driver)
 ```
 
 ## Python Input/Output

@@ -1,7 +1,7 @@
 ---
 id: "048"
 title: "Method Resolution Order (MRO)"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 6
 duration: "20 minutes"
 objectives:

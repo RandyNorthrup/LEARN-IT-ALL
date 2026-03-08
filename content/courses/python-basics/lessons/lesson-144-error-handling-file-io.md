@@ -1,8 +1,8 @@
 ---
-id: "151-error-handling-file-io"
+id: lesson-144-error-handling-file-io
 title: "Error Handling in File Operations"
 chapterId: ch11-error-handling
-order: 7
+order: 6
 duration: 25
 objectives:
   - Handle file operation errors
@@ -564,80 +564,67 @@ def write_with_lock(filename, content):
         return False
 ```
 
-## Complete File Operation Class
+## Complete File Operation Functions
 
 ```python
-class SafeFileManager:
-    """Complete file manager with error handling"""
-    
-    def __init__(self, base_directory='.'):
-        self.base_directory = os.path.abspath(base_directory)
-    
-    def _validate_path(self, filename):
-        """Validate file path"""
-        abs_path = os.path.abspath(filename)
-        if not abs_path.startswith(self.base_directory):
-            raise ValueError("Path outside base directory")
-        return abs_path
-    
-    def read(self, filename, encoding='utf-8'):
-        """Safely read file"""
-        try:
-            path = self._validate_path(filename)
-            with open(path, 'r', encoding=encoding) as f:
-                return f.read(), None
-        except Exception as e:
-            return None, str(e)
-    
-    def write(self, filename, content, encoding='utf-8'):
-        """Safely write file"""
-        try:
-            path = self._validate_path(filename)
-            
-            # Create directory if needed
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            
-            # Write atomically
-            with tempfile.NamedTemporaryFile(
-                mode='w',
-                encoding=encoding,
-                dir=os.path.dirname(path),
-                delete=False
-            ) as tmp:
-                tmp.write(content)
-                tmp_name = tmp.name
-            
-            os.replace(tmp_name, path)
-            return True, None
-        
-        except Exception as e:
-            return False, str(e)
-    
-    def exists(self, filename):
-        """Check if file exists"""
-        try:
-            path = self._validate_path(filename)
-            return os.path.isfile(path)
-        except:
-            return False
-    
-    def delete(self, filename):
-        """Safely delete file"""
-        try:
-            path = self._validate_path(filename)
-            os.remove(path)
-            return True, None
-        except FileNotFoundError:
-            return False, "File not found"
-        except Exception as e:
-            return False, str(e)
+import tempfile
+
+def validate_file_path(base_directory, filename):
+    """Validate file path is within base directory"""
+    abs_path = os.path.abspath(filename)
+    if not abs_path.startswith(base_directory):
+        raise ValueError("Path outside base directory")
+    return abs_path
+
+def safe_read(base_directory, filename, encoding='utf-8'):
+    """Safely read file within base directory"""
+    try:
+        path = validate_file_path(base_directory, filename)
+        with open(path, 'r', encoding=encoding) as f:
+            return f.read(), None
+    except Exception as e:
+        return None, str(e)
+
+def safe_write(base_directory, filename, content, encoding='utf-8'):
+    """Safely write file within base directory"""
+    try:
+        path = validate_file_path(base_directory, filename)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with tempfile.NamedTemporaryFile(
+            mode='w', encoding=encoding,
+            dir=os.path.dirname(path), delete=False
+        ) as tmp:
+            tmp.write(content)
+            tmp_name = tmp.name
+        os.replace(tmp_name, path)
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+def safe_exists(base_directory, filename):
+    """Check if file exists within base directory"""
+    try:
+        path = validate_file_path(base_directory, filename)
+        return os.path.isfile(path)
+    except:
+        return False
+
+def safe_delete(base_directory, filename):
+    """Safely delete file within base directory"""
+    try:
+        path = validate_file_path(base_directory, filename)
+        os.remove(path)
+        return True, None
+    except FileNotFoundError:
+        return False, "File not found"
+    except Exception as e:
+        return False, str(e)
 
 # Usage
-import tempfile
-manager = SafeFileManager()
-success, error = manager.write("test.txt", "Hello, World!")
+base_dir = os.path.abspath('.')
+success, error = safe_write(base_dir, "test.txt", "Hello, World!")
 if success:
-    content, error = manager.read("test.txt")
+    content, error = safe_read(base_dir, "test.txt")
     print(content)
 ```
 

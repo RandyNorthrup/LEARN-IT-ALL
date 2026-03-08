@@ -1,8 +1,8 @@
 ---
-id: list-comprehensions
+id: lesson-109-list-comprehensions
 title: List Comprehensions
 chapterId: ch8-lists
-order: 36
+order: 12
 duration: 30
 objectives:
   - Understand list comprehension syntax

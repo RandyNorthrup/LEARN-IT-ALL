@@ -1,0 +1,186 @@
+{
+  "filename": "arp-resolution.pcap",
+  "description": "ARP (Address Resolution Protocol) resolution showing a host discovering the MAC address of another host on the same LAN, including a normal request/reply, gratuitous ARP, and an ARP probe for duplicate detection.",
+  "captureInfo": {
+    "duration": "0.312s",
+    "totalPackets": 6,
+    "interface": "eth0",
+    "captureFilter": "arp"
+  },
+  "packets": [
+    {
+      "number": 1,
+      "timestamp": "0.000000",
+      "source": "192.168.1.100",
+      "destination": "192.168.1.1",
+      "protocol": "ARP",
+      "length": 42,
+      "info": "Who has 192.168.1.1? Tell 192.168.1.100",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Destination", "value": "ff:ff:ff:ff:ff:ff", "highlight": true, "description": "Broadcast — ARP request goes to ALL hosts on the LAN" },
+            { "name": "Source", "value": "aa:bb:cc:dd:ee:ff", "description": "Sender's MAC address" },
+            { "name": "Type", "value": "0x0806", "highlight": true, "description": "ARP (not IPv4 0x0800)" }
+          ]
+        },
+        {
+          "name": "Address Resolution Protocol (Request)",
+          "fields": [
+            { "name": "Hardware Type", "value": "Ethernet (1)" },
+            { "name": "Protocol Type", "value": "IPv4 (0x0800)" },
+            { "name": "Hardware Size", "value": "6", "description": "MAC address = 6 bytes" },
+            { "name": "Protocol Size", "value": "4", "description": "IPv4 address = 4 bytes" },
+            { "name": "Opcode", "value": "Request (1)", "highlight": true },
+            { "name": "Sender MAC", "value": "aa:bb:cc:dd:ee:ff", "highlight": true },
+            { "name": "Sender IP", "value": "192.168.1.100", "highlight": true },
+            { "name": "Target MAC", "value": "00:00:00:00:00:00", "highlight": true, "description": "Unknown — this is what we're looking for" },
+            { "name": "Target IP", "value": "192.168.1.1", "highlight": true, "description": "IP address being resolved" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "timestamp": "0.000834",
+      "source": "192.168.1.1",
+      "destination": "192.168.1.100",
+      "protocol": "ARP",
+      "length": 42,
+      "info": "192.168.1.1 is at 00:1a:2b:3c:4d:5e",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Destination", "value": "aa:bb:cc:dd:ee:ff", "highlight": true, "description": "Unicast reply — only goes to the requester" },
+            { "name": "Source", "value": "00:1a:2b:3c:4d:5e" },
+            { "name": "Type", "value": "0x0806" }
+          ]
+        },
+        {
+          "name": "Address Resolution Protocol (Reply)",
+          "fields": [
+            { "name": "Opcode", "value": "Reply (2)", "highlight": true },
+            { "name": "Sender MAC", "value": "00:1a:2b:3c:4d:5e", "highlight": true, "description": "This is the answer — gateway's MAC address" },
+            { "name": "Sender IP", "value": "192.168.1.1" },
+            { "name": "Target MAC", "value": "aa:bb:cc:dd:ee:ff" },
+            { "name": "Target IP", "value": "192.168.1.100" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "timestamp": "0.100000",
+      "source": "192.168.1.100",
+      "destination": "93.184.216.34",
+      "protocol": "TCP",
+      "length": 74,
+      "info": "49152 → 80 [SYN] Seq=0 Win=64240 Len=0",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Destination", "value": "00:1a:2b:3c:4d:5e", "highlight": true, "description": "Now using the discovered MAC address for the gateway" },
+            { "name": "Source", "value": "aa:bb:cc:dd:ee:ff" },
+            { "name": "Type", "value": "0x0800", "description": "IPv4" }
+          ]
+        },
+        {
+          "name": "Internet Protocol Version 4",
+          "fields": [
+            { "name": "Source Address", "value": "192.168.1.100" },
+            { "name": "Destination Address", "value": "93.184.216.34", "highlight": true, "description": "Remote server — but Ethernet destination is the GATEWAY, not the server" }
+          ]
+        },
+        {
+          "name": "Transmission Control Protocol",
+          "fields": [
+            { "name": "Destination Port", "value": "80" },
+            { "name": "Flags", "value": "0x002 (SYN)" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "timestamp": "0.200000",
+      "source": "192.168.1.50",
+      "destination": "192.168.1.50",
+      "protocol": "ARP",
+      "length": 42,
+      "info": "ARP Probe: Who has 192.168.1.50? (Duplicate Address Detection)",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Destination", "value": "ff:ff:ff:ff:ff:ff" },
+            { "name": "Source", "value": "11:22:33:44:55:66" }
+          ]
+        },
+        {
+          "name": "Address Resolution Protocol (Probe)",
+          "fields": [
+            { "name": "Opcode", "value": "Request (1)" },
+            { "name": "Sender MAC", "value": "11:22:33:44:55:66" },
+            { "name": "Sender IP", "value": "0.0.0.0", "highlight": true, "description": "ARP Probe: sender IP is 0.0.0.0 (not yet claimed)" },
+            { "name": "Target MAC", "value": "00:00:00:00:00:00" },
+            { "name": "Target IP", "value": "192.168.1.50", "highlight": true, "description": "Testing if this IP is already in use" },
+            { "name": "Purpose", "value": "Duplicate Address Detection (DAD)", "highlight": true, "description": "If anyone replies, there's an IP conflict" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "timestamp": "0.250000",
+      "source": "192.168.1.50",
+      "destination": "192.168.1.50",
+      "protocol": "ARP",
+      "length": 42,
+      "info": "ARP Announcement: 192.168.1.50 is at 11:22:33:44:55:66",
+      "layers": [
+        {
+          "name": "Address Resolution Protocol (Announcement)",
+          "fields": [
+            { "name": "Opcode", "value": "Request (1)", "description": "Gratuitous ARP uses Request opcode" },
+            { "name": "Sender MAC", "value": "11:22:33:44:55:66" },
+            { "name": "Sender IP", "value": "192.168.1.50", "highlight": true, "description": "Now sender IP is set — claiming ownership" },
+            { "name": "Target MAC", "value": "ff:ff:ff:ff:ff:ff" },
+            { "name": "Target IP", "value": "192.168.1.50", "highlight": true },
+            { "name": "Purpose", "value": "Gratuitous ARP Announcement", "highlight": true, "description": "Updates all ARP caches on the LAN. Also used after IP failover (HSRP/VRRP)." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "timestamp": "0.312000",
+      "source": "192.168.1.200",
+      "destination": "192.168.1.100",
+      "protocol": "ARP",
+      "length": 42,
+      "info": "192.168.1.1 is at de:ad:be:ef:00:01 [SUSPICIOUS - possible ARP spoofing]",
+      "layers": [
+        {
+          "name": "Ethernet II",
+          "fields": [
+            { "name": "Source", "value": "de:ad:be:ef:00:01", "highlight": true, "description": "Different MAC than the real gateway (00:1a:2b:3c:4d:5e)" }
+          ]
+        },
+        {
+          "name": "Address Resolution Protocol (Reply)",
+          "fields": [
+            { "name": "Opcode", "value": "Reply (2)" },
+            { "name": "Sender MAC", "value": "de:ad:be:ef:00:01", "highlight": true, "description": "SUSPICIOUS: Claims to be 192.168.1.1 but with different MAC" },
+            { "name": "Sender IP", "value": "192.168.1.1", "highlight": true, "description": "Claims to be the gateway" },
+            { "name": "Target MAC", "value": "aa:bb:cc:dd:ee:ff" },
+            { "name": "Target IP", "value": "192.168.1.100" },
+            { "name": "Security Note", "value": "Possible ARP Spoofing/Poisoning Attack", "highlight": true, "description": "An unsolicited ARP reply claiming a different MAC for the gateway. This would redirect traffic through the attacker (man-in-the-middle)." }
+          ]
+        }
+      ]
+    }
+  ]
+}

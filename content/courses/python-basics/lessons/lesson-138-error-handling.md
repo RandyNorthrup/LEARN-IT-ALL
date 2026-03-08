@@ -1,5 +1,5 @@
 ---
-id: error-handling
+id: lesson-138-error-handling
 title: Error Handling with Try-Except
 chapterId: ch11-error-handling
 order: 1
@@ -168,22 +168,18 @@ except ValueError as e:
     print(f"Error: {e}")
 ```
 
-## Custom Exceptions
+## Descriptive Error Messages
 
 ```python
-class NegativeNumberError(Exception):
-    """Raised when negative number is not allowed"""
-    pass
-
 def sqrt(number):
     """Calculate square root"""
     if number < 0:
-        raise NegativeNumberError("Cannot calculate sqrt of negative number")
+        raise ValueError("Cannot calculate sqrt of negative number")
     return number ** 0.5
 
 try:
     result = sqrt(-4)
-except NegativeNumberError as e:
+except ValueError as e:
     print(f"Error: {e}")
 ```
 

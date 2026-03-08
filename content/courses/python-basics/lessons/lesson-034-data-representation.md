@@ -1,8 +1,8 @@
 ---
-id: "76-data-representation"
+id: lesson-034-data-representation
 title: "Data Representation and Encoding"
 chapterId: ch3-computing
-order: 7
+order: 8
 duration: 30
 objectives:
   - Understand how text, numbers, and media are encoded
@@ -247,8 +247,8 @@ def show_float_encoding():
     print("-" * 60)
     
     for num in numbers:
-        # Pack as 32-bit float
-        bytes_repr = struct.pack('f', num)
+        # Pack as 32-bit float (big-endian)
+        bytes_repr = struct.pack('>f', num)
         hex_repr = bytes_repr.hex()
         
         # Convert to binary for display
@@ -304,66 +304,67 @@ def explain_image_encoding():
 explain_image_encoding()
 
 # Simulate simple image
-class SimpleImage:
-    """Simplified image representation."""
-    
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+
+def create_image(width, height):
+    """Create a simplified image representation."""
+    return {
+        'width': width,
+        'height': height,
         # Each pixel is (R, G, B) tuple
-        self.pixels = [[(0, 0, 0) for _ in range(width)] for _ in range(height)]
-    
-    def set_pixel(self, x, y, rgb):
-        """Set pixel color."""
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.pixels[y][x] = rgb
-    
-    def get_pixel(self, x, y):
-        """Get pixel color."""
-        if 0 <= x < self.width and 0 <= y < self.height:
-            return self.pixels[y][x]
-        return None
-    
-    def size_bytes(self):
-        """Calculate size in bytes."""
-        return self.width * self.height * 3  # 3 bytes per pixel (RGB)
-    
-    def draw_rectangle(self, x1, y1, x2, y2, rgb):
-        """Draw filled rectangle."""
-        for y in range(y1, y2 + 1):
-            for x in range(x1, x2 + 1):
-                self.set_pixel(x, y, rgb)
-    
-    def print_ascii(self):
-        """Print ASCII representation."""
-        print(f"\n{self.width}x{self.height} Image (ASCII representation):")
-        for row in self.pixels:
-            line = ""
-            for r, g, b in row:
-                # Convert to grayscale and ASCII
-                gray = (r + g + b) // 3
-                if gray > 200:
-                    line += "  "
-                elif gray > 150:
-                    line += "░░"
-                elif gray > 100:
-                    line += "▒▒"
-                elif gray > 50:
-                    line += "▓▓"
-                else:
-                    line += "██"
-            print(line)
+        'pixels': [[(0, 0, 0) for _ in range(width)] for _ in range(height)],
+    }
+
+def image_set_pixel(img, x, y, rgb):
+    """Set pixel color."""
+    if 0 <= x < img['width'] and 0 <= y < img['height']:
+        img['pixels'][y][x] = rgb
+
+def image_get_pixel(img, x, y):
+    """Get pixel color."""
+    if 0 <= x < img['width'] and 0 <= y < img['height']:
+        return img['pixels'][y][x]
+    return None
+
+def image_size_bytes(img):
+    """Calculate size in bytes."""
+    return img['width'] * img['height'] * 3  # 3 bytes per pixel (RGB)
+
+def image_draw_rectangle(img, x1, y1, x2, y2, rgb):
+    """Draw filled rectangle."""
+    for y in range(y1, y2 + 1):
+        for x in range(x1, x2 + 1):
+            image_set_pixel(img, x, y, rgb)
+
+def image_print_ascii(img):
+    """Print ASCII representation."""
+    print(f"\n{img['width']}x{img['height']} Image (ASCII representation):")
+    for row in img['pixels']:
+        line = ""
+        for r, g, b in row:
+            # Convert to grayscale and ASCII
+            gray = (r + g + b) // 3
+            if gray > 200:
+                line += "  "
+            elif gray > 150:
+                line += "░░"
+            elif gray > 100:
+                line += "▒▒"
+            elif gray > 50:
+                line += "▓▓"
+            else:
+                line += "██"
+        print(line)
 
 # Create simple image
-img = SimpleImage(10, 10)
+img = create_image(10, 10)
 
 # Draw some shapes
-img.draw_rectangle(0, 0, 9, 9, (50, 50, 50))    # Dark background
-img.draw_rectangle(2, 2, 7, 7, (200, 200, 200))  # Light square
-img.draw_rectangle(4, 4, 5, 5, (255, 0, 0))      # Red center
+image_draw_rectangle(img, 0, 0, 9, 9, (50, 50, 50))    # Dark background
+image_draw_rectangle(img, 2, 2, 7, 7, (200, 200, 200))  # Light square
+image_draw_rectangle(img, 4, 4, 5, 5, (255, 0, 0))      # Red center
 
-img.print_ascii()
-print(f"Image size: {img.size_bytes()} bytes")
+image_print_ascii(img)
+print(f"Image size: {image_size_bytes(img)} bytes")
 ```
 
 ## Audio and Video Encoding

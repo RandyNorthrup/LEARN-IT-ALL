@@ -1,7 +1,7 @@
 ---
 id: "059"
 title: "Polymorphism Best Practices"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 7
 duration: "18 minutes"
 objectives:

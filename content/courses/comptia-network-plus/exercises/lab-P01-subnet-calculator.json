@@ -1,0 +1,75 @@
+{
+  "id": "lab-P01-subnet-calculator",
+  "lessonId": "lab-P01-subnet-calculator",
+  "title": "Lab: Python Subnet Calculator",
+  "description": "Build a subnet calculator function in Python that takes a CIDR notation address (e.g., '192.168.1.0/24') and returns the network address, broadcast address, subnet mask, and number of usable hosts.\n\nYou may use Python's built-in ipaddress module. Your function should handle both classful and classless addressing.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "python",
+  "starterCode": "import ipaddress\n\ndef subnet_info(cidr: str) -> dict:\n    \"\"\"\n    Calculate subnet information from CIDR notation.\n    \n    Args:\n        cidr: IP address in CIDR notation (e.g., '192.168.1.0/24')\n    \n    Returns:\n        Dictionary with keys:\n        - 'network': Network address (str)\n        - 'broadcast': Broadcast address (str)\n        - 'netmask': Subnet mask (str)\n        - 'hosts': Number of usable host addresses (int)\n        - 'first_host': First usable host IP (str)\n        - 'last_host': Last usable host IP (str)\n    \"\"\"\n    # Your code here\n    pass\n\n\n# Test your function:\nresult = subnet_info('192.168.1.0/24')\nprint(f\"Network: {result['network']}\")\nprint(f\"Broadcast: {result['broadcast']}\")\nprint(f\"Netmask: {result['netmask']}\")\nprint(f\"Usable hosts: {result['hosts']}\")\nprint(f\"First host: {result['first_host']}\")\nprint(f\"Last host: {result['last_host']}\")\n",
+  "solution": "import ipaddress\n\ndef subnet_info(cidr: str) -> dict:\n    network = ipaddress.ip_network(cidr, strict=False)\n    hosts = list(network.hosts())\n    return {\n        'network': str(network.network_address),\n        'broadcast': str(network.broadcast_address),\n        'netmask': str(network.netmask),\n        'hosts': len(hosts),\n        'first_host': str(hosts[0]) if hosts else str(network.network_address),\n        'last_host': str(hosts[-1]) if hosts else str(network.broadcast_address),\n    }\n",
+  "hints": [
+    "Use ipaddress.ip_network(cidr, strict=False) to create a network object",
+    "The network object has .network_address, .broadcast_address, and .netmask properties",
+    "Use list(network.hosts()) to get all usable host IPs (excludes network and broadcast)",
+    "For a /24 network, there are 254 usable hosts (256 - 2)",
+    "Set strict=False to handle host bits being set (e.g., '192.168.1.50/24')"
+  ],
+  "exerciseType": "lab",
+  "labType": "python-sandbox",
+  "environment": {
+    "runtime": "pyodide",
+    "preloadModules": [],
+    "setupCode": "import ipaddress"
+  },
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "Correctly calculates /24 network address",
+      "testCode": "result = subnet_info('192.168.1.0/24')\nresult['network'] == '192.168.1.0'",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "Correctly calculates /24 broadcast address",
+      "testCode": "result = subnet_info('192.168.1.0/24')\nresult['broadcast'] == '192.168.1.255'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "Correctly calculates /24 subnet mask",
+      "testCode": "result = subnet_info('192.168.1.0/24')\nresult['netmask'] == '255.255.255.0'",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "Correctly counts 254 usable hosts for /24",
+      "testCode": "result = subnet_info('192.168.1.0/24')\nresult['hosts'] == 254",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "Handles /28 subnet correctly (14 usable hosts)",
+      "testCode": "result = subnet_info('10.0.0.0/28')\nresult['hosts'] == 14 and result['network'] == '10.0.0.0' and result['broadcast'] == '10.0.0.15'",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "Handles host bits set with strict=False",
+      "testCode": "result = subnet_info('192.168.1.50/24')\nresult['network'] == '192.168.1.0'",
+      "isHidden": false
+    },
+    {
+      "id": "tc7",
+      "description": "Calculates first and last usable hosts",
+      "testCode": "result = subnet_info('10.0.0.0/24')\nresult['first_host'] == '10.0.0.1' and result['last_host'] == '10.0.0.254'",
+      "isHidden": false
+    },
+    {
+      "id": "tc8",
+      "description": "Handles /16 supernet correctly (65534 hosts)",
+      "testCode": "result = subnet_info('172.16.0.0/16')\nresult['hosts'] == 65534 and result['netmask'] == '255.255.0.0'",
+      "isHidden": true
+    }
+  ]
+}

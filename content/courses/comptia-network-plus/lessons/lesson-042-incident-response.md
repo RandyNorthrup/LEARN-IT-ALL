@@ -1,7 +1,7 @@
 ---
-id: incident-response
+id: lesson-042-incident-response
 title: Incident Response
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 42
 duration: 90
 objectives:
@@ -21,6 +21,18 @@ Incident response is the systematic approach to managing security incidents - fr
 In this lesson, we'll explore incident response frameworks, incident handling procedures, forensics investigation, evidence handling, containment strategies, and post-incident activities.
 
 **Key Principle:** Proper planning prevents poor performance - preparation is 90% of successful incident response.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand incident response lifecycle
+- Develop incident response plans
+- Detect and analyze security incidents
+- Contain and eradicate threats
+- Conduct post-incident reviews
+
+---
 
 ## Incident Response Frameworks
 
@@ -1042,71 +1054,88 @@ Disposal: [To be completed after retention period]
    - Retention policy (7 years typical)
 ```
 
-## Review Questions
+## Summary
 
-1. **What are the four phases of the NIST incident response lifecycle?**
-   - Preparation, Detection and Analysis, Containment/Eradication/Recovery, Post-Incident Activity
+In this lesson, we explored the incident response lifecycle for managing security events. The NIST SP 800-61 framework defines four phases: (1) Preparation — building the IR team, acquiring forensic tools (write blockers, FTK Imager, Wireshark, Volatility), and establishing procedures; (2) Detection and Analysis — identifying incidents through IDS/IPS alerts, SIEM correlations, and log anomalies, then classifying severity; (3) Containment, Eradication, and Recovery — isolating affected systems, removing the threat, restoring from clean backups, and verifying functionality; (4) Post-Incident Activity — conducting lessons-learned reviews and updating defenses. Evidence must be collected following the order of volatility (RAM first, then disk), with chain of custody documentation for legal admissibility. The IR team includes an incident manager, technical lead, system/network administrators, legal counsel, communications, and HR. Tabletop exercises and simulation scenarios validate the IR plan before a real incident occurs.
 
-2. **What is the difference between short-term and long-term containment?**
-   - Short-term stops spread immediately (temporary), long-term maintains operations while preparing for eradication
+## Practice Questions
 
-3. **What is the order of volatility principle?**
-   - Collect most volatile evidence first (memory before disk, as memory is lost when powered off)
 
-4. **What is chain of custody?**
-   - Documentation tracking evidence handling to prove integrity and maintain legal admissibility
+**Q1.** What are the four phases of the NIST incident response lifecycle, in order?
 
-5. **What should be included in an incident response plan?**
-   - Roles/responsibilities, classification, procedures, communication, tools, training
+A) Detection, Containment, Recovery, Documentation
+B) Preparation, Detection and Analysis, Containment/Eradication/Recovery, Post-Incident Activity
+C) Identification, Escalation, Remediation, Closure
+D) Planning, Monitoring, Response, Archiving
 
-6. **What is an IoC?**
-   - Indicator of Compromise - artifacts that indicate security incident (IPs, file hashes, domains)
+<details>
+<summary>Answer</summary>
 
-7. **What are the key questions in scoping an incident?**
-   - What, when, who, where, how, how far, what data at risk
+**B)** The NIST SP 800-61 incident response lifecycle consists of four phases: (1) Preparation, (2) Detection and Analysis, (3) Containment, Eradication, and Recovery, and (4) Post-Incident Activity. This is a continuous cycle where lessons learned from each incident feed back into the preparation phase.
+</details>
 
-8. **What is the purpose of a lessons learned meeting?**
-   - Identify what went well and what could improve, prevent future incidents
 
-9. **Why should you not immediately shut down a compromised system?**
-   - Lose volatile evidence (memory, network connections), need to capture first
+**Q2.** When collecting digital evidence, which should be captured first according to the order of volatility?
 
-10. **What metrics should be tracked for incident response?**
-    - Time to detect, time to contain, time to recover, systems affected, cost, MTTR
+A) Hard drive contents
+B) System memory (RAM)
+C) Backup tapes
+D) Network logs stored on a SIEM
 
-## Key Takeaways
+<details>
+<summary>Answer</summary>
 
-- **Preparation is critical** - 90% of incident response success comes from preparation
-- **Documentation is mandatory** - document everything, maintain timeline, preserve evidence
-- **Containment has two phases** - short-term (stop spread) and long-term (prepare for eradication)
-- **Preserve evidence during containment** - capture volatile data before taking disruptive actions
-- **Eradication must be complete** - verify removal, watch for reinfection
-- **Recovery is gradual** - test thoroughly, monitor closely, restore gradually
-- **Chain of custody is essential** - document all evidence handling for legal admissibility
-- **Lessons learned drive improvement** - every incident is opportunity to improve
-- **Communication is key** - internal and external stakeholders need timely, accurate updates
-- **Practice makes perfect** - regular tabletop exercises, simulations, and training
+**B)** The order of volatility dictates that the most volatile evidence be collected first. System memory (RAM) is the most volatile because its contents are lost when the system is powered off or rebooted. Hard drive contents persist across reboots, and backup tapes and SIEM logs are the least volatile. Capturing RAM first preserves running processes, network connections, and encryption keys.
+</details>
 
-## Chapter 4 Complete!
 
-**Congratulations!** You've completed Chapter 4: Network Security. You now understand:
-- Security concepts and principles
-- Physical security measures
-- Authentication and authorization systems
-- Cryptography fundamentals
-- VPNs and remote access
-- Firewalls and access control lists
-- IDS/IPS and network monitoring
-- Wireless security
-- Network access control (NAC)
-- Security policies and procedures
-- Vulnerability assessment
-- Incident response
+**Q3.** During an active ransomware incident, the IR team isolates affected systems from the network while keeping them powered on. Which containment strategy is being applied?
 
-## Next Steps
+A) Long-term containment
+B) Eradication
+C) Short-term containment
+D) Recovery
 
-Next, we'll begin **Chapter 5: IP Addressing and Subnetting**, where we'll explore IPv4/IPv6 addressing, subnetting, VLSM, and address planning.
+<details>
+<summary>Answer</summary>
 
----
+**C)** Short-term containment focuses on immediately stopping the spread of an incident with minimal disruption, such as isolating affected systems from the network. The systems are kept powered on to preserve volatile evidence. Long-term containment involves more permanent measures while preparing for eradication. Eradication removes the threat, and recovery restores normal operations.
+</details>
 
-**Lesson Complete!** You now understand incident response processes that minimize damage and facilitate recovery from security incidents.
+
+**Q4.** A forensic investigator transfers a hard drive from the evidence locker to the analysis lab. She logs the date, time, her name, the recipient, and the reason for the transfer. What process is she following?
+
+A) Change management
+B) Chain of custody
+C) Risk assessment
+D) Access control review
+
+<details>
+<summary>Answer</summary>
+
+**B)** Chain of custody is the documentation process that tracks evidence handling from collection through final disposition, recording who handled the evidence, when, where, and why. This maintains the integrity and legal admissibility of digital evidence. Change management governs infrastructure changes. Risk assessment evaluates threats. Access control review audits permissions.
+</details>
+
+
+**Q5.** After resolving a security incident, the IR team conducts a lessons-learned meeting. What is the primary purpose of this post-incident activity?
+
+A) To assign blame to the employee who caused the incident
+B) To identify what worked, what failed, and how to improve the IR process and defenses for future incidents
+C) To permanently archive all evidence so it cannot be reviewed again
+D) To reset all user passwords organization-wide
+
+<details>
+<summary>Answer</summary>
+
+**B)** The lessons-learned (post-incident) meeting is a blameless review focused on identifying what went well, what could be improved, and what changes should be made to policies, procedures, tools, and training. The goal is continuous improvement of the incident response process and organizational defenses. Assigning blame discourages reporting. Evidence should be retained per policy, not permanently archived in an inaccessible way.
+</details>
+
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.5 — Given a scenario, describe the use of policies, plans, and procedures (incident response)
+- NIST SP 800-61 Rev. 2: Computer Security Incident Handling Guide
+- NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response
+- SANS Institute: Incident Handler's Handbook
+- ISO/IEC 27035:2023: Information Security Incident Management
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Incident Response and Forensics

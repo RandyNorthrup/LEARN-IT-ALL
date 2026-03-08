@@ -1,0 +1,109 @@
+{
+  "id": "lab-L03-dhcp-dora",
+  "lessonId": "lab-L03-dhcp-dora",
+  "title": "Lab: DHCP DORA Process Analysis",
+  "description": "Analyze a complete DHCP lease lifecycle including the DORA process (Discover → Offer → Request → Acknowledge), gratuitous ARP for duplicate address detection, lease renewal, and release. Understand broadcast vs unicast behavior and DHCP option fields.\n\nUse the PCAP viewer below to examine each DHCP packet and answer the analysis questions.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "",
+  "solution": "",
+  "hints": [
+    "DHCP uses UDP ports 67 (server) and 68 (client)",
+    "The client starts with IP 0.0.0.0 because it has no address yet",
+    "DORA = Discover, Offer, Request, Acknowledge — the four message types",
+    "Broadcast (ff:ff:ff:ff:ff:ff) is used when the client can't receive unicast",
+    "The T1 timer (50% of lease) triggers unicast renewal; T2 (87.5%) triggers broadcast renewal"
+  ],
+  "exerciseType": "lab",
+  "labType": "pcap-analysis",
+  "resources": [
+    { "type": "pcap", "url": "/labs/pcaps/dhcp-dora.json", "label": "DHCP DORA Capture" }
+  ],
+  "labQuestions": [
+    {
+      "id": "q1",
+      "question": "Why does the DHCP Discover packet (packet #1) use source IP 0.0.0.0?",
+      "type": "multiple-choice",
+      "options": [
+        "It's a reserved loopback address",
+        "The client has no IP address yet — it hasn't been assigned one",
+        "0.0.0.0 is the DHCP server's address",
+        "It's the default gateway address"
+      ],
+      "correctAnswer": "The client has no IP address yet — it hasn't been assigned one",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q2",
+      "question": "What IP address does the DHCP server offer to the client?",
+      "type": "short-answer",
+      "correctAnswer": "192.168.1.150",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q3",
+      "question": "Why is the DHCP Request (packet #3) sent as a broadcast even though the client already knows the server's IP?",
+      "type": "multiple-choice",
+      "options": [
+        "The client's network stack requires broadcast for all DHCP messages",
+        "Broadcasting informs ALL DHCP servers which offer was accepted (so others can reclaim their offers)",
+        "Unicast is not supported by DHCP",
+        "The client hasn't configured its IP yet so it can only broadcast"
+      ],
+      "correctAnswer": "Broadcasting informs ALL DHCP servers which offer was accepted (so others can reclaim their offers)",
+      "relatedPackets": [3]
+    },
+    {
+      "id": "q4",
+      "question": "What is the lease time offered by the DHCP server?",
+      "type": "multiple-choice",
+      "options": ["3600 seconds (1 hour)", "43200 seconds (12 hours)", "86400 seconds (24 hours)", "604800 seconds (7 days)"],
+      "correctAnswer": "86400 seconds (24 hours)",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q5",
+      "question": "What is the purpose of the gratuitous ARP in packet #5?",
+      "type": "multiple-choice",
+      "options": [
+        "To find the MAC address of the DHCP server",
+        "To check if the assigned IP (192.168.1.150) is already in use by another device",
+        "To announce the client's presence to the router",
+        "To request a different IP address"
+      ],
+      "correctAnswer": "To check if the assigned IP (192.168.1.150) is already in use by another device",
+      "relatedPackets": [5]
+    },
+    {
+      "id": "q6",
+      "question": "Compare packets #1 (initial DORA) and #6 (renewal). What key difference shows that #6 is a renewal?",
+      "type": "multiple-choice",
+      "options": [
+        "Renewal uses TCP instead of UDP",
+        "Renewal is unicast (directly to server) instead of broadcast, and ciaddr is set",
+        "Renewal uses a different Transaction ID",
+        "Renewal doesn't include the hostname option"
+      ],
+      "correctAnswer": "Renewal is unicast (directly to server) instead of broadcast, and ciaddr is set",
+      "relatedPackets": [1, 6]
+    },
+    {
+      "id": "q7",
+      "question": "What DNS servers are assigned to the client via DHCP Option 6?",
+      "type": "short-answer",
+      "correctAnswer": "8.8.8.8, 8.8.4.4",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q8",
+      "question": "At what percentage of the lease time does the T1 (renewal) timer expire?",
+      "type": "multiple-choice",
+      "options": ["25%", "50%", "75%", "87.5%"],
+      "correctAnswer": "50%",
+      "hint": "T1 = 43200s is exactly half of the 86400s lease time",
+      "relatedPackets": [2]
+    }
+  ],
+  "testCases": []
+}

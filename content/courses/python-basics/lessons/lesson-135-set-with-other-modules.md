@@ -1,5 +1,5 @@
 ---
-id: "144-set-with-other-modules"
+id: lesson-135-set-with-other-modules
 title: "Sets with Standard Library Modules"
 chapterId: ch10-sets
 order: 11
@@ -144,7 +144,7 @@ set_b = {2, 3, 4}
 
 # Only pairs where first > second
 result = filtered_product(set_a, set_b, lambda a, b: a > b)
-print(result)  # {(3, 2), (2, 1), (3, 1)}
+print(result)  # {(3, 2)}
 
 # Chain multiple sets
 def chain_sets(*sets):
@@ -210,39 +210,49 @@ factors_18 = get_factors(18)
 common_factors = factors_12 & factors_18
 print(f"Common factors of 12 and 18: {common_factors}")
 
-# Cached property with sets
-class DataAnalyzer:
-    def __init__(self, data):
-        self.data = data
+# Cached computation with sets using a closure
+def create_data_analyzer(data):
+    """Create a data analyzer with lazy-computed unique value sets"""
+    cache = {}
     
-    @cached_property
-    def unique_values(self):
-        """Compute unique values once"""
-        print("Computing unique values...")
-        return set(self.data)
+    def get_unique_values():
+        """Compute unique values once, then cache"""
+        if "unique" not in cache:
+            print("Computing unique values...")
+            cache["unique"] = set(data)
+        return cache["unique"]
     
-    @cached_property
-    def unique_even(self):
-        """Compute unique even values once"""
-        print("Computing unique even...")
-        return {x for x in self.unique_values if x % 2 == 0}
+    def get_unique_even():
+        """Compute unique even values once, then cache"""
+        if "even" not in cache:
+            print("Computing unique even...")
+            cache["even"] = {x for x in get_unique_values() if x % 2 == 0}
+        return cache["even"]
     
-    @cached_property
-    def unique_odd(self):
-        """Compute unique odd values once"""
-        print("Computing unique odd...")
-        return {x for x in self.unique_values if x % 2 != 0}
+    def get_unique_odd():
+        """Compute unique odd values once, then cache"""
+        if "odd" not in cache:
+            print("Computing unique odd...")
+            cache["odd"] = {x for x in get_unique_values() if x % 2 != 0}
+        return cache["odd"]
+    
+    return {
+        "data": data,
+        "unique_values": get_unique_values,
+        "unique_even": get_unique_even,
+        "unique_odd": get_unique_odd,
+    }
 
-analyzer = DataAnalyzer([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])
-print(analyzer.unique_even)  # Computed
-print(analyzer.unique_even)  # Cached
-print(analyzer.unique_odd)   # Computed
+analyzer = create_data_analyzer([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])
+print(analyzer["unique_even"]())  # Computed
+print(analyzer["unique_even"]())  # Cached
+print(analyzer["unique_odd"]())   # Computed
 ```
 
 ## Sets with typing Module
 
 ```python
-from typing import Set, FrozenSet, TypeVar, Generic
+from typing import Set, FrozenSet, TypeVar
 
 # Type hints for set functions
 def merge_user_tags(user_tags: dict[str, Set[str]]) -> Set[str]:
@@ -264,35 +274,34 @@ def safe_intersection(sets: list[Set[T]]) -> Set[T]:
         result &= s
     return result
 
-# Generic class with sets
-class UniqueCollection(Generic[T]):
-    """Collection that maintains uniqueness"""
-    def __init__(self):
-        self._items: Set[T] = set()
-    
-    def add(self, item: T) -> bool:
-        """Add item, return True if new"""
-        if item in self._items:
-            return False
-        self._items.add(item)
-        return True
-    
-    def remove(self, item: T) -> bool:
-        """Remove item, return True if existed"""
-        if item in self._items:
-            self._items.discard(item)
-            return True
+# Collection that maintains uniqueness using functions
+def create_unique_collection():
+    """Create a collection that maintains uniqueness"""
+    return {"items": set()}
+
+def add_to_collection(collection, item):
+    """Add item, return True if new"""
+    if item in collection["items"]:
         return False
-    
-    def get_all(self) -> FrozenSet[T]:
-        """Get immutable copy"""
-        return frozenset(self._items)
+    collection["items"].add(item)
+    return True
+
+def remove_from_collection(collection, item):
+    """Remove item, return True if existed"""
+    if item in collection["items"]:
+        collection["items"].discard(item)
+        return True
+    return False
+
+def get_all_items(collection):
+    """Get immutable copy"""
+    return frozenset(collection["items"])
 
 # Usage
-collection: UniqueCollection[str] = UniqueCollection()
-collection.add("apple")
-collection.add("banana")
-print(collection.get_all())
+collection = create_unique_collection()
+add_to_collection(collection, "apple")
+add_to_collection(collection, "banana")
+print(get_all_items(collection))
 ```
 
 ## Sets with pathlib

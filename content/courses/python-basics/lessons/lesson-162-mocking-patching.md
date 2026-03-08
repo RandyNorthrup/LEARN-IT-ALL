@@ -1,8 +1,8 @@
 ---
-id: "161-mocking-patching"
+id: lesson-162-mocking-patching
 title: "Mocking and Patching"
 chapterId: ch12-testing
-order: 10
+order: 8
 duration: 30
 objectives:
   - Mock external dependencies
@@ -143,63 +143,55 @@ def test_format_timestamp_context():
 ```python
 from unittest.mock import patch
 
-class UserService:
-    def __init__(self, database):
-        self.database = database
-    
-    def get_user(self, user_id):
-        return self.database.query(f"SELECT * FROM users WHERE id = {user_id}")
-    
-    def is_active(self, user_id):
-        user = self.get_user(user_id)
-        return user.get("active", False)
+def get_user(database, user_id):
+    return database.query(f"SELECT * FROM users WHERE id = {user_id}")
 
-# Patch instance method
-@patch.object(UserService, 'get_user')
+def is_active(database, user_id):
+    user = get_user(database, user_id)
+    return user.get("active", False)
+
+# Patch function
+@patch('__main__.get_user')
 def test_is_active(mock_get_user):
     mock_get_user.return_value = {"id": "user1", "active": True}
     
-    service = UserService(None)  # Database not needed
-    assert service.is_active("user1") is True
+    assert is_active(None, "user1") is True
     
-    mock_get_user.assert_called_once_with("user1")
+    mock_get_user.assert_called_once_with(None, "user1")
 ```
 
-## Patching Classes
+## Patching Factory Functions
 
 ```python
 from unittest.mock import patch, Mock
 
-class Database:
-    def __init__(self, connection_string):
-        self.connection_string = connection_string
-    
-    def connect(self):
-        # Complex connection logic
-        pass
-    
-    def query(self, sql):
-        # Real database query
-        pass
+def create_database(connection_string):
+    """Create a database connection."""
+    # Complex connection logic
+    pass
 
-# Patch entire class
-@patch('__main__.Database')
-def test_user_service(MockDatabase):
+def db_query(database, sql):
+    """Run a database query."""
+    pass
+
+# Patch factory function
+@patch('__main__.create_database')
+def test_with_mock_database(mock_create_db):
     # Configure mock
-    mock_db_instance = Mock()
-    mock_db_instance.query.return_value = [{"id": 1, "name": "Alice"}]
-    MockDatabase.return_value = mock_db_instance
+    mock_db = Mock()
+    mock_db.query.return_value = [{"id": 1, "name": "Alice"}]
+    mock_create_db.return_value = mock_db
     
     # Use in code
-    db = Database("connection_string")  # Returns mock
+    db = create_database("connection_string")  # Returns mock
     result = db.query("SELECT * FROM users")
     
     assert len(result) == 1
     assert result[0]["name"] == "Alice"
     
     # Verify
-    MockDatabase.assert_called_once_with("connection_string")
-    mock_db_instance.query.assert_called_once()
+    mock_create_db.assert_called_once_with("connection_string")
+    mock_db.query.assert_called_once()
 ```
 
 ## Multiple Patches
@@ -286,15 +278,8 @@ mock_user.email = "alice@example.com"
 assert mock_user.id == "user123"
 assert mock_user.username == "alice"
 
-# Configure with spec
-class User:
-    def __init__(self, username):
-        self.username = username
-    
-    def get_profile(self):
-        pass
-
-mock_user = Mock(spec=User)
+# Configure with spec — restrict mock to specific attributes
+mock_user = Mock(spec=['username', 'email', 'get_profile'])
 mock_user.username = "bob"
 mock_user.get_profile.return_value = {"username": "bob"}
 
@@ -372,54 +357,53 @@ result = list(mock_iter)
 assert result == [1, 2, 3]
 ```
 
-## PropertyMock
+## Patching Computed Values
 
 ```python
-from unittest.mock import PropertyMock, patch
+from unittest.mock import patch
 
-class User:
-    def __init__(self, name):
-        self._name = name
-    
-    @property
-    def name(self):
-        return self._name.upper()
+def get_display_name(user_data):
+    """Compute display name from user data."""
+    return user_data["name"].upper()
 
-# Patch property
-@patch.object(User, 'name', new_callable=PropertyMock)
-def test_user_name(mock_name):
-    mock_name.return_value = "MOCKED"
+def greet_user(user_data):
+    """Generate greeting using computed name."""
+    display_name = get_display_name(user_data)
+    return f"Hello, {display_name}!"
+
+# Patch the computed-value function
+@patch('__main__.get_display_name')
+def test_greet_user(mock_get_name):
+    mock_get_name.return_value = "MOCKED"
     
-    user = User("alice")
-    assert user.name == "MOCKED"
+    user_data = {"name": "alice"}
+    result = greet_user(user_data)
+    assert result == "Hello, MOCKED!"
 ```
 
 ## Partial Mocking
 
 ```python
-from unittest.mock import Mock
+from unittest.mock import patch
 
-class Calculator:
-    def add(self, a, b):
-        return a + b
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+# Patch only one function, leaving others real
+with patch('__main__.multiply', return_value=100):
+    # Real functions work
+    assert add(2, 3) == 5
+    assert subtract(5, 3) == 2
     
-    def subtract(self, a, b):
-        return a - b
-    
-    def multiply(self, a, b):
-        return a * b
-
-# Mock only specific methods
-calc = Calculator()
-calc.multiply = Mock(return_value=100)
-
-# Real methods work
-assert calc.add(2, 3) == 5
-assert calc.subtract(5, 3) == 2
-
-# Mocked method returns fixed value
-assert calc.multiply(2, 3) == 100
-assert calc.multiply(10, 20) == 100
+    # Patched function returns fixed value
+    assert multiply(2, 3) == 100
+    assert multiply(10, 20) == 100
 ```
 
 ## Spies
@@ -446,23 +430,17 @@ spy_callback.assert_called_once_with(10)
 
 ```python
 # ✅ GOOD - Mock external dependencies only
-class UserService:
-    def __init__(self, database, email_service):
-        self.database = database
-        self.email_service = email_service
-    
-    def create_user(self, username, email):
-        user = self.database.save_user(username, email)
-        self.email_service.send_welcome_email(email)
-        return user
+def create_user(database, email_service, username, email):
+    user = database.save_user(username, email)
+    email_service.send_welcome_email(email)
+    return user
 
-@patch.object(UserService, 'email_service')
-@patch.object(UserService, 'database')
-def test_create_user(mock_db, mock_email):
+def test_create_user():
+    mock_db = Mock()
     mock_db.save_user.return_value = {"id": "user1", "username": "alice"}
+    mock_email = Mock()
     
-    service = UserService(mock_db, mock_email)
-    user = service.create_user("alice", "alice@example.com")
+    user = create_user(mock_db, mock_email, "alice", "alice@example.com")
     
     assert user["username"] == "alice"
     mock_email.send_welcome_email.assert_called_once_with("alice@example.com")
@@ -500,27 +478,22 @@ m = Mock()
 import pytest
 from unittest.mock import Mock, patch
 
-class EmailService:
-    def send_email(self, to, subject, body):
-        # Real email sending
-        pass
+def send_email(to, subject, body):
+    """Real email sending function."""
+    pass
 
-class UserService:
-    def __init__(self, database, email_service):
-        self.database = database
-        self.email_service = email_service
+def register_user(database, email_fn, username, email):
+    """Register a new user with database and email notification."""
+    if database.user_exists(email):
+        raise ValueError("User already exists")
     
-    def register_user(self, username, email):
-        if self.database.user_exists(email):
-            raise ValueError("User already exists")
-        
-        user = self.database.create_user(username, email)
-        self.email_service.send_email(
-            to=email,
-            subject="Welcome!",
-            body=f"Welcome {username}!"
-        )
-        return user
+    user = database.create_user(username, email)
+    email_fn(
+        to=email,
+        subject="Welcome!",
+        body=f"Welcome {username}!"
+    )
+    return user
 
 # Test with mocks
 def test_register_new_user():
@@ -528,28 +501,25 @@ def test_register_new_user():
     mock_db.user_exists.return_value = False
     mock_db.create_user.return_value = {"id": "user1", "username": "alice"}
     
-    mock_email = Mock(spec=EmailService)
+    mock_email_fn = Mock()
     
-    service = UserService(mock_db, mock_email)
-    user = service.register_user("alice", "alice@example.com")
+    user = register_user(mock_db, mock_email_fn, "alice", "alice@example.com")
     
     assert user["username"] == "alice"
     mock_db.user_exists.assert_called_once_with("alice@example.com")
     mock_db.create_user.assert_called_once_with("alice", "alice@example.com")
-    mock_email.send_email.assert_called_once()
+    mock_email_fn.assert_called_once()
 
 def test_register_existing_user():
     mock_db = Mock()
     mock_db.user_exists.return_value = True
-    mock_email = Mock()
-    
-    service = UserService(mock_db, mock_email)
+    mock_email_fn = Mock()
     
     with pytest.raises(ValueError, match="User already exists"):
-        service.register_user("alice", "alice@example.com")
+        register_user(mock_db, mock_email_fn, "alice", "alice@example.com")
     
     # Email should not be sent
-    mock_email.send_email.assert_not_called()
+    mock_email_fn.assert_not_called()
 ```
 
 ## Summary

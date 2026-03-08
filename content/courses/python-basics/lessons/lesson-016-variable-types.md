@@ -1,5 +1,5 @@
 ---
-id: variable-types
+id: lesson-016-variable-types
 title: Variable Types and Type Checking
 chapterId: ch2-variables
 order: 3

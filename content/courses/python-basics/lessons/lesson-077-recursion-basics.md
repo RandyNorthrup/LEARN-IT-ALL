@@ -1,5 +1,5 @@
 ---
-id: 53-recursion-basics
+id: lesson-077-recursion-basics
 title: Recursive Functions
 chapterId: ch6-functions
 order: 9

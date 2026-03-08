@@ -1,5 +1,5 @@
 ---
-id: data-types
+id: lesson-003-data-types
 title: Data Types in Python
 chapterId: ch1-intro
 order: 3

@@ -1,7 +1,7 @@
 ---
-id: physical-security
+id: lesson-032-physical-security
 title: Physical Security
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 32
 duration: 100
 objectives:
@@ -21,6 +21,18 @@ Physical security is often overlooked in network security discussions, yet it's 
 In this lesson, we'll explore physical security measures for protecting network infrastructure, including access controls, environmental controls, surveillance systems, and physical barriers that protect your network hardware from unauthorized access, theft, and environmental damage.
 
 **Key Principle:** If an attacker has physical access to your equipment, assume they have complete access to your data.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand physical security controls and zones
+- Implement access control systems
+- Secure data centers and equipment
+- Prevent physical attacks and theft
+- Implement environmental controls
+
+---
 
 ## Physical Access Controls
 
@@ -996,53 +1008,82 @@ Metrics:
 - Phishing test: <5% click rate
 ```
 
-## Review Questions
+## Summary
 
-1. **What is a mantrap and how does it prevent tailgating?**
-   - A mantrap is a small room with two interlocking doors. Only one door can open at a time, and authentication is required at each door, preventing tailgating.
+In this lesson, we explored physical security controls that protect network infrastructure from unauthorized access and environmental damage. Access control systems range from RFID proximity cards and smart cards to biometrics — fingerprint scanners (FAR ~1 in 50,000), iris scanners (FAR ~1 in 1.2 million), and facial recognition. Mantraps (access control vestibules) use two interlocking doors that cannot open simultaneously, preventing tailgating with 99.9% effectiveness. Environmental controls follow ASHRAE standards: server rooms should maintain 64.4–80.6°F (18–27°C) with 40–60% relative humidity to prevent overheating, condensation, and ESD damage. Facility security uses a layered approach — property perimeter (fencing, bollards), building perimeter (locked doors, reception), interior zones (card access, turnstiles), and server rooms (multi-factor authentication, video surveillance). Door access logs should be retained for at least 90 days, with alerts for after-hours access or repeated failed attempts.
 
-2. **What is the recommended temperature range for data centers according to ASHRAE?**
-   - 64.4°F - 80.6°F (18°C - 27°C) recommended operating range
+## Practice Questions
 
-3. **What are the three types of UPS systems?**
-   - Standby (offline), Line-interactive, Online (double-conversion)
+**Q1.** What is the primary purpose of a mantrap (access control vestibule) in a data center?
 
-4. **What is the difference between FM-200 and water-based fire suppression?**
-   - FM-200 is a clean agent (no residue, safe for equipment), while water causes equipment damage
+A) To monitor temperature and humidity levels
+B) To prevent tailgating by using two interlocking doors that cannot open simultaneously
+C) To provide emergency exit routes during fire evacuation
+D) To house network switches and patch panels
 
-5. **What is the DoD 5220.22-M standard?**
-   - 7-pass overwrite method for secure hard drive erasure
+<details>
+<summary>Answer</summary>
 
-6. **What is the difference between tailgating and piggybacking?**
-   - Tailgating is unauthorized access by following someone; piggybacking is when authorized person allows it
+**B)** A mantrap (access control vestibule) is a small room with two interlocking doors where only one door can be open at a time. A person must authenticate at the first door, enter the vestibule, wait for the first door to close, then authenticate again at the second door. This prevents tailgating — following an authorized person through a secured entrance. Temperature monitoring (A) is an environmental control function. Emergency exits (C) and equipment housing (D) are unrelated to mantrap functionality.
+</details>
 
-7. **What is hot aisle/cold aisle containment?**
-   - Data center layout where server intake (cold) and exhaust (hot) aisles are separated for efficient cooling
+**Q2.** According to ASHRAE standards, what is the recommended temperature range for a server room?
 
-8. **What information should be logged for door access?**
-   - Badge ID, name, date/time, location, success/failure, exit time
+A) 50°F – 60°F (10°C – 15°C)
+B) 64.4°F – 80.6°F (18°C – 27°C)
+C) 85°F – 95°F (29°C – 35°C)
+D) 40°F – 50°F (4°C – 10°C)
 
-9. **What is the purpose of a pre-action fire suppression system?**
-   - Requires two separate triggers (double-interlock) before releasing water, preventing accidental discharge
+<details>
+<summary>Answer</summary>
 
-10. **What is dumpster diving and how can it be prevented?**
-    - Searching trash for sensitive info; prevented by shredding documents, locked trash bins, secure disposal
+**B)** ASHRAE recommends a server room operating temperature range of 64.4°F – 80.6°F (18°C – 27°C) with 40%–60% relative humidity. Temperatures too cold (A, D) risk condensation, while temperatures too hot (C) cause equipment overheating and shortened hardware lifespan.
+</details>
 
-## Key Takeaways
+**Q3.** A security administrator discovers that someone used a cloned proximity card to enter the server room. Which additional authentication measure would best mitigate this type of attack?
 
-- **Physical security is foundational** - all other controls fail if attacker has physical access
-- **Defense in depth** applies to physical security: multiple layers from property perimeter to equipment
-- **Environmental controls** (temperature, humidity, fire suppression) protect equipment from damage
-- **Power protection** (UPS, generators) ensures availability during outages
-- **Access controls** must be multi-factor for high-security areas
-- **Surveillance and logging** provide detective controls and forensic evidence
-- **Secure disposal** is critical - data must be unrecoverable from decommissioned equipment
-- **Security awareness** training prevents social engineering attacks
+A) Install higher fencing around the building perimeter
+B) Add biometric authentication (fingerprint or iris scan) as a second factor
+C) Increase the frequency of security guard patrols
+D) Replace proximity cards with longer PIN codes
 
-## Next Steps
+<details>
+<summary>Answer</summary>
 
-In the next lesson, we'll explore **Authentication and Authorization** mechanisms, including protocols like RADIUS, TACACS+, 802.1X, and access control models.
+**B)** Adding biometric authentication creates multi-factor access control — combining something you have (badge) with something you are (biometric). A cloned card alone would not grant access since the attacker cannot replicate a fingerprint or iris. Higher fencing (A) and guard patrols (C) are outer-perimeter controls that don't address the server room door. Longer PINs (D) can still be observed through shoulder surfing.
+</details>
 
----
+**Q4.** Why is FM-200 (or similar clean agent) preferred over water-based sprinkler systems for fire suppression in data centers?
 
-**Lesson Complete!** You now understand physical security measures that protect network infrastructure from unauthorized access and environmental threats.
+A) FM-200 is less expensive to install and maintain
+B) FM-200 extinguishes fires without leaving residue or damaging electronic equipment
+C) Water-based systems cannot detect fires automatically
+D) FM-200 also cools the server room during normal operations
+
+<details>
+<summary>Answer</summary>
+
+**B)** FM-200 and similar clean agents suppress fires by removing heat and interrupting the chemical reaction of combustion without leaving residue, water damage, or harming sensitive electronic equipment. Water-based sprinklers (A is false — FM-200 is actually more expensive) would destroy servers, switches, and storage devices. Water-based systems can detect fires automatically (C is incorrect). FM-200 is not used for cooling (D).
+</details>
+
+**Q5.** A company's access logs show an employee badging into the server room at 2:00 AM on a Saturday, outside their authorized access window of Monday–Friday 8 AM–6 PM. What is the most appropriate first response?
+
+A) Immediately terminate the employee
+B) Disable all badge access to the server room permanently
+C) Investigate the alert, review camera footage, and verify whether the access was authorized
+D) Ignore the alert since the badge scan was successful
+
+<details>
+<summary>Answer</summary>
+
+**C)** The appropriate first response to an anomalous access event is to investigate — review surveillance footage, check whether emergency access was pre-approved, and determine if the access was legitimate. Immediate termination (A) is premature without investigation. Disabling all access (B) is an overreaction that could disrupt operations. Ignoring the alert (D) defeats the purpose of monitoring and could allow unauthorized activity to continue.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.5 — Given a scenario, install and configure the appropriate physical security controls
+- NIST SP 800-116 Rev. 1: Guidelines for the Use of PIV Credentials in Facility Access
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — PE (Physical and Environmental Protection) Family
+- ASHRAE TC 9.9: Thermal Guidelines for Data Processing Environments
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Physical Security
+- TIA-942: Telecommunications Infrastructure Standard for Data Centers

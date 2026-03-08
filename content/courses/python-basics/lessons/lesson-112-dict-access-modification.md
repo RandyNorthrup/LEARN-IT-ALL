@@ -1,5 +1,5 @@
 ---
-id: "121-dict-access-modification"
+id: lesson-112-dict-access-modification
 title: "Dictionary Access and Modification"
 chapterId: ch9-dictionaries
 order: 3

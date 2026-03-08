@@ -1,5 +1,5 @@
 ---
-id: layer3-network
+id: lesson-004-layer3-network
 title: Layer 3 - The Network Layer
 chapterId: ch1-networking-fundamentals
 order: 4
@@ -514,11 +514,150 @@ The Network layer (Layer 3) enables internetwork communication:
 
 ---
 
+## Practice Questions
+
+**Q1.** A workstation has an IP address of 169.254.15.42. What does this indicate?
+
+A) The device has a valid public IP address
+B) The device is on the 169.254.0.0/16 private network
+C) The device was unable to reach a DHCP server and received an APIPA address
+D) The device is using a multicast address
+
+<details>
+<summary>Answer</summary>
+
+**C)** Addresses in the 169.254.0.0/16 range are APIPA (Automatic Private IP Addressing) addresses. These are automatically assigned when a device configured for DHCP cannot reach a DHCP server. APIPA addresses are link-local only and cannot be routed. This is not a private RFC 1918 range.
+</details>
+
+**Q2.** Which field in an IPv4 header prevents packets from looping infinitely in a network?
+
+A) Protocol
+B) Fragment Offset
+C) Time to Live (TTL)
+D) Header Checksum
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Time to Live (TTL) field is decremented by 1 at each router. When it reaches 0, the router discards the packet and sends an ICMP Time Exceeded message back to the source. This prevents packets from looping indefinitely in the network due to routing errors. Typical initial TTL values are 64, 128, or 255.
+</details>
+
+**Q3.** Which protocol resolves IPv4 addresses to MAC addresses?
+
+A) DNS
+B) DHCP
+C) ICMP
+D) ARP
+
+<details>
+<summary>Answer</summary>
+
+**D)** ARP (Address Resolution Protocol) resolves IPv4 addresses to MAC addresses. When a device needs to send data to another device on the same network, it broadcasts an ARP request asking "Who has IP x.x.x.x?" The device with that IP responds with its MAC address. DNS resolves hostnames to IP addresses, DHCP assigns IP addresses, and ICMP is used for error reporting.
+</details>
+
+**Q4.** A company uses the IP range 172.16.0.0/12 for its internal network. What type of addressing is this?
+
+A) Public IP addressing
+B) Private IP addressing (RFC 1918)
+C) Multicast addressing
+D) APIPA addressing
+
+<details>
+<summary>Answer</summary>
+
+**B)** The range 172.16.0.0/12 (172.16.0.0 - 172.31.255.255) is one of the three private IP address ranges defined in RFC 1918. Private addresses are not routable on the Internet and require NAT (Network Address Translation) to communicate externally. The other RFC 1918 ranges are 10.0.0.0/8 and 192.168.0.0/16.
+</details>
+
+**Q5.** A router receives a packet destined for 10.5.3.20 and has the following routes in its routing table. Which route will it use?
+
+- Route A: 10.0.0.0/8 via 192.168.1.1
+- Route B: 10.5.0.0/16 via 192.168.1.2
+- Route C: 10.5.3.0/24 via 192.168.1.3
+- Route D: 0.0.0.0/0 via 192.168.1.254
+
+A) Route A
+B) Route B
+C) Route C
+D) Route D
+
+<details>
+<summary>Answer</summary>
+
+**C)** Routers use the longest prefix match to determine the best route. Route C (10.5.3.0/24) has the most specific match (24-bit prefix) for the destination 10.5.3.20. Route B matches with a /16 prefix, Route A with a /8, and Route D is the default route (least specific). The most specific matching route is always preferred.
+</details>
+
+**Q6.** What is the primary function of a router in a network?
+
+A) Forward frames based on MAC addresses within the same network
+B) Forward packets between different networks based on IP addresses
+C) Amplify and repeat electrical signals
+D) Assign IP addresses to network devices
+
+<details>
+<summary>Answer</summary>
+
+**B)** A router is a Layer 3 device that forwards packets between different networks based on destination IP addresses and routing table lookups. Switches forward frames based on MAC addresses (A), repeaters/hubs amplify signals (C), and DHCP servers assign IP addresses (D).
+</details>
+
+**Q7.** A network administrator uses the `ping` command to test connectivity to a remote server and receives "Destination Unreachable" messages. Which protocol generates these messages?
+
+A) TCP
+B) UDP
+C) ARP
+D) ICMP
+
+<details>
+<summary>Answer</summary>
+
+**D)** ICMP (Internet Control Message Protocol) generates error reporting and diagnostic messages, including "Destination Unreachable," "Time Exceeded," and "Echo Reply" (ping responses). ICMP operates at Layer 3 and is used by tools like ping and traceroute. It is not used for data transfer.
+</details>
+
+**Q8.** Which IPv4 header field indicates the upper-layer protocol being carried in the packet?
+
+A) Version
+B) Protocol
+C) Type of Service
+D) Total Length
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Protocol field (8 bits) in the IPv4 header identifies the upper-layer protocol encapsulated in the packet's payload. Common values include 6 for TCP, 17 for UDP, and 1 for ICMP. The Version field identifies IPv4 vs IPv6, ToS is for QoS, and Total Length indicates overall packet size.
+</details>
+
+**Q9.** An IPv4 address belongs to Class B. What is the valid range for its first octet?
+
+A) 1-126
+B) 128-191
+C) 192-223
+D) 224-239
+
+<details>
+<summary>Answer</summary>
+
+**B)** Class B addresses have a first octet range of 128-191, with a default subnet mask of /16 (255.255.0.0). Class A uses 1-126, Class C uses 192-223, and Class D (224-239) is reserved for multicast. Note that classful addressing is historical; modern networks use CIDR.
+</details>
+
+**Q10.** What happens when a router receives a packet with a TTL value of 1?
+
+A) The router forwards the packet normally
+B) The router decrements the TTL to 0 and discards the packet, sending an ICMP Time Exceeded message
+C) The router increases the TTL and forwards the packet
+D) The router sends the packet to the default gateway
+
+<details>
+<summary>Answer</summary>
+
+**B)** When a router receives a packet with TTL=1, it decrements the TTL to 0 and discards the packet. The router then sends an ICMP Time Exceeded message back to the source. This mechanism is used by traceroute to discover the path packets take through a network by sending packets with incrementally increasing TTL values.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.1**: OSI Model - Network Layer
-- **CompTIA Network+ N10-008 Objective 1.4**: IPv4 and IPv6 Addressing
+- **CompTIA Network+ N10-009 Objective 1.1**: OSI Model - Network Layer
+- **CompTIA Network+ N10-009 Objective 1.4**: IPv4 and IPv6 Addressing
 - **RFC 791**: Internet Protocol (IPv4)
 - **RFC 2460**: Internet Protocol Version 6 (IPv6)
 - **RFC 792**: Internet Control Message Protocol (ICMP)
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course

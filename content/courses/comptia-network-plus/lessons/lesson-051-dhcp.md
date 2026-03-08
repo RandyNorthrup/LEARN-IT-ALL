@@ -1,5 +1,7 @@
 ---
 id: lesson-051-dhcp
+chapterId: ch2-ip-addressing
+order: 51
 title: "Dynamic Host Configuration Protocol (DHCP)"
 sidebar_label: "Lesson 51: DHCP"
 description: "Master DHCP operations, DORA process, server configuration, relay agents, and DHCPv6"
@@ -22,6 +24,19 @@ Dynamic Host Configuration Protocol (DHCP) automatically assigns IP addresses an
 DHCP operates on a client-server model where DHCP servers lease IP addresses to clients for a specified duration. Understanding DHCP is essential for network administration and appears frequently on the Network+ exam.
 
 **Key Principle:** DHCP provides centralized, automatic IP address management, reducing errors and administrative overhead.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand DHCP operations and the DORA process
+- Configure DHCP servers with scopes, reservations, and options
+- Implement DHCP relay agents for multi-subnet environments
+- Troubleshoot common DHCP issues
+- Distinguish between DHCPv4 and DHCPv6 implementations
+- Configure stateful and stateless DHCPv6
+
+---
 
 ## DHCP Fundamentals
 
@@ -1431,36 +1446,97 @@ DHCP provides automatic IP address configuration, eliminating manual setup and r
 6. Check firewall rules (UDP 67/68)
 7. Use packet capture to identify failure point
 
-## Additional Resources
+## Practice Questions
 
-- **RFC 2131**: Dynamic Host Configuration Protocol (DHCPv4)
-- **RFC 8415**: Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
-- **RFC 4861**: Neighbor Discovery for IPv6 (includes RA)
-- **CompTIA Network+ N10-008**: Domain 1.6 - DHCP concepts
-- **ISC DHCP**: dhcp.isc.org
-- **Microsoft DHCP**: docs.microsoft.com/windows-server/networking/technologies/dhcp
+**Q1.** What is the correct order of the DHCP DORA process?
 
-## Practice Exercises
+A) Discover, Offer, Request, Acknowledge
+B) Discover, Open, Request, Accept
+C) Demand, Offer, Receive, Acknowledge
+D) Detect, Offer, Request, Assign
 
-1. Configure DHCP scope for 192.168.50.0/24, range .100-.200, 48-hour lease
+<details>
+<summary>Answer</summary>
 
-2. What happens at each stage if T1 renewal fails but T2 succeeds?
+**A)** The DHCP DORA process consists of four steps: Discover (client broadcasts to find servers), Offer (server proposes an IP address), Request (client formally requests the offered address), and Acknowledge (server confirms the lease). The other options use incorrect terminology that does not match the DHCP protocol specification (RFC 2131).
+</details>
 
-3. Create DHCP reservation for printer MAC 00:11:22:33:44:55 → IP 192.168.1.75
+**Q2.** A client on VLAN 20 cannot obtain a DHCP address. The DHCP server is on VLAN 10. All other VLANs work correctly. What is the most likely cause?
 
-4. Configure ip helper-address on Cisco router for remote DHCP server
+A) The DHCP server has run out of available IP addresses
+B) The DHCP relay agent (ip helper-address) is not configured on the VLAN 20 interface
+C) The client's NIC is faulty
+D) DNS is not configured on the DHCP server
 
-5. Client gets 169.254.x.x address. List five possible causes.
+<details>
+<summary>Answer</summary>
 
-6. Calculate scope utilization: 200 addresses, 180 leased. What percentage?
+**B)** DHCP Discover messages are broadcasts that do not cross router/VLAN boundaries by default. A DHCP relay agent (ip helper-address) must be configured on the router interface for each VLAN to forward DHCP broadcasts to the server. Since other VLANs work, the server is functional (A is unlikely). A faulty NIC (C) would affect all network communication. DNS configuration (D) is unrelated to address assignment.
+</details>
 
-7. Configure stateless DHCPv6 to provide DNS 2001:4860:4860::8888
+**Q3.** Which DHCP feature ensures a specific device always receives the same IP address?
 
-**Answers:**
-1. Range 192.168.50.100-200, lease 172800 seconds, gateway .1, subnet mask /24
-2. T1 fails → client continues using IP → T2 broadcast → any server responds → lease renewed
-3. Add reservation with MAC, assign 192.168.1.75, configure on DHCP server
-4. `interface vlan X` then `ip helper-address <DHCP_server_IP>`
-5. DHCP server down, no relay agent, firewall blocking, scope exhausted, cable unplugged
-6. 180/200 = 90% utilization (consider expanding scope)
-7. Set M=0, O=1 on router RA; configure DHCPv6 server with DNS option only (no address range)
+A) DHCP scope
+B) DHCP exclusion range
+C) DHCP reservation
+D) DHCP option
+
+<details>
+<summary>Answer</summary>
+
+**C)** A DHCP reservation binds a specific IP address to a device's MAC address, ensuring the device always receives the same address from the DHCP server. A scope (A) defines the overall pool of addresses. An exclusion range (B) removes addresses from the pool so they won't be assigned. DHCP options (D) provide additional configuration like DNS servers and default gateways.
+</details>
+
+**Q4.** Which ports does DHCP use for communication?
+
+A) TCP 67 (server) and TCP 68 (client)
+B) UDP 67 (server) and UDP 68 (client)
+C) UDP 53 (server) and UDP 54 (client)
+D) TCP 80 (server) and TCP 443 (client)
+
+<details>
+<summary>Answer</summary>
+
+**B)** DHCP uses UDP port 67 for the server and UDP port 68 for the client. UDP is used rather than TCP (A) because the client doesn't yet have an IP address to establish a TCP connection. Ports 53 (C) are used by DNS, and ports 80/443 (D) are used by HTTP/HTTPS.
+</details>
+
+**Q5.** What is the key difference between stateful DHCPv6 and stateless DHCPv6?
+
+A) Stateful DHCPv6 uses UDP while stateless uses TCP
+B) Stateful DHCPv6 assigns IP addresses and tracks leases, while stateless only provides additional configuration like DNS servers
+C) Stateless DHCPv6 assigns IP addresses, while stateful only provides configuration options
+D) Stateful DHCPv6 works only with IPv4, while stateless works with IPv6
+
+<details>
+<summary>Answer</summary>
+
+**B)** Stateful DHCPv6 assigns IPv6 addresses and maintains lease state information (similar to DHCPv4). Stateless DHCPv6 works alongside SLAAC—the host obtains its IPv6 address via SLAAC but queries DHCPv6 only for additional parameters like DNS server addresses. Option C reverses the definitions. Both use UDP (A is wrong), and both are IPv6-specific protocols (D is wrong).
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.6 – Explain the use and purpose of network services (DHCP)
+- RFC 2131: Dynamic Host Configuration Protocol (DHCPv4)
+- RFC 8415: Dynamic Host Configuration Protocol for IPv6 (Stateful DHCPv6)
+- RFC 4861: Neighbor Discovery for IP Version 6 (IPv6) – Router Advertisement
+- RFC 3046: DHCP Relay Agent Information Option
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – DHCP Operations
+- ISC DHCP Documentation: https://www.isc.org/dhcp/
+- Microsoft DHCP: docs.microsoft.com/windows-server/networking/technologies/dhcp
+
+### Required Reading
+
+- **RFC 2131** — Dynamic Host Configuration Protocol (1997)
+  - Read: Sections 1–3 (Introduction, Protocol Summary, The Client-Server Protocol)
+  - Available at: https://www.rfc-editor.org/rfc/rfc2131
+  - Focus questions:
+    1. Why does the DHCP protocol require four messages (DORA) instead of a simple two-message request/reply?
+    2. How does a DHCP client behave when it receives multiple DHCPOFFER messages from different servers?
+    3. What is the purpose of the T1 and T2 renewal timers, and what happens if renewal at T1 fails?
+
+- **RFC 8415** — DHCPv6 (2018)
+  - Read: Section 1 (Introduction) and Section 5.1 (Client/Server Exchanges)
+  - Available at: https://www.rfc-editor.org/rfc/rfc8415
+  - Focus questions:
+    1. How does the DHCPv6 Solicit/Advertise/Request/Reply exchange compare to DHCPv4's DORA process?
+    2. Why doesn't DHCPv6 assign a default gateway, and how is gateway discovery handled in IPv6 instead?

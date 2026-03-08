@@ -1,9 +1,9 @@
 ---
-id: "lesson-089"
+id: lesson-089-exam-tips
 title: "Exam Day Tips and Test-Taking Strategies"
-chapterId: "chapter-10"
+chapterId: ch10-exam-prep
 order: 89
-duration: 22
+duration: 35
 objectives:
   - "Master proven test-taking strategies for multiple-choice questions"
   - "Recognize and avoid common exam traps and distractors"
@@ -15,7 +15,7 @@ objectives:
 
 ## Introduction
 
-Passing the CompTIA Network+ N10-008 exam requires more than just technical knowledge—it demands strategic test-taking skills, effective time management, and the ability to navigate tricky questions designed to test not only what you know, but how well you can apply that knowledge under pressure.
+Passing the CompTIA Network+ N10-009 exam requires more than just technical knowledge—it demands strategic test-taking skills, effective time management, and the ability to navigate tricky questions designed to test not only what you know, but how well you can apply that knowledge under pressure.
 
 This lesson equips you with proven strategies used by successful test-takers to maximize your score. You'll learn how to:
 - Identify and avoid common question traps
@@ -25,6 +25,17 @@ This lesson equips you with proven strategies used by successful test-takers to 
 - Handle difficult questions without losing momentum
 
 These strategies, combined with your technical preparation, will give you the confidence and skills needed to perform your best on exam day.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Master proven test-taking strategies for multiple-choice questions
+- Recognize and avoid common exam traps and distractors
+- Develop effective time management techniques for exam day
+- Prepare mentally and logistically for exam success
 
 ---
 
@@ -652,7 +663,141 @@ With these strategies combined with your technical preparation, you're ready to 
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** What is the recommended approach when you encounter a Performance-Based Question (PBQ) at the beginning of the exam?
+
+A) Spend as much time as needed to complete it perfectly
+B) Skip it and return to it after completing the multiple-choice questions
+C) Guess randomly and move on
+D) Ask the proctor for help
+
+<details>
+<summary>Answer</summary>
+
+**B)** The recommended strategy is to flag PBQs and skip them on the first pass. Complete all multiple-choice questions first to secure those points, then return to PBQs with your remaining time.
+</details>
+
+**Q2.** When you don't know the answer to a multiple-choice question, what should you do?
+
+A) Leave it blank and move on
+B) Eliminate obviously wrong answers, make your best guess, and flag it for review
+C) Spend 5 minutes researching the answer
+D) Choose the longest answer option
+
+<details>
+<summary>Answer</summary>
+
+**B)** There is no penalty for guessing on CompTIA exams, so never leave a question blank. Eliminate clearly wrong options to improve your odds, select your best guess, flag it, and move on.
+</details>
+
+**Q3.** Approximately how much time should you budget per multiple-choice question on the Network+ exam?
+
+A) 30 seconds
+B) 1 minute
+C) 3 minutes
+D) 5 minutes
+
+<details>
+<summary>Answer</summary>
+
+**B)** With 90 minutes and up to 90 questions (including PBQs), budgeting about 1 minute per multiple-choice question leaves adequate time for PBQs and review.
+</details>
+
+**Q4.** A question asks "Which is the BEST solution for..." and two answers seem correct. What should you consider?
+
+A) Always pick the more complex solution
+B) Choose the answer that is most cost-effective, least disruptive, or most directly addresses the scenario
+C) Pick the first answer that seems correct
+D) Skip the question entirely
+
+<details>
+<summary>Answer</summary>
+
+**B)** When multiple answers seem correct, CompTIA often tests judgment. Look for the BEST answer based on context: most direct solution, least risk, most appropriate scope, or industry best practice for the scenario described.
+</details>
+
+**Q5.** What items are you permitted to bring into the testing center?
+
+A) Mobile phone, notes, and calculator
+B) Two forms of valid ID
+C) Study guide and flashcards
+D) Laptop for reference
+
+<details>
+<summary>Answer</summary>
+
+**B)** Only two forms of valid government-issued ID are permitted. All personal items including phones, notes, watches, and study materials must be stored in a locker before entering the testing room.
+</details>
+
+**Q6.** When reviewing flagged questions at the end of the exam, what is the best practice?
+
+A) Change every answer to a different option
+B) Only change an answer if you have a clear reason to believe the original was wrong
+C) Don't review flagged questions at all
+D) Always change to the longest answer
+
+<details>
+<summary>Answer</summary>
+
+**B)** Research shows that first instincts are often correct. Only change an answer if you have a specific, logical reason to believe your original choice was wrong. Avoid changing answers based on anxiety or second-guessing.
+</details>
+
+**Q7.** A question contains the phrase "Choose TWO." What does this indicate?
+
+A) You must select exactly two correct answers from the options
+B) You can select any number of answers
+C) The question has two parts to answer separately
+D) You should answer the question twice
+
+<details>
+<summary>Answer</summary>
+
+**A)** "Choose TWO" indicates a multiple-select question where exactly two options are correct. You must select both correct answers to receive full credit for the question.
+</details>
+
+**Q8.** What should you do if you're running low on time with 10 questions remaining?
+
+A) Immediately submit the exam
+B) Quickly answer remaining questions with best guesses rather than leaving them blank
+C) Skip all remaining questions
+D) Ask for additional time
+
+<details>
+<summary>Answer</summary>
+
+**B)** Since there is no penalty for incorrect answers, quickly answer all remaining questions with your best guesses. An educated guess has a chance of being correct; a blank answer is always wrong.
+</details>
+
+**Q9.** Which study approach is most effective in the final 24 hours before the exam?
+
+A) Cramming all new material possible
+B) Light review of key concepts and getting adequate rest
+C) Taking three full-length practice exams back-to-back
+D) Memorizing every RFC number
+
+<details>
+<summary>Answer</summary>
+
+**B)** In the final 24 hours, light review (flashcards, key concepts) and adequate sleep (7-8 hours) are far more effective than cramming. A rested mind performs significantly better on exam day.
+</details>
+
+**Q10.** When a Network+ question describes a troubleshooting scenario, which approach should guide your answer?
+
+A) Choose the most advanced and expensive technology solution
+B) Follow the CompTIA troubleshooting methodology—identify the problem before jumping to solutions
+C) Always recommend replacing all hardware
+D) Suggest restarting all devices as the first step
+
+<details>
+<summary>Answer</summary>
+
+**B)** CompTIA heavily tests the troubleshooting methodology. Answers that follow the systematic 7-step approach (identify the problem first, then theory, then test) are typically correct over answers that skip steps.
+</details>
+
+---
+
+## References
 
 - **CompTIA Exam Policies**: Official testing rules and procedures
 - **Pearson VUE Testing Center Locator**: Find nearby testing locations

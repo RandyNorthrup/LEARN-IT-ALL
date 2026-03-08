@@ -1,5 +1,5 @@
 ---
-id: "122-dict-iteration"
+id: lesson-113-dict-iteration
 title: "Dictionary Iteration Techniques"
 chapterId: ch9-dictionaries
 order: 4
@@ -222,8 +222,8 @@ data = {
 # Sort by score desc, then age asc
 for name in sorted(data, key=lambda n: (-data[n]["score"], data[n]["age"])):
     print(f"{name}: score={data[name]['score']}, age={data[name]['age']}")
-# alice: score=100, age=25
-# bob: score=100, age=30
+# bob: score=100, age=25
+# alice: score=100, age=30
 # charlie: score=90, age=30
 ```
 
@@ -388,7 +388,7 @@ scores = {"alice": 100, "bob": 85}
 for key in list(scores):  # Need list() copy
     if scores[key] >= 90:
         scores[f"{key}_bonus"] = scores[key] + 10
-print(scores)  # {'alice': 110, 'bob': 85, 'alice_bonus': 110}
+print(scores)  # {'alice': 100, 'bob': 85, 'alice_bonus': 110}
 ```
 
 ## Iterating with itertools

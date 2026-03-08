@@ -1,8 +1,8 @@
 ---
-id: "109-scope-anti-patterns"
+id: lesson-094-scope-anti-patterns
 title: "Common Scope Anti-Patterns"
 chapterId: ch7-scope
-order: 13
+order: 12
 duration: 20
 objectives:
   - Recognize common scope mistakes
@@ -41,30 +41,29 @@ def reset():
 # - Functions have hidden dependencies
 # - Can't run multiple calculations simultaneously
 
-# ✅ GOOD - Use class or pass parameters
-class Statistics:
-    def __init__(self):
-        self.total = 0
-        self.count = 0
+# ✅ GOOD - Use closure to encapsulate state
+def create_statistics():
+    data = {'total': 0, 'count': 0}
     
-    def process_number(self, n):
-        self.total += n
-        self.count += 1
+    def process_number(n):
+        data['total'] += n
+        data['count'] += 1
     
-    @property
-    def average(self):
-        return self.total / self.count if self.count > 0 else 0
+    def average():
+        return data['total'] / data['count'] if data['count'] > 0 else 0
     
-    def reset(self):
-        self.total = 0
-        self.count = 0
+    def reset():
+        data['total'] = 0
+        data['count'] = 0
+    
+    return process_number, average, reset
 
 # Clear, testable, can have multiple instances
-stats1 = Statistics()
-stats2 = Statistics()
+process1, avg1, reset1 = create_statistics()
+process2, avg2, reset2 = create_statistics()
 
-stats1.process_number(10)
-stats2.process_number(20)
+process1(10)
+process2(20)
 # Each independent!
 ```
 
@@ -127,26 +126,27 @@ items = get_items()
 items.append(3)  # Modifies global directly!
 print(shared_list)  # [1, 2, 3]
 
-# ✅ GOOD - Encapsulate in class
-class ItemManager:
-    def __init__(self):
-        self._items = []  # Private
+# ✅ GOOD - Encapsulate in closure
+def create_item_manager():
+    items = []  # Private state
     
-    def add_item(self, item):
-        self._items.append(item)
+    def add_item(item):
+        items.append(item)
     
-    def get_items(self):
-        return self._items.copy()  # Return copy
+    def get_items():
+        return items.copy()  # Return copy
     
-    def get_item_count(self):
-        return len(self._items)
+    def get_item_count():
+        return len(items)
+    
+    return add_item, get_items, get_item_count
 
-manager = ItemManager()
-manager.add_item(1)
-manager.add_item(2)
-items = manager.get_items()
+add_item, get_items, get_item_count = create_item_manager()
+add_item(1)
+add_item(2)
+items = get_items()
 items.append(3)  # Doesn't affect internal list
-print(manager.get_item_count())  # 2
+print(get_item_count())  # 2
 ```
 
 ## Anti-Pattern 4: Leaking Loop Variables
@@ -270,25 +270,26 @@ def get_value():
     global counter  # Unnecessary - just reading
     return counter
 
-# ✅ GOOD - Use class
-class Counter:
-    def __init__(self):
-        self._value = 0
+# ✅ GOOD - Use closure
+def create_counter():
+    data = {'value': 0}
     
-    def increment(self):
-        self._value += 1
+    def increment():
+        data['value'] += 1
     
-    def decrement(self):
-        self._value -= 1
+    def decrement():
+        data['value'] -= 1
     
-    def reset(self):
-        self._value = 0
+    def reset():
+        data['value'] = 0
     
-    def get_value(self):
-        return self._value
+    def get_value():
+        return data['value']
+    
+    return increment, decrement, reset, get_value
 
-counter = Counter()
-counter.increment()
+increment, decrement, reset, get_value = create_counter()
+increment()
 ```
 
 ## Anti-Pattern 8: Shadowing Built-ins
@@ -351,21 +352,25 @@ def outer():
     x = inner2(x)
     return x  # Clear: 10 + 10 + 20 = 40
 
-# ✅ ALSO GOOD - Use class for state
-class Calculator:
-    def __init__(self, initial):
-        self.value = initial
+# ✅ ALSO GOOD - Use closure for state
+def create_calculator(initial):
+    data = {'value': initial}
     
-    def add_ten(self):
-        self.value += 10
+    def add_ten():
+        data['value'] += 10
     
-    def add_twenty(self):
-        self.value += 20
+    def add_twenty():
+        data['value'] += 20
+    
+    def get_value():
+        return data['value']
+    
+    return add_ten, add_twenty, get_value
 
-calc = Calculator(10)
-calc.add_ten()
-calc.add_twenty()
-print(calc.value)  # 40
+add_ten, add_twenty, get_value = create_calculator(10)
+add_ten()
+add_twenty()
+print(get_value())  # 40
 ```
 
 ## Anti-Pattern 10: Circular Dependencies
@@ -405,7 +410,7 @@ def function_b():
 ## Anti-Pattern 11: Implicit Global Creation
 
 ```python
-# ❌ BAD - Typo creates global
+# ❌ BAD - Typo creates silent bug (variable is unused)
 def calculate():
     result = 0
     for i in range(10):
@@ -414,12 +419,13 @@ def calculate():
 
 def process():
     total = calculate()
-    # Typo: missing 'l'
-    tota1 = total * 2  # Creates global tota1 (with number 1)!
-    return total
+    # Typo: missing 'l' - creates unused local variable!
+    tota1 = total * 2  # tota1 is LOCAL, silently ignored
+    return total  # Returns unmodified total
 
-process()
-print(tota1)  # Works but shouldn't exist!
+result = process()
+print(result)  # 45 (not 90 as intended)
+# print(tota1)  # NameError! tota1 is local to process()
 
 # ✅ GOOD - Use linter or type hints
 def process() -> int:
@@ -433,12 +439,16 @@ def process() -> int:
 
 ```python
 # ✅ DO: Minimize global usage
-class State:
-    def __init__(self):
-        self.data = []
+def create_state():
+    data = []
     
-    def add(self, item):
-        self.data.append(item)
+    def add(item):
+        data.append(item)
+    
+    def get_data():
+        return data.copy()
+    
+    return add, get_data
 
 # ✅ DO: Explicit parameters
 def process(data, config):

@@ -1,8 +1,8 @@
 ---
-id: "102-loop-patterns"
+id: lesson-067-loop-patterns
 title: "Common Loop Patterns and Idioms"
 chapterId: ch5-loops
-order: 13
+order: 10
 duration: 25
 objectives:
   - Master common Python loop patterns

@@ -1,5 +1,5 @@
 ---
-id: "138-frozenset-immutable-sets"
+id: lesson-129-frozenset-immutable-sets
 title: "frozenset: Immutable Sets"
 chapterId: ch10-sets
 order: 5
@@ -202,7 +202,7 @@ result1 = frozen_set | regular_set
 print(type(result1))  # <class 'frozenset'>
 
 result2 = regular_set | frozen_set
-print(type(result2))  # <class 'frozenset'>
+print(type(result2))  # <class 'set'>
 
 # Methods return the type of the caller
 result3 = frozen_set.union(regular_set)
@@ -248,59 +248,57 @@ print(hasattr(fs, 'issubset'))  # True
 
 ```python
 # Example 1: Graph representation with frozenset edges
-class Graph:
-    """Undirected graph with frozenset edges"""
-    def __init__(self):
-        self.edges = set()
-    
-    def add_edge(self, node1, node2):
-        """Add edge (undirected)"""
-        self.edges.add(frozenset([node1, node2]))
-    
-    def has_edge(self, node1, node2):
-        """Check if edge exists"""
-        return frozenset([node1, node2]) in self.edges
-    
-    def get_neighbors(self, node):
-        """Get all neighbors of a node"""
-        neighbors = set()
-        for edge in self.edges:
-            if node in edge:
-                neighbors.update(edge - {node})
-        return neighbors
+def create_graph():
+    """Create an undirected graph using frozenset edges"""
+    return {"edges": set()}
 
-graph = Graph()
-graph.add_edge("A", "B")
-graph.add_edge("B", "C")
-graph.add_edge("A", "C")
+def add_edge(graph, node1, node2):
+    """Add edge (undirected)"""
+    graph["edges"].add(frozenset([node1, node2]))
 
-print(graph.has_edge("A", "B"))  # True
-print(graph.has_edge("B", "A"))  # True (same edge)
-print(graph.get_neighbors("B"))  # {"A", "C"}
+def has_edge(graph, node1, node2):
+    """Check if edge exists"""
+    return frozenset([node1, node2]) in graph["edges"]
+
+def get_neighbors(graph, node):
+    """Get all neighbors of a node"""
+    neighbors = set()
+    for edge in graph["edges"]:
+        if node in edge:
+            neighbors.update(edge - {node})
+    return neighbors
+
+graph = create_graph()
+add_edge(graph, "A", "B")
+add_edge(graph, "B", "C")
+add_edge(graph, "A", "C")
+
+print(has_edge(graph, "A", "B"))  # True
+print(has_edge(graph, "B", "A"))  # True (same edge)
+print(get_neighbors(graph, "B"))  # {"A", "C"}
 
 # Example 2: Caching with set keys
-class PermissionCache:
-    """Cache permission checks for user groups"""
-    def __init__(self):
-        self.cache = {}
-    
-    def check_permissions(self, user_groups, required_perms):
-        """Check if any user group has required permissions"""
-        # Use frozensets as cache keys
-        key = (frozenset(user_groups), frozenset(required_perms))
-        
-        if key not in self.cache:
-            # Simulate expensive permission check
-            result = bool(frozenset(user_groups) & frozenset(required_perms))
-            self.cache[key] = result
-        
-        return self.cache[key]
+def create_permission_cache():
+    """Create a cache for permission checks on user groups"""
+    return {"cache": {}}
 
-cache = PermissionCache()
+def check_permissions(perm_cache, user_groups, required_perms):
+    """Check if any user group has required permissions"""
+    # Use frozensets as cache keys
+    key = (frozenset(user_groups), frozenset(required_perms))
+    
+    if key not in perm_cache["cache"]:
+        # Simulate expensive permission check
+        result = bool(frozenset(user_groups) & frozenset(required_perms))
+        perm_cache["cache"][key] = result
+    
+    return perm_cache["cache"][key]
+
+perm_cache = create_permission_cache()
 groups1 = ["admin", "editor"]
 perms1 = ["read", "write"]
 
-result = cache.check_permissions(groups1, perms1)
+result = check_permissions(perm_cache, groups1, perms1)
 print(f"Has permission: {result}")
 
 # Example 3: Configuration combinations
@@ -336,38 +334,36 @@ words = ["listen", "silent", "hello", "world", "enlist"]
 # groups = group_anagrams(words)
 
 # Example 5: Membership tracking
-class Tournament:
-    """Track teams and their matchups"""
-    def __init__(self):
-        self.teams = set()
-        self.matchups = set()  # Set of frozensets
-    
-    def add_team(self, team_members):
-        """Add team as frozenset"""
-        team = frozenset(team_members)
-        self.teams.add(team)
-    
-    def schedule_match(self, team1_members, team2_members):
-        """Schedule match between two teams"""
-        team1 = frozenset(team1_members)
-        team2 = frozenset(team2_members)
-        matchup = frozenset([team1, team2])
-        self.matchups.add(matchup)
-    
-    def has_played(self, team1_members, team2_members):
-        """Check if two teams have played"""
-        team1 = frozenset(team1_members)
-        team2 = frozenset(team2_members)
-        matchup = frozenset([team1, team2])
-        return matchup in self.matchups
+def create_tournament():
+    """Create a tournament tracker for teams and matchups"""
+    return {"teams": set(), "matchups": set()}
 
-tournament = Tournament()
-tournament.add_team(["alice", "bob"])
-tournament.add_team(["charlie", "david"])
-tournament.schedule_match(["alice", "bob"], ["charlie", "david"])
+def add_team(tournament, team_members):
+    """Add team as frozenset"""
+    team = frozenset(team_members)
+    tournament["teams"].add(team)
 
-print(tournament.has_played(["alice", "bob"], ["charlie", "david"]))  # True
-print(tournament.has_played(["bob", "alice"], ["david", "charlie"]))  # True (order doesn't matter)
+def schedule_match(tournament, team1_members, team2_members):
+    """Schedule match between two teams"""
+    team1 = frozenset(team1_members)
+    team2 = frozenset(team2_members)
+    matchup = frozenset([team1, team2])
+    tournament["matchups"].add(matchup)
+
+def has_played(tournament, team1_members, team2_members):
+    """Check if two teams have played"""
+    team1 = frozenset(team1_members)
+    team2 = frozenset(team2_members)
+    matchup = frozenset([team1, team2])
+    return matchup in tournament["matchups"]
+
+tournament = create_tournament()
+add_team(tournament, ["alice", "bob"])
+add_team(tournament, ["charlie", "david"])
+schedule_match(tournament, ["alice", "bob"], ["charlie", "david"])
+
+print(has_played(tournament, ["alice", "bob"], ["charlie", "david"]))  # True
+print(has_played(tournament, ["bob", "alice"], ["david", "charlie"]))  # True (order doesn't matter)
 ```
 
 ## Performance Characteristics

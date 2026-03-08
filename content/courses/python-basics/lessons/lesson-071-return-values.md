@@ -1,5 +1,5 @@
 ---
-id: return-values
+id: lesson-071-return-values
 title: Return Values and Multiple Returns
 chapterId: ch6-functions
 order: 3

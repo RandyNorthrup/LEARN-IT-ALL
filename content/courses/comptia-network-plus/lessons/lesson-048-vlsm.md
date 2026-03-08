@@ -1,5 +1,7 @@
 ---
 id: lesson-048-vlsm
+chapterId: ch2-ip-addressing
+order: 48
 title: "Variable Length Subnet Masking (VLSM)"
 sidebar_label: "Lesson 48: VLSM"
 description: "Master VLSM for efficient IP address allocation, hierarchical network design, and optimal subnet sizing"
@@ -22,6 +24,19 @@ Variable Length Subnet Masking (VLSM) revolutionized IP addressing by allowing n
 This lesson explores VLSM design principles, calculation methods, and practical implementation strategies used in modern networks.
 
 **Key Principle:** Right-size your subnets - don't waste address space with oversized networks.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the advantages of VLSM over fixed-length subnetting
+- Design VLSM addressing schemes for complex networks
+- Optimize IP address space utilization
+- Implement hierarchical addressing structures
+- Avoid common VLSM design mistakes
+- Apply VLSM to real-world network scenarios
+
+---
 
 ## Understanding VLSM
 
@@ -711,6 +726,21 @@ Efficient use of public IP space
 Maximizes customer allocations
 ```
 
+### Multi-Vendor Interface Addressing and Route Summarization
+
+Applying VLSM subnets to interfaces and configuring route summarization varies by vendor:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | Linux (iproute2) |
+|------|-----------|---------------|------------|------------------|
+| Assign IP to interface | `ip address 10.0.1.1 255.255.255.0` | `set interfaces ge-0/0/0 unit 0 family inet address 10.0.1.1/24` | `ip address 10.0.1.1/24` | `ip addr add 10.0.1.1/24 dev eth0` |
+| Secondary IP | `ip address 10.0.2.1 255.255.255.0 secondary` | `set interfaces ge-0/0/0 unit 0 family inet address 10.0.2.1/24` (multiple allowed) | `ip address 10.0.2.1/24 secondary` | `ip addr add 10.0.2.1/24 dev eth0` |
+| Show IP config | `show ip interface brief` | `show interfaces terse` | `show ip interface brief` | `ip addr show` |
+| Static route | `ip route 10.0.0.0 255.255.0.0 10.1.1.1` | `set routing-options static route 10.0.0.0/16 next-hop 10.1.1.1` | `ip route 10.0.0.0/16 10.1.1.1` | `ip route add 10.0.0.0/16 via 10.1.1.1` |
+| OSPF summarization | `area 1 range 10.0.0.0 255.255.0.0` | `set protocols ospf area 1 area-range 10.0.0.0/16` | `area 1 range 10.0.0.0/16` | `area 1 range 10.0.0.0/16` (FRR) |
+| Show route table | `show ip route` | `show route` | `show ip route` | `ip route show` |
+
+> **Key Insight:** Cisco IOS is the only major platform that still uses dotted-decimal subnet masks (255.255.255.0) for interface addressing. Juniper, Arista, Linux, and virtually all modern platforms use **CIDR prefix notation** (/24). The Network+ exam uses both formats, so you must be comfortable converting between them.
+
 ## Summary
 
 VLSM enables efficient IP address allocation through:
@@ -757,22 +787,97 @@ VLSM enables efficient IP address allocation through:
 - Study classless routing protocols (OSPF, EIGRP)
 - Apply VLSM to real networks
 
-## Additional Resources
+## Practice Questions
 
-- **RFC 1812**: Requirements for IP Version 4 Routers (Section 4.2.2.11)
-- **RFC 4632**: Classless Inter-Domain Routing (CIDR)
-- **CompTIA Network+ N10-008**: Domain 1.4 - VLSM and subnetting
-- **Cisco**: VLSM and route summarization best practices
-- **Online Tools**: VLSM calculators and validation tools
+**Q1.** What is the primary advantage of VLSM over fixed-length subnet masking (FLSM)?
 
-## Practice Exercises
+A) VLSM allows the use of different subnet mask lengths within the same network, reducing IP address waste
+B) VLSM increases the total number of available IP addresses in a network
+C) VLSM eliminates the need for routing protocols
+D) VLSM only works with IPv6 networks
 
-1. Design VLSM scheme for 10.50.0.0/16 with departments needing 2000, 1000, 500, 250, 100, 50, and 25 hosts.
+<details>
+<summary>Answer</summary>
 
-2. Given 192.168.0.0/22, create VLSM plan for 5 branches: 300, 150, 75, 40, and 20 hosts each, plus 10 point-to-point links.
+**A)** VLSM allows different subnet sizes within the same major network, enabling administrators to match subnet sizes to actual host requirements. This minimizes wasted addresses compared to FLSM, where every subnet must be the same size. VLSM doesn't increase total addresses (B), it still requires classless routing protocols like OSPF or EIGRP (C), and it works with both IPv4 and IPv6 (D).
+</details>
 
-3. Verify if these allocations overlap: 172.16.32.0/20 and 172.16.40.0/22
+**Q2.** When designing a VLSM addressing scheme, which subnet should be allocated first?
 
-4. Design hierarchical VLSM for 3 offices from 10.0.0.0/16, each office needs 3 departments with 500, 250, and 100 hosts.
+A) The subnet requiring the fewest hosts
+B) The subnet requiring the most hosts
+C) Point-to-point link subnets (/30)
+D) The subnet with the most critical servers
 
-5. Summarize these VLSM allocations into single route: 192.168.32.0/24, 192.168.33.0/25, 192.168.33.128/26, 192.168.33.192/27
+<details>
+<summary>Answer</summary>
+
+**B)** The golden rule of VLSM design is to allocate the largest subnets first. Starting with the biggest requirements ensures adequate contiguous address space is available. If you allocate small subnets first, you may fragment the address space and be unable to create the larger subnets needed later. Criticality (D) is an operational concern, not an addressing constraint.
+</details>
+
+**Q3.** A network uses 192.168.1.0/24. Department A needs 100 hosts and Department B needs 50 hosts. Using VLSM, what are the most efficient subnet masks for these departments?
+
+A) Both departments get /24
+B) Department A gets /25 (126 hosts), Department B gets /26 (62 hosts)
+C) Department A gets /26 (62 hosts), Department B gets /27 (30 hosts)
+D) Both departments get /25
+
+<details>
+<summary>Answer</summary>
+
+**B)** Department A needs 100 hosts, so the smallest subnet that fits is /25 (126 usable hosts). Department B needs 50 hosts, so the smallest subnet that fits is /26 (62 usable hosts). Option A wastes the entire address space. Option C is too small for both departments (62 < 100 for Dept A, 30 < 50 for Dept B). Option D gives Department B more addresses than needed (126 vs. 50 required).
+</details>
+
+**Q4.** Which routing protocol characteristic is required for VLSM support?
+
+A) Distance-vector operation
+B) Classful routing updates that omit subnet mask information
+C) Classless routing updates that include subnet mask information with each route
+D) Static routing only
+
+<details>
+<summary>Answer</summary>
+
+**C)** VLSM requires classless routing protocols that include subnet mask (prefix length) information in their routing updates. Protocols like OSPF, EIGRP, IS-IS, and BGP support VLSM. Classful protocols like RIPv1 and IGRP (B) do not carry subnet mask information and cannot support variable-length subnets. Distance-vector (A) describes an algorithm type, not a VLSM requirement. Static routing (D) can support VLSM but is not a protocol characteristic.
+</details>
+
+**Q5.** A company has been allocated 172.16.0.0/16 and uses VLSM. They create a /21 subnet for a large department and a /30 subnet for a point-to-point WAN link. How many usable host addresses does each subnet provide?
+
+A) /21 = 2046 hosts, /30 = 2 hosts
+B) /21 = 2048 hosts, /30 = 4 hosts
+C) /21 = 510 hosts, /30 = 2 hosts
+D) /21 = 4094 hosts, /30 = 6 hosts
+
+<details>
+<summary>Answer</summary>
+
+**A)** A /21 subnet has 11 host bits (32 − 21 = 11), providing 2^11 − 2 = 2046 usable hosts. A /30 subnet has 2 host bits (32 − 30 = 2), providing 2^2 − 2 = 2 usable hosts—perfect for point-to-point links. Option B doesn't subtract the network and broadcast addresses. Option C calculates /23, not /21. Option D calculates /20, not /21.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.4 – Given a scenario, configure a subnet and use appropriate IP addressing schemes
+- RFC 1812: Requirements for IP Version 4 Routers (Section 4.2.2.11 – Subnetting)
+- RFC 4632: Classless Inter-Domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan
+- RFC 1878: Variable Length Subnet Table For IPv4
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – VLSM and Route Summarization
+- Odom, W. (2021). *CCNA 200-301 Official Cert Guide, Volume 1*. Cisco Press – VLSM Design
+- Cisco: VLSM and route summarization best practices
+- Online Tools: VLSM calculators and validation tools
+
+### Required Reading
+
+- **RFC 8200** — Internet Protocol, Version 6 (IPv6) Specification (2017)
+  - Read: Sections 1–3 (Introduction, Terminology, IPv6 Header Format)
+  - Available at: https://www.rfc-editor.org/rfc/rfc8200
+  - Focus questions:
+    1. How does the IPv6 header's fixed 40-byte size and removal of the Header Checksum field improve router performance compared to IPv4?
+    2. What is the role of the Flow Label field, and how does it enable per-flow packet handling without deep packet inspection?
+    3. How do IPv6 Extension Headers replace IPv4's Options field, and what security concerns do they introduce?
+
+- **RFC 4632** — Classless Inter-Domain Routing (CIDR) (2006)
+  - Read: Sections 1–3
+  - Available at: https://www.rfc-editor.org/rfc/rfc4632
+  - Focus questions:
+    1. How did CIDR address the IPv4 address exhaustion problem that existed with classful addressing?
+    2. What is route aggregation (supernetting), and how does it reduce the size of the global routing table?

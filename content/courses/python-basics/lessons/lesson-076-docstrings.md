@@ -1,5 +1,5 @@
 ---
-id: 52-docstrings
+id: lesson-076-docstrings
 title: Function Documentation with Docstrings
 chapterId: ch6-functions
 order: 8
@@ -316,46 +316,48 @@ def calculate_bmi(weight, height):
     return weight / (height ** 2)
 ```
 
-### Example 2: Class Method Documentation
+### Example 2: Multi-Function Module Documentation
 
 ```python
-class BankAccount:
+def create_account(account_number, initial_balance=0):
     """
-    A simple bank account class.
+    Create a new bank account.
     
-    Attributes:
-        account_number (str): The account number.
-        balance (float): Current account balance.
+    A bank account is represented as a dictionary with
+    'account_number' and 'balance' keys.
+    
+    Args:
+        account_number (str): Unique account identifier.
+        initial_balance (float, optional): Starting balance. Defaults to 0.
+    
+    Returns:
+        dict: Account dictionary with keys:
+            - 'account_number' (str): The account number.
+            - 'balance' (float): Current account balance.
     """
+    return {
+        "account_number": account_number,
+        "balance": initial_balance,
+    }
+
+def deposit(account, amount):
+    """
+    Deposit money into the account.
     
-    def __init__(self, account_number, initial_balance=0):
-        """
-        Initialize a new bank account.
-        
-        Args:
-            account_number (str): Unique account identifier.
-            initial_balance (float, optional): Starting balance. Defaults to 0.
-        """
-        self.account_number = account_number
-        self.balance = initial_balance
+    Args:
+        account (dict): The account dictionary (from create_account).
+        amount (float): Amount to deposit (must be positive).
     
-    def deposit(self, amount):
-        """
-        Deposit money into the account.
-        
-        Args:
-            amount (float): Amount to deposit (must be positive).
-        
-        Returns:
-            float: New balance after deposit.
-        
-        Raises:
-            ValueError: If amount is negative or zero.
-        """
-        if amount <= 0:
-            raise ValueError("Deposit amount must be positive")
-        self.balance += amount
-        return self.balance
+    Returns:
+        float: New balance after deposit.
+    
+    Raises:
+        ValueError: If amount is negative or zero.
+    """
+    if amount <= 0:
+        raise ValueError("Deposit amount must be positive")
+    account["balance"] += amount
+    return account["balance"]
 ```
 
 ### Example 3: API Function Documentation

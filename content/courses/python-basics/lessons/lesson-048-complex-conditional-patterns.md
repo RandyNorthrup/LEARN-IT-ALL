@@ -1,5 +1,5 @@
 ---
-id: "86-complex-conditional-patterns"
+id: lesson-048-complex-conditional-patterns
 title: "Complex Conditional Patterns"
 chapterId: ch4-comparisons
 order: 8
@@ -215,42 +215,42 @@ print(calculate(10, '%', 5))  # Unknown operator
 ## State Machine Pattern
 
 ```python
-class TrafficLight:
-    """Traffic light with state transitions."""
-    
-    def __init__(self):
-        self.state = "red"
-        self.transitions = {
+def create_traffic_light():
+    """Create a traffic light with state transitions."""
+    return {
+        "state": "red",
+        "transitions": {
             "red": "green",
             "green": "yellow",
             "yellow": "red"
         }
-    
-    def next_state(self):
-        """Transition to next state."""
-        self.state = self.transitions[self.state]
-        return self.state
-    
-    def can_go(self):
-        """Check if vehicles can proceed."""
-        return self.state == "green"
-    
-    def should_slow(self):
-        """Check if vehicles should slow down."""
-        return self.state == "yellow"
+    }
+
+def next_state(light):
+    """Transition to next state."""
+    light["state"] = light["transitions"][light["state"]]
+    return light["state"]
+
+def can_go(light):
+    """Check if vehicles can proceed."""
+    return light["state"] == "green"
+
+def should_slow(light):
+    """Check if vehicles should slow down."""
+    return light["state"] == "yellow"
 
 # Usage
-light = TrafficLight()
-print(f"Light: {light.state}, Can go: {light.can_go()}")  # red, False
+light = create_traffic_light()
+print(f"Light: {light['state']}, Can go: {can_go(light)}")  # red, False
 
-light.next_state()
-print(f"Light: {light.state}, Can go: {light.can_go()}")  # green, True
+next_state(light)
+print(f"Light: {light['state']}, Can go: {can_go(light)}")  # green, True
 
-light.next_state()
-print(f"Light: {light.state}, Should slow: {light.should_slow()}")  # yellow, True
+next_state(light)
+print(f"Light: {light['state']}, Should slow: {should_slow(light)}")  # yellow, True
 
-light.next_state()
-print(f"Light: {light.state}, Can go: {light.can_go()}")  # red, False
+next_state(light)
+print(f"Light: {light['state']}, Can go: {can_go(light)}")  # red, False
 ```
 
 ## Complex Range Checks
@@ -295,14 +295,18 @@ import bisect
 
 def get_tax_bracket(income):
     """Get tax rate based on income bracket."""
-    brackets = [0, 10000, 40000, 85000, 160000]
+    # Brackets represent minimum income for each tier
+    brackets = [10000, 40000, 85000, 160000]
     rates = [0, 0.10, 0.12, 0.22, 0.24, 0.32]
     
+    if income <= 0:
+        return 0  # No tax on zero or negative income
     index = bisect.bisect_right(brackets, income)
     return rates[index]
 
-print(f"Tax rate: {get_tax_bracket(50000) * 100}%")  # 22.0%
+print(f"Tax rate: {get_tax_bracket(50000) * 100}%")  # 12.0%
 print(f"Tax rate: {get_tax_bracket(8000) * 100}%")   # 0.0%
+print(f"Tax rate: {get_tax_bracket(0) * 100}%")      # 0.0%
 ```
 
 ## Conditional Assignment Patterns
@@ -381,150 +385,141 @@ print(result3, result4)  # True True
 ## Multi-Criteria Decision Making
 
 ```python
-class JobApplication:
-    """Evaluate job application."""
+def create_application(experience, education, skills, references):
+    """Create a job application."""
+    return {
+        "experience": experience,
+        "education": education,
+        "skills": skills,
+        "references": references,
+    }
+
+def calculate_score(app):
+    """Calculate application score."""
+    score = 0
     
-    def __init__(self, experience, education, skills, references):
-        self.experience = experience
-        self.education = education
-        self.skills = skills
-        self.references = references
+    # Experience points
+    if app["experience"] >= 5:
+        score += 40
+    elif app["experience"] >= 3:
+        score += 30
+    elif app["experience"] >= 1:
+        score += 20
+    else:
+        score += 10
     
-    def calculate_score(self):
-        """Calculate application score."""
-        score = 0
-        
-        # Experience points
-        if self.experience >= 5:
-            score += 40
-        elif self.experience >= 3:
-            score += 30
-        elif self.experience >= 1:
-            score += 20
-        else:
-            score += 10
-        
-        # Education points
-        if self.education == "PhD":
-            score += 30
-        elif self.education == "Masters":
-            score += 25
-        elif self.education == "Bachelor":
-            score += 20
-        else:
-            score += 10
-        
-        # Skills points
-        score += min(len(self.skills) * 5, 20)
-        
-        # References points
-        score += min(len(self.references) * 5, 10)
-        
-        return score
+    # Education points
+    education_points = {"PhD": 30, "Masters": 25, "Bachelor": 20}
+    score += education_points.get(app["education"], 10)
     
-    def get_decision(self):
-        """Make hiring decision."""
-        score = self.calculate_score()
-        
-        if score >= 80:
-            return "Strong hire"
-        elif score >= 60:
-            return "Hire"
-        elif score >= 40:
-            return "Maybe"
-        else:
-            return "Pass"
+    # Skills points (max 20)
+    score += min(len(app["skills"]) * 5, 20)
+    
+    # References points (max 10)
+    score += min(len(app["references"]) * 5, 10)
+    
+    return score
+
+def get_decision(app):
+    """Make hiring decision."""
+    score = calculate_score(app)
+    
+    if score >= 80:
+        return "Strong hire"
+    elif score >= 60:
+        return "Hire"
+    elif score >= 40:
+        return "Maybe"
+    else:
+        return "Pass"
 
 # Strong candidate
-app1 = JobApplication(
+app1 = create_application(
     experience=6,
     education="Masters",
     skills=["Python", "Java", "SQL", "AWS"],
     references=["ref1", "ref2"]
 )
 
-print(f"Score: {app1.calculate_score()}, Decision: {app1.get_decision()}")
-# Score: 85, Decision: Strong hire
+print(f"Score: {calculate_score(app1)}, Decision: {get_decision(app1)}")
+# Score: 95, Decision: Strong hire
 
 # Weak candidate
-app2 = JobApplication(
+app2 = create_application(
     experience=0,
     education="Bachelor",
     skills=["Python"],
     references=[]
 )
 
-print(f"Score: {app2.calculate_score()}, Decision: {app2.get_decision()}")
+print(f"Score: {calculate_score(app2)}, Decision: {get_decision(app2)}")
 # Score: 35, Decision: Pass
 ```
 
 ## Validation Chain Pattern
 
 ```python
-class Validator:
-    """Chainable validation."""
-    
-    def __init__(self, value):
-        self.value = value
-        self.errors = []
-    
-    def is_not_empty(self, message="Value cannot be empty"):
-        """Check if value is not empty."""
-        if not self.value:
-            self.errors.append(message)
-        return self
-    
-    def min_length(self, length, message=None):
-        """Check minimum length."""
-        if len(str(self.value)) < length:
-            msg = message or f"Must be at least {length} characters"
-            self.errors.append(msg)
-        return self
-    
-    def max_length(self, length, message=None):
-        """Check maximum length."""
-        if len(str(self.value)) > length:
-            msg = message or f"Must be at most {length} characters"
-            self.errors.append(msg)
-        return self
-    
-    def matches_pattern(self, pattern, message="Invalid format"):
-        """Check if value matches pattern."""
-        import re
-        if not re.match(pattern, str(self.value)):
-            self.errors.append(message)
-        return self
-    
-    def is_valid(self):
-        """Check if all validations passed."""
-        return len(self.errors) == 0
-    
-    def get_errors(self):
-        """Get all validation errors."""
-        return self.errors
+def validate(value):
+    """Create a validation result for a value."""
+    return {"value": value, "errors": []}
+
+def check_not_empty(result, message="Value cannot be empty"):
+    """Check if value is not empty."""
+    if not result["value"]:
+        result["errors"].append(message)
+    return result
+
+def check_min_length(result, length, message=None):
+    """Check minimum length."""
+    if len(str(result["value"])) < length:
+        msg = message or f"Must be at least {length} characters"
+        result["errors"].append(msg)
+    return result
+
+def check_max_length(result, length, message=None):
+    """Check maximum length."""
+    if len(str(result["value"])) > length:
+        msg = message or f"Must be at most {length} characters"
+        result["errors"].append(msg)
+    return result
+
+def check_pattern(result, pattern, message="Invalid format"):
+    """Check if value matches pattern."""
+    import re
+    if not re.match(pattern, str(result["value"])):
+        result["errors"].append(message)
+    return result
+
+def is_valid(result):
+    """Check if all validations passed."""
+    return len(result["errors"]) == 0
+
+def get_errors(result):
+    """Get all validation errors."""
+    return result["errors"]
 
 # Validate email
 email = "user@example.com"
-validator = (Validator(email)
-             .is_not_empty()
-             .min_length(5)
-             .matches_pattern(r'^[\w\.-]+@[\w\.-]+\.\w+$', "Invalid email format"))
+result = validate(email)
+check_not_empty(result)
+check_min_length(result, 5)
+check_pattern(result, r'^[\w\.-]+@[\w\.-]+\.\w+$', "Invalid email format")
 
-if validator.is_valid():
+if is_valid(result):
     print("Email is valid!")
 else:
-    print("Errors:", validator.get_errors())
+    print("Errors:", get_errors(result))
 # Email is valid!
 
 # Validate invalid email
 invalid_email = "bad"
-validator2 = (Validator(invalid_email)
-              .is_not_empty()
-              .min_length(5)
-              .matches_pattern(r'^[\w\.-]+@[\w\.-]+\.\w+$', "Invalid email format"))
+result2 = validate(invalid_email)
+check_not_empty(result2)
+check_min_length(result2, 5)
+check_pattern(result2, r'^[\w\.-]+@[\w\.-]+\.\w+$', "Invalid email format")
 
-print("Valid:", validator2.is_valid())
-print("Errors:", validator2.get_errors())
+print("Valid:", is_valid(result2))
+print("Errors:", get_errors(result2))
 # Valid: False
 # Errors: ['Must be at least 5 characters', 'Invalid email format']
 ```

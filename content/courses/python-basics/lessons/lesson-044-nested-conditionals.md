@@ -1,5 +1,5 @@
 ---
-id: nested-conditionals
+id: lesson-044-nested-conditionals
 title: Nested Conditionals and Ternary Operators
 chapterId: ch4-comparisons
 order: 4
@@ -309,7 +309,7 @@ def calculate_price(base_price, quantity, is_member):
     
     return final_price
 
-print(calculate_price(100, 12, True))   # 12 items, member: $1020
+print(calculate_price(100, 12, True))   # 12 items, member: $900.0
 print(calculate_price(100, 3, False))   # 3 items, no member: $300
 ```
 

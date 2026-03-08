@@ -1,8 +1,8 @@
 ---
-id: 13-best-practices
+id: lesson-013-best-practices
 title: Python Development Best Practices
 chapterId: ch1-intro
-order: 13
+order: 12
 duration: 30
 objectives:
   - Learn professional development practices
@@ -186,31 +186,27 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-class UserAccount:
+def create_user_account(username: str, email: str) -> dict:
     """
-    Represents a user account with authentication.
+    Create a new user account.
     
-    Attributes:
-        username: Unique username for the account
-        email: User's email address
-        _password_hash: Hashed password (private)
-    """
-    
-    def __init__(self, username: str, email: str):
-        """
-        Initialize a new user account.
+    Args:
+        username: Unique identifier for user
+        email: Contact email address
         
-        Args:
-            username: Unique identifier for user
-            email: Contact email address
-        """
-        self.username = username
-        self.email = email
-        self._password_hash = None
-    
-    def set_password(self, password: str) -> None:
-        """Set user password (stores hash only)."""
-        self._password_hash = hash_password(password)
+    Returns:
+        dict: Account with keys 'username', 'email', '_password_hash'
+    """
+    return {
+        "username": username,
+        "email": email,
+        "_password_hash": None,
+    }
+
+
+def set_password(account: dict, password: str) -> None:
+    """Set user password (stores hash only)."""
+    account["_password_hash"] = hash_password(password)
 ```
 
 ## Error Handling
@@ -239,17 +235,13 @@ def divide_numbers(a, b):
     except:  # DON'T DO THIS!
         return None  # Hides all errors
 
-# ✓ Good: Custom exceptions
-class ValidationError(Exception):
-    """Raised when data validation fails."""
-    pass
-
+# ✓ Good: Raising specific exceptions with clear messages
 def validate_age(age):
     """Validate age is within reasonable range."""
     if not isinstance(age, int):
-        raise ValidationError("Age must be an integer")
+        raise ValueError("Age must be an integer")
     if age < 0 or age > 150:
-        raise ValidationError("Age must be between 0 and 150")
+        raise ValueError("Age must be between 0 and 150")
     return True
 ```
 

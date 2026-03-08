@@ -30,7 +30,7 @@ export default function ProgressPage() {
         const response = await fetch('/api/progress');
         if (response.ok) {
           const data = await response.json();
-          setStats(data);
+          setStats(prev => ({ ...prev, ...data }));
         }
       } catch (error) {
         console.error('Failed to fetch progress:', error);

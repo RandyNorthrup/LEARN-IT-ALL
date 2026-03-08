@@ -1,7 +1,7 @@
 ---
 id: lesson-070-mpls
 title: "MPLS (Multiprotocol Label Switching)"
-chapterId: "chapter-008-wan-technologies"
+chapterId: ch8-wan-technologies
 order: 70
 duration: 24
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # MPLS (Multiprotocol Label Switching)
 
+## Introduction
+
 **MPLS (Multiprotocol Label Switching)** is a high-performance WAN technology that uses **labels** instead of IP addresses for forwarding packets. MPLS provides scalability, QoS, traffic engineering, and VPN services for enterprise networks.
 
-This lesson covers MPLS fundamentals—essential for the CompTIA Network+ N10-008 exam.
+This lesson covers MPLS fundamentals—essential for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand MPLS architecture and operation
+- Explain label switching and forwarding
+- Describe MPLS network components (PE, P, CE routers)
+- Differentiate MPLS from traditional IP routing
+- Identify MPLS benefits and use cases
 
 ---
 
@@ -453,7 +467,7 @@ Customer B Site 1          │             Customer B Site 2
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **MPLS** uses labels instead of IP addresses for fast packet forwarding (Layer 2.5 technology)
 2. **CE routers** are customer-owned; **PE routers** add/remove labels at edge; **P routers** forward based on labels only
@@ -468,14 +482,148 @@ Customer B Site 1          │             Customer B Site 2
 
 ---
 
+## Practice Questions
+
+**Q1.** In an MPLS network, what does the PE (Provider Edge) router do when a packet enters the MPLS domain?
+
+A) Removes the MPLS label
+B) Pushes (adds) an MPLS label onto the packet
+C) Routes the packet using traditional IP lookup
+D) Encrypts the packet
+
+<details>
+<summary>Answer</summary>
+
+**B)** The PE (Provider Edge) router pushes (adds) an MPLS label onto packets entering the MPLS network. This label determines how the packet is forwarded through the MPLS domain.
+</details>
+
+**Q2.** Which MPLS label operation occurs at core (P) routers as packets traverse the MPLS network?
+
+A) Push
+B) Pop
+C) Swap
+D) Encapsulate
+
+<details>
+<summary>Answer</summary>
+
+**C)** P (Provider) routers in the MPLS core perform the swap operation, exchanging the incoming label for an outgoing label. They forward based on labels only, without examining the IP header.
+</details>
+
+**Q3.** What is the PRIMARY advantage of MPLS label-based forwarding compared to traditional IP routing?
+
+A) Better encryption
+B) Faster forwarding since routers look up fixed-length labels instead of variable-length IP prefixes
+C) Support for IPv6 only
+D) Lower equipment cost
+
+<details>
+<summary>Answer</summary>
+
+**B)** MPLS label lookups are faster than IP routing table lookups because labels are short, fixed-length values. This enables more efficient forwarding, especially in large networks.
+</details>
+
+**Q4.** Which MPLS component provides isolated customer networks over a shared service provider infrastructure using VRFs?
+
+A) LDP
+B) LSP
+C) MPLS VPN (Layer 3 VPN)
+D) Traffic engineering
+
+<details>
+<summary>Answer</summary>
+
+**C)** MPLS VPN (Layer 3 VPN) uses VRFs (Virtual Routing and Forwarding) on PE routers to maintain separate routing tables for each customer, providing network isolation over shared infrastructure.
+</details>
+
+**Q5.** An LSP (Label Switched Path) in MPLS is BEST described as:
+
+A) The physical fiber optic cable used by the provider
+B) The predetermined path that labeled packets follow through the MPLS network
+C) The encryption tunnel between two sites
+D) The routing protocol used by MPLS
+
+<details>
+<summary>Answer</summary>
+
+**B)** An LSP (Label Switched Path) is the path that packets follow through the MPLS network, defined by the sequence of labels applied at each hop from ingress to egress.
+</details>
+
+**Q6.** How many traffic classes can MPLS QoS support using the Exp (Experimental) bits in the MPLS header?
+
+A) 4
+B) 6
+C) 8
+D) 16
+
+<details>
+<summary>Answer</summary>
+
+**C)** The MPLS header contains 3 Exp (Experimental) bits used for QoS, providing 2³ = 8 possible traffic classes for prioritizing different types of traffic.
+</details>
+
+**Q7.** Which protocol is used to distribute MPLS labels between routers?
+
+A) OSPF
+B) BGP
+C) LDP
+D) SNMP
+
+<details>
+<summary>Answer</summary>
+
+**C)** LDP (Label Distribution Protocol) is used to distribute label bindings between MPLS routers. RSVP-TE is used for traffic engineering, and MP-BGP is used for MPLS VPN route distribution.
+</details>
+
+**Q8.** What is the PRIMARY difference between MPLS and Internet VPN for WAN connectivity?
+
+A) MPLS is free; Internet VPN is expensive
+B) MPLS provides predictable performance with higher cost; Internet VPN is cheaper with variable performance
+C) Internet VPN is faster than MPLS
+D) MPLS does not support QoS
+
+<details>
+<summary>Answer</summary>
+
+**B)** MPLS offers predictable, consistent performance with SLA guarantees but at a higher cost. Internet VPN is cheaper but traverses the public internet, resulting in variable latency and performance.
+</details>
+
+**Q9.** Which type of router in an MPLS network is owned by the customer and does NOT participate in MPLS label operations?
+
+A) P router
+B) PE router
+C) CE router
+D) Core router
+
+<details>
+<summary>Answer</summary>
+
+**C)** The CE (Customer Edge) router is owned by the customer and connects to the provider's PE router. It does not participate in MPLS label operations—it simply sends and receives IP packets.
+</details>
+
+**Q10.** What is Penultimate Hop Popping (PHP) in MPLS, and why is it used?
+
+A) The ingress PE router adds two labels to each packet for redundancy
+B) The router one hop before the egress PE removes the MPLS label, so the egress PE receives a plain IP packet and saves a label lookup
+C) The egress PE encrypts the packet before forwarding it to the CE router
+D) P routers duplicate packets and send them along two different LSPs
+
+<details>
+<summary>Answer</summary>
+
+**B)** Penultimate Hop Popping (PHP) is an optimization where the second-to-last router (penultimate hop) removes the MPLS label before forwarding the packet to the egress PE router. This saves the egress PE from performing both a label lookup and an IP routing lookup, improving efficiency.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 2.1:** Compare and contrast WAN technologies (MPLS)
+- **CompTIA Network+ N10-009 Objective 2.1:** Compare and contrast WAN technologies (MPLS)
 - RFC 3031: MPLS Architecture
 - RFC 4364: BGP/MPLS IP VPNs
 - RFC 3036: LDP Specification
 - Cisco: MPLS Fundamentals
-- Professor Messer: Network+ N10-008 - MPLS
+- Professor Messer: Network+ N10-009 - MPLS
 
 ---
 

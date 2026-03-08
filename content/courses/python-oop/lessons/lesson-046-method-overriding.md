@@ -1,7 +1,7 @@
 ---
 id: "046"
 title: "Method Overriding"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 4
 duration: "16 minutes"
 objectives:

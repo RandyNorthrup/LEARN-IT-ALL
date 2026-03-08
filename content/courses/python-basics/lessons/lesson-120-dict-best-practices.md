@@ -1,5 +1,5 @@
 ---
-id: "130-dict-best-practices"
+id: lesson-120-dict-best-practices
 title: "Dictionary Best Practices and Patterns"
 chapterId: ch9-dictionaries
 order: 11
@@ -46,6 +46,9 @@ cache = OrderedDict()
 # Use ChainMap when:
 # - Layered configuration
 # - Need to avoid copying
+user_config = {"theme": "dark"}
+app_config = {"theme": "light", "debug": True}
+defaults = {"theme": "default", "debug": False, "verbose": False}
 config = ChainMap(user_config, app_config, defaults)
 
 # Example decision tree
@@ -65,6 +68,14 @@ def choose_dict_type(requirements):
 ## Safe Access Patterns
 
 ```python
+# Setup for examples below
+d = {"key": "hello", "name": "Alice", "age": 30}
+def process(value): print(f"Processing: {value}")
+def handle_missing(): print("Key not found, handling gracefully")
+keys = ["key", "name", "missing"]
+default = "N/A"
+value = "new_item"
+
 # ❌ BAD: Check and access (two lookups)
 if "key" in d:
     value = d["key"]  # Second lookup!
@@ -122,19 +133,15 @@ d = {}  # What does d contain?
 data = {}  # Too generic
 temp = {}  # Unclear purpose
 
-# ✅ GOOD: Type hints
-from typing import Dict
-
-def process_users(users: Dict[str, dict]) -> None:
+# ✅ GOOD: Type hints (Python 3.9+ built-in syntax)
+def process_users(users: dict[str, dict]) -> None:
     """Process user data."""
     for name, info in users.items():
         print(f"{name}: {info}")
 
-# ✅ GOOD: Specific types
-from typing import Dict, List
-
-scores: Dict[str, int] = {"alice": 100, "bob": 85}
-groups: Dict[str, List[str]] = {"A": ["alice"], "B": ["bob"]}
+# ✅ GOOD: Specific types (Python 3.9+ built-in syntax)
+scores: dict[str, int] = {"alice": 100, "bob": 85}
+groups: dict[str, list[str]] = {"A": ["alice"], "B": ["bob"]}
 
 # ✅ GOOD: Document dict structure
 def load_config() -> dict:
@@ -180,12 +187,18 @@ d = {k: [] for k in keys}  # Each gets new list
 
 # ✅ GOOD: Conditional initialization
 include_optional = True
+value = "main_data"
+value2 = "extra_data"
 d = {
     "required": value,
     **{"optional": value2} if include_optional else {}
 }
 
 # ✅ GOOD: Build incrementally with clear intent
+def load_defaults(): return {"debug": False, "verbose": False}
+def load_user_prefs(): return {"theme": "dark"}
+def load_runtime_overrides(): return {"debug": True}
+
 config = {}
 config.update(load_defaults())
 config.update(load_user_prefs())
@@ -195,6 +208,10 @@ config.update(load_runtime_overrides())
 ## Iteration Best Practices
 
 ```python
+# Setup for iteration examples
+d = {"prefix_name": "Alice", "prefix_age": "30", "status": "active"}
+def process(item): print(f"Processing: {item}")
+
 # ✅ GOOD: Iterate with items() when need both
 for key, value in d.items():
     print(f"{key}: {value}")
@@ -233,6 +250,9 @@ for i, (key, value) in enumerate(d.items()):
 ## Comprehension Best Practices
 
 ```python
+# Setup
+d = {"abc": 6, "abd": 4, "xyz": -1, "ab": 8, "abcd": 2}
+
 # ✅ GOOD: Simple, readable comprehension
 doubled = {k: v * 2 for k, v in d.items()}
 
@@ -252,8 +272,8 @@ filtered = {
     k: v for k, v in d.items()
     if k.startswith('a') and len(k) > 2 and v % 2 == 0
 }
-# Step 2: Transform
-result = {k: transform(v) for k, v in filtered.items()}
+# Step 2: Transform (using transform_value defined below)
+result = {k: transform_value(v) for k, v in filtered.items()}
 
 # ✅ GOOD: Use helper function
 def transform_value(v):
@@ -266,6 +286,10 @@ def transform_value(v):
 result = {k: transform_value(v) for k, v in d.items()}
 
 # ✅ GOOD: Multi-line for readability
+large_dict = {"item1": 10, "item2": -5, "item3": 20}
+def is_valid(k): return k.startswith("item")
+def should_include(v): return v > 0
+
 result = {
     k: v * 2
     for k, v in large_dict.items()
@@ -274,6 +298,7 @@ result = {
 }
 
 # ❌ BAD: Nested comprehension (hard to read)
+d = {"group1": {"a": 1, "b": -2}, "group2": {"c": 3}, "group3": {}}
 nested = {k: {k2: v2 for k2, v2 in v.items() if v2 > 0} for k, v in d.items() if v}
 
 # ✅ GOOD: Break into steps
@@ -286,6 +311,15 @@ for k, v in d.items():
 ## Error Handling
 
 ```python
+# Setup for error handling examples
+import logging
+logger = logging.getLogger(__name__)
+config = {"api_key": "abc123", "debug": True}
+users = {1: "Alice", 2: "Bob"}
+d = {"key": "value", "age": 25}
+default_value = "fallback"
+default = "N/A"
+
 # ✅ GOOD: Use get() for optional keys
 value = config.get("optional_key", default_value)
 
@@ -293,7 +327,7 @@ value = config.get("optional_key", default_value)
 try:
     api_key = config["api_key"]
 except KeyError:
-    raise ConfigError("Missing required api_key")
+    raise ValueError("Missing required api_key")  # or define a custom ConfigError
 
 # ✅ GOOD: Provide helpful error messages
 def get_user(user_id):
@@ -331,6 +365,10 @@ import copy
 deep = copy.deepcopy(original)
 
 # ✅ GOOD: Document copy behavior
+def process_value(v):
+    """Example transformation."""
+    return str(v).upper()
+
 def process_config(config: dict) -> dict:
     """
     Process configuration.
@@ -367,6 +405,11 @@ def merge_configs(base, override):
 ## Common Anti-Patterns
 
 ```python
+# Example action handler functions
+def create(data): return f"Created: {data}"
+def update(data): return f"Updated: {data}"
+def delete(data): return f"Deleted: {data}"
+
 # ❌ ANTI-PATTERN 1: Using dict for switch/case
 def handle_action(action, data):
     if action == "create":
@@ -398,16 +441,16 @@ user = {
 }
 # No type checking, typos cause bugs
 
-# ✅ BETTER: Use dataclass
-from dataclasses import dataclass
+# ✅ BETTER: Use namedtuple for structured data
+from collections import namedtuple
 
-@dataclass
-class User:
-    name: str
-    age: int
-    email: str
-
+User = namedtuple('User', ['name', 'age', 'email'])
 user = User("Alice", 30, "alice@example.com")
+
+# Provides named access, immutability, and clear structure
+print(user.name)   # Alice
+print(user.age)    # 30
+print(user.email)  # alice@example.com
 
 # ❌ ANTI-PATTERN 3: Deeply nested dicts
 config = {
@@ -464,6 +507,11 @@ data = {
 ## Performance Best Practices
 
 ```python
+# Setup for performance examples
+user_id = 3
+def process(item): print(f"Processing: {item}")
+def compute(x): return x ** 2 + x  # Simulating expensive computation
+
 # ✅ GOOD: Pre-compute lookups
 # Slow: List membership O(n)
 valid_ids = [1, 2, 3, 4, 5]
@@ -530,65 +578,73 @@ def load_user_data() -> dict:
     """
     pass
 
-# ✅ GOOD: Type hints for complex dicts
-from typing import Dict, List, Optional, TypedDict
+# ✅ GOOD: Document expected dict structure with comments
+# User dict structure:
+#   id: int
+#   name: str
+#   email: str
+#   age: int or None (optional)
+#
+# Example:
+user_record = {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 30}
 
-class UserDict(TypedDict):
-    id: int
-    name: str
-    email: str
-    age: Optional[int]
+from collections import defaultdict
 
-def get_users() -> List[UserDict]:
+def get_users() -> list[dict]:
+    """Return a list of user dicts matching the structure above."""
     pass
 
 # ✅ GOOD: Comment non-obvious dict usage
 # Map from user_id to list of order_ids for fast lookup
-user_orders: Dict[int, List[int]] = defaultdict(list)
+user_orders: dict[int, list[int]] = defaultdict(list)
 
 # ✅ GOOD: Explain key choices
 # Use tuples for composite keys to ensure immutability
-coordinates: Dict[tuple[int, int], str] = {}
+coordinates: dict[tuple, str] = {}
 ```
 
 ## Testing Dict Code
 
 ```python
-import unittest
+# Test dict operations using standalone functions
+def test_safe_access():
+    """Test safe dictionary access"""
+    d = {"a": 1, "b": 2}
+    assert d.get("a") == 1
+    assert d.get("missing") is None
+    assert d.get("missing", 0) == 0
 
-class TestDictOperations(unittest.TestCase):
-    
-    def test_safe_access(self):
-        """Test safe dictionary access"""
-        d = {"a": 1, "b": 2}
-        self.assertEqual(d.get("a"), 1)
-        self.assertIsNone(d.get("missing"))
-        self.assertEqual(d.get("missing", 0), 0)
-    
-    def test_dict_merge(self):
-        """Test dictionary merging preserves values"""
-        d1 = {"a": 1, "b": 2}
-        d2 = {"b": 20, "c": 3}
-        merged = d1 | d2
-        self.assertEqual(merged["a"], 1)
-        self.assertEqual(merged["b"], 20)  # d2 wins
-        self.assertEqual(merged["c"], 3)
-        self.assertEqual(d1["b"], 2)  # Original unchanged
-    
-    def test_shallow_copy(self):
-        """Test shallow copy creates independent dict"""
-        original = {"a": 1, "b": 2}
-        copy = original.copy()
-        copy["c"] = 3
-        self.assertNotIn("c", original)
-    
-    def test_defaultdict_behavior(self):
-        """Test defaultdict auto-initialization"""
-        from collections import defaultdict
-        d = defaultdict(int)
-        d["a"] += 1
-        self.assertEqual(d["a"], 1)
-        self.assertEqual(d["missing"], 0)  # Auto-created
+def test_dict_merge():
+    """Test dictionary merging preserves values"""
+    d1 = {"a": 1, "b": 2}
+    d2 = {"b": 20, "c": 3}
+    merged = d1 | d2
+    assert merged["a"] == 1
+    assert merged["b"] == 20  # d2 wins
+    assert merged["c"] == 3
+    assert d1["b"] == 2  # Original unchanged
+
+def test_shallow_copy():
+    """Test shallow copy creates independent dict"""
+    original = {"a": 1, "b": 2}
+    copy = original.copy()
+    copy["c"] = 3
+    assert "c" not in original
+
+def test_defaultdict_behavior():
+    """Test defaultdict auto-initialization"""
+    from collections import defaultdict
+    d = defaultdict(int)
+    d["a"] += 1
+    assert d["a"] == 1
+    assert d["missing"] == 0  # Auto-created
+
+# Run tests
+test_safe_access()
+test_dict_merge()
+test_shallow_copy()
+test_defaultdict_behavior()
+print("All tests passed!")
 ```
 
 ## Summary

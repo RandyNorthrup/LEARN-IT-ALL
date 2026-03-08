@@ -1,8 +1,8 @@
 ---
-id: list-methods
+id: lesson-107-list-methods
 title: List Methods
 chapterId: ch8-lists
-order: 34
+order: 6
 duration: 30
 objectives:
   - Add elements with append(), insert(), and extend()

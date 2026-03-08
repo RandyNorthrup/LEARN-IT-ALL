@@ -1,0 +1,57 @@
+{
+  "id": "exercise-211-requirements",
+  "courseId": "python-basics",
+  "lessonId": "lesson-196-pip-packages",
+  "chapterId": "ch17-modules",
+  "title": "Requirements File Management",
+  "description": "Build tools to work with Python requirements.txt files. Parse requirement lines into structured data with package names and version constraints, detect version conflicts between entries, identify outdated packages by comparing versions, and generate requirements text from a dictionary.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def parse_requirements(req_text):\n    \"\"\"Parse a requirements.txt string into a list of dicts.\n\n    Each non-empty, non-comment line becomes a dict with:\n      - 'name': package name (str)\n      - 'operator': version operator ('==', '>=', '<=', '~=', '!=', '>' , '<') or None\n      - 'version': version string or None\n\n    Comments start with '#'. Blank lines are skipped.\n\n    Example input:\n        requests==2.28.0\n        flask>=2.0\n        numpy\n        # this is a comment\n\n    Returns a list of dicts.\n    \"\"\"\n    pass\n\n\ndef check_version_conflict(req_text):\n    \"\"\"Find packages with conflicting version requirements.\n\n    A conflict occurs when the same package appears multiple times with\n    different version pins (e.g. requests==2.28.0 and requests==2.29.0).\n\n    Returns a list of dicts, each with:\n      - 'package': the package name\n      - 'versions': list of conflicting version requirement strings\n                    (e.g. ['==2.28.0', '==2.29.0'])\n    Returns an empty list if no conflicts.\n    \"\"\"\n    pass\n\n\ndef find_outdated(current, latest):\n    \"\"\"Find packages where the current version is older than the latest.\n\n    Args:\n        current: dict mapping package name -> current version string\n                 (e.g. {'requests': '2.28.0', 'flask': '2.0.1'})\n        latest:  dict mapping package name -> latest version string\n                 (e.g. {'requests': '2.31.0', 'flask': '3.0.0'})\n\n    Compares versions using tuple comparison of integer parts split by '.'.\n    Returns a sorted list of dicts:\n        [{'name': ..., 'current': ..., 'latest': ...}, ...]\n    \"\"\"\n    pass\n\n\ndef generate_requirements(packages_dict):\n    \"\"\"Generate requirements.txt content from a dict of packages.\n\n    Args:\n        packages_dict: dict mapping package name -> version string.\n                       If version is None, pin without version.\n                       Otherwise use '==' pinning.\n\n    Returns a string with one requirement per line, sorted\n    alphabetically by package name.\n    \"\"\"\n    pass\n",
+  "solution": "import re\nfrom collections import defaultdict\n\n\ndef parse_requirements(req_text):\n    results = []\n    for line in req_text.strip().splitlines():\n        line = line.strip()\n        if not line or line.startswith('#'):\n            continue\n        match = re.match(r'^([a-zA-Z0-9_-]+)\\s*(==|>=|<=|~=|!=|>|<)\\s*(.+)$', line)\n        if match:\n            results.append({\n                'name': match.group(1).lower(),\n                'operator': match.group(2),\n                'version': match.group(3).strip()\n            })\n        else:\n            results.append({\n                'name': line.lower(),\n                'operator': None,\n                'version': None\n            })\n    return results\n\n\ndef check_version_conflict(req_text):\n    parsed = parse_requirements(req_text)\n    pkg_versions = defaultdict(list)\n    for p in parsed:\n        if p['operator'] and p['version']:\n            pkg_versions[p['name']].append(f\"{p['operator']}{p['version']}\")\n\n    conflicts = []\n    for pkg, versions in sorted(pkg_versions.items()):\n        unique = list(dict.fromkeys(versions))  # preserve order, deduplicate\n        if len(unique) > 1:\n            conflicts.append({'package': pkg, 'versions': unique})\n\n    return conflicts\n\n\ndef find_outdated(current, latest):\n    outdated = []\n    for pkg in sorted(current):\n        if pkg in latest:\n            cur_parts = tuple(int(x) for x in current[pkg].split('.'))\n            lat_parts = tuple(int(x) for x in latest[pkg].split('.'))\n            if cur_parts < lat_parts:\n                outdated.append({\n                    'name': pkg,\n                    'current': current[pkg],\n                    'latest': latest[pkg]\n                })\n    return outdated\n\n\ndef generate_requirements(packages_dict):\n    lines = []\n    for name in sorted(packages_dict):\n        version = packages_dict[name]\n        if version is None:\n            lines.append(name)\n        else:\n            lines.append(f'{name}=={version}')\n    return '\\n'.join(lines)\n",
+  "hints": [
+    "Use a regex like ^([a-zA-Z0-9_-]+)\\s*(==|>=|<=|~=|!=|>|<)\\s*(.+)$ to parse package name, operator, and version from each line.",
+    "For check_version_conflict, group parsed entries by package name using a defaultdict(list), then check for duplicate version pins.",
+    "For find_outdated, split version strings by '.' and convert each part to int for tuple comparison: (2, 28, 0) < (2, 31, 0).",
+    "For generate_requirements, sort packages alphabetically and format each as 'name==version' or just 'name' if version is None."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "parse_requirements parses versioned and unversioned packages",
+      "validation": "result = parse_requirements('requests==2.28.0\\nflask>=2.0\\nnumpy\\n# comment'); assert len(result) == 3 and result[0] == {'name': 'requests', 'operator': '==', 'version': '2.28.0'} and result[2] == {'name': 'numpy', 'operator': None, 'version': None}",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "check_version_conflict detects conflicting versions",
+      "validation": "req = 'requests==2.28.0\\nflask>=2.0\\nrequests==2.29.0'; result = check_version_conflict(req); assert len(result) == 1 and result[0]['package'] == 'requests'",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "check_version_conflict returns empty list when no conflicts",
+      "validation": "assert check_version_conflict('requests==2.28.0\\nflask>=2.0') == []",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "find_outdated identifies outdated packages",
+      "validation": "current = {'requests': '2.28.0', 'flask': '3.0.0'}; latest = {'requests': '2.31.0', 'flask': '3.0.0'}; result = find_outdated(current, latest); assert len(result) == 1 and result[0]['name'] == 'requests'",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "generate_requirements produces sorted output",
+      "validation": "result = generate_requirements({'flask': '2.0.1', 'requests': '2.28.0', 'numpy': None}); assert result == 'flask==2.0.1\\nnumpy\\nrequests==2.28.0'",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "parse_requirements skips blank lines and comments",
+      "validation": "result = parse_requirements('\\n# comment\\n\\npandas==1.5.0\\n\\n# another\\n'); assert len(result) == 1 and result[0]['name'] == 'pandas'",
+      "isHidden": true
+    }
+  ]
+}

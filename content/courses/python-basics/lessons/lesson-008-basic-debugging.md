@@ -1,5 +1,5 @@
 ---
-id: basic-debugging
+id: lesson-008-basic-debugging
 title: Basic Debugging Techniques
 chapterId: ch1-intro
 order: 8

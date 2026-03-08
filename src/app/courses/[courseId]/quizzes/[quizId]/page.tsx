@@ -23,6 +23,8 @@ import {
   CodeCompletionQuestion,
   CodingExerciseQuestion,
   MultiPartQuestion,
+  EssayQuestion,
+  DesignQuestion,
 } from '@/types/quiz';
 
 export default function QuizPage() {
@@ -317,6 +319,14 @@ function QuestionCard({
           onChange={onAnswerChange}
         />
       )}
+
+      {(question.type === 'essay' || question.type === 'design') && (
+        <EssayDesignInput
+          question={question as EssayQuestion | DesignQuestion}
+          answer={answer as { type: 'essay' | 'design'; text: string } | undefined}
+          onChange={onAnswerChange}
+        />
+      )}
     </div>
   );
 }
@@ -605,6 +615,67 @@ function MultiPartInput({
   );
 }
 
+// Essay / Design Question Input
+function EssayDesignInput({
+  question,
+  answer,
+  onChange,
+}: {
+  question: EssayQuestion | DesignQuestion;
+  answer?: { type: 'essay' | 'design'; text: string };
+  onChange: (answer: UserAnswer) => void;
+}) {
+  const text = answer?.text || '';
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const minWords = question.minWords || 50;
+  const isDesign = question.type === 'design';
+
+  return (
+    <div className="space-y-3">
+      {isDesign && (question as DesignQuestion).scenario && (
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-sm font-semibold text-amber-800 mb-1">📋 Scenario</p>
+          <p className="text-sm text-amber-900">{(question as DesignQuestion).scenario}</p>
+        </div>
+      )}
+      <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+        <p className="text-sm text-indigo-800">
+          <strong>{isDesign ? '🏗️ Design Question' : '📝 Essay Question'}</strong> — This is a self-assessed question. After submission, you&apos;ll see a rubric and model answer to evaluate your response.
+        </p>
+      </div>
+      <textarea
+        value={text}
+        onChange={(e) =>
+          onChange({ type: question.type, text: e.target.value } as UserAnswer)
+        }
+        placeholder={isDesign
+          ? 'Describe your design here. Include topology, equipment, addressing scheme, security considerations, and justifications...'
+          : 'Write your essay here. Be thorough and reference specific protocols, standards, or concepts...'
+        }
+        className="w-full min-h-[200px] p-4 border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-y font-mono text-sm"
+        rows={10}
+      />
+      <div className="flex justify-between text-sm">
+        <span className={`${wordCount >= minWords ? 'text-green-600' : 'text-gray-500'}`}>
+          {wordCount} word{wordCount !== 1 ? 's' : ''} {wordCount < minWords && `(minimum ${minWords} recommended)`}
+        </span>
+        <span className="text-gray-400">Self-assessed • {question.points} points</span>
+      </div>
+      <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <p className="text-sm font-semibold text-gray-700 mb-2">Rubric Criteria:</p>
+        <ul className="space-y-1">
+          {question.rubric.map((r, i) => (
+            <li key={i} className="text-sm text-gray-600 flex justify-between">
+              <span>• {r.criterion}</span>
+              <span className="text-gray-400 ml-2">{r.points} pts</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 // Quiz Results Component
 function QuizResults({ result, quiz }: { result: QuizResult; quiz: Quiz }) {
   return (
@@ -678,6 +749,38 @@ function QuizResults({ result, quiz }: { result: QuizResult; quiz: Quiz }) {
                       <p className="text-sm text-gray-800">
                         <strong>Explanation:</strong> {qr.explanation}
                       </p>
+                    </div>
+                  )}
+                  {(question.type === 'essay' || question.type === 'design') && (
+                    <div className="mt-4 space-y-3">
+                      {/* Show student's answer */}
+                      {qr.userAnswer && 'text' in qr.userAnswer && qr.userAnswer.text && (
+                        <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                          <p className="text-sm font-semibold text-gray-700 mb-1">Your Answer:</p>
+                          <p className="text-sm text-gray-600 whitespace-pre-wrap">{qr.userAnswer.text}</p>
+                        </div>
+                      )}
+                      {/* Rubric */}
+                      <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                        <p className="text-sm font-semibold text-indigo-800 mb-2">📋 Self-Assessment Rubric:</p>
+                        <ul className="space-y-1">
+                          {(question as EssayQuestion | DesignQuestion).rubric.map((r, i) => (
+                            <li key={i} className="text-sm text-indigo-700 flex justify-between">
+                              <span>☐ {r.criterion}</span>
+                              <span className="text-indigo-500 ml-2">{r.points} pts</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      {/* Model Answer */}
+                      <details className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                        <summary className="text-sm font-semibold text-emerald-800 cursor-pointer">
+                          📖 View Model Answer
+                        </summary>
+                        <div className="mt-2 text-sm text-emerald-900 whitespace-pre-wrap">
+                          {(question as EssayQuestion | DesignQuestion).modelAnswer}
+                        </div>
+                      </details>
                     </div>
                   )}
                 </div>

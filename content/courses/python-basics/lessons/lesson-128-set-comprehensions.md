@@ -1,5 +1,5 @@
 ---
-id: "137-set-comprehensions"
+id: lesson-128-set-comprehensions
 title: "Set Comprehensions and Generation"
 chapterId: ch10-sets
 order: 4

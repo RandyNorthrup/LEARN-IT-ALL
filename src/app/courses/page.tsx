@@ -215,12 +215,10 @@ export default function CoursesPage() {
             const statusConfig = STATUS_CONFIG[course.status as keyof typeof STATUS_CONFIG];
             const StatusIcon = statusConfig.icon;
 
-            return (
-              <Link
-                key={course.id}
-                href={`/courses/${course.id}`}
-                className="group rounded-2xl bg-white shadow-lg overflow-hidden transition-all hover:shadow-2xl hover:scale-105"
-              >
+            const isComingSoon = course.status === 'coming-soon';
+
+            const cardBody = (
+              <>
                 {/* Course Header */}
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-3">
@@ -239,7 +237,7 @@ export default function CoursesPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className={`text-xl font-bold mb-2 transition-colors ${isComingSoon ? 'text-gray-500' : 'text-gray-900 group-hover:text-blue-600'}`}>
                     {course.title}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">{course.description}</p>
@@ -286,24 +284,43 @@ export default function CoursesPage() {
                     <span className="text-sm font-medium text-gray-600 capitalize">
                       {course.type.replace('-', ' ')}
                     </span>
-                    <span className="text-blue-600 font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center">
-                      View Course
-                      <svg
-                        className="ml-1 h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+                    <span className={`font-semibold text-sm inline-flex items-center ${isComingSoon ? 'text-gray-400' : 'text-blue-600 group-hover:translate-x-1 transition-transform'}`}>
+                      {isComingSoon ? 'Coming Soon' : 'View Course'}
+                      {!isComingSoon && (
+                        <svg
+                          className="ml-1 h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      )}
                     </span>
                   </div>
                 </div>
+              </>
+            );
+
+            return isComingSoon ? (
+              <div
+                key={course.id}
+                className="group rounded-2xl bg-white shadow-lg overflow-hidden transition-all opacity-75 cursor-not-allowed"
+              >
+                {cardBody}
+              </div>
+            ) : (
+              <Link
+                key={course.id}
+                href={`/courses/${course.id}`}
+                className="group rounded-2xl bg-white shadow-lg overflow-hidden transition-all hover:shadow-2xl hover:scale-105"
+              >
+                {cardBody}
               </Link>
             );
           })}

@@ -1,7 +1,7 @@
 ---
-id: ethernet-fundamentals
+id: lesson-011-ethernet-fundamentals
 title: Ethernet Fundamentals (802.3 and CSMA/CD)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 11
 duration: 50
 objectives:
@@ -27,7 +27,7 @@ objectives:
 
 **Ethernet** is the most widely deployed local area network (LAN) technology in the world. Developed in the 1970s at Xerox PARC by Robert Metcalfe and standardized by the **Institute of Electrical and Electronics Engineers (IEEE)** as **802.3**, Ethernet has evolved from a 10 Mbps shared medium to modern switched networks operating at speeds up to 400 Gbps.
 
-This lesson covers the fundamental concepts of Ethernet technology, including the 802.3 standard, the CSMA/CD access method, frame structure, and MAC addressing—all essential knowledge for the CompTIA Network+ N10-008 exam.
+This lesson covers the fundamental concepts of Ethernet technology, including the 802.3 standard, the CSMA/CD access method, frame structure, and MAC addressing—all essential knowledge for the CompTIA Network+ N10-009 exam.
 
 ---
 
@@ -393,7 +393,168 @@ A **MAC (Media Access Control) address** is a unique 48-bit identifier assigned 
 
 ---
 
-## Key Takeaways
+## Auto-Negotiation
+
+### What is Auto-Negotiation?
+
+**Auto-negotiation** is the process by which two Ethernet devices automatically determine the best speed and duplex setting for their connection. Defined in **IEEE 802.3u** (Fast Ethernet) and extended in later standards, auto-negotiation uses electrical pulses called **Fast Link Pulses (FLPs)** to exchange capabilities before the link comes up.
+
+### Auto-Negotiation Process
+
+**Step 1: Link Pulse Exchange**
+- Both devices send FLPs containing a **base page** that advertises supported speeds and duplex modes
+- Each device encodes its capabilities as a 16-bit word
+
+**Step 2: Capability Comparison**
+- Both sides compare advertised capabilities
+- The **highest common speed and best duplex** mode are selected
+
+**Step 3: Priority Resolution**
+```
+Auto-negotiation priority (highest to lowest):
+  1. 10GBASE-T full-duplex
+  2. 5GBASE-T full-duplex
+  3. 2.5GBASE-T full-duplex
+  4. 1000BASE-T full-duplex
+  5. 1000BASE-T half-duplex
+  6. 100BASE-TX full-duplex
+  7. 100BASE-T4
+  8. 100BASE-TX half-duplex
+  9. 10BASE-T full-duplex
+  10. 10BASE-T half-duplex
+```
+
+**Step 4: Link Established**
+- Both devices configure to agreed-upon settings
+- Link comes up and data transmission begins
+
+### Duplex Mismatch Problems
+
+A **duplex mismatch** occurs when one side is set to full-duplex and the other to half-duplex. This is one of the most common Ethernet performance issues:
+
+```
+Symptoms of duplex mismatch:
+- Late collisions on the half-duplex side
+- FCS errors and runt frames
+- Slow throughput (often around 50-60% of expected)
+- Intermittent connectivity
+
+Common cause:
+  Switch port: Manually set to 100 Mbps full-duplex
+  PC NIC: Set to auto-negotiate
+  
+  Result: PC auto-negotiates speed (100 Mbps) correctly
+          but defaults to half-duplex (cannot detect partner's
+          duplex because partner isn't auto-negotiating)
+
+Best practice: Either set BOTH sides to auto-negotiate
+               or manually configure BOTH sides identically
+```
+
+---
+
+## Ethernet Speed Standards Evolution
+
+### From 10BASE5 to 400GbE
+
+Ethernet has evolved through multiple generations, each increasing speed dramatically while maintaining backward compatibility at the frame level:
+
+| Standard | Speed | Year | Media | Max Distance | Notes |
+|----------|-------|------|-------|--------------|-------|
+| **10BASE5** | 10 Mbps | 1983 | Thick coax | 500m | Original "Thicknet" |
+| **10BASE2** | 10 Mbps | 1985 | Thin coax | 185m | "Thinnet" / Cheapernet |
+| **10BASE-T** | 10 Mbps | 1990 | Cat3 UTP | 100m | First twisted-pair Ethernet |
+| **100BASE-TX** | 100 Mbps | 1995 | Cat5 UTP | 100m | "Fast Ethernet" |
+| **1000BASE-T** | 1 Gbps | 1999 | Cat5e UTP | 100m | "Gigabit Ethernet" |
+| **1000BASE-SX** | 1 Gbps | 1998 | MMF | 550m | Short-wavelength fiber |
+| **1000BASE-LX** | 1 Gbps | 1998 | SMF | 5km | Long-wavelength fiber |
+| **10GBASE-T** | 10 Gbps | 2006 | Cat6a UTP | 100m | 10 Gigabit over copper |
+| **10GBASE-SR** | 10 Gbps | 2002 | MMF | 400m | Datacenter fiber |
+| **10GBASE-LR** | 10 Gbps | 2002 | SMF | 10km | Long-range fiber |
+| **25GBASE-SR** | 25 Gbps | 2016 | MMF | 100m | Server-to-switch |
+| **40GBASE-SR4** | 40 Gbps | 2010 | MMF (4 lanes) | 150m | Spine-leaf links |
+| **100GBASE-SR4** | 100 Gbps | 2010 | MMF (4 lanes) | 100m | Datacenter backbone |
+| **400GBASE-SR8** | 400 Gbps | 2017 | MMF (8 lanes) | 100m | Hyperscale datacenters |
+
+**Key trend:** Modern high-speed standards (25G, 100G, 400G) use parallel lanes—multiple fiber strands or wavelengths transmitting simultaneously, then combining the bandwidth.
+
+### Multigigabit Ethernet (802.3bz)
+
+**2.5GBASE-T and 5GBASE-T** were introduced in 2016 specifically to support WiFi 6 (802.11ax) access points that exceed 1 Gbps throughput—without requiring Cat6a cabling:
+
+- **2.5GBASE-T:** Runs over existing Cat5e at distances up to 100m
+- **5GBASE-T:** Runs over Cat5e (up to 100m) or Cat6 (up to 100m)
+- Eliminates the need to re-cable buildings to support faster wireless backhaul
+- Supported by modern managed switches from Cisco, Aruba, and others
+
+---
+
+## Link Aggregation (802.3ad / LACP)
+
+### What is Link Aggregation?
+
+**Link aggregation** (also called **port channeling**, **NIC teaming**, or **bonding**) combines multiple physical Ethernet links into a single logical link, increasing bandwidth and providing redundancy.
+
+**IEEE 802.3ad** defines the Link Aggregation Control Protocol (**LACP**), the standard method for negotiating and managing aggregated links.
+
+### How LACP Works
+
+```
+┌────────────┐                      ┌────────────┐
+│  Switch A  │  Port 1 ────────── Port 1  │  Switch B  │
+│            │  Port 2 ────────── Port 2  │            │
+│            │  Port 3 ────────── Port 3  │            │
+│            │  Port 4 ────────── Port 4  │            │
+└────────────┘                      └────────────┘
+       └── LAG (Logical: 4 Gbps) ──┘
+```
+
+**LACP Negotiation:**
+1. Both switches send **LACPDUs** (LACP Data Units) on each physical link
+2. Switches agree on which ports to aggregate based on **system priority** and **port priority**
+3. Aggregated ports form a **Link Aggregation Group (LAG)**
+4. If one link fails, traffic redistributes across remaining links
+
+**LACP Modes:**
+- **Active:** Device actively sends LACPDUs to initiate aggregation
+- **Passive:** Device responds to LACPDUs but does not initiate
+- At least one side must be active for LACP to form
+
+### Load Distribution
+
+Traffic is distributed across member links using a **hashing algorithm** based on:
+- Source/destination MAC address
+- Source/destination IP address
+- Source/destination TCP/UDP port
+- Combination of the above
+
+**Important:** LACP does NOT load-balance per-packet. Each flow (identified by the hash) is assigned to one link. Aggregate throughput increases, but a single flow cannot exceed one link's speed.
+
+### Practical Example
+
+```
+Server with 4× 1 Gbps NICs bonded via LACP:
+  Logical bandwidth: 4 Gbps aggregate
+  Redundancy: Any 3 links can fail, server stays connected
+  
+  Flow distribution:
+    Client A → Server: uses link 1 (1 Gbps max)
+    Client B → Server: uses link 2 (1 Gbps max)
+    Client C → Server: uses link 3 (1 Gbps max)
+    Client D → Server: uses link 4 (1 Gbps max)
+    
+  Total throughput: up to 4 Gbps with 4 concurrent flows
+  Single flow: still limited to 1 Gbps
+```
+
+**Common Deployment:**
+- Server to switch uplinks (NIC teaming)
+- Switch-to-switch inter-links (increased backbone bandwidth)
+- Storage array connectivity (high-throughput iSCSI or NFS)
+
+---
+
+## Summary
 
 1. **Ethernet is standardized as IEEE 802.3** and operates at Layer 1 and Layer 2
 2. **CSMA/CD** manages media access in half-duplex Ethernet (legacy)
@@ -431,63 +592,80 @@ A **MAC (Media Access Control) address** is a unique 48-bit identifier assigned 
 
 ## Practice Questions
 
-**1. What does CSMA/CD stand for?**
-- A) Carrier Sense Media Access with Collision Detection
-- B) Collision Sense Multiple Access with Carrier Detection
-- C) Carrier Sense Multiple Access with Collision Detection ✓
-- D) Carrier Signal Multiple Access with Collision Domain
 
-**Answer:** C - CSMA/CD stands for Carrier Sense Multiple Access with Collision Detection. Devices listen (carrier sense) before transmitting, multiple devices share the medium (multiple access), and collisions are detected (collision detection).
+**Q1.** What does CSMA/CD stand for?
 
----
+A) Carrier Sense Media Access with Collision Detection
+B) Collision Sense Multiple Access with Carrier Detection
+C) Carrier Sense Multiple Access with Collision Detection
+D) Carrier Signal Multiple Access with Collision Domain
 
-**2. In a full-duplex Ethernet connection, which statement is TRUE?**
-- A) CSMA/CD is enabled and collisions can occur
-- B) Devices can send and receive simultaneously ✓
-- C) Bandwidth is shared between all devices
-- D) A hub must be used to connect devices
+<details>
+<summary>Answer</summary>
 
-**Answer:** B - Full-duplex allows simultaneous send and receive, doubles throughput, and disables CSMA/CD. No collisions are possible in full-duplex mode.
+**C)** ** C - CSMA/CD stands for Carrier Sense Multiple Access with Collision Detection. Devices listen (carrier sense) before transmitting, multiple devices share the medium (multiple access), and collisions are detected (collision detection).
+</details>
 
----
+**Q2.** In a full-duplex Ethernet connection, which statement is TRUE?
 
-**3. What is the minimum size of an Ethernet frame?**
-- A) 46 bytes
-- B) 64 bytes ✓
-- C) 512 bytes
-- D) 1518 bytes
+A) CSMA/CD is enabled and collisions can occur
+B) Devices can send and receive simultaneously
+C) Bandwidth is shared between all devices
+D) A hub must be used to connect devices
 
-**Answer:** B - The minimum Ethernet frame size is 64 bytes (includes Dest MAC, Src MAC, EtherType, 46-byte payload minimum, and FCS). Frames smaller than 64 bytes are called "runt frames" and indicate errors.
+<details>
+<summary>Answer</summary>
 
----
+**B)** ** B - Full-duplex allows simultaneous send and receive, doubles throughput, and disables CSMA/CD. No collisions are possible in full-duplex mode.
+</details>
 
-**4. Which device creates separate collision domains for each port?**
-- A) Hub
-- B) Repeater
-- C) Switch ✓
-- D) Wireless Access Point
+**Q3.** What is the minimum size of an Ethernet frame?
 
-**Answer:** C - Switches create separate collision domains for each port. Hubs and repeaters share one collision domain across all ports.
+A) 46 bytes
+B) 64 bytes
+C) 512 bytes
+D) 1518 bytes
 
----
+<details>
+<summary>Answer</summary>
 
-**5. What is the purpose of the FCS field in an Ethernet frame?**
-- A) Identifies the protocol type
-- B) Provides the source MAC address
-- C) Detects transmission errors using CRC ✓
-- D) Indicates the start of the frame
+**B)** ** B - The minimum Ethernet frame size is 64 bytes (includes Dest MAC, Src MAC, EtherType, 46-byte payload minimum, and FCS). Frames smaller than 64 bytes are called "runt frames" and indicate errors.
+</details>
 
-**Answer:** C - The Frame Check Sequence (FCS) uses a CRC-32 calculation to detect errors. The receiver recalculates the CRC and discards frames with mismatches.
+**Q4.** Which device creates separate collision domains for each port?
 
----
+A) Hub
+B) Repeater
+C) Switch
+D) Wireless Access Point
+
+<details>
+<summary>Answer</summary>
+
+**C)** ** C - Switches create separate collision domains for each port. Hubs and repeaters share one collision domain across all ports.
+</details>
+
+**Q5.** What is the purpose of the FCS field in an Ethernet frame?
+
+A) Identifies the protocol type
+B) Provides the source MAC address
+C) Detects transmission errors using CRC
+D) Indicates the start of the frame
+
+<details>
+<summary>Answer</summary>
+
+**C)** ** C - The Frame Check Sequence (FCS) uses a CRC-32 calculation to detect errors. The receiver recalculates the CRC and discards frames with mismatches.
+</details>
+
 
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.3:** Compare and contrast types of network topologies and technologies
-- **CompTIA Network+ N10-008 Objective 2.3:** Compare and contrast routing technologies and bandwidth management concepts
+- **CompTIA Network+ N10-009 Objective 1.3:** Compare and contrast types of network topologies and technologies
+- **CompTIA Network+ N10-009 Objective 2.3:** Compare and contrast routing technologies and bandwidth management concepts
 - **IEEE 802.3 Standard:** Ethernet specifications
 - **RFC 894:** A Standard for the Transmission of IP Datagrams over Ethernet Networks
-- Professor Messer: Network+ N10-008 - Ethernet Fundamentals
+- Professor Messer: Network+ N10-009 - Ethernet Fundamentals
 - Cisco Networking Academy: CCNA - Ethernet Overview
 
 ---

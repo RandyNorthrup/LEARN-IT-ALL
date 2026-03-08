@@ -1,8 +1,8 @@
 ---
-id: "112-list-modification"
+id: lesson-098-list-modification
 title: "Modifying Lists In-Place"
 chapterId: ch8-lists
-order: 4
+order: 5
 duration: 25
 objectives:
   - Master list mutation methods
@@ -441,21 +441,21 @@ print(reference)  # [1, 2, 3] - not affected!
 
 ```python
 # ❌ BAD - Modifying while iterating
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 1, 3, 5]
 for num in numbers:
     if num % 2 == 0:
         numbers.remove(num)  # Causes issues!
-print(numbers)  # [1, 3, 4, 5] - Missed element 4!
+print(numbers)  # [4, 1, 3, 5] - Missed 4!
 
 # ✅ GOOD - Iterate over copy
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 1, 3, 5]
 for num in numbers[:]:  # Iterate over copy
     if num % 2 == 0:
         numbers.remove(num)
 print(numbers)  # [1, 3, 5]
 
 # ✅ BETTER - Use comprehension
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 1, 3, 5]
 numbers = [x for x in numbers if x % 2 != 0]
 print(numbers)  # [1, 3, 5]
 

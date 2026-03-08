@@ -1,5 +1,5 @@
 ---
-id: "88-conditional-best-practices"
+id: lesson-050-conditional-best-practices
 title: "Conditional Best Practices"
 chapterId: ch4-comparisons
 order: 10
@@ -414,7 +414,7 @@ create_user_with_welcome("Bob", "bob@test.com")
 # Welcome email sent to bob@test.com
 ```
 
-## Use Polymorphism Instead of Type Checking
+## Use Dispatch Dictionaries Instead of Type Checking
 
 ```python
 # ❌ Type checking with conditionals
@@ -427,45 +427,39 @@ def process_payment(payment):
     elif payment['type'] == 'crypto':
         print(f"Processing crypto: {payment['wallet']}")
 
-# ✅ Use polymorphism (classes with common interface)
-class Payment:
-    """Base payment class."""
-    def process(self):
-        raise NotImplementedError
+# ✅ Use a dispatch dictionary to avoid repetitive if-elif chains
+def process_credit_card(payment):
+    print(f"Processing credit card: {payment['card_number']}")
 
-class CreditCardPayment(Payment):
-    def __init__(self, card_number):
-        self.card_number = card_number
-    
-    def process(self):
-        print(f"Processing credit card: {self.card_number}")
+def process_paypal(payment):
+    print(f"Processing PayPal: {payment['email']}")
 
-class PayPalPayment(Payment):
-    def __init__(self, email):
-        self.email = email
-    
-    def process(self):
-        print(f"Processing PayPal: {self.email}")
+def process_crypto(payment):
+    print(f"Processing crypto: {payment['wallet']}")
 
-class CryptoPayment(Payment):
-    def __init__(self, wallet):
-        self.wallet = wallet
-    
-    def process(self):
-        print(f"Processing crypto: {self.wallet}")
+# Map each payment type to its handler function
+payment_handlers = {
+    'credit_card': process_credit_card,
+    'paypal': process_paypal,
+    'crypto': process_crypto,
+}
+
+def process_payment_dispatch(payment):
+    """Process any payment type using dispatch."""
+    handler = payment_handlers.get(payment['type'])
+    if handler:
+        handler(payment)
+    else:
+        print(f"Unknown payment type: {payment['type']}")
 
 # Usage: no conditionals needed!
-def process_payment_polymorphic(payment):
-    """Process any payment type."""
-    payment.process()
+credit_card = {'type': 'credit_card', 'card_number': '1234-5678-9012-3456'}
+paypal = {'type': 'paypal', 'email': 'user@paypal.com'}
+crypto = {'type': 'crypto', 'wallet': '0x1234abcd'}
 
-credit_card = CreditCardPayment("1234-5678-9012-3456")
-paypal = PayPalPayment("user@paypal.com")
-crypto = CryptoPayment("0x1234abcd")
-
-process_payment_polymorphic(credit_card)
-process_payment_polymorphic(paypal)
-process_payment_polymorphic(crypto)
+process_payment_dispatch(credit_card)
+process_payment_dispatch(paypal)
+process_payment_dispatch(crypto)
 ```
 
 ## Test Conditional Logic
@@ -583,7 +577,7 @@ print(f"International: ${calculate_shipping_cost(2, 50, False, True)}")
 - ❌ Deep nesting (> 3 levels)
 - ❌ Magic numbers without explanation
 - ❌ Boolean parameters (unclear at call site)
-- ❌ Type checking instead of polymorphism
+- ❌ Type checking instead of dispatch dictionaries
 - ❌ Comparing booleans to True/False
 - ❌ Complex inline conditions
 

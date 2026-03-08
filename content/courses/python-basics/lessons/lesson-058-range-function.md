@@ -1,8 +1,8 @@
 ---
-id: "93-range-function"
+id: lesson-058-range-function
 title: "The range() Function"
 chapterId: ch5-loops
-order: 4
+order: 5
 duration: 20
 objectives:
   - Master range() function syntax

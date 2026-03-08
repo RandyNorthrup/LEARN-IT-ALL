@@ -1,8 +1,8 @@
 ---
-id: "74-memory-ram"
+id: lesson-032-memory-ram
 title: "Memory and RAM"
 chapterId: ch3-computing
-order: 5
+order: 6
 duration: 25
 objectives:
   - Understand what RAM is and how it works
@@ -94,50 +94,51 @@ Every byte in RAM has a unique address:
 
 ```python
 # Memory addressing
-class MemorySimulator:
-    """Simplified memory simulator."""
-    
-    def __init__(self, size):
-        self.memory = [0] * size  # Initialize memory to zeros
-        self.size = size
-    
-    def write(self, address, value):
-        """Write value to memory address."""
-        if 0 <= address < self.size:
-            self.memory[address] = value
-            print(f"WRITE: Address {hex(address)} = {value}")
-        else:
-            print(f"ERROR: Address {hex(address)} out of bounds")
-    
-    def read(self, address):
-        """Read value from memory address."""
-        if 0 <= address < self.size:
-            value = self.memory[address]
-            print(f"READ: Address {hex(address)} = {value}")
-            return value
-        else:
-            print(f"ERROR: Address {hex(address)} out of bounds")
-            return None
-    
-    def dump(self, start, end):
-        """Display memory contents."""
-        print(f"\nMemory Dump (addresses {hex(start)} to {hex(end)}):")
-        for addr in range(start, min(end + 1, self.size)):
-            print(f"  {hex(addr)}: {self.memory[addr]}")
+
+def create_memory(size):
+    """Create a simplified memory simulator."""
+    return {
+        'memory': [0] * size,  # Initialize memory to zeros
+        'size': size,
+    }
+
+def memory_write(mem, address, value):
+    """Write value to memory address."""
+    if 0 <= address < mem['size']:
+        mem['memory'][address] = value
+        print(f"WRITE: Address {hex(address)} = {value}")
+    else:
+        print(f"ERROR: Address {hex(address)} out of bounds")
+
+def memory_read(mem, address):
+    """Read value from memory address."""
+    if 0 <= address < mem['size']:
+        value = mem['memory'][address]
+        print(f"READ: Address {hex(address)} = {value}")
+        return value
+    else:
+        print(f"ERROR: Address {hex(address)} out of bounds")
+        return None
+
+def memory_dump(mem, start, end):
+    """Display memory contents."""
+    print(f"\nMemory Dump (addresses {hex(start)} to {hex(end)}):")
+    for addr in range(start, min(end + 1, mem['size'])):
+        print(f"  {hex(addr)}: {mem['memory'][addr]}")
 
 # Simulate memory operations
-memory = MemorySimulator(256)  # 256 bytes of memory
+memory = create_memory(256)  # 256 bytes of memory
 
 # Write to memory
-memory.write(0x00, 42)
-memory.write(0x01, 100)
-memory.write(0x02, 255)
+memory_write(memory, 0x00, 42)
+memory_write(memory, 0x01, 100)
+memory_write(memory, 0x02, 255)
 
 # Read from memory
-value = memory.read(0x01)
+value = memory_read(memory, 0x01)
 
 # Show memory contents
-memory.dump(0x00, 0x05)
+memory_dump(memory, 0x00, 0x05)
 # WRITE: Address 0x0 = 42
 # WRITE: Address 0x1 = 100
 # WRITE: Address 0x2 = 255
@@ -268,68 +269,69 @@ print(f"After deleting another_reference: {sys.getrefcount(my_list) - 1}")
 
 ```python
 # Demonstrating memory allocation
-class MemoryAllocator:
-    """Simplified memory allocator."""
+
+def create_allocator(total_memory):
+    """Create a simplified memory allocator."""
+    return {
+        'total_memory': total_memory,
+        'allocated': {},
+        'free_memory': total_memory,
+    }
+
+def allocator_allocate(alloc, size, name):
+    """Allocate memory block."""
+    if size > alloc['free_memory']:
+        print(f"ERROR: Not enough memory. Requested: {size} bytes, Available: {alloc['free_memory']} bytes")
+        return None
     
-    def __init__(self, total_memory):
-        self.total_memory = total_memory
-        self.allocated = {}
-        self.free_memory = total_memory
+    # Simplified: just track size and name
+    address = len(alloc['allocated'])
+    alloc['allocated'][name] = {"address": address, "size": size}
+    alloc['free_memory'] -= size
     
-    def allocate(self, size, name):
-        """Allocate memory block."""
-        if size > self.free_memory:
-            print(f"ERROR: Not enough memory. Requested: {size} bytes, Available: {self.free_memory} bytes")
-            return None
-        
-        # Simplified: just track size and name
-        address = len(self.allocated)
-        self.allocated[name] = {"address": address, "size": size}
-        self.free_memory -= size
-        
-        print(f"ALLOCATED: {name} at address {hex(address)}, size {size} bytes")
-        print(f"  Free memory: {self.free_memory} / {self.total_memory} bytes")
-        return address
+    print(f"ALLOCATED: {name} at address {hex(address)}, size {size} bytes")
+    print(f"  Free memory: {alloc['free_memory']} / {alloc['total_memory']} bytes")
+    return address
+
+def allocator_free(alloc, name):
+    """Free allocated memory."""
+    if name not in alloc['allocated']:
+        print(f"ERROR: {name} not found in allocated memory")
+        return
     
-    def free(self, name):
-        """Free allocated memory."""
-        if name not in self.allocated:
-            print(f"ERROR: {name} not found in allocated memory")
-            return
-        
-        size = self.allocated[name]["size"]
-        del self.allocated[name]
-        self.free_memory += size
-        
-        print(f"FREED: {name}, released {size} bytes")
-        print(f"  Free memory: {self.free_memory} / {self.total_memory} bytes")
+    size = alloc['allocated'][name]["size"]
+    del alloc['allocated'][name]
+    alloc['free_memory'] += size
     
-    def show_allocation(self):
-        """Show current memory allocation."""
-        print(f"\nCurrent Memory Allocation:")
-        print(f"  Total: {self.total_memory} bytes")
-        print(f"  Used: {self.total_memory - self.free_memory} bytes")
-        print(f"  Free: {self.free_memory} bytes")
-        
-        if self.allocated:
-            print(f"\n  Allocated blocks:")
-            for name, info in self.allocated.items():
-                print(f"    {name}: {info['size']} bytes at {hex(info['address'])}")
+    print(f"FREED: {name}, released {size} bytes")
+    print(f"  Free memory: {alloc['free_memory']} / {alloc['total_memory']} bytes")
+
+def allocator_show(alloc):
+    """Show current memory allocation."""
+    print(f"\nCurrent Memory Allocation:")
+    print(f"  Total: {alloc['total_memory']} bytes")
+    print(f"  Used: {alloc['total_memory'] - alloc['free_memory']} bytes")
+    print(f"  Free: {alloc['free_memory']} bytes")
+    
+    if alloc['allocated']:
+        print(f"\n  Allocated blocks:")
+        for name, info in alloc['allocated'].items():
+            print(f"    {name}: {info['size']} bytes at {hex(info['address'])}")
 
 # Simulate memory allocation
-allocator = MemoryAllocator(1024)  # 1 KB of memory
+allocator = create_allocator(1024)  # 1 KB of memory
 
 # Allocate memory for variables
-allocator.allocate(100, "array_a")
-allocator.allocate(200, "array_b")
-allocator.allocate(50, "string_x")
+allocator_allocate(allocator, 100, "array_a")
+allocator_allocate(allocator, 200, "array_b")
+allocator_allocate(allocator, 50, "string_x")
 
-allocator.show_allocation()
+allocator_show(allocator)
 
 # Free memory
-allocator.free("array_b")
+allocator_free(allocator, "array_b")
 
-allocator.show_allocation()
+allocator_show(allocator)
 ```
 
 ## Stack vs Heap Memory
@@ -389,88 +391,88 @@ def recursive_function(n):
 ## Memory Fragmentation
 
 ```python
-class FragmentedMemory:
-    """Demonstrate memory fragmentation."""
+def create_fragmented_memory(size):
+    """Create a memory simulator for demonstrating fragmentation."""
+    return {
+        'memory': [None] * size,
+        'size': size,
+    }
+
+def frag_allocate(mem, size, name):
+    """Allocate contiguous memory block."""
+    # Find first fit
+    for start in range(len(mem['memory']) - size + 1):
+        if all(mem['memory'][i] is None for i in range(start, start + size)):
+            # Found space
+            for i in range(start, start + size):
+                mem['memory'][i] = name
+            print(f"ALLOCATED: {name} at positions {start}-{start+size-1}")
+            return start
     
-    def __init__(self, size):
-        self.memory = [None] * size
-        self.size = size
+    print(f"ERROR: Cannot allocate {size} contiguous bytes for {name}")
+    return None
+
+def frag_free(mem, name):
+    """Free all memory for given name."""
+    count = 0
+    for i in range(len(mem['memory'])):
+        if mem['memory'][i] == name:
+            mem['memory'][i] = None
+            count += 1
+    print(f"FREED: {name} ({count} bytes)")
+
+def frag_show_memory(mem):
+    """Visualize memory."""
+    print("\nMemory Layout (. = free, letter = allocated):")
+    print("".join(
+        "." if block is None else block[0]
+        for block in mem['memory']
+    ))
     
-    def allocate(self, size, name):
-        """Allocate contiguous memory block."""
-        # Find first fit
-        for start in range(len(self.memory) - size + 1):
-            if all(self.memory[i] is None for i in range(start, start + size)):
-                # Found space
-                for i in range(start, start + size):
-                    self.memory[i] = name
-                print(f"ALLOCATED: {name} at positions {start}-{start+size-1}")
-                return start
-        
-        print(f"ERROR: Cannot allocate {size} contiguous bytes for {name}")
-        return None
+    # Calculate fragmentation
+    free_blocks = []
+    in_free_block = False
+    block_size = 0
     
-    def free(self, name):
-        """Free all memory for given name."""
-        count = 0
-        for i in range(len(self.memory)):
-            if self.memory[i] == name:
-                self.memory[i] = None
-                count += 1
-        print(f"FREED: {name} ({count} bytes)")
-    
-    def show_memory(self):
-        """Visualize memory."""
-        print("\nMemory Layout (. = free, letter = allocated):")
-        print("".join(
-            "." if block is None else block[0]
-            for block in self.memory
-        ))
-        
-        # Calculate fragmentation
-        free_blocks = []
-        in_free_block = False
-        block_size = 0
-        
-        for block in self.memory:
-            if block is None:
-                if not in_free_block:
-                    in_free_block = True
-                    block_size = 1
-                else:
-                    block_size += 1
+    for block in mem['memory']:
+        if block is None:
+            if not in_free_block:
+                in_free_block = True
+                block_size = 1
             else:
-                if in_free_block:
-                    free_blocks.append(block_size)
-                    in_free_block = False
-                    block_size = 0
-        
-        if in_free_block:
-            free_blocks.append(block_size)
-        
-        total_free = sum(free_blocks)
-        print(f"Free space: {total_free} bytes in {len(free_blocks)} fragments")
-        if free_blocks:
-            print(f"Largest free block: {max(free_blocks)} bytes")
+                block_size += 1
+        else:
+            if in_free_block:
+                free_blocks.append(block_size)
+                in_free_block = False
+                block_size = 0
+    
+    if in_free_block:
+        free_blocks.append(block_size)
+    
+    total_free = sum(free_blocks)
+    print(f"Free space: {total_free} bytes in {len(free_blocks)} fragments")
+    if free_blocks:
+        print(f"Largest free block: {max(free_blocks)} bytes")
 
 # Demonstrate fragmentation
-memory = FragmentedMemory(40)
+memory = create_fragmented_memory(40)
 
-memory.allocate(10, "A")
-memory.allocate(10, "B")
-memory.allocate(10, "C")
-memory.allocate(10, "D")
+frag_allocate(memory, 10, "A")
+frag_allocate(memory, 10, "B")
+frag_allocate(memory, 10, "C")
+frag_allocate(memory, 10, "D")
 
-memory.show_memory()
+frag_show_memory(memory)
 
 # Free some blocks, creating fragmentation
-memory.free("B")
-memory.free("D")
+frag_free(memory, "B")
+frag_free(memory, "D")
 
-memory.show_memory()
+frag_show_memory(memory)
 
 # Try to allocate 15 bytes - will fail due to fragmentation
-memory.allocate(15, "E")
+frag_allocate(memory, 15, "E")
 # ALLOCATED: A at positions 0-9
 # ALLOCATED: B at positions 10-19
 # ALLOCATED: C at positions 20-29

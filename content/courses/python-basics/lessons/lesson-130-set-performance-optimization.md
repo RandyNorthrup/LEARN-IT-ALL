@@ -1,5 +1,5 @@
 ---
-id: "139-set-performance-optimization"
+id: lesson-130-set-performance-optimization
 title: "Set Performance and Optimization"
 chapterId: ch10-sets
 order: 6
@@ -155,7 +155,7 @@ print(f"  Dict: {sys.getsizeof(data_dict):,} bytes")
 # Hash collisions can degrade O(1) to O(n) in worst case
 import time
 
-# Good hash distribution
+# Good hash distribution (integers have unique hashes)
 good_data = list(range(100_000))
 good_set = set(good_data)
 
@@ -164,30 +164,35 @@ for val in good_data[:1000]:
     _ = val in good_set
 good_time = time.time() - start
 
-# Poor hash distribution (all hash to same value)
-class BadHash:
-    def __init__(self, value):
-        self.value = value
-    
-    def __hash__(self):
-        return 1  # All hash to same value - worst case!
-    
-    def __eq__(self, other):
-        return isinstance(other, BadHash) and self.value == other.value
+print(f"Set lookup (good hashes): {good_time:.4f}s")
 
-bad_data = [BadHash(i) for i in range(100_000)]
-bad_set = set(bad_data)
+# Hash collision impact explained:
+# When different objects share the same hash value,
+# Python must compare them one by one (linear scan).
+# With good hash distribution, each "bucket" has ~1 item → O(1).
+# With ALL items in one bucket, lookup degrades to O(n).
+
+# Built-in types have excellent, well-distributed hashes:
+print(hash(42))       # Each integer has a unique hash
+print(hash("hello")) # Strings have well-distributed hashes
+print(hash((1, 2)))   # Tuples hash based on contents
+
+# Compare hash-based lookup vs linear scan (list)
+# List lookup simulates collision-like worst-case behavior
+linear_data = list(range(100_000))
 
 start = time.time()
-for obj in bad_data[:1000]:
-    _ = obj in bad_set
-bad_time = time.time() - start
+for val in linear_data[:1000]:
+    _ = val in linear_data  # O(n) per lookup — like all-collision worst case
+linear_time = time.time() - start
 
-print(f"Good hash: {good_time:.4f}s")
-print(f"Bad hash:  {bad_time:.4f}s")
-print(f"Bad is {bad_time/good_time:.0f}x slower")
+print(f"\nHash-based (set):   {good_time:.4f}s")
+print(f"Linear scan (list): {linear_time:.4f}s")
+print(f"Linear is {linear_time/good_time:.0f}x slower")
 
 # Lesson: Good hash functions are crucial for performance!
+# Python's built-in types (int, str, tuple) have excellent hashes.
+# Hash collisions cause O(1) lookups to degrade toward O(n).
 ```
 
 ## Memory Efficiency

@@ -1,7 +1,7 @@
 ---
-id: spanning-tree-protocol
+id: lesson-016-spanning-tree-protocol
 title: Spanning Tree Protocol Deep Dive
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 16
 duration: 90
 objectives:
@@ -590,6 +590,21 @@ SW1(config)# spanning-tree mst 1 priority 4096
 SW2(config)# spanning-tree mst 2 priority 4096
 ```
 
+### Multi-Vendor STP Configuration Comparison
+
+STP is an IEEE standard (802.1D/802.1w/802.1s), so all vendors implement it — but with different default modes and CLI syntax:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | HP/Aruba |
+|------|-----------|---------------|------------|----------|
+| Default STP mode | PVST+ (per-VLAN) | RSTP (802.1w) | MSTP (802.1s) | MSTP (802.1s) |
+| Enable Rapid STP | `spanning-tree mode rapid-pvst` | `set protocols rstp` (default) | `spanning-tree mode rapid-pvst` | `spanning-tree mode rst` |
+| Set root bridge | `spanning-tree vlan 10 priority 4096` | `set protocols rstp bridge-priority 4096` | `spanning-tree vlan 10 priority 4096` | `spanning-tree priority 1` |
+| Enable edge port (PortFast) | `spanning-tree portfast` | `set protocols rstp interface ge-0/0/1 edge` | `spanning-tree portfast` | `spanning-tree port-type admin-edge` |
+| BPDU Guard | `spanning-tree bpduguard enable` | `set protocols rstp bpdu-block-on-edge` | `spanning-tree bpduguard enable` | `spanning-tree bpdu-protection` |
+| Show STP status | `show spanning-tree` | `show spanning-tree bridge` | `show spanning-tree` | `show spanning-tree` |
+
+> **Key Difference:** Cisco defaults to PVST+ (proprietary per-VLAN STP), while Juniper and Arista default to IEEE-standard RSTP or MSTP. In multi-vendor environments, use MSTP (802.1s) for interoperability across all vendors.
+
 ---
 
 ## STP Verification Commands
@@ -965,11 +980,153 @@ SW1# show spanning-tree summary totals
 
 ---
 
+## Practice Questions
+
+**Q1.** In a network with three switches, which switch will be elected as the STP root bridge?
+
+- Switch A: Priority 32768, MAC 00:1A:2B:3C:4D:5E
+- Switch B: Priority 4096, MAC 00:FF:AA:BB:CC:DD
+- Switch C: Priority 32768, MAC 00:0A:1B:2C:3D:4E
+
+A) Switch A
+B) Switch B
+C) Switch C
+D) All switches share the root role
+
+<details>
+<summary>Answer</summary>
+
+**B)** The root bridge is elected based on the lowest Bridge ID, which consists of priority + MAC address. Priority is compared first. Switch B has the lowest priority (4096), so it wins regardless of its MAC address. Switches A and C both have the default priority of 32768, so they would compare MAC addresses only if they had the same priority as the lowest.
+</details>
+
+**Q2.** An administrator notices that when a PC is connected to a switch port, it takes approximately 50 seconds before the PC can reach the network. What should be enabled on the port to fix this?
+
+A) Root Guard
+B) BPDU Guard
+C) PortFast
+D) Loop Guard
+
+<details>
+<summary>Answer</summary>
+
+**C)** PortFast allows access ports to skip the Blocking, Listening, and Learning states and immediately transition to Forwarding. The 50-second delay is caused by classic STP convergence (20s Blocking + 15s Listening + 15s Learning). PortFast should only be enabled on ports connected to end devices, not switch-to-switch links. BPDU Guard, Root Guard, and Loop Guard serve different protective purposes.
+</details>
+
+**Q3.** What is the purpose of BPDU Guard on a switch port?
+
+A) To prevent the port from sending BPDUs to neighbors
+B) To put the port in err-disabled state if a BPDU is received
+C) To filter BPDUs from being forwarded across trunk links
+D) To increase the BPDU transmission rate for faster convergence
+
+<details>
+<summary>Answer</summary>
+
+**B)** BPDU Guard protects access ports configured with PortFast by placing the port into err-disabled state if a BPDU is received. This prevents rogue switches or bridging devices from being connected to access ports, which could cause STP topology changes or loops. It does not filter or suppress BPDUs — that is BPDU Filter.
+</details>
+
+**Q4.** How does RSTP (802.1w) achieve faster convergence compared to classic STP (802.1D)?
+
+A) By eliminating the need for a root bridge
+B) By using a proposal/agreement handshake mechanism on point-to-point links
+C) By increasing the BPDU transmission interval to 10 seconds
+D) By removing the learning state entirely
+
+<details>
+<summary>Answer</summary>
+
+**B)** RSTP achieves sub-second convergence by using a proposal/agreement handshake between switches on point-to-point (full-duplex) links, allowing ports to transition directly to forwarding without waiting through timer-based states. RSTP still elects a root bridge, retains a learning state, and sends BPDUs every 2 seconds (same as STP). The key improvement is the active negotiation mechanism.
+</details>
+
+**Q5.** A switch has two paths to the root bridge with the following costs:
+- Path A: Total cost 8, via Switch X (BID 32768.0000.AAAA.0001) on port Gi0/1
+- Path B: Total cost 8, via Switch Y (BID 32768.0000.BBBB.0002) on port Gi0/2
+
+Which path will be selected as the root port?
+
+A) Path A, because Switch X has the lower sender Bridge ID
+B) Path B, because Switch Y has the higher sender Bridge ID
+C) Both paths will load balance traffic
+D) Path A, because Gi0/1 has a lower port number
+
+<details>
+<summary>Answer</summary>
+
+**A)** When root path costs are equal, STP uses the lowest sender Bridge ID as the first tie-breaker. Switch X (0000.AAAA.0001) has a lower MAC address than Switch Y (0000.BBBB.0002), so Path A is selected as the root port. STP does not load balance — it selects one path and blocks the other. Port number is the third tie-breaker, only used after sender BID.
+</details>
+
+**Q6.** Which RSTP port role serves as a backup to the root port and can immediately take over if the root port fails?
+
+A) Designated Port
+B) Backup Port
+C) Alternate Port
+D) Edge Port
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Alternate Port in RSTP provides a backup path to the root bridge and can immediately become the root port if the current root port fails, enabling sub-second convergence. A Backup Port is a backup to a designated port on the same segment. A Designated Port forwards traffic from a segment toward the root. An Edge Port is connected to end devices.
+</details>
+
+**Q7.** What is the STP path cost for a 1 Gbps link using the original IEEE 802.1D cost values?
+
+A) 2
+B) 4
+C) 19
+D) 100
+
+<details>
+<summary>Answer</summary>
+
+**B)** Using the original 802.1D (16-bit) cost values, a 1 Gbps link has a cost of 4. A 10 Mbps link has cost 100, a 100 Mbps link has cost 19, and a 10 Gbps link has cost 2. These values are important for calculating root path costs and determining port roles.
+</details>
+
+**Q8.** A network engineer wants to prevent a branch office switch from ever becoming the STP root bridge. Which STP enhancement should be configured on the uplink ports of the distribution switch?
+
+A) PortFast
+B) BPDU Guard
+C) Root Guard
+D) BPDU Filter
+
+<details>
+<summary>Answer</summary>
+
+**C)** Root Guard prevents a port from becoming a root port by placing it in a root-inconsistent state if a superior BPDU is received. This enforces the root bridge placement by preventing downstream switches from becoming root. PortFast and BPDU Guard are for access ports. BPDU Filter suppresses BPDUs entirely, which could create loops.
+</details>
+
+**Q9.** What advantage does MSTP (802.1s) provide over Per-VLAN Spanning Tree Plus (PVST+)?
+
+A) MSTP eliminates the need for a root bridge
+B) MSTP maps multiple VLANs to fewer spanning tree instances, reducing overhead
+C) MSTP does not require trunk links between switches
+D) MSTP provides faster convergence than RSTP
+
+<details>
+<summary>Answer</summary>
+
+**B)** MSTP maps multiple VLANs to a smaller number of spanning tree instances, significantly reducing CPU/memory overhead and BPDU traffic. With PVST+, each VLAN has its own STP instance (100 VLANs = 100 instances). MSTP still requires a root bridge, trunk links, and uses RSTP mechanisms for convergence speed.
+</details>
+
+**Q10.** A switch port configured with Loop Guard stops receiving BPDUs from the other end of a link. What action does Loop Guard take?
+
+A) The port transitions to forwarding state
+B) The port is placed in err-disabled state
+C) The port is placed in loop-inconsistent (blocking) state
+D) The port sends a TCN BPDU to the root bridge
+
+<details>
+<summary>Answer</summary>
+
+**C)** Loop Guard detects unidirectional link failures by monitoring BPDU receipt. If BPDUs stop arriving on a non-designated port, Loop Guard places the port in loop-inconsistent state (blocking), preventing it from incorrectly transitioning to forwarding and creating a loop. This is different from BPDU Guard (err-disabled) and normal STP behavior (which would transition to forwarding after Max Age expires).
+</details>
+
+---
+
 ## References
 
 - IEEE 802.1D-2004: STP Standard
 - IEEE 802.1w-2001: RSTP Standard  
 - IEEE 802.1s-2002: MSTP Standard
-- CompTIA Network+ N10-008 Objectives: 2.3 Compare and contrast network implementations
+- CompTIA Network+ N10-009 Objectives: 2.3 Compare and contrast network implementations
 - Cisco Documentation: Spanning Tree Protocol Configuration Guide
 - "Cisco LAN Switching Fundamentals" - Kennedy Clark

@@ -1,9 +1,9 @@
 ---
-id: "lesson-083"
+id: lesson-083-common-issues-logical
 title: "Common Logical Layer Issues: IP Conflicts, Routing Loops, and DNS Problems"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 83
-duration: 28
+duration: 55
 objectives:
   - "Diagnose and resolve IP address conflicts and DHCP issues"
   - "Identify and fix routing loops and incorrect routing configurations"
@@ -25,6 +25,17 @@ In this lesson, we'll explore common logical network issues including:
 - **VLAN and network segmentation issues**
 
 Understanding these logical issues enables you to quickly diagnose and resolve connectivity problems that appear mysterious because physical connectivity is fine.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Diagnose and resolve IP address conflicts and DHCP issues
+- Identify and fix routing loops and incorrect routing configurations
+- Troubleshoot DNS resolution failures and misconfigurations
+- Apply systematic troubleshooting to logical network problems
 
 ---
 
@@ -1240,11 +1251,145 @@ Understanding logical layer issues enables quick resolution of connectivity prob
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** A Windows computer displays "There is an IP address conflict with another system on the network." What is the MOST appropriate first step?
+
+A) Replace the network cable
+B) Reboot the computer
+C) Identify the conflicting device using ARP or DHCP logs and resolve the duplicate assignment
+D) Change the subnet mask
+
+<details>
+<summary>Answer</summary>
+
+**C)** The first step is to identify which device holds the conflicting IP address (using ARP tables, DHCP server logs, or network scanning) and then resolve the conflict by changing one device's IP or fixing the DHCP configuration.
+</details>
+
+**Q2.** A user can ping devices by IP address but cannot browse websites by name. What is the most likely issue?
+
+A) Default gateway is incorrect
+B) DNS resolution is failing
+C) The NIC is disabled
+D) The cable is damaged
+
+<details>
+<summary>Answer</summary>
+
+**B)** If IP connectivity works but name resolution fails, the DNS configuration is the problem. The DNS server may be unreachable, misconfigured, or the client's DNS settings may be incorrect.
+</details>
+
+**Q3.** What is a routing loop?
+
+A) A backup path in the routing table
+B) A condition where packets circulate between routers without reaching their destination
+C) A method of load balancing traffic
+D) A feature of dynamic routing protocols
+
+<details>
+<summary>Answer</summary>
+
+**B)** A routing loop occurs when routers have conflicting or incorrect routing entries that cause packets to be forwarded in a circle between routers, never reaching their destination. TTL prevents infinite loops.
+</details>
+
+**Q4.** A device is configured with IP 192.168.1.50/24 and default gateway 192.168.2.1. Why can't it reach the internet?
+
+A) The IP address is in use by another device
+B) The subnet mask is incorrect
+C) The default gateway is on a different subnet than the device
+D) DNS is not configured
+
+<details>
+<summary>Answer</summary>
+
+**C)** The device (192.168.1.50/24) is on the 192.168.1.0 network, but the gateway (192.168.2.1) is on the 192.168.2.0 network. The gateway must be on the same subnet as the device.
+</details>
+
+**Q5.** Users on VLAN 10 cannot communicate with users on VLAN 20, even though both VLANs are configured on the same switch. What is required?
+
+A) A crossover cable between the VLANs
+B) A Layer 3 device (router or Layer 3 switch) for inter-VLAN routing
+C) Changing both groups to the same VLAN
+D) A hub to connect the VLANs
+
+<details>
+<summary>Answer</summary>
+
+**B)** VLANs create separate broadcast domains. Communication between VLANs requires a Layer 3 device (router or Layer 3 switch) to route traffic between the different network segments.
+</details>
+
+**Q6.** A DHCP server has run out of available IP addresses in its scope. What symptom will new clients experience?
+
+A) They will receive a 169.254.x.x APIPA address
+B) They will receive the gateway's IP address
+C) They will be assigned an IPv6 address instead
+D) They will keep their previous IP indefinitely
+
+<details>
+<summary>Answer</summary>
+
+**A)** When no DHCP server responds (or has no available addresses), Windows clients assign themselves an APIPA address in the 169.254.0.0/16 range, which only allows local link communication.
+</details>
+
+**Q7.** A network has two DHCP servers, and some clients are receiving incorrect IP configurations. What is this scenario called?
+
+A) IP conflict
+B) Rogue DHCP server
+C) DNS poisoning
+D) ARP spoofing
+
+<details>
+<summary>Answer</summary>
+
+**B)** A rogue DHCP server is an unauthorized DHCP server on the network that provides incorrect configurations to clients. DHCP snooping on managed switches can prevent this.
+</details>
+
+**Q8.** Which command would you use to clear the local DNS cache on a Windows computer?
+
+A) ipconfig /release
+B) ipconfig /flushdns
+C) arp -d
+D) netsh dns clear
+
+<details>
+<summary>Answer</summary>
+
+**B)** `ipconfig /flushdns` clears the local DNS resolver cache, forcing the system to query the DNS server again for fresh results. This is useful when DNS records have recently changed.
+</details>
+
+**Q9.** A switch port is configured for VLAN 10, but the device connected to it needs to be on VLAN 20. What is this type of issue?
+
+A) Physical layer problem
+B) VLAN misconfiguration
+C) Routing loop
+D) DNS failure
+
+<details>
+<summary>Answer</summary>
+
+**B)** A VLAN misconfiguration occurs when a port is assigned to the wrong VLAN, preventing the device from communicating with its intended network segment. Correcting the port's VLAN assignment resolves the issue.
+</details>
+
+**Q10.** A device has an IP address of 169.254.10.50. What does this indicate?
+
+A) The device has a valid static IP configuration
+B) The device is using a public IP address
+C) The device failed to obtain an address from a DHCP server
+D) The DNS server assigned this address
+
+<details>
+<summary>Answer</summary>
+
+**C)** Addresses in the 169.254.0.0/16 range are APIPA (Automatic Private IP Addressing) addresses, automatically assigned when a device cannot contact a DHCP server.
+</details>
+
+---
+
+## References
 
 - **RFC 791**: Internet Protocol (IP)
 - **RFC 2131**: Dynamic Host Configuration Protocol (DHCP)
 - **RFC 1034/1035**: Domain Name System (DNS)
 - **RFC 2328**: OSPF Routing Protocol
 - **IEEE 802.1Q**: VLAN Tagging Standard
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.3 - Given a scenario, troubleshoot common network service issues
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.3 - Given a scenario, troubleshoot common network service issues

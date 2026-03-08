@@ -1,5 +1,5 @@
 ---
-id: "146-exception-types"
+id: lesson-139-exception-types
 title: "Python Exception Types Deep Dive"
 chapterId: ch11-error-handling
 order: 2
@@ -30,7 +30,6 @@ Understanding Python's exception hierarchy helps you handle errors effectively.
 #       │   └── OverflowError
 #       ├── LookupError
 #       │   ├── IndexError
-#       │   ├── KeyError
 #       │   └── KeyError
 #       ├── TypeError
 #       ├── ValueError

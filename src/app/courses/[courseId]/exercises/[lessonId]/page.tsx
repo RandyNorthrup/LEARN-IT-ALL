@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Play, CheckCircle2, XCircle, AlertCircle, Loader2 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
+import dynamic from 'next/dynamic';
+import type { PcapData } from '@/components/PcapViewer';
+
+// Dynamic imports for lab components (heavy dependencies)
+const PcapViewer = dynamic(() => import('@/components/PcapViewer'), { ssr: false });
+const PyodideSandbox = dynamic(() => import('@/components/PyodideSandbox'), { ssr: false });
 
 interface TestCase {
   id: string;
@@ -12,7 +18,20 @@ interface TestCase {
   input?: string;
   expectedOutput?: string;
   validation?: string;
+  testCode?: string; // for Pyodide test cases
   isHidden: boolean;
+}
+
+interface LabResource {
+  type: 'pcap' | 'topology' | 'data';
+  url: string;
+  label?: string;
+}
+
+interface LabEnvironment {
+  runtime?: 'pyodide';
+  preloadModules?: string[];
+  setupCode?: string;
 }
 
 interface ExerciseData {
@@ -27,6 +46,22 @@ interface ExerciseData {
   solution: string;
   hints: string[];
   testCases: TestCase[];
+  // Lab exercise extensions
+  exerciseType?: 'standard' | 'lab';
+  labType?: 'pcap-analysis' | 'python-sandbox' | 'cli-simulation';
+  resources?: LabResource[];
+  environment?: LabEnvironment;
+  labQuestions?: LabQuestion[];
+}
+
+interface LabQuestion {
+  id: string;
+  question: string;
+  type: 'multiple-choice' | 'short-answer';
+  options?: string[];
+  correctAnswer: string;
+  hint?: string;
+  relatedPackets?: number[]; // packet numbers to highlight in PCAP viewer
 }
 
 interface TestResult {
@@ -59,6 +94,9 @@ export default function ExercisePage() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmissionResult | null>(null);
   const [showHints, setShowHints] = useState(false);
+  const [pcapData, setPcapData] = useState<PcapData | null>(null);
+  const [labAnswers, setLabAnswers] = useState<Record<string, string>>({});
+  const [labResults, setLabResults] = useState<Record<string, boolean> | null>(null);
 
   useEffect(() => {
     async function fetchExercise() {
@@ -68,6 +106,22 @@ export default function ExercisePage() {
           const data = await response.json();
           setExercise(data);
           setCode(data.starterCode || '');
+
+          // If this is a PCAP lab, fetch the PCAP data
+          if (data.labType === 'pcap-analysis' && data.resources) {
+            const pcapResource = data.resources.find((r: LabResource) => r.type === 'pcap');
+            if (pcapResource) {
+              try {
+                const pcapResponse = await fetch(pcapResource.url);
+                if (pcapResponse.ok) {
+                  const pcap = await pcapResponse.json();
+                  setPcapData(pcap);
+                }
+              } catch (err) {
+                console.error('Failed to load PCAP data:', err);
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Failed to fetch exercise:', error);
@@ -117,6 +171,36 @@ export default function ExercisePage() {
       });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Handle PCAP lab question submission (client-side grading)
+  const handleLabSubmit = () => {
+    if (!exercise?.labQuestions) return;
+    const results: Record<string, boolean> = {};
+    let correct = 0;
+    for (const q of exercise.labQuestions) {
+      const answer = labAnswers[q.id]?.trim().toLowerCase();
+      const expected = q.correctAnswer.trim().toLowerCase();
+      const passed = answer === expected;
+      results[q.id] = passed;
+      if (passed) correct++;
+    }
+    setLabResults(results);
+
+    // Submit to API for persistence
+    if (correct === exercise.labQuestions.length) {
+      fetch(`/api/courses/${courseId}/exercises/${lessonId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: JSON.stringify(labAnswers),
+          exerciseId: exercise.id,
+          testCases: [],
+          labResults: results,
+          allPassed: true,
+        }),
+      }).catch(() => {});
     }
   };
 
@@ -172,6 +256,167 @@ export default function ExercisePage() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Lab Exercise Layout */}
+        {exercise.labType === 'pcap-analysis' ? (
+          <div className="space-y-6">
+            {/* Lab Title & Description */}
+            <div className="rounded-2xl bg-white shadow-xl p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 text-xs font-bold">PCAP LAB</span>
+                <h1 className="text-2xl font-bold text-gray-900">{exercise.title}</h1>
+              </div>
+              <p className="text-gray-700 whitespace-pre-wrap">{exercise.description}</p>
+            </div>
+
+            {/* PCAP Viewer */}
+            {pcapData ? (
+              <PcapViewer
+                data={pcapData}
+                highlightPackets={exercise.labQuestions?.flatMap((q) => q.relatedPackets || []) || []}
+              />
+            ) : (
+              <div className="rounded-2xl bg-white shadow-xl p-6 text-center text-gray-500">
+                <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+                Loading packet capture...
+              </div>
+            )}
+
+            {/* Lab Questions */}
+            {exercise.labQuestions && exercise.labQuestions.length > 0 && (
+              <div className="rounded-2xl bg-white shadow-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Analysis Questions</h3>
+                <div className="space-y-4">
+                  {exercise.labQuestions.map((q, idx) => (
+                    <div key={q.id} className={`p-4 rounded-lg border ${labResults ? (labResults[q.id] ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50') : 'border-gray-200 bg-gray-50'}`}>
+                      <p className="font-semibold text-gray-900 mb-2">
+                        {idx + 1}. {q.question}
+                        {q.relatedPackets && q.relatedPackets.length > 0 && (
+                          <span className="text-xs text-gray-400 ml-2">(See packet{q.relatedPackets.length > 1 ? 's' : ''} #{q.relatedPackets.join(', #')})</span>
+                        )}
+                      </p>
+                      {q.type === 'multiple-choice' && q.options ? (
+                        <div className="space-y-1.5">
+                          {q.options.map((opt, oi) => (
+                            <label key={oi} className="flex items-center gap-2 text-sm cursor-pointer">
+                              <input
+                                type="radio"
+                                name={q.id}
+                                value={opt}
+                                checked={labAnswers[q.id] === opt}
+                                onChange={() => setLabAnswers((prev) => ({ ...prev, [q.id]: opt }))}
+                                disabled={!!labResults}
+                                className="text-blue-600"
+                              />
+                              <span className="text-gray-800">{opt}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={labAnswers[q.id] || ''}
+                          onChange={(e) => setLabAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                          disabled={!!labResults}
+                          placeholder="Your answer..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
+                        />
+                      )}
+                      {labResults && !labResults[q.id] && (
+                        <p className="text-xs text-red-600 mt-1">Correct answer: {q.correctAnswer}</p>
+                      )}
+                      {labResults && labResults[q.id] && (
+                        <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Correct
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {!labResults && (
+                  <button
+                    onClick={handleLabSubmit}
+                    className="mt-4 w-full inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold transition-all hover:from-indigo-700 hover:to-blue-700 shadow-lg"
+                  >
+                    Submit Answers
+                  </button>
+                )}
+                {labResults && (
+                  <div className={`mt-4 p-3 rounded-lg ${Object.values(labResults).every(Boolean) ? 'bg-green-100' : 'bg-yellow-100'}`}>
+                    <p className="font-semibold text-gray-900">
+                      Score: {Object.values(labResults).filter(Boolean).length}/{Object.values(labResults).length}
+                      {Object.values(labResults).every(Boolean) && ' 🎉 Perfect!'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+        ) : exercise.labType === 'python-sandbox' ? (
+          <div className="space-y-6">
+            {/* Lab Title & Description */}
+            <div className="rounded-2xl bg-white shadow-xl p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs font-bold">PYTHON LAB</span>
+                <h1 className="text-2xl font-bold text-gray-900">{exercise.title}</h1>
+              </div>
+              <p className="text-gray-700 whitespace-pre-wrap">{exercise.description}</p>
+              {/* Hints for Python labs */}
+              {exercise.hints && exercise.hints.length > 0 && (
+                <div className="mt-4">
+                  <button
+                    onClick={() => setShowHints(!showHints)}
+                    className="flex items-center text-blue-600 hover:text-blue-700 font-semibold"
+                  >
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {showHints ? 'Hide' : 'Show'} Hints ({exercise.hints.length})
+                  </button>
+                  {showHints && (
+                    <ul className="mt-2 space-y-1">
+                      {exercise.hints.map((hint) => (
+                        <li key={hint} className="text-sm text-gray-700 p-2 bg-blue-50 rounded">
+                          {hint}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Pyodide Sandbox */}
+            <PyodideSandbox
+              starterCode={exercise.starterCode}
+              testCases={exercise.testCases
+                .filter((tc) => tc.testCode)
+                .map((tc) => ({
+                  id: tc.id,
+                  description: tc.description,
+                  testCode: tc.testCode!,
+                  hidden: tc.isHidden,
+                }))}
+              preloadModules={exercise.environment?.preloadModules || []}
+              setupCode={exercise.environment?.setupCode || ''}
+              onResults={(results, allPassed) => {
+                if (allPassed) {
+                  fetch(`/api/courses/${courseId}/exercises/${lessonId}/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      code: exercise.starterCode,
+                      exerciseId: exercise.id,
+                      testCases: [],
+                      labResults: Object.fromEntries(results.map((r) => [r.id, r.passed])),
+                      allPassed: true,
+                    }),
+                  }).catch(() => {});
+                }
+              }}
+            />
+          </div>
+
+        ) : (
+        /* Standard Exercise Layout */
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Panel - Instructions */}
           <div className="space-y-6">
@@ -334,6 +579,7 @@ export default function ExercisePage() {
             </button>
           </div>
         </div>
+        )}
       </main>
     </div>
   );

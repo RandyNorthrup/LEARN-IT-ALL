@@ -1,7 +1,7 @@
 ---
 id: what-are-classes
 title: What Are Classes and Objects?
-chapterId: ch2-classes-objects
+chapterId: ch2-classes
 order: 11
 duration: 15
 objectives:

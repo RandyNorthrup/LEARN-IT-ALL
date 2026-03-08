@@ -1,5 +1,5 @@
 ---
-id: osi-model-overview
+id: lesson-001-osi-model-overview
 title: OSI Model Overview
 chapterId: ch1-networking-fundamentals
 order: 1
@@ -399,65 +399,83 @@ traceroute 192.168.2.100  # Linux
 
 ---
 
-## Review Questions
-
-1. **At which OSI layer does a router operate?**
-   - **Answer**: Layer 3 (Network layer). Routers make forwarding decisions based on IP addresses.
-
-2. **What is the PDU at the Data Link layer called?**
-   - **Answer**: Frame
-
-3. **Which layer is responsible for logical addressing and routing?**
-   - **Answer**: Layer 3 (Network layer)
-
-4. **What's the difference between TCP and UDP?**
-   - **Answer**: TCP is connection-oriented and reliable (guarantees delivery), while UDP is connectionless and unreliable (no delivery guarantee) but faster.
-
-5. **At which layer does a switch operate?**
-   - **Answer**: Layer 2 (Data Link layer). Switches use MAC addresses to forward frames.
-
-6. **What layer would you check if you're troubleshooting a cable issue?**
-   - **Answer**: Layer 1 (Physical layer)
-
-7. **Which layers are included in the Application layer of the TCP/IP model?**
-   - **Answer**: Layers 5, 6, and 7 (Session, Presentation, and Application)
-
-8. **What protocol operates at Layer 4 and provides reliable, connection-oriented communication?**
-   - **Answer**: TCP (Transmission Control Protocol)
-
-9. **What is the purpose of the Presentation layer?**
-   - **Answer**: To translate, encrypt, and compress data between the application and network layers.
-
-10. **At which layer does encryption typically occur?**
-    - **Answer**: Layer 6 (Presentation layer), though encryption can also occur at other layers (e.g., IPsec at Layer 3, TLS at Layer 4/5)
-
----
-
 ## Summary
 
-The OSI model is a fundamental concept in networking that provides a framework for understanding how data moves through a network. By dividing network communication into seven distinct layers, it enables:
+In this lesson, we explored the seven layers of the OSI model and their roles in network communication. Layer 1 (Physical) handles bit transmission over media like Cat5e/Cat6 cables, Layer 2 (Data Link) provides MAC addressing and frame delivery using its LLC and MAC sublayers, and Layer 3 (Network) manages IP addressing and routing via protocols like OSPF and BGP. Layer 4 (Transport) ensures reliable delivery through TCP's three-way handshake (SYN → SYN-ACK → ACK) or fast, connectionless delivery through UDP. The upper layers handle session management (Layer 5), data formatting and encryption (Layer 6), and application protocols like HTTP (port 80), HTTPS (port 443), and DNS (port 53) at Layer 7. Each layer communicates using Protocol Data Units — bits, frames, packets, and segments. Understanding encapsulation — adding headers at each layer — is critical for troubleshooting network issues systematically from Layer 1 upward.
 
-- **Standardization** across different vendors and technologies
-- **Troubleshooting** by isolating issues to specific layers
-- **Modular design** allowing changes to one layer without affecting others
-- **Clear communication** among network professionals
+## Practice Questions
 
-Remember the seven layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application (**"Please Do Not Throw Sausage Pizza Away"**).
+**Q1.** Which OSI layer is responsible for logical addressing and routing packets between different networks?
 
-Each layer has specific functions and uses specific protocols and devices. Understanding the OSI model is crucial for:
-- Network troubleshooting
-- Security implementation
-- Protocol analysis
-- Network design and implementation
+A) Data Link layer
+B) Transport layer
+C) Network layer
+D) Session layer
 
----
+<details>
+<summary>Answer</summary>
+
+**C)** The Network layer (Layer 3) handles logical addressing using IP addresses and determines the best path (routing) for packets across networks. The Data Link layer (A) uses MAC addresses for local delivery. The Transport layer (B) handles segmentation and port addressing. The Session layer (D) manages communication sessions between applications.
+</details>
+
+**Q2.** What is the Protocol Data Unit (PDU) at Layer 2 of the OSI model?
+
+A) Packet
+B) Segment
+C) Bit
+D) Frame
+
+<details>
+<summary>Answer</summary>
+
+**D)** The PDU at Layer 2 (Data Link layer) is a frame, which includes MAC addresses and a Frame Check Sequence (FCS) trailer. A packet (A) is the PDU at Layer 3. A segment (B) is the PDU at Layer 4. Bits (C) are the PDU at Layer 1 (Physical layer).
+</details>
+
+**Q3.** A user reports they cannot access a website. A technician verifies the cable is connected and link lights are active, but the user has no IP address assigned. At which OSI layer should the technician focus troubleshooting next?
+
+A) Physical layer
+B) Application layer
+C) Network layer
+D) Data Link layer
+
+<details>
+<summary>Answer</summary>
+
+**C)** Since the cable is connected and link lights are on, Layer 1 (Physical) is working. The lack of an IP address is a Network layer (Layer 3) issue — likely a DHCP problem. The Physical layer (A) has already been ruled out. The Application layer (B) is too high to address an IP assignment issue. The Data Link layer (D) would involve MAC addressing and framing issues, which are not indicated here.
+</details>
+
+**Q4.** During encapsulation, a TCP header containing source and destination port numbers is added at which OSI layer?
+
+A) Network layer
+B) Session layer
+C) Data Link layer
+D) Transport layer
+
+<details>
+<summary>Answer</summary>
+
+**D)** The Transport layer (Layer 4) adds the TCP or UDP header, which includes source and destination port numbers, sequence numbers, and flow control information. The Network layer (A) adds IP headers. The Session layer (B) manages sessions but does not add port-based headers. The Data Link layer (C) adds MAC address headers and FCS trailers.
+</details>
+
+**Q5.** A network engineer is analyzing a packet capture and notices that identical plaintext blocks are producing different ciphertext. The engineer suspects data is being encrypted before transmission. Which OSI layer is primarily responsible for encryption and data formatting?
+
+A) Application layer
+B) Transport layer
+C) Presentation layer
+D) Session layer
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Presentation layer (Layer 6) is responsible for data translation, encryption/decryption, and compression. While encryption can occur at other layers in practice (e.g., IPsec at Layer 3, TLS at Layer 4/5), the OSI model assigns encryption functions to the Presentation layer. The Application layer (A) provides network services to applications. The Transport layer (B) handles segmentation and reliable delivery. The Session layer (D) manages session establishment and teardown.
+</details>
 
 ## References
 
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 1.1 - OSI Model Layers
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 1.1 - OSI Model Layers
 - **RFC 1122**: Requirements for Internet Hosts (TCP/IP model)
 - **ISO/IEC 7498-1**: OSI Reference Model - Basic Reference Model
-- **Professor Messer**: "Understanding the OSI Model" - N10-008 Network+ Course
+- **Professor Messer**: "Understanding the OSI Model" - N10-009 Network+ Course
 - **Microsoft Learn**: "Windows network architecture and the OSI model"
 
 ---

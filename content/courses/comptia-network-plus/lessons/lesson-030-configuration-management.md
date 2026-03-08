@@ -1,7 +1,7 @@
 ---
-id: configuration-management
+id: lesson-030-configuration-management
 title: Configuration Management and Automation
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 30
 duration: 90
 objectives:
@@ -17,6 +17,18 @@ objectives:
 ## Introduction
 
 Configuration management is the practice of systematically managing, organizing, and controlling changes to network device configurations throughout their lifecycle. Modern network environments require automation to scale effectively, reduce human error, ensure consistency, and accelerate deployment. This lesson covers configuration management principles, version control systems, automation tools (Ansible, Python), Infrastructure as Code (IaC), and best practices for automated network operations.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Implement configuration management systems
+- Use version control for network configs
+- Automate network tasks with Ansible and Python
+- Apply Infrastructure as Code principles
+- Follow automation best practices
+
+---
 
 ## Configuration Management Fundamentals
 
@@ -239,6 +251,22 @@ Core-SW-02:ios:admin:password
 Core-R-01:ios:admin:password
 FW-01:asa:admin:password
 ```
+
+### Multi-Vendor Configuration Management Comparison
+
+Each vendor handles configuration differently. Understanding these differences is essential for automating multi-vendor environments:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | Linux (systemd-networkd) |
+|------|-----------|---------------|------------|--------------------------|
+| Config file format | IOS CLI syntax (flat) | XML/set-based (hierarchical) | IOS-like CLI syntax | INI-style (.network files) / YAML (Netplan) |
+| Backup running config | `copy run tftp://server/file` | `request system configuration rescue save` | `copy run flash:backup.cfg` | `cp /etc/netplan/*.yaml /backup/` |
+| Compare configs | `show archive config diff` | `show | compare` (built-in diff) | `diff running-config startup-config` | `diff file1.yaml file2.yaml` |
+| Rollback | `configure replace flash:backup.cfg` | `rollback 0-49` (50 versions) | `configure replace flash:backup.cfg` | `netplan try` (auto-rollback) |
+| API access | RESTCONF / NETCONF | NETCONF / REST API | eAPI (JSON-RPC) | D-Bus / REST |
+| Automation protocol | SSH / NETCONF | NETCONF (native) | SSH / eAPI | SSH |
+| Config format for automation | Cisco YANG models | Juniper YANG / XML | JSON (eAPI) | YAML |
+
+> **Automation Tip:** When automating across vendors, use **NAPALM** (Network Automation and Programmability Abstraction Layer with Multivendor support) — it provides a unified Python API for Cisco IOS, Junos, Arista EOS, and others. Ansible's `network_cli` connection plugin similarly abstracts vendor differences.
 
 ## Configuration Automation with Ansible
 
@@ -922,15 +950,78 @@ Modern configuration management requires:
 
 Configuration management and automation are no longer optional - they are essential for managing modern, large-scale networks efficiently and reliably.
 
-## Review Questions
+## Practice Questions
 
-1. What is the purpose of version control for network configurations?
-2. What is the difference between RANCID and Oxidized?
-3. What are the benefits of using Ansible for network automation?
-4. What is idempotency and why is it important?
-5. What is NAPALM and what advantage does it provide?
-6. What is configuration drift and why should it be detected?
-7. What is "Infrastructure as Code" (IaC)?
-8. What should be included in a configuration baseline (golden config)?
-9. Why is pre-change validation important in automation?
-10. What Python library would you use for SSH connections to network devices?
+**Q1.** What percentage of network outages are attributed to human configuration errors?
+
+A) 20%
+B) 50%
+C) 80%
+D) 95%
+
+<details>
+<summary>Answer</summary>
+
+**C)** Industry statistics show that 80% of network outages are caused by human configuration errors. This is a primary driver for implementing configuration management systems and automation, which ensure consistency, reduce manual mistakes, enable rapid rollback, and provide an audit trail of all changes.
+</details>
+
+**Q2.** A network team discovers that several access switches have drifted from the approved baseline configuration over the past 6 months. Which tool would BEST detect and alert on these configuration changes automatically?
+
+A) Wireshark
+B) RANCID or Oxidized
+C) ping
+D) nslookup
+
+<details>
+<summary>Answer</summary>
+
+**B)** RANCID (Really Awesome New Cisco confIg Differ) and its modern alternative Oxidized automatically poll network devices on a schedule, detect configuration changes by comparing current configs against stored versions, and email differences to administrators. They store configurations in version control (Git/CVS) for history tracking. Wireshark captures packets, not configurations. Ping tests connectivity. Nslookup queries DNS.
+</details>
+
+**Q3.** What is the PRIMARY advantage of Ansible for network automation compared to traditional scripting?
+
+A) It requires agents installed on all network devices
+B) It uses binary configuration files for speed
+C) It is agentless, uses human-readable YAML, and is idempotent
+D) It only works with Cisco devices
+
+<details>
+<summary>Answer</summary>
+
+**C)** Ansible's primary advantages are that it is agentless (connects via SSH, requiring no software on managed devices), uses human-readable YAML playbooks, and is idempotent (safe to run multiple times without unintended side effects). Ansible does not require agents — that is a characteristic of tools like Puppet and Chef. It uses YAML, not binary files. It supports many vendors through its extensive network module library.
+</details>
+
+**Q4.** A network engineer needs to compare the current running configuration of a core switch against last month's version to investigate a routing issue. Using Git for configuration management, which command accomplishes this?
+
+A) git init Core-SW-01.cfg
+B) git diff HEAD~1 Core-SW-01.cfg
+C) git add Core-SW-01.cfg
+D) git branch Core-SW-01
+
+<details>
+<summary>Answer</summary>
+
+**B)** The command `git diff HEAD~1 Core-SW-01.cfg` compares the current version of the configuration file against the previous commit, showing exactly what lines were added, removed, or modified. For comparing against a specific tagged version, `git diff v1.0 v2.0 Core-SW-01.cfg` can be used. `git init` initializes a repository, `git add` stages files, and `git branch` creates a new branch — none compare file versions.
+</details>
+
+**Q5.** In the configuration management lifecycle, what is the correct sequence of steps?
+
+A) Deploy, Design, Monitor, Restore, Audit, Update, Backup
+B) Design, Deploy, Monitor, Update, Audit, Backup, Restore
+C) Monitor, Design, Deploy, Backup, Update, Audit, Restore
+D) Audit, Design, Deploy, Update, Monitor, Backup, Restore
+
+<details>
+<summary>Answer</summary>
+
+**B)** The configuration management lifecycle follows: (1) Design — create baseline templates, (2) Deploy — apply configurations to devices, (3) Monitor — track configuration drift, (4) Update — apply approved changes, (5) Audit — verify compliance with standards, (6) Backup — store configurations securely, (7) Restore — recover from failures. This sequence ensures configurations are properly designed before deployment and continuously managed throughout their lifecycle.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.2 — Given a scenario, determine the appropriate organizational documents and policies
+- NIST SP 800-128: Guide for Security-Focused Configuration Management of Information Systems
+- IETF RFC 6241: Network Configuration Protocol (NETCONF)
+- IETF RFC 8040: RESTCONF Protocol
+- ITIL v4 Foundation: Service Configuration Management and Infrastructure and Platform Management Practices
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Configuration and Change Management

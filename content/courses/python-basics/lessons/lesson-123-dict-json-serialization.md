@@ -1,5 +1,5 @@
 ---
-id: "132-dict-json-serialization"
+id: lesson-123-dict-json-serialization
 title: "Dictionary JSON and Serialization"
 chapterId: ch9-dictionaries
 order: 14
@@ -114,19 +114,18 @@ import json
 from datetime import datetime, date
 from decimal import Decimal
 
-# Custom JSON encoder
-class CustomEncoder(json.JSONEncoder):
-    def default(self, obj):
-        """Convert non-serializable objects"""
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        if isinstance(obj, date):
-            return obj.isoformat()
-        if isinstance(obj, Decimal):
-            return float(obj)
-        if isinstance(obj, set):
-            return list(obj)
-        return super().default(obj)
+# Custom JSON encoding using a default function
+def custom_json_default(obj):
+    """Convert non-serializable objects for JSON encoding"""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    if isinstance(obj, date):
+        return obj.isoformat()
+    if isinstance(obj, Decimal):
+        return float(obj)
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
 # Data with complex types
 data = {
@@ -136,8 +135,8 @@ data = {
     "tags": {"python", "tutorial"}
 }
 
-# Serialize with custom encoder
-json_string = json.dumps(data, cls=CustomEncoder, indent=2)
+# Serialize with custom default function
+json_string = json.dumps(data, default=custom_json_default, indent=2)
 print(json_string)
 # {
 #   "timestamp": "2024-01-15T10:30:00",
@@ -167,86 +166,81 @@ parsed = json.loads(json_string, object_hook=custom_decoder)
 print(type(parsed["timestamp"]))  # <class 'datetime.datetime'>
 ```
 
-## Class to Dict Conversion
+## Dict to/from JSON Conversion
 
 ```python
-from dataclasses import dataclass, asdict
+from collections import namedtuple
 import json
 
-@dataclass
-class User:
-    name: str
-    age: int
-    email: str
-    active: bool = True
-    
-    def to_dict(self):
-        """Convert to dictionary"""
-        return {
-            "name": self.name,
-            "age": self.age,
-            "email": self.email,
-            "active": self.active
-        }
-    
-    @classmethod
-    def from_dict(cls, data):
-        """Create from dictionary"""
-        return cls(
-            name=data["name"],
-            age=data["age"],
-            email=data["email"],
-            active=data.get("active", True)
-        )
-    
-    def to_json(self):
-        """Convert to JSON string"""
-        return json.dumps(self.to_dict())
-    
-    @classmethod
-    def from_json(cls, json_string):
-        """Create from JSON string"""
-        return cls.from_dict(json.loads(json_string))
+# Define User as a namedtuple with a default for 'active'
+User = namedtuple('User', ['name', 'age', 'email', 'active'])
+User.__new__.__defaults__ = (True,)  # default for 'active'
+
+def user_to_dict(user):
+    """Convert User namedtuple to dictionary"""
+    return {
+        "name": user.name,
+        "age": user.age,
+        "email": user.email,
+        "active": user.active
+    }
+
+def user_from_dict(data):
+    """Create User namedtuple from dictionary"""
+    return User(
+        name=data["name"],
+        age=data["age"],
+        email=data["email"],
+        active=data.get("active", True)
+    )
+
+def user_to_json(user):
+    """Convert User to JSON string"""
+    return json.dumps(user_to_dict(user))
+
+def user_from_json(json_string):
+    """Create User from JSON string"""
+    return user_from_dict(json.loads(json_string))
 
 # Usage
 user = User("Alice", 30, "alice@example.com")
 
 # To dict
-user_dict = user.to_dict()
+user_dict = user_to_dict(user)
 print(user_dict)  # {'name': 'Alice', 'age': 30, ...}
 
-# Or use dataclass asdict
-user_dict = asdict(user)
+# Or use _asdict() (built into namedtuple)
+user_dict = user._asdict()
 
 # To JSON
-json_string = user.to_json()
+json_string = user_to_json(user)
 print(json_string)
 
 # From JSON
-restored = User.from_json(json_string)
+restored = user_from_json(json_string)
 print(restored.name)  # Alice
 
-# Nested objects
-@dataclass
-class Profile:
-    user: User
-    bio: str
-    
-    def to_dict(self):
-        return {
-            "user": self.user.to_dict(),
-            "bio": self.bio
-        }
-    
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            user=User.from_dict(data["user"]),
-            bio=data["bio"]
-        )
+# Nested objects using dicts
+def create_profile(user, bio):
+    """Create a profile containing a User"""
+    return {"user": user, "bio": bio}
 
-profile = Profile(user, "Software engineer")
-profile_dict = profile.to_dict()
+def profile_to_dict(profile):
+    """Convert profile to dict for serialization"""
+    return {
+        "user": user_to_dict(profile["user"]),
+        "bio": profile["bio"]
+    }
+
+def profile_from_dict(data):
+    """Create profile from dict"""
+    return {
+        "user": user_from_dict(data["user"]),
+        "bio": data["bio"]
+    }
+
+profile = create_profile(user, "Software engineer")
+profile_dict = profile_to_dict(profile)
 print(json.dumps(profile_dict, indent=2))
 ```
 
@@ -254,9 +248,6 @@ print(json.dumps(profile_dict, indent=2))
 
 ```python
 from typing import Any, Dict
-
-class ValidationError(Exception):
-    pass
 
 def validate_user_data(data: Dict[str, Any]) -> Dict[str, Any]:
     """Validate user data structure"""
@@ -293,7 +284,7 @@ def validate_user_data(data: Dict[str, Any]) -> Dict[str, Any]:
     }
     
     if errors:
-        raise ValidationError(f"Validation errors: {', '.join(errors)}")
+        raise ValueError(f"Validation errors: {', '.join(errors)}")
     
     return validated
 
@@ -302,14 +293,14 @@ try:
     user_data = {"name": "Alice", "email": "alice@example.com", "age": 30}
     validated = validate_user_data(user_data)
     print("Valid:", validated)
-except ValidationError as e:
+except ValueError as e:
     print(e)
 
 # Invalid data
 try:
     bad_data = {"name": "Bob", "age": "thirty"}
     validate_user_data(bad_data)
-except ValidationError as e:
+except ValueError as e:
     print(e)  # Validation errors: Missing required field: email, age must be integer
 
 # Schema validation with jsonschema
@@ -415,43 +406,38 @@ import json
 import urllib.request
 from typing import Dict, List, Any
 
-class APIClient:
-    """Simple API client with dict responses"""
+# Simple API client using functions
+def api_get(base_url, endpoint) -> Dict[str, Any]:
+    """GET request returning dict"""
+    url = f"{base_url}/{endpoint}"
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = response.read()
+            return json.loads(data)
+    except Exception as e:
+        return {"error": str(e)}
+
+def api_post(base_url, endpoint, data: Dict[str, Any]) -> Dict[str, Any]:
+    """POST request with dict payload"""
+    url = f"{base_url}/{endpoint}"
+    json_data = json.dumps(data).encode('utf-8')
     
-    def __init__(self, base_url):
-        self.base_url = base_url
+    req = urllib.request.Request(
+        url,
+        data=json_data,
+        headers={'Content-Type': 'application/json'}
+    )
     
-    def get(self, endpoint) -> Dict[str, Any]:
-        """GET request returning dict"""
-        url = f"{self.base_url}/{endpoint}"
-        try:
-            with urllib.request.urlopen(url) as response:
-                data = response.read()
-                return json.loads(data)
-        except Exception as e:
-            return {"error": str(e)}
-    
-    def post(self, endpoint, data: Dict[str, Any]) -> Dict[str, Any]:
-        """POST request with dict payload"""
-        url = f"{self.base_url}/{endpoint}"
-        json_data = json.dumps(data).encode('utf-8')
-        
-        req = urllib.request.Request(
-            url,
-            data=json_data,
-            headers={'Content-Type': 'application/json'}
-        )
-        
-        try:
-            with urllib.request.urlopen(req) as response:
-                result = response.read()
-                return json.loads(result)
-        except Exception as e:
-            return {"error": str(e)}
+    try:
+        with urllib.request.urlopen(req) as response:
+            result = response.read()
+            return json.loads(result)
+    except Exception as e:
+        return {"error": str(e)}
 
 # Example usage (would work with real API)
-# client = APIClient("https://api.example.com")
-# user = client.get("users/123")
+# base = "https://api.example.com"
+# user = api_get(base, "users/123")
 # print(user["name"])
 
 # Response transformation
@@ -484,74 +470,68 @@ print(app_format)
 ```python
 import json
 import os
+from typing import Dict, Any
 
-class Config:
-    """Configuration manager"""
-    
-    def __init__(self, config_file="config.json"):
-        self.config_file = config_file
-        self.data = self.load()
-    
-    def load(self) -> Dict[str, Any]:
-        """Load configuration from file"""
-        if os.path.exists(self.config_file):
-            with open(self.config_file, 'r') as f:
-                return json.load(f)
-        return self.get_defaults()
-    
-    def save(self):
-        """Save configuration to file"""
-        with open(self.config_file, 'w') as f:
-            json.dump(self.data, f, indent=2)
-    
-    def get(self, key, default=None):
-        """Get configuration value"""
-        keys = key.split('.')
-        value = self.data
-        for k in keys:
-            if isinstance(value, dict):
-                value = value.get(k)
-                if value is None:
-                    return default
-            else:
+# Configuration manager using functions
+def config_load(config_file="config.json") -> Dict[str, Any]:
+    """Load configuration from file"""
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as f:
+            return json.load(f)
+    return config_defaults()
+
+def config_save(data, config_file="config.json"):
+    """Save configuration to file"""
+    with open(config_file, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def config_get(data, key, default=None):
+    """Get configuration value using dot-notation keys"""
+    keys = key.split('.')
+    value = data
+    for k in keys:
+        if isinstance(value, dict):
+            value = value.get(k)
+            if value is None:
                 return default
-        return value
-    
-    def set(self, key, value):
-        """Set configuration value"""
-        keys = key.split('.')
-        current = self.data
-        for k in keys[:-1]:
-            if k not in current:
-                current[k] = {}
-            current = current[k]
-        current[keys[-1]] = value
-        self.save()
-    
-    @staticmethod
-    def get_defaults() -> Dict[str, Any]:
-        """Default configuration"""
-        return {
-            "app": {
-                "name": "MyApp",
-                "version": "1.0.0"
-            },
-            "server": {
-                "host": "localhost",
-                "port": 8000
-            },
-            "database": {
-                "host": "localhost",
-                "port": 5432,
-                "name": "myapp_db"
-            }
+        else:
+            return default
+    return value
+
+def config_set(data, key, value, config_file="config.json"):
+    """Set configuration value using dot-notation keys"""
+    keys = key.split('.')
+    current = data
+    for k in keys[:-1]:
+        if k not in current:
+            current[k] = {}
+        current = current[k]
+    current[keys[-1]] = value
+    config_save(data, config_file)
+
+def config_defaults() -> Dict[str, Any]:
+    """Default configuration"""
+    return {
+        "app": {
+            "name": "MyApp",
+            "version": "1.0.0"
+        },
+        "server": {
+            "host": "localhost",
+            "port": 8000
+        },
+        "database": {
+            "host": "localhost",
+            "port": 5432,
+            "name": "myapp_db"
         }
+    }
 
 # Usage
-config = Config()
-print(config.get("server.port"))  # 8000
-config.set("server.port", 9000)
-print(config.get("server.port"))  # 9000
+config = config_load()
+print(config_get(config, "server.port"))  # 8000
+config_set(config, "server.port", 9000)
+print(config_get(config, "server.port"))  # 9000
 ```
 
 ## Serialization Formats

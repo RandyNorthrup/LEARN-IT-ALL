@@ -1,7 +1,7 @@
 ---
 id: "049"
 title: "Composition vs Inheritance"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 7
 duration: "20 minutes"
 objectives:

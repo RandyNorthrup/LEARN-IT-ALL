@@ -1,9 +1,9 @@
 ---
-id: "lesson-082"
+id: lesson-082-common-issues-physical
 title: "Common Physical Layer Issues: Cables, Attenuation, and EMI"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 82
-duration: 26
+duration: 55
 objectives:
   - "Identify and troubleshoot common cable connectivity problems"
   - "Recognize symptoms of signal attenuation and diagnose causes"
@@ -18,6 +18,17 @@ objectives:
 The physical layer (Layer 1 of the OSI model) is responsible for transmitting raw bits over physical media. Despite advances in networking technology, physical layer issues remain among the most common causes of network problems. Cable faults, signal degradation, electromagnetic interference, and improper installations can cause complete network outages or intermittent connectivity problems that are difficult to diagnose.
 
 In this lesson, we'll explore common physical layer issues including cable problems (opens, shorts, damaged cables), attenuation (signal loss), electromagnetic interference (EMI), crosstalk, and environmental factors. Understanding these issues and their symptoms enables quick diagnosis and resolution, minimizing network downtime.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Identify and troubleshoot common cable connectivity problems
+- Recognize symptoms of signal attenuation and diagnose causes
+- Detect and mitigate electromagnetic interference (EMI) and crosstalk
+- Apply systematic troubleshooting to resolve physical layer issues
 
 ---
 
@@ -887,9 +898,143 @@ Physical layer issues are common but can be resolved quickly with systematic tro
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** A network cable passes a continuity test but fails at Gigabit speeds (works only at 100 Mbps). What is the most likely cause?
+
+A) Open circuit on Pin 1
+B) Short circuit between Pins 4 and 5
+C) Split pair wiring error
+D) Cable exceeds 50 meters
+
+<details>
+<summary>Answer</summary>
+
+**C)** A split pair passes continuity and wiremap tests but creates excessive crosstalk. 100BASE-TX uses only 2 pairs and may work, but 1000BASE-T requires all 4 pairs with proper twist integrity.
+</details>
+
+**Q2.** What is the maximum recommended length for a horizontal Ethernet cable run (including patch cords) per TIA standards?
+
+A) 50 meters
+B) 90 meters
+C) 100 meters
+D) 150 meters
+
+<details>
+<summary>Answer</summary>
+
+**C)** TIA-568 specifies a maximum of 100 meters for a complete Ethernet channel, including up to 90 meters of permanent link and 10 meters total for patch cords at both ends.
+</details>
+
+**Q3.** A network administrator notices high CRC error counts on a switch port. The cable runs parallel to fluorescent lights. What is the most likely cause?
+
+A) Cable open
+B) Electromagnetic interference (EMI)
+C) Incorrect VLAN assignment
+D) Duplex mismatch
+
+<details>
+<summary>Answer</summary>
+
+**B)** Fluorescent lights are a common source of EMI that can induce noise on nearby network cables, causing bit errors that appear as CRC (cyclic redundancy check) errors on the switch port.
+</details>
+
+**Q4.** Which type of cable is BEST suited for installation near high-EMI environments like factory floors?
+
+A) Cat5e UTP
+B) Cat6 UTP
+C) Shielded (STP/F-UTP) cable
+D) Flat patch cable
+
+<details>
+<summary>Answer</summary>
+
+**C)** Shielded cable (STP or F-UTP) has a metallic shield that protects against electromagnetic interference. In high-EMI environments, fiber optic cable is even better since it's immune to EMI.
+</details>
+
+**Q5.** What is NEXT (Near-End Crosstalk)?
+
+A) Signal loss over cable distance
+B) Unwanted signal coupling between wire pairs measured at the transmitting end
+C) Interference from external sources like motors
+D) Signal reflection caused by impedance mismatch
+
+<details>
+<summary>Answer</summary>
+
+**B)** NEXT (Near-End Crosstalk) measures unwanted signal that leaks from one wire pair to another, measured at the same end where the signal is transmitted. It's the most critical crosstalk measurement for Ethernet.
+</details>
+
+**Q6.** A technician discovers that a cable has no link light on either end. Visual inspection shows no obvious damage. What should they test FIRST?
+
+A) Signal attenuation
+B) Crosstalk levels
+C) Continuity (check for opens or shorts)
+D) Cable certification
+
+<details>
+<summary>Answer</summary>
+
+**C)** With no link light, the most basic check is continuity to determine if the cable has a complete electrical path. An open or short circuit is the most likely cause of a complete link failure.
+</details>
+
+**Q7.** What effect does excessive cable bending beyond the minimum bend radius have?
+
+A) It changes the cable's color
+B) It can damage internal conductors and degrade signal quality
+C) It increases the cable's bandwidth
+D) It has no effect on performance
+
+<details>
+<summary>Answer</summary>
+
+**B)** Exceeding the minimum bend radius can damage the internal conductors, break the insulation, or alter the cable's impedance characteristics, leading to signal degradation, increased attenuation, or intermittent failures.
+</details>
+
+**Q8.** Network errors only occur during business hours when the HVAC system is running. What is the most likely cause?
+
+A) DNS misconfiguration
+B) EMI from HVAC motors
+C) IP address conflict
+D) DHCP scope exhaustion
+
+<details>
+<summary>Answer</summary>
+
+**B)** Time-correlated errors that align with equipment operation (like HVAC motors) strongly suggest EMI. Motors generate electromagnetic fields that can induce noise on nearby network cables.
+</details>
+
+**Q9.** What is attenuation in networking?
+
+A) Unwanted signal coupling between adjacent wire pairs
+B) The loss of signal strength as it travels through cable
+C) Interference from external electromagnetic sources
+D) The reflection of signals at cable endpoints
+
+<details>
+<summary>Answer</summary>
+
+**B)** Attenuation is the reduction in signal strength (measured in dB) as a signal travels through a cable. It increases with cable length and signal frequency.
+</details>
+
+**Q10.** Which of the following is completely immune to electromagnetic interference?
+
+A) Cat6A STP cable
+B) Coaxial cable
+C) Fiber optic cable
+D) Cat5e UTP cable
+
+<details>
+<summary>Answer</summary>
+
+**C)** Fiber optic cable transmits light signals through glass or plastic, making it completely immune to electromagnetic interference since light is not affected by electrical or magnetic fields.
+</details>
+
+---
+
+## References
 
 - **TIA-568**: Commercial Building Telecommunications Cabling Standard
 - **IEEE 802.3**: Ethernet Standards
 - **ANSI/TIA-569**: Telecommunications Pathways and Spaces Standard
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.2 - Troubleshoot common cable connectivity issues
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.2 - Troubleshoot common cable connectivity issues

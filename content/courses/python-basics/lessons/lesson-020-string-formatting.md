@@ -1,5 +1,5 @@
 ---
-id: 46-string-formatting
+id: lesson-020-string-formatting
 title: String Formatting with f-strings
 chapterId: ch2-variables
 order: 7
@@ -64,7 +64,7 @@ print(f"Result: {'Pass' if score >= 60 else 'Fail'}")  # Result: Pass
 ```python
 # Floating point numbers
 price = 19.99567
-print(f"Price: ${price:.2f}")  # Price: $19.00 (2 decimal places)
+print(f"Price: ${price:.2f}")  # Price: $20.00 (2 decimal places)
 
 pi = 3.14159265359
 print(f"Pi: {pi:.3f}")  # Pi: 3.142 (3 decimal places)
@@ -287,7 +287,7 @@ y = 20
 print(f"{x + y}")  # 30
 
 # With = (shows expression AND value)
-print(f"{x + y =}")  # x + y = 30
+print(f"{x + y =}")  # x + y =30
 print(f"{x = }")     # x = 10
 print(f"{y = }")     # y = 20
 

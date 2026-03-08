@@ -1,5 +1,5 @@
 ---
-id: "135-set-operations-mathematical"
+id: lesson-126-set-operations-mathematical
 title: "Set Operations: Mathematical Foundations"
 chapterId: ch10-sets
 order: 2

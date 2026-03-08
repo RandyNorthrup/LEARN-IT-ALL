@@ -1,7 +1,7 @@
 ---
-id: private-vs-public-ip
+id: lesson-045-private-vs-public-ip
 title: Private vs. Public IP Addresses
-chapterId: ch5-ip-addressing
+chapterId: ch2-ip-addressing
 order: 45
 duration: 75
 objectives:
@@ -727,37 +727,85 @@ Private addressing with NAT is the foundation of modern Internet connectivity!
 
 ---
 
-## Review Questions
+## Practice Questions
 
-1. **What are the three RFC 1918 private ranges?**
-   - Answer: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
 
-2. **Is 172.32.10.50 a private address?**
-   - Answer: No, public (outside 172.16-172.31 range)
+**Q1.** Which of the following is one of the three RFC 1918 private IPv4 address ranges?
 
-3. **What type of NAT do most home routers use?**
-   - Answer: PAT (Port Address Translation / NAT Overload)
+A) 192.0.0.0/8
+B) 172.16.0.0/12
+C) 169.254.0.0/16
+D) 127.0.0.0/8
 
-4. **Why was RFC 1918 created?**
-   - Answer: Address IPv4 exhaustion by allowing reusable private addresses
+<details>
+<summary>Answer</summary>
 
-5. **What is required for private IPs to access the Internet?**
-   - Answer: NAT (Network Address Translation)
+**B)** The three RFC 1918 private ranges are 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16. The range 169.254.0.0/16 is APIPA (link-local), 127.0.0.0/8 is the loopback range, and 192.0.0.0/8 is not a defined private range (only 192.168.0.0/16 is private).
+</details>
 
-6. **What is port forwarding used for?**
-   - Answer: Allow external access to services on private network
 
-7. **How many devices can share one public IP with PAT?**
-   - Answer: Thousands (limited by ~65K ports)
+**Q2.** What is the primary purpose of Network Address Translation (NAT)?
 
----
+A) To encrypt traffic between two private networks
+B) To allow devices with private IP addresses to communicate on the public Internet by translating private addresses to public addresses
+C) To assign IP addresses to devices automatically
+D) To resolve domain names to IP addresses
+
+<details>
+<summary>Answer</summary>
+
+**B)** NAT translates private (RFC 1918) IP addresses to public IP addresses, enabling devices on private networks to communicate with the Internet. Without NAT, private addresses are not routable on the Internet. DHCP assigns addresses automatically, DNS resolves domain names, and NAT does not provide encryption.
+</details>
+
+
+**Q3.** A technician sees the IP address 172.20.5.100 on a workstation. Is this a private or public address?
+
+A) Public — all 172.x.x.x addresses are public
+B) Private — it falls within the 172.16.0.0/12 range (172.16.0.0–172.31.255.255)
+C) Private — it falls within the 10.0.0.0/8 range
+D) Public — only 192.168.x.x addresses are private
+
+<details>
+<summary>Answer</summary>
+
+**B)** The address 172.20.5.100 is private because it falls within the RFC 1918 range of 172.16.0.0/12 (172.16.0.0–172.31.255.255). Not all 172.x.x.x addresses are private — only 172.16.x.x through 172.31.x.x. For example, 172.32.1.1 would be a public address.
+</details>
+
+
+**Q4.** A small office has 50 computers that need Internet access but only one public IP address from the ISP. Which NAT type allows all 50 computers to share that single public IP?
+
+A) Static NAT
+B) Dynamic NAT
+C) PAT (Port Address Translation)
+D) Proxy ARP
+
+<details>
+<summary>Answer</summary>
+
+**C)** PAT (Port Address Translation), also called NAT overload, allows many private IP addresses to share a single public IP address by using unique source port numbers to distinguish each internal session. Static NAT maps one private IP to one public IP. Dynamic NAT uses a pool of public IPs. Proxy ARP is unrelated to address translation.
+</details>
+
+
+**Q5.** A company hosts a web server on its internal network at 192.168.1.50 and wants it accessible from the Internet. Which NAT type provides a permanent one-to-one mapping between a public IP and the server's private IP?
+
+A) PAT
+B) Dynamic NAT
+C) Static NAT
+D) NAT64
+
+<details>
+<summary>Answer</summary>
+
+**C)** Static NAT creates a permanent one-to-one mapping between a public IP address and a private IP address, allowing external users to reach the internal server consistently. PAT uses many-to-one mapping with port numbers. Dynamic NAT assigns public IPs from a pool temporarily. NAT64 translates between IPv4 and IPv6 and is not used for this purpose.
+</details>
+
 
 ## References
 
 - **RFC 1918:** Address Allocation for Private Internets
 - **RFC 2663:** IP Network Address Translator Terminology
 - **RFC 3022:** Traditional IP Network Address Translator
-- **CompTIA Network+ N10-008:** Domain 1.4 - Private vs Public
+- **CompTIA Network+ N10-009:** Domain 1.4 - Private vs Public
 - **IANA:** IPv4 Address Space Registry
 
 ---

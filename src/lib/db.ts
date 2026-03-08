@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { mkdirSync } from 'fs';
 
 // Lazy initialization - only create DB connection when needed
 let db: Database.Database | null = null;
@@ -8,6 +9,8 @@ export function getDb(): Database.Database {
   if (!db) {
     // Create singleton database connection
     const dbPath = join(process.cwd(), 'database', 'learn-it-all.db');
+    // Ensure the database directory exists
+    mkdirSync(dirname(dbPath), { recursive: true });
     db = new Database(dbPath);
 
     // Enable foreign keys and set pragmas
@@ -243,15 +246,19 @@ export const dbHelpers = {
   // Progress Stats
   getProgressStats: () => {
     const enrollments = getDb().prepare('SELECT COUNT(*) as count FROM course_enrollments').get() as { count: number };
+    const completedCourses = getDb().prepare("SELECT COUNT(*) as count FROM course_enrollments WHERE status = 'COMPLETED'").get() as { count: number };
     const completedLessons = getDb().prepare("SELECT COUNT(*) as count FROM lesson_progress WHERE status = 'COMPLETED'").get() as { count: number };
     const passedExercises = getDb().prepare("SELECT COUNT(DISTINCT exerciseId) as count FROM exercise_submissions WHERE status = 'PASSED'").get() as { count: number };
     const passedQuizzes = getDb().prepare('SELECT COUNT(*) as count FROM quiz_attempts WHERE passed = 1').get() as { count: number };
+    const totalTimeSpent = getDb().prepare('SELECT COALESCE(SUM(timeSpent), 0) as total FROM lesson_progress').get() as { total: number };
     
     return {
       coursesStarted: enrollments.count,
+      coursesCompleted: completedCourses.count,
       lessonsCompleted: completedLessons.count,
       exercisesPassed: passedExercises.count,
       quizzesPassed: passedQuizzes.count,
+      totalStudyHours: Math.round((totalTimeSpent.total / 3600) * 10) / 10,
     };
   },
 
@@ -296,29 +303,9 @@ export const dbHelpers = {
 // Export database connection and helper functions
 export { db, generateId };
 
-// Individual exports for cleaner imports
-export const getSettings = dbHelpers.getSettings;
-export const updateSettings = dbHelpers.updateSettings;
-export const getEnrollment = dbHelpers.getEnrollment;
-export const createEnrollment = dbHelpers.createEnrollment;
-export const getAllEnrollments = dbHelpers.getAllEnrollments;
-export const updateEnrollmentProgress = dbHelpers.updateEnrollmentProgress;
-export const getLessonProgress = dbHelpers.getLessonProgress;
-export const getCourseLessonProgress = dbHelpers.getCourseLessonProgress;
-export const markLessonComplete = dbHelpers.markLessonComplete;
-export const createExerciseSubmission = dbHelpers.createExerciseSubmission;
-export const getExerciseSubmissions = dbHelpers.getExerciseSubmissions;
-export const getLatestExerciseSubmission = dbHelpers.getLatestExerciseSubmission;
-export const getPassedExercisesCount = dbHelpers.getPassedExercisesCount;
+// Individual exports for commonly used functions
 export const createQuizAttempt = dbHelpers.createQuizAttempt;
-export const getQuizAttempts = dbHelpers.getQuizAttempts;
-export const getLatestQuizAttempt = dbHelpers.getLatestQuizAttempt;
-export const getProgressStats = dbHelpers.getProgressStats;
-export const clearAllProgress = dbHelpers.clearAllProgress;
-export const clearCourseProgress = dbHelpers.clearCourseProgress;
-export const clearChapterProgress = dbHelpers.clearChapterProgress;
-export const clearLessonProgress = dbHelpers.clearLessonProgress;
-export const clearQuizProgress = dbHelpers.clearQuizProgress;
+export const markLessonComplete = dbHelpers.markLessonComplete;
 
 // Graceful shutdown
 process.on('exit', () => {

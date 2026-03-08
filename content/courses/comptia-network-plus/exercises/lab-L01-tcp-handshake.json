@@ -1,0 +1,96 @@
+{
+  "id": "lab-L01-tcp-handshake",
+  "lessonId": "lab-L01-tcp-handshake",
+  "title": "Lab: TCP Three-Way Handshake Analysis",
+  "description": "Analyze a real packet capture showing a TCP three-way handshake between a client and web server. Identify SYN, SYN-ACK, and ACK packets, examine TCP flags, sequence numbers, and understand how TCP establishes reliable connections.\n\nUse the PCAP viewer below to examine each packet's headers and answer the analysis questions.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "",
+  "solution": "",
+  "hints": [
+    "The three-way handshake sequence is: SYN → SYN-ACK → ACK",
+    "Look at the TCP Flags field in each packet's Transmission Control Protocol layer",
+    "The SYN flag sets the initial sequence number; the ACK number is always the peer's sequence + 1",
+    "After the handshake completes, the PSH flag indicates data is being pushed to the application",
+    "FIN flags indicate connection teardown — it's a separate 4-step process"
+  ],
+  "exerciseType": "lab",
+  "labType": "pcap-analysis",
+  "resources": [
+    { "type": "pcap", "url": "/labs/pcaps/tcp-handshake.json", "label": "TCP Handshake Capture" }
+  ],
+  "labQuestions": [
+    {
+      "id": "q1",
+      "question": "Which packet initiates the TCP connection (the first step of the three-way handshake)?",
+      "type": "multiple-choice",
+      "options": ["Packet #1", "Packet #2", "Packet #3", "Packet #4"],
+      "correctAnswer": "Packet #1",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q2",
+      "question": "What TCP flags are set in the server's response (packet #2)?",
+      "type": "multiple-choice",
+      "options": ["SYN only", "ACK only", "SYN and ACK", "FIN and ACK"],
+      "correctAnswer": "SYN and ACK",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q3",
+      "question": "What is the destination port in the initial SYN packet, and what service does it represent?",
+      "type": "multiple-choice",
+      "options": ["Port 443 (HTTPS)", "Port 80 (HTTP)", "Port 22 (SSH)", "Port 53 (DNS)"],
+      "correctAnswer": "Port 80 (HTTP)",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q4",
+      "question": "In packet #2, the Acknowledgment Number is 1. What does this mean?",
+      "type": "multiple-choice",
+      "options": [
+        "The server received 1 byte of data",
+        "The server acknowledges the client's SYN (SYN counts as 1 byte)",
+        "The server's sequence number is 1",
+        "There was 1 packet before this one"
+      ],
+      "correctAnswer": "The server acknowledges the client's SYN (SYN counts as 1 byte)",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q5",
+      "question": "What TCP option negotiated in the SYN packet allows the receive window to exceed 64KB?",
+      "type": "multiple-choice",
+      "options": ["MSS (Maximum Segment Size)", "SACK Permitted", "Window Scale", "Timestamps"],
+      "correctAnswer": "Window Scale",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q6",
+      "question": "Which packet contains the HTTP GET request, and what TCP flags does it have?",
+      "type": "multiple-choice",
+      "options": ["Packet #3 with ACK", "Packet #4 with PSH and ACK", "Packet #5 with SYN", "Packet #6 with FIN"],
+      "correctAnswer": "Packet #4 with PSH and ACK",
+      "relatedPackets": [4]
+    },
+    {
+      "id": "q7",
+      "question": "The server's TTL in packet #2 is 57 while the client's TTL is 64. How many router hops is the server away?",
+      "type": "multiple-choice",
+      "options": ["5 hops", "7 hops", "57 hops", "64 hops"],
+      "correctAnswer": "7 hops",
+      "hint": "Most servers start with TTL=64. Subtract the received TTL from the original: 64-57=7",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q8",
+      "question": "Which packet initiates the connection teardown (FIN flag)?",
+      "type": "multiple-choice",
+      "options": ["Packet #7", "Packet #8", "Packet #9", "Packet #10"],
+      "correctAnswer": "Packet #8",
+      "relatedPackets": [8, 9, 10]
+    }
+  ],
+  "testCases": []
+}

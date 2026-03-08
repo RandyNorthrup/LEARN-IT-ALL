@@ -1,30 +1,30 @@
 ---
-id: routing-fundamentals
-title: Routing Fundamentals and Static Routing
-chapterId: ch2-network-implementations
+id: lesson-017-routing-fundamentals
+title: Routing Fundamentals
+chapterId: ch3-network-implementations
 order: 17
 duration: 80
 objectives:
   - Explain how routers forward packets between networks
   - Understand routing table structure and operation
   - Differentiate between administrative distance and routing metrics
-  - Configure and verify static routes
-  - Implement default routes and floating static routes
+  - Understand the role of static, dynamic, and default routes
+  - Apply longest prefix match and route selection concepts
   - Understand route summarization concepts
-  - Troubleshoot static routing issues
+  - Verify and troubleshoot basic routing operations
 ---
 
-# Lesson 17: Routing Fundamentals and Static Routing
+# Lesson 17: Routing Fundamentals
 
 ## Learning Objectives
 By the end of this lesson, you will be able to:
 - Explain how routers forward packets between networks
 - Understand routing table structure and operation
 - Differentiate between administrative distance and routing metrics
-- Configure and verify static routes
-- Implement default routes and floating static routes
+- Understand the role of static, dynamic, and default routes
+- Apply longest prefix match and route selection concepts
 - Understand route summarization concepts
-- Troubleshoot static routing issues
+- Verify and troubleshoot basic routing operations
 
 ## Introduction
 
@@ -35,7 +35,7 @@ Routers make forwarding decisions by consulting their **routing table**, which c
 - **Static Routes** - Manually configured by administrators
 - **Dynamic Routes** - Learned through routing protocols (OSPF, EIGRP, BGP)
 
-This lesson focuses on routing fundamentals and static routing, which provides the foundation for understanding dynamic routing protocols covered in later lessons.
+This lesson focuses on routing fundamentals — how routers work, routing table structure, route selection, and route summarization — which provides the foundation for understanding both static routing (covered in the next lesson) and dynamic routing protocols covered in later lessons.
 
 ---
 
@@ -392,182 +392,20 @@ Router(config)# ip route 10.0.0.0 255.255.255.0 192.168.2.254 130
 
 ---
 
-## Static Routes
+## Static Routing Overview
 
-**Static routes** are manually configured routes that remain in the routing table until removed by the administrator or until the exit interface goes down.
+**Static routes** are manually configured routes that remain in the routing table until removed by the administrator or until the exit interface goes down. They are best suited for:
 
-### When to Use Static Routes
-
-**Appropriate Use Cases:**
 - **Small networks** with few routes and stable topology
-- **Stub networks** with single exit point
-- **Default routes** to Internet or upstream provider
-- **Backup routes** (floating static) when dynamic routing fails
-- **Security** - explicit control over routing paths
-- **Lab environments** for learning and testing
+- **Stub networks** with a single exit point (use a default route)
+- **Backup paths** using floating static routes (higher AD than primary dynamic route)
+- **Security-sensitive paths** requiring explicit control over routing
 
-**Inappropriate Use Cases:**
-- Large networks (hundreds of routes, difficult to manage)
-- Networks with frequent topology changes
-- Networks requiring automatic failover
-- Networks needing load balancing across multiple paths
+Static routes have an Administrative Distance of 1 by default, making them preferred over all dynamic routing protocols. A **floating static route** uses a manually elevated AD (e.g., 130) so it only activates when the primary dynamic route fails.
 
-### Static Route Configuration
+A **default route** (0.0.0.0/0) is a special static route that matches any destination not explicitly in the routing table — the "gateway of last resort."
 
-**Syntax:**
-```cisco
-Router(config)# ip route <destination_network> <subnet_mask> {next-hop-ip | exit-interface} [distance]
-```
-
-**Parameters:**
-- **destination_network**: Network to reach (e.g., 10.0.0.0)
-- **subnet_mask**: Subnet mask (e.g., 255.255.255.0)
-- **next-hop-ip**: IP address of next router
-- **exit-interface**: Local interface to use (point-to-point)
-- **distance**: Administrative distance (optional, default=1)
-
-### Static Route Types
-
-**1. Next-Hop Static Route**
-```cisco
-Router(config)# ip route 192.168.20.0 255.255.255.0 10.1.1.2
-
-Explanation:
-- To reach 192.168.20.0/24
-- Send to next-hop router 10.1.1.2
-- Router must know how to reach 10.1.1.2 (recursive lookup)
-```
-
-**Advantages:**
-- Works on multi-access networks (Ethernet)
-- Doesn't depend on interface state
-
-**Disadvantages:**
-- Requires recursive lookup (extra processing)
-- Next-hop must be reachable (in routing table)
-
-**2. Exit Interface Static Route**
-```cisco
-Router(config)# ip route 192.168.20.0 255.255.255.0 Serial0/0/0
-
-Explanation:
-- To reach 192.168.20.0/24
-- Forward out Serial0/0/0 interface
-- Best for point-to-point links (Serial, PPP)
-```
-
-**Advantages:**
-- No recursive lookup needed
-- Faster processing (single lookup)
-
-**Disadvantages:**
-- Doesn't work well on multi-access networks
-- Route active as long as interface is up (even if next-hop down)
-
-**3. Fully Specified Static Route**
-```cisco
-Router(config)# ip route 192.168.20.0 255.255.255.0 GigabitEthernet0/1 10.1.1.2
-
-Explanation:
-- To reach 192.168.20.0/24
-- Exit interface GigabitEthernet0/1
-- Next-hop 10.1.1.2
-- Combines both methods
-```
-
-**Advantages:**
-- Works on multi-access networks
-- No recursive lookup needed
-- Explicit control over forwarding
-
-**Disadvantages:**
-- More complex configuration
-
-**Best Practice Recommendation:**
-- **Point-to-Point Links (Serial, PPP, GRE):** Use exit interface
-- **Multi-Access Networks (Ethernet):** Use next-hop or fully specified
-- **Modern Networks (Ethernet dominant):** Use next-hop IP
-
-### Default Route
-
-A **default route** (0.0.0.0/0) matches all destinations not explicitly in the routing table. Also called the "gateway of last resort."
-
-**Configuration:**
-```cisco
-! IPv4 default route
-Router(config)# ip route 0.0.0.0 0.0.0.0 192.168.1.1
-
-! IPv6 default route
-Router(config)# ipv6 route ::/0 2001:db8::1
-
-! Using exit interface
-Router(config)# ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0
-```
-
-**Use Cases:**
-- **Stub routers**: Single connection to rest of network
-- **Internet gateway**: Route to ISP
-- **Default forwarding**: When no specific route matches
-
-**Example Stub Network:**
-```
-Branch Office Router:
-Local networks: 192.168.10.0/24, 192.168.20.0/24
-Corporate WAN: 10.0.0.0/8
-
-Config:
-ip route 0.0.0.0 0.0.0.0 10.1.1.1
-! Send everything else to corporate router
-```
-
-### Static Host Route
-
-A **host route** specifies path to single host (/32 subnet mask).
-
-**Configuration:**
-```cisco
-Router(config)# ip route 10.0.0.50 255.255.255.255 192.168.1.254
-
-! Specific route for host 10.0.0.50 only
-! More specific than network route (longest prefix match)
-```
-
-**Use Cases:**
-- Traffic engineering for specific server
-- Workaround for routing issues
-- Testing and troubleshooting
-
-### Floating Static Route
-
-A **floating static route** has a higher AD than the primary route and serves as a backup.
-
-**Configuration:**
-```cisco
-! Primary route: OSPF (AD = 110)
-router ospf 1
- network 10.0.0.0 0.255.255.255 area 0
-
-! Backup route: Floating static (AD = 130)
-ip route 10.0.0.0 255.0.0.0 192.168.100.1 130
-
-Normal operation:
-- OSPF route used (AD=110 < AD=130)
-- Static route not installed in routing table
-
-OSPF failure:
-- OSPF route removed from table
-- Static route installed (now best route)
-- Traffic flows over backup link
-
-OSPF recovery:
-- OSPF route returns (AD=110)
-- OSPF route replaces static route
-- Traffic returns to primary path
-```
-
-**Best Practice:**
-- Set floating static AD between primary and less-preferred protocols
-- Example: Primary OSPF (110), Floating Static (130), Backup RIP (120)
+Static route configuration and implementation details — including configuration syntax, route types (next-hop, exit interface, fully specified), default route setup, host routes, floating static routes, and troubleshooting — are covered in [Lesson 18: Static Routing](lesson-018-static-routing).
 
 ---
 
@@ -622,9 +460,9 @@ Tracing the route to 192.168.10.50
 
 ---
 
-## Troubleshooting Static Routes
+## Common Routing Issues
 
-### Common Issues
+Understanding common routing problems helps diagnose connectivity failures. For static-route-specific troubleshooting (next-hop unreachable, wrong exit interface, floating static failover), see [Lesson 18: Static Routing](lesson-018-static-routing).
 
 **1. No Route to Destination**
 
@@ -668,29 +506,7 @@ Router# traceroute 192.168.50.10
 - Check next-hop router has route back (return path)
 - Use traceroute to identify where packets go wrong
 
-**3. Next-Hop Not Reachable**
-
-**Symptoms:**
-- Static route appears in config but not in routing table
-
-**Diagnosis:**
-```cisco
-Router# show running-config | include ip route
-ip route 192.168.50.0 255.255.255.0 10.99.99.1
-
-Router# show ip route static
-! No output - static route not installed
-
-Router# show ip route 10.99.99.1
-% Network not in table  ← Next-hop not reachable!
-```
-
-**Solutions:**
-- Ensure next-hop IP is in a directly connected network
-- Add route to next-hop network
-- Use exit interface instead of next-hop IP
-
-**4. Overlapping Routes (Longest Prefix Match)**
+**3. Overlapping Routes (Longest Prefix Match)**
 
 **Symptoms:**
 - Traffic goes via unexpected path
@@ -713,7 +529,7 @@ Packet to 192.168.10.50:
 - Design routing table intentionally
 - Use more specific routes for traffic engineering
 
-**5. Return Path Missing (Asymmetric Routing)**
+**4. Return Path Missing (Asymmetric Routing)**
 
 **Symptoms:**
 - Ping fails in one direction
@@ -805,39 +621,172 @@ Summary: 192.168.0.0/22 (covers 192.168.0.0 - 192.168.3.255)
 - **Metric**: Cost value used to compare routes from the same source (lower = better)
 - **Longest Prefix Match**: Most specific route wins, regardless of metric or AD
 
-**Static Routing:**
-- **Next-Hop Static**: Specifies next router's IP address
-- **Exit Interface Static**: Specifies outgoing interface
+**Static Routing** (for configuration details, see [Lesson 18: Static Routing](lesson-018-static-routing)):
+- Static routes are manually configured (AD = 1 by default)
 - **Default Route**: 0.0.0.0/0 matches all destinations
 - **Floating Static**: Backup route with higher AD (e.g., AD=130)
 - **Use Cases**: Small networks, stub networks, backup paths, security
 
-**Configuration Best Practices:**
-- Use next-hop IP on Ethernet networks
-- Use exit interface on point-to-point links
-- Configure default route for stub routers
-- Use floating statics for redundancy (AD > primary protocol)
-- Always configure return paths (bidirectional routing)
-
-**Troubleshooting:**
+**Verification and Troubleshooting:**
 - Verify route exists: `show ip route <destination>`
 - Check interface status: `show ip interface brief`
 - Test reachability: `ping` and `traceroute`
-- Verify next-hop reachability
-- Check for return path on remote router
+- Common issues: missing routes, longest prefix match surprises, missing return paths
 
 **CompTIA Network+ Exam Tips:**
 - Know Administrative Distance values: Connected=0, Static=1, OSPF=110, RIP=120
 - Understand longest prefix match (more specific always wins)
-- Remember default route syntax: `ip route 0.0.0.0 0.0.0.0 <next-hop>`
-- Know difference between next-hop and exit interface static routes
 - Understand floating static routes use higher AD as backup
+
+---
+
+## Practice Questions
+
+**Q1.** A router has the following routes in its routing table for destination 10.1.1.0/24:
+- Static route (AD 1, metric 0) via 192.168.1.1
+- OSPF route (AD 110, metric 50) via 192.168.2.1
+- RIP route (AD 120, metric 3) via 192.168.3.1
+
+Which route will the router use to forward traffic to 10.1.1.0/24?
+
+A) The RIP route because it has the lowest metric
+B) The OSPF route because it is the most efficient protocol
+C) The static route because it has the lowest administrative distance
+D) All three routes will be used for load balancing
+
+<details>
+<summary>Answer</summary>
+
+**C)** When multiple routing sources provide routes to the same destination, Administrative Distance (AD) determines which is installed. The static route has AD 1, which is lower than OSPF (110) or RIP (120). Metric is only compared between routes from the same source, not across different protocols. The router doesn't load balance across routes with different ADs.
+</details>
+
+**Q2.** What happens to the TTL field when a router forwards a packet?
+
+A) It is reset to 255
+B) It is decremented by 1
+C) It remains unchanged
+D) It is set to the hop count of the route
+
+<details>
+<summary>Answer</summary>
+
+**B)** Each router decrements the TTL (Time-to-Live) by 1 when forwarding a packet. If the TTL reaches 0, the router drops the packet and sends an ICMP Time Exceeded message to the source. This mechanism prevents packets from looping indefinitely in the network due to routing errors.
+</details>
+
+**Q3.** A router receives a packet destined for 192.168.10.50. The routing table contains the following entries:
+- 192.168.10.0/24 via 10.1.1.1
+- 192.168.0.0/16 via 10.1.1.2
+- 0.0.0.0/0 via 10.1.1.3
+
+Which next-hop address will the router use?
+
+A) 10.1.1.1
+B) 10.1.1.2
+C) 10.1.1.3
+D) The packet will be dropped
+
+<details>
+<summary>Answer</summary>
+
+**A)** Routers use longest prefix match to select the most specific route. The destination 192.168.10.50 matches all three entries, but 192.168.10.0/24 is the most specific match (24-bit prefix). This takes priority over the /16 route and the default route (/0), regardless of metrics or administrative distances.
+</details>
+
+**Q4.** Which statement is TRUE about how routers handle MAC addresses during packet forwarding?
+
+A) Source and destination MAC addresses remain the same end-to-end
+B) Source and destination IP addresses change at each hop
+C) MAC addresses change at each hop while IP addresses remain the same end-to-end
+D) Both MAC and IP addresses remain unchanged during routing
+
+<details>
+<summary>Answer</summary>
+
+**C)** When a router forwards a packet, it strips the incoming Layer 2 frame and creates a new frame with the router's egress interface MAC as the source and the next-hop (or destination host) MAC as the destination. The Layer 3 IP addresses remain unchanged throughout the entire path, providing end-to-end addressing.
+</details>
+
+**Q5.** An administrator configures the following command: `ip route 10.0.0.0 255.0.0.0 192.168.1.254 130`. What is the purpose of the "130" at the end?
+
+A) It sets the metric for the route
+B) It sets the administrative distance to create a floating static route
+C) It sets the maximum hop count
+D) It sets the route timeout in seconds
+
+<details>
+<summary>Answer</summary>
+
+**B)** The trailing number 130 sets the administrative distance of the static route to 130, making it a floating static route. Since 130 is higher than OSPF (110), this route will only be used if the OSPF route to the same destination fails. The default AD for a static route is 1. This creates a backup path for redundancy.
+</details>
+
+**Q6.** What is the default administrative distance of a directly connected network?
+
+A) 0
+B) 1
+C) 5
+D) 20
+
+<details>
+<summary>Answer</summary>
+
+**A)** Directly connected networks have an administrative distance of 0, making them the most trusted route source. Static routes have AD 1, eBGP has AD 20, EIGRP has AD 90, OSPF has AD 110, and RIP has AD 120. Connected routes are automatically added when an interface is configured with an IP address and is in the up/up state.
+</details>
+
+**Q7.** A branch office router has a single connection to the corporate WAN. Which type of route is MOST appropriate to configure on this router?
+
+A) Multiple static routes to each remote network
+B) A default static route pointing to the WAN next-hop
+C) OSPF dynamic routing with multiple areas
+D) RIP with split horizon enabled
+
+<details>
+<summary>Answer</summary>
+
+**B)** A stub network with a single exit point should use a default route (0.0.0.0/0) because all non-local traffic must go through the same WAN link regardless of destination. Configuring individual static routes would be unnecessary and difficult to maintain. Dynamic routing is overkill for a single-exit stub network.
+</details>
+
+**Q8.** A network administrator configures a static route using a next-hop IP address on an Ethernet network. The next-hop IP is not in the router's routing table. What will happen?
+
+A) The static route will be installed but traffic will be dropped
+B) The static route will not be installed in the routing table
+C) The router will automatically find an alternate path
+D) The static route will use the default gateway instead
+
+<details>
+<summary>Answer</summary>
+
+**B)** When a static route specifies a next-hop IP address, the router must be able to reach that next-hop through a recursive lookup. If the next-hop is not reachable (not in the routing table), the static route will appear in the configuration but will not be installed in the routing table as an active route.
+</details>
+
+**Q9.** What are the four routes 192.168.0.0/24, 192.168.1.0/24, 192.168.2.0/24, and 192.168.3.0/24 summarized into?
+
+A) 192.168.0.0/16
+B) 192.168.0.0/22
+C) 192.168.0.0/23
+D) 192.168.0.0/20
+
+<details>
+<summary>Answer</summary>
+
+**B)** These four networks share the first 22 bits in common. Converting to binary: 192.168.0.x = ...00000000, 192.168.1.x = ...00000001, 192.168.2.x = ...00000010, 192.168.3.x = ...00000011. The first 22 bits are identical, so the summary is 192.168.0.0/22, covering 192.168.0.0 through 192.168.3.255. A /23 would only cover two networks, and /16 or /20 would be too broad.
+</details>
+
+**Q10.** On a Cisco router, what does the code "L" represent in the routing table output?
+
+A) A route learned via a link-state protocol
+B) A local host route (/32) for the router's own interface IP
+C) A route learned via LACP
+D) A loopback interface route
+
+<details>
+<summary>Answer</summary>
+
+**B)** In Cisco IOS routing tables, "L" represents a local route — a /32 host route automatically created for each IP address configured on the router's interfaces. These routes are used for packets destined to the router itself. "C" is for directly connected networks, "S" for static, "O" for OSPF, "R" for RIP, and "B" for BGP.
+</details>
 
 ---
 
 ## References
 
-- CompTIA Network+ N10-008 Objectives: 2.2 Compare routing technologies and bandwidth management concepts
+- CompTIA Network+ N10-009 Objectives: 2.2 Compare routing technologies and bandwidth management concepts
 - RFC 1812: Requirements for IPv4 Routers
 - Cisco IOS IP Routing Configuration Guide
 - "Routing TCP/IP, Volume 1" - Jeff Doyle

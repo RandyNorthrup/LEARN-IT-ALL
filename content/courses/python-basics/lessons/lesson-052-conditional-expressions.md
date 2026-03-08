@@ -1,5 +1,5 @@
 ---
-id: "90-conditional-expressions"
+id: lesson-052-conditional-expressions
 title: "Conditional Expressions and Inline Conditionals"
 chapterId: ch4-comparisons
 order: 12

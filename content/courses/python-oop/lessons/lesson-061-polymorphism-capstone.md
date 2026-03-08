@@ -1,7 +1,7 @@
 ---
 id: "061"
 title: "Polymorphism Capstone Project"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 9
 duration: "30 minutes"
 objectives:

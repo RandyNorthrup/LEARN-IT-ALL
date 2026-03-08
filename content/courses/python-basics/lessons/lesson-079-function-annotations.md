@@ -1,5 +1,5 @@
 ---
-id: 55-function-annotations
+id: lesson-079-function-annotations
 title: Function Annotations and Type Hints
 chapterId: ch6-functions
 order: 11

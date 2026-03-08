@@ -1,5 +1,5 @@
 ---
-id: "123-dict-methods"
+id: lesson-114-dict-methods
 title: "Dictionary Methods Deep Dive"
 chapterId: ch9-dictionaries
 order: 5
@@ -433,28 +433,23 @@ data.update({"d": 4})
 # Or merge operator (Python 3.9+)
 data = {"a": 1, "b": 2} | {"c": 3} | {"d": 4}
 
-# Builder pattern for chaining
-class DictBuilder:
-    def __init__(self):
-        self.data = {}
-    
-    def add(self, key, value):
-        self.data[key] = value
-        return self
-    
-    def update_from(self, other):
-        self.data.update(other)
-        return self
-    
-    def build(self):
-        return self.data.copy()
+# Builder pattern using helper functions
+def dict_add(data, key, value):
+    """Add key-value pair, return dict for continued building"""
+    data[key] = value
+    return data
 
-# Chain calls
-result = (DictBuilder()
-    .add("a", 1)
-    .add("b", 2)
-    .update_from({"c": 3})
-    .build())
+def dict_update_from(data, other):
+    """Merge another dict, return dict for continued building"""
+    data.update(other)
+    return data
+
+# Sequential building with functions
+data = {}
+dict_add(data, "a", 1)
+dict_add(data, "b", 2)
+dict_update_from(data, {"c": 3})
+result = data.copy()
 print(result)  # {'a': 1, 'b': 2, 'c': 3}
 ```
 

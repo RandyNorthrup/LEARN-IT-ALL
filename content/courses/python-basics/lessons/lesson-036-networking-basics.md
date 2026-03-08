@@ -1,8 +1,8 @@
 ---
-id: "78-networking-basics"
+id: lesson-036-networking-basics
 title: "Networking Basics"
 chapterId: ch3-computing
-order: 9
+order: 10
 duration: 30
 objectives:
   - Understand how computer networks work
@@ -82,59 +82,58 @@ def explain_ip_addresses():
 
 explain_ip_addresses()
 
-class IPv4Address:
-    """Represent and manipulate IPv4 addresses."""
+def create_ipv4(address):
+    """Create an IPv4 address from string like '192.168.1.100'."""
+    octets = [int(x) for x in address.split('.')]
     
-    def __init__(self, address):
-        """Initialize from string like '192.168.1.100'."""
-        self.octets = [int(x) for x in address.split('.')]
-        
-        if len(self.octets) != 4:
-            raise ValueError("IPv4 must have 4 octets")
-        
-        for octet in self.octets:
-            if not 0 <= octet <= 255:
-                raise ValueError("Each octet must be 0-255")
+    if len(octets) != 4:
+        raise ValueError("IPv4 must have 4 octets")
     
-    def to_string(self):
-        """Convert to string format."""
-        return '.'.join(str(x) for x in self.octets)
+    for octet in octets:
+        if not 0 <= octet <= 255:
+            raise ValueError("Each octet must be 0-255")
     
-    def to_int(self):
-        """Convert to 32-bit integer."""
-        return (self.octets[0] << 24) + (self.octets[1] << 16) + \
-               (self.octets[2] << 8) + self.octets[3]
-    
-    def to_binary(self):
-        """Convert to binary representation."""
-        return '.'.join(f"{x:08b}" for x in self.octets)
-    
-    def is_private(self):
-        """Check if private IP address."""
-        # 10.x.x.x, 172.16-31.x.x, 192.168.x.x
-        if self.octets[0] == 10:
-            return True
-        if self.octets[0] == 172 and 16 <= self.octets[1] <= 31:
-            return True
-        if self.octets[0] == 192 and self.octets[1] == 168:
-            return True
-        return False
-    
-    def is_localhost(self):
-        """Check if localhost."""
-        return self.octets[0] == 127
+    return {'octets': octets}
 
-# Test IPv4 class
+def ipv4_to_string(addr):
+    """Convert to string format."""
+    return '.'.join(str(x) for x in addr['octets'])
+
+def ipv4_to_int(addr):
+    """Convert to 32-bit integer."""
+    return (addr['octets'][0] << 24) + (addr['octets'][1] << 16) + \
+           (addr['octets'][2] << 8) + addr['octets'][3]
+
+def ipv4_to_binary(addr):
+    """Convert to binary representation."""
+    return '.'.join(f"{x:08b}" for x in addr['octets'])
+
+def ipv4_is_private(addr):
+    """Check if private IP address."""
+    # 10.x.x.x, 172.16-31.x.x, 192.168.x.x
+    if addr['octets'][0] == 10:
+        return True
+    if addr['octets'][0] == 172 and 16 <= addr['octets'][1] <= 31:
+        return True
+    if addr['octets'][0] == 192 and addr['octets'][1] == 168:
+        return True
+    return False
+
+def ipv4_is_localhost(addr):
+    """Check if localhost."""
+    return addr['octets'][0] == 127
+
+# Test IPv4 functions
 print("\nIPv4 Address Examples:")
 addresses = ["192.168.1.100", "10.0.0.1", "127.0.0.1", "8.8.8.8"]
 
 for addr_str in addresses:
-    addr = IPv4Address(addr_str)
+    addr = create_ipv4(addr_str)
     print(f"\n{addr_str}:")
-    print(f"  Binary: {addr.to_binary()}")
-    print(f"  Integer: {addr.to_int()}")
-    print(f"  Private: {addr.is_private()}")
-    print(f"  Localhost: {addr.is_localhost()}")
+    print(f"  Binary: {ipv4_to_binary(addr)}")
+    print(f"  Integer: {ipv4_to_int(addr)}")
+    print(f"  Private: {ipv4_is_private(addr)}")
+    print(f"  Localhost: {ipv4_is_localhost(addr)}")
 ```
 
 ## Ports
@@ -178,44 +177,41 @@ def explain_ports():
 
 explain_ports()
 
-class NetworkEndpoint:
-    """Represent IP:Port combination."""
-    
-    def __init__(self, ip, port):
-        self.ip = ip
-        self.port = port
-        
-        if not 0 <= port <= 65535:
-            raise ValueError("Port must be 0-65535")
-    
-    def __str__(self):
-        return f"{self.ip}:{self.port}"
-    
-    def is_well_known_port(self):
-        """Check if well-known port."""
-        return 0 <= self.port <= 1023
-    
-    def is_registered_port(self):
-        """Check if registered port."""
-        return 1024 <= self.port <= 49151
-    
-    def is_dynamic_port(self):
-        """Check if dynamic/ephemeral port."""
-        return 49152 <= self.port <= 65535
+def create_endpoint(ip, port):
+    """Create a network endpoint (IP:Port combination)."""
+    if not 0 <= port <= 65535:
+        raise ValueError("Port must be 0-65535")
+    return {'ip': ip, 'port': port}
+
+def endpoint_to_string(ep):
+    """Format endpoint as string."""
+    return f"{ep['ip']}:{ep['port']}"
+
+def endpoint_is_well_known(ep):
+    """Check if well-known port."""
+    return 0 <= ep['port'] <= 1023
+
+def endpoint_is_registered(ep):
+    """Check if registered port."""
+    return 1024 <= ep['port'] <= 49151
+
+def endpoint_is_dynamic(ep):
+    """Check if dynamic/ephemeral port."""
+    return 49152 <= ep['port'] <= 65535
 
 # Test endpoints
 endpoints = [
-    NetworkEndpoint("192.168.1.100", 80),
-    NetworkEndpoint("10.0.0.1", 443),
-    NetworkEndpoint("127.0.0.1", 5000),
+    create_endpoint("192.168.1.100", 80),
+    create_endpoint("10.0.0.1", 443),
+    create_endpoint("127.0.0.1", 5000),
 ]
 
 print("\nNetwork Endpoints:")
 for endpoint in endpoints:
-    print(f"{endpoint}")
-    print(f"  Well-known: {endpoint.is_well_known_port()}")
-    print(f"  Registered: {endpoint.is_registered_port()}")
-    print(f"  Dynamic: {endpoint.is_dynamic_port()}")
+    print(f"{endpoint_to_string(endpoint)}")
+    print(f"  Well-known: {endpoint_is_well_known(endpoint)}")
+    print(f"  Registered: {endpoint_is_registered(endpoint)}")
+    print(f"  Dynamic: {endpoint_is_dynamic(endpoint)}")
 ```
 
 ## Protocols
@@ -279,106 +275,106 @@ explain_protocols()
 ## Client-Server Model
 
 ```python
-class SimpleServer:
-    """Simplified server simulation."""
-    
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self.running = False
-        self.clients = []
-    
-    def start(self):
-        """Start server."""
-        self.running = True
-        print(f"Server started on {self.host}:{self.port}")
-        print(f"Listening for connections...")
-    
-    def accept_connection(self, client_addr):
-        """Accept client connection."""
-        self.clients.append(client_addr)
-        print(f"Client connected from {client_addr}")
-    
-    def receive_data(self, client_addr, data):
-        """Receive data from client."""
-        print(f"Received from {client_addr}: {data}")
-        return self.process_request(data)
-    
-    def process_request(self, data):
-        """Process client request."""
-        # Echo back (simple example)
-        response = f"Server received: {data}"
-        return response
-    
-    def send_data(self, client_addr, data):
-        """Send data to client."""
-        print(f"Sending to {client_addr}: {data}")
-    
-    def stop(self):
-        """Stop server."""
-        self.running = False
-        print(f"Server stopped")
+def create_server(host, port):
+    """Create a simplified server simulation."""
+    return {
+        'host': host,
+        'port': port,
+        'running': False,
+        'clients': [],
+    }
 
-class SimpleClient:
-    """Simplified client simulation."""
+def server_start(server):
+    """Start server."""
+    server['running'] = True
+    print(f"Server started on {server['host']}:{server['port']}")
+    print(f"Listening for connections...")
+
+def server_accept_connection(server, client_addr):
+    """Accept client connection."""
+    server['clients'].append(client_addr)
+    print(f"Client connected from {client_addr}")
+
+def server_receive_data(server, client_addr, data):
+    """Receive data from client."""
+    print(f"Received from {client_addr}: {data}")
+    return server_process_request(data)
+
+def server_process_request(data):
+    """Process client request."""
+    # Echo back (simple example)
+    response = f"Server received: {data}"
+    return response
+
+def server_send_data(server, client_addr, data):
+    """Send data to client."""
+    print(f"Sending to {client_addr}: {data}")
+
+def server_stop(server):
+    """Stop server."""
+    server['running'] = False
+    print(f"Server stopped")
+
+def create_client(client_id):
+    """Create a simplified client simulation."""
+    return {
+        'client_id': client_id,
+        'connected': False,
+        'server_addr': None,
+    }
+
+def client_connect(client, host, port):
+    """Connect to server."""
+    client['server_addr'] = f"{host}:{port}"
+    client['connected'] = True
+    print(f"Client {client['client_id']} connecting to {client['server_addr']}")
+
+def client_send_request(client, data):
+    """Send request to server."""
+    if not client['connected']:
+        print("Not connected to server")
+        return None
     
-    def __init__(self, client_id):
-        self.client_id = client_id
-        self.connected = False
-        self.server_addr = None
-    
-    def connect(self, host, port):
-        """Connect to server."""
-        self.server_addr = f"{host}:{port}"
-        self.connected = True
-        print(f"Client {self.client_id} connecting to {self.server_addr}")
-    
-    def send_request(self, data):
-        """Send request to server."""
-        if not self.connected:
-            print("Not connected to server")
-            return None
-        
-        print(f"Client {self.client_id} sending: {data}")
-        return data
-    
-    def receive_response(self, data):
-        """Receive response from server."""
-        print(f"Client {self.client_id} received: {data}")
-    
-    def disconnect(self):
-        """Disconnect from server."""
-        self.connected = False
-        print(f"Client {self.client_id} disconnected")
+    print(f"Client {client['client_id']} sending: {data}")
+    return data
+
+def client_receive_response(client, data):
+    """Receive response from server."""
+    print(f"Client {client['client_id']} received: {data}")
+
+def client_disconnect(client):
+    """Disconnect from server."""
+    client['connected'] = False
+    print(f"Client {client['client_id']} disconnected")
 
 # Simulate client-server interaction
 print("\nClient-Server Example:")
 print("=" * 50)
 
 # Start server
-server = SimpleServer("127.0.0.1", 8000)
-server.start()
+server = create_server("127.0.0.1", 8000)
+server_start(server)
 
 print()
 
 # Client connects
-client = SimpleClient("Client-1")
-client.connect("127.0.0.1", 8000)
-server.accept_connection("192.168.1.100:54321")
+client = create_client("Client-1")
+client_connect(client, "127.0.0.1", 8000)
+server_accept_connection(server, "192.168.1.100:54321")
 
 print()
 
 # Client sends request
-request = client.send_request("Hello, Server!")
-response = server.receive_data("192.168.1.100:54321", request)
-server.send_data("192.168.1.100:54321", response)
-client.receive_response(response)
+request = client_send_request(client, "Hello, Server!")
+response = server_receive_data(server, "192.168.1.100:54321", request)
+server_send_data(server, "192.168.1.100:54321", response)
+client_receive_response(client, response)
 
 print()
 
 # Client disconnects
-client.disconnect()
-server.stop()
+client_disconnect(client)
+server_stop(server)
 ```
 
 ## HTTP Requests
@@ -436,55 +432,55 @@ def explain_http():
 
 explain_http()
 
-class HTTPRequest:
-    """Simplified HTTP request."""
-    
-    def __init__(self, method, path, headers=None, body=None):
-        self.method = method
-        self.path = path
-        self.headers = headers or {}
-        self.body = body
-    
-    def to_string(self):
-        """Convert to HTTP request string."""
-        lines = [f"{self.method} {self.path} HTTP/1.1"]
-        
-        for key, value in self.headers.items():
-            lines.append(f"{key}: {value}")
-        
-        lines.append("")  # Empty line
-        
-        if self.body:
-            lines.append(str(self.body))
-        
-        return "\n".join(lines)
+def create_http_request(method, path, headers=None, body=None):
+    """Create a simplified HTTP request."""
+    return {
+        'method': method,
+        'path': path,
+        'headers': headers or {},
+        'body': body,
+    }
 
-class HTTPResponse:
-    """Simplified HTTP response."""
+def http_request_to_string(req):
+    """Convert to HTTP request string."""
+    lines = [f"{req['method']} {req['path']} HTTP/1.1"]
     
-    def __init__(self, status_code, status_text, headers=None, body=None):
-        self.status_code = status_code
-        self.status_text = status_text
-        self.headers = headers or {}
-        self.body = body
+    for key, value in req['headers'].items():
+        lines.append(f"{key}: {value}")
     
-    def to_string(self):
-        """Convert to HTTP response string."""
-        lines = [f"HTTP/1.1 {self.status_code} {self.status_text}"]
-        
-        for key, value in self.headers.items():
-            lines.append(f"{key}: {value}")
-        
-        lines.append("")  # Empty line
-        
-        if self.body:
-            lines.append(str(self.body))
-        
-        return "\n".join(lines)
+    lines.append("")  # Empty line
+    
+    if req['body']:
+        lines.append(str(req['body']))
+    
+    return "\n".join(lines)
+
+def create_http_response(status_code, status_text, headers=None, body=None):
+    """Create a simplified HTTP response."""
+    return {
+        'status_code': status_code,
+        'status_text': status_text,
+        'headers': headers or {},
+        'body': body,
+    }
+
+def http_response_to_string(resp):
+    """Convert to HTTP response string."""
+    lines = [f"HTTP/1.1 {resp['status_code']} {resp['status_text']}"]
+    
+    for key, value in resp['headers'].items():
+        lines.append(f"{key}: {value}")
+    
+    lines.append("")  # Empty line
+    
+    if resp['body']:
+        lines.append(str(resp['body']))
+    
+    return "\n".join(lines)
 
 # Example HTTP exchange
 print("\nHTTP Request Example:")
-request = HTTPRequest(
+request = create_http_request(
     "GET",
     "/api/users/123",
     headers={
@@ -493,10 +489,10 @@ request = HTTPRequest(
         "Accept": "application/json"
     }
 )
-print(request.to_string())
+print(http_request_to_string(request))
 
 print("\nHTTP Response Example:")
-response = HTTPResponse(
+response = create_http_response(
     200,
     "OK",
     headers={
@@ -505,59 +501,58 @@ response = HTTPResponse(
     },
     body='{"id": 123, "name": "Alice", "email": "alice@example.com"}'
 )
-print(response.to_string())
+print(http_response_to_string(response))
 ```
 
 ## DNS (Domain Name System)
 
 ```python
-class SimpleDNS:
-    """Simplified DNS resolver."""
-    
-    def __init__(self):
-        # Simulated DNS records
-        self.records = {
+def create_dns():
+    """Create a simplified DNS resolver."""
+    return {
+        'records': {
             "localhost": "127.0.0.1",
             "google.com": "142.250.185.46",
             "github.com": "140.82.114.4",
             "example.com": "93.184.216.34",
-        }
+        },
+    }
+
+def dns_resolve(dns, domain):
+    """Resolve domain name to IP address."""
+    print(f"Resolving '{domain}'...")
     
-    def resolve(self, domain):
-        """Resolve domain name to IP address."""
-        print(f"Resolving '{domain}'...")
-        
-        if domain in self.records:
-            ip = self.records[domain]
-            print(f"  ✓ {domain} → {ip}")
-            return ip
-        else:
-            print(f"  ✗ Domain not found")
-            return None
-    
-    def reverse_lookup(self, ip):
-        """Reverse lookup: IP to domain."""
-        print(f"Reverse lookup '{ip}'...")
-        
-        for domain, addr in self.records.items():
-            if addr == ip:
-                print(f"  ✓ {ip} → {domain}")
-                return domain
-        
-        print(f"  ✗ No domain found for IP")
+    if domain in dns['records']:
+        ip = dns['records'][domain]
+        print(f"  ✓ {domain} → {ip}")
+        return ip
+    else:
+        print(f"  ✗ Domain not found")
         return None
 
+def dns_reverse_lookup(dns, ip):
+    """Reverse lookup: IP to domain."""
+    print(f"Reverse lookup '{ip}'...")
+    
+    for domain, addr in dns['records'].items():
+        if addr == ip:
+            print(f"  ✓ {ip} → {domain}")
+            return domain
+    
+    print(f"  ✗ No domain found for IP")
+    return None
+
 # Test DNS
-dns = SimpleDNS()
+dns = create_dns()
 
 print("\nDNS Resolution Examples:")
-dns.resolve("google.com")
-dns.resolve("github.com")
-dns.resolve("unknown.com")
+dns_resolve(dns, "google.com")
+dns_resolve(dns, "github.com")
+dns_resolve(dns, "unknown.com")
 
 print()
-dns.reverse_lookup("127.0.0.1")
-dns.reverse_lookup("192.168.1.1")
+dns_reverse_lookup(dns, "127.0.0.1")
+dns_reverse_lookup(dns, "192.168.1.1")
 ```
 
 ## Python Networking

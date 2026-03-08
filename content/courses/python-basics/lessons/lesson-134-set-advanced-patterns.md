@@ -1,5 +1,5 @@
 ---
-id: "143-set-advanced-patterns"
+id: lesson-134-set-advanced-patterns
 title: "Advanced Set Patterns and Techniques"
 chapterId: ch10-sets
 order: 10
@@ -147,96 +147,96 @@ print(f"Odds: {odds}")
 
 ```python
 # Represent graph as adjacency sets
-class Graph:
-    def __init__(self):
-        self.adj = {}  # node -> set of neighbors
+def create_graph():
+    """Create an empty graph with adjacency sets"""
+    return {"adj": {}}
+
+def graph_add_edge(graph, u, v):
+    """Add undirected edge"""
+    if u not in graph["adj"]:
+        graph["adj"][u] = set()
+    if v not in graph["adj"]:
+        graph["adj"][v] = set()
+    graph["adj"][u].add(v)
+    graph["adj"][v].add(u)
+
+def graph_bfs(graph, start):
+    """Breadth-first search using sets"""
+    visited = set()
+    queue = [start]
+    visited.add(start)
     
-    def add_edge(self, u, v):
-        """Add undirected edge"""
-        if u not in self.adj:
-            self.adj[u] = set()
-        if v not in self.adj:
-            self.adj[v] = set()
-        self.adj[u].add(v)
-        self.adj[v].add(u)
+    while queue:
+        node = queue.pop(0)
+        for neighbor in graph["adj"].get(node, set()):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
     
-    def bfs(self, start):
-        """Breadth-first search using sets"""
-        visited = set()
-        queue = [start]
-        visited.add(start)
-        
-        while queue:
-            node = queue.pop(0)
-            for neighbor in self.adj.get(node, set()):
+    return visited
+
+def graph_dfs(graph, start):
+    """Depth-first search using sets"""
+    visited = set()
+    stack = [start]
+    
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph["adj"].get(node, set()):
                 if neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-        
-        return visited
+                    stack.append(neighbor)
     
-    def dfs(self, start):
-        """Depth-first search using sets"""
-        visited = set()
-        stack = [start]
-        
-        while stack:
-            node = stack.pop()
-            if node not in visited:
-                visited.add(node)
-                for neighbor in self.adj.get(node, set()):
-                    if neighbor not in visited:
-                        stack.append(neighbor)
-        
-        return visited
+    return visited
+
+def graph_connected_components(graph):
+    """Find all connected components"""
+    unvisited = set(graph["adj"].keys())
+    components = []
     
-    def connected_components(self):
-        """Find all connected components"""
-        unvisited = set(self.adj.keys())
-        components = []
-        
-        while unvisited:
-            start = next(iter(unvisited))
-            component = self.bfs(start)
-            components.append(component)
-            unvisited -= component
-        
-        return components
+    while unvisited:
+        start = next(iter(unvisited))
+        component = graph_bfs(graph, start)
+        components.append(component)
+        unvisited -= component
     
-    def find_cliques(self, size):
-        """Find all complete subgraphs of given size"""
-        from itertools import combinations
-        
-        nodes = list(self.adj.keys())
-        cliques = []
-        
-        for combo in combinations(nodes, size):
-            combo_set = set(combo)
-            # Check if all pairs are connected
-            is_clique = all(
-                v in self.adj.get(u, set())
-                for i, u in enumerate(combo)
-                for v in combo[i+1:]
-            )
-            if is_clique:
-                cliques.append(combo_set)
-        
-        return cliques
+    return components
+
+def graph_find_cliques(graph, size):
+    """Find all complete subgraphs of given size"""
+    from itertools import combinations
+    
+    nodes = list(graph["adj"].keys())
+    cliques = []
+    
+    for combo in combinations(nodes, size):
+        combo_set = set(combo)
+        # Check if all pairs are connected
+        is_clique = all(
+            v in graph["adj"].get(u, set())
+            for i, u in enumerate(combo)
+            for v in combo[i+1:]
+        )
+        if is_clique:
+            cliques.append(combo_set)
+    
+    return cliques
 
 # Example graph
-g = Graph()
-g.add_edge("A", "B")
-g.add_edge("B", "C")
-g.add_edge("C", "A")  # Triangle
-g.add_edge("D", "E")
-g.add_edge("E", "F")
+g = create_graph()
+graph_add_edge(g, "A", "B")
+graph_add_edge(g, "B", "C")
+graph_add_edge(g, "C", "A")  # Triangle
+graph_add_edge(g, "D", "E")
+graph_add_edge(g, "E", "F")
 
 # Find components
-components = g.connected_components()
+components = graph_connected_components(g)
 print(f"Connected components: {components}")
 
 # Find triangles (size 3 cliques)
-triangles = g.find_cliques(3)
+triangles = graph_find_cliques(g, 3)
 print(f"Triangles: {triangles}")
 ```
 
@@ -300,217 +300,219 @@ for i, cluster in enumerate(clusters):
 
 ```python
 # Multi-stage filtering pipeline
-class FilterPipeline:
-    def __init__(self, initial_data):
-        self.data = set(initial_data)
-        self.history = [self.data.copy()]
-    
-    def filter_include(self, include_set):
-        """Keep only items in include_set"""
-        self.data &= include_set
-        self.history.append(self.data.copy())
-        return self
-    
-    def filter_exclude(self, exclude_set):
-        """Remove items in exclude_set"""
-        self.data -= exclude_set
-        self.history.append(self.data.copy())
-        return self
-    
-    def filter_predicate(self, predicate):
-        """Filter by predicate function"""
-        self.data = {x for x in self.data if predicate(x)}
-        self.history.append(self.data.copy())
-        return self
-    
-    def filter_require_any(self, required_set):
-        """Keep items that share at least one element with required_set"""
-        self.data = {x for x in self.data if {x} & required_set}
-        self.history.append(self.data.copy())
-        return self
-    
-    def get_result(self):
-        """Get final filtered set"""
-        return self.data.copy()
-    
-    def get_removed_at_stage(self, stage):
-        """Get items removed at specific stage"""
-        if stage < 1 or stage >= len(self.history):
-            return set()
-        return self.history[stage - 1] - self.history[stage]
+def create_filter_pipeline(initial_data):
+    """Create a pipeline for multi-stage set filtering"""
+    data = set(initial_data)
+    return {"data": data, "history": [data.copy()]}
+
+def pipeline_filter_include(pipeline, include_set):
+    """Keep only items in include_set"""
+    pipeline["data"] &= include_set
+    pipeline["history"].append(pipeline["data"].copy())
+    return pipeline
+
+def pipeline_filter_exclude(pipeline, exclude_set):
+    """Remove items in exclude_set"""
+    pipeline["data"] -= exclude_set
+    pipeline["history"].append(pipeline["data"].copy())
+    return pipeline
+
+def pipeline_filter_predicate(pipeline, predicate):
+    """Filter by predicate function"""
+    pipeline["data"] = {x for x in pipeline["data"] if predicate(x)}
+    pipeline["history"].append(pipeline["data"].copy())
+    return pipeline
+
+def pipeline_filter_require_any(pipeline, required_set):
+    """Keep items that are in the required_set"""
+    pipeline["data"] = {x for x in pipeline["data"] if {x} & required_set}
+    pipeline["history"].append(pipeline["data"].copy())
+    return pipeline
+
+def pipeline_get_result(pipeline):
+    """Get final filtered set"""
+    return pipeline["data"].copy()
+
+def pipeline_get_removed_at_stage(pipeline, stage):
+    """Get items removed at specific stage"""
+    if stage < 1 or stage >= len(pipeline["history"]):
+        return set()
+    return pipeline["history"][stage - 1] - pipeline["history"][stage]
 
 # Usage
 data = set(range(1, 101))
 valid = set(range(10, 91))
 exclude = {15, 25, 35, 45, 55}
 
-pipeline = FilterPipeline(data)
-result = (pipeline
-    .filter_include(valid)  # Stage 1
-    .filter_exclude(exclude)  # Stage 2
-    .filter_predicate(lambda x: x % 2 == 0)  # Stage 3: evens only
-    .get_result())
+pipeline = create_filter_pipeline(data)
+pipeline_filter_include(pipeline, valid)           # Stage 1
+pipeline_filter_exclude(pipeline, exclude)          # Stage 2
+pipeline_filter_predicate(pipeline, lambda x: x % 2 == 0)  # Stage 3: evens only
+result = pipeline_get_result(pipeline)
 
 print(f"Final result: {len(result)} items")
-print(f"Removed at stage 1: {pipeline.get_removed_at_stage(1)}")
-print(f"Removed at stage 2: {pipeline.get_removed_at_stage(2)}")
+print(f"Removed at stage 1: {pipeline_get_removed_at_stage(pipeline, 1)}")
+print(f"Removed at stage 2: {pipeline_get_removed_at_stage(pipeline, 2)}")
 ```
 
 ## Set-Based Caching
 
 ```python
 # LRU cache using sets
-class SetBasedLRUCache:
-    """Simple LRU cache tracking with sets"""
-    def __init__(self, capacity):
-        self.capacity = capacity
-        self.cache = {}  # key -> value
-        self.hot_keys = set()  # Recently accessed
-        self.cold_keys = set()  # Less recently accessed
+def create_lru_cache(capacity):
+    """Create a simple LRU cache with hot/cold set tracking"""
+    return {
+        "capacity": capacity,
+        "cache": {},        # key -> value
+        "hot_keys": set(),  # Recently accessed
+        "cold_keys": set()  # Less recently accessed
+    }
+
+def lru_get(lru, key):
+    """Get value, promoting to hot set"""
+    if key not in lru["cache"]:
+        return None
     
-    def get(self, key):
-        """Get value, promoting to hot set"""
-        if key not in self.cache:
-            return None
-        
-        # Promote to hot
-        self.cold_keys.discard(key)
-        self.hot_keys.add(key)
-        
-        return self.cache[key]
+    # Promote to hot
+    lru["cold_keys"].discard(key)
+    lru["hot_keys"].add(key)
     
-    def put(self, key, value):
-        """Put value, evicting if necessary"""
-        # Already exists - update
-        if key in self.cache:
-            self.cache[key] = value
-            self.cold_keys.discard(key)
-            self.hot_keys.add(key)
-            return
-        
-        # Need to evict
-        if len(self.cache) >= self.capacity:
-            # Evict from cold first
-            if self.cold_keys:
-                evict_key = self.cold_keys.pop()
-            else:
-                # Move hot to cold and evict
-                self.cold_keys = self.hot_keys.copy()
-                self.hot_keys.clear()
-                evict_key = self.cold_keys.pop()
-            
-            del self.cache[evict_key]
-        
-        # Add new item
-        self.cache[key] = value
-        self.hot_keys.add(key)
+    return lru["cache"][key]
+
+def lru_put(lru, key, value):
+    """Put value, evicting if necessary"""
+    # Already exists - update
+    if key in lru["cache"]:
+        lru["cache"][key] = value
+        lru["cold_keys"].discard(key)
+        lru["hot_keys"].add(key)
+        return
     
-    def stats(self):
-        """Get cache statistics"""
-        return {
-            "size": len(self.cache),
-            "capacity": self.capacity,
-            "hot": len(self.hot_keys),
-            "cold": len(self.cold_keys)
-        }
+    # Need to evict
+    if len(lru["cache"]) >= lru["capacity"]:
+        # Evict from cold first
+        if lru["cold_keys"]:
+            evict_key = lru["cold_keys"].pop()
+        else:
+            # Move hot to cold and evict
+            lru["cold_keys"] = lru["hot_keys"].copy()
+            lru["hot_keys"].clear()
+            evict_key = lru["cold_keys"].pop()
+        
+        del lru["cache"][evict_key]
+    
+    # Add new item
+    lru["cache"][key] = value
+    lru["hot_keys"].add(key)
+
+def lru_stats(lru):
+    """Get cache statistics"""
+    return {
+        "size": len(lru["cache"]),
+        "capacity": lru["capacity"],
+        "hot": len(lru["hot_keys"]),
+        "cold": len(lru["cold_keys"])
+    }
 
 # Usage
-cache = SetBasedLRUCache(capacity=5)
+cache = create_lru_cache(capacity=5)
 for i in range(10):
-    cache.put(f"key{i}", f"value{i}")
-    print(f"After adding key{i}: {cache.stats()}")
+    lru_put(cache, f"key{i}", f"value{i}")
+    print(f"After adding key{i}: {lru_stats(cache)}")
 ```
 
 ## Set-Based State Machines
 
 ```python
 # State machine with set-based transitions
-class StateMachine:
-    def __init__(self):
-        self.states = set()
-        self.transitions = {}  # (from_state, event) -> to_state
-        self.valid_events = {}  # state -> set of valid events
-        self.current_state = None
+def create_state_machine():
+    """Create a state machine with set-based transitions"""
+    return {
+        "states": set(),
+        "transitions": {},      # (from_state, event) -> to_state
+        "valid_events": {},     # state -> set of valid events
+        "current_state": None
+    }
+
+def sm_add_state(sm, state):
+    """Add a state"""
+    sm["states"].add(state)
+    if state not in sm["valid_events"]:
+        sm["valid_events"][state] = set()
+
+def sm_add_transition(sm, from_state, event, to_state):
+    """Add transition"""
+    sm_add_state(sm, from_state)
+    sm_add_state(sm, to_state)
+    sm["transitions"][(from_state, event)] = to_state
+    sm["valid_events"][from_state].add(event)
+
+def sm_set_initial(sm, state):
+    """Set initial state"""
+    if state not in sm["states"]:
+        raise ValueError(f"State {state} not defined")
+    sm["current_state"] = state
+
+def sm_trigger(sm, event):
+    """Trigger event"""
+    if sm["current_state"] is None:
+        raise RuntimeError("No initial state set")
     
-    def add_state(self, state):
-        """Add a state"""
-        self.states.add(state)
-        if state not in self.valid_events:
-            self.valid_events[state] = set()
+    if event not in sm["valid_events"][sm["current_state"]]:
+        raise ValueError(f"Invalid event {event} for state {sm['current_state']}")
     
-    def add_transition(self, from_state, event, to_state):
-        """Add transition"""
-        self.add_state(from_state)
-        self.add_state(to_state)
-        self.transitions[(from_state, event)] = to_state
-        self.valid_events[from_state].add(event)
+    key = (sm["current_state"], event)
+    if key in sm["transitions"]:
+        sm["current_state"] = sm["transitions"][key]
+        return True
+    return False
+
+def sm_get_valid_events(sm):
+    """Get valid events for current state"""
+    if sm["current_state"] is None:
+        return set()
+    return sm["valid_events"][sm["current_state"]].copy()
+
+def sm_can_reach(sm, target_state):
+    """Check if target state is reachable from current"""
+    if sm["current_state"] is None:
+        return False
     
-    def set_initial(self, state):
-        """Set initial state"""
-        if state not in self.states:
-            raise ValueError(f"State {state} not defined")
-        self.current_state = state
+    visited = set()
+    queue = [sm["current_state"]]
     
-    def trigger(self, event):
-        """Trigger event"""
-        if self.current_state is None:
-            raise RuntimeError("No initial state set")
-        
-        if event not in self.valid_events[self.current_state]:
-            raise ValueError(f"Invalid event {event} for state {self.current_state}")
-        
-        key = (self.current_state, event)
-        if key in self.transitions:
-            self.current_state = self.transitions[key]
+    while queue:
+        state = queue.pop(0)
+        if state == target_state:
             return True
-        return False
+        
+        if state in visited:
+            continue
+        visited.add(state)
+        
+        # Add all reachable states
+        for event in sm["valid_events"].get(state, set()):
+            next_state = sm["transitions"].get((state, event))
+            if next_state and next_state not in visited:
+                queue.append(next_state)
     
-    def get_valid_events(self):
-        """Get valid events for current state"""
-        if self.current_state is None:
-            return set()
-        return self.valid_events[self.current_state].copy()
-    
-    def can_reach(self, target_state):
-        """Check if target state is reachable from current"""
-        if self.current_state is None:
-            return False
-        
-        visited = set()
-        queue = [self.current_state]
-        
-        while queue:
-            state = queue.pop(0)
-            if state == target_state:
-                return True
-            
-            if state in visited:
-                continue
-            visited.add(state)
-            
-            # Add all reachable states
-            for event in self.valid_events.get(state, set()):
-                next_state = self.transitions.get((state, event))
-                if next_state and next_state not in visited:
-                    queue.append(next_state)
-        
-        return False
+    return False
 
 # Example: Order processing
-sm = StateMachine()
-sm.add_transition("created", "submit", "pending")
-sm.add_transition("pending", "approve", "approved")
-sm.add_transition("pending", "reject", "rejected")
-sm.add_transition("approved", "ship", "shipped")
-sm.add_transition("shipped", "deliver", "delivered")
+sm = create_state_machine()
+sm_add_transition(sm, "created", "submit", "pending")
+sm_add_transition(sm, "pending", "approve", "approved")
+sm_add_transition(sm, "pending", "reject", "rejected")
+sm_add_transition(sm, "approved", "ship", "shipped")
+sm_add_transition(sm, "shipped", "deliver", "delivered")
 
-sm.set_initial("created")
-print(f"Valid events: {sm.get_valid_events()}")
-print(f"Can reach 'delivered'? {sm.can_reach('delivered')}")
+sm_set_initial(sm, "created")
+print(f"Valid events: {sm_get_valid_events(sm)}")
+print(f"Can reach 'delivered'? {sm_can_reach(sm, 'delivered')}")
 
-sm.trigger("submit")
-print(f"Current state: {sm.current_state}")
-print(f"Can reach 'delivered'? {sm.can_reach('delivered')}")
+sm_trigger(sm, "submit")
+print(f"Current state: {sm['current_state']}")
+print(f"Can reach 'delivered'? {sm_can_reach(sm, 'delivered')}")
 ```
 
 ## Summary

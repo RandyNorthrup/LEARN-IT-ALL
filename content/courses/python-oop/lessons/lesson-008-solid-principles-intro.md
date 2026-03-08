@@ -1,7 +1,7 @@
 ---
 id: solid-principles-intro
 title: Introduction to SOLID Principles
-chapterId: ch1-clean-code
+chapterId: ch4-abstraction
 order: 8
 duration: 18
 objectives:

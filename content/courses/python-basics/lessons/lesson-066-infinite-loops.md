@@ -1,8 +1,8 @@
 ---
-id: "101-infinite-loops"
+id: lesson-066-infinite-loops
 title: "Infinite Loops and When to Use Them"
 chapterId: ch5-loops
-order: 12
+order: 9
 duration: 20
 objectives:
   - Understand infinite loops and their use cases

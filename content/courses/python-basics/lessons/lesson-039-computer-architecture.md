@@ -1,8 +1,8 @@
 ---
-id: "81-computer-architecture"
+id: lesson-039-computer-architecture
 title: "Computer Architecture"
 chapterId: ch3-computing
-order: 12
+order: 13
 duration: 30
 objectives:
   - Understand the Von Neumann architecture
@@ -101,40 +101,40 @@ def explain_system_bus():
 
 explain_system_bus()
 
-class SystemBus:
-    """Simulate system bus."""
+def create_system_bus(width_bits=64):
+    """Create a system bus simulation."""
+    return {
+        'width_bits': width_bits,
+        'width_bytes': width_bits // 8,
+        'transfers': 0,
+    }
+
+def bus_transfer_data(bus, address, data, operation):
+    """Simulate data transfer on bus."""
+    bus['transfers'] += 1
     
-    def __init__(self, width_bits=64):
-        self.width_bits = width_bits
-        self.width_bytes = width_bits // 8
-        self.transfers = 0
+    data_size = len(data) if isinstance(data, (list, bytes)) else 1
+    chunks = (data_size + bus['width_bytes'] - 1) // bus['width_bytes']
     
-    def transfer_data(self, address, data, operation):
-        """Simulate data transfer on bus."""
-        self.transfers += 1
-        
-        data_size = len(data) if isinstance(data, (list, bytes)) else 1
-        chunks = (data_size + self.width_bytes - 1) // self.width_bytes
-        
-        print(f"Bus Transfer #{self.transfers}:")
-        print(f"  Operation: {operation}")
-        print(f"  Address: 0x{address:08X}")
-        print(f"  Data size: {data_size} bytes")
-        print(f"  Bus width: {self.width_bytes} bytes")
-        print(f"  Transfers needed: {chunks}")
-        
-        return chunks
+    print(f"Bus Transfer #{bus['transfers']}:")
+    print(f"  Operation: {operation}")
+    print(f"  Address: 0x{address:08X}")
+    print(f"  Data size: {data_size} bytes")
+    print(f"  Bus width: {bus['width_bytes']} bytes")
+    print(f"  Transfers needed: {chunks}")
+    
+    return chunks
 
 # Simulate bus transfers
 print("\nSystem Bus Simulation:")
-bus = SystemBus(width_bits=64)  # 64-bit bus
+bus = create_system_bus(width_bits=64)  # 64-bit bus
 
 # Transfer 4 bytes (fits in one transfer)
-bus.transfer_data(0x1000, [0xFF, 0xAA, 0xBB, 0xCC], "WRITE")
+bus_transfer_data(bus, 0x1000, [0xFF, 0xAA, 0xBB, 0xCC], "WRITE")
 print()
 
 # Transfer 16 bytes (needs 2 transfers on 64-bit bus)
-bus.transfer_data(0x2000, [0] * 16, "READ")
+bus_transfer_data(bus, 0x2000, [0] * 16, "READ")
 ```
 
 ## Instruction Set Architecture (ISA)
@@ -179,61 +179,61 @@ def explain_isa():
 
 explain_isa()
 
-class SimpleCPU:
-    """Simulate simple CPU with instruction execution."""
-    
-    def __init__(self):
-        self.registers = {'R0': 0, 'R1': 0, 'R2': 0, 'R3': 0}
-        self.memory = [0] * 256
-        self.pc = 0  # Program counter
-        self.instructions_executed = 0
-    
-    def load_register(self, reg, value):
-        """LOAD: Load value into register."""
-        self.registers[reg] = value
-        self.instructions_executed += 1
-        print(f"LOAD {reg}, {value}  →  {reg} = {value}")
-    
-    def add(self, dest, src1, src2):
-        """ADD: Add two registers."""
-        result = self.registers[src1] + self.registers[src2]
-        self.registers[dest] = result
-        self.instructions_executed += 1
-        print(f"ADD {dest}, {src1}, {src2}  →  {dest} = {result}")
-    
-    def store(self, reg, address):
-        """STORE: Store register to memory."""
-        self.memory[address] = self.registers[reg]
-        self.instructions_executed += 1
-        print(f"STORE {reg}, [0x{address:02X}]  →  MEM[0x{address:02X}] = {self.registers[reg]}")
-    
-    def load_from_memory(self, reg, address):
-        """LOAD: Load from memory to register."""
-        self.registers[reg] = self.memory[address]
-        self.instructions_executed += 1
-        print(f"LOAD {reg}, [0x{address:02X}]  →  {reg} = {self.memory[address]}")
-    
-    def print_state(self):
-        """Print CPU state."""
-        print("\nCPU State:")
-        print(f"  Registers: {self.registers}")
-        print(f"  PC: {self.pc}")
-        print(f"  Instructions executed: {self.instructions_executed}")
+def create_simple_cpu():
+    """Create a simple CPU simulation."""
+    return {
+        'registers': {'R0': 0, 'R1': 0, 'R2': 0, 'R3': 0},
+        'memory': [0] * 256,
+        'pc': 0,
+        'instructions_executed': 0,
+    }
+
+def cpu_load_register(cpu, reg, value):
+    """LOAD: Load value into register."""
+    cpu['registers'][reg] = value
+    cpu['instructions_executed'] += 1
+    print(f"LOAD {reg}, {value}  \u2192  {reg} = {value}")
+
+def cpu_add(cpu, dest, src1, src2):
+    """ADD: Add two registers."""
+    result = cpu['registers'][src1] + cpu['registers'][src2]
+    cpu['registers'][dest] = result
+    cpu['instructions_executed'] += 1
+    print(f"ADD {dest}, {src1}, {src2}  \u2192  {dest} = {result}")
+
+def cpu_store(cpu, reg, address):
+    """STORE: Store register to memory."""
+    cpu['memory'][address] = cpu['registers'][reg]
+    cpu['instructions_executed'] += 1
+    print(f"STORE {reg}, [0x{address:02X}]  \u2192  MEM[0x{address:02X}] = {cpu['registers'][reg]}")
+
+def cpu_load_from_memory(cpu, reg, address):
+    """LOAD: Load from memory to register."""
+    cpu['registers'][reg] = cpu['memory'][address]
+    cpu['instructions_executed'] += 1
+    print(f"LOAD {reg}, [0x{address:02X}]  \u2192  {reg} = {cpu['memory'][address]}")
+
+def cpu_print_state(cpu):
+    """Print CPU state."""
+    print("\nCPU State:")
+    print(f"  Registers: {cpu['registers']}")
+    print(f"  PC: {cpu['pc']}")
+    print(f"  Instructions executed: {cpu['instructions_executed']}")
 
 # Simulate assembly program
 print("\nSimple CPU Simulation:")
 print("Program: Add 5 + 3 and store result")
 print("-" * 50)
 
-cpu = SimpleCPU()
+cpu = create_simple_cpu()
 
 # Assembly program
-cpu.load_register('R1', 5)        # R1 = 5
-cpu.load_register('R2', 3)        # R2 = 3
-cpu.add('R3', 'R1', 'R2')         # R3 = R1 + R2
-cpu.store('R3', 0x10)             # Memory[0x10] = R3
+cpu_load_register(cpu, 'R1', 5)        # R1 = 5
+cpu_load_register(cpu, 'R2', 3)        # R2 = 3
+cpu_add(cpu, 'R3', 'R1', 'R2')         # R3 = R1 + R2
+cpu_store(cpu, 'R3', 0x10)             # Memory[0x10] = R3
 
-cpu.print_state()
+cpu_print_state(cpu)
 ```
 
 ## Machine Code
@@ -328,70 +328,70 @@ def explain_memory_hierarchy():
 
 explain_memory_hierarchy()
 
-class CacheSimulator:
-    """Simulate cache behavior."""
-    
-    def __init__(self, cache_size=8):
-        self.cache = {}
-        self.cache_size = cache_size
-        self.hits = 0
-        self.misses = 0
-        self.access_order = []
-    
-    def access(self, address):
-        """Access memory address."""
-        if address in self.cache:
-            # Cache hit
-            self.hits += 1
-            print(f"Access 0x{address:04X}: HIT   (Total: {self.hits} hits, {self.misses} misses)")
-            # Move to end (most recently used)
-            self.access_order.remove(address)
-            self.access_order.append(address)
-        else:
-            # Cache miss
-            self.misses += 1
-            print(f"Access 0x{address:04X}: MISS  (Total: {self.hits} hits, {self.misses} misses)")
-            
-            # Add to cache
-            if len(self.cache) >= self.cache_size:
-                # Evict least recently used
-                evicted = self.access_order.pop(0)
-                del self.cache[evicted]
-                print(f"  └─ Evicted 0x{evicted:04X} (LRU)")
-            
-            self.cache[address] = f"Data@0x{address:04X}"
-            self.access_order.append(address)
-            print(f"  └─ Loaded 0x{address:04X} into cache")
-    
-    def get_stats(self):
-        """Get cache statistics."""
-        total = self.hits + self.misses
-        hit_rate = (self.hits / total * 100) if total > 0 else 0
-        return {
-            'hits': self.hits,
-            'misses': self.misses,
-            'total': total,
-            'hit_rate': hit_rate,
-        }
+def create_cache_sim(cache_size=8):
+    """Create a cache simulation."""
+    return {
+        'cache': {},
+        'cache_size': cache_size,
+        'hits': 0,
+        'misses': 0,
+        'access_order': [],
+    }
+
+def cache_access(sim, address):
+    """Access memory address."""
+    if address in sim['cache']:
+        # Cache hit
+        sim['hits'] += 1
+        print(f"Access 0x{address:04X}: HIT   (Total: {sim['hits']} hits, {sim['misses']} misses)")
+        # Move to end (most recently used)
+        sim['access_order'].remove(address)
+        sim['access_order'].append(address)
+    else:
+        # Cache miss
+        sim['misses'] += 1
+        print(f"Access 0x{address:04X}: MISS  (Total: {sim['hits']} hits, {sim['misses']} misses)")
+        
+        # Add to cache
+        if len(sim['cache']) >= sim['cache_size']:
+            # Evict least recently used
+            evicted = sim['access_order'].pop(0)
+            del sim['cache'][evicted]
+            print(f"  \u2514\u2500 Evicted 0x{evicted:04X} (LRU)")
+        
+        sim['cache'][address] = f"Data@0x{address:04X}"
+        sim['access_order'].append(address)
+        print(f"  \u2514\u2500 Loaded 0x{address:04X} into cache")
+
+def cache_get_stats(sim):
+    """Get cache statistics."""
+    total = sim['hits'] + sim['misses']
+    hit_rate = (sim['hits'] / total * 100) if total > 0 else 0
+    return {
+        'hits': sim['hits'],
+        'misses': sim['misses'],
+        'total': total,
+        'hit_rate': hit_rate,
+    }
 
 # Simulate cache
 print("\nCache Simulation:")
-cache = CacheSimulator(cache_size=4)
+cache = create_cache_sim(cache_size=4)
 
 # Access pattern showing locality
 print("\n1. Sequential Access (Spatial Locality):")
 for addr in [0x1000, 0x1001, 0x1002, 0x1003]:
-    cache.access(addr)
+    cache_access(cache, addr)
 
 print("\n2. Repeated Access (Temporal Locality):")
 for addr in [0x1000, 0x1001, 0x1000, 0x1001]:
-    cache.access(addr)
+    cache_access(cache, addr)
 
 print("\n3. Cache Overflow:")
 for addr in [0x2000, 0x2001, 0x2002, 0x2003, 0x2004]:  # 5th access causes eviction
-    cache.access(addr)
+    cache_access(cache, addr)
 
-stats = cache.get_stats()
+stats = cache_get_stats(cache)
 print(f"\nCache Statistics:")
 print(f"  Hits: {stats['hits']}")
 print(f"  Misses: {stats['misses']}")

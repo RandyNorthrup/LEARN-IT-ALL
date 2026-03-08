@@ -1,7 +1,7 @@
 ---
 id: lesson-071-broadband-technologies
 title: "Broadband Technologies (Cable, DSL, Fiber/FTTP)"
-chapterId: "chapter-008-wan-technologies"
+chapterId: ch8-wan-technologies
 order: 71
 duration: 23
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Broadband Technologies (Cable, DSL, Fiber/FTTP)
 
+## Introduction
+
 **Broadband** refers to high-speed internet access technologies providing "always-on" connectivity. Primary broadband technologies include **DSL (Digital Subscriber Line)**, **cable modem**, and **fiber optic** (FTTP/FTTH).
 
-This lesson covers broadband fundamentals—important for the CompTIA Network+ N10-008 exam.
+This lesson covers broadband fundamentals—important for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand broadband technology characteristics
+- Explain DSL variants and operation
+- Describe cable modem technology (DOCSIS)
+- Compare fiber-to-the-premises technologies
+- Identify broadband use cases and limitations
 
 ---
 
@@ -528,7 +542,7 @@ Traditional DSL: [Copper]─────────────────▶ 
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **Broadband** provides high-speed, always-on internet (DSL, cable, fiber)
 2. **DSL** uses existing phone lines with speeds up to 100 Mbps (VDSL2), limited by distance from CO (max 18,000 ft)
@@ -543,13 +557,147 @@ Traditional DSL: [Copper]─────────────────▶ 
 
 ---
 
+## Practice Questions
+
+**Q1.** Which broadband technology uses existing telephone lines and has performance that degrades with distance from the central office?
+
+A) Cable
+B) DSL
+C) FTTH
+D) Fixed wireless
+
+<details>
+<summary>Answer</summary>
+
+**B)** DSL (Digital Subscriber Line) uses existing copper telephone lines. Performance degrades as distance from the central office (CO) increases, with a maximum effective distance of approximately 18,000 feet.
+</details>
+
+**Q2.** What is the maximum distance limitation for DSL service from the central office?
+
+A) 1,000 feet
+B) 5,000 feet
+C) 18,000 feet
+D) 50,000 feet
+
+<details>
+<summary>Answer</summary>
+
+**C)** DSL signals degrade over copper wire, with a practical maximum distance of approximately 18,000 feet (about 3.4 miles) from the central office. VDSL offers higher speeds but at shorter distances.
+</details>
+
+**Q3.** Which standard defines cable modem technology, with version 3.1 supporting speeds up to 10 Gbps?
+
+A) IEEE 802.11
+B) DOCSIS
+C) SONET
+D) G.992
+
+<details>
+<summary>Answer</summary>
+
+**B)** DOCSIS (Data Over Cable Service Interface Specification) is the standard for cable modem technology. DOCSIS 3.1 supports up to 10 Gbps downstream and 1-2 Gbps upstream.
+</details>
+
+**Q4.** A user experiences slower internet speeds in the evening when more neighbors are online. Which broadband technology is MOST likely being used?
+
+A) DSL
+B) Cable
+C) FTTH with dedicated fiber
+D) T1 leased line
+
+<details>
+<summary>Answer</summary>
+
+**B)** Cable internet is a shared medium where bandwidth is shared among all subscribers on the same cable segment. Performance degrades during peak usage hours when many neighbors are online simultaneously.
+</details>
+
+**Q5.** Which fiber deployment model provides fiber optic cable directly to the customer's home for the highest possible speeds?
+
+A) FTTC (Fiber to the Curb)
+B) FTTN (Fiber to the Node)
+C) FTTP/FTTH (Fiber to the Premises/Home)
+D) HFC (Hybrid Fiber-Coaxial)
+
+<details>
+<summary>Answer</summary>
+
+**C)** FTTP/FTTH provides fiber optic cable all the way to the customer's home, delivering the highest speeds (1-10 Gbps symmetric) with no copper in the last mile.
+</details>
+
+**Q6.** In a GPON (Gigabit Passive Optical Network) architecture, which device is located at the customer premises?
+
+A) OLT (Optical Line Terminal)
+B) Splitter
+C) ONT (Optical Network Terminal)
+D) DSLAM
+
+<details>
+<summary>Answer</summary>
+
+**C)** The ONT (Optical Network Terminal) is located at the customer premises and converts the optical signal to electrical signals for the customer's network equipment.
+</details>
+
+**Q7.** Which DSL variant offers the highest speeds but is limited to the shortest distances?
+
+A) ADSL
+B) SDSL
+C) VDSL
+D) IDSL
+
+<details>
+<summary>Answer</summary>
+
+**C)** VDSL (Very High-bit-rate DSL) offers the highest DSL speeds (up to 100 Mbps with VDSL2) but requires the customer to be very close to the central office or DSLAM, typically within 1,000-4,500 feet.
+</details>
+
+**Q8.** What is the PRIMARY difference between ADSL and SDSL?
+
+A) ADSL uses fiber; SDSL uses copper
+B) ADSL has asymmetric speeds (faster download); SDSL has symmetric speeds (same upload/download)
+C) ADSL is faster than SDSL in all cases
+D) SDSL requires a dedicated phone line; ADSL does not
+
+<details>
+<summary>Answer</summary>
+
+**B)** ADSL (Asymmetric DSL) provides faster download speeds than upload, optimal for typical consumer use. SDSL (Symmetric DSL) provides equal upload and download speeds, better for business applications.
+</details>
+
+**Q9.** Which broadband technology provides the BEST combination of high speed, low latency, and symmetric bandwidth?
+
+A) ADSL
+B) Cable (DOCSIS 3.0)
+C) FTTH (Fiber to the Home)
+D) Fixed wireless
+
+<details>
+<summary>Answer</summary>
+
+**C)** FTTH provides the best overall performance: very high speeds (1-10 Gbps), symmetric upload/download bandwidth, very low latency, and is considered the most future-proof broadband technology.
+</details>
+
+**Q10.** What is the function of the DSLAM (DSL Access Multiplexer) at the telephone company's central office?
+
+A) Converts analog voice signals to digital for the PSTN
+B) Aggregates multiple customer DSL connections and connects them to the ISP backbone
+C) Provides power to customer DSL modems
+D) Encrypts all DSL traffic for security
+
+<details>
+<summary>Answer</summary>
+
+**B)** The DSLAM aggregates multiple individual DSL connections from customers in the area and connects them to the ISP's internet backbone. It sits at the central office and is the provider-side counterpart to the customer's DSL modem. It does not provide power to customer equipment or encrypt traffic.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 2.1:** Compare and contrast WAN technologies (DSL, cable, fiber)
+- **CompTIA Network+ N10-009 Objective 2.1:** Compare and contrast WAN technologies (DSL, cable, fiber)
 - ITU-T G.992: ADSL Standards
 - CableLabs: DOCSIS Specifications
 - ITU-T G.984: GPON Standard
-- Professor Messer: Network+ N10-008 - Broadband Technologies
+- Professor Messer: Network+ N10-009 - Broadband Technologies
 
 ---
 

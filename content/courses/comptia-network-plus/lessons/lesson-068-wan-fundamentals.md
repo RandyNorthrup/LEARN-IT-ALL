@@ -1,7 +1,7 @@
 ---
 id: lesson-068-wan-fundamentals
 title: "WAN Fundamentals and Service Providers"
-chapterId: "chapter-008-wan-technologies"
+chapterId: ch8-wan-technologies
 order: 68
 duration: 21
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # WAN Fundamentals and Service Providers
 
+## Introduction
+
 **Wide Area Networks (WANs)** connect geographically dispersed locations across cities, countries, or continents. Unlike LANs (local) and MANs (metro), WANs typically involve **service providers** and cover long distances.
 
-This lesson covers WAN fundamentals—essential for the CompTIA Network+ N10-008 exam.
+This lesson covers WAN fundamentals—essential for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand WAN concepts and terminology
+- Differentiate WAN from LAN and MAN
+- Explain WAN service provider roles
+- Describe demarcation point and customer premises equipment
+- Identify WAN connection types and characteristics
 
 ---
 
@@ -106,6 +120,39 @@ Customer Site        │     Provider Network
 - Circuit from demarc to provider network
 - Provider equipment
 
+### Smart Jack and MPOE
+
+The **smartjack** (also called a **network interface device** or **NID**) is the provider-installed device at the demarcation point that provides diagnostic capabilities.
+
+**Smartjack capabilities:**
+- Remote loopback testing (provider can test circuit remotely)
+- LED status indicators (power, signal, alarm)
+- Signal regeneration/amplification
+- Converts between provider and customer cabling standards
+
+**MPOE (Minimum Point of Entry):**
+- Physical location where provider cabling enters the building
+- Typically in the basement or ground floor of commercial buildings
+- May include a patch panel distributing circuits to different floors
+
+```
+Physical Layout (typical enterprise building):
+
+  Provider CO ─── Underground conduit ───▶ MPOE (Basement)
+                                            │
+                                       Smartjack
+                                            │
+                                   Riser cable (vertical)
+                                            │
+                                     Patch panel (3rd floor)
+                                            │
+                                   Customer Router (CPE)
+                                            │
+                                     LAN switches → Users
+```
+
+> **Exam Tip:** Everything on the **provider side** of the demarc is the provider's responsibility. Everything on the **customer side** is the customer's responsibility. When troubleshooting WAN issues, the first question is always: "Which side of the demarc is the problem on?" Loopback testing at the smartjack helps answer this.
+
 ---
 
 ## WAN Service Providers
@@ -186,6 +233,41 @@ Customer Site        │     Provider Network
 **Tier 3 ISPs:**
 - Local coverage
 - Buy transit from Tier 2/Tier 1
+
+### Peering and Transit
+
+Understanding how ISPs exchange traffic is important for WAN design:
+
+**Peering:**
+- Two ISPs agree to exchange traffic directly (free or settlement-based)
+- Occurs at **IXP (Internet Exchange Point)** facilities
+- Reduces latency by avoiding intermediate hops
+
+**Transit:**
+- One ISP pays another for access to the rest of the internet
+- Tier 3 buys transit from Tier 2; Tier 2 buys from Tier 1
+
+```
+ISP Peering at an Internet Exchange Point (IXP):
+
+  ┌────────┐     ┌──────────┐     ┌────────┐
+  │ ISP A  │─────│   IXP    │─────│ ISP B  │
+  │ (Tier2)│ Peer │ Switch   │ Peer │ (Tier2)│
+  └────────┘     └────┬─────┘     └────────┘
+                       │
+                  ┌────▼───┐
+                  │ ISP C  │
+                  │ (Tier1)│ ← Provides transit
+                  └────────┘
+```
+
+**Major IXPs worldwide:**
+- DE-CIX (Frankfurt) – largest by traffic volume
+- AMS-IX (Amsterdam)
+- LINX (London)
+- Equinix IX (multiple global locations)
+
+> **Key Insight:** When traffic between two endpoints traverses fewer ISP hops (through peering), latency decreases. Enterprise WAN design sometimes considers ISP peering relationships when selecting providers for latency-sensitive applications.
 
 ---
 
@@ -312,6 +394,111 @@ Customer Site        │     Provider Network
 - Small offices
 - Residential
 - Branch offices (with VPN)
+
+---
+
+## Metro Ethernet and Carrier Ethernet
+
+### What is Metro Ethernet?
+
+**Metro Ethernet** extends Ethernet technology over metropolitan area networks, providing WAN connectivity using the familiar Ethernet frame format.
+
+**Key advantage:** Organizations use the same Ethernet interface (RJ-45 or SFP) for both LAN and WAN—no specialized WAN interfaces (serial, T1) needed.
+
+### Metro Ethernet Service Types (MEF)
+
+The **Metro Ethernet Forum (MEF)** defines standard service types:
+
+| Service Type | MEF Term | Description | Topology |
+|-------------|----------|-------------|----------|
+| **E-Line** | Ethernet Virtual Private Line (EVPL) | Point-to-point connection | Site A ↔ Site B |
+| **E-LAN** | Ethernet Virtual Private LAN (EVPLAN) | Multipoint-to-multipoint | Any site ↔ any site |
+| **E-Tree** | Ethernet Virtual Private Tree | Hub-and-spoke (rooted multipoint) | Hub ↔ spokes |
+
+```
+E-Line (Point-to-Point):
+  Site A ◀──────────────▶ Site B
+        100 Mbps Ethernet
+
+E-LAN (Multipoint):
+  Site A ◀───▶ Metro ◀───▶ Site B
+              Ethernet
+  Site C ◀───▶ Cloud ◀───▶ Site D
+  (Any site can communicate with any other)
+
+E-Tree (Hub-and-Spoke):
+       ┌──── Spoke A
+  Hub ─┼──── Spoke B
+       └──── Spoke C
+  (Spokes communicate via Hub only)
+```
+
+### Metro Ethernet Bandwidth Options
+
+| Bandwidth | Common Use | Monthly Cost (approx.) |
+|-----------|-----------|----------------------|
+| 10 Mbps | Small branch office | $300-500 |
+| 100 Mbps | Medium branch | $500-1,500 |
+| 1 Gbps | Large branch / datacenter | $1,500-5,000 |
+| 10 Gbps | Datacenter interconnect | $5,000-15,000 |
+| 100 Gbps | Carrier backbone | $15,000+ |
+
+**Metro Ethernet vs T1 cost comparison:**
+```
+100 Mbps Metro Ethernet: ~$1,000/month
+  vs.
+65 × T1 lines to match bandwidth: ~$19,500/month
+  (each T1 = 1.544 Mbps, ~$300/month)
+
+Cost savings: ~95%
+```
+
+> **Exam Tip:** Metro Ethernet has largely replaced T1/T3 leased lines for WAN connectivity due to **higher bandwidth, lower cost per Mbps, and simpler management** (standard Ethernet interface). However, leased lines may still be required in rural areas where Ethernet services are unavailable.
+
+---
+
+## WAN Redundancy Design
+
+### Dual-Homed vs Multi-Homed
+
+**Single-homed:** One connection to one ISP (no redundancy)
+
+**Dual-homed:** Two connections to one ISP
+- Protects against link failure
+- Does NOT protect against ISP failure
+
+**Multi-homed:** Connections to two or more ISPs
+- Protects against both link and ISP failure
+- Requires BGP for routing decisions
+
+**Dual multi-homed:** Two connections to each of two ISPs
+- Highest redundancy
+- Most complex (requires BGP with multiple AS relationships)
+
+```
+Single-homed:        Dual-homed:
+  ┌────┐               ┌────┐
+  │Site│───ISP A      │Site│═══ISP A
+  └────┘               └────┘
+
+Multi-homed:         Dual multi-homed:
+  ┌────┐               ┌────┐
+  │Site│───ISP A      │Site│═══ISP A
+  │    │───ISP B      │    │═══ISP B
+  └────┘               └────┘
+  (═ = two links)
+```
+
+### WAN Failover Strategies
+
+| Strategy | Primary | Backup | Failover Time | Cost |
+|----------|---------|--------|---------------|------|
+| **Active/Standby** | MPLS | Broadband VPN | 30-60 sec | Medium |
+| **Active/Active** | MPLS + Broadband | Load balanced | Instant | Higher |
+| **SD-WAN** | Multiple links | All active | Sub-second | Varies |
+| **Diverse path** | Fiber (Route A) | Fiber (Route B) | 50 ms (SONET) | High |
+
+> **Key Insight:** True WAN redundancy requires **path diversity**—ensuring that backup circuits don't share the same physical conduit or central office as primary circuits. If both circuits run through the same underground conduit, a single backhoe cut takes out both links.
 
 ---
 
@@ -448,6 +635,58 @@ Customer Site        │     Provider Network
 **Solution:**
 - QoS (Quality of Service) to prioritize traffic
 
+### Throughput vs Bandwidth
+
+An important distinction that's often tested:
+
+**Bandwidth:** The maximum theoretical data rate of a link (e.g., 100 Mbps)
+
+**Throughput:** The actual data rate achieved after accounting for overhead, congestion, and protocol efficiency
+
+```
+Throughput calculation example:
+
+  Link bandwidth: 100 Mbps
+  TCP overhead: ~5% (headers, ACKs)
+  Ethernet overhead: ~3% (preamble, IFG, CRC)
+  Network congestion: ~10% loss
+
+  Actual throughput: 100 × 0.95 × 0.97 × 0.90 = ~83 Mbps
+```
+
+**Goodput:** The useful application data rate (excludes retransmissions, protocol overhead)
+
+```
+Bandwidth > Throughput > Goodput
+
+  Bandwidth:  100 Mbps (theoretical max)
+  Throughput:  83 Mbps (actual transfer rate)
+  Goodput:     78 Mbps (useful data, no TCP overhead)
+```
+
+> **Exam Tip:** The CompTIA exam distinguishes between bandwidth, throughput, and goodput. **Bandwidth** is theoretical maximum, **throughput** is actual measured rate, and **goodput** is the rate of useful data delivered to the application.
+
+### WAN Latency Calculation
+
+**Real-world example: New York to London WAN link**
+
+```
+Fiber distance: ~5,500 km (undersea cable)
+Speed of light in fiber: ~200,000 km/s (0.67c due to refraction)
+
+Propagation delay (one way):
+  5,500 km ÷ 200,000 km/s = 27.5 ms
+
+Round-trip propagation: 55 ms
+
+Add router processing (5 hops × 0.5 ms each): +2.5 ms
+Add queuing delays: +2-5 ms
+
+Total RTT: ~60-63 ms
+```
+
+Compare with satellite (GEO): ~600 ms RTT for the same path—**10x worse latency**.
+
 ---
 
 ## SLA (Service Level Agreement)
@@ -520,7 +759,7 @@ Customer Site        │     Provider Network
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **WAN** connects geographically dispersed locations using service providers
 2. **CPE (Customer Premises Equipment)** is equipment at customer site; **Demarc** is boundary between customer and provider
@@ -535,12 +774,146 @@ Customer Site        │     Provider Network
 
 ---
 
+## Practice Questions
+
+**Q1.** Which WAN switching method establishes a dedicated communication path between two endpoints for the duration of the session?
+
+A) Packet switching
+B) Circuit switching
+C) Message switching
+D) Cell switching
+
+<details>
+<summary>Answer</summary>
+
+**A) is incorrect. B)** Circuit switching establishes a dedicated path (circuit) between endpoints for the entire session. The traditional PSTN telephone network is the classic example.
+</details>
+
+**Q2.** What is the demarcation point (demarc) in a WAN connection?
+
+A) The router at the ISP's datacenter
+B) The boundary between the customer's network and the service provider's network
+C) The DNS server at the edge
+D) The firewall between internal and external networks
+
+<details>
+<summary>Answer</summary>
+
+**B)** The demarcation point (demarc) is the boundary where the service provider's responsibility ends and the customer's responsibility begins. It is typically located at the customer premises.
+</details>
+
+**Q3.** Which WAN topology connects all branch offices through a central site?
+
+A) Full mesh
+B) Partial mesh
+C) Hub-and-spoke
+D) Ring
+
+<details>
+<summary>Answer</summary>
+
+**C)** Hub-and-spoke topology connects all branch offices (spokes) to a central site (hub). Traffic between branches must traverse the hub. It is common for branch office WAN designs.
+</details>
+
+**Q4.** What does CPE stand for in WAN terminology, and where is it located?
+
+A) Central Processing Equipment, located at ISP datacenter
+B) Customer Premises Equipment, located at the customer site
+C) Cloud Provider Equipment, located in the cloud
+D) Core Processing Engine, located in the WAN backbone
+
+<details>
+<summary>Answer</summary>
+
+**B)** CPE (Customer Premises Equipment) refers to networking equipment located at the customer's site, such as routers, CSU/DSUs, and modems.
+</details>
+
+**Q5.** Which of the following is an example of a packet-switched WAN technology?
+
+A) PSTN
+B) ISDN
+C) MPLS
+D) Analog modem
+
+<details>
+<summary>Answer</summary>
+
+**C)** MPLS is a packet-switched technology that shares infrastructure among multiple customers. Data is divided into packets that can take different paths. PSTN and ISDN are circuit-switched.
+</details>
+
+**Q6.** A WAN connection advertised as "50 Mbps down / 10 Mbps up" is an example of what type of bandwidth?
+
+A) Symmetric
+B) Asymmetric
+C) Dedicated
+D) Burstable
+
+<details>
+<summary>Answer</summary>
+
+**B)** Asymmetric bandwidth has different upload and download speeds. This is common with consumer broadband services like DSL and cable where download speeds exceed upload speeds.
+</details>
+
+**Q7.** What does an SLA (Service Level Agreement) define for a WAN service?
+
+A) The physical cable type to use
+B) Guaranteed uptime, latency, and packet loss metrics
+C) The programming language for network equipment
+D) The maximum number of connected devices
+
+<details>
+<summary>Answer</summary>
+
+**B)** An SLA defines guaranteed performance metrics including uptime percentage (e.g., 99.99%), maximum latency, maximum packet loss, and mean time to repair. Penalties apply if the provider fails to meet SLA terms.
+</details>
+
+**Q8.** What is the "last mile" in WAN connectivity?
+
+A) The backbone connection between ISPs
+B) The final connection from the service provider to the customer premises
+C) The distance between the router and the switch
+D) The length of the fiber optic trunk
+
+<details>
+<summary>Answer</summary>
+
+**B)** The last mile (also called the local loop) is the final connection between the service provider's network and the customer premises. It is often the bandwidth bottleneck in WAN connectivity.
+</details>
+
+**Q9.** What is jitter in the context of WAN performance?
+
+A) Total time for a packet to reach its destination
+B) Variation in latency between packets
+C) The number of dropped packets
+D) The available bandwidth on the link
+
+<details>
+<summary>Answer</summary>
+
+**B)** Jitter is the variation in latency (delay) between packets. High jitter is particularly problematic for real-time applications like VoIP and video conferencing.
+</details>
+
+**Q10.** A company has connections to two different ISPs and uses BGP to manage routing between them. Which WAN redundancy design does this describe?
+
+A) Single-homed
+B) Dual-homed
+C) Multi-homed
+D) Direct connect
+
+<details>
+<summary>Answer</summary>
+
+**C)** Multi-homed means the organization has connections to two or more different ISPs, providing protection against both link failure and ISP failure. BGP is required to manage routing decisions between multiple providers. Dual-homed uses two connections to the same ISP, and single-homed has only one connection.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.2:** Explain the characteristics of network topologies and types (WAN)
-- **CompTIA Network+ N10-008 Objective 2.1:** Compare and contrast WAN technologies
+- **CompTIA Network+ N10-009 Objective 1.2:** Explain the characteristics of network topologies and types (WAN)
+- **CompTIA Network+ N10-009 Objective 2.1:** Compare and contrast WAN technologies
 - Cisco: WAN Technologies Overview
-- Professor Messer: Network+ N10-008 - WAN Technologies
+- Professor Messer: Network+ N10-009 - WAN Technologies
 
 ---
 

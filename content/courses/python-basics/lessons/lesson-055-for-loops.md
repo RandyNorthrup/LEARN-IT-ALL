@@ -1,8 +1,8 @@
 ---
-id: for-loops
+id: lesson-055-for-loops
 title: For Loops and Iteration
 chapterId: ch5-loops
-order: 1
+order: 2
 duration: 30
 objectives:
   - Master for loop syntax

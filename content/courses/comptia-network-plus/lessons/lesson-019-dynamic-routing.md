@@ -1,7 +1,7 @@
 ---
-id: dynamic-routing
+id: lesson-019-dynamic-routing
 title: Dynamic Routing Protocols (RIP, OSPF, EIGRP)
-chapterId: ch2-network-implementations
+chapterId: ch3-network-implementations
 order: 19
 duration: 90
 objectives:
@@ -14,7 +14,7 @@ objectives:
   - Configure and verify basic dynamic routing
 ---
 
-# Lesson 18: Dynamic Routing Protocols (RIP, OSPF, EIGRP)
+# Lesson 19: Dynamic Routing Protocols (RIP, OSPF, EIGRP)
 
 ## Learning Objectives
 By the end of this lesson, you will be able to:
@@ -135,7 +135,7 @@ Like having a complete road map:
 | **Scalability** | Small networks | Large networks | Large networks |
 | **Administrative Distance** | 120 | 110 | 90 (internal) |
 | **Updates** | Periodic (30 sec) | Triggered | Triggered |
-| **Load Balancing** | Equal-cost (16 paths) | Equal-cost (4 paths default) | Equal/unequal-cost (4 paths default) |
+| **Load Balancing** | Equal-cost (4 paths default) | Equal-cost (4 paths default) | Equal/unequal-cost (4 paths default) |
 | **Hierarchical Design** | No | Yes (areas) | Yes (AS) |
 | **Compatibility** | All vendors | All vendors | Cisco only |
 
@@ -858,6 +858,23 @@ Gi0/1              1        0/0         1       0/1           50           0
 Gi0/2              1        0/0         5       0/1           50           0
 ```
 
+### Multi-Vendor OSPF Configuration Comparison
+
+OSPF is an open standard (RFC 2328), so every vendor supports it. EIGRP is Cisco-proprietary (though Cisco released a limited open version). In multi-vendor networks, OSPF is the standard choice:
+
+| Task | Cisco IOS | Juniper Junos | Arista EOS | Linux (FRRouting) |
+|------|-----------|---------------|------------|-------------------|
+| Enable OSPF | `router ospf 1` | `set protocols ospf` | `router ospf 1` | `router ospf` (in vtysh) |
+| Advertise network | `network 10.0.0.0 0.0.0.255 area 0` | `set protocols ospf area 0.0.0.0 interface ge-0/0/0` | `network 10.0.0.0/24 area 0` | `network 10.0.0.0/24 area 0` |
+| Set router ID | `router-id 1.1.1.1` | `set routing-options router-id 1.1.1.1` | `router-id 1.1.1.1` | `ospf router-id 1.1.1.1` |
+| Passive interface | `passive-interface GigabitEthernet0/0` | `set protocols ospf area 0 interface ge-0/0/0 passive` | `passive-interface Ethernet1` | `passive-interface eth0` |
+| Set cost | `ip ospf cost 100` | `set protocols ospf area 0 interface ge-0/0/0 metric 100` | `ip ospf cost 100` | `ip ospf cost 100` |
+| Show neighbors | `show ip ospf neighbor` | `show ospf neighbor` | `show ip ospf neighbor` | `show ip ospf neighbor` |
+| Show routes | `show ip route ospf` | `show route protocol ospf` | `show ip route ospf` | `show ip route ospf` |
+| Show LSDB | `show ip ospf database` | `show ospf database` | `show ip ospf database` | `show ip ospf database` |
+
+> **Key Differences:** Cisco uses wildcard masks (0.0.0.255) for network statements while others use prefix notation (/24). Juniper configures OSPF per-interface rather than by network statement. Arista EOS syntax is nearly identical to Cisco IOS. **FRRouting** (FRR) is the open-source routing suite used in Linux-based routers and many SDN platforms.
+
 ---
 
 ## Routing Protocol Selection
@@ -955,11 +972,166 @@ Gi0/2              1        0/0         5       0/1           50           0
 
 ---
 
+## Practice Questions
+
+**Q1.** Which routing protocol type maintains a complete topology map of the network and uses the Dijkstra SPF algorithm to calculate the best path?
+
+A) Distance vector
+B) Link-state
+C) Hybrid
+D) Path vector
+
+<details>
+<summary>Answer</summary>
+
+**B)** Link-state protocols (such as OSPF and IS-IS) build a complete topology database and use the Dijkstra Shortest Path First algorithm to calculate the best path to every destination. Distance vector protocols route by "rumor" and only know direction and distance. Hybrid protocols (EIGRP) use DUAL. Path vector (BGP) uses AS path attributes.
+</details>
+
+**Q2.** What is the maximum hop count for RIP, and what happens when a network is 16 hops away?
+
+A) Maximum 15 hops; 16 hops means the network is unreachable
+B) Maximum 16 hops; 17 hops means the network is unreachable
+C) Maximum 30 hops; 31 hops means the network is unreachable
+D) RIP has no maximum hop count
+
+<details>
+<summary>Answer</summary>
+
+**A)** RIP uses hop count as its metric with a maximum of 15 hops. A hop count of 16 is considered infinity/unreachable, and the route is removed from the routing table. This limitation restricts RIP to small networks and is one reason it has been largely replaced by OSPF and EIGRP in production environments.
+</details>
+
+**Q3.** An OSPF router has the following interfaces:
+- GigabitEthernet0/0 (1 Gbps)
+- FastEthernet0/1 (100 Mbps)
+
+Using the default OSPF reference bandwidth of 100 Mbps, what are the OSPF costs for these interfaces?
+
+A) Gi0/0 = 1, Fa0/1 = 1
+B) Gi0/0 = 10, Fa0/1 = 100
+C) Gi0/0 = 100, Fa0/1 = 1000
+D) Gi0/0 = 1, Fa0/1 = 10
+
+<details>
+<summary>Answer</summary>
+
+**A)** OSPF cost = Reference Bandwidth / Interface Bandwidth. With the default 100 Mbps reference: Gi0/0 = 100/1000 = 0.1, rounded to 1; Fa0/1 = 100/100 = 1. This is actually a problem because both interfaces get cost 1, making OSPF unable to prefer Gigabit over Fast Ethernet. The solution is to increase the reference bandwidth (e.g., to 100 Gbps).
+</details>
+
+**Q4.** Which EIGRP feature allows it to achieve sub-second convergence when a successor route fails?
+
+A) Holddown timers
+B) Feasible successors in the topology table
+C) Periodic full routing table updates
+D) Split horizon with poison reverse
+
+<details>
+<summary>Answer</summary>
+
+**B)** EIGRP maintains feasible successors (backup routes) in its topology table. When a successor (primary route) fails, EIGRP immediately installs the feasible successor without running a full DUAL calculation, providing sub-second convergence. Holddown timers and periodic updates are RIP mechanisms. Split horizon prevents loops but doesn't provide fast failover.
+</details>
+
+**Q5.** Which OSPF area type receives only a default route and does not accept any external or inter-area LSAs?
+
+A) Backbone area (Area 0)
+B) Standard area
+C) Stub area
+D) Totally stubby area
+
+<details>
+<summary>Answer</summary>
+
+**D)** A totally stubby area (Cisco proprietary) blocks both external LSAs (Type 5) and inter-area LSAs (Type 3), providing only a default route to reach outside networks. This results in the smallest LSDB. Standard areas receive all LSAs. Stub areas block external LSAs but allow inter-area LSAs. Area 0 is the backbone and receives everything.
+</details>
+
+**Q6.** A company uses routers from multiple vendors. Which routing protocol is the BEST choice for their enterprise network?
+
+A) EIGRP
+B) RIP
+C) OSPF
+D) IGRP
+
+<details>
+<summary>Answer</summary>
+
+**C)** OSPF (RFC 2328) is an open standard supported by all major vendors, making it ideal for multi-vendor environments. EIGRP is primarily Cisco proprietary with limited multi-vendor support. RIP is vendor-neutral but has severe scalability limitations (15 hop max, slow convergence). IGRP is obsolete and Cisco proprietary.
+</details>
+
+**Q7.** In RIP, what mechanism prevents a router from advertising a route back out the same interface it was learned from?
+
+A) Route poisoning
+B) Holddown timer
+C) Split horizon
+D) Maximum hop count
+
+<details>
+<summary>Answer</summary>
+
+**C)** Split horizon prevents routing loops by not advertising routes back out the interface they were learned from. Route poisoning advertises a failed route with metric 16 (infinity). Holddown timers delay accepting new route information after a failure. Maximum hop count (15) limits network size but doesn't prevent loop advertisements.
+</details>
+
+**Q8.** Which of the following correctly lists the default administrative distance values from MOST trusted to LEAST trusted?
+
+A) OSPF (110) → EIGRP (90) → RIP (120) → Static (1)
+B) Static (1) → EIGRP (90) → OSPF (110) → RIP (120)
+C) RIP (120) → OSPF (110) → EIGRP (90) → Static (1)
+D) EIGRP (90) → Static (1) → OSPF (110) → RIP (120)
+
+<details>
+<summary>Answer</summary>
+
+**B)** Lower administrative distance means more trusted. The correct order from most to least trusted is: Connected (0) → Static (1) → EIGRP internal (90) → OSPF (110) → RIP (120). When multiple routing sources provide routes to the same destination, the route with the lowest AD is installed in the routing table.
+</details>
+
+**Q9.** What unique capability does EIGRP provide that OSPF and RIP do not?
+
+A) Classless routing with VLSM support
+B) Unequal-cost load balancing using the variance command
+C) Support for IPv6 routing
+D) Hierarchical network design with areas
+
+<details>
+<summary>Answer</summary>
+
+**B)** EIGRP uniquely supports unequal-cost load balancing through the variance command, allowing traffic to be distributed across paths with different metrics. OSPF only supports equal-cost load balancing. Both OSPF and RIPv2/RIPng support classless routing and IPv6. OSPF uses areas for hierarchy — EIGRP does not use areas in the same way.
+</details>
+
+**Q10.** On an OSPF multi-access network (Ethernet), what is the purpose of electing a Designated Router (DR)?
+
+A) To serve as the root bridge for the segment
+B) To reduce the number of OSPF adjacencies and LSA flooding on the segment
+C) To assign IP addresses to OSPF neighbors via DHCP
+D) To perform inter-area route summarization
+
+<details>
+<summary>Answer</summary>
+
+**B)** On multi-access networks, without a DR, every router would need to form adjacencies with every other router (n(n-1)/2 adjacencies). The DR serves as a central point for LSA exchange, reducing adjacencies to n-1. All routers form adjacencies only with the DR and BDR, significantly reducing OSPF overhead. Route summarization is performed by ABRs, not DRs.
+</details>
+
+---
+
 ## References
 
 - RFC 2453: RIP Version 2
 - RFC 2328: OSPF Version 2
 - RFC 7868: Cisco's EIGRP Informational RFC
-- CompTIA Network+ N10-008 Objectives: 2.2 Compare routing technologies
+- CompTIA Network+ N10-009 Objectives: 2.2 Compare routing technologies
 - "OSPF: Anatomy of an Internet Routing Protocol" - John Moy
 - "Routing TCP/IP, Volume 1" - Jeff Doyle
+
+### Required Reading
+
+- **RFC 2328** — OSPF Version 2 (1998)
+  - Read: Sections 1–4 (Introduction, The Topological Database, Splitting the AS into Areas, Functional Summary)
+  - Available at: https://www.rfc-editor.org/rfc/rfc2328
+  - Focus questions:
+    1. Why does OSPF flood complete topology information rather than just distance vectors, and what advantages does this provide?
+    2. How do OSPF area types (backbone, stub, NSSA, totally stubby) reduce the size of the link-state database?
+    3. What role do the Designated Router (DR) and Backup Designated Router (BDR) play on multi-access networks, and how is the election conducted?
+
+- **RFC 2453** — RIP Version 2 (1998)
+  - Read: Section 3 (Protocol Specification) — particularly 3.4 (Split Horizon) and 3.9 (Timers)
+  - Available at: https://www.rfc-editor.org/rfc/rfc2453
+  - Focus questions:
+    1. What is split horizon, and how does it help prevent routing loops in distance-vector protocols?
+    2. Why does RIPv2 have a maximum hop count of 15, and what practical limitation does this create?

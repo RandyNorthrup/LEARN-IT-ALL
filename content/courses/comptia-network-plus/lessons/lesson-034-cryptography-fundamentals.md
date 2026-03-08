@@ -1,7 +1,7 @@
 ---
-id: cryptography-fundamentals
+id: lesson-034-cryptography-fundamentals
 title: Cryptography Fundamentals
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 34
 duration: 85
 objectives:
@@ -21,6 +21,18 @@ Cryptography is the practice of securing communications and data through mathema
 In this lesson, we'll explore encryption algorithms, hashing functions, digital signatures, certificates, and Public Key Infrastructure (PKI) that protect network communications and verify identities.
 
 **Key Principle:** Cryptography provides confidentiality, integrity, authentication, and non-repudiation.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand symmetric and asymmetric encryption
+- Explain hashing and digital signatures
+- Implement PKI and certificate management
+- Use encryption protocols (TLS/SSL, IPsec)
+- Apply cryptography best practices
+
+---
 
 ## Cryptography Fundamentals
 
@@ -501,6 +513,153 @@ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
     Ephemeral Elliptic Curve Diffie-Hellman key exchange
 ```
 
+### Mathematical Foundations of Asymmetric Encryption
+
+Understanding *why* asymmetric cryptography works requires a brief look at the mathematical problems that make it secure.
+
+#### RSA Worked Example (Simplified)
+
+**Key Generation:**
+```
+Step 1: Choose two prime numbers
+   p = 61, q = 53
+
+Step 2: Compute modulus n
+   n = p × q = 61 × 53 = 3,233
+
+Step 3: Compute Euler's totient φ(n)
+   φ(n) = (p - 1)(q - 1) = 60 × 52 = 3,120
+
+Step 4: Choose public exponent e
+   e = 17 (must be coprime to 3,120 — gcd(17, 3120) = 1 ✓)
+
+Step 5: Compute private exponent d
+   d = e⁻¹ mod φ(n)
+   17 × d ≡ 1 (mod 3,120)
+   d = 2,753 (because 17 × 2,753 = 46,801 = 15 × 3,120 + 1)
+
+Public Key:  (e=17, n=3,233)  ← Share freely
+Private Key: (d=2,753, n=3,233) ← Keep secret
+```
+
+**Encryption** (message m = 65, representing the letter "A"):
+```
+Ciphertext c = mᵉ mod n
+            c = 65¹⁷ mod 3,233
+            c = 2,790
+```
+
+**Decryption:**
+```
+Plaintext m = cᵈ mod n
+           m = 2,790²⁷⁵³ mod 3,233
+           m = 65 ✓
+```
+
+**Why it's secure:** Factoring n = 3,233 back into 61 × 53 is trivial for small numbers. But for RSA-2048, the modulus n is a 617-digit number. No known classical algorithm can factor a number that large in any reasonable time — this is the **integer factorization problem**. Current estimates suggest factoring a 2048-bit RSA key would take billions of years on conventional hardware.
+
+| Key Size | Security Level | Approximate Factor Time |
+|----------|----------------|------------------------|
+| RSA-1024 | Deprecated | Feasible with major resources |
+| RSA-2048 | Current minimum | ~10¹⁵ years (classical) |
+| RSA-3072 | 128-bit security | Beyond foreseeable capability |
+| RSA-4096 | High security | Vastly beyond capability |
+
+#### Diffie-Hellman Key Exchange (Worked Example)
+
+**Public parameters** (agreed upon openly):
+- g = 5 (generator)
+- p = 23 (prime modulus)
+
+```
+Step-by-Step Key Exchange:
+
+                    Alice                          Bob
+                    ─────                          ───
+Step 1: Choose      Private key: a = 6            Private key: b = 15
+        private
+        key
+
+Step 2: Compute     A = gᵃ mod p                  B = gᵇ mod p
+        public      A = 5⁶ mod 23                 B = 5¹⁵ mod 23
+        value       A = 15,625 mod 23             B = 30,517,578,125 mod 23
+                    A = 8                          B = 19
+
+Step 3: Exchange    ──── Sends A = 8 ────────►
+        public      ◄──── Sends B = 19 ──────
+        values
+
+Step 4: Compute     s = Bᵃ mod p                  s = Aᵇ mod p
+        shared      s = 19⁶ mod 23                s = 8¹⁵ mod 23
+        secret      s = 47,045,881 mod 23         s = 35,184,372,088,832 mod 23
+                    s = 2 ✓                        s = 2 ✓
+```
+
+Both Alice and Bob arrive at the **same shared secret (2)** without ever transmitting it. An eavesdropper sees g=5, p=23, A=8, B=19 — but computing Alice's private key `a` from `A = 5ᵃ mod 23 = 8` requires solving the **discrete logarithm problem**, which has no efficient solution for large primes (2048+ bits).
+
+> **Key Insight:** Real DH uses primes with 2048+ bits (600+ digits). The discrete logarithm problem at this scale is computationally infeasible. Modern TLS uses ECDHE (Elliptic Curve Diffie-Hellman Ephemeral), which achieves equivalent security with smaller key sizes using elliptic curve mathematics instead of modular exponentiation.
+
+### Post-Quantum Cryptography (PQC)
+
+#### The Quantum Threat to Networking
+
+Shor's algorithm (1994) proved that a sufficiently powerful **quantum computer** can:
+- **Factor large integers** in polynomial time → **breaks RSA**
+- **Compute discrete logarithms** → **breaks DH, ECDH, ECDSA, DSA**
+
+This means every asymmetric algorithm currently protecting network traffic — TLS, IPsec VPNs, SSH, Wi-Fi (WPA3-Enterprise) — is vulnerable to a future quantum computer.
+
+**"Harvest Now, Decrypt Later" (HNDL):**
+```
+Today:                           Future (~2030s):
+┌─────────┐   Encrypted    ┌─────────┐
+│ Attacker │──────────────►│ Storage  │
+│ Records  │   Traffic     │ Archive  │
+│ Today    │               │ (Years)  │
+└─────────┘               └────┬─────┘
+                                │
+                    ┌───────────▼──────────┐
+                    │ Quantum Computer     │
+                    │ Breaks RSA/ECDH      │
+                    │ Decrypts all stored  │
+                    │ traffic retroactively│
+                    └──────────────────────┘
+```
+
+This makes PQC migration urgent **now** — even before quantum computers exist at scale — because encrypted data captured today remains valuable for years.
+
+#### NIST Post-Quantum Standards (Finalized August 2024)
+
+| FIPS Standard | Algorithm Name | Type | Replaces | Use Case |
+|---------------|----------------|------|----------|----------|
+| FIPS 203 | **ML-KEM** (Kyber) | Lattice-based | ECDH / DH key exchange | Key encapsulation for TLS, VPN |
+| FIPS 204 | **ML-DSA** (Dilithium) | Lattice-based | RSA / ECDSA signatures | Digital signatures, certificates |
+| FIPS 205 | **SLH-DSA** (SPHINCS+) | Hash-based | RSA / ECDSA signatures | Conservative signature fallback |
+
+These algorithms resist quantum attack because they rely on mathematical problems (lattice problems, hash functions) that quantum computers cannot solve efficiently.
+
+#### Impact on Network Protocols
+
+| Protocol | Current Crypto | PQC Migration Status |
+|----------|---------------|---------------------|
+| **TLS 1.3** | ECDHE + ECDSA/RSA | Chrome/Cloudflare deploy **hybrid X25519Kyber768** key exchange (2024+) |
+| **IPsec/IKEv2** | DH/ECDH key exchange | NIST recommends hybrid classical+PQC during transition |
+| **SSH** | ECDH/DH key exchange | OpenSSH 9.0+ supports **sntrup761x25519-sha512** (hybrid PQC) |
+| **Wi-Fi (WPA3)** | SAE (ECDH-based) | Research ongoing; expect WPA4 or WPA3 amendment |
+| **X.509 Certs** | RSA/ECDSA signatures | Must migrate to ML-DSA signatures for post-quantum validity |
+
+**Migration Timeline:**
+```
+2024: NIST finalizes FIPS 203/204/205 standards
+2025-2030: Hybrid deployments (classical + PQC simultaneously)
+~2030: NIST targets deprecation of RSA-2048 for new deployments
+~2035: NIST targets full deprecation of RSA and ECDSA in TLS
+```
+
+> **For the Network+ exam:** Know that quantum computing threatens current encryption, that NIST has published post-quantum standards (ML-KEM, ML-DSA), and that organizations should begin planning migration. Hybrid key exchange (combining classical and post-quantum algorithms) is the recommended transition strategy.
+
+---
+
 ## Hashing
 
 ### Hash Function Concepts
@@ -834,53 +993,99 @@ Example:
 ssh-keygen -t ed25519 -C "user@example.com"
 ```
 
-## Review Questions
+## Summary
 
-1. **What is the difference between symmetric and asymmetric encryption?**
-   - Symmetric uses one key (fast, bulk encryption), asymmetric uses key pair (slower, key exchange/signatures)
+In this lesson, we explored the cryptographic building blocks that secure network communications. Symmetric encryption uses a single shared key — AES (128/192/256-bit) is the current standard and is 100–1000× faster than asymmetric algorithms, while DES (56-bit) was broken in 1999 and 3DES is legacy-only. Asymmetric encryption uses key pairs: RSA for encryption and digital signatures, ECC for efficiency on constrained devices, and Diffie-Hellman for secure key exchange. Hashing algorithms like SHA-256 produce fixed-length digests for integrity verification; MD5 and SHA-1 are broken and should not be used. Digital signatures provide authentication, integrity, and non-repudiation by signing with a private key. Block cipher modes matter: ECB is insecure (reveals patterns), CBC chains blocks but cannot parallelize, and GCM (used in TLS 1.3) provides authenticated encryption with parallelization. PKI uses X.509 certificates issued by Certificate Authorities to bind public keys to identities.
 
-2. **What is the current recommended symmetric encryption algorithm?**
-   - AES (128, 192, or 256-bit keys)
+## Practice Questions
 
-3. **Why is ECB mode insecure?**
-   - Same plaintext blocks produce same ciphertext blocks, revealing patterns
+**Q1.** Which encryption type uses a single shared key for both encryption and decryption and is commonly used for bulk data encryption?
 
-4. **What is GCM and why is it preferred?**
-   - Galois/Counter Mode provides authenticated encryption (confidentiality + integrity), parallelizable, modern standard
+A) Asymmetric encryption
+B) Hashing
+C) Symmetric encryption
+D) Digital signatures
 
-5. **What is the key size comparison between ECC and RSA?**
-   - ECC-256 ≈ RSA-3072 (ECC much smaller for equivalent security)
+<details>
+<summary>Answer</summary>
 
-6. **What is the difference between a hash and HMAC?**
-   - Hash is keyless (anyone can compute), HMAC is keyed (requires secret key for authentication)
+**C)** Symmetric encryption uses the same key for both encryption and decryption, making it fast and efficient for bulk data encryption (e.g., AES). Asymmetric encryption (A) uses a key pair (public/private) and is slower. Hashing (B) is a one-way function that does not encrypt or decrypt data. Digital signatures (D) use asymmetric cryptography to verify authenticity and integrity, not to encrypt bulk data.
+</details>
 
-7. **Why should passwords never be hashed with SHA-256 directly?**
-   - Too fast (brute-force easy), no salt (rainbow tables), use bcrypt/scrypt/Argon2 instead
+**Q2.** What is the primary purpose of a hashing algorithm like SHA-256?
 
-8. **What does a digital signature prove?**
-   - Authentication (signer identity), integrity (not modified), non-repudiation (cannot deny)
+A) To encrypt data so it cannot be read without a key
+B) To create a fixed-length fingerprint that verifies data integrity
+C) To exchange encryption keys securely between two parties
+D) To compress data for faster transmission
 
-9. **What is Perfect Forward Secrecy?**
-   - Ephemeral keys (DHE/ECDHE) ensure compromise of long-term key doesn't compromise past sessions
+<details>
+<summary>Answer</summary>
 
-10. **Why is SHA-1 deprecated?**
-    - Collision attacks demonstrated (Google 2017), no longer cryptographically secure
+**B)** Hashing algorithms like SHA-256 produce a fixed-length digest (hash) that acts as a fingerprint for the original data. Any modification to the data produces a completely different hash, allowing verification of integrity. Hashing is one-way and cannot be reversed. Encryption (A) is a two-way process using keys. Key exchange (C) uses protocols like Diffie-Hellman. Compression (D) reduces file size and is unrelated to hashing.
+</details>
 
-## Key Takeaways
+**Q3.** An organization needs to secure its web application with TLS 1.3. Which cipher suite component provides authenticated encryption and is mandatory in TLS 1.3?
 
-- **AES** is the current symmetric encryption standard (GCM mode preferred)
-- **RSA** is being phased out in favor of **ECC** (smaller keys, better performance)
-- **SHA-256** or better for hashing (SHA-1 and MD5 deprecated)
-- **bcrypt/scrypt/Argon2** for password hashing (never SHA-256 directly)
-- **HMAC** provides keyed authentication (message integrity + authentication)
-- **Digital signatures** prove identity and integrity (non-repudiation)
-- **ECDHE** provides perfect forward secrecy (modern TLS requirement)
-- **Key management** is critical (cryptography only as strong as weakest link)
+A) ECB (Electronic Codebook) mode
+B) CBC (Cipher Block Chaining) mode
+C) GCM (Galois/Counter Mode)
+D) DES (Data Encryption Standard)
 
-## Next Steps
+<details>
+<summary>Answer</summary>
 
-In the next lesson, we'll explore **VPNs and Remote Access**, including IPsec, SSL VPN, and secure remote connectivity.
+**C)** GCM (Galois/Counter Mode) provides authenticated encryption with associated data (AEAD), combining confidentiality and integrity verification in a single operation. TLS 1.3 mandates AEAD cipher suites like AES-GCM. ECB mode (A) is insecure because identical plaintext blocks produce identical ciphertext. CBC (B) is supported in older TLS versions but is not AEAD and is susceptible to padding oracle attacks. DES (D) was broken in 1999 and is completely insecure.
+</details>
 
----
+**Q4.** What security property does Perfect Forward Secrecy (PFS) provide when using ephemeral Diffie-Hellman (DHE or ECDHE) key exchange?
 
-**Lesson Complete!** You now understand cryptographic algorithms and techniques that protect data confidentiality, integrity, and authenticity.
+A) It ensures all encrypted sessions use the same master key for efficiency
+B) It guarantees that compromising a long-term private key cannot decrypt past session traffic
+C) It eliminates the need for certificate-based authentication
+D) It replaces symmetric encryption with faster asymmetric encryption
+
+<details>
+<summary>Answer</summary>
+
+**B)** Perfect Forward Secrecy (PFS) uses ephemeral (temporary) keys for each session. If a server's long-term private key is later compromised, past recorded sessions cannot be decrypted because the ephemeral session keys were discarded. Using the same master key (A) is the opposite of PFS. PFS does not replace certificate authentication (C). Asymmetric encryption (D) is slower than symmetric, and PFS still uses symmetric encryption for data transfer.
+</details>
+
+**Q5.** A security administrator needs to verify that a software update was published by the legitimate vendor and has not been modified in transit. Which cryptographic mechanism should they use?
+
+A) Symmetric encryption with AES-256
+B) Digital signature verification using the vendor's public key
+C) Password-based encryption of the download
+D) Compressing the file with GZIP before transfer
+
+<details>
+<summary>Answer</summary>
+
+**B)** Digital signatures provide authentication (verifying the signer's identity), integrity (detecting any modification), and non-repudiation (the vendor cannot deny publishing it). The administrator verifies the signature using the vendor's public key. Symmetric encryption (A) provides confidentiality but not authentication of the sender. Password-based encryption (C) doesn't verify the publisher's identity. GZIP compression (D) has no security properties.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.3 — Given a scenario, apply network hardening techniques (encryption standards)
+- NIST SP 800-175B Rev. 1: Guideline for Using Cryptographic Standards in the Federal Government
+- NIST FIPS 197: Advanced Encryption Standard (AES)
+- IETF RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3
+- Stallings, W. (2021). *Cryptography and Network Security: Principles and Practice* (8th ed.). Pearson
+- NIST SP 800-57 Part 1 Rev. 5: Recommendation for Key Management
+
+### Required Reading
+
+- **RFC 8446** — The Transport Layer Security (TLS) Protocol Version 1.3 (2018)
+  - Read: Section 1 (Introduction) and Section 2 (Protocol Overview)
+  - Available at: https://www.rfc-editor.org/rfc/rfc8446
+  - Focus questions:
+    1. How does TLS 1.3 reduce the handshake from two round-trips (TLS 1.2) to one, and what is 0-RTT resumption?
+    2. Which cipher suites were removed in TLS 1.3 compared to TLS 1.2, and why were they deprecated?
+    3. How does TLS 1.3 achieve forward secrecy, and why is this considered essential for modern security?
+
+- **NIST FIPS 197** — Advanced Encryption Standard (AES)
+  - Read: Sections 1–3 (Introduction, Definitions, Notation and Conventions) and Section 5 (Algorithm Specification) overview
+  - Available at: https://csrc.nist.gov/publications/detail/fips/197/final
+  - Focus questions:
+    1. Why did NIST standardize on key sizes of 128, 192, and 256 bits? What threat models does each address?
+    2. How do the SubBytes, ShiftRows, MixColumns, and AddRoundKey transformations contribute to AES's security properties?

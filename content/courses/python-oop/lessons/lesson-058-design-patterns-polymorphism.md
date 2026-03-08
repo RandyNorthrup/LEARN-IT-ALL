@@ -1,7 +1,7 @@
 ---
 id: "058"
 title: "Design Patterns with Polymorphism"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 6
 duration: "22 minutes"
 objectives:

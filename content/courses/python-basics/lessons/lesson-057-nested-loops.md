@@ -1,8 +1,8 @@
 ---
-id: "92-nested-loops"
+id: lesson-057-nested-loops
 title: "Nested Loops"
 chapterId: ch5-loops
-order: 3
+order: 4
 duration: 25
 objectives:
   - Understand nested loop structure
@@ -276,13 +276,13 @@ for color in colors:
 
 # Output:
 # small red
-# small green
-# small blue
 # medium red
-# medium green
-# medium blue
 # large red
+# small green
+# medium green
 # large green
+# small blue
+# medium blue
 # large blue
 
 # Create product catalog

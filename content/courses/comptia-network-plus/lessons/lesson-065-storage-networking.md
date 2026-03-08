@@ -1,7 +1,7 @@
 ---
 id: lesson-065-storage-networking
 title: "Storage Networking (SAN, NAS, iSCSI, Fibre Channel)"
-chapterId: "chapter-007-cloud-datacenter"
+chapterId: ch7-cloud-datacenter
 order: 65
 duration: 23
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Storage Networking (SAN, NAS, iSCSI, Fibre Channel)
 
+## Introduction
+
 **Storage networking** connects servers to centralized storage systems, enabling shared access, improved performance, and simplified management. Key technologies include **SAN (Storage Area Network)**, **NAS (Network Attached Storage)**, **iSCSI**, and **Fibre Channel**.
 
-This lesson covers storage networking fundamentals—important for the CompTIA Network+ N10-008 exam.
+This lesson covers storage networking fundamentals—important for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand storage networking concepts
+- Differentiate between SAN and NAS
+- Explain iSCSI protocol and operation
+- Describe Fibre Channel technology
+- Identify storage networking use cases
 
 ---
 
@@ -544,7 +558,7 @@ fdisk -l /dev/sdb
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **DAS** is directly attached storage (single server), **NAS** is file-level network storage, **SAN** is block-level network storage
 2. **NAS** uses standard protocols (NFS, SMB) for file sharing across multiple clients
@@ -559,13 +573,147 @@ fdisk -l /dev/sdb
 
 ---
 
+## Practice Questions
+
+**Q1.** Which storage technology provides block-level access and makes storage appear as locally attached disks to servers?
+
+A) NAS
+B) SAN
+C) DAS
+D) NFS
+
+<details>
+<summary>Answer</summary>
+
+**B)** A SAN (Storage Area Network) provides block-level access to storage. Servers connect to SAN storage over a dedicated network, and the storage appears as locally attached disks, making it ideal for databases and VMs.
+</details>
+
+**Q2.** A company needs file-level shared storage accessible by multiple clients using standard network protocols. Which technology should they deploy?
+
+A) SAN
+B) NAS
+C) Fibre Channel
+D) iSCSI
+
+<details>
+<summary>Answer</summary>
+
+**B)** NAS (Network Attached Storage) provides file-level access using standard protocols like NFS (Linux/Unix) and SMB/CIFS (Windows). Multiple clients can access the same file shares simultaneously.
+</details>
+
+**Q3.** Which SAN protocol encapsulates SCSI commands over TCP/IP, allowing the use of existing Ethernet infrastructure?
+
+A) Fibre Channel
+B) FCoE
+C) iSCSI
+D) NFS
+
+<details>
+<summary>Answer</summary>
+
+**C)** iSCSI encapsulates SCSI commands inside TCP/IP packets, allowing SAN traffic to run over standard Ethernet networks. This makes it a lower-cost alternative to dedicated Fibre Channel.
+</details>
+
+**Q4.** What is the function of an HBA (Host Bus Adapter) in a SAN environment?
+
+A) It converts file-level requests to block-level
+B) It connects servers to the SAN fabric
+C) It manages RAID configurations
+D) It provides DNS resolution for storage
+
+<details>
+<summary>Answer</summary>
+
+**B)** An HBA (Host Bus Adapter) connects a server to the SAN. A Fibre Channel HBA connects to FC switches, while an iSCSI HBA (or software initiator) connects to iSCSI targets over Ethernet.
+</details>
+
+**Q5.** Which term describes a logical unit of storage presented by a SAN to a server, appearing as a local disk?
+
+A) Volume
+B) Partition
+C) LUN
+D) Share
+
+<details>
+<summary>Answer</summary>
+
+**C)** A LUN (Logical Unit Number) is a logical disk unit presented by the SAN storage array to a server. The server sees the LUN as a locally attached disk for formatting and use.
+</details>
+
+**Q6.** What is the PRIMARY advantage of Fibre Channel over iSCSI for SAN connectivity?
+
+A) Lower cost
+B) Uses existing Ethernet infrastructure
+C) Higher performance with dedicated network and speeds up to 128 Gbps
+D) Simpler configuration
+
+<details>
+<summary>Answer</summary>
+
+**C)** Fibre Channel provides higher performance with a dedicated storage network and speeds up to 128 Gbps. However, it is more expensive than iSCSI due to the specialized hardware required.
+</details>
+
+**Q7.** Which technology combines Fibre Channel and Ethernet into a single unified network?
+
+A) iSCSI
+B) NFS
+C) FCoE
+D) SMB
+
+<details>
+<summary>Answer</summary>
+
+**C)** FCoE (Fibre Channel over Ethernet) encapsulates Fibre Channel frames inside Ethernet frames, allowing storage and regular network traffic to share the same physical network infrastructure.
+</details>
+
+**Q8.** Which authentication method is used by iSCSI to secure connections between initiators and targets?
+
+A) Kerberos
+B) RADIUS
+C) CHAP
+D) LDAP
+
+<details>
+<summary>Answer</summary>
+
+**C)** CHAP (Challenge Handshake Authentication Protocol) is used by iSCSI for authenticating initiators (servers) connecting to targets (storage). Mutual CHAP provides two-way authentication.
+</details>
+
+**Q9.** Which protocol is commonly used by NAS devices to provide file sharing to Linux and Unix clients?
+
+A) SMB
+B) iSCSI
+C) NFS
+D) Fibre Channel
+
+<details>
+<summary>Answer</summary>
+
+**C)** NFS (Network File System) is the standard file-sharing protocol used by NAS for Linux and Unix clients. SMB/CIFS is used for Windows clients.
+</details>
+
+**Q10.** In a Fibre Channel SAN, what is the purpose of zoning?
+
+A) To increase the speed of data transfers between switches
+B) To control which servers can access specific storage devices for security and isolation
+C) To encrypt data in transit between HBAs and storage arrays
+D) To compress data before writing to disk
+
+<details>
+<summary>Answer</summary>
+
+**B)** Zoning in Fibre Channel restricts which HBAs (servers) can communicate with which storage ports and LUNs, providing security and isolation. Without zoning, all connected devices could see all storage, which is a security risk and could lead to data corruption. Zoning does not affect speed, encryption, or compression.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.8:** Summarize cloud concepts and connectivity options (storage concepts)
+- **CompTIA Network+ N10-009 Objective 1.8:** Summarize cloud concepts and connectivity options (storage concepts)
 - Fibre Channel Industry Association (FCIA)
 - RFC 3720: iSCSI Specification
 - VMware Storage Documentation
-- Professor Messer: Network+ N10-008 - Storage Networking
+- Professor Messer: Network+ N10-009 - Storage Networking
 
 ---
 

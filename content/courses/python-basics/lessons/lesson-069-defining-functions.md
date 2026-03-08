@@ -1,5 +1,5 @@
 ---
-id: defining-functions
+id: lesson-069-defining-functions
 title: Defining and Calling Functions
 chapterId: ch6-functions
 order: 1
@@ -24,6 +24,17 @@ A **function** is a named block of code that you can call (execute) multiple tim
 2. **Organization**: Break complex problems into smaller pieces
 3. **Maintainability**: Fix bugs in one place
 4. **Readability**: Named functions make code self-documenting
+
+## Why Functions Matter
+
+Functions are far more than a convenience — they are the primary tool for managing complexity in software.
+
+- **DRY (Don't Repeat Yourself)**: Without functions, you'd copy-paste the same logic everywhere. When a bug appears, you'd have to fix it in every copy. Functions let you fix it once.
+- **Abstraction**: A well-named function hides *how* something works and lets the caller focus on *what* it does. `calculate_tax(income)` is instantly understandable; the 20-line formula behind it doesn't clutter your main code.
+- **Testability**: Small, focused functions are easy to test in isolation. You can verify `celsius_to_fahrenheit(100)` returns `212.0` without running your entire program.
+- **Readability**: Code that reads like a sequence of function calls — `load_data()`, `clean_data()`, `train_model()` — tells a clear story.
+- **The Call Stack**: Every time you call a function, Python adds a frame to the **call stack**. When the function returns, that frame is removed. This is how Python keeps track of where to resume execution, and understanding it will help you debug errors like `RecursionError` later on.
+- **Divide and Conquer**: Large problems become manageable when broken into small, well-defined functions. Each function solves one piece of the puzzle.
 
 ## Built-in Functions Review
 
@@ -169,15 +180,15 @@ print(f"0°C = {temp_f}°F")   # 0°C = 32.0°F
 
 ```python
 def is_even(number):
-    if number % 2 == 0:
-        return True
-    else:
-        return False
+    return number % 2 == 0  # Idiomatic: the comparison already produces a bool
 
 print(is_even(4))   # True
 print(is_even(7))   # False
 print(is_even(100)) # True
 ```
+
+> **Tip:** When a condition already evaluates to `True` or `False`, return it
+> directly instead of writing a verbose `if/else`.
 
 ### Example 4: Find Maximum of Three Numbers
 
@@ -193,6 +204,10 @@ def find_max(a, b, c):
 print(find_max(10, 25, 15))  # 25
 print(find_max(100, 50, 75)) # 100
 ```
+
+> **Note:** Python includes a built-in `max()` function that already does this
+> (and handles any number of arguments). Writing our own version helps
+> understand the underlying logic, but in practice you should use the built-in.
 
 ### Example 5: Calculate Discount Price
 

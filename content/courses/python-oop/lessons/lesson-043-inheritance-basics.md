@@ -1,7 +1,7 @@
 ---
 id: "043"
 title: "Inheritance Basics"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 1
 duration: "15 minutes"
 objectives:

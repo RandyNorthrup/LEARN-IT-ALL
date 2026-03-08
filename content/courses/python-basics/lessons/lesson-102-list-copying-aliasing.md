@@ -1,8 +1,8 @@
 ---
-id: "116-list-copying-aliasing"
+id: lesson-102-list-copying-aliasing
 title: "List Copying and Aliasing"
 chapterId: ch8-lists
-order: 8
+order: 10
 duration: 25
 objectives:
   - Understand list references vs copies
@@ -111,12 +111,12 @@ print(id(original[0]) == id(shallow[0]))  # True - same object!
 # shallow ───> [ptr1, ptr2]  # Same pointers!
 #                 │     │
 #                 ▼     ▼
-#              [1, 2] [3, 4]
+#             [99, 2] [3, 4]
 
 # Replacing entire nested list is safe
 shallow = original[:]
 shallow[0] = [99, 99]  # Replace, not modify
-print(original)  # [[1, 2], [3, 4]] - unchanged
+print(original)  # [[99, 2], [3, 4]] - unchanged
 print(shallow)   # [[99, 99], [3, 4]]
 
 # Common bug with default arguments
@@ -168,33 +168,31 @@ deep[1][1][1][0] = 88
 print(original)
 # [[1, [2, 3]], [4, [5, [6, 7]]]] - unchanged
 
-# Deep copy with objects
-class Person:
-    def __init__(self, name, friends=None):
-        self.name = name
-        self.friends = friends if friends else []
-    
-    def __repr__(self):
-        return f"Person({self.name})"
+# Deep copy with nested dictionaries
+def make_person(name, friends=None):
+    return {"name": name, "friends": friends if friends else []}
 
-alice = Person("Alice")
-bob = Person("Bob")
-alice.friends = [bob]
+alice = make_person("Alice")
+bob = make_person("Bob")
+alice["friends"] = [bob]
 
 # Shallow copy
 shallow = copy.copy(alice)
-shallow.friends.append(Person("Charlie"))
-print(alice.friends)  # [Person(Bob), Person(Charlie)] - affected!
+shallow["friends"].append(make_person("Charlie"))
+print(alice["friends"])
+# [{'name': 'Bob', ...}, {'name': 'Charlie', ...}] - affected!
 
 # Deep copy
-alice = Person("Alice")
-bob = Person("Bob")
-alice.friends = [bob]
+alice = make_person("Alice")
+bob = make_person("Bob")
+alice["friends"] = [bob]
 
 deep = copy.deepcopy(alice)
-deep.friends.append(Person("Charlie"))
-print(alice.friends)  # [Person(Bob)] - unchanged
-print(deep.friends)   # [Person(Bob), Person(Charlie)]
+deep["friends"].append(make_person("Charlie"))
+print(alice["friends"])
+# [{'name': 'Bob', ...}] - unchanged
+print(deep["friends"])
+# [{'name': 'Bob', ...}, {'name': 'Charlie', ...}]
 ```
 
 ## When to Use Each
@@ -230,15 +228,11 @@ backup = copy.deepcopy(matrix)
 matrix[0][0] = 99
 # Can restore from backup
 
-# 2. Objects with mutable attributes
-class Config:
-    def __init__(self):
-        self.settings = {"debug": True}
-
-config1 = Config()
+# 2. Dictionaries with mutable values
+config1 = {"settings": {"debug": True}}
 config2 = copy.deepcopy(config1)
-config2.settings["debug"] = False
-print(config1.settings)  # {"debug": True} - unchanged
+config2["settings"]["debug"] = False
+print(config1["settings"])  # {"debug": True} - unchanged
 ```
 
 ## Detecting Aliases
@@ -275,7 +269,7 @@ def find_aliases(obj):
 x = [1, 2, 3]
 y = x
 z = x
-print(find_aliases(x))  # ['y', 'z']
+print(find_aliases(x))  # ['x', 'y', 'z']
 ```
 
 ## Copy in Function Parameters
@@ -319,44 +313,38 @@ result = process_copy(numbers)  # Creates new list
 ## Return Value Aliasing
 
 ```python
-# Returning reference can cause issues
-class DataStore:
-    def __init__(self):
-        self._data = [1, 2, 3]
-    
-    def get_data(self):
-        return self._data  # Returns reference!
+# Returning a reference can cause issues
+def create_store():
+    return {"data": [1, 2, 3]}
 
-store = DataStore()
-data = store.get_data()
+def get_data(store):
+    return store["data"]  # Returns reference!
+
+store = create_store()
+data = get_data(store)
 data.append(999)
-print(store._data)  # [1, 2, 3, 999] - modified!
+print(store["data"])  # [1, 2, 3, 999] - modified!
 
 # Safe: return copy
-class DataStore:
-    def __init__(self):
-        self._data = [1, 2, 3]
-    
-    def get_data(self):
-        return self._data[:]  # Return copy
+def get_data_safe(store):
+    return store["data"][:]  # Return copy
 
-store = DataStore()
-data = store.get_data()
+store = create_store()
+data = get_data_safe(store)
 data.append(999)
-print(store._data)  # [1, 2, 3] - unchanged
+print(store["data"])  # [1, 2, 3] - unchanged
 
 # For nested structures
-class DataStore:
-    def __init__(self):
-        self._data = [[1, 2], [3, 4]]
-    
-    def get_data(self):
-        return copy.deepcopy(self._data)
+def create_nested_store():
+    return {"data": [[1, 2], [3, 4]]}
 
-store = DataStore()
-data = store.get_data()
+def get_data_deep(store):
+    return copy.deepcopy(store["data"])
+
+store = create_nested_store()
+data = get_data_deep(store)
 data[0][0] = 999
-print(store._data)  # [[1, 2], [3, 4]] - unchanged
+print(store["data"])  # [[1, 2], [3, 4]] - unchanged
 ```
 
 ## Copy Performance
@@ -437,14 +425,14 @@ print(matrix)  # [[1], [1], [1]] - all same!
 matrix = [[0] for _ in range(3)]
 
 # Pitfall 3: Modifying during iteration
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 1, 3, 5]
 for num in numbers:
     if num % 2 == 0:
         numbers.remove(num)  # Modifies original!
-print(numbers)  # [1, 3, 4, 5] - missed 4!
+print(numbers)  # [4, 1, 3, 5] - missed 4!
 
 # Should iterate over copy:
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 1, 3, 5]
 for num in numbers[:]:
     if num % 2 == 0:
         numbers.remove(num)

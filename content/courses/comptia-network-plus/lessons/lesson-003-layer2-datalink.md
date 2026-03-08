@@ -1,5 +1,5 @@
 ---
-id: layer2-datalink
+id: lesson-003-layer2-datalink
 title: Layer 2 - The Data Link Layer
 chapterId: ch1-networking-fundamentals
 order: 3
@@ -554,11 +554,145 @@ The Data Link layer (Layer 2) is crucial for local network communication:
 
 ---
 
+## Practice Questions
+
+**Q1.** A MAC address is displayed as `00:1A:2B:3C:4D:5E`. Which portion of this address identifies the manufacturer?
+
+A) 3C:4D:5E
+B) 00:1A:2B
+C) 2B:3C:4D
+D) The entire address
+
+<details>
+<summary>Answer</summary>
+
+**B)** The first 24 bits (3 bytes) of a MAC address form the OUI (Organizationally Unique Identifier), which is assigned by IEEE to the manufacturer. In this case, `00:1A:2B` identifies the manufacturer. The last 24 bits (`3C:4D:5E`) are the device identifier assigned by that manufacturer.
+</details>
+
+**Q2.** What is the broadcast MAC address used to send a frame to all devices on a local network?
+
+A) 00:00:00:00:00:00
+B) FF:FF:FF:FF:FF:FF
+C) 01:00:5E:00:00:00
+D) 255.255.255.255
+
+<details>
+<summary>Answer</summary>
+
+**B)** The broadcast MAC address is `FF:FF:FF:FF:FF:FF`, where all 48 bits are set to 1. When a frame is sent to this address, all devices on the local network will receive and process it. Option D (255.255.255.255) is an IP broadcast address, not a MAC address.
+</details>
+
+**Q3.** What is the primary difference between a hub and a switch?
+
+A) A hub operates at Layer 3, while a switch operates at Layer 2
+B) A hub forwards frames only to the destination port, while a switch floods all ports
+C) A hub floods frames to all ports, while a switch forwards only to the destination port
+D) A hub supports VLANs, while a switch does not
+
+<details>
+<summary>Answer</summary>
+
+**C)** A hub is a Layer 1 device that simply repeats (floods) incoming frames to all ports, creating a single collision domain. A switch is a Layer 2 device that uses a MAC address table to forward frames only to the specific port where the destination device is connected, providing dedicated bandwidth per port.
+</details>
+
+**Q4.** An Ethernet frame arrives at a switch, but the destination MAC address is not in the switch's MAC address table. What will the switch do?
+
+A) Drop the frame
+B) Send an error message back to the source
+C) Flood the frame to all ports except the source port
+D) Forward the frame to the default gateway
+
+<details>
+<summary>Answer</summary>
+
+**C)** When a switch receives a frame with an unknown destination MAC address (not in its MAC address table), it floods the frame out all ports except the port it was received on. This is called "unknown unicast flooding." The switch learns the source MAC address from this frame and adds it to the table.
+</details>
+
+**Q5.** Which field in an Ethernet frame is used for error detection?
+
+A) Preamble
+B) Type/Length
+C) Start Frame Delimiter (SFD)
+D) Frame Check Sequence (FCS)
+
+<details>
+<summary>Answer</summary>
+
+**D)** The Frame Check Sequence (FCS) is a 4-byte field that contains a CRC (Cyclic Redundancy Check) value calculated by the sender. The receiver recalculates the CRC and compares it to the FCS. If they don't match, the frame is discarded. The Preamble and SFD are used for synchronization, and the Type/Length field identifies the upper-layer protocol or payload size.
+</details>
+
+**Q6.** What is the maximum size of the payload in a standard Ethernet frame?
+
+A) 64 bytes
+B) 1000 bytes
+C) 1500 bytes
+D) 9000 bytes
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Maximum Transmission Unit (MTU) for standard Ethernet is 1500 bytes, which is the maximum payload size. The minimum payload is 46 bytes. Frames with payloads up to 9000 bytes are called jumbo frames but are non-standard. 64 bytes is the minimum total frame size including headers.
+</details>
+
+**Q7.** Which IEEE standard defines VLAN tagging?
+
+A) 802.3
+B) 802.11
+C) 802.1Q
+D) 802.1D
+
+<details>
+<summary>Answer</summary>
+
+**C)** IEEE 802.1Q defines VLAN tagging. It adds a 4-byte VLAN tag to Ethernet frames to identify which VLAN the frame belongs to. 802.3 is the Ethernet standard, 802.11 is the Wi-Fi standard, and 802.1D is the Spanning Tree Protocol (STP) standard for loop prevention.
+</details>
+
+**Q8.** What is the primary purpose of the Spanning Tree Protocol (STP)?
+
+A) To encrypt data frames on the network
+B) To prevent switching loops in redundant network designs
+C) To assign IP addresses to network devices
+D) To provide faster forwarding of frames
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Spanning Tree Protocol (STP), defined by IEEE 802.1D, prevents switching loops in networks with redundant links. Without STP, frames could loop endlessly in a redundant switched network, causing broadcast storms and MAC address table instability. STP blocks redundant paths and establishes a loop-free topology.
+</details>
+
+**Q9.** A network technician captures a frame with the Type field value of `0x0806`. Which protocol is being used?
+
+A) IPv4
+B) IPv6
+C) ARP
+D) ICMP
+
+<details>
+<summary>Answer</summary>
+
+**C)** The EtherType value `0x0806` indicates ARP (Address Resolution Protocol). ARP is used to resolve IPv4 addresses to MAC addresses. EtherType `0x0800` indicates IPv4, and `0x86DD` indicates IPv6. ICMP does not have its own EtherType as it is encapsulated within IP packets.
+</details>
+
+**Q10.** Which Data Link sublayer is responsible for physical addressing and media access control?
+
+A) LLC (Logical Link Control)
+B) MAC (Media Access Control)
+C) NIC (Network Interface Card)
+D) FCS (Frame Check Sequence)
+
+<details>
+<summary>Answer</summary>
+
+**B)** The MAC (Media Access Control) sublayer is the lower sublayer of the Data Link layer. It handles physical addressing with MAC addresses, frame assembly/disassembly, media access management (e.g., CSMA/CD), and error detection using FCS. The LLC sublayer is the upper sublayer that interfaces with the Network layer and handles flow control and protocol multiplexing.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.1**: OSI Model - Data Link Layer
-- **CompTIA Network+ N10-008 Objective 2.2**: Switching Technologies
+- **CompTIA Network+ N10-009 Objective 1.1**: OSI Model - Data Link Layer
+- **CompTIA Network+ N10-009 Objective 2.2**: Switching Technologies
 - **IEEE 802.3**: Ethernet Standard
 - **IEEE 802.1Q**: VLAN Tagging
 - **IEEE 802.1D/w**: Spanning Tree Protocols
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course

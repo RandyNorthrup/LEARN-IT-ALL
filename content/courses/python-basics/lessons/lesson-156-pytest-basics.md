@@ -1,8 +1,8 @@
 ---
-id: 63-pytest-basics
+id: lesson-156-pytest-basics
 title: Introduction to pytest
 chapterId: ch12-testing
-order: 4
+order: 3
 duration: 30
 objectives:
   - Install and use pytest
@@ -63,9 +63,9 @@ def test_multiplication():  # ✓ Discovered
 def multiply_test():  # ✗ Not discovered
     assert 2 * 3 == 6
 
-class TestCalculator:  # ✓ Discovered
-    def test_add(self):
-        assert 2 + 2 == 4
+# Standalone test functions are the simplest approach:
+def test_add():  # ✓ Discovered
+    assert 2 + 2 == 4
 ```
 
 ## Better Assertion Messages
@@ -187,41 +187,33 @@ def test_file_exists(temp_file):
     assert content == "test content"
 ```
 
-## Test Classes for Organization
+## Organizing Tests in Modules
 
 ```python
-# test_calculator.py
+# calculator.py — the code under test
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+# test_calculator.py — group related tests in one file
 import pytest
 
-class Calculator:
-    def add(self, a, b):
-        return a + b
-    
-    def subtract(self, a, b):
-        return a - b
-    
-    def multiply(self, a, b):
-        return a * b
+def test_add():
+    assert add(2, 3) == 5
+    assert add(-1, 1) == 0
 
-class TestCalculator:
-    """Group related tests."""
-    
-    @pytest.fixture
-    def calc(self):
-        """Provide calculator instance."""
-        return Calculator()
-    
-    def test_add(self, calc):
-        assert calc.add(2, 3) == 5
-        assert calc.add(-1, 1) == 0
-    
-    def test_subtract(self, calc):
-        assert calc.subtract(5, 3) == 2
-        assert calc.subtract(0, 5) == -5
-    
-    def test_multiply(self, calc):
-        assert calc.multiply(2, 3) == 6
-        assert calc.multiply(0, 10) == 0
+def test_subtract():
+    assert subtract(5, 3) == 2
+    assert subtract(0, 5) == -5
+
+def test_multiply():
+    assert multiply(2, 3) == 6
+    assert multiply(0, 10) == 0
 ```
 
 ## Marks and Test Selection
@@ -270,26 +262,25 @@ def validate_password(password):
         return False, "No uppercase"
     return True, "Valid"
 
-class TestPasswordValidation:
-    def test_valid_passwords(self):
-        valid, msg = validate_password("Secure123")
-        assert valid
-        assert msg == "Valid"
-    
-    def test_too_short(self):
-        valid, msg = validate_password("Short1")
-        assert not valid
-        assert msg == "Too short"
-    
-    def test_no_digit(self):
-        valid, msg = validate_password("NoDigitPass")
-        assert not valid
-        assert msg == "No digit"
-    
-    def test_no_uppercase(self):
-        valid, msg = validate_password("noupper123")
-        assert not valid
-        assert msg == "No uppercase"
+def test_valid_passwords():
+    valid, msg = validate_password("Secure123")
+    assert valid
+    assert msg == "Valid"
+
+def test_too_short():
+    valid, msg = validate_password("Short1")
+    assert not valid
+    assert msg == "Too short"
+
+def test_no_digit():
+    valid, msg = validate_password("NoDigitPass")
+    assert not valid
+    assert msg == "No digit"
+
+def test_no_uppercase():
+    valid, msg = validate_password("noupper123")
+    assert not valid
+    assert msg == "No uppercase"
 ```
 
 ## Pytest Output
@@ -317,56 +308,58 @@ def test_verbose():
 
 ```python
 # shopping_cart.py
-class ShoppingCart:
-    def __init__(self):
-        self.items = []
-    
-    def add_item(self, name, price, quantity=1):
-        self.items.append({
-            "name": name,
-            "price": price,
-            "quantity": quantity
-        })
-    
-    def get_total(self):
-        return sum(item["price"] * item["quantity"] for item in self.items)
-    
-    def get_item_count(self):
-        return sum(item["quantity"] for item in self.items)
+def create_cart():
+    """Create a new empty shopping cart."""
+    return {"items": []}
+
+def add_item(cart, name, price, quantity=1):
+    """Add an item to the cart."""
+    cart["items"].append({
+        "name": name,
+        "price": price,
+        "quantity": quantity
+    })
+
+def get_total(cart):
+    """Calculate cart total."""
+    return sum(item["price"] * item["quantity"] for item in cart["items"])
+
+def get_item_count(cart):
+    """Count total items in cart."""
+    return sum(item["quantity"] for item in cart["items"])
 
 # test_shopping_cart.py
 import pytest
 
-class TestShoppingCart:
-    @pytest.fixture
-    def cart(self):
-        """Provide fresh cart for each test."""
-        return ShoppingCart()
+@pytest.fixture
+def cart():
+    """Provide fresh cart for each test."""
+    return create_cart()
+
+def test_empty_cart(cart):
+    """Test empty cart."""
+    assert get_total(cart) == 0
+    assert get_item_count(cart) == 0
+    assert len(cart["items"]) == 0
+
+def test_add_single_item(cart):
+    """Test adding one item."""
+    add_item(cart, "Book", 10.0)
+    assert get_total(cart) == 10.0
+    assert get_item_count(cart) == 1
+
+def test_add_multiple_items(cart):
+    """Test adding multiple items."""
+    add_item(cart, "Book", 10.0, 2)
+    add_item(cart, "Pen", 1.5, 3)
     
-    def test_empty_cart(self, cart):
-        """Test empty cart."""
-        assert cart.get_total() == 0
-        assert cart.get_item_count() == 0
-        assert len(cart.items) == 0
-    
-    def test_add_single_item(self, cart):
-        """Test adding one item."""
-        cart.add_item("Book", 10.0)
-        assert cart.get_total() == 10.0
-        assert cart.get_item_count() == 1
-    
-    def test_add_multiple_items(self, cart):
-        """Test adding multiple items."""
-        cart.add_item("Book", 10.0, 2)
-        cart.add_item("Pen", 1.5, 3)
-        
-        assert cart.get_total() == 24.5  # (10*2) + (1.5*3)
-        assert cart.get_item_count() == 5  # 2 + 3
-    
-    def test_get_total_precision(self, cart):
-        """Test decimal precision."""
-        cart.add_item("Item", 10.99, 3)
-        assert abs(cart.get_total() - 32.97) < 0.01
+    assert get_total(cart) == 24.5  # (10*2) + (1.5*3)
+    assert get_item_count(cart) == 5  # 2 + 3
+
+def test_get_total_precision(cart):
+    """Test decimal precision."""
+    add_item(cart, "Item", 10.99, 3)
+    assert abs(get_total(cart) - 32.97) < 0.01
 ```
 
 ## Test Discovery

@@ -1,9 +1,9 @@
 ---
-id: "lesson-084"
+id: lesson-084-performance-issues
 title: "Network Performance Issues: Bottlenecks, QoS, and Traffic Management"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 84
-duration: 27
+duration: 55
 objectives:
   - "Identify and diagnose network performance bottlenecks"
   - "Analyze bandwidth utilization and congestion issues"
@@ -27,6 +27,18 @@ In this lesson, we'll explore network performance issues including:
 - **Broadcast storms** and excessive traffic
 
 Understanding these concepts enables you to diagnose performance degradation, optimize network throughput, and ensure critical applications receive appropriate network resources.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Identify and diagnose network performance bottlenecks
+- Analyze bandwidth utilization and congestion issues
+- Understand Quality of Service (QoS) and traffic prioritization
+- Troubleshoot latency, jitter, and packet loss problems
+- Apply traffic shaping and bandwidth management techniques
 
 ---
 
@@ -1094,11 +1106,145 @@ Understanding performance issues enables you to optimize network throughput, ens
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** What is a network bottleneck?
+
+A) A device that filters malicious traffic
+B) A point in the network where capacity is insufficient to handle traffic demand
+C) A backup link that activates during failover
+D) A protocol used for traffic encryption
+
+<details>
+<summary>Answer</summary>
+
+**B)** A network bottleneck is a point where traffic demand exceeds available capacity, causing congestion, queuing delays, and performance degradation—similar to traffic backing up at a narrow point.
+</details>
+
+**Q2.** Which metric measures the variation in delay between received packets?
+
+A) Latency
+B) Bandwidth
+C) Jitter
+D) Throughput
+
+<details>
+<summary>Answer</summary>
+
+**C)** Jitter is the variation in packet arrival times (delay variation). High jitter is particularly problematic for real-time applications like VoIP and video conferencing.
+</details>
+
+**Q3.** A VoIP call has choppy, broken audio. Which network issue is the MOST likely cause?
+
+A) Low bandwidth utilization
+B) High latency, jitter, or packet loss
+C) Incorrect VLAN assignment
+D) DNS misconfiguration
+
+<details>
+<summary>Answer</summary>
+
+**B)** VoIP is highly sensitive to latency (>150ms), jitter (>30ms), and packet loss (>1%). Any of these can cause choppy audio, dropped words, or call quality issues.
+</details>
+
+**Q4.** What is the purpose of QoS (Quality of Service) on a network?
+
+A) To increase total available bandwidth
+B) To prioritize certain traffic types over others during congestion
+C) To encrypt sensitive data in transit
+D) To block unauthorized network access
+
+<details>
+<summary>Answer</summary>
+
+**B)** QoS mechanisms prioritize critical traffic (like voice and video) over less time-sensitive traffic (like file downloads) during congestion, ensuring important applications maintain acceptable performance.
+</details>
+
+**Q5.** A switch port shows output queue drops increasing over time. What does this indicate?
+
+A) The port is operating normally
+B) The port is experiencing congestion and dropping packets because the buffer is full
+C) The cable is faulty
+D) VLAN tagging is incorrect
+
+<details>
+<summary>Answer</summary>
+
+**B)** Output queue drops mean packets are being discarded because the output queue (buffer) is full—the switch cannot transmit packets fast enough. This indicates congestion on that port.
+</details>
+
+**Q6.** What is a broadcast storm?
+
+A) A planned broadcast of maintenance notifications
+B) An overwhelming flood of broadcast traffic that consumes bandwidth and degrades performance
+C) A type of DDoS attack from the internet
+D) Normal ARP resolution behavior
+
+<details>
+<summary>Answer</summary>
+
+**B)** A broadcast storm occurs when broadcast traffic floods the network excessively, often caused by switching loops (no STP), misconfigured devices, or malfunctioning NICs. It can consume all available bandwidth.
+</details>
+
+**Q7.** An interface on a router consistently shows 95% utilization during business hours. What is the recommended action?
+
+A) Ignore it since it's within operating parameters
+B) Replace all cables in the path
+C) Upgrade the link capacity or implement traffic management
+D) Disable QoS to free up bandwidth
+
+<details>
+<summary>Answer</summary>
+
+**C)** Sustained utilization above 80% indicates potential congestion. Solutions include upgrading the link speed, implementing QoS to prioritize critical traffic, or adding parallel links for load balancing.
+</details>
+
+**Q8.** What is the difference between traffic shaping and traffic policing?
+
+A) They are identical mechanisms
+B) Shaping buffers excess traffic to smooth the flow; policing drops excess traffic immediately
+C) Policing increases bandwidth; shaping decreases it
+D) Shaping works at Layer 1; policing works at Layer 7
+
+<details>
+<summary>Answer</summary>
+
+**B)** Traffic shaping buffers excess traffic and releases it at a controlled rate, smoothing bursts. Traffic policing drops or re-marks traffic that exceeds the configured rate without buffering.
+</details>
+
+**Q9.** Which DSCP value is commonly used to mark VoIP traffic for high priority?
+
+A) DSCP 0 (Best Effort)
+B) DSCP 46 (EF - Expedited Forwarding)
+C) DSCP 10 (AF11)
+D) DSCP 8 (CS1)
+
+<details>
+<summary>Answer</summary>
+
+**B)** DSCP 46 (EF - Expedited Forwarding) is the standard marking for VoIP traffic, specifying low loss, low latency, and low jitter treatment by network devices.
+</details>
+
+**Q10.** What protocol is commonly used to collect interface statistics and traffic data from network devices for monitoring?
+
+A) SMTP
+B) SNMP
+C) FTP
+D) LDAP
+
+<details>
+<summary>Answer</summary>
+
+**B)** SNMP (Simple Network Management Protocol) is used to collect performance data (interface utilization, error counts, CPU usage) from network devices for monitoring and alerting.
+</details>
+
+---
+
+## References
 
 - **RFC 2474**: Definition of Differentiated Services Field (DSCP)
 - **RFC 3260**: New Terminology for DiffServ
 - **RFC 2475**: Architecture for Differentiated Services
 - **IEEE 802.1Q**: VLAN Tagging (includes 802.1p CoS field)
 - **IEEE 802.1D**: Spanning Tree Protocol
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.5 - Given a scenario, troubleshoot general networking issues
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.5 - Given a scenario, troubleshoot general networking issues

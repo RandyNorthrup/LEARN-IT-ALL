@@ -1,7 +1,7 @@
 ---
-id: performance-management
+id: lesson-025-performance-management
 title: Performance Management and Optimization
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 25
 duration: 80
 objectives:
@@ -17,6 +17,18 @@ objectives:
 ## Introduction
 
 Network performance management involves continuously measuring, monitoring, analyzing, and optimizing network performance to ensure optimal user experience and efficient resource utilization. This lesson covers performance baselines, capacity planning, bandwidth management, traffic shaping, and optimization techniques for modern networks.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Establish network performance baselines
+- Implement capacity planning strategies
+- Configure bandwidth management and traffic shaping
+- Optimize network performance
+- Use performance monitoring tools
+
+---
 
 ## Performance Baselines
 
@@ -435,7 +447,7 @@ Policing: Drops excess → Drops possible, no latency
 
 ### Quality of Service (QoS)
 
-QoS prioritizes important traffic during congestion. *(See Lesson 21 for detailed QoS coverage.)*
+QoS prioritizes important traffic during congestion.
 
 **Quick QoS Refresher:**
 - **Classification**: Identify traffic (by port, IP, DSCP)
@@ -587,7 +599,7 @@ interface Serial0/0
    ! Look for output drops, output queue depth
 
 5. Implement QoS if congestion-related
-   ! See Lesson 21 QoS configurations
+   ! Apply QoS policy to prioritize traffic
 ```
 
 #### 3. Duplex Mismatch
@@ -829,15 +841,78 @@ Performance management is an ongoing process:
 
 Effective performance management prevents issues before they impact users, supports business growth, and optimizes IT spending.
 
-## Review Questions
+## Practice Questions
 
-1. What is a network performance baseline and why is it important?
-2. What is the difference between mean and 95th percentile for capacity planning?
-3. At what sustained utilization level should you plan a capacity upgrade?
-4. What is the difference between traffic shaping and traffic policing?
-5. What are the symptoms of a duplex mismatch?
-6. Explain how WAN optimization deduplication reduces bandwidth usage.
-7. What tool would you use to measure maximum TCP throughput between two points?
-8. What does asymmetric routing mean and why can it cause problems?
-9. How do you calculate bandwidth requirements using a user-based model?
-10. What are three bandwidth optimization techniques and their use cases?
+**Q1.** What is the recommended minimum data collection period for creating a network performance baseline?
+
+A) 24 hours
+B) 2 weeks
+C) 1 hour
+D) 6 months
+
+<details>
+<summary>Answer</summary>
+
+**B)** The minimum recommended baseline collection period is 2 weeks of continuous monitoring, with 4-6 weeks recommended and a full year ideal to capture seasonal patterns. A 24-hour or 1-hour sample is insufficient to capture weekly variations such as Monday login surges versus Friday low-traffic periods. While 6 months is better, 2 weeks is the accepted minimum.
+</details>
+
+**Q2.** A network engineer collects 30 days of bandwidth samples and finds one day spiked to 900 Mbps while most days were 400-550 Mbps. Which statistical measure best represents typical peak usage while ignoring this outlier?
+
+A) Mean (average)
+B) Standard deviation
+C) 95th percentile
+D) Maximum value
+
+<details>
+<summary>Answer</summary>
+
+**C)** The 95th percentile is the industry standard for capacity planning because it discards the top 5% of values (outliers like the 900 Mbps spike) and focuses on sustained peak utilization. The mean would be skewed upward by the outlier. Standard deviation measures variability, not typical peaks. The maximum value would simply report the 900 Mbps outlier.
+</details>
+
+**Q3.** A company currently uses 420 Mbps average bandwidth with 3% monthly growth. Using compound growth, what is the projected bandwidth usage in 12 months?
+
+A) 456 Mbps
+B) 598 Mbps
+C) 780 Mbps
+D) 840 Mbps
+
+<details>
+<summary>Answer</summary>
+
+**B)** Using the compound growth formula: Future = Current × (1 + Growth Rate)^Time = 420 × (1.03)^12 ≈ 598 Mbps. Option A incorrectly calculates only one month of growth. Option C and D significantly overestimate the growth. Compound growth accounts for the cumulative effect of each month's increase building on the previous month's total.
+</details>
+
+**Q4.** A VoIP deployment requires a Mean Opinion Score (MOS) above 4.0. After baselining the network, the engineer finds average latency of 180 ms and jitter of 45 ms on the WAN link. What action should be taken?
+
+A) No action needed; the values are within acceptable range
+B) Implement QoS to prioritize voice traffic and reduce latency and jitter
+C) Increase the SNMP polling interval
+D) Replace all analog phones with digital phones
+
+<details>
+<summary>Answer</summary>
+
+**B)** VoIP requires low latency (ideally <150 ms one-way) and low jitter (ideally <30 ms) to maintain a MOS above 4.0. The measured values of 180 ms latency and 45 ms jitter exceed acceptable thresholds, so implementing Quality of Service (QoS) to prioritize voice packets will help reduce both metrics. Taking no action would result in poor call quality. Changing polling intervals or phone types does not address the underlying network performance issues.
+</details>
+
+**Q5.** Alert thresholds for CPU utilization on a core router are commonly set at Mean + 2 standard deviations for warning and Mean + 3 standard deviations for critical. If the baseline mean CPU is 35% with a standard deviation of 8%, what is the critical alert threshold?
+
+A) 43%
+B) 51%
+C) 59%
+D) 67%
+
+<details>
+<summary>Answer</summary>
+
+**C)** Critical threshold = Mean + 3 × Standard Deviation = 35% + (3 × 8%) = 35% + 24% = 59%. Option A (43%) represents Mean + 1 SD. Option B (51%) represents Mean + 2 SD, which would be the warning threshold. Option D (67%) incorrectly calculates Mean + 4 SD. Setting thresholds using standard deviations ensures alerts fire only for statistically significant deviations from normal behavior.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.3 — Given a scenario, use the appropriate network software tools and commands
+- IETF RFC 2544: Benchmarking Methodology for Network Interconnect Devices
+- IETF RFC 2475: An Architecture for Differentiated Services (DiffServ QoS)
+- ITIL v4 Foundation: Service Level Management and Capacity and Performance Management Practices
+- Kurose, J. F., & Ross, K. W. (2021). *Computer Networking: A Top-Down Approach* (8th ed.). Pearson — Chapter 7: Multimedia Networking
+- Tanenbaum, A. S., & Wetherall, D. J. (2021). *Computer Networks* (6th ed.). Pearson — Chapter 5: Quality of Service

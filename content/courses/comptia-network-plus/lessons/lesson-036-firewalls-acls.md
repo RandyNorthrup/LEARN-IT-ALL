@@ -1,7 +1,7 @@
 ---
-id: firewalls-acls
+id: lesson-036-firewalls-acls
 title: Firewalls and ACLs
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 36
 duration: 95
 objectives:
@@ -21,6 +21,18 @@ Firewalls are security devices that monitor and control network traffic based on
 In this lesson, we'll explore firewall types, ACL configurations, stateful inspection, next-generation firewall features, and best practices for network security perimeter defense.
 
 **Key Principle:** Default deny - block everything by default, explicitly allow only necessary traffic.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand firewall types and architectures
+- Configure firewall rules and policies
+- Implement Access Control Lists (ACLs)
+- Deploy DMZ and network segmentation
+- Troubleshoot firewall issues
+
+---
 
 ## Firewall Fundamentals
 
@@ -320,6 +332,21 @@ policy-map RATE-LIMIT-POLICY
 interface GigabitEthernet0/0
  service-policy input RATE-LIMIT-POLICY
 ```
+
+### Multi-Vendor ACL and Firewall Rule Comparison
+
+ACLs and firewall rules are conceptually identical across vendors — match traffic and permit/deny — but the syntax varies significantly:
+
+| Task | Cisco IOS | Juniper Junos | Linux (nftables) | Palo Alto PAN-OS |
+|------|-----------|---------------|-------------------|------------------|
+| Block a host | `deny ip host 10.0.0.5 any` | `set firewall family inet filter BLOCK term T1 from source-address 10.0.0.5/32` `then discard` | `nft add rule inet filter input ip saddr 10.0.0.5 drop` | Security policy rule: deny source 10.0.0.5 |
+| Allow HTTPS | `permit tcp any any eq 443` | `set firewall family inet filter ALLOW term T1 from protocol tcp destination-port 443` `then accept` | `nft add rule inet filter input tcp dport 443 accept` | Security policy: allow application ssl |
+| Allow a subnet | `permit ip 10.0.1.0 0.0.0.255 any` | `set firewall family inet filter ALLOW term T2 from source-address 10.0.1.0/24` `then accept` | `nft add rule inet filter input ip saddr 10.0.1.0/24 accept` | Security policy: allow source 10.0.1.0/24 |
+| Apply to interface | `ip access-group ACL_NAME in` | `set interfaces ge-0/0/0 unit 0 family inet filter input FILTER_NAME` | `nft add chain inet filter input { type filter hook input priority 0; }` | Applied via security zones |
+| Show rules | `show access-lists` | `show firewall filter FILTER_NAME` | `nft list ruleset` | `show running security-policy-match` |
+| Log matches | `permit ... log` | `then log` | `nft add rule ... log prefix "MATCH: "` | Logging enabled per rule |
+
+> **Key Differences:** Cisco uses **wildcard masks** (0.0.0.255 = /24), while every other vendor uses **CIDR prefix notation** (/24). Juniper uses a hierarchical filter/term model. Linux **nftables** (successor to iptables) is the firewall on Linux-based routers, containers, and cloud instances. Palo Alto is an **application-aware** firewall — it identifies applications (not just ports), so you can write rules like "allow Zoom" rather than "allow UDP 8801."
 
 ## Firewall Types
 
@@ -874,55 +901,85 @@ Example Alerts:
 - Spike in traffic (DoS)
 ```
 
-## Review Questions
+## Summary
 
-1. **What is the difference between stateful and stateless firewalls?**
-   - Stateless inspects packets individually, stateful tracks connection state and automatically allows return traffic
+In this lesson, we explored firewalls and ACLs as the primary tools for controlling network traffic. Firewalls use security zones — outside (level 0), DMZ (level 50), and inside (level 100) — with traffic flowing from higher to lower levels by default. Rules are processed top-to-bottom with first-match logic and an implicit deny at the end. Cisco standard ACLs (numbered 1–99) filter by source IP only and should be placed near the destination; extended ACLs (100–199) filter by source, destination, protocol, and port and should be placed near the source. Wildcard masks use inverse subnet notation (255.255.255.255 minus subnet mask) where 0 means "must match" and 1 means "don't care." Stateful firewalls track connection state tables to automatically allow return traffic, while next-generation firewalls add application-layer inspection, IPS, and user identity awareness. The default-deny principle — block everything and explicitly permit only necessary traffic — is the cornerstone of effective firewall policy.
 
-2. **What is the default action if no firewall rule matches?**
-   - Deny (implicit deny all)
+## Practice Questions
 
-3. **What is a DMZ and why is it used?**
-   - Demilitarized Zone - network segment for public-facing servers, provides security buffer between Internet and internal network
+**Q1.** What is the fundamental difference between a stateful firewall and a stateless (packet-filtering) firewall?
 
-4. **What is the difference between standard and extended ACLs?**
-   - Standard filters source IP only (1-99), extended filters source, destination, protocol, port (100-199)
+A) Stateful firewalls can only filter based on source IP address
+B) Stateless firewalls track active connections and allow return traffic automatically
+C) Stateful firewalls track connection state and context, while stateless firewalls evaluate each packet independently
+D) Stateless firewalls provide deeper inspection including application-layer analysis
 
-5. **What additional features do NGFWs provide over traditional firewalls?**
-   - Application awareness, user identity, IPS, SSL inspection, threat intelligence
+<details>
+<summary>Answer</summary>
 
-6. **Why is SSL/TLS inspection controversial?**
-   - Privacy concerns (decrypting user traffic), legal implications, must handle banking/healthcare differently
+**C)** A stateful firewall maintains a connection state table that tracks active sessions, automatically allowing legitimate return traffic for established connections. A stateless (packet-filtering) firewall evaluates each packet independently against its rule set without knowledge of connection state. Option A describes stateless behavior (limited filtering). Option B reverses the definitions. Option D describes next-generation firewalls, not stateless firewalls.
+</details>
 
-7. **What is a WAF and what does it protect against?**
-   - Web Application Firewall protects against application-layer attacks (SQL injection, XSS, CSRF)
+**Q2.** Where should a standard ACL be placed on a Cisco router, and why?
 
-8. **Where should standard ACLs be placed?**
-   - Close to destination (filter only by source IP)
+A) Close to the source, to block traffic as early as possible
+B) Close to the destination, because standard ACLs filter only by source IP and may unintentionally block legitimate traffic if placed too early
+C) On the core router, to filter traffic at the network center
+D) On the Internet-facing interface only
 
-9. **Where should extended ACLs be placed?**
-   - Close to source (filter by multiple criteria, block traffic early)
+<details>
+<summary>Answer</summary>
 
-10. **What is the benefit of stateful failover?**
-    - Maintains existing connections during failover (seamless for users)
+**B)** Standard ACLs filter only by source IP address, so placing them close to the source could unintentionally block that source from reaching other legitimate destinations. Placing them close to the destination ensures only the intended traffic flow is affected. Extended ACLs (not standard) should be placed close to the source (A) because they can filter on source, destination, protocol, and port. Core router placement (C) and Internet-only placement (D) are not established best practices for standard ACLs.
+</details>
 
-## Key Takeaways
+**Q3.** A company hosts a public web server that must be accessible from the Internet while keeping internal resources protected. Which network architecture best addresses this requirement?
 
-- **Firewalls** are essential perimeter security devices (defense in depth)
-- **Default deny** is fundamental principle (allow only necessary traffic)
-- **Stateful inspection** is modern standard (tracks connection state)
-- **NGFWs** provide application and user awareness (Layer 7 visibility)
-- **ACLs** are the foundation of firewall rules (source, destination, service, action)
-- **DMZ** provides security buffer for public-facing servers
-- **High availability** ensures continuous protection (active/standby, active/active)
-- **SSL inspection** enables visibility into encrypted traffic (privacy trade-offs)
-- **Regular rule review** maintains security and performance
-- **Logging and monitoring** essential for threat detection and incident response
+A) Place the web server directly on the internal LAN with a firewall rule allowing HTTP/HTTPS
+B) Deploy the web server in a DMZ (Demilitarized Zone) with firewall rules controlling traffic between the Internet, DMZ, and internal network
+C) Connect the web server directly to the Internet without a firewall
+D) Place the web server on the same VLAN as the database server for fastest access
 
-## Next Steps
+<details>
+<summary>Answer</summary>
 
-In the next lesson, we'll explore **IDS/IPS and Network Security Monitoring**, including intrusion detection systems, security monitoring tools, and threat hunting.
+**B)** A DMZ provides a semi-trusted network segment between the Internet and internal LAN. The web server sits in the DMZ where it can be accessed from the Internet, while firewall rules prevent direct access from the DMZ to internal resources. Placing it on the internal LAN (A) exposes internal resources if the web server is compromised. No firewall (C) provides no protection. Same VLAN as the database (D) violates network segmentation principles and puts the database at risk.
+</details>
 
----
+**Q4.** Given the following Cisco ACL, what traffic is permitted?
+```
+access-list 100 permit tcp any host 10.1.1.100 eq 443
+access-list 100 deny ip any any log
+```
 
-**Lesson Complete!** You now understand firewalls and ACLs that control network access and enforce security policies.
+A) All traffic to 10.1.1.100
+B) Only HTTPS (TCP port 443) traffic to host 10.1.1.100 from any source
+C) All TCP traffic from 10.1.1.100
+D) Only HTTP (TCP port 80) traffic to host 10.1.1.100
+
+<details>
+<summary>Answer</summary>
+
+**B)** The first rule permits TCP traffic from any source to the specific host 10.1.1.100 on port 443 (HTTPS). The second rule explicitly denies all other IP traffic and logs it. Since ACLs process rules top-down with first-match logic, only HTTPS traffic to that host is allowed. All traffic (A) is too broad. The rule specifies traffic TO the host, not FROM (C). Port 443 is HTTPS, not HTTP port 80 (D).
+</details>
+
+**Q5.** A next-generation firewall (NGFW) differs from a traditional stateful firewall primarily because it can perform which of the following?
+
+A) Filter traffic based on IP addresses and port numbers
+B) Perform application-layer inspection, user identity awareness, and integrated IPS
+C) Block all inbound traffic by default
+D) Operate at Layer 2 of the OSI model as a transparent bridge
+
+<details>
+<summary>Answer</summary>
+
+**B)** Next-generation firewalls (NGFWs) extend traditional stateful firewall capabilities with application awareness (identifying applications regardless of port), user identity integration (tying rules to users rather than just IPs), integrated intrusion prevention (IPS), SSL/TLS inspection, and threat intelligence feeds. IP and port filtering (A) is a basic feature of all firewalls. Default deny (C) is a standard principle, not unique to NGFWs. Layer 2 operation (D) describes a transparent firewall mode, not what distinguishes NGFWs.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.3 — Given a scenario, apply network hardening techniques
+- NIST SP 800-41 Rev. 1: Guidelines on Firewalls and Firewall Policy
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — AC (Access Control) and SC (System and Communications Protection) Families
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Chapter 9: Firewalls
+- Kurose, J. F., & Ross, K. W. (2021). *Computer Networking: A Top-Down Approach* (8th ed.). Pearson — Chapter 8: Security in Computer Networks

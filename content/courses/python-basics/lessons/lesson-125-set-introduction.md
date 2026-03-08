@@ -1,5 +1,5 @@
 ---
-id: "134-set-introduction"
+id: lesson-125-set-introduction
 title: "Introduction to Sets"
 chapterId: ch10-sets
 order: 1

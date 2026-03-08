@@ -1,7 +1,7 @@
 ---
 id: "060"
 title: "Testing Polymorphic Code"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 8
 duration: "20 minutes"
 objectives:

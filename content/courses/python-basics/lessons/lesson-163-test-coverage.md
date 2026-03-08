@@ -1,8 +1,8 @@
 ---
-id: "162-test-coverage"
+id: lesson-163-test-coverage
 title: "Test Coverage and Quality"
 chapterId: ch12-testing
-order: 11
+order: 9
 duration: 25
 objectives:
   - Measure test coverage
@@ -84,32 +84,27 @@ pytest --cov=module1 --cov=module2
 
 ```python
 # user_service.py
-class UserService:
-    def __init__(self, database):
-        self.database = database
+def get_user(database, user_id):
+    # Line coverage: Is this line executed?
+    user = database.query(user_id)
     
-    def get_user(self, user_id):
-        # Line coverage: Is this line executed?
-        user = self.database.query(user_id)
-        
-        # Branch coverage: Are both paths tested?
-        if user:
-            return user
-        else:
-            return None
-    
-    def delete_user(self, user_id):
-        # Line coverage counts this as tested
-        # even if we don't check the logic
-        self.database.delete(user_id)
+    # Branch coverage: Are both paths tested?
+    if user:
+        return user
+    else:
+        return None
+
+def delete_user(database, user_id):
+    # Line coverage counts this as tested
+    # even if we don't check the logic
+    database.delete(user_id)
 
 # Weak test - 100% line coverage but poor testing
 def test_get_user():
     mock_db = Mock()
     mock_db.query.return_value = {"id": "user1"}
     
-    service = UserService(mock_db)
-    result = service.get_user("user1")
+    result = get_user(mock_db, "user1")
     
     # Only tests success path!
     assert result is not None
@@ -119,16 +114,14 @@ def test_get_user_found():
     mock_db = Mock()
     mock_db.query.return_value = {"id": "user1"}
     
-    service = UserService(mock_db)
-    result = service.get_user("user1")
+    result = get_user(mock_db, "user1")
     assert result == {"id": "user1"}
 
 def test_get_user_not_found():
     mock_db = Mock()
     mock_db.query.return_value = None
     
-    service = UserService(mock_db)
-    result = service.get_user("user1")
+    result = get_user(mock_db, "user1")
     assert result is None
 ```
 
@@ -221,9 +214,8 @@ def debug_function():  # pragma: no cover
     """This function is excluded from coverage"""
     print("Debug info")
 
-class BaseClass:
-    def abstract_method(self):
-        raise NotImplementedError  # Automatically excluded
+def abstract_placeholder():
+    raise NotImplementedError  # Automatically excluded
 
 def main():
     if __name__ == "__main__":  # Automatically excluded
@@ -293,40 +285,33 @@ def test_is_even_strong():
 ## Test Quality Metrics
 
 ```python
-class UserValidator:
-    """Example class for quality metrics"""
-    
-    def validate_email(self, email):
-        if not email:
-            return False
-        if "@" not in email:
-            return False
-        if not email.endswith((".com", ".org", ".net")):
-            return False
-        return True
+def validate_email(email):
+    """Validate email — example for quality metrics."""
+    if not email:
+        return False
+    if "@" not in email:
+        return False
+    if not email.endswith((".com", ".org", ".net")):
+        return False
+    return True
 
 # Poor quality tests (high coverage, low quality)
 def test_email_validation_poor():
-    validator = UserValidator()
-    validator.validate_email("test@example.com")
+    validate_email("test@example.com")
     # No assertions! Test passes but checks nothing
 
 # Better quality tests
 def test_email_validation_empty():
-    validator = UserValidator()
-    assert validator.validate_email("") is False
+    assert validate_email("") is False
 
 def test_email_validation_no_at():
-    validator = UserValidator()
-    assert validator.validate_email("invalid") is False
+    assert validate_email("invalid") is False
 
 def test_email_validation_bad_domain():
-    validator = UserValidator()
-    assert validator.validate_email("test@example.xyz") is False
+    assert validate_email("test@example.xyz") is False
 
 def test_email_validation_valid():
-    validator = UserValidator()
-    assert validator.validate_email("test@example.com") is True
+    assert validate_email("test@example.com") is True
 
 # Quality metrics:
 # - Assertion density: assertions per test
@@ -341,10 +326,9 @@ def test_email_validation_valid():
 # Different modules may have different goals
 
 # Core business logic - aim for 100%
-class PaymentProcessor:
-    def process_payment(self, amount, card):
-        # Critical code - must be fully tested
-        pass
+def process_payment(amount, card):
+    # Critical code - must be fully tested
+    pass
 
 # UI/View code - 70-80% acceptable
 def render_user_page(user):

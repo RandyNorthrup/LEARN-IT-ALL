@@ -1,7 +1,7 @@
 ---
-id: network-diagramming
+id: lesson-029-network-diagramming
 title: Network Diagramming and Documentation Standards
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 29
 duration: 70
 objectives:
@@ -17,6 +17,18 @@ objectives:
 ## Introduction
 
 Network diagrams are visual representations of network infrastructure that enable effective communication, troubleshooting, planning, and maintenance. Different diagram types serve different purposes: physical diagrams show physical equipment and connections, logical diagrams illustrate data flow and IP addressing, wiring diagrams detail cable connections, and rack diagrams document data center layouts. This lesson covers industry-standard diagramming practices, symbol conventions, tools, and best practices for creating professional network documentation.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Create physical and logical network diagrams
+- Use industry-standard diagram symbols
+- Document wiring and rack layouts
+- Select appropriate diagramming tools
+- Follow professional documentation standards
+
+---
 
 ## Types of Network Diagrams
 
@@ -736,15 +748,78 @@ Good network diagrams are essential for:
 - Compliance (regulatory requirements)
 - Knowledge management (reduce dependency on individuals)
 
-## Review Questions
+## Practice Questions
 
-1. What is the difference between a physical and logical network diagram?
-2. What information should be included on a rack elevation diagram?
-3. What are industry-standard symbols for routers, switches, and firewalls?
-4. Why is version control important for network diagrams?
-5. What is the purpose of a wiring diagram vs. a logical diagram?
-6. What security considerations should be taken when sharing network diagrams?
-7. Name three popular network diagramming tools and one advantage of each.
-8. What is the T568B wiring standard?
-9. How often should network diagrams be updated?
-10. What regulatory requirements mandate network documentation?
+**Q1.** Which type of network diagram would show VLAN assignments, IP subnets, and OSPF routing areas?
+
+A) Physical network diagram
+B) Rack elevation diagram
+C) Logical network diagram
+D) Wiring diagram
+
+<details>
+<summary>Answer</summary>
+
+**C)** A logical network diagram shows how data flows through the network, including VLANs, IP addressing in CIDR notation, routing protocols and areas, security zones, and Layer 3 boundaries. A physical diagram shows equipment locations and cable types. A rack elevation diagram documents equipment placement within rack units. A wiring diagram details cable connections and patch panel port mappings.
+</details>
+
+**Q2.** A data center technician needs to determine which rack unit a specific server occupies and which PDU it connects to for power. Which diagram type provides this information?
+
+A) Logical network diagram
+B) Wiring diagram
+C) Site map/floor plan
+D) Rack elevation diagram
+
+<details>
+<summary>Answer</summary>
+
+**D)** A rack elevation diagram documents equipment placement by rack unit (U) from bottom to top, including model numbers, serial numbers, power connections to specific PDU outlets, weight distribution, and front/rear mounting details. Logical diagrams show data flow, not physical placement. Wiring diagrams detail cable connections. Site maps show equipment locations across a facility floor but not individual rack details.
+</details>
+
+**Q3.** According to industry best practices, which wiring standard is most commonly used for Ethernet patch cables in commercial installations?
+
+A) T568A
+B) T568B
+C) Crossover wiring
+D) Rollover wiring
+
+<details>
+<summary>Answer</summary>
+
+**B)** T568B is the most commonly used wiring standard for commercial Ethernet installations in the United States. It defines the pin-to-color assignments for RJ45 connectors (Pin 1: Orange/White, Pin 2: Orange, Pin 3: Green/White, Pin 6: Green). T568A is an alternative standard more common in government installations. Crossover cables use T568B on one end and T568A on the other. Rollover cables are used for console connections.
+</details>
+
+**Q4.** A network architect is creating documentation for a new branch office. The documentation must show the physical locations of access points, the MDF/IDF closets, and conduit pathways between rooms. Which diagram type should be created?
+
+A) Logical network diagram
+B) Rack elevation diagram
+C) Site map/floor plan
+D) NetFlow diagram
+
+<details>
+<summary>Answer</summary>
+
+**C)** A site map/floor plan overlays network infrastructure on a building layout, showing MDF/IDF locations, access point placement, cable paths through conduit and cable trays, and network jack locations per room. Logical diagrams show IP addressing and routing. Rack elevation diagrams show individual rack contents. NetFlow diagrams are not a standard documentation type.
+</details>
+
+**Q5.** When documenting a wiring diagram, what information should be recorded for each patch panel port?
+
+A) Only the port number and cable color
+B) Port number, cable label, destination, room, outlet, status, and installation date
+C) Only the VLAN assignment and IP address
+D) Only the switch port speed and duplex setting
+
+<details>
+<summary>Answer</summary>
+
+**B)** Complete patch panel documentation includes the port number, cable label (following the labeling standard), destination description, room number, outlet/jack identifier, active/spare status, and installation date. This information enables rapid troubleshooting and cable tracing. Recording only the port number or color is insufficient. VLAN and IP information belongs in logical documentation, and switch port settings belong in configuration documentation.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.1 — Given a scenario, use the appropriate documentation and diagrams to manage the network
+- TIA/EIA-568: Commercial Building Telecommunications Cabling Standard
+- IEEE 802 Standards: Network Documentation and Diagramming Conventions
+- ITIL v4 Foundation: Service Configuration Management — Configuration Management Database (CMDB)
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — PL (Planning) Family
+- Kurose, J. F., & Ross, K. W. (2021). *Computer Networking: A Top-Down Approach* (8th ed.). Pearson — Chapter 9: Network Management

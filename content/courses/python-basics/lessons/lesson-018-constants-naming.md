@@ -1,5 +1,5 @@
 ---
-id: 44-constants-naming
+id: lesson-018-constants-naming
 title: Constants and Naming Conventions
 chapterId: ch2-variables
 order: 5
@@ -70,18 +70,15 @@ DEFAULT_LANGUAGE = "en"
 SECONDS_PER_DAY = 86400
 ```
 
-### Classes: PascalCase
+### Named Types: PascalCase
 
 ```python
 # Good - capitalize each word, no underscores
-class UserAccount:
-    pass
+from collections import namedtuple
 
-class ShoppingCart:
-    pass
-
-class DatabaseConnection:
-    pass
+UserAccount = namedtuple('UserAccount', ['username', 'email'])
+ShoppingCart = namedtuple('ShoppingCart', ['items', 'total'])
+DatabaseConnection = namedtuple('DatabaseConnection', ['host', 'port'])
 ```
 
 ### Private Variables: _leading_underscore
@@ -321,7 +318,7 @@ user_id_str = "12345" # Good (string version)
 
 - **Constants**: UPPERCASE_WITH_UNDERSCORES (convention, not enforced)
 - **Variables**: lowercase_with_underscores (snake_case)
-- **Classes**: PascalCase
+- **Named types**: PascalCase (e.g., namedtuples)
 - **Private**: _leading_underscore
 - **Choose descriptive names** that explain what the variable holds
 - **Boolean variables** should start with is/has/can/should

@@ -1,8 +1,8 @@
 ---
-id: "152-error-handling-best-practices"
+id: lesson-145-error-handling-best-practices
 title: "Error Handling Best Practices"
 chapterId: ch11-error-handling
-order: 8
+order: 7
 duration: 25
 objectives:
   - Follow error handling best practices
@@ -89,7 +89,7 @@ def good_logging():
 def good_handling():
     try:
         critical_operation()
-    except OperationError as e:
+    except RuntimeError as e:
         logger.error(f"Known error: {e}")
         return fallback_value()
     except Exception as e:
@@ -101,9 +101,6 @@ def critical_operation():
 
 def fallback_value():
     return None
-
-class OperationError(Exception):
-    pass
 ```
 
 ## Provide Helpful Error Messages
@@ -165,6 +162,8 @@ def good_remediation(config_file):
 ## Clean Up Resources Properly
 
 ```python
+from contextlib import contextmanager
+from types import SimpleNamespace
 # ❌ BAD: No cleanup
 def bad_cleanup():
     file = open("data.txt")
@@ -194,8 +193,6 @@ def good_multiple():
     # Both closed automatically
 
 # ✅ GOOD: Custom context manager
-from contextlib import contextmanager
-
 @contextmanager
 def database_connection():
     conn = connect_to_database()
@@ -213,9 +210,7 @@ def process(file):
     pass
 
 def connect_to_database():
-    class MockConn:
-        def close(self): pass
-    return MockConn()
+    return SimpleNamespace(close=lambda: None)
 
 def execute_query(conn):
     pass
@@ -252,10 +247,10 @@ def good_level():
         data = get_data_better()
         result = process(data)
         return result
-    except APIError as e:
+    except ConnectionError as e:
         logger.error(f"API error: {e}")
         return default_data()
-    except ProcessingError as e:
+    except ValueError as e:
         logger.error(f"Processing error: {e}")
         return None
 
@@ -264,12 +259,6 @@ def fetch_from_api():
 
 def default_data():
     return []
-
-class APIError(Exception):
-    pass
-
-class ProcessingError(Exception):
-    pass
 ```
 
 ## Document Expected Exceptions
@@ -299,21 +288,20 @@ def good_docs(filename):
     with open(filename) as f:
         return f.read()
 
-# ✅ GOOD: Document custom exceptions
-class ValidationError(Exception):
+# ✅ GOOD: Document exceptions with clear descriptions
+def make_validation_error(field, value, reason):
     """
-    Raised when data validation fails.
+    Create a descriptive validation error.
     
-    Attributes:
+    Args:
         field: Name of field that failed validation
         value: Value that failed validation
         reason: Why validation failed
+    
+    Returns:
+        ValueError with formatted message
     """
-    def __init__(self, field, value, reason):
-        self.field = field
-        self.value = value
-        self.reason = reason
-        super().__init__(f"{field}: {reason} (got {value})")
+    return ValueError(f"{field}: {reason} (got {value})")
 
 def validate_age(age):
     """
@@ -326,57 +314,47 @@ def validate_age(age):
         int: Validated age
     
     Raises:
-        ValidationError: If age invalid
+        ValueError: If age is invalid
     """
     if not isinstance(age, int):
-        raise ValidationError("age", age, "must be integer")
+        raise make_validation_error("age", age, "must be integer")
     if age < 0:
-        raise ValidationError("age", age, "must be non-negative")
+        raise make_validation_error("age", age, "must be non-negative")
     if age > 150:
-        raise ValidationError("age", age, "unrealistic value")
+        raise make_validation_error("age", age, "unrealistic value")
     return age
 ```
 
-## Use Exception Hierarchies
+## Leverage Python's Built-in Exception Hierarchy
 
 ```python
-# ✅ GOOD: Create exception hierarchy
-class AppError(Exception):
-    """Base exception for application"""
-    pass
+# ✅ GOOD: Use Python's built-in exception hierarchy
+#
+# Python's exception tree already organizes errors by type:
+#   Exception
+#     ├── ValueError      → invalid data or arguments
+#     ├── TypeError        → wrong type
+#     ├── KeyError         → missing dictionary key
+#     ├── ConnectionError  → network/connection failures
+#     ├── PermissionError  → authorization/authentication issues
+#     ├── FileNotFoundError → missing files or resources
+#     ├── RuntimeError     → general operation failures
+#     └── LookupError      → base for KeyError, IndexError
 
-class DatabaseError(AppError):
-    """Database-related errors"""
-    pass
-
-class ConnectionError(DatabaseError):
-    """Database connection errors"""
-    pass
-
-class QueryError(DatabaseError):
-    """Database query errors"""
-    pass
-
-class ValidationError(AppError):
-    """Validation errors"""
-    pass
-
-class AuthenticationError(AppError):
-    """Authentication errors"""
-    pass
-
-# Now can catch at different levels
+# Catch at different levels of specificity
 def example_hierarchy():
     try:
         operation()
     except ConnectionError:
-        print("Connection failed")
-    except QueryError:
-        print("Query failed")
-    except DatabaseError:  # Catches other DB errors
-        print("Database error")
-    except AppError:  # Catches all app errors
-        print("Application error")
+        print("Connection failed")        # Most specific
+    except PermissionError:
+        print("Access denied")
+    except OSError:
+        print("OS-level error")            # Also catches ConnectionError, PermissionError
+    except ValueError:
+        print("Invalid data")
+    except Exception:
+        print("Unexpected error")          # Most general (last resort)
 
 def operation():
     pass
@@ -461,96 +439,89 @@ from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-class UserService:
-    """User service with production-ready error handling"""
+def get_user(user_id: str) -> Optional[dict]:
+    """
+    Get user by ID.
     
-    def get_user(self, user_id: str) -> Optional[dict]:
-        """
-        Get user by ID.
+    Args:
+        user_id: User ID to fetch
+    
+    Returns:
+        User dict if found, None otherwise
+    
+    Raises:
+        ValueError: If user_id is invalid
+        RuntimeError: If database operation fails
+    """
+    # Validate input
+    if not user_id or not isinstance(user_id, str):
+        raise ValueError(f"Invalid user_id: {user_id}")
+    
+    logger.info(f"Fetching user {user_id}")
+    
+    try:
+        # Attempt database query
+        user = query_database(user_id)
         
-        Args:
-            user_id: User ID to fetch
+        if user is None:
+            logger.warning(f"User {user_id} not found")
+            return None
         
-        Returns:
-            User dict if found, None otherwise
-        
-        Raises:
-            ValueError: If user_id is invalid
-            DatabaseError: If database operation fails
-        """
+        logger.info(f"User {user_id} fetched successfully")
+        return user
+    
+    except ConnectionError as e:
+        logger.error(f"Database connection failed: {e}")
+        raise RuntimeError("Unable to connect to database") from e
+    
+    except Exception as e:
+        logger.critical(f"Unexpected error fetching user {user_id}: {e}", exc_info=True)
+        raise
+
+def create_user(user_data: dict) -> Tuple[bool, Optional[str]]:
+    """
+    Create new user.
+    
+    Args:
+        user_data: User data dictionary
+    
+    Returns:
+        Tuple of (success, error_message)
+    """
+    try:
         # Validate input
-        if not user_id or not isinstance(user_id, str):
-            raise ValueError(f"Invalid user_id: {user_id}")
+        validate_user_data(user_data)
         
-        logger.info(f"Fetching user {user_id}")
+        # Create user
+        user_id = insert_user(user_data)
         
-        try:
-            # Attempt database query
-            user = self._query_database(user_id)
-            
-            if user is None:
-                logger.warning(f"User {user_id} not found")
-                return None
-            
-            logger.info(f"User {user_id} fetched successfully")
-            return user
-        
-        except ConnectionError as e:
-            logger.error(f"Database connection failed: {e}")
-            raise DatabaseError("Unable to connect to database") from e
-        
-        except QueryError as e:
-            logger.error(f"Query failed for user {user_id}: {e}")
-            raise DatabaseError(f"Failed to fetch user {user_id}") from e
-        
-        except Exception as e:
-            logger.critical(f"Unexpected error fetching user {user_id}: {e}", exc_info=True)
-            raise
+        logger.info(f"User created: {user_id}")
+        return True, None
     
-    def create_user(self, user_data: dict) -> Tuple[bool, Optional[str]]:
-        """
-        Create new user.
-        
-        Args:
-            user_data: User data dictionary
-        
-        Returns:
-            Tuple of (success, error_message)
-        """
-        try:
-            # Validate input
-            self._validate_user_data(user_data)
-            
-            # Create user
-            user_id = self._insert_user(user_data)
-            
-            logger.info(f"User created: {user_id}")
-            return True, None
-        
-        except ValidationError as e:
-            logger.warning(f"Validation failed: {e}")
-            return False, str(e)
-        
-        except DatabaseError as e:
-            logger.error(f"Database error: {e}")
-            return False, "Unable to create user. Please try again."
-        
-        except Exception as e:
-            logger.critical(f"Unexpected error creating user: {e}", exc_info=True)
-            return False, "An unexpected error occurred."
+    except ValueError as e:
+        logger.warning(f"Validation failed: {e}")
+        return False, str(e)
     
-    def _query_database(self, user_id):
-        """Query database (mock)"""
-        return {"id": user_id, "name": "Alice"}
+    except RuntimeError as e:
+        logger.error(f"Database error: {e}")
+        return False, "Unable to create user. Please try again."
     
-    def _validate_user_data(self, data):
-        """Validate user data"""
-        if "name" not in data:
-            raise ValidationError("name", None, "required")
-    
-    def _insert_user(self, data):
-        """Insert user (mock)"""
-        return "new_user_id"
+    except Exception as e:
+        logger.critical(f"Unexpected error creating user: {e}", exc_info=True)
+        return False, "An unexpected error occurred."
+
+def query_database(user_id):
+    """Query database (mock)"""
+    return {"id": user_id, "name": "Alice"}
+
+def validate_user_data(data):
+    """Validate user data"""
+    if "name" not in data:
+        raise ValueError("name is required")
+
+def insert_user(data):
+    """Insert user (mock)"""
+    return "new_user_id"
 ```
 
 ## Error Handling Checklist

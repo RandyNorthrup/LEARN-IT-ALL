@@ -1,5 +1,5 @@
 ---
-id: "84-truth-testing"
+id: lesson-046-truth-testing
 title: "Truth Testing and Truthiness"
 chapterId: ch4-comparisons
 order: 6
@@ -293,27 +293,29 @@ else:
     print("All odd")  # This prints
 ```
 
-## Truthiness with Custom Objects
+## Truthiness with Collections
+
+Python's built-in collections are automatically falsy when empty and truthy when non-empty. This works because Python internally checks whether the collection has a length of zero:
 
 ```python
-class ShoppingCart:
-    """Shopping cart with truthiness."""
-    
-    def __init__(self):
-        self.items = []
-    
-    def add(self, item):
-        self.items.append(item)
-    
-    def __bool__(self):
-        """Cart is truthy if it has items."""
-        return len(self.items) > 0
-    
-    def __len__(self):
-        """Return number of items."""
-        return len(self.items)
+# Built-in collections are falsy when empty, truthy when non-empty
 
-cart = ShoppingCart()
+# Lists
+empty_list = []
+full_list = [1, 2, 3]
+
+print(bool(empty_list))  # False (length is 0)
+print(bool(full_list))   # True  (length is 3)
+
+# Dictionaries
+empty_dict = {}
+full_dict = {"item": "Apple"}
+
+print(bool(empty_dict))  # False (length is 0)
+print(bool(full_dict))   # True  (length is 1)
+
+# Using a shopping cart as a list
+cart = []
 
 # Empty cart is falsy
 if cart:
@@ -321,21 +323,18 @@ if cart:
 else:
     print("Cart is empty")  # This prints
 
-cart.add("Apple")
-cart.add("Banana")
+cart.append("Apple")
+cart.append("Banana")
 
 # Non-empty cart is truthy
 if cart:
-    print(f"Cart has {len(cart)} items")  # This prints
+    print(f"Cart has {len(cart)} items")  # Cart has 2 items
 
-# Without __bool__, object would always be truthy
-class BadCart:
-    def __init__(self):
-        self.items = []
-
-bad_cart = BadCart()
-if bad_cart:
-    print("This always prints even when empty!")
+# Key insight: Python checks len() internally for truthiness
+# Empty collection → len() returns 0 → bool(0) is False
+# Non-empty collection → len() returns > 0 → bool(>0) is True
+print(bool(len([])))     # False
+print(bool(len([1])))    # True
 ```
 
 ## When to Use Explicit vs Implicit

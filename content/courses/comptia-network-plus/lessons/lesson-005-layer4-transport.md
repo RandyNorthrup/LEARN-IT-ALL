@@ -1,5 +1,5 @@
 ---
-id: layer4-transport
+id: lesson-005-layer4-transport
 title: Layer 4 - The Transport Layer
 chapterId: ch1-networking-fundamentals
 order: 5
@@ -538,10 +538,161 @@ The Transport layer (Layer 4) provides critical end-to-end communication service
 
 ---
 
+## Practice Questions
+
+**Q1.** A VoIP application requires fast, low-latency communication and can tolerate some packet loss. Which Transport layer protocol should it use?
+
+A) TCP
+B) UDP
+C) ICMP
+D) IP
+
+<details>
+<summary>Answer</summary>
+
+**B)** UDP (User Datagram Protocol) is ideal for VoIP because it is connectionless with low overhead, resulting in faster transmission and lower latency. VoIP can tolerate some packet loss but not the delays caused by TCP's reliability mechanisms (retransmission, ordering). ICMP and IP are not Transport layer protocols.
+</details>
+
+**Q2.** During a TCP three-way handshake, the client sends a SYN with sequence number 500. What will the server's SYN-ACK contain?
+
+A) Seq=500, Ack=500
+B) Seq=random, Ack=500
+C) Seq=random, Ack=501
+D) Seq=501, Ack=500
+
+<details>
+<summary>Answer</summary>
+
+**C)** In the TCP three-way handshake, when the server responds to a SYN, it sends a SYN-ACK with its own random initial sequence number and an acknowledgment number equal to the client's sequence number plus 1 (500 + 1 = 501). This acknowledges receipt of the client's SYN.
+</details>
+
+**Q3.** Which port number range is designated for well-known services?
+
+A) 0-1023
+B) 1024-49151
+C) 49152-65535
+D) 0-65535
+
+<details>
+<summary>Answer</summary>
+
+**A)** Well-known ports range from 0-1023 and are assigned to commonly used services by IANA (e.g., HTTP on port 80, HTTPS on port 443). Ports 1024-49151 are registered ports, and ports 49152-65535 are dynamic/ephemeral ports used for temporary client connections.
+</details>
+
+**Q4.** Which TCP flag is used to initiate a connection?
+
+A) ACK
+B) FIN
+C) RST
+D) SYN
+
+<details>
+<summary>Answer</summary>
+
+**D)** The SYN (Synchronize) flag is used to initiate a TCP connection and synchronize sequence numbers between the client and server. ACK acknowledges received data, FIN gracefully closes a connection, and RST forcefully resets a connection due to an error.
+</details>
+
+**Q5.** A web server is receiving HTTP requests. The server is listening on port 80. A client connects from port 52431. What is port 52431 called?
+
+A) A well-known port
+B) A registered port
+C) An ephemeral port
+D) A static port
+
+<details>
+<summary>Answer</summary>
+
+**C)** Port 52431 falls within the ephemeral (dynamic) port range of 49152-65535. Ephemeral ports are temporarily assigned by the operating system to client applications for the duration of a connection. Well-known ports are 0-1023, and registered ports are 1024-49151.
+</details>
+
+**Q6.** Which mechanism does TCP use to prevent the sender from overwhelming the receiver with data?
+
+A) Error detection
+B) Segmentation
+C) Flow control (sliding window)
+D) Port multiplexing
+
+<details>
+<summary>Answer</summary>
+
+**C)** TCP uses flow control through the sliding window mechanism. The receiver advertises a window size indicating how much data it can accept, and the sender limits its data transmission accordingly. This dynamically adjusts based on the receiver's buffer capacity to prevent overflow.
+</details>
+
+**Q7.** A network administrator sees that DNS queries are using port 53. Which Transport layer protocol does DNS primarily use for standard queries?
+
+A) TCP only
+B) UDP only
+C) UDP for standard queries, TCP for zone transfers and large responses
+D) Neither TCP nor UDP
+
+<details>
+<summary>Answer</summary>
+
+**C)** DNS uses UDP port 53 for standard name resolution queries because they are small and benefit from UDP's speed. DNS uses TCP port 53 for zone transfers between DNS servers and for responses that exceed 512 bytes (or the EDNS limit), since these require TCP's reliability for larger data transfers.
+</details>
+
+**Q8.** How does TCP handle a segment that arrives out of order?
+
+A) It discards the segment and requests retransmission
+B) It uses sequence numbers to reassemble segments in the correct order
+C) It sends an RST to the sender
+D) It forwards the segment as-is to the application
+
+<details>
+<summary>Answer</summary>
+
+**B)** TCP uses sequence numbers to track the position of each byte of data in the stream. When segments arrive out of order, TCP buffers them and uses the sequence numbers to reassemble the data in the correct order before delivering it to the application. This ensures reliable, ordered delivery.
+</details>
+
+**Q9.** Which of the following is a characteristic of UDP?
+
+A) Connection-oriented communication
+B) Guaranteed delivery of data
+C) Lower overhead and faster transmission
+D) Built-in flow control
+
+<details>
+<summary>Answer</summary>
+
+**C)** UDP has lower overhead and faster transmission because it is connectionless, does not guarantee delivery, does not enforce ordering, and does not implement flow control. The UDP header is only 8 bytes compared to TCP's minimum 20 bytes. This makes UDP ideal for time-sensitive applications like streaming and gaming.
+</details>
+
+**Q10.** A TCP connection needs to be gracefully terminated. How many steps are involved in the TCP connection teardown process?
+
+A) Two (two-way handshake)
+B) Three (three-way handshake)
+C) Four (four-way handshake)
+D) Five (five-way handshake)
+
+<details>
+<summary>Answer</summary>
+
+**C)** TCP uses a four-way handshake (FIN, ACK, FIN, ACK) for graceful connection termination. The initiating side sends a FIN, the other side acknowledges with ACK, then sends its own FIN, which is acknowledged with a final ACK. This allows both sides to finish sending any remaining data before closing.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.1**: OSI Model - Transport Layer
-- **CompTIA Network+ N10-008 Objective 1.5**: TCP and UDP Ports
+- **CompTIA Network+ N10-009 Objective 1.1**: OSI Model - Transport Layer
+- **CompTIA Network+ N10-009 Objective 1.5**: TCP and UDP Ports
 - **RFC 793**: Transmission Control Protocol (TCP)
 - **RFC 768**: User Datagram Protocol (UDP)
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course
+
+### Required Reading
+
+- **RFC 9293** — Transmission Control Protocol (TCP) — 2022 Consolidation
+  - Read: Sections 3.1–3.5 (Header Format, State Machine, Sequence Numbers, Data Communication, TCP Quiet Time)
+  - Available at: https://www.rfc-editor.org/rfc/rfc9293
+  - Focus questions:
+    1. Why does TCP use a 32-bit sequence number space instead of a simple incrementing counter, and what happens when it wraps around?
+    2. What is the purpose of the URG (Urgent) pointer field, and why is its use discouraged in modern implementations?
+    3. How does the TCP state machine handle simultaneous connection opens (both sides send SYN at the same time)?
+
+- **RFC 768** — User Datagram Protocol (1980)
+  - Read: Entire document (3 pages — one of the shortest RFCs ever published)
+  - Available at: https://www.rfc-editor.org/rfc/rfc768
+  - Focus questions:
+    1. Why is the UDP checksum optional in IPv4 but mandatory in IPv6?
+    2. What design decisions make UDP faster than TCP, and what tradeoffs result?

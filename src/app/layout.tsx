@@ -4,6 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'LEARN-IT-ALL',
   description: 'Complete Custom Learning Platform',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

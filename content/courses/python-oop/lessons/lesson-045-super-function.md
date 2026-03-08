@@ -1,7 +1,7 @@
 ---
 id: "045"
 title: "The super() Function Deep Dive"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 3
 duration: "17 minutes"
 objectives:

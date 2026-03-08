@@ -1,8 +1,8 @@
 ---
-id: 60-scope-best-practices
+id: lesson-088-scope-best-practices
 title: Scope Best Practices
 chapterId: ch7-scope
-order: 7
+order: 9
 duration: 25
 objectives:
   - Learn scope best practices
@@ -87,13 +87,21 @@ def add_todo(task):
 def add_todo(todos, task):
     return todos + [task]
 
-# Or use a class
-class TodoList:
-    def __init__(self):
-        self.todos = []
+# Or use a closure
+def create_todo_list():
+    todos = []
     
-    def add(self, task):
-        self.todos.append(task)
+    def add(task):
+        todos.append(task)
+    
+    def get_all():
+        return todos.copy()
+    
+    return add, get_all
+
+add_todo, get_todos = create_todo_list()
+add_todo("Buy groceries")
+print(get_todos())  # ['Buy groceries']
 ```
 
 ## Best Practice 4: Constants Are OK as Globals

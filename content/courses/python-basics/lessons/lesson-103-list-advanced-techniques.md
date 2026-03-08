@@ -1,8 +1,8 @@
 ---
-id: "117-list-advanced-techniques"
+id: lesson-103-list-advanced-techniques
 title: "Advanced List Techniques"
 chapterId: ch8-lists
-order: 9
+order: 11
 duration: 25
 objectives:
   - Master advanced list operations
@@ -247,29 +247,28 @@ if stack:
     top = stack[-1]
     print(top)  # 2
 
-# Stack class
-class Stack:
-    def __init__(self):
-        self._items = []
-    
-    def push(self, item):
-        self._items.append(item)
-    
-    def pop(self):
-        if not self.is_empty():
-            return self._items.pop()
+# Stack helper functions (operate on a plain list)
+def stack_push(stack, item):
+    """Push an item onto the stack"""
+    stack.append(item)
+
+def stack_pop(stack):
+    """Pop an item from the stack"""
+    if not stack:
         raise IndexError("Pop from empty stack")
-    
-    def peek(self):
-        if not self.is_empty():
-            return self._items[-1]
+    return stack.pop()
+
+def stack_peek(stack):
+    """Peek at the top item without removing it"""
+    if not stack:
         raise IndexError("Peek from empty stack")
-    
-    def is_empty(self):
-        return len(self._items) == 0
-    
-    def size(self):
-        return len(self._items)
+    return stack[-1]
+
+def stack_is_empty(stack):
+    return len(stack) == 0
+
+def stack_size(stack):
+    return len(stack)
 
 # Queue (FIFO - First In First Out)
 # ⚠️ Using list as queue is inefficient!

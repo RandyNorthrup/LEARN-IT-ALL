@@ -1,5 +1,5 @@
 ---
-id: how-computers-work
+id: lesson-027-how-computers-work
 title: How Computers Work
 chapterId: ch3-computing
 order: 1

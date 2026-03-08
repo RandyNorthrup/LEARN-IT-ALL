@@ -1,5 +1,5 @@
 ---
-id: 09-code-editors
+id: lesson-009-code-editors
 title: Code Editors and IDEs
 chapterId: ch1-intro
 order: 9

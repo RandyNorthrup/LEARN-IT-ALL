@@ -1,8 +1,8 @@
 ---
-id: nested-scope-closures
+id: lesson-083-nested-scope-closures
 title: Nested Scope and Closures
 chapterId: ch7-scope
-order: 2
+order: 3
 duration: 30
 objectives:
   - Understand nested function scope

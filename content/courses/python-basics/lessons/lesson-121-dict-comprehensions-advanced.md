@@ -1,5 +1,5 @@
 ---
-id: "126-dict-comprehensions-advanced"
+id: lesson-121-dict-comprehensions-advanced
 title: "Advanced Dictionary Comprehensions"
 chapterId: ch9-dictionaries
 order: 12
@@ -107,7 +107,7 @@ discounted = {
     item: price * 0.9 if price > 1.0 else price
     for item, price in prices.items()
 }
-print(discounted)  # {'apple': 0.9, 'banana': 0.5, 'cherry': 1.8}
+print(discounted)  # {'apple': 1.0, 'banana': 0.5, 'cherry': 1.8}
 ```
 
 ## Nested Dictionary Comprehensions

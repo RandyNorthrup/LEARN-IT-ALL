@@ -1,63 +1,70 @@
 {
   "id": "exercise-162-error-handling-best-practices",
-  "lessonId": "lesson-152-error-handling-best-practices",
+  "lessonId": "lesson-145-error-handling-best-practices",
   "title": "Error Handling Best Practices",
-  "description": "Follow professional error handling patterns, write maintainable code, document errors effectively, implement production-ready practices.",
+  "description": "Follow professional error handling patterns: catch specific exceptions, retry failed operations, chain operations with error propagation, and log errors with structured results.",
   "difficulty": "intermediate",
   "points": 20,
-  "starterCode": "# Exercise: Error Handling Best Practices\n\ndef specific_exception_handling(data):\n    \"\"\"Handle specific exceptions (not broad Exception).\"\"\"\n    pass\n\ndef helpful_error_messages(user_input):\n    \"\"\"Provide clear, actionable error messages.\"\"\"\n    pass\n\ndef cleanup_resources_properly(filename):\n    \"\"\"Ensure resource cleanup with context managers.\"\"\"\n    pass\n\ndef handle_at_appropriate_level(user_id):\n    \"\"\"Handle exceptions at the right level.\"\"\"\n    pass\n\ndef documented_exceptions(email):\n    \"\"\"Function with documented exceptions.\"\"\"\n    pass\n\ndef exception_hierarchy_example(operation):\n    \"\"\"Use exception hierarchy for related errors.\"\"\"\n    pass\n",
-  "solution": "# Solution: Error Handling Best Practices\n\n# Define exception hierarchy\nclass AppError(Exception):\n    \"\"\"Base application error\"\"\"\n    pass\n\nclass ValidationError(AppError):\n    \"\"\"Validation failed\"\"\"\n    pass\n\nclass ProcessingError(AppError):\n    \"\"\"Processing failed\"\"\"\n    pass\n\ndef specific_exception_handling(data):\n    \"\"\"\n    Handle specific exceptions (not broad Exception).\n    \n    Returns:\n        Processed result\n    \"\"\"\n    try:\n        if not isinstance(data, dict):\n            raise TypeError(\"Data must be dictionary\")\n        \n        value = data['value']\n        result = int(value) * 2\n        return result\n    \n    # Specific exceptions, not Exception\n    except KeyError:\n        return None  # Missing key\n    except ValueError:\n        return None  # Invalid conversion\n    except TypeError:\n        return None  # Wrong type\n\ndef helpful_error_messages(user_input):\n    \"\"\"\n    Provide clear, actionable error messages.\n    \n    Returns:\n        Validated integer\n    \n    Raises:\n        ValueError: With helpful message\n    \"\"\"\n    try:\n        value = int(user_input)\n    except ValueError:\n        # Clear, actionable message\n        raise ValueError(\n            f\"'{user_input}' is not a valid number. \"\n            f\"Please enter digits only (e.g., '42').\"\n        )\n    \n    if value < 0:\n        raise ValueError(\n            f\"Number must be positive, got {value}. \"\n            f\"Please enter a value >= 0.\"\n        )\n    \n    return value\n\ndef cleanup_resources_properly(filename):\n    \"\"\"\n    Ensure resource cleanup with context managers.\n    \n    Returns:\n        File content or None\n    \"\"\"\n    try:\n        # Use context manager for automatic cleanup\n        with open(filename, 'r') as f:\n            return f.read()\n    except FileNotFoundError:\n        return None\n\ndef handle_at_appropriate_level(user_id):\n    \"\"\"\n    Handle exceptions at the right level.\n    \n    Returns:\n        User data or None\n    \"\"\"\n    def get_user_from_db(uid):\n        \"\"\"Low-level function - let exceptions propagate\"\"\"\n        if not uid:\n            raise ValueError(\"User ID required\")\n        # Simulate database access\n        return {\"id\": uid, \"name\": \"Alice\"}\n    \n    # Handle at this level where we can take action\n    try:\n        user = get_user_from_db(user_id)\n        return user\n    except ValueError as e:\n        # Can provide fallback\n        return None\n\ndef documented_exceptions(email):\n    \"\"\"\n    Validate email address.\n    \n    Args:\n        email: Email address to validate\n    \n    Returns:\n        Validated email (lowercase)\n    \n    Raises:\n        TypeError: If email is not a string\n        ValueError: If email format is invalid\n    \n    Examples:\n        >>> documented_exceptions(\"user@example.com\")\n        'user@example.com'\n    \"\"\"\n    if not isinstance(email, str):\n        raise TypeError(\"Email must be a string\")\n    \n    if \"@\" not in email:\n        raise ValueError(\"Email must contain @\")\n    \n    if \".\" not in email.split(\"@\")[1]:\n        raise ValueError(\"Email domain must contain .\")\n    \n    return email.lower()\n\ndef exception_hierarchy_example(operation):\n    \"\"\"\n    Use exception hierarchy for related errors.\n    \n    Args:\n        operation: Operation to perform\n    \n    Returns:\n        Result or error message\n    \"\"\"\n    try:\n        if operation == \"validate\":\n            raise ValidationError(\"Validation failed\")\n        elif operation == \"process\":\n            raise ProcessingError(\"Processing failed\")\n        else:\n            return \"Success\"\n    \n    except ValidationError as e:\n        return f\"Validation error: {e}\"\n    except ProcessingError as e:\n        return f\"Processing error: {e}\"\n    except AppError as e:\n        # Catch any app error\n        return f\"Application error: {e}\"\n",
+  "starterCode": "# Exercise: Error Handling Best Practices\n\ndef specific_handler(func, *args):\n    \"\"\"Call func(*args). Return result on success, or (error_type_name, message) tuple on failure.\"\"\"\n    pass\n\ndef retry_operation(func, max_retries=3):\n    \"\"\"Call func() up to max_retries times. Return result on success, raise last exception on failure.\"\"\"\n    pass\n\ndef chain_operations(operations, data):\n    \"\"\"Process data through list of functions. Stop on first error.\n    Return (last_successful_result, error_msg_or_None).\"\"\"\n    pass\n\ndef log_errors(func, *args):\n    \"\"\"Call func(*args). Return dict with success, result, and error keys.\"\"\"\n    pass\n",
+  "solution": "# Solution: Error Handling Best Practices\n\ndef specific_handler(func, *args):\n    \"\"\"Call func(*args). Return result on success, or (error_type_name, message) tuple on failure.\"\"\"\n    try:\n        return func(*args)\n    except (ValueError, TypeError, KeyError) as e:\n        return (type(e).__name__, str(e))\n\ndef retry_operation(func, max_retries=3):\n    \"\"\"Call func() up to max_retries times. Return result on success, raise last exception on failure.\"\"\"\n    last_exception = None\n    for attempt in range(max_retries):\n        try:\n            return func()\n        except Exception as e:\n            last_exception = e\n    raise last_exception\n\ndef chain_operations(operations, data):\n    \"\"\"Process data through list of functions. Stop on first error.\n    Return (last_successful_result, error_msg_or_None).\"\"\"\n    result = data\n    for op in operations:\n        try:\n            result = op(result)\n        except Exception as e:\n            return (result, str(e))\n    return (result, None)\n\ndef log_errors(func, *args):\n    \"\"\"Call func(*args). Return dict with success, result, and error keys.\"\"\"\n    try:\n        result = func(*args)\n        return {\"success\": True, \"result\": result, \"error\": None}\n    except Exception as e:\n        return {\"success\": False, \"result\": None, \"error\": str(e)}\n",
   "hints": [
-    "Catch specific exceptions (KeyError, ValueError) not broad Exception",
-    "Error messages should explain what happened, why, and how to fix",
-    "Always use context managers (with statement) for file operations",
-    "Handle exceptions where you can take meaningful action",
-    "Document all exceptions in docstrings with Raises: section",
-    "Create exception hierarchies: base class with specific subclasses"
+    "Catch specific exceptions (ValueError, TypeError, KeyError) not bare except",
+    "Use type(e).__name__ to get the exception class name as a string",
+    "In retry_operation, save the last exception and raise it after all retries fail",
+    "In chain_operations, keep track of the last successful result before error",
+    "Return structured dicts from log_errors so callers can inspect results programmatically",
+    "Always include the error message via str(e) for debugging context"
   ],
   "testCases": [
     {
-      "input": "specific_exception_handling({'value': '10'})",
-      "description": "Test specific_exception_handling success",
+      "input": "specific_handler(int, '42')",
+      "description": "Test specific_handler with successful call",
       "id": "test1",
-      "expectedOutput": "20",
-      "isHidden": false
+      "expectedOutput": "42",
+      "isHidden": false,
+      "validation": "assert specific_handler(int, '42') == 42"
     },
     {
-      "input": "specific_exception_handling({'other': '10'})",
-      "description": "Test specific_exception_handling missing key",
+      "input": "specific_handler(int, 'abc')[0]",
+      "description": "Test specific_handler catches ValueError",
       "id": "test2",
-      "expectedOutput": "None",
-      "isHidden": false
+      "expectedOutput": "'ValueError'",
+      "isHidden": false,
+      "validation": "assert specific_handler(int, 'abc')[0] == 'ValueError'"
     },
     {
-      "input": "try:\\n    helpful_error_messages('abc')\\nexcept ValueError as e:\\n    'not a valid number' in str(e)",
-      "description": "Test helpful_error_messages invalid",
+      "input": "log_errors(int, '42')['result']",
+      "description": "Test log_errors with successful call",
       "id": "test3",
-      "expectedOutput": "True",
-      "isHidden": false
+      "expectedOutput": "42",
+      "isHidden": false,
+      "validation": "assert log_errors(int, '42')['result'] == 42"
     },
     {
-      "input": "documented_exceptions('USER@EXAMPLE.COM')",
-      "description": "Test documented_exceptions valid",
+      "input": "log_errors(int, 'abc')['success']",
+      "description": "Test log_errors with failing call",
       "id": "test4",
-      "expectedOutput": "'user@example.com'",
-      "isHidden": true
+      "expectedOutput": "False",
+      "isHidden": false,
+      "validation": "assert log_errors(int, 'abc')['success'] == False"
     },
     {
-      "input": "try:\\n    documented_exceptions('invalid')\\nexcept ValueError as e:\\n    'contain @' in str(e)",
-      "description": "Test documented_exceptions no @",
+      "input": "state = {'n': 0}\\ndef flaky():\\n    state['n'] += 1\\n    if state['n'] < 3:\\n        raise ValueError('fail')\\n    return 'ok'\\nretry_operation(flaky, max_retries=3)",
+      "description": "Test retry_operation succeeds after retries",
       "id": "test5",
-      "expectedOutput": "True",
-      "isHidden": true
+      "expectedOutput": "'ok'",
+      "isHidden": true,
+      "validation": "state = {'n': 0}\ndef flaky():\n    state['n'] += 1\n    if state['n'] < 3:\n        raise ValueError('fail')\n    return 'ok'\nassert retry_operation(flaky, max_retries=3) == 'ok'"
     },
     {
-      "input": "exception_hierarchy_example('validate')",
-      "description": "Test exception_hierarchy_example",
+      "input": "chain_operations([lambda x: x * 2, lambda x: x + 1], 5)",
+      "description": "Test chain_operations with successful chain",
       "id": "test6",
-      "expectedOutput": "'Validation error: Validation failed'",
-      "isHidden": true
+      "expectedOutput": "(11, None)",
+      "isHidden": true,
+      "validation": "assert chain_operations([lambda x: x * 2, lambda x: x + 1], 5) == (11, None)"
     }
   ],
-  "language": "python"
+  "language": "python",
+  "chapterId": "ch11-error-handling"
 }

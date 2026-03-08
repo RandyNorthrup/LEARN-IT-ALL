@@ -1,9 +1,9 @@
 ---
-id: "lesson-080"
+id: lesson-080-cable-testers
 title: "Cable Testing Tools: Multimeter, Cable Certifier, and OTDR"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 80
-duration: 24
+duration: 55
 objectives:
   - "Use a multimeter to test cable continuity and electrical properties"
   - "Perform cable certification tests to verify compliance with standards"
@@ -18,6 +18,17 @@ objectives:
 Physical layer issues account for a significant percentage of network problems. Cable faults, poor terminations, electrical interference, and fiber optic breaks can cause complete network outages or intermittent connectivity problems. Specialized cable testing tools enable technicians to quickly diagnose and resolve these physical layer issues.
 
 In this lesson, we'll explore three categories of cable testing tools: **multimeters** for basic electrical testing, **cable certifiers** for comprehensive copper cable testing and standards compliance, and **Optical Time Domain Reflectometers (OTDRs)** for fiber optic cable testing. Understanding when and how to use each tool is essential for efficient network troubleshooting.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Use a multimeter to test cable continuity and electrical properties
+- Perform cable certification tests to verify compliance with standards
+- Use an OTDR to test and troubleshoot fiber optic cables
+- Select the appropriate cable testing tool for specific troubleshooting scenarios
 
 ---
 
@@ -914,10 +925,144 @@ Physical layer problems are common in networks. Understanding and using the appr
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** Which tool is used to verify that a cable meets Cat6A performance standards for attenuation and crosstalk?
+
+A) Multimeter
+B) Basic cable tester
+C) Cable certifier
+D) Tone generator
+
+<details>
+<summary>Answer</summary>
+
+**C)** A cable certifier performs comprehensive testing including attenuation, NEXT, return loss, and other parameters to verify compliance with TIA/ISO standards like Cat6A.
+</details>
+
+**Q2.** What does a TDR (Time Domain Reflectometer) measure?
+
+A) Signal attenuation in decibels
+B) Cable length and distance to faults
+C) Electromagnetic interference levels
+D) Crosstalk between wire pairs
+
+<details>
+<summary>Answer</summary>
+
+**B)** A TDR sends an electrical pulse down the cable and measures the reflection to determine cable length and the distance to any faults (opens, shorts, or impedance mismatches).
+</details>
+
+**Q3.** What tool is specifically designed for testing and troubleshooting fiber optic cables?
+
+A) Multimeter
+B) Cable certifier
+C) OTDR (Optical Time Domain Reflectometer)
+D) Toner probe
+
+<details>
+<summary>Answer</summary>
+
+**C)** An OTDR sends light pulses into a fiber and analyzes the reflections to measure fiber length, locate breaks, identify splices, and characterize overall fiber quality.
+</details>
+
+**Q4.** A wiremap test shows that Pin 1 connects to Pin 3 and Pin 3 connects to Pin 1. What type of fault is this?
+
+A) Open circuit
+B) Short circuit
+C) Crossed pair
+D) Split pair
+
+<details>
+<summary>Answer</summary>
+
+**C)** A crossed pair occurs when wires from different positions are swapped. Pin 1 connecting to Pin 3 and vice versa indicates the wires were crossed during termination.
+</details>
+
+**Q5.** Why can't a multimeter detect a split pair wiring error?
+
+A) Multimeters cannot measure resistance
+B) A split pair passes continuity testing because all pins are connected correctly
+C) Multimeters are only for fiber optic cables
+D) Split pairs do not exist in Cat6 cables
+
+<details>
+<summary>Answer</summary>
+
+**B)** A split pair passes continuity and wiremap testing because each pin connects to the correct pin at the other end. However, the pairs aren't properly twisted together, causing crosstalk—detectable only by a cable certifier's NEXT test.
+</details>
+
+**Q6.** When testing PoE voltage with a multimeter, what is the expected voltage range for 802.3af (standard PoE)?
+
+A) 12-24 VDC
+B) 44-57 VDC
+C) 100-120 VAC
+D) 5-12 VDC
+
+<details>
+<summary>Answer</summary>
+
+**B)** IEEE 802.3af PoE provides 44-57 VDC (nominal 48V) over Ethernet cable pairs to power network devices like IP phones and access points.
+</details>
+
+**Q7.** What is the purpose of using launch and receive cables when performing OTDR testing?
+
+A) To extend the cable length being tested
+B) To eliminate the dead zone at the beginning and end of the fiber under test
+C) To increase the optical power of the OTDR
+D) To convert between single-mode and multimode fiber
+
+<details>
+<summary>Answer</summary>
+
+**B)** Launch and receive cables (also called test leads) extend beyond the OTDR's dead zones, allowing accurate measurement of the connectors and the full length of the fiber under test.
+</details>
+
+**Q8.** A cable certifier reports a NEXT (Near-End Crosstalk) failure on a newly installed cable. What is the most likely cause?
+
+A) The cable exceeds 100 meters
+B) Excessive untwisting of wire pairs at the termination point
+C) The cable is not plugged into the switch
+D) The cable jacket is the wrong color
+
+<details>
+<summary>Answer</summary>
+
+**B)** Excessive untwisting of wire pairs at connectors or punch-down blocks is the most common cause of NEXT failures. TIA standards require maintaining twist to within 0.5 inches of termination.
+</details>
+
+**Q9.** Which measurement indicates how much signal is lost as it travels through a cable?
+
+A) Impedance
+B) Attenuation
+C) Crosstalk
+D) Delay skew
+
+<details>
+<summary>Answer</summary>
+
+**B)** Attenuation measures signal loss (in dB) as the signal travels through the cable. Higher attenuation values indicate more signal loss, which increases with cable length and frequency.
+</details>
+
+**Q10.** A technician needs to quickly verify that a patch cord has no opens or shorts before using it. Which tool is the FASTEST and most practical choice?
+
+A) OTDR
+B) Cable certifier
+C) Basic cable tester
+D) Spectrum analyzer
+
+<details>
+<summary>Answer</summary>
+
+**C)** A basic cable tester provides quick wiremap verification, checking for opens, shorts, and correct pin-to-pin connections in seconds—ideal for simple pre-use verification of patch cords.
+</details>
+
+---
+
+## References
 
 - **TIA-568**: Commercial Building Telecommunications Cabling Standard
 - **ISO/IEC 11801**: Generic Cabling for Customer Premises
 - **TIA-526-14A**: Optical Power Loss Measurements of Installed Multimode Fiber Cable Plant
 - **IEC 61280-4-1**: Fibre-optic Communication Subsystem Test Procedures - Part 4-1: Installed Cable Plant - Multimode Attenuation Measurement
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.2 - Troubleshoot common cable connectivity issues and select the appropriate tools
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.2 - Troubleshoot common cable connectivity issues and select the appropriate tools

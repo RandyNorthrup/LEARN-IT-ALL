@@ -1,5 +1,5 @@
 ---
-id: "125-dict-copying-merging"
+id: lesson-116-dict-copying-merging
 title: "Dictionary Copying and Merging"
 chapterId: ch9-dictionaries
 order: 7

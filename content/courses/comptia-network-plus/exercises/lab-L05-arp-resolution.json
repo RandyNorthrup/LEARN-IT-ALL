@@ -1,0 +1,124 @@
+{
+  "id": "lab-L05-arp-resolution",
+  "lessonId": "lab-L05-arp-resolution",
+  "title": "Lab: ARP Resolution and Security Analysis",
+  "description": "Analyze ARP (Address Resolution Protocol) traffic showing normal address resolution, gratuitous ARP announcements, duplicate address detection (DAD), and an ARP spoofing attack. Understand how Layer 2 addressing works and recognize security threats.\n\nUse the PCAP viewer below to examine each ARP packet and answer the analysis questions.",
+  "difficulty": "intermediate",
+  "points": 100,
+  "language": "text",
+  "starterCode": "",
+  "solution": "",
+  "hints": [
+    "ARP maps IP addresses (Layer 3) to MAC addresses (Layer 2)",
+    "ARP requests are broadcast (ff:ff:ff:ff:ff:ff); ARP replies are unicast",
+    "ARP Probes use sender IP 0.0.0.0 to test for duplicate addresses",
+    "Gratuitous ARP announces IP-to-MAC mappings to update all ARP caches",
+    "ARP spoofing sends fake replies to poison ARP caches — a man-in-the-middle attack"
+  ],
+  "exerciseType": "lab",
+  "labType": "pcap-analysis",
+  "resources": [
+    { "type": "pcap", "url": "/labs/pcaps/arp-resolution.json", "label": "ARP Resolution Capture" }
+  ],
+  "labQuestions": [
+    {
+      "id": "q1",
+      "question": "Why is the ARP request in packet #1 sent to the broadcast MAC address (ff:ff:ff:ff:ff:ff)?",
+      "type": "multiple-choice",
+      "options": [
+        "ARP always uses broadcast for both requests and replies",
+        "The sender doesn't know the target's MAC address yet, so it must ask all hosts on the LAN",
+        "Broadcast is required by IPv4 for all Layer 2 communication",
+        "The sender's ARP cache is corrupted"
+      ],
+      "correctAnswer": "The sender doesn't know the target's MAC address yet, so it must ask all hosts on the LAN",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q2",
+      "question": "In packet #1, the Target MAC field is 00:00:00:00:00:00. Why?",
+      "type": "multiple-choice",
+      "options": [
+        "It's a broadcast address",
+        "The target's MAC is unknown — that's exactly what the ARP request is trying to discover",
+        "The target host is offline",
+        "This indicates an ARP error"
+      ],
+      "correctAnswer": "The target's MAC is unknown — that's exactly what the ARP request is trying to discover",
+      "relatedPackets": [1]
+    },
+    {
+      "id": "q3",
+      "question": "What is the gateway's MAC address as revealed in the ARP reply (packet #2)?",
+      "type": "short-answer",
+      "correctAnswer": "00:1a:2b:3c:4d:5e",
+      "relatedPackets": [2]
+    },
+    {
+      "id": "q4",
+      "question": "In packet #3, the Ethernet destination is 00:1a:2b:3c:4d:5e (gateway MAC), but the IP destination is 93.184.216.34 (remote server). Why do the Layer 2 and Layer 3 destinations differ?",
+      "type": "multiple-choice",
+      "options": [
+        "This is an error in the packet capture",
+        "The packet must be sent to the local gateway (Layer 2 MAC) to be routed to the remote server (Layer 3 IP)",
+        "The remote server is on the same LAN as the client",
+        "Layer 2 and Layer 3 always have different destinations"
+      ],
+      "correctAnswer": "The packet must be sent to the local gateway (Layer 2 MAC) to be routed to the remote server (Layer 3 IP)",
+      "relatedPackets": [3]
+    },
+    {
+      "id": "q5",
+      "question": "What makes packet #4 an ARP Probe (Duplicate Address Detection) rather than a normal ARP request?",
+      "type": "multiple-choice",
+      "options": [
+        "It uses a different EtherType",
+        "The sender IP is 0.0.0.0 — the host hasn't claimed the IP yet",
+        "The target MAC is set to its own MAC",
+        "It's sent via unicast instead of broadcast"
+      ],
+      "correctAnswer": "The sender IP is 0.0.0.0 — the host hasn't claimed the IP yet",
+      "relatedPackets": [4]
+    },
+    {
+      "id": "q6",
+      "question": "Packet #6 shows a suspicious ARP reply. What security attack does this represent?",
+      "type": "multiple-choice",
+      "options": [
+        "DNS spoofing",
+        "ARP spoofing/poisoning — a fake reply to redirect traffic through the attacker",
+        "MAC flooding attack",
+        "DHCP starvation attack"
+      ],
+      "correctAnswer": "ARP spoofing/poisoning — a fake reply to redirect traffic through the attacker",
+      "relatedPackets": [6]
+    },
+    {
+      "id": "q7",
+      "question": "How can you tell packet #6 is an ARP spoofing attack? Compare it to the legitimate response in packet #2.",
+      "type": "multiple-choice",
+      "options": [
+        "The packet is larger than a normal ARP reply",
+        "It claims 192.168.1.1 is at MAC de:ad:be:ef:00:01, which differs from the real gateway MAC (00:1a:2b:3c:4d:5e)",
+        "It uses UDP instead of ARP",
+        "The TTL value is too high"
+      ],
+      "correctAnswer": "It claims 192.168.1.1 is at MAC de:ad:be:ef:00:01, which differs from the real gateway MAC (00:1a:2b:3c:4d:5e)",
+      "relatedPackets": [2, 6]
+    },
+    {
+      "id": "q8",
+      "question": "What Layer 2 security feature can prevent ARP spoofing attacks on managed switches?",
+      "type": "multiple-choice",
+      "options": [
+        "Port forwarding",
+        "Dynamic ARP Inspection (DAI)",
+        "Network Address Translation (NAT)",
+        "DNS over HTTPS (DoH)"
+      ],
+      "correctAnswer": "Dynamic ARP Inspection (DAI)",
+      "hint": "DAI validates ARP packets against the DHCP snooping binding table"
+    }
+  ],
+  "testCases": []
+}

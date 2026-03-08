@@ -1,5 +1,5 @@
 ---
-id: function-parameters
+id: lesson-070-function-parameters
 title: Function Parameters and Arguments
 chapterId: ch6-functions
 order: 2

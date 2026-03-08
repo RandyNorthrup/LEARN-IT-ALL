@@ -1,8 +1,8 @@
 ---
-id: "157-performance-error-handling"
+id: lesson-149-performance-error-handling
 title: "Performance Considerations in Error Handling"
 chapterId: ch11-error-handling
-order: 12
+order: 10
 duration: 25
 objectives:
   - Understand error handling performance costs
@@ -445,52 +445,52 @@ print(stream.getvalue())
 ## Performance Best Practices
 
 ```python
-class OptimizedValidator:
-    """Validator with performance optimizations"""
+import re
+
+# Pre-compile patterns for reuse across calls
+_email_pattern = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w+$')
+
+def create_validator():
+    """Create a validator with a validation cache."""
+    return {"cache": {}}
+
+def validate_batch(validator, items):
+    """
+    Validate items in batch for performance.
     
-    def __init__(self):
-        # Cache validation results
-        self._validation_cache = {}
-        
-        # Pre-compile patterns
-        import re
-        self._email_pattern = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w+$')
+    Optimizations:
+    - Single validation pass
+    - Early termination on first error
+    - No exception creation for valid items
+    - Reuse compiled patterns
+    """
+    cache = validator["cache"]
     
-    def validate_batch(self, items):
-        """
-        Validate items in batch for performance.
+    # Quick type check (no exceptions)
+    if not all(isinstance(item, dict) for item in items):
+        raise TypeError("All items must be dictionaries")
+    
+    # Check required fields
+    for i, item in enumerate(items):
+        if "email" not in item:
+            raise ValueError(f"Item {i}: missing 'email' field")
         
-        Optimizations:
-        - Single validation pass
-        - Early termination on first error
-        - No exception creation for valid items
-        - Reuse compiled patterns
-        """
-        # Quick type check (no exceptions)
-        if not all(isinstance(item, dict) for item in items):
-            raise TypeError("All items must be dictionaries")
-        
-        # Check required fields
-        for i, item in enumerate(items):
-            if "email" not in item:
-                raise ValueError(f"Item {i}: missing 'email' field")
-            
-            # Use cached validation if possible
-            email = item["email"]
-            if email in self._validation_cache:
-                if not self._validation_cache[email]:
-                    raise ValueError(f"Item {i}: invalid email {email}")
-            else:
-                # Validate and cache
-                valid = bool(self._email_pattern.match(email))
-                self._validation_cache[email] = valid
-                if not valid:
-                    raise ValueError(f"Item {i}: invalid email {email}")
-        
-        return True
+        # Use cached validation if possible
+        email = item["email"]
+        if email in cache:
+            if not cache[email]:
+                raise ValueError(f"Item {i}: invalid email {email}")
+        else:
+            # Validate and cache
+            valid = bool(_email_pattern.match(email))
+            cache[email] = valid
+            if not valid:
+                raise ValueError(f"Item {i}: invalid email {email}")
+    
+    return True
 
 # Usage
-validator = OptimizedValidator()
+validator = create_validator()
 
 items = [
     {"email": "user1@example.com"},
@@ -499,7 +499,7 @@ items = [
 ]
 
 try:
-    validator.validate_batch(items)
+    validate_batch(validator, items)
     print("Validation successful")
 except ValueError as e:
     print(f"Validation failed: {e}")

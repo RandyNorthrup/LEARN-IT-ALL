@@ -1,0 +1,57 @@
+{
+  "id": "exercise-203-import-analysis",
+  "courseId": "python-basics",
+  "lessonId": "lesson-192-imports-basics",
+  "chapterId": "ch17-modules",
+  "title": "Import Dependency Analysis",
+  "description": "Build tools that analyze Python code for import-related issues. Detect circular dependencies in a dependency graph, extract imported names from source text, count how often a module is referenced, and suggest removing unused imports from a codebase.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def find_circular_deps(dep_graph):\n    \"\"\"Find circular dependencies in a dependency graph.\n\n    Args:\n        dep_graph: dict mapping module name -> list of modules it depends on.\n                   Example: {'a': ['b'], 'b': ['c'], 'c': ['a']}\n\n    Returns:\n        A list of cycles, where each cycle is a list of module names\n        forming the loop (e.g. ['a', 'b', 'c', 'a']).\n        Return an empty list if no cycles are found.\n    \"\"\"\n    pass\n\n\ndef extract_imported_names(code_text):\n    \"\"\"Extract all imported module/name identifiers from Python source text.\n\n    Scans each line for 'import X' or 'from X import Y, Z' patterns.\n\n    Returns a sorted list of unique imported names.\n    For 'import os' -> 'os'\n    For 'from os.path import join, exists' -> 'join', 'exists'\n    For 'import numpy as np' -> 'np' (the alias is what is used in code)\n    \"\"\"\n    pass\n\n\ndef count_import_usage(code_text, module_name):\n    \"\"\"Count how many times a module or imported name is referenced in code.\n\n    Counts occurrences of module_name as a standalone word in lines\n    that are NOT import statements (lines not starting with 'import'\n    or 'from').\n\n    Returns an integer count.\n    \"\"\"\n    pass\n\n\ndef suggest_import_cleanup(imports_list, used_names):\n    \"\"\"Suggest which imports can be removed because they are unused.\n\n    Args:\n        imports_list: list of imported name strings, e.g. ['os', 'sys', 'np']\n        used_names: set of name strings actually used in code\n\n    Returns:\n        A sorted list of import names that do NOT appear in used_names.\n    \"\"\"\n    pass\n",
+  "solution": "def find_circular_deps(dep_graph):\n    cycles = []\n    visited = set()\n\n    def dfs(node, path, path_set):\n        if node in path_set:\n            cycle_start = path.index(node)\n            cycle = path[cycle_start:] + [node]\n            cycles.append(cycle)\n            return\n        if node in visited:\n            return\n        visited.add(node)\n        path_set.add(node)\n        path.append(node)\n        for neighbor in dep_graph.get(node, []):\n            dfs(neighbor, path, path_set)\n        path.pop()\n        path_set.remove(node)\n\n    for node in dep_graph:\n        visited.clear()\n        dfs(node, [], set())\n\n    # Deduplicate cycles by comparing sorted canonical forms\n    unique = []\n    seen_canonical = set()\n    for cycle in cycles:\n        loop = cycle[:-1]\n        min_idx = loop.index(min(loop))\n        canonical = tuple(loop[min_idx:] + loop[:min_idx])\n        if canonical not in seen_canonical:\n            seen_canonical.add(canonical)\n            unique.append(cycle)\n    return unique\n\n\ndef extract_imported_names(code_text):\n    names = set()\n    for line in code_text.strip().splitlines():\n        line = line.strip()\n        if line.startswith('from ') and ' import ' in line:\n            after_import = line.split(' import ')[1]\n            for name in after_import.split(','):\n                name = name.strip()\n                if ' as ' in name:\n                    names.add(name.split(' as ')[1].strip())\n                else:\n                    names.add(name)\n        elif line.startswith('import '):\n            rest = line[7:].strip()\n            if ' as ' in rest:\n                names.add(rest.split(' as ')[1].strip())\n            else:\n                names.add(rest)\n    return sorted(names)\n\n\ndef count_import_usage(code_text, module_name):\n    import re\n    count = 0\n    for line in code_text.strip().splitlines():\n        stripped = line.strip()\n        if stripped.startswith('import ') or stripped.startswith('from '):\n            continue\n        count += len(re.findall(r'\\b' + re.escape(module_name) + r'\\b', line))\n    return count\n\n\ndef suggest_import_cleanup(imports_list, used_names):\n    unused = [name for name in imports_list if name not in used_names]\n    return sorted(unused)\n",
+  "hints": [
+    "For find_circular_deps, use depth-first search (DFS) with a recursion stack. When you revisit a node already in the current path, you've found a cycle.",
+    "For extract_imported_names, split each line by keywords 'import' and 'from', then handle 'as' aliases — the alias replaces the original name in usage.",
+    "For count_import_usage, use a word-boundary regex (\\b) to match the module name as a whole word, and skip lines that start with 'import' or 'from'.",
+    "suggest_import_cleanup is a simple set difference: find names in imports_list that are not in used_names."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "find_circular_deps detects a simple cycle",
+      "validation": "result = find_circular_deps({'a': ['b'], 'b': ['c'], 'c': ['a']}); assert len(result) == 1 and result[0] == ['a', 'b', 'c', 'a']",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "find_circular_deps returns empty list when no cycles exist",
+      "validation": "assert find_circular_deps({'a': ['b'], 'b': ['c'], 'c': []}) == []",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "extract_imported_names extracts names from mixed import styles",
+      "validation": "code = 'import os\\nfrom collections import Counter, defaultdict\\nimport numpy as np'; result = extract_imported_names(code); assert result == ['Counter', 'defaultdict', 'np', 'os']",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "count_import_usage counts references excluding import lines",
+      "validation": "code = 'import os\\npath = os.path.join(\"a\", \"b\")\\nprint(os.getcwd())'; assert count_import_usage(code, 'os') == 2",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "suggest_import_cleanup identifies unused imports",
+      "validation": "assert suggest_import_cleanup(['os', 'sys', 'json', 'math'], {'os', 'math'}) == ['json', 'sys']",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "extract_imported_names handles aliases correctly",
+      "validation": "code = 'from datetime import datetime as dt\\nimport pandas as pd'; result = extract_imported_names(code); assert result == ['dt', 'pd']",
+      "isHidden": true
+    }
+  ]
+}

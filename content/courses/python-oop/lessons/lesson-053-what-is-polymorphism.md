@@ -1,7 +1,7 @@
 ---
 id: "053"
 title: "What is Polymorphism?"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 1
 duration: "16 minutes"
 objectives:

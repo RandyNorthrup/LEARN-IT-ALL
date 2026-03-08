@@ -1,8 +1,8 @@
 ---
-id: "105-variable-lifetime"
+id: lesson-090-variable-lifetime
 title: "Variable Lifetime and Garbage Collection"
 chapterId: ch7-scope
-order: 9
+order: 10
 duration: 25
 objectives:
   - Understand variable lifetime in Python
@@ -114,37 +114,34 @@ del numbers  # Last reference removed, memory freed
 
 ```python
 # Objects are created and destroyed automatically
+import sys
 
-# Creation
-class MyClass:
-    def __init__(self, name):
-        self.name = name
-        print(f"{self.name} created")
-    
-    def __del__(self):
-        """Called when object is about to be destroyed."""
-        print(f"{self.name} destroyed")
+# Reference counting controls when objects are freed
+print("=== Object Lifecycle ===")
 
 # Create objects
-obj1 = MyClass("Object 1")  # Created
-obj2 = MyClass("Object 2")  # Created
+obj1 = {"name": "Object 1", "data": [1, 2, 3]}
+print(f"Created: {obj1['name']}")
+
+obj2 = {"name": "Object 2", "data": [4, 5, 6]}
+print(f"Created: {obj2['name']}")
 
 # Objects alive
 print("Objects exist")
 
 # Delete references
-del obj1  # Object 1 destroyed (no more references)
+del obj1  # No more references, memory can be freed
 print("obj1 deleted")
 
 # obj2 still exists
-print(f"obj2 still exists: {obj2.name}")
+print(f"obj2 still exists: {obj2['name']}")
 
-# obj2 destroyed when function/script ends
-del obj2  # Object 2 destroyed
+del obj2  # Freed when last reference removed
+print("obj2 deleted")
 
 # Example with multiple references
 print("\nMultiple references:")
-obj3 = MyClass("Object 3")
+obj3 = {"name": "Object 3", "data": [7, 8, 9]}
 ref1 = obj3
 ref2 = obj3
 
@@ -156,8 +153,8 @@ print("obj3 deleted, but object still alive")
 del ref1  # Object still alive (ref2 exists)
 print("ref1 deleted, but object still alive")
 
-del ref2  # Now object destroyed (no references)
-print("ref2 deleted, object destroyed")
+del ref2  # Now no references remain
+print("ref2 deleted, object can be freed")
 ```
 
 ## Garbage Collection
@@ -167,32 +164,21 @@ import gc
 
 # Python's garbage collector handles circular references
 
-# Circular reference example
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.next = None
-    
-    def __del__(self):
-        print(f"Node {self.value} deleted")
-
-# Create circular reference
-node1 = Node(1)
-node2 = Node(2)
-node1.next = node2
-node2.next = node1  # Circular!
+# Circular reference example using dictionaries
+node1 = {"value": 1, "next": None}
+node2 = {"value": 2, "next": None}
+node1["next"] = node2
+node2["next"] = node1  # Circular!
 
 # Remove direct references
 del node1
 del node2
-# Objects not deleted yet due to circular reference
+# Dicts not freed yet due to circular reference
 
 # Force garbage collection
 print("Before GC:")
 collected = gc.collect()
 print(f"After GC: Collected {collected} objects")
-# Node 1 deleted
-# Node 2 deleted
 
 # Check garbage collector status
 print(f"GC enabled: {gc.isenabled()}")
@@ -204,56 +190,63 @@ print(f"GC count: {gc.get_count()}")
 
 ```python
 # ❌ BAD - Circular references can cause leaks
-class Parent:
-    def __init__(self):
-        self.children = []
-    
-    def add_child(self, child):
-        self.children.append(child)
-        child.parent = self  # Circular reference!
+def create_parent():
+    return {"name": "parent", "children": []}
 
-class Child:
-    def __init__(self):
-        self.parent = None
+def create_child():
+    return {"name": "child", "parent": None}
+
+def add_child(parent, child):
+    parent["children"].append(child)
+    child["parent"] = parent  # Circular reference!
 
 # Create circular reference
-parent = Parent()
-child = Child()
-parent.add_child(child)
+parent = create_parent()
+child = create_child()
+add_child(parent, child)
 
 # Even if we delete, circular reference remains
 del parent, child
 # May not be immediately freed without GC
 
-# ✅ GOOD - Use weak references
+# ✅ GOOD - Avoid circular references
+def create_parent_safe():
+    return {"name": "parent", "children": []}
+
+def create_child_safe(parent_name):
+    # Store parent name/ID instead of direct reference
+    return {"name": "child", "parent_name": parent_name}
+
+def add_child_safe(parent, child):
+    parent["children"].append(child)
+    # No circular reference - child stores parent name, not parent dict
+
+parent = create_parent_safe()
+child = create_child_safe(parent["name"])
+add_child_safe(parent, child)
+
+print(child["parent_name"])  # "parent"
+del parent, child  # Freed immediately - no circular reference
+
+# ✅ ALSO GOOD - Use weak references (for supported types)
 import weakref
 
-class ParentSafe:
-    def __init__(self):
-        self.children = []
-    
-    def add_child(self, child):
-        self.children.append(child)
-        child.parent = weakref.ref(self)  # Weak reference!
+# Weak references don't prevent garbage collection
+# They work with functions and many custom objects
+def create_resource():
+    """A function that can be weakly referenced."""
+    print("Resource active")
 
-class ChildSafe:
-    def __init__(self):
-        self.parent = None
-    
-    def get_parent(self):
-        """Get parent if still alive."""
-        if self.parent:
-            return self.parent()  # Dereference weak ref
-        return None
+strong_ref = create_resource
+weak_ref = weakref.ref(create_resource)
 
-# Now safe from circular reference leak
-parent = ParentSafe()
-child = ChildSafe()
-parent.add_child(child)
+print(weak_ref())  # <function create_resource ...>
 
-print(child.get_parent())  # ParentSafe object
-del parent  # Parent freed immediately
-print(child.get_parent())  # None (parent gone)
+del create_resource  # Remove one strong reference
+print(weak_ref())    # Still alive (strong_ref holds it)
+
+del strong_ref       # No more strong references
+print(weak_ref())    # None - resource was collected
 ```
 
 ## Context Managers for Resource Cleanup
@@ -275,26 +268,22 @@ def read_file_good():
     # File closed automatically here
     return data
 
-# Custom context manager
-class DatabaseConnection:
-    def __init__(self, db_name):
-        self.db_name = db_name
-        self.connection = None
-    
-    def __enter__(self):
-        """Called when entering 'with' block."""
-        print(f"Opening connection to {self.db_name}")
-        self.connection = f"Connection to {self.db_name}"
-        return self.connection
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Called when exiting 'with' block."""
-        print(f"Closing connection to {self.db_name}")
-        self.connection = None
-        return False  # Don't suppress exceptions
+# Custom context manager using contextlib
+from contextlib import contextmanager
+
+@contextmanager
+def database_connection(db_name):
+    """Context manager for database connections."""
+    print(f"Opening connection to {db_name}")
+    connection = f"Connection to {db_name}"
+    try:
+        yield connection  # Provide connection to 'with' block
+    finally:
+        print(f"Closing connection to {db_name}")
+        # Cleanup happens here automatically
 
 # Use context manager
-with DatabaseConnection('mydb') as conn:
+with database_connection('mydb') as conn:
     print(f"Using {conn}")
     # Do work with connection
 # Connection closed automatically

@@ -1,8 +1,8 @@
 ---
-id: global-vs-local-scope
+id: lesson-082-global-vs-local-scope
 title: Global vs Local Scope
 chapterId: ch7-scope
-order: 1
+order: 2
 duration: 25
 objectives:
   - Master the differences between global and local scope

@@ -27,7 +27,44 @@ export async function POST(
   try {
     const { courseId, lessonId } = await params;
     const body = await request.json();
-    const { code, exerciseId, testCases } = body;
+    const { code, exerciseId, testCases, labResults, allPassed } = body;
+
+    // Lab exercise submissions (PCAP analysis, Python sandbox)
+    if (labResults) {
+      const exerciseData = getExerciseData(courseId, lessonId);
+      if (!exerciseData) {
+        return NextResponse.json({ error: 'Exercise not found' }, { status: 404 });
+      }
+
+      const totalQuestions = Object.keys(labResults).length;
+      const passedQuestions = Object.values(labResults).filter(Boolean).length;
+      const score = totalQuestions > 0 ? Math.round((passedQuestions / totalQuestions) * 100) : 0;
+      const success = allPassed === true || passedQuestions === totalQuestions;
+
+      dbHelpers.createExerciseSubmission(
+        exerciseId,
+        courseId,
+        code || '',
+        exerciseData.language || 'lab',
+        success ? 'PASSED' : 'FAILED',
+        score
+      );
+
+      if (success) {
+        dbHelpers.markLessonComplete(lessonId, courseId);
+      }
+
+      return NextResponse.json({
+        success,
+        score,
+        totalTests: totalQuestions,
+        passedTests: passedQuestions,
+        results: [],
+        message: success
+          ? `Lab complete! All ${totalQuestions} questions answered correctly. 🎉`
+          : `${passedQuestions} of ${totalQuestions} questions correct. Review and try again!`,
+      });
+    }
 
     if (!code || !exerciseId || !testCases) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -206,61 +243,4 @@ async function evaluatePythonOutput(
   }
 }
 
-// FIXME-PROD: Implement Python sandbox execution
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function _evaluatePythonCode(code: string, testCase: TestCase): Promise<boolean> {
-  // FIXME-PROD: Replace with actual Python sandbox execution
-  // For now, we'll do basic validation checks
-  
-  // Check if code contains required elements based on test case
-  if (testCase.validation) {
-    // Parse validation to extract variable names
-    const variableMatch = testCase.validation.match(/assert\s+(\w+)/);
-    if (variableMatch) {
-      const varName = variableMatch[1];
-      // Check if variable is defined in code
-      if (!code.includes(varName)) {
-        return false;
-      }
-    }
-  }
 
-  // Simple heuristic: if code looks reasonable, pass it
-  // In production, this would execute in a sandboxed Python environment
-  const hasRequiredStructure = code.trim().length > 20;
-  return hasRequiredStructure;
-}
-
-// FIXME-PROD: Implement Python sandbox execution
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function _evaluatePythonFunction(
-  code: string,
-  input: string,
-  expectedOutput: string
-): Promise<{ passed: boolean; actualOutput?: string; error?: string }> {
-  // FIXME-PROD: Replace with actual Python sandbox execution
-  // For now, return a simple check
-  
-  try {
-    // Check if code defines any functions
-    const hasFunctionDef = /def\s+\w+\s*\(/.test(code);
-    
-    if (!hasFunctionDef) {
-      return {
-        passed: false,
-        error: 'No function definition found',
-      };
-    }
-
-    // Basic validation: assume code is correct if well-formed
-    return {
-      passed: true,
-      actualOutput: expectedOutput, // In prod, this would be actual execution result
-    };
-  } catch (error) {
-    return {
-      passed: false,
-      error: error instanceof Error ? error.message : 'Execution error',
-    };
-  }
-}

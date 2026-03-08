@@ -1,8 +1,8 @@
 ---
-id: "71-binary-number-system"
+id: lesson-029-binary-number-system
 title: "Binary Number System"
 chapterId: ch3-computing
-order: 2
+order: 3
 duration: 25
 objectives:
   - Understand the binary (base-2) number system

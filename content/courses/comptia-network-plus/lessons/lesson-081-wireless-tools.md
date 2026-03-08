@@ -1,9 +1,9 @@
 ---
-id: "lesson-081"
+id: lesson-081-wireless-tools
 title: "Wireless Troubleshooting Tools: WiFi and Spectrum Analyzers"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 81
-duration: 25
+duration: 45
 objectives:
   - "Use WiFi analyzers to assess wireless network performance and identify issues"
   - "Interpret spectrum analyzer data to detect interference sources"
@@ -18,6 +18,17 @@ objectives:
 Wireless networks present unique troubleshooting challenges compared to wired networks. Signal interference, channel congestion, RF (Radio Frequency) obstacles, and competing access points can all degrade performance or cause connectivity failures. Unlike wired connections where issues are often localized to a specific cable or port, wireless problems require specialized tools to visualize the invisible RF environment.
 
 In this lesson, we'll explore **WiFi analyzers** (also called WLAN scanners) and **spectrum analyzers**, two essential tool categories for wireless network troubleshooting. WiFi analyzers operate at Layer 2/3, showing available networks, signal strength, and channel usage. Spectrum analyzers operate at Layer 1 (Physical), detecting all RF energy including non-WiFi sources of interference. Together, these tools provide comprehensive wireless diagnostics capabilities.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Use WiFi analyzers to assess wireless network performance and identify issues
+- Interpret spectrum analyzer data to detect interference sources
+- Optimize wireless network placement and channel selection using analyzer tools
+- Troubleshoot common wireless connectivity and performance problems
 
 ---
 
@@ -779,9 +790,143 @@ Wireless troubleshooting requires visibility into the invisible RF environment. 
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** Which three 2.4 GHz WiFi channels are non-overlapping and recommended for use in the United States?
+
+A) 1, 5, 10
+B) 1, 6, 11
+C) 2, 7, 12
+D) 3, 8, 13
+
+<details>
+<summary>Answer</summary>
+
+**B)** Channels 1, 6, and 11 are the only three non-overlapping channels in the 2.4 GHz band (US). Since each channel is 22 MHz wide, only channels separated by 5 channels have no overlap.
+</details>
+
+**Q2.** A WiFi analyzer shows a signal strength of -78 dBm. How would you classify this signal?
+
+A) Excellent
+B) Good
+C) Weak
+D) Unusable
+
+<details>
+<summary>Answer</summary>
+
+**C)** A signal strength of -78 dBm falls in the weak range (-70 to -80 dBm). Devices may experience connectivity issues, slow speeds, or intermittent drops at this signal level.
+</details>
+
+**Q3.** What distinguishes a spectrum analyzer from a WiFi analyzer?
+
+A) A spectrum analyzer is cheaper
+B) A spectrum analyzer detects ALL RF energy, including non-WiFi interference sources
+C) A WiFi analyzer can detect Bluetooth interference
+D) A spectrum analyzer only works on 5 GHz
+
+<details>
+<summary>Answer</summary>
+
+**B)** A spectrum analyzer operates at Layer 1 (Physical) and detects all RF energy in the frequency range, including non-WiFi sources like microwave ovens, Bluetooth, cordless phones, and baby monitors.
+</details>
+
+**Q4.** During a site survey, which type of survey involves measuring actual throughput while connected to the wireless network?
+
+A) Passive survey
+B) Active survey
+C) Predictive survey
+D) Visual survey
+
+<details>
+<summary>Answer</summary>
+
+**B)** An active survey connects to the wireless network and measures actual throughput, latency, and packet loss at various locations. Passive surveys only measure signal strength without connecting.
+</details>
+
+**Q5.** Users report slow WiFi performance despite strong signal strength. A WiFi analyzer shows your AP and a neighboring AP both on Channel 6. What type of interference is this?
+
+A) Adjacent channel interference
+B) Co-channel interference
+C) Non-WiFi interference
+D) Multipath interference
+
+<details>
+<summary>Answer</summary>
+
+**B)** Co-channel interference occurs when multiple access points operate on the same channel. Both APs must share airtime, reducing available bandwidth for each network.
+</details>
+
+**Q6.** Which of the following is a common source of interference that a WiFi analyzer CANNOT detect but a spectrum analyzer can?
+
+A) A neighboring WiFi network
+B) A rogue access point
+C) A microwave oven
+D) An AP with a hidden SSID
+
+<details>
+<summary>Answer</summary>
+
+**C)** Microwave ovens emit RF energy at 2.4 GHz but do not transmit WiFi frames. A WiFi analyzer only sees WiFi signals, while a spectrum analyzer detects all RF energy including non-WiFi sources.
+</details>
+
+**Q7.** What is DFS (Dynamic Frequency Selection) required for on certain 5 GHz channels?
+
+A) To prevent interference with weather and military radar systems
+B) To increase WiFi speed
+C) To enable WPA3 encryption
+D) To support WiFi 6E devices
+
+<details>
+<summary>Answer</summary>
+
+**A)** DFS requires WiFi devices to detect radar signals on UNII-2 and UNII-2 Extended channels and vacate the channel if radar is detected, preventing interference with weather and military radar.
+</details>
+
+**Q8.** A security audit reveals an access point broadcasting "Free_WiFi" with no encryption near your corporate office. What is this most likely?
+
+A) A legitimate guest network
+B) A rogue or evil twin access point
+C) A normal neighbor network
+D) A WiFi analyzer artifact
+
+<details>
+<summary>Answer</summary>
+
+**B)** An open, unencrypted AP with a generic name like "Free_WiFi" near a corporate environment is likely a rogue AP or an evil twin attack designed to lure users into connecting to capture their traffic.
+</details>
+
+**Q9.** What is the recommended minimum signal strength (RSSI) for reliable WiFi coverage in most enterprise environments?
+
+A) -30 dBm
+B) -50 dBm
+C) -67 dBm
+D) -85 dBm
+
+<details>
+<summary>Answer</summary>
+
+**C)** Most enterprise deployments target -67 dBm or better as the minimum signal strength. This provides reliable connectivity for most applications including voice over WiFi.
+</details>
+
+**Q10.** What advantage does the 5 GHz band have over 2.4 GHz for WiFi?
+
+A) Longer range
+B) Better wall penetration
+C) More non-overlapping channels and less interference
+D) Higher transmit power allowed
+
+<details>
+<summary>Answer</summary>
+
+**C)** The 5 GHz band offers significantly more non-overlapping channels (24+) compared to just 3 in 2.4 GHz, and fewer consumer devices use 5 GHz, resulting in less interference.
+</details>
+
+---
+
+## References
 
 - **IEEE 802.11**: Wireless LAN Standards - https://standards.ieee.org/standard/802_11-2020.html
 - **FCC Frequency Allocation Chart**: https://www.fcc.gov/engineering-technology/policy-and-rules-division/general/radio-spectrum-allocation
 - **WiFi Alliance**: https://www.wi-fi.org/
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.3 - Use the appropriate tool
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.3 - Use the appropriate tool

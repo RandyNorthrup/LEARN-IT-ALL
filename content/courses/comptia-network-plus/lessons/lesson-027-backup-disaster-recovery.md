@@ -1,7 +1,7 @@
 ---
-id: backup-disaster-recovery
+id: lesson-027-backup-disaster-recovery
 title: Backup and Disaster Recovery
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 27
 duration: 80
 objectives:
@@ -17,6 +17,18 @@ objectives:
 ## Introduction
 
 Business continuity depends on the ability to restore network services after failures, disasters, or cyberattacks. Effective backup and disaster recovery (DR) planning ensures minimal data loss, rapid service restoration, and organizational resilience. This lesson covers backup strategies, recovery objectives, redundancy mechanisms, and disaster recovery planning for network infrastructure.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand backup strategies and types
+- Define RPO and RTO objectives
+- Implement disaster recovery plans
+- Configure backup solutions
+- Test and maintain recovery procedures
+
+---
 
 ## Why Backup and Disaster Recovery Matter
 
@@ -829,15 +841,78 @@ Effective backup and disaster recovery requires:
 
 Don't wait for disaster to discover your backups don't work or your DR plan is outdated. Regular testing and maintenance are essential to ensure business continuity when disaster strikes.
 
-## Review Questions
+## Practice Questions
 
-1. What are the three types of backups and how do they differ?
-2. Explain the 3-2-1 backup rule and why it's important.
-3. What is the difference between RPO and RTO?
-4. How many nines of availability equals 5.26 minutes of downtime per year?
-5. What is the difference between active-passive and active-active redundancy?
-6. What are the three types of disaster recovery sites (cold, warm, hot)?
-7. What is N+1 redundancy and when would you use it?
-8. How often should disaster recovery plans be tested?
-9. What is MTTR and why does it matter?
-10. What should be included in network device configuration backups?
+**Q1.** Which backup type copies only the data that has changed since the last backup of ANY type?
+
+A) Full backup
+B) Differential backup
+C) Incremental backup
+D) Snapshot backup
+
+<details>
+<summary>Answer</summary>
+
+**C)** An incremental backup copies only data changed since the last backup of any type (full or incremental). This results in the fastest backup time and least storage but requires the full backup plus all subsequent incrementals to restore. A differential backup copies all changes since the last full backup only. A full backup copies everything regardless of changes.
+</details>
+
+**Q2.** A company performs a full backup on Sunday and differential backups Monday through Saturday. On Wednesday, a server crashes and needs to be restored. Which backup sets are required?
+
+A) Sunday full + Monday differential + Tuesday differential + Wednesday differential
+B) Sunday full + Wednesday differential only
+C) Wednesday differential only
+D) Sunday full + Monday differential + Wednesday differential
+
+<details>
+<summary>Answer</summary>
+
+**B)** Differential backups accumulate all changes since the last full backup. Wednesday's differential contains all changes from Monday, Tuesday, and Wednesday. Therefore, only two backup sets are needed: Sunday's full backup plus Wednesday's differential. This is a key advantage of differential over incremental, which would require the full plus all individual daily incrementals.
+</details>
+
+**Q3.** What does the 3-2-1 backup rule specify?
+
+A) 3 backup types, 2 backup schedules, 1 backup administrator
+B) 3 copies of data, 2 different media types, 1 copy off-site
+C) 3 full backups, 2 incremental backups, 1 differential backup per week
+D) 3 retention periods, 2 backup servers, 1 tape library
+
+<details>
+<summary>Answer</summary>
+
+**B)** The 3-2-1 backup rule is the industry best practice: maintain 3 copies of data (1 primary + 2 backups), store them on 2 different media types (e.g., disk and tape, or local disk and cloud), and keep 1 copy off-site to protect against site-level disasters such as fire, flood, or theft. The other options describe incorrect combinations that don't represent the standard rule.
+</details>
+
+**Q4.** A hospital's electronic health records system has an RPO of 1 hour and an RTO of 15 minutes. What does this mean for their backup and recovery strategy?
+
+A) Backups run every 15 minutes and recovery can take up to 1 hour
+B) Data loss of up to 1 hour is acceptable, and the system must be restored within 15 minutes
+C) The system must be backed up once per hour and tested every 15 minutes
+D) Recovery takes 1 hour and backups are retained for 15 minutes
+
+<details>
+<summary>Answer</summary>
+
+**B)** RPO (Recovery Point Objective) defines the maximum acceptable data loss measured in time — here, up to 1 hour of data. RTO (Recovery Time Objective) defines the maximum acceptable downtime before services must be restored — here, 15 minutes. This means backups must occur at least every hour and the recovery infrastructure (such as hot standby systems) must enable restoration within 15 minutes.
+</details>
+
+**Q5.** In the Grandfather-Father-Son (GFS) backup rotation scheme, which backup generation is retained the longest?
+
+A) Son (daily backups)
+B) Father (weekly backups)
+C) Grandfather (monthly backups)
+D) All generations are retained equally
+
+<details>
+<summary>Answer</summary>
+
+**C)** In GFS rotation, Grandfather (monthly) backups are retained the longest — typically 12 months. Father (weekly) backups are typically kept for 4-5 weeks. Son (daily) backups are overwritten after about 4 weeks. This tiered approach provides granular recent recovery points while maintaining long-term archives for compliance and historical reference without requiring excessive storage media.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.2 — Given a scenario, determine the appropriate organizational documents and policies
+- NIST SP 800-34 Rev. 1: Contingency Planning Guide for Federal Information Systems
+- NIST SP 800-184: Guide for Cybersecurity Event Recovery
+- ITIL v4 Foundation: Service Continuity Management Practice
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Chapter on Operations Security
+- ISO 22301:2019: Security and Resilience — Business Continuity Management Systems

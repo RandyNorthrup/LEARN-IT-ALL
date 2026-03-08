@@ -1,7 +1,7 @@
 ---
 id: "055"
 title: "Operator Overloading"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 3
 duration: "20 minutes"
 objectives:

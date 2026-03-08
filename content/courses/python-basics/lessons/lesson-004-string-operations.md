@@ -1,5 +1,5 @@
 ---
-id: string-operations
+id: lesson-004-string-operations
 title: String Operations and Methods
 chapterId: ch1-intro
 order: 4
@@ -175,10 +175,13 @@ print(text.find("Java"))      # -1 (not found)
 # Count occurrences
 text = "banana"
 print(text.count("a"))        # 3
+print(text.startswith("ba"))  # True
+print(text.endswith("na"))    # True
 
-# Check start/end
-print(text.startswith("Py"))  # True
-print(text.endswith("me"))    # True
+# Check start/end of different text
+greeting = "Hello, World!"
+print(greeting.startswith("Hello"))  # True
+print(greeting.endswith("World!"))   # True
 ```
 
 ### Split and Join

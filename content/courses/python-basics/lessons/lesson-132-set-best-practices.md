@@ -1,5 +1,5 @@
 ---
-id: "141-set-best-practices"
+id: lesson-132-set-best-practices
 title: "Set Best Practices and Patterns"
 chapterId: ch10-sets
 order: 8
@@ -233,22 +233,28 @@ ADMIN_PERMISSIONS = frozenset(["read", "write", "delete"])
 VALID_STATUSES = frozenset(["pending", "approved", "rejected"])
 
 # ✅ GOOD: Return copies to prevent modification
-class Config:
-    def __init__(self):
-        self._valid_keys = {"key1", "key2", "key3"}
-    
-    def get_valid_keys(self):
-        """Return copy to prevent modification"""
-        return self._valid_keys.copy()
+def create_config():
+    """Create a config with valid keys"""
+    return {"valid_keys": {"key1", "key2", "key3"}}
+
+def get_valid_keys_safe(config):
+    """Return copy to prevent modification"""
+    return config["valid_keys"].copy()
 
 # ❌ AVOID: Returning mutable internal state
-class ConfigBad:
-    def __init__(self):
-        self._valid_keys = {"key1", "key2", "key3"}
-    
-    def get_valid_keys(self):
-        """Caller can modify internal state!"""
-        return self._valid_keys  # Risky!
+def get_valid_keys_unsafe(config):
+    """Caller can modify internal state!"""
+    return config["valid_keys"]  # Risky!
+
+# Demonstration:
+config = create_config()
+safe_keys = get_valid_keys_safe(config)
+safe_keys.add("key4")
+print(config["valid_keys"])  # Still {"key1", "key2", "key3"}
+
+unsafe_keys = get_valid_keys_unsafe(config)
+unsafe_keys.add("key5")
+print(config["valid_keys"])  # Modified! Now includes "key5"
 
 # ✅ GOOD: Use frozenset for dict keys
 cache = {

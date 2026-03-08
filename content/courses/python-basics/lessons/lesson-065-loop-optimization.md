@@ -1,8 +1,8 @@
 ---
-id: "100-loop-optimization"
+id: lesson-065-loop-optimization
 title: "Loop Optimization Techniques"
 chapterId: ch5-loops
-order: 11
+order: 8
 duration: 25
 objectives:
   - Learn techniques to write faster loops

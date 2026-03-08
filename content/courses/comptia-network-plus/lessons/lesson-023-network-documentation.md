@@ -1,21 +1,7 @@
 ---
-id: network-documentation
+id: lesson-023-network-documentation
 title: Network Documentation
-chapterId: ch3-network-operations
-order: 23
-duration: 60
-objectives:
-  - Understand the importance of network documentation
-  - Identify types of network documentation required
-  - Create and maintain network diagrams
-  - Document network configurations and policies
-  - Implement documentation best practices
----
-
----
-id: network-documentation
-title: Network Documentation
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 23
 duration: 60
 objectives:
@@ -31,6 +17,18 @@ objectives:
 ## Introduction
 
 Network documentation is the foundation of effective network operations and management. Proper documentation enables efficient troubleshooting, facilitates change management, ensures business continuity, and supports compliance requirements. This lesson covers essential documentation types, best practices, and tools used by network professionals.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the importance of network documentation
+- Identify types of network documentation required
+- Create and maintain network diagrams
+- Document network configurations and policies
+- Implement documentation best practices
+
+---
 
 ## Why Network Documentation Matters
 
@@ -584,7 +582,9 @@ Your company is acquiring another organization. You need to integrate their netw
 - Undocumented single points of failure discovered too late
 - Cost overruns due to extended consulting engagement
 
-## Key Takeaways
+## Summary
+
+**Key Takeaways:**
 
 1. **Documentation is an investment**: Short-term effort saves long-term pain
 2. **Automation helps**: Use tools to generate and maintain documentation
@@ -596,8 +596,6 @@ Your company is acquiring another organization. You need to integrate their netw
 8. **Compliance requires it**: Many regulations mandate network documentation
 9. **Team effort**: Everyone on team responsible for maintaining documentation
 10. **Living document**: Network documentation constantly evolves with network
-
-## Summary
 
 Network documentation is essential for:
 - **Operational efficiency**: Faster troubleshooting and changes
@@ -615,15 +613,77 @@ Effective documentation requires:
 
 Investment in quality documentation pays dividends through reduced downtime, faster onboarding, improved security, and regulatory compliance.
 
-## Review Questions
+## Practice Questions
 
-1. What is the difference between a physical and logical network diagram?
-2. Why should network documentation be stored in a separate location from the production network?
-3. What information should be included in IPAM documentation?
-4. How often should configuration backups be performed for critical network devices?
-5. What is a Standard Operating Procedure (SOP) and why is it important?
-6. List three tools commonly used for network diagramming.
-7. What are the key elements of a disaster recovery procedure?
-8. Why is version control important for network documentation?
-9. What are some common compliance requirements that mandate network documentation?
-10. What is the impact of outdated or missing network documentation?
+**Q1.** Which type of network documentation shows IP addressing, VLANs, and routing protocols?
+
+A) Physical network diagram
+B) Logical network diagram
+C) Rack elevation diagram
+D) Wiring diagram
+
+<details>
+<summary>Answer</summary>
+
+**B)** A logical network diagram illustrates how data flows through the network, including IP addresses, subnet assignments, VLANs, and routing protocols. A physical diagram shows equipment locations and cable types. A rack elevation diagram documents equipment placement within racks. A wiring diagram details cable connections and patch panel mappings.
+</details>
+
+**Q2.** A network administrator needs to document all IP address assignments, DHCP scopes, and reserved addresses in a centralized system. Which documentation type best serves this purpose?
+
+A) Cable management documentation
+B) Standard Operating Procedures
+C) IP Address Management (IPAM) documentation
+D) Site survey documentation
+
+<details>
+<summary>Answer</summary>
+
+**C)** IP Address Management (IPAM) documentation provides a centralized record of all IP assignments, including subnet allocation tables, static IP assignments, and DHCP scope configurations. Cable management documents physical cabling. SOPs document routine procedures. Site surveys assess physical and wireless infrastructure.
+</details>
+
+**Q3.** A company is expanding to a new floor and needs to plan cable runs, rack placement, and power requirements. Which documentation should be created FIRST?
+
+A) Logical network diagram
+B) Configuration backup schedule
+C) Physical site assessment
+D) Change control log
+
+<details>
+<summary>Answer</summary>
+
+**C)** A physical site assessment should be conducted first to document power availability, cooling capacity, cable pathways, conduit runs, and rack space before any installation begins. A logical diagram addresses data flow, not physical infrastructure planning. Configuration backups and change control come after equipment is deployed.
+</details>
+
+**Q4.** What is the recommended cable labeling format for identifying a cable connection from Building A, Room 201, Rack 1, Switch 01, port G0/1?
+
+A) Cable-201-A
+B) A-201-R1-SW01-G0/1
+C) SW01-Port1-Room201
+D) 201.1.1.1
+
+<details>
+<summary>Answer</summary>
+
+**B)** The format A-201-R1-SW01-G0/1 follows the industry-standard labeling convention of [Building]-[Room]-[Rack]-[Device]-[Port], providing complete traceability from building to specific port. The other options either omit critical location information, use non-standard formats, or could be confused with IP addressing.
+</details>
+
+**Q5.** An organization's network documentation reveals that their DHCP server, DNS server, and default gateway all reside on a single device with no redundancy. A network engineer reviews this during an audit. What is the PRIMARY risk identified?
+
+A) Excessive bandwidth consumption
+B) IP address exhaustion
+C) Single point of failure affecting all network services
+D) Non-compliance with cable labeling standards
+
+<details>
+<summary>Answer</summary>
+
+**C)** Consolidating DHCP, DNS, and gateway functions on a single device without redundancy creates a single point of failure (SPOF). If that device fails, users lose IP addressing, name resolution, and routing simultaneously. This is a critical finding in any documentation audit. The other options describe unrelated concerns that would not result from this specific configuration.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.1 — Given a scenario, use the appropriate documentation and diagrams to manage the network
+- ITIL v4 Foundation: Service Management Practices — Configuration Management and Knowledge Management
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — CM (Configuration Management) Family
+- Kurose, J. F., & Ross, K. W. (2021). *Computer Networking: A Top-Down Approach* (8th ed.). Pearson — Chapter 9: Network Management
+- IEEE 802.1 Working Group: Network Management and Documentation Standards

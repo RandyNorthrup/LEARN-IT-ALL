@@ -1,0 +1,56 @@
+{
+  "id": "exercise-118-scope-pitfalls-patterns",
+  "courseId": "python-basics",
+  "lessonId": "lesson-088-scope-best-practices",
+  "chapterId": "ch7-scope",
+  "title": "Scope Pitfalls and Patterns",
+  "description": "Recognize and fix common Python scope pitfalls: the mutable default argument trap, late-binding closures in loops, using nonlocal for accumulators, and avoiding shadowing of built-in names.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def fix_mutable_default(items=None):\n    \"\"\"Demonstrate the mutable default argument fix.\n    \n    The classic bug: using a mutable default like items=[] causes\n    the same list to be shared across all calls. The fix is to\n    default to None and create a new list inside the function.\n    \n    If items is None, create a new empty list.\n    Append the string 'new' to the list and return it.\n    \n    Args:\n        items: An optional list (default None).\n    \n    Returns:\n        The list with 'new' appended.\n    \n    Example:\n        fix_mutable_default() -> ['new']\n        fix_mutable_default(['a']) -> ['a', 'new']\n    \"\"\"\n    # TODO: If items is None, create a fresh list\n    # Then append 'new' and return the list\n    pass\n\n\ndef make_multipliers(n):\n    \"\"\"Return a list of n multiplier functions.\n    \n    The i-th function (0-indexed) should multiply its argument by i.\n    \n    BEWARE the late-binding closure bug! In a naive loop:\n        lambda x: x * i  <-- 'i' is looked up at call time, not definition time\n    Fix this by capturing i as a default argument:\n        lambda x, i=i: x * i\n    \n    Args:\n        n: The number of multiplier functions to create.\n    \n    Returns:\n        A list of functions [mult_0, mult_1, ..., mult_(n-1)].\n    \n    Example:\n        fns = make_multipliers(4)\n        fns[0](10) -> 0\n        fns[1](10) -> 10\n        fns[3](10) -> 30\n    \"\"\"\n    # TODO: Create n lambda functions, each multiplying by its index\n    # Use default argument to capture the loop variable\n    pass\n\n\ndef accumulate_with_nonlocal(numbers):\n    \"\"\"Build a list of running totals using nonlocal.\n    \n    Define an inner helper that uses nonlocal to maintain a running\n    total. Call it for each number to produce the running totals.\n    \n    Args:\n        numbers: A list of numbers.\n    \n    Returns:\n        A list of running totals.\n    \n    Example:\n        accumulate_with_nonlocal([1, 2, 3, 4]) -> [1, 3, 6, 10]\n    \"\"\"\n    # TODO: Use a closure with nonlocal to track running_total\n    pass\n\n\ndef shadow_demo():\n    \"\"\"Show that built-in functions are accessible when not shadowed.\n    \n    Return a dict with three keys proving the builtins still work:\n    - 'builtin_type': result of type(42) (should be <class 'int'>)\n    - 'builtin_len': result of len([1, 2, 3]) (should be 3)\n    - 'builtin_sum': result of sum([1, 2, 3]) (should be 6)\n    \n    The point: do NOT create variables named type, len, or sum.\n    \n    Returns:\n        A dictionary with the three keys described above.\n    \"\"\"\n    # TODO: Return a dict using built-in type(), len(), and sum()\n    # Do NOT shadow any built-in names!\n    pass\n",
+  "solution": "def fix_mutable_default(items=None):\n    \"\"\"Demonstrate the mutable default argument fix.\n    \n    The classic bug: using a mutable default like items=[] causes\n    the same list to be shared across all calls. The fix is to\n    default to None and create a new list inside the function.\n    \n    If items is None, create a new empty list.\n    Append the string 'new' to the list and return it.\n    \n    Args:\n        items: An optional list (default None).\n    \n    Returns:\n        The list with 'new' appended.\n    \n    Example:\n        fix_mutable_default() -> ['new']\n        fix_mutable_default(['a']) -> ['a', 'new']\n    \"\"\"\n    if items is None:\n        items = []\n    items.append('new')\n    return items\n\n\ndef make_multipliers(n):\n    \"\"\"Return a list of n multiplier functions.\n    \n    The i-th function (0-indexed) should multiply its argument by i.\n    \n    BEWARE the late-binding closure bug! In a naive loop:\n        lambda x: x * i  <-- 'i' is looked up at call time, not definition time\n    Fix this by capturing i as a default argument:\n        lambda x, i=i: x * i\n    \n    Args:\n        n: The number of multiplier functions to create.\n    \n    Returns:\n        A list of functions [mult_0, mult_1, ..., mult_(n-1)].\n    \n    Example:\n        fns = make_multipliers(4)\n        fns[0](10) -> 0\n        fns[1](10) -> 10\n        fns[3](10) -> 30\n    \"\"\"\n    return [lambda x, i=i: x * i for i in range(n)]\n\n\ndef accumulate_with_nonlocal(numbers):\n    \"\"\"Build a list of running totals using nonlocal.\n    \n    Define an inner helper that uses nonlocal to maintain a running\n    total. Call it for each number to produce the running totals.\n    \n    Args:\n        numbers: A list of numbers.\n    \n    Returns:\n        A list of running totals.\n    \n    Example:\n        accumulate_with_nonlocal([1, 2, 3, 4]) -> [1, 3, 6, 10]\n    \"\"\"\n    running_total = 0\n\n    def add(value):\n        nonlocal running_total\n        running_total += value\n        return running_total\n\n    return [add(num) for num in numbers]\n\n\ndef shadow_demo():\n    \"\"\"Show that built-in functions are accessible when not shadowed.\n    \n    Return a dict with three keys proving the builtins still work:\n    - 'builtin_type': result of type(42) (should be <class 'int'>)\n    - 'builtin_len': result of len([1, 2, 3]) (should be 3)\n    - 'builtin_sum': result of sum([1, 2, 3]) (should be 6)\n    \n    The point: do NOT create variables named type, len, or sum.\n    \n    Returns:\n        A dictionary with the three keys described above.\n    \"\"\"\n    return {\n        'builtin_type': type(42),\n        'builtin_len': len([1, 2, 3]),\n        'builtin_sum': sum([1, 2, 3])\n    }\n",
+  "hints": [
+    "The mutable default argument fix: use None as default, then 'if items is None: items = []' inside the function.",
+    "To fix late-binding closures in loops, capture the loop variable with a default parameter: lambda x, i=i: x * i",
+    "The 'nonlocal' keyword lets an inner function modify a variable from its enclosing function's scope."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "fix_mutable_default returns fresh list when called with no args",
+      "validation": "assert fix_mutable_default() == ['new']",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "make_multipliers creates correct multiplier functions",
+      "validation": "fns = make_multipliers(5); assert fns[0](10) == 0; assert fns[3](10) == 30; assert fns[4](7) == 28",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "accumulate_with_nonlocal builds running totals",
+      "validation": "assert accumulate_with_nonlocal([1, 2, 3, 4]) == [1, 3, 6, 10]",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "shadow_demo returns correct built-in results",
+      "validation": "result = shadow_demo(); assert result['builtin_type'] == int; assert result['builtin_len'] == 3; assert result['builtin_sum'] == 6",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "fix_mutable_default does not share state between calls",
+      "validation": "a = fix_mutable_default(); b = fix_mutable_default(); assert a == ['new'] and b == ['new'] and a is not b",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "accumulate_with_nonlocal handles empty list",
+      "validation": "assert accumulate_with_nonlocal([]) == []",
+      "isHidden": true
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-id: "148-exception-handling-patterns"
+id: lesson-141-exception-handling-patterns
 title: "Exception Handling Patterns and Strategies"
 chapterId: ch11-error-handling
 order: 4
@@ -147,54 +147,47 @@ def parse_data(data):
 # Circuit breaker for failing services
 from datetime import datetime, timedelta
 
-class CircuitBreaker:
-    """Circuit breaker to prevent cascading failures"""
-    def __init__(self, failure_threshold=5, timeout=60):
-        self.failure_threshold = failure_threshold
-        self.timeout = timeout
-        self.failure_count = 0
-        self.last_failure_time = None
-        self.state = "closed"  # closed, open, half-open
+def create_circuit_breaker(failure_threshold=5, timeout=60):
+    """Create a circuit breaker to prevent cascading failures"""
+    return {
+        "failure_threshold": failure_threshold,
+        "timeout": timeout,
+        "failure_count": 0,
+        "last_failure_time": None,
+        "state": "closed",  # closed, open, half-open
+    }
+
+def circuit_breaker_call(breaker, operation):
+    """Execute operation with circuit breaker protection"""
+    if breaker["state"] == "open":
+        if _should_attempt_reset(breaker):
+            breaker["state"] = "half-open"
+        else:
+            raise RuntimeError("Circuit breaker is OPEN")
     
-    def call(self, operation):
-        """Execute operation with circuit breaker"""
-        if self.state == "open":
-            if self._should_attempt_reset():
-                self.state = "half-open"
-            else:
-                raise Exception("Circuit breaker is OPEN")
-        
-        try:
-            result = operation()
-            self._on_success()
-            return result
-        except Exception as e:
-            self._on_failure()
-            raise
-    
-    def _on_success(self):
-        """Handle successful operation"""
-        self.failure_count = 0
-        self.state = "closed"
-    
-    def _on_failure(self):
-        """Handle failed operation"""
-        self.failure_count += 1
-        self.last_failure_time = datetime.now()
-        
-        if self.failure_count >= self.failure_threshold:
-            self.state = "open"
-    
-    def _should_attempt_reset(self):
-        """Check if should attempt to reset"""
-        if self.last_failure_time is None:
-            return False
-        
-        elapsed = datetime.now() - self.last_failure_time
-        return elapsed.total_seconds() >= self.timeout
+    try:
+        result = operation()
+        # On success, reset failure count
+        breaker["failure_count"] = 0
+        breaker["state"] = "closed"
+        return result
+    except Exception as e:
+        # On failure, increment count
+        breaker["failure_count"] += 1
+        breaker["last_failure_time"] = datetime.now()
+        if breaker["failure_count"] >= breaker["failure_threshold"]:
+            breaker["state"] = "open"
+        raise
+
+def _should_attempt_reset(breaker):
+    """Check if enough time has passed to attempt reset"""
+    if breaker["last_failure_time"] is None:
+        return False
+    elapsed = datetime.now() - breaker["last_failure_time"]
+    return elapsed.total_seconds() >= breaker["timeout"]
 
 # Usage
-breaker = CircuitBreaker(failure_threshold=3, timeout=30)
+breaker = create_circuit_breaker(failure_threshold=3, timeout=30)
 
 def unreliable_service():
     import random
@@ -204,7 +197,7 @@ def unreliable_service():
 
 for i in range(10):
     try:
-        result = breaker.call(unreliable_service)
+        result = circuit_breaker_call(breaker, unreliable_service)
         print(f"Call {i+1}: {result}")
     except Exception as e:
         print(f"Call {i+1} failed: {e}")
@@ -361,73 +354,74 @@ country = get_value_from_sources("country", sources)
 
 ```python
 # Transaction with rollback
-class Transaction:
-    """Transaction with commit/rollback"""
-    def __init__(self):
-        self.operations = []
-        self.committed = False
+def create_transaction():
+    """Create a transaction that supports commit/rollback"""
+    return {"operations": [], "committed": False}
+
+def add_operation(transaction, do_func, undo_func):
+    """Add an operation with its undo function to the transaction"""
+    transaction["operations"].append((do_func, undo_func))
+
+def execute_transaction(transaction):
+    """Execute all operations; rollback completed ones on failure"""
+    completed = []
     
-    def add_operation(self, do_func, undo_func):
-        """Add operation with undo"""
-        self.operations.append((do_func, undo_func))
+    try:
+        for do_func, undo_func in transaction["operations"]:
+            do_func()
+            completed.append(undo_func)
+        
+        transaction["committed"] = True
+        return True
     
-    def execute(self):
-        """Execute all operations"""
-        completed = []
+    except Exception as e:
+        print(f"Transaction failed: {e}")
+        print("Rolling back...")
         
-        try:
-            for do_func, undo_func in self.operations:
-                do_func()
-                completed.append(undo_func)
-            
-            self.committed = True
-            return True
+        # Rollback completed operations in reverse order
+        for undo_func in reversed(completed):
+            try:
+                undo_func()
+            except Exception as undo_error:
+                print(f"Rollback error: {undo_error}")
         
-        except Exception as e:
-            print(f"Transaction failed: {e}")
-            print("Rolling back...")
-            
-            # Rollback completed operations in reverse order
-            for undo_func in reversed(completed):
-                try:
-                    undo_func()
-                except Exception as undo_error:
-                    print(f"Rollback error: {undo_error}")
-            
-            raise
+        raise
 
 # Example: Bank transfer
-class Account:
-    def __init__(self, name, balance):
-        self.name = name
-        self.balance = balance
-    
-    def withdraw(self, amount):
-        if amount > self.balance:
-            raise ValueError("Insufficient funds")
-        self.balance -= amount
-    
-    def deposit(self, amount):
-        self.balance += amount
+def create_account(name, balance):
+    """Create a bank account as a dictionary"""
+    return {"name": name, "balance": balance}
+
+def withdraw(account, amount):
+    """Withdraw from account"""
+    if amount > account["balance"]:
+        raise ValueError("Insufficient funds")
+    account["balance"] -= amount
+
+def deposit(account, amount):
+    """Deposit to account"""
+    account["balance"] += amount
 
 def transfer(from_account, to_account, amount):
     """Transfer money with transaction"""
-    transaction = Transaction()
+    txn = create_transaction()
     
     # Add withdraw operation
-    transaction.add_operation(
-        do_func=lambda: from_account.withdraw(amount),
-        undo_func=lambda: from_account.deposit(amount)
+    add_operation(
+        txn,
+        do_func=lambda: withdraw(from_account, amount),
+        undo_func=lambda: deposit(from_account, amount)
     )
     
     # Add deposit operation
-    transaction.add_operation(
-        do_func=lambda: to_account.deposit(amount),
-        undo_func=lambda: to_account.withdraw(amount)
+    add_operation(
+        txn,
+        do_func=lambda: deposit(to_account, amount),
+        undo_func=lambda: withdraw(to_account, amount)
     )
     
     try:
-        transaction.execute()
+        execute_transaction(txn)
         print("Transfer successful")
         return True
     except Exception as e:
@@ -435,16 +429,16 @@ def transfer(from_account, to_account, amount):
         return False
 
 # Usage
-alice = Account("Alice", 1000)
-bob = Account("Bob", 500)
+alice = create_account("Alice", 1000)
+bob = create_account("Bob", 500)
 
-print(f"Before: Alice={alice.balance}, Bob={bob.balance}")
+print(f"Before: Alice={alice['balance']}, Bob={bob['balance']}")
 transfer(alice, bob, 200)
-print(f"After: Alice={alice.balance}, Bob={bob.balance}")
+print(f"After: Alice={alice['balance']}, Bob={bob['balance']}")
 
 # Try invalid transfer
 transfer(alice, bob, 2000)  # Should rollback
-print(f"After failed: Alice={alice.balance}, Bob={bob.balance}")
+print(f"After failed: Alice={alice['balance']}, Bob={bob['balance']}")
 ```
 
 ## Resource Cleanup Pattern
@@ -474,21 +468,23 @@ def release_resource(resource):
     print(f"Released {resource}")
 
 # Context manager (preferred)
-class ManagedResource:
+from contextlib import contextmanager
+
+@contextmanager
+def managed_resource():
     """Resource with automatic cleanup"""
-    def __enter__(self):
-        print("Acquiring resource")
-        self.resource = "managed_resource"
-        return self.resource
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    print("Acquiring resource")
+    resource = "managed_resource"
+    try:
+        yield resource
+    except Exception as exc:
+        print(f"Exception occurred: {exc}")
+        raise
+    finally:
         print("Releasing resource")
-        if exc_type:
-            print(f"Exception occurred: {exc_val}")
-        return False  # Don't suppress exceptions
 
 # Usage
-with ManagedResource() as resource:
+with managed_resource() as resource:
     print(f"Using {resource}")
     # Automatic cleanup even if exception occurs
 
@@ -506,13 +502,6 @@ def process_multiple_resources():
 
 ```python
 # Collect multiple exceptions
-class AggregateException(Exception):
-    """Exception containing multiple exceptions"""
-    def __init__(self, exceptions):
-        self.exceptions = exceptions
-        messages = [str(e) for e in exceptions]
-        super().__init__(f"Multiple errors: {'; '.join(messages)}")
-
 def validate_all(data, validators):
     """Run all validators, collect all errors"""
     errors = []
@@ -524,7 +513,8 @@ def validate_all(data, validators):
             errors.append(e)
     
     if errors:
-        raise AggregateException(errors)
+        messages = [str(e) for e in errors]
+        raise ValueError(f"Multiple errors: {'; '.join(messages)}")
     
     return True
 
@@ -546,10 +536,8 @@ validators = [validate_not_empty, validate_has_name, validate_has_email]
 
 try:
     validate_all({}, validators)
-except AggregateException as e:
-    print(f"Validation failed with {len(e.exceptions)} errors:")
-    for error in e.exceptions:
-        print(f"  - {error}")
+except ValueError as e:
+    print(f"Validation failed: {e}")
 ```
 
 ## Logging with Exceptions

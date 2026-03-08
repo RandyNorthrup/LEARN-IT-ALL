@@ -1,9 +1,9 @@
 ---
-id: "lesson-078"
+id: lesson-078-network-utilities
 title: "Network Utilities: nslookup, dig, netstat, and arp"
-chapterId: "chapter-09"
+chapterId: ch9-network-troubleshooting
 order: 78
-duration: 26
+duration: 55
 objectives:
   - "Use nslookup and dig to troubleshoot DNS resolution issues"
   - "Analyze netstat output to identify network connections and listening ports"
@@ -18,6 +18,17 @@ objectives:
 Building on the foundation of command-line troubleshooting tools (ping, traceroute, ipconfig), this lesson explores advanced network utilities that provide deeper insights into network operations. These tools help diagnose DNS problems, analyze active connections, inspect routing tables, and troubleshoot Layer 2 address resolution issues.
 
 We'll cover four critical utilities: **nslookup** and **dig** for DNS troubleshooting, **netstat** for connection analysis, and **arp** for address resolution diagnostics. Mastering these tools enables you to quickly identify and resolve complex network issues that basic connectivity tests cannot detect.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Use nslookup and dig to troubleshoot DNS resolution issues
+- Analyze netstat output to identify network connections and listening ports
+- Use arp to view and manage the ARP cache
+- Apply network utilities to diagnose common network problems
 
 ---
 
@@ -1353,8 +1364,142 @@ Combined with basic tools (ping, traceroute, ipconfig), these utilities provide 
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** A technician runs `nslookup example.com` and receives a "Non-authoritative answer." What does this mean?
+
+A) The DNS query failed
+B) The response came from a DNS cache, not the authoritative DNS server
+C) The domain does not exist
+D) The DNS server is misconfigured
+
+<details>
+<summary>Answer</summary>
+
+**B)** A non-authoritative answer means the response came from a cached copy on a recursive DNS server, not directly from the domain's authoritative name server.
+</details>
+
+**Q2.** Which command would you use to query MX records for a domain?
+
+A) nslookup -type=A example.com
+B) nslookup -type=MX example.com
+C) nslookup -type=NS example.com
+D) nslookup -type=CNAME example.com
+
+<details>
+<summary>Answer</summary>
+
+**B)** The `-type=MX` option queries Mail Exchange records, which identify the mail servers responsible for accepting email for a domain.
+</details>
+
+**Q3.** A technician suspects the default DNS server is providing incorrect results. How can they test using an alternative DNS server?
+
+A) nslookup example.com 8.8.8.8
+B) nslookup -server=8.8.8.8
+C) dig @default example.com
+D) ping -dns 8.8.8.8 example.com
+
+<details>
+<summary>Answer</summary>
+
+**A)** Running `nslookup example.com 8.8.8.8` sends the DNS query to 8.8.8.8 (Google DNS) instead of the default DNS server, allowing comparison of results.
+</details>
+
+**Q4.** Which `netstat` option displays all active connections AND listening ports with numeric addresses?
+
+A) netstat -r
+B) netstat -an
+C) netstat -s
+D) netstat -e
+
+<details>
+<summary>Answer</summary>
+
+**B)** `netstat -an` combines `-a` (all connections and listening ports) with `-n` (numeric format, skipping DNS resolution for faster output).
+</details>
+
+**Q5.** What does the `arp -a` command display?
+
+A) The DNS cache
+B) Active TCP connections
+C) The ARP cache mapping IP addresses to MAC addresses
+D) The routing table
+
+<details>
+<summary>Answer</summary>
+
+**C)** `arp -a` displays the ARP (Address Resolution Protocol) cache, showing the mappings between IP addresses and their corresponding MAC addresses on the local network.
+</details>
+
+**Q6.** Which DNS record type creates an alias that points one domain name to another?
+
+A) A
+B) MX
+C) PTR
+D) CNAME
+
+<details>
+<summary>Answer</summary>
+
+**D)** A CNAME (Canonical Name) record creates an alias, pointing one domain name to another domain name rather than directly to an IP address.
+</details>
+
+**Q7.** A technician sees a device communicating with an unexpected MAC address for the default gateway in the ARP table. What might this indicate?
+
+A) Normal network behavior
+B) A DNS poisoning attack
+C) An ARP spoofing or poisoning attack
+D) A DHCP scope exhaustion
+
+<details>
+<summary>Answer</summary>
+
+**C)** An unexpected MAC address for the gateway in the ARP table could indicate ARP spoofing/poisoning, where an attacker redirects traffic by sending fraudulent ARP replies.
+</details>
+
+**Q8.** What is the modern Linux replacement for the `netstat` command?
+
+A) ip route
+B) ss (socket statistics)
+C) ip neigh
+D) dig
+
+<details>
+<summary>Answer</summary>
+
+**B)** The `ss` (socket statistics) command is the modern replacement for `netstat` on Linux. It provides faster output and more detailed socket information.
+</details>
+
+**Q9.** A reverse DNS lookup using nslookup on a private IP address returns "Non-existent domain." What does this indicate?
+
+A) The IP address is not in use
+B) The DNS server is broken
+C) Private IP addresses typically don't have public reverse DNS records
+D) The device at that IP is offline
+
+<details>
+<summary>Answer</summary>
+
+**C)** Private IP addresses (RFC 1918) typically do not have reverse DNS (PTR) records in public DNS. This is expected behavior and does not indicate a problem.
+</details>
+
+**Q10.** Which `dig` option traces the complete DNS resolution path from root servers to the authoritative server?
+
+A) dig +short
+B) dig +trace
+C) dig +noall
+D) dig +answer
+
+<details>
+<summary>Answer</summary>
+
+**B)** `dig +trace` performs an iterative query from the root DNS servers through TLD servers to the authoritative name server, showing the complete resolution path.
+</details>
+
+---
+
+## References
 
 - **RFC 1035**: Domain Names - Implementation and Specification - https://tools.ietf.org/html/rfc1035
 - **RFC 826**: Ethernet Address Resolution Protocol (ARP) - https://tools.ietf.org/html/rfc826
-- **CompTIA Network+ N10-008 Exam Objectives**: Domain 5.3 - Use the appropriate tool
+- **CompTIA Network+ N10-009 Exam Objectives**: Domain 5.3 - Use the appropriate tool

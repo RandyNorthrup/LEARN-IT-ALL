@@ -1,9 +1,9 @@
 ---
-id: "lesson-090"
+id: lesson-090-career-paths
 title: "Career Paths and Next Steps After Network+"
-chapterId: "chapter-10"
+chapterId: ch10-exam-prep
 order: 90
-duration: 25
+duration: 45
 objectives:
   - "Explore career opportunities available with Network+ certification"
   - "Understand salary expectations and job market trends"
@@ -26,6 +26,17 @@ This final lesson explores what comes next:
 - Long-term career planning in IT
 
 Your Network+ certification demonstrates foundational competence in networking—now it's time to leverage that knowledge into a rewarding career.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Explore career opportunities available with Network+ certification
+- Understand salary expectations and job market trends
+- Identify next certifications to advance your career
+- Develop a personalized career roadmap in IT networking
 
 ---
 
@@ -767,14 +778,164 @@ Whether you pursue enterprise networking, cloud architecture, security specializ
 
 **Welcome to the networking profession. Your journey is just beginning, and the possibilities are limitless.**
 
-**Best of luck in your career, and congratulations on completing the CompTIA Network+ N10-008 course!**
+**Best of luck in your career, and congratulations on completing the CompTIA Network+ N10-009 course!**
 
 ---
 
-## Additional Resources
+## Summary
+
+The CompTIA Network+ certification opens doors to a wide range of networking career paths. Key takeaways:
+
+1. **Entry-level roles** (Help Desk, NOC Technician, Network Support Specialist) provide the foundation — expect $35,000-$55,000 starting salary
+2. **Mid-level roles** (Network Administrator, Systems Administrator, Security Analyst) typically require 2-5 years of experience and additional certifications
+3. **Senior roles** (Network Architect, Cloud Engineer, Security Engineer) require specialized expertise and 5+ years — salaries range $90,000-$150,000+
+4. **Certification paths** branch into networking (CCNA → CCNP), security (Security+ → CySA+ → CASP+), or cloud (AWS/Azure/GCP)
+5. **Continuous learning** is essential — technologies like SD-WAN, cloud networking, and network automation are reshaping the field
+6. **Soft skills** matter — communication, documentation, teamwork, and problem-solving are valued equally with technical knowledge
+7. **Specialization** increases earning potential — security and cloud networking command the highest salaries
+8. **Professional development**: Join professional organizations (IEEE, ISACA), contribute to open-source projects, and build a home lab
+
+---
+
+## Practice Questions
+
+**Q1.** Which entry-level IT position focuses primarily on monitoring network infrastructure 24/7 and responding to alerts?
+
+A) Network Architect
+B) NOC (Network Operations Center) Technician
+C) Chief Information Officer
+D) Penetration Tester
+
+<details>
+<summary>Answer</summary>
+
+**B)** A NOC Technician monitors network infrastructure around the clock, responds to alerts and alarms, performs initial troubleshooting, escalates critical issues, and maintains incident logs.
+</details>
+
+**Q2.** After earning Network+, which certification is most commonly recommended as the next step for someone pursuing a career in network engineering?
+
+A) CompTIA Project+
+B) Cisco CCNA
+C) ITIL Foundation
+D) AWS Cloud Practitioner
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Cisco CCNA (Cisco Certified Network Associate) is the most common next certification for network engineering careers. It provides vendor-specific skills that complement the vendor-neutral Network+ foundation.
+</details>
+
+**Q3.** What is the typical salary range for an entry-level Network Administrator position?
+
+A) $25,000 - $35,000
+B) $45,000 - $65,000
+C) $100,000 - $120,000
+D) $150,000 - $200,000
+
+<details>
+<summary>Answer</summary>
+
+**B)** Entry-level Network Administrators typically earn $45,000-$65,000. Salary varies by location, organization size, and additional certifications.
+</details>
+
+**Q4.** Which career specialization would involve conducting site surveys and optimizing RF performance?
+
+A) Database Administrator
+B) Wireless Network Engineer
+C) Software Developer
+D) Help Desk Manager
+
+<details>
+<summary>Answer</summary>
+
+**B)** A Wireless Network Engineer specializes in designing and deploying wireless networks, conducting site surveys, configuring access points and controllers, and optimizing radio frequency (RF) performance.
+</details>
+
+**Q5.** What certification path should someone pursue if they want to specialize in network security?
+
+A) Network+ → CCNA → AWS Solutions Architect
+B) Network+ → Security+ → CySA+ or CEH
+C) Network+ → Linux+ → RHCE
+D) Network+ → Project+ → PMP
+
+<details>
+<summary>Answer</summary>
+
+**B)** For a network security career, the recommended path is Network+ → CompTIA Security+ → CompTIA CySA+ (Cybersecurity Analyst) or EC-Council CEH (Certified Ethical Hacker).
+</details>
+
+**Q6.** How long is the CompTIA Network+ certification valid before renewal is required?
+
+A) 1 year
+B) 3 years
+C) 5 years
+D) Lifetime (no renewal needed)
+
+<details>
+<summary>Answer</summary>
+
+**B)** CompTIA Network+ certification is valid for 3 years. It can be renewed through continuing education units (CEUs), earning a higher-level CompTIA certification, or retaking the exam.
+</details>
+
+**Q7.** Which job role typically combines server management with networking responsibilities?
+
+A) Network Architect
+B) Systems Administrator
+C) CISO
+D) Database Administrator
+
+<details>
+<summary>Answer</summary>
+
+**B)** A Systems Administrator often manages both servers and network infrastructure, including AD/DNS/DHCP configuration, virtualization platforms, backup solutions, and basic network troubleshooting.
+</details>
+
+**Q8.** What is the primary benefit of joining professional communities and networking groups in IT?
+
+A) Free exam vouchers
+B) Knowledge sharing, mentorship, job opportunities, and staying current with industry trends
+C) Automatic salary increases
+D) Required for certification renewal
+
+<details>
+<summary>Answer</summary>
+
+**B)** Professional communities provide knowledge sharing, mentorship from experienced professionals, job opportunity awareness, and help you stay current with rapidly evolving technologies and industry trends.
+</details>
+
+**Q9.** A network professional wants to transition into cloud networking. Which certification would be most relevant?
+
+A) CompTIA A+
+B) AWS Solutions Architect or Azure Network Engineer
+C) CompTIA ITF+
+D) CWNA
+
+<details>
+<summary>Answer</summary>
+
+**B)** Cloud certifications like AWS Solutions Architect or Microsoft Azure Network Engineer Associate are most relevant for transitioning into cloud networking, covering virtual networks, cloud connectivity, and hybrid architectures.
+</details>
+
+**Q10.** What is the typical career progression from a Network+ certified entry-level role to a senior position?
+
+A) Help Desk → CEO
+B) Network Support → Network Administrator → Network Engineer → Senior Engineer → Architect
+C) Network Administrator → Developer → Manager
+D) NOC Technician → Sales Engineer → VP of Sales
+
+<details>
+<summary>Answer</summary>
+
+**B)** The typical networking career progression is: Network Support/Help Desk → Network Administrator → Network Engineer → Senior Network Engineer → Network Architect/Manager, with increasing responsibility and specialization at each level.
+</details>
+
+---
+
+## References
 
 ### Career Resources
 - **CompTIA Career Roadmap**: https://www.comptia.org/content/it-careers-path-roadmap
+- **CompTIA Network+ Certification**: https://www.comptia.org/certifications/network
 - **Bureau of Labor Statistics - Network Administrators**: https://www.bls.gov/ooh/computer-and-information-technology/network-and-computer-systems-administrators.htm
 - **LinkedIn Learning - Career Paths**: Networking career development courses
 - **Dice Tech Salary Report**: Annual IT salary survey and trends

@@ -1,7 +1,7 @@
 ---
-id: security-policies-procedures
+id: lesson-040-security-policies-procedures
 title: Security Policies and Procedures
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 40
 duration: 75
 objectives:
@@ -21,6 +21,18 @@ Security policies and procedures form the foundation of an organization's securi
 In this lesson, we'll explore policy development, acceptable use policies, change management, incident response procedures, business continuity planning, and security awareness training.
 
 **Key Principle:** People, process, and technology - security requires all three elements working together.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Develop security policies and standards
+- Implement acceptable use policies
+- Create incident response procedures
+- Enforce security awareness training
+- Maintain compliance and documentation
+
+---
 
 ## Security Policy Framework
 
@@ -886,55 +898,88 @@ Locations:
 - Workstation stickers
 ```
 
-## Review Questions
+## Summary
 
-1. **What is the difference between a policy and a procedure?**
-   - Policy is high-level management intent, procedure is step-by-step implementation instructions
+In this lesson, we explored the governance documents that define an organization's security program. The policy hierarchy has four levels: policies (high-level mandatory management intent), standards (specific mandatory requirements like "14+ character passwords"), procedures (step-by-step instructions for specific tasks), and guidelines (non-mandatory best practices). Key policy types include Acceptable Use Policies (defining permitted and prohibited activities), data classification (Public, Internal, Confidential, Restricted — each with escalating handling requirements like encryption and DLP), access control policies enforcing least privilege and quarterly access reviews, and remote access policies requiring VPN, MFA, and full-disk encryption. Change management processes ensure network modifications follow request, review, approval, testing, implementation, and documentation steps. Business continuity planning addresses disaster recovery through hot, warm, and cold sites, with RPO and RTO defining acceptable data loss and downtime targets.
 
-2. **What are the main phases of incident response?**
-   - Preparation, Detection/Analysis, Containment, Eradication, Recovery, Post-Incident
+## Practice Questions
 
-3. **What is RTO?**
-   - Recovery Time Objective - maximum acceptable downtime
 
-4. **What is RPO?**
-   - Recovery Point Objective - maximum acceptable data loss
+**Q1.** In the security policy hierarchy, which document provides high-level mandatory statements of management intent?
 
-5. **What is the 3-2-1 backup rule?**
-   - 3 copies, 2 different media types, 1 offsite
+A) Guideline
+B) Standard
+C) Procedure
+D) Policy
 
-6. **What is the purpose of CAB?**
-   - Change Advisory Board reviews and approves high-risk changes
+<details>
+<summary>Answer</summary>
 
-7. **What are the incident severity levels?**
-   - Critical, High, Medium, Low (prioritization and response time)
+**D)** A policy is a high-level, mandatory statement of management intent that applies to the entire organization (e.g., "All users must use strong passwords"). A standard specifies detailed mandatory requirements. A procedure provides step-by-step instructions. A guideline offers non-mandatory recommendations.
+</details>
 
-8. **What is the difference between hot, warm, and cold DR sites?**
-   - Hot (immediate, expensive), Warm (hours-days, moderate), Cold (days-weeks, cheap)
 
-9. **What should be included in acceptable use policy?**
-   - Permitted/prohibited activities, monitoring, consequences, personal use guidelines
+**Q2.** Which data classification level would apply to a company's trade secrets and executive communications?
 
-10. **What is the purpose of phishing simulations?**
-    - Test user awareness, provide immediate training, measure improvement
+A) Public
+B) Internal Use
+C) Confidential
+D) Restricted
 
-## Key Takeaways
+<details>
+<summary>Answer</summary>
 
-- **Policies define rules, procedures provide steps** - both essential for security
-- **Change management prevents problems** - plan, test, document, rollback capability
-- **Incident response is a process** - preparation is key, documentation critical
-- **RTO and RPO drive backup strategy** - business requirements determine technical implementation
-- **3-2-1 backup rule** - protection against all disaster scenarios
-- **Security awareness training is critical** - users are often the weakest link
-- **Regular testing essential** - test backups, DR plans, and incident response
-- **Documentation is mandatory** - policies, procedures, incidents, changes
-- **Continuous improvement** - learn from incidents, update policies, refine procedures
-- **Management support required** - policies must be enforced from top down
+**D)** Restricted is the highest data classification level, applied to information whose disclosure would cause severe harm, such as trade secrets, legal documents, and executive communications. Confidential covers data like financial and customer records. Internal Use applies to items like memos. Public is for marketing materials and public website content.
+</details>
 
-## Next Steps
 
-In the next lesson, we'll explore **Vulnerability Assessment**, including vulnerability scanning, penetration testing, and security assessments.
+**Q3.** A network team plans to upgrade the core switch firmware during business hours without submitting a change request. Which policy does this violate?
 
----
+A) Acceptable Use Policy
+B) Remote Access Policy
+C) Change Management Policy
+D) Password Policy
 
-**Lesson Complete!** You now understand security policies and procedures that govern how organizations protect information assets.
+<details>
+<summary>Answer</summary>
+
+**C)** Making infrastructure changes without following the change management process violates the Change Management Policy, which requires submitting a change request, obtaining approval (typically from a Change Advisory Board), scheduling a maintenance window, testing, and having a rollback plan. The other policies address different concerns.
+</details>
+
+
+**Q4.** An organization's Acceptable Use Policy states employees may use company resources for reasonable personal use during breaks. An employee is caught running a personal e-commerce business using company servers. What is the most appropriate response?
+
+A) No action — the AUP allows personal use
+B) Enforce the AUP violation because the personal business exceeds reasonable personal use
+C) Update the AUP to explicitly allow e-commerce
+D) Revoke the employee's network access permanently
+
+<details>
+<summary>Answer</summary>
+
+**B)** The AUP permits reasonable personal use (such as browsing during lunch), but running a personal business on company resources clearly exceeds reasonable use and constitutes a policy violation. This should be enforced per the AUP's stated consequences. Allowing it sets a dangerous precedent, and permanent revocation is disproportionate without progressive discipline.
+</details>
+
+
+**Q5.** According to modern NIST password guidance, which practice is now recommended over traditional password policies?
+
+A) Requiring password changes every 30 days
+B) Enforcing minimum 6-character passwords with complexity requirements
+C) Checking passwords against breached password lists and eliminating mandatory rotation
+D) Requiring security questions as a backup authentication method
+
+<details>
+<summary>Answer</summary>
+
+**C)** Modern NIST guidance (SP 800-63B) recommends checking passwords against known breached password lists and eliminating mandatory periodic rotation (only change on compromise). Frequent mandatory rotation leads to weaker passwords. NIST now recommends longer passwords (8+ minimum, 12+ preferred) without arbitrary complexity rules, and discourages security questions because they are vulnerable to social engineering.
+</details>
+
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.5 — Given a scenario, describe the use of policies, plans, and procedures
+- NIST SP 800-12 Rev. 1: An Introduction to Information Security — Security Policy
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — PL (Planning) and AT (Awareness and Training) Families
+- ISO/IEC 27002:2022: Information Security Controls — Policy and Organizational Controls
+- SANS Institute: Information Security Policy Templates
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Security Policy and Management

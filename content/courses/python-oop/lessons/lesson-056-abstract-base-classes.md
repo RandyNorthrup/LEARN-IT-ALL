@@ -1,7 +1,7 @@
 ---
 id: "056"
 title: "Abstract Base Classes"
-chapterId: "06"
+chapterId: ch6-polymorphism
 order: 4
 duration: "18 minutes"
 objectives:

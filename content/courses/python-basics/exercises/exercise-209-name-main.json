@@ -1,0 +1,57 @@
+{
+  "id": "exercise-209-name-main",
+  "courseId": "python-basics",
+  "lessonId": "lesson-194-creating-modules",
+  "chapterId": "ch17-modules",
+  "title": "The __name__ == '__main__' Pattern",
+  "description": "Master the if __name__ == '__main__' idiom that makes Python files work both as importable modules and standalone scripts. Build functions to detect main guards in source code, extract the guarded block, automatically add a guard, and check if a script is properly runnable.",
+  "difficulty": "beginner",
+  "points": 20,
+  "language": "python",
+  "starterCode": "def has_main_guard(code_text):\n    \"\"\"Check if Python source code contains an if __name__ == '__main__' guard.\n\n    Looks for a line matching the pattern:\n        if __name__ == '__main__':\n    or with double quotes:\n        if __name__ == \\\"__main__\\\":\n\n    Returns True if found, False otherwise.\n    \"\"\"\n    pass\n\n\ndef extract_main_block(code_text):\n    \"\"\"Extract the code inside the if __name__ == '__main__' block.\n\n    Returns the body of the main guard (the indented lines after the\n    if statement) as a single string with the indentation preserved.\n    Returns an empty string if no main guard exists.\n    \"\"\"\n    pass\n\n\ndef add_main_guard(code_text, main_func_name):\n    \"\"\"Add a main guard to the end of the given code text.\n\n    Appends:\n        \\n\\nif __name__ == '__main__':\n            <main_func_name>()\n\n    If the code already has a main guard, return it unchanged.\n    \"\"\"\n    pass\n\n\ndef is_runnable_script(code_text):\n    \"\"\"Determine if a Python source text is a runnable script.\n\n    A script is considered runnable if:\n      1. It has a main guard, AND\n      2. The function called in the main guard is defined in the code\n\n    Returns True if runnable, False otherwise.\n    \"\"\"\n    pass\n",
+  "solution": "import re\n\n\ndef has_main_guard(code_text):\n    for line in code_text.splitlines():\n        stripped = line.strip()\n        if re.match(r'''if\\s+__name__\\s*==\\s*['\"]__main__['\"]\\s*:''', stripped):\n            return True\n    return False\n\n\ndef extract_main_block(code_text):\n    lines = code_text.splitlines()\n    in_block = False\n    block_lines = []\n\n    for line in lines:\n        if in_block:\n            if line.strip() == '' or (len(line) > 0 and line[0] in (' ', '\\t')):\n                block_lines.append(line)\n            else:\n                break\n        else:\n            stripped = line.strip()\n            if re.match(r'''if\\s+__name__\\s*==\\s*['\"]__main__['\"]\\s*:''', stripped):\n                in_block = True\n\n    # Remove trailing empty lines\n    while block_lines and block_lines[-1].strip() == '':\n        block_lines.pop()\n\n    return '\\n'.join(block_lines)\n\n\ndef add_main_guard(code_text, main_func_name):\n    if has_main_guard(code_text):\n        return code_text\n    guard = f\"\\n\\nif __name__ == '__main__':\\n    {main_func_name}()\"\n    return code_text + guard\n\n\ndef is_runnable_script(code_text):\n    if not has_main_guard(code_text):\n        return False\n\n    main_block = extract_main_block(code_text)\n    # Find function calls in the main block\n    called_funcs = re.findall(r'\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(', main_block)\n\n    # Find defined functions in the code\n    defined_funcs = set()\n    for line in code_text.splitlines():\n        m = re.match(r'^def\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(', line)\n        if m:\n            defined_funcs.add(m.group(1))\n\n    # At least one called function must be defined\n    return any(f in defined_funcs for f in called_funcs)\n",
+  "hints": [
+    "Use a regex like: if\\s+__name__\\s*==\\s*['\"]__main__['\"]\\s*: to match the main guard with either single or double quotes.",
+    "For extract_main_block, after finding the guard line, collect indented lines until you hit a non-indented line (or end of file).",
+    "For add_main_guard, check has_main_guard first — if it already exists, return code_text unchanged.",
+    "For is_runnable_script, extract function calls from the main block and check if they appear in def statements elsewhere in the code."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "has_main_guard detects the guard with single quotes",
+      "validation": "assert has_main_guard(\"if __name__ == '__main__':\\n    main()\") == True",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "has_main_guard returns False when no guard exists",
+      "validation": "assert has_main_guard('def hello():\\n    print(\"hi\")\\nhello()') == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "extract_main_block extracts the indented body",
+      "validation": "code = \"def main():\\n    pass\\n\\nif __name__ == '__main__':\\n    main()\\n    print('done')\"; result = extract_main_block(code); assert 'main()' in result and 'print' in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "add_main_guard appends guard or returns unchanged if exists",
+      "validation": "code = 'def run():\\n    pass'; result = add_main_guard(code, 'run'); assert \"if __name__\" in result and 'run()' in result; assert add_main_guard(result, 'run') == result",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "is_runnable_script returns True when function is defined and called in main guard",
+      "validation": "code = \"def main():\\n    print('hello')\\n\\nif __name__ == '__main__':\\n    main()\"; assert is_runnable_script(code) == True",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "is_runnable_script returns False when called function is not defined",
+      "validation": "code = \"x = 1\\nif __name__ == '__main__':\\n    undefined_func()\"; assert is_runnable_script(code) == False",
+      "isHidden": true
+    }
+  ]
+}

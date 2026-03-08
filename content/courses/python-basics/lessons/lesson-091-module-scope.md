@@ -1,8 +1,8 @@
 ---
-id: "106-module-scope"
+id: lesson-091-module-scope
 title: "Module-Level Scope and Imports"
 chapterId: ch7-scope
-order: 10
+order: 11
 duration: 25
 objectives:
   - Understand module-level scope
@@ -31,10 +31,8 @@ def module_function():
     print("I'm a module function")
     print(f"Accessing MODULE_CONSTANT: {MODULE_CONSTANT}")
 
-# Module-level class
-class ModuleClass:
-    """Class at module level."""
-    pass
+# Module-level data structure
+module_data = {"type": "example", "name": "mymodule"}
 
 # Code at module level runs when imported
 print("Module is being loaded")
@@ -56,8 +54,8 @@ print(mymodule.MODULE_CONSTANT)  # 100
 print(mymodule.module_variable)  # "Accessible from module"
 mymodule.module_function()
 
-# Create instance of class
-obj = mymodule.ModuleClass()
+# Access module data
+print(mymodule.module_data)  # {"type": "example", "name": "mymodule"}
 
 # Module is an object
 print(type(mymodule))  # <class 'module'>
@@ -455,7 +453,7 @@ if __name__ == '__main__':
 
 # ✅ GOOD - Use __all__ to control exports
 # mymodule.py
-__all__ = ['public_func', 'PublicClass']
+__all__ = ['public_func', 'public_helper']
 
 def public_func():
     """Exported by 'from mymodule import *'."""
@@ -465,11 +463,11 @@ def _private_func():
     """Not exported."""
     pass
 
-class PublicClass:
+def public_helper():
     """Exported."""
     pass
 
-class _PrivateClass:
+def _private_helper():
     """Not exported."""
     pass
 ```

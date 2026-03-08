@@ -1,8 +1,8 @@
 ---
-id: 66-error-patterns
+id: lesson-159-error-patterns
 title: Common Error Patterns
 chapterId: ch12-testing
-order: 7
+order: 5
 duration: 25
 objectives:
   - Recognize common error patterns

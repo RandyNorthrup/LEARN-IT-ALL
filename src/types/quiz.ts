@@ -68,6 +68,30 @@ export interface MultiPartQuestion extends BaseQuestion {
   parts: QuizQuestion[]; // can contain any question type except multi-part
 }
 
+// Rubric criterion for essay/design questions
+export interface RubricCriterion {
+  criterion: string;
+  points: number;
+  description?: string;
+}
+
+// Essay question (free-text, self-assessed against rubric)
+export interface EssayQuestion extends BaseQuestion {
+  type: 'essay';
+  rubric: RubricCriterion[];
+  modelAnswer: string;
+  minWords?: number; // optional minimum word count
+}
+
+// Design question (free-text with diagram/architecture focus, self-assessed)
+export interface DesignQuestion extends BaseQuestion {
+  type: 'design';
+  rubric: RubricCriterion[];
+  modelAnswer: string;
+  minWords?: number;
+  scenario?: string; // additional scenario/constraint details
+}
+
 // Union type for all question types
 export type QuizQuestion =
   | MultipleChoiceQuestion
@@ -75,7 +99,9 @@ export type QuizQuestion =
   | TrueFalseQuestion
   | CodeCompletionQuestion
   | CodingExerciseQuestion
-  | MultiPartQuestion;
+  | MultiPartQuestion
+  | EssayQuestion
+  | DesignQuestion;
 
 // Quiz data structure
 export interface Quiz {
@@ -96,7 +122,9 @@ export type UserAnswer =
   | { type: 'true-false'; answer: boolean }
   | { type: 'code-completion'; code: string }
   | { type: 'coding-exercise'; code: string }
-  | { type: 'multi-part'; answers: UserAnswer[] };
+  | { type: 'multi-part'; answers: UserAnswer[] }
+  | { type: 'essay'; text: string }
+  | { type: 'design'; text: string };
 
 // Quiz submission
 export interface QuizSubmission {

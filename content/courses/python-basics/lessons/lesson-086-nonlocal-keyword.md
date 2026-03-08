@@ -1,8 +1,8 @@
 ---
-id: 58-nonlocal-keyword
+id: lesson-086-nonlocal-keyword
 title: The nonlocal Keyword
 chapterId: ch7-scope
-order: 5
+order: 6
 duration: 20
 objectives:
   - Master the nonlocal keyword

@@ -1,7 +1,7 @@
 ---
 id: "047"
 title: "Multiple Inheritance"
-chapterId: "05"
+chapterId: ch5-inheritance
 order: 5
 duration: "18 minutes"
 objectives:

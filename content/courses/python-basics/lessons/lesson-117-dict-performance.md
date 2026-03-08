@@ -1,5 +1,5 @@
 ---
-id: "127-dict-performance"
+id: lesson-117-dict-performance
 title: "Dictionary Performance and Memory"
 chapterId: ch9-dictionaries
 order: 8
@@ -241,26 +241,10 @@ print(f"Two lists: {sys.getsizeof(keys) + sys.getsizeof(values):,} bytes")
 ## Hash Collision Impact
 
 ```python
-# Simulate hash collisions
-class BadHash:
-    """Object with terrible hash function"""
-    def __init__(self, value):
-        self.value = value
-    
-    def __hash__(self):
-        # Always return same hash - worst case!
-        return 42
-    
-    def __eq__(self, other):
-        return isinstance(other, BadHash) and self.value == other.value
-    
-    def __repr__(self):
-        return f"BadHash({self.value})"
-
-# Create dict with many collisions
+# Hash collision impact on performance
 import time
 
-# Good hashing (normal dict)
+# Good hashing: Python's built-in types have excellent hash functions
 good_dict = {i: i**2 for i in range(1000)}
 
 start = time.time()
@@ -268,20 +252,30 @@ for i in range(1000):
     val = good_dict[i]
 good_time = time.time() - start
 
-# Bad hashing (all same hash)
-bad_dict = {BadHash(i): i**2 for i in range(1000)}
+print(f"Good hashing (int keys): {good_time:.6f}s")
+
+# When hash collisions occur (multiple keys mapping to the same bucket),
+# Python must compare keys one by one, degrading from O(1) to O(n).
+# To illustrate, compare dict lookup vs list search:
+
+data_dict = {i: True for i in range(1000)}
+data_list = list(range(1000))
 
 start = time.time()
 for i in range(1000):
-    val = bad_dict[BadHash(i)]
-bad_time = time.time() - start
+    _ = i in data_dict  # O(1) with good hashing
+dict_time = time.time() - start
 
-print(f"Good hashing: {good_time:.6f}s")
-print(f"Bad hashing:  {bad_time:.6f}s")
-print(f"Slowdown: {bad_time / good_time:.1f}x")
-# Bad hashing can be 10-100x slower!
+start = time.time()
+for i in range(1000):
+    _ = i in data_list  # O(n) — similar to worst-case hash collisions
+list_time = time.time() - start
 
-# With collisions, lookup becomes O(n) instead of O(1)
+print(f"Dict lookup (O(1)):  {dict_time:.6f}s")
+print(f"List search (O(n)):  {list_time:.6f}s")
+print(f"Ratio: {list_time / dict_time:.1f}x")
+# This shows the performance difference between O(1) and O(n).
+# Poorly distributed hashes cause dict lookups to behave like list searches!
 ```
 
 ## Optimization Techniques

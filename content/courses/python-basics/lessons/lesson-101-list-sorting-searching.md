@@ -1,8 +1,8 @@
 ---
-id: "115-list-sorting-searching"
+id: lesson-101-list-sorting-searching
 title: "Sorting and Searching Lists"
 chapterId: ch8-lists
-order: 7
+order: 9
 duration: 30
 objectives:
   - Master list sorting techniques
@@ -69,7 +69,7 @@ print(words)  # ['apple', 'Banana', 'Cherry']
 # Sort by last character
 words = ["apple", "banana", "cherry"]
 words.sort(key=lambda x: x[-1])
-print(words)  # ['apple', 'banana', 'cherry']
+print(words)  # ['banana', 'apple', 'cherry']
 
 # Sort by absolute value
 numbers = [-5, 2, -8, 3, -1]
@@ -79,7 +79,7 @@ print(numbers)  # [-1, 2, 3, -5, -8]
 # Multiple criteria - sort by length, then alphabetically
 words = ["is", "python", "awesome", "hi"]
 words.sort(key=lambda x: (len(x), x))
-print(words)  # ['hi', 'is', 'awesome', 'python']
+print(words)  # ['hi', 'is', 'python', 'awesome']
 ```
 
 ## Sorting Complex Objects
@@ -113,14 +113,10 @@ print(data)  # [(1, 'a'), (2, 'b'), (3, 'c')]
 data.sort(key=lambda x: x[1])
 print(data)  # [(1, 'a'), (2, 'b'), (3, 'c')]
 
-# Sort objects
-class Student:
-    def __init__(self, name, grade):
-        self.name = name
-        self.grade = grade
-    
-    def __repr__(self):
-        return f"Student({self.name}, {self.grade})"
+# Sort named tuples
+from collections import namedtuple
+
+Student = namedtuple('Student', ['name', 'grade'])
 
 students = [
     Student("Alice", 85),
@@ -130,7 +126,7 @@ students = [
 
 students.sort(key=lambda s: s.grade, reverse=True)
 print(students)
-# [Student(Bob, 92), Student(Alice, 85), Student(Charlie, 78)]
+# [Student(name='Bob', grade=92), Student(name='Alice', grade=85), Student(name='Charlie', grade=78)]
 ```
 
 ## Custom Sorting with operator Module
@@ -164,19 +160,15 @@ for item in data:
 # {'category': 'B', 'value': 1}
 # {'category': 'B', 'value': 2}
 
-# attrgetter for objects
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    
-    def __repr__(self):
-        return f"Person({self.name}, {self.age})"
+# attrgetter for named tuples
+from collections import namedtuple
+
+Person = namedtuple('Person', ['name', 'age'])
 
 people = [Person("Alice", 30), Person("Bob", 25), Person("Charlie", 35)]
 people.sort(key=attrgetter("age"))
 print(people)
-# [Person(Bob, 25), Person(Alice, 30), Person(Charlie, 35)]
+# [Person(name='Bob', age=25), Person(name='Alice', age=30), Person(name='Charlie', age=35)]
 
 # Multiple attributes
 people.sort(key=attrgetter("age", "name"))
@@ -216,8 +208,8 @@ students.sort(key=lambda x: x[1])
 
 for student in students:
     print(student)
-# ('Bob', 'A', 90)
 # ('David', 'A', 90)
+# ('Bob', 'A', 85)
 # ('Charlie', 'B', 90)
 # ('Alice', 'B', 85)
 ```

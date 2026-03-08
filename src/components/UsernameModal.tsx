@@ -51,6 +51,8 @@ export default function UsernameModal({ onComplete }: UsernameModalProps) {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
+            id="username"
+            name="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter username"

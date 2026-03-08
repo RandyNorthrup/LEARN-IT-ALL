@@ -1,5 +1,5 @@
 ---
-id: layer5-7-upper-layers
+id: lesson-006-layer5-7-upper-layers
 title: Layers 5-7 - Session, Presentation, and Application Layers
 chapterId: ch1-networking-fundamentals
 order: 6
@@ -557,11 +557,145 @@ The upper three OSI layers provide application-oriented services:
 
 ---
 
+## Practice Questions
+
+**Q1.** Which OSI layer is responsible for establishing, maintaining, and terminating communication sessions between applications?
+
+A) Layer 4 - Transport
+B) Layer 5 - Session
+C) Layer 6 - Presentation
+D) Layer 7 - Application
+
+<details>
+<summary>Answer</summary>
+
+**B)** Layer 5, the Session layer, manages communication sessions between applications. It handles establishing sessions (setup), maintaining them (checkpoints, token management), and terminating them (graceful close). The Transport layer handles end-to-end data delivery, the Presentation layer formats data, and the Application layer provides services to users.
+</details>
+
+**Q2.** A user visits a secure website using HTTPS. Which OSI layer handles the TLS encryption of the HTTP data?
+
+A) Layer 4 - Transport
+B) Layer 5 - Session
+C) Layer 6 - Presentation
+D) Layer 7 - Application
+
+<details>
+<summary>Answer</summary>
+
+**C)** The Presentation layer (Layer 6) handles encryption and decryption of data. TLS/SSL encryption transforms the HTTP data into an encrypted format before it is transmitted, ensuring confidentiality and integrity. While TLS also has session management aspects (Layer 5), encryption is fundamentally a Presentation layer function.
+</details>
+
+**Q3.** Which data format is a lightweight, human-readable format commonly used in web APIs and represents a Presentation layer function?
+
+A) CSMA/CD
+B) JSON
+C) ARP
+D) STP
+
+<details>
+<summary>Answer</summary>
+
+**B)** JSON (JavaScript Object Notation) is a lightweight, human-readable data serialization format widely used in web APIs. Data formatting and serialization are Presentation layer (Layer 6) functions. CSMA/CD is a media access method (Layer 2), ARP is an address resolution protocol (Layer 2/3), and STP is a loop prevention protocol (Layer 2).
+</details>
+
+**Q4.** A web browser sends an HTTP GET request to download a webpage. At which OSI layer does HTTP operate?
+
+A) Layer 4 - Transport
+B) Layer 5 - Session
+C) Layer 6 - Presentation
+D) Layer 7 - Application
+
+<details>
+<summary>Answer</summary>
+
+**D)** HTTP (HyperText Transfer Protocol) is an Application layer (Layer 7) protocol. It provides the interface between the web application and the network, enabling web browsers to request and receive web content. Application layer protocols provide network services directly to end-user applications.
+</details>
+
+**Q5.** An online shopping site uses cookies to maintain a user's shopping cart across multiple page requests. Which OSI layer concept does this represent?
+
+A) Physical layer signaling
+B) Session layer state management
+C) Network layer routing
+D) Data Link layer framing
+
+<details>
+<summary>Answer</summary>
+
+**B)** Cookies maintaining state across multiple requests is a Session layer (Layer 5) concept. The Session layer manages communication sessions, including maintaining session state. HTTP is stateless by default, so cookies provide session tracking to maintain context (like shopping cart contents) across multiple requests.
+</details>
+
+**Q6.** Which type of compression discards some data to achieve smaller file sizes, making it suitable for photos but not for text documents?
+
+A) Lossless compression
+B) Lossy compression
+C) Symmetric compression
+D) Asymmetric compression
+
+<details>
+<summary>Answer</summary>
+
+**B)** Lossy compression discards some data that is considered less important to achieve better compression ratios. JPEG for photos and MP3 for audio are examples. The original data cannot be perfectly reconstructed. Lossless compression (e.g., ZIP, PNG) preserves all data and is required for text documents and executables.
+</details>
+
+**Q7.** Which Session layer protocol uses a challenge-response mechanism for authentication in PPP connections?
+
+A) PAP
+B) CHAP
+C) HTTP
+D) FTP
+
+<details>
+<summary>Answer</summary>
+
+**B)** CHAP (Challenge Handshake Authentication Protocol) uses a challenge-response mechanism where the server sends a random challenge and the client responds with a hash of the challenge and its password. This is more secure than PAP (Password Authentication Protocol), which sends credentials in clear text. HTTP and FTP are Application layer protocols.
+</details>
+
+**Q8.** A company needs to ensure that data transmitted between its offices is converted from EBCDIC encoding to ASCII. This conversion is a function of which OSI layer?
+
+A) Layer 5 - Session
+B) Layer 6 - Presentation
+C) Layer 7 - Application
+D) Layer 4 - Transport
+
+<details>
+<summary>Answer</summary>
+
+**B)** Character encoding translation (such as converting between EBCDIC and ASCII) is a Presentation layer (Layer 6) function. The Presentation layer handles data translation and formatting, ensuring that data from one system can be understood by another system, regardless of differences in internal data representation.
+</details>
+
+**Q9.** Which dialog control mode allows simultaneous two-way communication between devices?
+
+A) Simplex
+B) Half-duplex
+C) Full-duplex
+D) Multiplex
+
+<details>
+<summary>Answer</summary>
+
+**C)** Full-duplex allows simultaneous two-way communication, meaning both devices can send and receive data at the same time. Simplex is one-way only, half-duplex is two-way but only one direction at a time, and multiplexing refers to combining multiple signals on one channel (not a dialog control mode at the Session layer).
+</details>
+
+**Q10.** Which Application layer protocol is used to retrieve email messages while keeping them stored on the server and allowing access from multiple devices?
+
+A) SMTP
+B) POP3
+C) IMAP
+D) FTP
+
+<details>
+<summary>Answer</summary>
+
+**C)** IMAP (Internet Message Access Protocol) keeps email messages stored on the server and synchronizes them across multiple devices. POP3 typically downloads messages and removes them from the server, making it suitable for single-device access. SMTP is used for sending email, not retrieving it. FTP is a file transfer protocol.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.1**: OSI Model - Layers 5-7
-- **CompTIA Network+ N10-008 Objective 1.5**: Ports and Protocols
+- **CompTIA Network+ N10-009 Objective 1.1**: OSI Model - Layers 5-7
+- **CompTIA Network+ N10-009 Objective 1.5**: Ports and Protocols
 - **RFC 2616**: HTTP/1.1
 - **RFC 5321**: SMTP
 - **RFC 3501**: IMAP
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course

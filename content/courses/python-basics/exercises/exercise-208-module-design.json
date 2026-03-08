@@ -1,0 +1,57 @@
+{
+  "id": "exercise-208-module-design",
+  "courseId": "python-basics",
+  "lessonId": "lesson-194-creating-modules",
+  "chapterId": "ch17-modules",
+  "title": "Designing Python Modules",
+  "description": "Practice designing clean Python modules. Write functions that generate proper module docstrings, validate module names against Python naming conventions, extract the public API from source code by identifying non-underscored top-level definitions, and generate __init__.py content.",
+  "difficulty": "intermediate",
+  "points": 20,
+  "language": "python",
+  "starterCode": "import re\n\n\ndef create_module_docstring(name, desc, author, version):\n    \"\"\"Generate a formatted module-level docstring.\n\n    Format:\n        '''<name>\n\n        <desc>\n\n        Author: <author>\n        Version: <version>\n        '''\n\n    The docstring uses triple single-quotes.\n    Returns the complete docstring as a string.\n    \"\"\"\n    pass\n\n\ndef validate_module_name(name):\n    \"\"\"Validate a Python module name.\n\n    Rules:\n      - Must start with a letter or underscore\n      - Can contain letters, digits, underscores\n      - Cannot be a Python keyword\n      - Cannot be empty\n      - Must be all lowercase (PEP 8 convention)\n\n    Returns True if valid, False otherwise.\n    \"\"\"\n    pass\n\n\ndef extract_public_api(code_text):\n    \"\"\"Extract public names from Python source code.\n\n    Identifies top-level definitions (lines starting with 'def ' or\n    'class ') whose names do NOT start with an underscore.\n\n    Also includes top-level variable assignments (name = ...) at the\n    module level whose names don't start with underscore.\n\n    Returns a sorted list of public name strings.\n    \"\"\"\n    pass\n\n\ndef generate_init_file(modules_list):\n    \"\"\"Generate __init__.py content that imports from submodules.\n\n    For each module name in modules_list, generate a line:\n        from .<module> import *\n\n    Also generate an __all__ list containing all module names.\n\n    Returns the file content as a string.\n    \"\"\"\n    pass\n",
+  "solution": "import re\nimport keyword\n\n\ndef create_module_docstring(name, desc, author, version):\n    return f\"'''{name}\\n\\n{desc}\\n\\nAuthor: {author}\\nVersion: {version}\\n'''\"\n\n\ndef validate_module_name(name):\n    if not name or not isinstance(name, str):\n        return False\n    if name != name.lower():\n        return False\n    if keyword.iskeyword(name):\n        return False\n    return bool(re.match(r'^[a-z_][a-z0-9_]*$', name))\n\n\ndef extract_public_api(code_text):\n    names = []\n    for line in code_text.splitlines():\n        # Only consider top-level lines (not indented)\n        if line and not line[0].isspace():\n            match_def = re.match(r'^def\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(', line)\n            match_class = re.match(r'^class\\s+([a-zA-Z_][a-zA-Z0-9_]*)[\\s(:]', line)\n            match_var = re.match(r'^([a-zA-Z_][a-zA-Z0-9_]*)\\s*=', line)\n            for m in [match_def, match_class, match_var]:\n                if m:\n                    name = m.group(1)\n                    if not name.startswith('_'):\n                        names.append(name)\n                    break\n    return sorted(set(names))\n\n\ndef generate_init_file(modules_list):\n    lines = []\n    for mod in modules_list:\n        lines.append(f'from .{mod} import *')\n    lines.append('')\n    all_items = ', '.join(f\"'{mod}'\" for mod in modules_list)\n    lines.append(f'__all__ = [{all_items}]')\n    lines.append('')\n    return '\\n'.join(lines)\n",
+  "hints": [
+    "For create_module_docstring, use an f-string with triple quotes. Remember to include blank lines between sections.",
+    "For validate_module_name, import the keyword module and use keyword.iskeyword(name) to check against reserved words. Use a regex like ^[a-z_][a-z0-9_]*$ for naming rules.",
+    "For extract_public_api, match lines starting with 'def ', 'class ', or simple variable assignments using regex. Skip names that begin with underscore.",
+    "For generate_init_file, build each line as 'from .<module> import *' and add an __all__ list at the end."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "create_module_docstring generates correct format",
+      "validation": "result = create_module_docstring('mymod', 'A great module', 'Alice', '1.0'); assert \"'''mymod\" in result and 'Author: Alice' in result and 'Version: 1.0' in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "validate_module_name accepts valid names and rejects invalid ones",
+      "validation": "assert validate_module_name('my_module') == True and validate_module_name('2bad') == False and validate_module_name('MyModule') == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "validate_module_name rejects Python keywords",
+      "validation": "assert validate_module_name('class') == False and validate_module_name('import') == False and validate_module_name('for') == False",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "extract_public_api finds public functions and classes",
+      "validation": "code = 'def hello():\\n    pass\\n\\ndef _private():\\n    pass\\n\\nclass Widget:\\n    pass\\n\\n_hidden = 42\\nVERSION = \"1.0\"'; result = extract_public_api(code); assert result == ['VERSION', 'Widget', 'hello']",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "generate_init_file produces correct import lines and __all__",
+      "validation": "result = generate_init_file(['utils', 'models']); assert 'from .utils import *' in result and 'from .models import *' in result and \"__all__\" in result",
+      "isHidden": false
+    },
+    {
+      "id": "tc6",
+      "description": "validate_module_name rejects empty string and non-string input",
+      "validation": "assert validate_module_name('') == False and validate_module_name(None) == False",
+      "isHidden": true
+    }
+  ]
+}

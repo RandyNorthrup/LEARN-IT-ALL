@@ -1,9 +1,9 @@
 ---
-id: "lesson-087"
+id: lesson-087-study-strategies
 title: "Effective Study Strategies for Network+ Success"
-chapterId: "chapter-10"
+chapterId: ch10-exam-prep
 order: 87
-duration: 25
+duration: 50
 objectives:
   - "Implement effective study techniques for Network+ exam preparation"
   - "Create and use flashcards for memorization of key concepts"
@@ -26,6 +26,18 @@ In this lesson, we'll explore proven study strategies specifically tailored for 
 - **Study schedules** (spaced repetition, time management)
 
 Implementing these strategies transforms passive reading into active mastery, significantly increasing your chances of exam success.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Implement effective study techniques for Network+ exam preparation
+- Create and use flashcards for memorization of key concepts
+- Set up hands-on labs for practical skill development
+- Utilize practice tests to assess readiness and identify weak areas
+- Develop a personalized study plan and schedule
 
 ---
 
@@ -939,10 +951,77 @@ The key to passing Network+ is consistency, active engagement, and practical exp
 
 ---
 
-## Additional References
+## Practice Questions
+
+**Q1.** What is the primary advantage of spaced repetition over traditional re-reading when studying for the Network+ exam?
+
+A) It requires less total study time
+B) It strengthens long-term memory by reviewing material at increasing intervals
+C) It eliminates the need for hands-on practice
+D) It only works for memorizing port numbers
+
+<details>
+<summary>Answer</summary>
+
+**B)** Spaced repetition strengthens long-term memory by presenting material at optimal intervals, forcing active recall rather than passive recognition. It doesn't necessarily require less total time (A), it supplements but doesn't replace hands-on practice (C), and it works for all types of content, not just port numbers (D).
+</details>
+
+**Q2.** After scoring 68% on a practice exam, what is the most effective next step?
+
+A) Schedule the real exam immediately
+B) Retake the same practice exam until scoring 100%
+C) Analyze incorrect answers to identify weak domains and focus study on those areas
+D) Start over from the beginning of the course
+
+<details>
+<summary>Answer</summary>
+
+**C)** Analyzing incorrect answers reveals specific knowledge gaps. Targeted study on weak domains is more efficient than scheduling before you're ready (A), memorizing one specific test (B), or restarting all material when only certain areas need improvement (D).
+</details>
+
+**Q3.** Which free tool is best suited for building virtual network labs to practice configuration tasks for the Network+ exam?
+
+A) VMware Workstation
+B) Cisco Packet Tracer
+C) Wireshark
+D) PuTTY
+
+<details>
+<summary>Answer</summary>
+
+**B)** Cisco Packet Tracer is free through the Cisco Networking Academy and provides a simulated environment for building and configuring virtual networks. VMware (A) is a hypervisor, not a network simulator. Wireshark (C) captures and analyzes packets but doesn't simulate networks. PuTTY (D) is an SSH/Telnet client for connecting to devices, not a lab environment.
+</details>
+
+**Q4.** A student wants to group related port numbers together to memorize them more easily. Which memory technique does this describe?
+
+A) Mnemonics
+B) Visualization
+C) Chunking
+D) Method of loci
+
+<details>
+<summary>Answer</summary>
+
+**C)** Chunking organizes information into meaningful groups, making it easier to remember. Grouping ports by function (e.g., web: 80, 443; email: 25, 110, 143, 993, 995) is a classic chunking technique. Mnemonics (A) use acronyms or phrases. Visualization (B) creates mental images. Method of loci (D) associates items with physical locations.
+</details>
+
+**Q5.** According to the Feynman Technique, what is the best way to confirm you truly understand a networking concept?
+
+A) Having a teacher review your notes
+B) Explaining the concept to others (or yourself) in simple terms to identify knowledge gaps
+C) Reading the textbook aloud
+D) Watching video lectures repeatedly
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Feynman Technique involves explaining a concept in simple terms as if teaching someone else. If you struggle to explain it simply, you haven't fully understood it. Having notes reviewed (A) is passive. Reading aloud (C) and re-watching lectures (D) are passive learning methods that don't force the deep retrieval and organization required by teaching.
+</details>
+
+## References
 
 - **Anki Flashcard App**: https://apps.ankiweb.net
 - **Cisco Packet Tracer**: https://www.netacad.com/courses/packet-tracer
-- **Professor Messer's Network+ Course**: https://www.professormesser.com/network-plus/n10-008/n10-008-video/n10-008-training-course/
+- **Professor Messer's Network+ Course**: https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/
 - **ExamCompass Practice Questions**: https://www.examcompass.com/comptia-network-plus-certification-practice-test-exam
 - **CompTIA Network+ Exam Objectives**: https://www.comptia.org/training/resources/exam-objectives

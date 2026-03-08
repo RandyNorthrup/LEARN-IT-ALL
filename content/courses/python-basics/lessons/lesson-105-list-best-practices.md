@@ -1,8 +1,8 @@
 ---
-id: "119-list-best-practices"
+id: lesson-105-list-best-practices
 title: "List Best Practices and Patterns"
 chapterId: ch8-lists
-order: 11
+order: 14
 duration: 25
 objectives:
   - Learn list best practices
@@ -327,13 +327,14 @@ def process_list_copy(items):
     result.reverse()
     return result
 
-# ✅ GOOD - Defensive copying in classes
-class DataStore:
-    def __init__(self, data):
-        self._data = data[:]  # Copy to protect internal state
-    
-    def get_data(self):
-        return self._data[:]  # Return copy to protect internal state
+# ✅ GOOD - Defensive copying with functions
+def create_data_store(data):
+    """Create a data store with a copy of the input data"""
+    return {"data": data[:]}  # Copy to protect internal state
+
+def get_store_data(store):
+    """Return a copy of the store's data"""
+    return store["data"][:]  # Return copy to protect internal state
 ```
 
 ## Function Return Values

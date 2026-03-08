@@ -1,7 +1,7 @@
 ---
-id: ipv4-fundamentals
+id: lesson-043-ipv4-fundamentals
 title: IPv4 Fundamentals
-chapterId: ch5-ip-addressing
+chapterId: ch2-ip-addressing
 order: 43
 duration: 60
 objectives:
@@ -299,6 +299,160 @@ Total Usable Hosts: 254
 
 ---
 
+## IPv4 Packet Structure
+
+Understanding the IPv4 packet header is essential for troubleshooting and analyzing network traffic. Every IPv4 packet contains a header with control information followed by the payload (data).
+
+### IPv4 Header Format
+
+```
+0                   1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Version|  IHL  |    DSCP   |ECN|          Total Length         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Identification        |Flags|      Fragment Offset    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Time to Live |    Protocol   |         Header Checksum       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       Source IP Address                       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Destination IP Address                     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Options (if IHL > 5)                       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Minimum header size: 20 bytes (no options)
+Maximum header size: 60 bytes (with options)
+```
+
+### Header Fields Explained
+
+| Field | Size | Description |
+|-------|------|-------------|
+| **Version** | 4 bits | IP version (always 4 for IPv4) |
+| **IHL** | 4 bits | Internet Header Length in 32-bit words (min 5 = 20 bytes) |
+| **DSCP** | 6 bits | Differentiated Services Code Point (QoS marking) |
+| **ECN** | 2 bits | Explicit Congestion Notification |
+| **Total Length** | 16 bits | Entire packet size in bytes (header + data, max 65,535) |
+| **Identification** | 16 bits | Unique ID for fragment reassembly |
+| **Flags** | 3 bits | Fragmentation control (DF = Don't Fragment, MF = More Fragments) |
+| **Fragment Offset** | 13 bits | Position of fragment in original packet |
+| **TTL** | 8 bits | Hop count limit (decremented by each router) |
+| **Protocol** | 8 bits | Upper-layer protocol (6=TCP, 17=UDP, 1=ICMP) |
+| **Header Checksum** | 16 bits | Error checking for header integrity |
+| **Source Address** | 32 bits | Sender's IPv4 address |
+| **Destination Address** | 32 bits | Recipient's IPv4 address |
+
+### Time to Live (TTL) Behavior
+
+TTL prevents packets from looping infinitely in the network. Each router that forwards the packet **decrements the TTL by 1**. When TTL reaches **0**, the router discards the packet and sends an ICMP "Time Exceeded" message back to the source.
+
+```
+Packet Lifecycle with TTL:
+
+Source PC (TTL=128)
+  │
+  ▼
+Router 1 (TTL=128 → 127, forward)
+  │
+  ▼
+Router 2 (TTL=127 → 126, forward)
+  │
+  ▼
+Router 3 (TTL=126 → 125, forward)
+  │
+  ▼
+Destination Server (TTL=125, deliver to application)
+```
+
+**Default TTL Values by Operating System:**
+
+| OS | Default TTL |
+|----|-------------|
+| Linux | 64 |
+| Windows | 128 |
+| macOS | 64 |
+| Cisco IOS | 255 |
+| Juniper | 64 |
+
+**TTL in Troubleshooting:**
+```bash
+# Traceroute uses incrementing TTL values to discover path
+# TTL=1 → first router replies with Time Exceeded
+# TTL=2 → second router replies
+# TTL=3 → third router replies
+# Continues until destination reached
+
+traceroute 8.8.8.8     # Linux/macOS
+tracert 8.8.8.8        # Windows
+```
+
+**Identifying Remote OS by TTL:**
+```
+Reply from 10.5.5.5: TTL=126
+  Original TTL was likely 128 (Windows) → 2 hops away
+
+Reply from 10.5.5.5: TTL=61
+  Original TTL was likely 64 (Linux) → 3 hops away
+```
+
+### IPv4 Fragmentation
+
+When a packet is larger than the **Maximum Transmission Unit (MTU)** of a link, the router must **fragment** the packet into smaller pieces. Each fragment is transmitted independently and reassembled at the destination.
+
+```
+Original Packet (4000 bytes, MTU=1500):
+
+┌────────────────────────────────────────────────────┐
+│ Header (20B) │          Data (3980 bytes)          │
+└────────────────────────────────────────────────────┘
+                        │
+              Fragmentation at Router
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│HDR│Data 1480B│ │HDR│Data 1480B│ │HDR│Data 1020B│
+│MF=1 Offset=0│ │MF=1 Off=1480│ │MF=0 Off=2960│
+└──────────────┘ └──────────────┘ └──────────────┘
+  Fragment 1       Fragment 2       Fragment 3
+```
+
+**Key Fragmentation Concepts:**
+
+| Concept | Description |
+|---------|-------------|
+| **MTU** | Maximum Transmission Unit (Ethernet default: 1500 bytes) |
+| **DF Flag** | Don't Fragment - router drops packet instead of fragmenting |
+| **MF Flag** | More Fragments - indicates more fragments follow |
+| **Fragment Offset** | Position of fragment data relative to original |
+| **Reassembly** | Always performed at destination, never intermediate routers |
+
+**Path MTU Discovery (PMTUD):**
+```
+Purpose: Find smallest MTU along entire path
+Method:
+  1. Source sends packet with DF bit set
+  2. If router can't forward (packet > MTU):
+     → Drops packet
+     → Sends ICMP "Fragmentation Needed" with its MTU
+  3. Source reduces packet size and retries
+  4. Repeats until packet reaches destination
+
+Benefits:
+  - Avoids fragmentation entirely
+  - Better performance (no reassembly overhead)
+  - Modern applications prefer this method
+
+Test MTU:
+  ping -f -l 1472 10.1.1.1    (Windows, DF flag set)
+  ping -M do -s 1472 10.1.1.1 (Linux, DF flag set)
+  # 1472 + 20 (IP) + 8 (ICMP) = 1500 (standard MTU)
+```
+
+---
+
 ## Calculating Number of Hosts
 
 ### Formula
@@ -510,55 +664,6 @@ With /24 mask, device correctly routes to gateway for 192.168.2.50
 
 ---
 
-## Practice Problems
-
-### Problem 1
-**Given:** 172.16.50.100/16  
-**Find:** Network address, broadcast address, usable range
-
-**Solution:**
-```
-Subnet mask: /16 = 255.255.0.0
-Network bits: 16
-Host bits: 16
-
-Network address:   172.16.0.0
-Broadcast address: 172.16.255.255
-Usable range:      172.16.0.1 - 172.16.255.254
-Total hosts:       2^16 - 2 = 65,534
-```
-
-### Problem 2
-**Given:** 10.1.1.50/24  
-**Find:** Can this device communicate directly with 10.1.2.50?
-
-**Solution:**
-```
-Device IP: 10.1.1.50/24
-Network: 10.1.1.0
-
-Target IP: 10.1.2.50
-Network: 10.1.2.0
-
-Answer: NO - Different networks (/24 masks)
-Communication requires routing through gateway
-```
-
-### Problem 3
-**Convert:** 11001000.00000010.00101010.00001100 to dotted decimal
-
-**Solution:**
-```
-11001000 = 128+64+8 = 200
-00000010 = 2
-00101010 = 32+8+2 = 42
-00001100 = 8+4 = 12
-
-Answer: 200.2.42.12
-```
-
----
-
 ## Summary
 
 IPv4 addressing is the foundation of network communication. Key takeaways:
@@ -575,37 +680,82 @@ Master these concepts before moving to subnetting calculations!
 
 ---
 
-## Review Questions
+## Practice Questions
 
-1. **How many bits are in an IPv4 address?**
-   - Answer: 32 bits (four 8-bit octets)
 
-2. **What is the decimal value of binary 11000000?**
-   - Answer: 192 (128 + 64)
+**Q1.** How many bits are in an IPv4 address, and how are they typically divided?
 
-3. **How many usable host addresses in a /24 network?**
-   - Answer: 254 (2^8 - 2)
+A) 16 bits divided into two octets
+B) 32 bits divided into four octets
+C) 48 bits divided into six octets
+D) 64 bits divided into eight octets
 
-4. **What does /30 CIDR notation represent?**
-   - Answer: 30 network bits, 2 host bits, subnet mask 255.255.255.252
+<details>
+<summary>Answer</summary>
 
-5. **Can 192.168.1.100/24 communicate directly with 192.168.2.100/24?**
-   - Answer: No, different networks, requires routing
+**B)** An IPv4 address is 32 bits long, divided into four 8-bit sections called octets. Each octet is represented as a decimal number (0–255) separated by dots in dotted decimal notation (e.g., 192.168.1.100). 48 bits describes a MAC address, and 128 bits describes an IPv6 address.
+</details>
 
-6. **What is the broadcast address for 10.5.5.0/24?**
-   - Answer: 10.5.5.255
 
-7. **What is the purpose of a default gateway?**
-   - Answer: Routes traffic to networks outside the local subnet
+**Q2.** What is the purpose of a subnet mask?
 
-8. **What is the network address for 172.16.45.200/16?**
-   - Answer: 172.16.0.0
+A) To encrypt network traffic between devices
+B) To determine which portion of an IP address identifies the network and which identifies the host
+C) To assign IP addresses automatically via DHCP
+D) To translate domain names to IP addresses
 
----
+<details>
+<summary>Answer</summary>
+
+**B)** A subnet mask determines which bits of an IP address represent the network portion and which represent the host portion. The mask's binary 1s mark network bits and binary 0s mark host bits. This distinction is essential for routers and hosts to determine whether a destination is local or remote. DHCP assigns addresses, DNS translates names, and encryption is handled by other protocols.
+</details>
+
+
+**Q3.** What is the decimal value of the binary octet 11001000?
+
+A) 168
+B) 192
+C) 200
+D) 204
+
+<details>
+<summary>Answer</summary>
+
+**C)** Converting 11001000: 128 + 64 + 0 + 0 + 8 + 0 + 0 + 0 = 200. Each bit position represents a power of 2 from left to right: 128, 64, 32, 16, 8, 4, 2, 1. Only the positions with a 1 bit are added together.
+</details>
+
+
+**Q4.** Given the IP address 10.20.30.40 with a subnet mask of 255.255.255.0, what is the network address?
+
+A) 10.0.0.0
+B) 10.20.0.0
+C) 10.20.30.0
+D) 10.20.30.40
+
+<details>
+<summary>Answer</summary>
+
+**C)** To find the network address, perform a logical AND between the IP address and subnet mask. With a /24 mask (255.255.255.0), the first three octets are the network portion and the last octet is zeroed out: 10.20.30.0. The answer 10.0.0.0 would correspond to a /8 mask, and 10.20.0.0 would correspond to a /16 mask.
+</details>
+
+
+**Q5.** A /30 subnet mask provides how many usable host addresses, and what is its primary use case?
+
+A) 4 usable hosts — small office networks
+B) 6 usable hosts — server VLANs
+C) 2 usable hosts — point-to-point links between routers
+D) 14 usable hosts — wireless access points
+
+<details>
+<summary>Answer</summary>
+
+**C)** A /30 subnet has 2 host bits, giving 2^2 = 4 total addresses minus 2 (network and broadcast) = 2 usable host addresses. This is the ideal size for point-to-point links between two routers, where exactly two addresses are needed — one for each router interface. Using larger subnets for point-to-point links wastes address space.
+</details>
+
 
 ## References
 
-- **CompTIA Network+ N10-008 Exam Objectives:** Domain 1.4 - IPv4 addressing and subnetting
+- **CompTIA Network+ N10-009 Exam Objectives:** Domain 1.4 - IPv4 addressing and subnetting
 - **RFC 791:** Internet Protocol (IPv4 specification)
 - **RFC 950:** Internet Standard Subnetting Procedure
 - **RFC 1918:** Address Allocation for Private Internets

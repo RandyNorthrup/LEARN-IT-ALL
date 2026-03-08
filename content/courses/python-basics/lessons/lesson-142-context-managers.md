@@ -1,5 +1,5 @@
 ---
-id: "149-context-managers"
+id: lesson-142-context-managers
 title: "Context Managers and Resource Management"
 chapterId: ch11-error-handling
 order: 5
@@ -48,43 +48,30 @@ with open("data1.txt") as f1:
 ## How Context Managers Work
 
 ```python
-# Context managers implement __enter__ and __exit__
-class FileManager:
+# The @contextmanager decorator lets you write context managers as
+# generator functions. Code before 'yield' runs on entry, and code
+# after 'yield' runs on exit (even if an exception occurs).
+from contextlib import contextmanager
+
+@contextmanager
+def file_manager(filename, mode):
     """Simple file context manager"""
-    def __init__(self, filename, mode):
-        self.filename = filename
-        self.mode = mode
-        self.file = None
+    # Setup: runs when entering 'with' block
+    print(f"Opening {filename}")
+    f = open(filename, mode)
     
-    def __enter__(self):
-        """Called when entering 'with' block"""
-        print(f"Opening {self.filename}")
-        self.file = open(self.filename, self.mode)
-        return self.file  # Returned to 'as' variable
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Called when exiting 'with' block.
-        
-        Args:
-            exc_type: Exception type (or None)
-            exc_val: Exception value (or None)
-            exc_tb: Exception traceback (or None)
-        
-        Returns:
-            True to suppress exception, False to propagate
-        """
-        print(f"Closing {self.filename}")
-        if self.file:
-            self.file.close()
-        
-        if exc_type:
-            print(f"Exception occurred: {exc_val}")
-        
-        return False  # Don't suppress exceptions
+    try:
+        yield f  # Provide the resource to the 'with' block
+    except Exception as exc:
+        print(f"Exception occurred: {exc}")
+        raise  # Re-raise the exception (don't suppress it)
+    finally:
+        # Cleanup: always runs when exiting 'with' block
+        print(f"Closing {filename}")
+        f.close()
 
 # Usage
-with FileManager("test.txt", "w") as f:
+with file_manager("test.txt", "w") as f:
     f.write("Hello!")
 # File automatically closed
 ```
@@ -94,66 +81,67 @@ with FileManager("test.txt", "w") as f:
 ```python
 # Timer context manager
 import time
+from contextlib import contextmanager
 
-class Timer:
+@contextmanager
+def timer():
     """Measure execution time"""
-    def __enter__(self):
-        self.start = time.time()
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.end = time.time()
-        self.elapsed = self.end - self.start
-        print(f"Elapsed time: {self.elapsed:.4f} seconds")
-        return False
+    info = {"start": time.time(), "elapsed": 0}
+    try:
+        yield info
+    finally:
+        info["end"] = time.time()
+        info["elapsed"] = info["end"] - info["start"]
+        print(f"Elapsed time: {info['elapsed']:.4f} seconds")
 
 # Usage
-with Timer():
+with timer():
     # Code to measure
     total = sum(range(1000000))
 
 # Timer with result access
-with Timer() as timer:
+with timer() as t:
     result = sum(range(1000000))
 
-print(f"Total time: {timer.elapsed:.4f}s")
+print(f"Total time: {t['elapsed']:.4f}s")
 
 # Database transaction context manager
-class DatabaseTransaction:
-    """Database transaction with auto commit/rollback"""
-    def __init__(self, connection):
-        self.connection = connection
-    
-    def __enter__(self):
-        print("Beginning transaction")
-        self.connection.begin()
-        return self.connection
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is None:
-            print("Committing transaction")
-            self.connection.commit()
-        else:
-            print(f"Rolling back transaction: {exc_val}")
-            self.connection.rollback()
-        return False
+from types import SimpleNamespace
 
-class MockConnection:
-    def begin(self): pass
-    def commit(self): print("  -> Committed")
-    def rollback(self): print("  -> Rolled back")
-    def execute(self, sql): print(f"  -> Executing: {sql}")
+@contextmanager
+def database_transaction(connection):
+    """Database transaction with auto commit/rollback"""
+    print("Beginning transaction")
+    connection.begin()
+    try:
+        yield connection
+    except Exception as e:
+        print(f"Rolling back transaction: {e}")
+        connection.rollback()
+        raise
+    else:
+        print("Committing transaction")
+        connection.commit()
+
+def make_mock_connection():
+    """Create a mock database connection"""
+    return SimpleNamespace(
+        begin=lambda: None,
+        commit=lambda: print("  -> Committed"),
+        rollback=lambda: print("  -> Rolled back"),
+        execute=lambda sql: print(f"  -> Executing: {sql}"),
+    )
 
 # Usage
-conn = MockConnection()
-with DatabaseTransaction(conn) as db:
+conn = make_mock_connection()
+with database_transaction(conn) as db:
     db.execute("INSERT INTO users VALUES (1, 'Alice')")
     db.execute("INSERT INTO users VALUES (2, 'Bob')")
 # Auto-commit on success
 
 # With error - auto-rollback
 try:
-    with DatabaseTransaction(conn) as db:
+    with database_transaction(conn) as db:
         db.execute("INSERT INTO users VALUES (3, 'Charlie')")
         raise ValueError("Oops!")
 except ValueError:
@@ -163,26 +151,21 @@ except ValueError:
 import os
 import shutil
 
-class TempDirectory:
+@contextmanager
+def temp_directory(prefix="temp_"):
     """Create and auto-cleanup temporary directory"""
-    def __init__(self, prefix="temp_"):
-        self.prefix = prefix
-        self.path = None
-    
-    def __enter__(self):
-        import tempfile
-        self.path = tempfile.mkdtemp(prefix=self.prefix)
-        print(f"Created temp directory: {self.path}")
-        return self.path
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.path and os.path.exists(self.path):
-            shutil.rmtree(self.path)
-            print(f"Removed temp directory: {self.path}")
-        return False
+    import tempfile
+    path = tempfile.mkdtemp(prefix=prefix)
+    print(f"Created temp directory: {path}")
+    try:
+        yield path
+    finally:
+        if os.path.exists(path):
+            shutil.rmtree(path)
+            print(f"Removed temp directory: {path}")
 
 # Usage
-with TempDirectory("myapp_") as tmpdir:
+with temp_directory("myapp_") as tmpdir:
     # Use temporary directory
     file_path = os.path.join(tmpdir, "data.txt")
     with open(file_path, "w") as f:
@@ -194,27 +177,18 @@ with TempDirectory("myapp_") as tmpdir:
 
 ```python
 # Context manager that suppresses exceptions
-class SuppressException:
+from contextlib import contextmanager
+
+@contextmanager
+def suppress_exception(*exception_types):
     """Suppress specific exceptions"""
-    def __init__(self, *exception_types):
-        self.exception_types = exception_types
-    
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is None:
-            return False
-        
-        # Suppress if exception type matches
-        if issubclass(exc_type, self.exception_types):
-            print(f"Suppressed {exc_type.__name__}: {exc_val}")
-            return True
-        
-        return False
+    try:
+        yield
+    except exception_types as e:
+        print(f"Suppressed {type(e).__name__}: {e}")
 
 # Usage
-with SuppressException(ValueError, TypeError):
+with suppress_exception(ValueError, TypeError):
     result = int("not a number")  # ValueError suppressed
     print("This won't execute")
 
@@ -278,20 +252,15 @@ with error_handler("data processing"):
     data = [1, 2, 3]
     total = sum(data)
 
-# closing() - ensures close() method is called
-class MockResource:
-    def __init__(self, name):
-        self.name = name
-    
-    def use(self):
-        print(f"Using {self.name}")
-    
-    def close(self):
-        print(f"Closing {self.name}")
+# closing() - ensures close() is called on objects that have it.
+# Useful for objects that support close() but aren't context managers.
+import io
 
-with closing(MockResource("API")) as resource:
-    resource.use()
-# close() automatically called
+buffer = io.StringIO("Hello from buffer")
+with closing(buffer) as resource:
+    content = resource.read()
+    print(f"Read: {content}")
+# buffer.close() automatically called
 
 # redirect_stdout - capture stdout
 output = StringIO()
@@ -381,22 +350,10 @@ result1 = process_with_optional_logging([1, 2, 3])
 
 ```python
 # Lock context manager
+# Python's threading.Lock() is already a context manager!
 import threading
 
-class Lock:
-    """Thread lock context manager"""
-    def __init__(self):
-        self._lock = threading.Lock()
-    
-    def __enter__(self):
-        self._lock.acquire()
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._lock.release()
-        return False
-
-lock = Lock()
+lock = threading.Lock()
 
 def thread_safe_operation():
     with lock:
@@ -538,11 +495,14 @@ def safe_operation():
         print(f"Error: {e}")
         # Decide whether to suppress or re-raise
 
-# DON'T: Forget to return False in __exit__ if not suppressing
-class BadManager:
-    def __exit__(self, *args):
+# DON'T: Swallow exceptions in context managers
+@contextmanager
+def bad_manager():
+    try:
+        yield
+    except Exception:
         cleanup()
-        # Forgot to return False - might suppress exceptions!
+        # BUG: forgot to re-raise — exceptions are silently swallowed!
 
 # DO: Use ExitStack for dynamic resources
 with ExitStack() as stack:

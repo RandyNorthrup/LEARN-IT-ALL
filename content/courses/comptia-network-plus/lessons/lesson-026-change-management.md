@@ -1,21 +1,7 @@
 ---
-id: change-management
+id: lesson-026-change-management
 title: Change Management and Configuration Control
-chapterId: ch3-network-operations
-order: 26
-duration: 90
-objectives:
-  - Understand change management processes
-  - Implement change control procedures
-  - Document change requests and approvals
-  - Plan and execute network changes safely
-  - Perform rollback procedures when necessary
----
-
----
-id: change-management
-title: Change Management and Configuration Control
-chapterId: ch3-network-operations
+chapterId: ch4-network-operations
 order: 26
 duration: 90
 objectives:
@@ -31,6 +17,18 @@ objectives:
 ## Introduction
 
 Change management is the systematic approach to controlling modifications to network infrastructure, ensuring changes are carefully planned, tested, documented, and approved before implementation. Effective change management reduces outages, maintains network stability, enables rapid rollback when issues occur, and ensures compliance with regulatory requirements.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand change management processes
+- Implement change control procedures
+- Document change requests and approvals
+- Plan and execute network changes safely
+- Perform rollback procedures when necessary
+
+---
 
 ## Why Change Management Matters
 
@@ -949,15 +947,77 @@ Effective change management requires:
 
 Change management is not bureaucracy - it's risk management. Well-executed change management prevents outages, reduces stress, and enables confident infrastructure evolution.
 
-## Review Questions
+## Practice Questions
 
-1. What are the six steps in the ITIL change management process?
-2. What is the difference between a standard change and a normal change?
-3. What information should be included in a Request for Change (RFC)?
-4. What is a rollback plan and when should it be executed?
-5. What is the purpose of a Change Advisory Board (CAB)?
-6. Why is configuration version control important?
-7. What are three key performance indicators (KPIs) for change management?
-8. When is it appropriate to use the emergency change process?
-9. What is a Post-Implementation Review (PIR) and what should it include?
-10. What tools can be used for automated configuration backup and management?
+**Q1.** In the ITIL change management framework, what is the correct order of the change management process?
+
+A) Implementation, Approval, Request, Review, Planning, Evaluation
+B) Request for Change, Evaluation, Approval, Planning, Implementation, Review
+C) Planning, Request for Change, Implementation, Evaluation, Approval, Review
+D) Evaluation, Request for Change, Planning, Approval, Review, Implementation
+
+<details>
+<summary>Answer</summary>
+
+**B)** The ITIL change management process follows: (1) Request for Change (RFC), (2) Change Evaluation, (3) Change Approval/Rejection, (4) Change Planning, (5) Change Implementation, (6) Change Review. This logical sequence ensures changes are properly documented, assessed for risk, approved by stakeholders, planned in detail, executed during maintenance windows, and reviewed for lessons learned.
+</details>
+
+**Q2.** A critical security vulnerability is discovered on the production firewall and must be patched immediately. Which type of change should be initiated?
+
+A) Standard change
+B) Normal change
+C) Emergency change
+D) Routine change
+
+<details>
+<summary>Answer</summary>
+
+**C)** An emergency change is used for urgent responses to incidents requiring immediate action, such as patching a critical security vulnerability. It uses an abbreviated approval process with a mandatory post-implementation review. A standard change is for low-risk, pre-approved routine procedures. A normal change requires full CAB review and is too slow for urgent security issues. "Routine change" is not a formal ITIL change type.
+</details>
+
+**Q3.** A network engineer submits an RFC to upgrade core switch firmware. The risk assessment shows Impact Score of 4 (affects entire office) and Likelihood Score of 2 (unlikely). What is the calculated risk level?
+
+A) Low risk (score 2)
+B) Medium risk (score 8)
+C) High risk (score 16)
+D) Critical risk (score 20)
+
+<details>
+<summary>Answer</summary>
+
+**B)** Risk Score = Impact Score × Likelihood Score = 4 × 2 = 8, which falls in the Medium risk range (6-12). Medium risk changes require thorough review and approval from the Change Advisory Board. Low risk is 1-5, Medium is 6-12, and High risk is 13-25. This change affects the entire office (high impact) but has a low probability of failure, resulting in a moderate overall risk.
+</details>
+
+**Q4.** During a firmware upgrade on a core switch, the engineer notices HSRP is not functioning correctly after the reload. According to change management best practices, what should the engineer do?
+
+A) Continue monitoring and wait for HSRP to recover on its own
+B) Execute the documented rollback plan by booting from the previous firmware
+C) Proceed with upgrading the second switch to match firmware versions
+D) Submit a new RFC to address the HSRP issue
+
+<details>
+<summary>Answer</summary>
+
+**B)** HSRP malfunction is explicitly listed as a rollback trigger in the change plan. The engineer should execute the pre-documented rollback procedure by booting from the previous firmware image, which takes approximately 15 minutes. Waiting for recovery risks extended downtime. Upgrading the second switch could compound the problem. Submitting a new RFC is too slow for an active issue during a maintenance window.
+</details>
+
+**Q5.** Which group is responsible for reviewing and approving normal network changes before implementation?
+
+A) Help Desk
+B) Change Advisory Board (CAB)
+C) End users
+D) Network Operations Center (NOC)
+
+<details>
+<summary>Answer</summary>
+
+**B)** The Change Advisory Board (CAB) is the designated group that reviews and approves changes, assessing technical merit, risk, business impact, and scheduling. CAB members typically include IT management, technical leads, the change manager, and business stakeholders. The Help Desk handles user incidents. End users are stakeholders who receive notifications but don't approve changes. The NOC monitors the network during and after changes but doesn't approve them.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 3.2 — Given a scenario, determine the appropriate organizational documents and policies
+- ITIL v4 Foundation: Change Enablement Practice and Service Configuration Management
+- NIST SP 800-128: Guide for Security-Focused Configuration Management of Information Systems
+- ISO/IEC 20000-1:2018: Information Technology — Service Management System Requirements
+- Kurose, J. F., & Ross, K. W. (2021). *Computer Networking: A Top-Down Approach* (8th ed.). Pearson — Chapter 9: Network Management

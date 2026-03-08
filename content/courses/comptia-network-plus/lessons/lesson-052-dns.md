@@ -1,5 +1,7 @@
 ---
 id: lesson-052-dns
+chapterId: ch2-ip-addressing
+order: 52
 title: "Domain Name System (DNS)"
 sidebar_label: "Lesson 52: DNS"
 description: "Master DNS hierarchy, record types, resolution process, and DNS security including DNSSEC"
@@ -22,6 +24,19 @@ The Domain Name System (DNS) translates human-readable domain names (like www.ex
 DNS is one of the most critical services on the Internet. Understanding its hierarchy, record types, and resolution process is essential for network administration and troubleshooting.
 
 **Key Principle:** DNS is a distributed, hierarchical database that provides name-to-IP address resolution.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand DNS hierarchy and namespace structure
+- Configure and interpret DNS record types (A, AAAA, MX, CNAME, PTR, etc.)
+- Explain iterative and recursive DNS resolution processes
+- Implement DNS zones (forward and reverse)
+- Troubleshoot DNS resolution issues
+- Understand DNS security concepts including DNSSEC
+
+---
 
 ## DNS Fundamentals
 
@@ -1589,38 +1604,98 @@ DNS is the Internet's phone book, translating domain names to IP addresses:
 - Regular SOA serial updates
 - Document zone changes
 
-## Additional Resources
+## Practice Questions
 
-- **RFC 1034**: Domain Names - Concepts and Facilities
-- **RFC 1035**: Domain Names - Implementation and Specification
-- **RFC 4033-4035**: DNSSEC specifications
-- **RFC 7858**: DNS over TLS
-- **RFC 8484**: DNS over HTTPS
-- **CompTIA Network+ N10-008**: Domain 1.6 - DNS concepts
-- **BIND**: www.isc.org/bind
-- **DNS Root Servers**: www.root-servers.org
+**Q1.** Which DNS record type maps a hostname to an IPv4 address?
 
-## Practice Exercises
+A) AAAA
+B) CNAME
+C) A
+D) MX
 
-1. Trace resolution for www.example.com from root to answer using dig +trace
+<details>
+<summary>Answer</summary>
 
-2. What's the difference between CNAME and A record? When would you use each?
+**C)** An A (Address) record maps a hostname to an IPv4 address (e.g., www.example.com → 192.0.2.1). AAAA (A) maps a hostname to an IPv6 address. CNAME (B) creates an alias pointing one hostname to another. MX (D) specifies mail exchange servers for a domain.
+</details>
 
-3. Configure forward and reverse zones for network 192.168.100.0/24
+**Q2.** A user reports they can access a website by IP address (192.0.2.50) but not by name (www.example.com). What is the most likely issue?
 
-4. Why do MX records need A records for mail servers?
+A) The web server is down
+B) A firewall is blocking HTTP traffic
+C) DNS resolution is failing
+D) The user's IP address is incorrect
 
-5. Explain DNS cache poisoning and how DNSSEC prevents it
+<details>
+<summary>Answer</summary>
 
-6. Client can ping 8.8.8.8 but nslookup fails. What could be wrong?
+**C)** If a website is reachable by IP address but not by hostname, the issue is DNS resolution—the client cannot translate the domain name to its IP address. The web server is clearly operational since it responds to the IP (A). HTTP traffic is not blocked since the IP connection works (B). The user's connectivity is fine since they can reach the server by IP (D).
+</details>
 
-7. Design DNS infrastructure with primary, secondary, and caching servers
+**Q3.** What is the difference between recursive and iterative DNS queries?
 
-**Answers:**
-1. dig +trace shows: root → .com TLD → example.com NS → www.example.com A record
-2. CNAME is alias to another name; A maps to IP. Use CNAME for aliases that follow primary record changes
-3. Forward zone: 192-168-100.0/24 hosts; Reverse: 100.168.192.in-addr.arpa with PTR records
-4. MX record points to hostname; email server needs IP, so hostname needs A/AAAA record
-5. Cache poisoning sends fake responses; DNSSEC signs responses cryptographically, verifying authenticity
-6. DNS server unreachable or port 53 blocked; can reach Google's server but not DNS service
-7. Primary (master zone), Secondary (zone transfer from primary), Caching (recursion for clients, no authoritative data)
+A) Recursive queries are faster because they skip the root servers
+B) In a recursive query, the DNS server fully resolves the name on behalf of the client; in an iterative query, the server returns referrals for the client to follow
+C) Iterative queries are only used for reverse DNS lookups
+D) Recursive queries use TCP while iterative queries use UDP
+
+<details>
+<summary>Answer</summary>
+
+**B)** In a recursive query, the client asks its DNS server to fully resolve the name and return the final answer. In an iterative query, the server returns the best answer it has (often a referral to another server), and the querier must follow up. Recursive queries still contact root servers (A). Both query types can be used for any lookup type (C). Both primarily use UDP port 53 (D), switching to TCP only for large responses or zone transfers.
+</details>
+
+**Q4.** Which DNS record type is used for reverse DNS lookups (mapping an IP address to a hostname)?
+
+A) A
+B) MX
+C) PTR
+D) SOA
+
+<details>
+<summary>Answer</summary>
+
+**C)** PTR (Pointer) records map IP addresses to hostnames, enabling reverse DNS lookups. They are stored in special reverse zones (in-addr.arpa for IPv4, ip6.arpa for IPv6). A records (A) do forward lookups (name to IP). MX records (B) identify mail servers. SOA records (D) contain authoritative information about a DNS zone.
+</details>
+
+**Q5.** What is the primary purpose of DNSSEC?
+
+A) To encrypt DNS queries and responses for privacy
+B) To authenticate DNS responses and protect against cache poisoning by digitally signing DNS records
+C) To speed up DNS resolution by caching responses longer
+D) To replace DNS with a more secure protocol
+
+<details>
+<summary>Answer</summary>
+
+**B)** DNSSEC (DNS Security Extensions) adds digital signatures to DNS records, allowing resolvers to verify that responses are authentic and haven't been tampered with. This protects against attacks like cache poisoning. DNSSEC provides authentication and integrity, not encryption for privacy (A)—DNS over HTTPS (DoH) and DNS over TLS (DoT) handle that. It doesn't affect caching duration (C) or replace DNS (D).
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Domain 1.6 – Explain the use and purpose of network services (DNS)
+- RFC 1034: Domain Names – Concepts and Facilities
+- RFC 1035: Domain Names – Implementation and Specification
+- RFC 4033: DNS Security Introduction and Requirements (DNSSEC)
+- RFC 7858: DNS over Transport Layer Security (DoT)
+- RFC 8484: DNS Queries over HTTPS (DoH)
+- Lammle, T. (2021). *CompTIA Network+ Study Guide (Exam N10-009)*. Sybex – DNS Concepts
+- IANA Root Servers: https://www.iana.org/domains/root/servers
+- BIND: www.isc.org/bind
+
+### Required Reading
+
+- **RFC 1035** — Domain Names — Implementation and Specification (1987)
+  - Read: Section 3 (Domain Name Space and RR Definitions) and Section 4 (Messages)
+  - Available at: https://www.rfc-editor.org/rfc/rfc1035
+  - Focus questions:
+    1. How is the DNS namespace structured as an inverted tree, and what constraints does RFC 1035 place on label lengths and total name lengths?
+    2. What are the fields in a DNS message header, and how do the QR, OPCODE, and RCODE fields work together?
+    3. How does the DNS compression scheme (Section 4.1.4) reduce message size, and why is this important for UDP transport?
+
+- **RFC 4033** — DNS Security Introduction and Requirements (DNSSEC)
+  - Read: Sections 1–5 (Introduction, Definitions, Services, Scope)
+  - Available at: https://www.rfc-editor.org/rfc/rfc4033
+  - Focus questions:
+    1. What specific threats does DNSSEC protect against, and what threats does it *not* address?
+    2. How do RRSIG, DNSKEY, and DS records work together to form a chain of trust?

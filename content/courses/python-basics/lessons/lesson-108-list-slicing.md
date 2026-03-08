@@ -1,8 +1,8 @@
 ---
-id: list-slicing
+id: lesson-108-list-slicing
 title: List Slicing
 chapterId: ch8-lists
-order: 35
+order: 4
 duration: 25
 objectives:
   - Master list slicing syntax [start:stop:step]

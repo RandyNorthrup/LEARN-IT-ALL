@@ -1,0 +1,57 @@
+{
+  "id": "exercise-189-named-tuple-methods",
+  "courseId": "python-basics",
+  "lessonId": "lesson-184-named-tuples",
+  "chapterId": "ch15-tuples",
+  "title": "Named Tuple Methods",
+  "description": "Explore the special methods available on named tuples: _replace, _asdict, and _fields. Write functions that create an updated copy of a Student with a new grade, convert a named tuple into a dictionary, and compare the field names of two different named tuples to find shared and unique fields.",
+  "difficulty": "intermediate",
+  "points": 25,
+  "language": "python",
+  "starterCode": "from collections import namedtuple\n\nStudent = namedtuple('Student', ['name', 'grade', 'gpa'])\n\n\ndef update_grade(student, new_grade):\n    \"\"\"Return a new Student with the grade replaced by new_grade.\n    Use the _replace method.\"\"\"\n    pass\n\n\ndef student_to_dict(student):\n    \"\"\"Convert a Student named tuple to a dictionary.\n    Use the _asdict method.\"\"\"\n    pass\n\n\ndef compare_fields(nt1, nt2):\n    \"\"\"Compare the field names of two named tuple instances.\n    Return a dict with:\n      'shared': tuple of field names in both\n      'only_first': tuple of fields only in nt1\n      'only_second': tuple of fields only in nt2\"\"\"\n    pass\n",
+  "solution": "from collections import namedtuple\n\nStudent = namedtuple('Student', ['name', 'grade', 'gpa'])\n\n\ndef update_grade(student, new_grade):\n    \"\"\"Return a new Student with the grade replaced by new_grade.\n    Use the _replace method.\"\"\"\n    return student._replace(grade=new_grade)\n\n\ndef student_to_dict(student):\n    \"\"\"Convert a Student named tuple to a dictionary.\n    Use the _asdict method.\"\"\"\n    return dict(student._asdict())\n\n\ndef compare_fields(nt1, nt2):\n    \"\"\"Compare the field names of two named tuple instances.\n    Return a dict with:\n      'shared': tuple of field names in both\n      'only_first': tuple of fields only in nt1\n      'only_second': tuple of fields only in nt2\"\"\"\n    fields1 = set(nt1._fields)\n    fields2 = set(nt2._fields)\n    return {\n        'shared': tuple(sorted(fields1 & fields2)),\n        'only_first': tuple(sorted(fields1 - fields2)),\n        'only_second': tuple(sorted(fields2 - fields1))\n    }\n",
+  "hints": [
+    "Named tuples are immutable, but _replace() returns a new instance with specified fields changed.",
+    "The _asdict() method returns an OrderedDict of field names to values. Wrap with dict() for a plain dictionary.",
+    "Access field names with the _fields attribute, which returns a tuple of strings.",
+    "Use set operations (& for intersection, - for difference) to compare field names."
+  ],
+  "testCases": [
+    {
+      "id": "tc1",
+      "description": "update_grade changes the grade field",
+      "validation": "from collections import namedtuple\nStudent = namedtuple('Student', ['name', 'grade', 'gpa'])\ns = Student('Alice', 'B', 3.5)\nassert update_grade(s, 'A') == Student('Alice', 'A', 3.5)",
+      "isHidden": false
+    },
+    {
+      "id": "tc2",
+      "description": "student_to_dict returns a dictionary",
+      "validation": "from collections import namedtuple\nStudent = namedtuple('Student', ['name', 'grade', 'gpa'])\ns = Student('Bob', 'A', 3.9)\nd = student_to_dict(s)\nassert d == {'name': 'Bob', 'grade': 'A', 'gpa': 3.9} and isinstance(d, dict)",
+      "isHidden": false
+    },
+    {
+      "id": "tc3",
+      "description": "compare_fields finds shared and unique fields",
+      "validation": "from collections import namedtuple\nA = namedtuple('A', ['name', 'age', 'grade'])\nB = namedtuple('B', ['name', 'grade', 'school'])\nresult = compare_fields(A('x',1,'y'), B('x','y','z'))\nassert result['shared'] == ('grade', 'name')\nassert result['only_first'] == ('age',)\nassert result['only_second'] == ('school',)",
+      "isHidden": false
+    },
+    {
+      "id": "tc4",
+      "description": "update_grade does not modify the original",
+      "validation": "from collections import namedtuple\nStudent = namedtuple('Student', ['name', 'grade', 'gpa'])\noriginal = Student('Eve', 'C', 2.5)\nupdated = update_grade(original, 'B')\nassert original.grade == 'C' and updated.grade == 'B'",
+      "isHidden": false
+    },
+    {
+      "id": "tc5",
+      "description": "compare_fields with identical fields returns no unique fields",
+      "validation": "from collections import namedtuple\nX = namedtuple('X', ['a', 'b'])\nY = namedtuple('Y', ['a', 'b'])\nresult = compare_fields(X(1,2), Y(3,4))\nassert result['shared'] == ('a', 'b') and result['only_first'] == () and result['only_second'] == ()",
+      "isHidden": true
+    },
+    {
+      "id": "tc6",
+      "description": "compare_fields with no shared fields",
+      "validation": "from collections import namedtuple\nP = namedtuple('P', ['x', 'y'])\nQ = namedtuple('Q', ['a', 'b'])\nresult = compare_fields(P(1,2), Q(3,4))\nassert result['shared'] == ()",
+      "isHidden": true
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
-id: security-concepts
+id: lesson-031-security-concepts
 title: Security Concepts and Principles
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 31
 duration: 85
 objectives:
@@ -19,6 +19,18 @@ objectives:
 Network security is the foundation of protecting an organization's digital assets, ensuring confidentiality, integrity, and availability of data and services. In this lesson, we'll explore fundamental security concepts, the CIA triad, defense in depth strategies, and the security lifecycle that guides all network security implementations.
 
 Understanding these core principles is essential before implementing specific security technologies. Security is not a product you purchase—it's a process that requires continuous attention, adaptation, and improvement.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand the CIA triad (Confidentiality, Integrity, Availability)
+- Explain defense in depth strategies
+- Identify common security threats and vulnerabilities
+- Understand the security lifecycle
+- Apply security principles to network design
+
+---
 
 ## The CIA Triad
 
@@ -842,54 +854,82 @@ vlan 20
 - Penetration testing
 - Vulnerability scanning
 
-## Review Questions
+## Summary
 
-1. **What are the three principles of the CIA triad?**
-   - Confidentiality, Integrity, Availability
+In this lesson, we explored the foundational principles of network security. The CIA triad defines three core goals: Confidentiality (protecting data via AES-256 encryption and access controls), Integrity (verifying data accuracy through SHA-256 hashing and digital signatures), and Availability (ensuring uptime through redundancy — where "four nines" or 99.99% allows only 52.56 minutes of downtime per year). The AAA framework governs access control: RADIUS (UDP 1812/1813) encrypts only passwords and is used for network access, while TACACS+ (TCP 49) encrypts the entire session and separates AAA functions, making it preferred for device administration. Defense in depth layers security across physical, perimeter, network, host, and application tiers so that no single failure compromises the system. These principles guide every security technology covered in subsequent lessons.
 
-2. **What is the difference between authentication and authorization?**
-   - Authentication verifies identity ("who you are"), authorization determines access rights ("what you can do")
+## Practice Questions
 
-3. **What authentication protocol encrypts the entire session?**
-   - TACACS+ (vs RADIUS which only encrypts passwords)
+**Q1.** Which component of the CIA triad ensures that data has not been altered or tampered with during transmission?
 
-4. **What is defense in depth?**
-   - Implementing multiple layers of security controls so if one fails, others protect the system
+A) Confidentiality
+B) Availability
+C) Integrity
+D) Authentication
 
-5. **What are the four risk response strategies?**
-   - Avoidance, Mitigation, Transfer, Acceptance
+<details>
+<summary>Answer</summary>
 
-6. **What is the principle of least privilege?**
-   - Users should have only minimum access necessary for their job functions
+**C)** Integrity ensures that data remains accurate, complete, and unaltered except by authorized modifications. Mechanisms like hashing (SHA-256) and digital signatures verify integrity. Confidentiality (A) protects data from unauthorized access. Availability (B) ensures systems are accessible when needed. Authentication (D) verifies identity but is part of the AAA framework, not the CIA triad.
+</details>
 
-7. **What is the Zero Trust security model?**
-   - "Never trust, always verify" - authenticate and authorize every request regardless of location
+**Q2.** What protocol does TACACS+ use for communication, and what advantage does this provide over RADIUS?
 
-8. **What is multi-factor authentication (MFA)?**
-   - Using two or more authentication factors: something you know, have, or are
+A) UDP — provides faster communication
+B) TCP — encrypts the entire session payload
+C) UDP — supports multi-factor authentication natively
+D) TCP — separates authentication from accounting
 
-9. **What is the difference between RADIUS and TACACS+?**
-   - RADIUS: UDP, encrypts passwords only, combines authentication/authorization
-   - TACACS+: TCP, encrypts entire session, separates AAA functions
+<details>
+<summary>Answer</summary>
 
-10. **What is a SPOF in security context?**
-    - Single Point of Failure - a component whose failure causes complete system failure
+**B)** TACACS+ uses TCP port 49 and encrypts the entire session, whereas RADIUS uses UDP and only encrypts passwords. This full-session encryption provides greater security for administrative device access. While TACACS+ also separates AAA functions (D is partially true), the question asks specifically about the protocol and its advantage — TCP with full encryption is the key differentiator.
+</details>
 
-## Key Takeaways
+**Q3.** A company wants to ensure its web application remains accessible even during a large-scale DDoS attack. Which CIA triad principle is primarily at risk, and which control best addresses it?
 
-- **CIA Triad** is the foundation of information security: Confidentiality, Integrity, Availability
-- **AAA Framework** (Authentication, Authorization, Accounting) provides comprehensive access control
-- **Defense in depth** implements multiple security layers to protect against threats
-- **Risk management** involves identifying, assessing, and treating risks based on likelihood and impact
-- **Least privilege** and **separation of duties** are critical principles for access control
-- **Zero Trust** model assumes breach and verifies every access request
-- **Compliance requirements** (PCI-DSS, HIPAA, GDPR) drive many security implementations
-- **Security is a process**, not a product - requires continuous monitoring and improvement
+A) Confidentiality — deploy encryption on all web traffic
+B) Integrity — implement digital signatures on all responses
+C) Availability — deploy DDoS mitigation with rate limiting and CDN services
+D) Confidentiality — implement multi-factor authentication for all users
 
-## Next Steps
+<details>
+<summary>Answer</summary>
 
-In the next lesson, we'll explore **Physical Security** measures that protect network infrastructure, including access controls, environmental controls, and facility security best practices.
+**C)** DDoS attacks target availability by overwhelming systems with traffic to make them inaccessible to legitimate users. DDoS mitigation services, rate limiting, and CDN distribution absorb or filter malicious traffic to maintain availability. Encryption (A) and MFA (D) address confidentiality. Digital signatures (B) address integrity. None of those controls directly mitigate DDoS attacks.
+</details>
 
----
+**Q4.** In a defense in depth strategy, which layer of security includes VLANs, private VLANs, and 802.1X network access control?
 
-**Lesson Complete!** You now understand fundamental security concepts and principles that guide all network security implementations.
+A) Physical security layer
+B) Perimeter security layer
+C) Network security layer
+D) Application security layer
+
+<details>
+<summary>Answer</summary>
+
+**C)** The network security layer in a defense in depth strategy includes network segmentation (VLANs), private VLANs, ACLs, and network access control (802.1X/NAC). The physical security layer (A) covers locks, cameras, and biometrics. The perimeter security layer (B) includes firewalls and border routers. The application security layer (D) covers input validation and secure coding.
+</details>
+
+**Q5.** An organization discovers that a terminated employee's account was used to download sensitive files two days after their departure. Which component of the AAA framework failed, and what control would have prevented this?
+
+A) Authentication failed — stronger passwords were needed
+B) Accounting failed — logging was not enabled
+C) Authorization failed — the employee had too many permissions
+D) Authentication failed — the account should have been disabled upon termination
+
+<details>
+<summary>Answer</summary>
+
+**D)** The authentication system failed because it allowed a terminated employee's credentials to remain valid. Proper offboarding procedures should immediately disable or revoke accounts upon termination. Stronger passwords (A) wouldn't help since the attacker had valid credentials. Accounting/logging (B) might detect the breach but not prevent it. Authorization (C) controls what authenticated users can do, but the root cause was that the account should not have been authenticatable at all.
+</details>
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.1 — Explain common security concepts
+- NIST SP 800-12 Rev. 1: An Introduction to Information Security
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls for Information Systems and Organizations
+- ISO/IEC 27001:2022: Information Security Management Systems — Requirements
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Chapter 1: Introduction to Security
+- NIST Cybersecurity Framework (CSF) v1.1: Framework for Improving Critical Infrastructure Cybersecurity

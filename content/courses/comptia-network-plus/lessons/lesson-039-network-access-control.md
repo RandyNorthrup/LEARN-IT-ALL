@@ -1,7 +1,7 @@
 ---
-id: network-access-control
+id: lesson-039-network-access-control
 title: Network Access Control (NAC)
-chapterId: ch4-network-security
+chapterId: ch5-network-security
 order: 39
 duration: 80
 objectives:
@@ -21,6 +21,18 @@ Network Access Control (NAC) is a security approach that enforces policies on de
 In this lesson, we'll explore NAC technologies, 802.1X port-based authentication, posture assessment, remediation, guest access management, and NAC deployment strategies.
 
 **Key Principle:** Trust but verify - authenticate devices and validate security posture before granting network access.
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand NAC concepts and benefits
+- Implement 802.1X port-based authentication
+- Configure device posture assessment
+- Deploy network segmentation
+- Implement quarantine and remediation
+
+---
 
 ## NAC Fundamentals
 
@@ -788,55 +800,88 @@ show aaa servers
 show aaa sessions
 ```
 
-## Review Questions
+## Summary
 
-1. **What are the three components of 802.1X?**
-   - Supplicant (client), Authenticator (switch/AP), Authentication Server (RADIUS)
+In this lesson, we explored Network Access Control (NAC) and how it enforces security policies on devices before granting network access. The 802.1X framework has three components: the supplicant (client device), the authenticator (switch or AP that controls port access), and the authentication server (RADIUS). Ports start in an unauthorized state allowing only EAPoL traffic until credentials are validated. When devices lack 802.1X support (printers, IoT), MAC Authentication Bypass (MAB) authenticates based on MAC address — though this is less secure since MACs can be spoofed. Host modes include single-host, multi-host (first device authenticates, others piggyback), multi-auth (each device authenticated separately), and multi-domain (one data + one voice device). Posture assessment checks device compliance — antivirus status, OS patches, encryption — before granting access, quarantining non-compliant devices to a remediation VLAN with self-service portals for guided fixes.
 
-2. **What is MAB used for?**
-   - MAC Authentication Bypass - authenticate devices without 802.1X support (printers, IoT)
+## Practice Questions
 
-3. **What is posture assessment?**
-   - Checking device compliance with security policies (AV, patches, firewall, etc.)
 
-4. **What is a quarantine VLAN?**
-   - Restricted VLAN for non-compliant devices with access only to remediation resources
+**Q1.** What are the three components of 802.1X port-based authentication?
 
-5. **What is the difference between agent-based and agentless posture assessment?**
-   - Agent-based uses installed software (more thorough), agentless uses network scanning (less accurate)
+A) Firewall, IDS, and SIEM
+B) Supplicant, authenticator, and authentication server
+C) Router, switch, and access point
+D) Client, proxy, and gateway
 
-6. **What is dynamic VLAN assignment?**
-   - RADIUS server assigns VLAN based on user/device identity or compliance
+<details>
+<summary>Answer</summary>
 
-7. **What is client isolation?**
-   - Prevents devices on same network from communicating directly with each other
+**B)** The three components of 802.1X are the supplicant (client device requesting access), the authenticator (switch or access point that enforces authentication), and the authentication server (RADIUS server that validates credentials). The other options describe different network components not specific to the 802.1X framework.
+</details>
 
-8. **What are the 802.1X host modes?**
-   - single-host, multi-host, multi-auth, multi-domain
 
-9. **What is TrustSec?**
-   - Cisco's software-defined segmentation using Security Group Tags (SGT)
+**Q2.** What is the purpose of posture assessment in a NAC solution?
 
-10. **What is the purpose of a guest portal?**
-    - Self-service or sponsored registration for temporary network access
+A) To verify the physical location of a device
+B) To check whether a device complies with security policies such as antivirus status, OS patches, and firewall configuration
+C) To measure network bandwidth usage per device
+D) To assign DNS settings to new devices
 
-## Key Takeaways
+<details>
+<summary>Answer</summary>
 
-- **NAC enforces who and what accesses the network** - authentication + posture assessment
-- **802.1X is the standard** - port-based authentication for network access
-- **Multiple authentication methods** - 802.1X, MAB, WebAuth (use in combination)
-- **Posture assessment validates compliance** - AV, patches, encryption, configuration
-- **Quarantine and remediation** - isolate non-compliant devices until fixed
-- **Dynamic VLAN assignment** - flexible access control based on identity/compliance
-- **Guest access management** - self-registration, sponsor-based, time-limited
-- **Phased deployment critical** - monitor first, enforce gradually
-- **Integration with existing systems** - Active Directory, SIEM, patch management
-- **Continuous monitoring** - NAC is ongoing process, not one-time configuration
+**B)** Posture assessment evaluates whether a connecting device meets the organization's security policy requirements, including antivirus definitions, OS patch level, encryption status, and firewall state. Devices that fail posture checks can be quarantined or given limited access until remediated. It does not check physical location, bandwidth, or DNS settings.
+</details>
 
-## Next Steps
 
-In the next lesson, we'll explore **Security Policies and Procedures**, including policy development, incident response procedures, and security awareness training.
+**Q3.** A network administrator needs to provide network access for IP-based security cameras that do not support 802.1X supplicant software. Which authentication method should be used?
 
----
+A) EAP-TLS
+B) WebAuth (captive portal)
+C) MAC Authentication Bypass (MAB)
+D) PEAP-MSCHAPv2
 
-**Lesson Complete!** You now understand Network Access Control systems that enforce authentication and compliance policies before granting network access.
+<details>
+<summary>Answer</summary>
+
+**C)** MAC Authentication Bypass (MAB) authenticates devices based on their MAC address and does not require supplicant software on the device, making it ideal for IoT devices, printers, and cameras. EAP-TLS and PEAP require a supplicant. WebAuth requires a browser, which security cameras do not have.
+</details>
+
+
+**Q4.** A company's NAC system detects that an employee's laptop is missing critical OS patches. The laptop is placed on a restricted VLAN with access only to update servers. What NAC function does this describe?
+
+A) Authentication
+B) Accounting
+C) Quarantine and remediation
+D) Load balancing
+
+<details>
+<summary>Answer</summary>
+
+**C)** Quarantine and remediation is the NAC function that isolates non-compliant devices on a restricted VLAN and provides access to remediation resources (such as update servers) so the device can become compliant. Authentication verifies identity. Accounting tracks usage. Load balancing distributes traffic.
+</details>
+
+
+**Q5.** In an 802.1X deployment, a switch port is configured with `authentication host-mode multi-domain`. What does this host mode allow?
+
+A) Unlimited devices on the port with no authentication
+B) One data device and one voice device, each authenticated separately
+C) Multiple devices where only the first device authenticates
+D) Only a single device on the port at any time
+
+<details>
+<summary>Answer</summary>
+
+**B)** Multi-domain host mode allows one device in the data domain and one device in the voice domain (typically an IP phone plus a PC), with each device authenticated separately. Single-host allows only one device. Multi-host authenticates the first device and allows others to piggyback. Multi-auth authenticates each device individually without domain restrictions.
+</details>
+
+
+## References
+
+- CompTIA Network+ N10-009 Exam Objectives: Objective 4.3 — Given a scenario, apply network hardening techniques (NAC)
+- IEEE 802.1X-2020: Port-Based Network Access Control
+- NIST SP 800-53 Rev. 5: Security and Privacy Controls — AC (Access Control) Family
+- IETF RFC 3748: Extensible Authentication Protocol (EAP)
+- Stallings, W. (2021). *Network Security Essentials: Applications and Standards* (7th ed.). Pearson — Access Control
+- Trusted Computing Group (TCG): Trusted Network Connect (TNC) Architecture

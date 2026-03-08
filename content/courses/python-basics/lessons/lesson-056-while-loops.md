@@ -1,8 +1,8 @@
 ---
-id: while-loops
+id: lesson-056-while-loops
 title: While Loops and Loop Control
 chapterId: ch5-loops
-order: 2
+order: 3
 duration: 25
 objectives:
   - Master while loop syntax

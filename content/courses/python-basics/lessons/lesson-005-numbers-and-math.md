@@ -1,5 +1,5 @@
 ---
-id: numbers-and-math
+id: lesson-005-numbers-and-math
 title: Numbers and Mathematical Operations
 chapterId: ch1-intro
 order: 5
@@ -155,7 +155,7 @@ print(result)  # 20
 
 # Complex expression
 result = 10 + 2 ** 3 * 4 / 2
-print(result)  # 10 + 8 * 4 / 2 = 10 + 32 / 2 = 10 + 16 = 26
+print(result)  # 10 + 8 * 4 / 2 = 10 + 32 / 2 = 10 + 16.0 = 26.0
 ```
 
 ## Compound Assignment Operators

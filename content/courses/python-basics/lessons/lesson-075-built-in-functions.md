@@ -1,5 +1,5 @@
 ---
-id: 51-built-in-functions
+id: lesson-075-built-in-functions
 title: Python Built-in Functions
 chapterId: ch6-functions
 order: 7
@@ -193,13 +193,14 @@ print(dir("hello"))  # ['capitalize', 'upper', ...]
 # help() - Get documentation
 # help(len)  # Shows len() documentation
 
-# vars() - Object's __dict__ attribute
-class Person:
-    def __init__(self, name):
-        self.name = name
+# vars() - Returns namespace as dictionary
+# Without arguments, vars() acts like locals()
+def show_vars():
+    name = "Alice"
+    age = 25
+    print(vars())  # {'name': 'Alice', 'age': 25}
 
-p = Person("Alice")
-print(vars(p))  # {'name': 'Alice'}
+show_vars()
 ```
 
 ## Practical Examples

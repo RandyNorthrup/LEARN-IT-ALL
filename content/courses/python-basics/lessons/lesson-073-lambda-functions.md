@@ -1,5 +1,5 @@
 ---
-id: lambda-functions
+id: lesson-073-lambda-functions
 title: Lambda Functions and Functional Programming
 chapterId: ch6-functions
 order: 5
@@ -205,8 +205,8 @@ total = reduce(lambda a, b: a + b, expensive)
 
 print(f"Expensive items after discount: {expensive}")
 print(f"Total: ${total:.2f}")
-# Expensive items after discount: [22.5, 18.9, 27.225, 18.0]
-# Total: $86.62
+# Expensive items after discount: [22.5, 27.225, 18.0]
+# Total: $67.72
 ```
 
 ### Example 2: User Data Transformation

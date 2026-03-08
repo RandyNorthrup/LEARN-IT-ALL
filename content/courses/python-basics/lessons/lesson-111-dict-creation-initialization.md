@@ -1,5 +1,5 @@
 ---
-id: "120-dict-creation-initialization"
+id: lesson-111-dict-creation-initialization
 title: "Dictionary Creation and Initialization"
 chapterId: ch9-dictionaries
 order: 2

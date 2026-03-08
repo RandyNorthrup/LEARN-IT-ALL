@@ -1,8 +1,8 @@
 ---
-id: 59-closure-patterns
+id: lesson-087-closure-patterns
 title: Closure Design Patterns
 chapterId: ch7-scope
-order: 6
+order: 7
 duration: 30
 objectives:
   - Master practical closure patterns

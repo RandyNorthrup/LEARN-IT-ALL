@@ -1,5 +1,5 @@
 ---
-id: variable-reassignment
+id: lesson-015-variable-reassignment
 title: Variable Assignment and Reassignment
 chapterId: ch2-variables
 order: 2
@@ -44,6 +44,35 @@ print(score)  # 20
 ```
 
 Each assignment **replaces** the previous value.
+
+## How Python Variables Actually Work: Name Binding
+
+In many languages, a variable is like a **box** that holds a value. Python works differently — a variable is a **name** (a label) that **points to** an object in memory.
+
+When you write `x = 5`, Python creates an integer object `5` in memory and makes the name `x` refer to it. When you reassign `x = 10`, Python doesn't change the `5` — it creates a new integer object `10` and makes `x` point to that instead. The old `5` object still exists (until Python cleans it up).
+
+This is called **name binding**: assignment *binds* a name to an object.
+
+You can see this in action using `id()`, which shows an object's memory address:
+
+```python
+x = 5
+print(id(x))   # e.g. 140234866327600
+
+x = 10
+print(id(x))   # e.g. 140234866327760 (different address!)
+```
+
+The address changed because `x` now points to a completely different object.
+
+This concept matters later when you work with **mutable objects** like lists. Two names can point to the *same* object, so changes through one name are visible through the other:
+
+```python
+a = [1, 2, 3]
+b = a           # b points to the SAME list object
+b.append(4)
+print(a)        # [1, 2, 3, 4] — a sees the change too!
+```
 
 ## Changing Types
 

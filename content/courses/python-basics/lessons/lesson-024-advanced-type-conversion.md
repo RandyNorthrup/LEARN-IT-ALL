@@ -1,8 +1,8 @@
 ---
-id: 14-advanced-type-conversion
+id: lesson-024-advanced-type-conversion
 title: Advanced Type Conversion and Casting
 chapterId: ch2-variables
-order: 11
+order: 10
 duration: 25
 objectives:
   - Master type conversion techniques
@@ -47,7 +47,7 @@ def safe_int_convert(value, default=0):
 
 print(safe_int_convert("42"))      # 42
 print(safe_int_convert("abc"))     # 0 (default)
-print(safe_int_convert("42.5"))    # Raises ValueError!
+print(safe_int_convert("42.5"))    # 0 (default — ValueError caught)
 
 # Better: Handle floats too
 def safe_int_convert_v2(value, default=0):
@@ -190,35 +190,34 @@ json_str = '{"name": "Charlie", "age": 35}'
 data = json.loads(json_str)  # {'name': 'Charlie', 'age': 35}
 ```
 
-## Custom Object Conversion
+## Custom Conversion Functions
 
 ```python
-class User:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    
-    def __str__(self):
-        """String representation (informal)."""
-        return f"User({self.name}, {self.age})"
-    
-    def __repr__(self):
-        """String representation (official/debugging)."""
-        return f"User(name='{self.name}', age={self.age})"
-    
-    def __int__(self):
-        """Convert to int (returns age)."""
-        return self.age
-    
-    def __bool__(self):
-        """Convert to bool (True if age > 0)."""
-        return self.age > 0
+# Create structured data using a dictionary
+def create_user(name, age):
+    """Create a user dictionary."""
+    return {"name": name, "age": age}
 
-user = User("Alice", 30)
-print(str(user))   # User(Alice, 30)
-print(repr(user))  # User(name='Alice', age=30)
-print(int(user))   # 30
-print(bool(user))  # True
+
+def user_to_string(user):
+    """Convert user dict to a readable string."""
+    return f"User({user['name']}, {user['age']})"
+
+
+def user_to_int(user):
+    """Convert user dict to int (returns age)."""
+    return user["age"]
+
+
+def user_is_valid(user):
+    """Check if user is valid (age > 0)."""
+    return user["age"] > 0
+
+
+user = create_user("Alice", 30)
+print(user_to_string(user))  # User(Alice, 30)
+print(user_to_int(user))     # 30
+print(user_is_valid(user))   # True
 ```
 
 ## Type Checking Before Conversion

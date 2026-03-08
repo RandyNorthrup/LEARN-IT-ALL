@@ -1,62 +1,57 @@
 {
   "id": "exercise-081-cpu-basics",
-  "lessonId": "lesson-073-cpu-basics",
-  "title": "CPU Instruction Simulator",
-  "description": "Create a simple CPU simulator that demonstrates the fetch-decode-execute cycle. The simulator will execute basic assembly-like instructions.\n\nYour CPU simulator should support these instructions:\n- `LOAD register value` - Load a value into a register\n- `ADD reg1 reg2 result` - Add two registers and store in result\n- `SUB reg1 reg2 result` - Subtract reg2 from reg1 and store in result\n- `MULT reg1 reg2 result` - Multiply two registers and store in result\n- `PRINT register` - Print the value in a register\n\nImplement a CPU class with:\n- Registers dictionary (A, B, C, D) initialized to 0\n- `fetch(instruction)` - Returns the instruction\n- `decode(instruction)` - Parses instruction into parts\n- `execute(parts)` - Executes the decoded instruction\n- `run(program)` - Runs a list of instructions through fetch-decode-execute cycle\n\nExample:\n```python\ncpu = CPU()\nprogram = [\n    \"LOAD A 10\",\n    \"LOAD B 20\",\n    \"ADD A B C\",\n    \"PRINT C\"\n]\ncpu.run(program)\n# [FETCH] LOAD A 10\n# [DECODE] Instruction: LOAD, Operands: ['A', '10']\n# [EXECUTE] Loaded 10 into register A\n# ...\n# Register C = 30\n```",
-  "difficulty": "advanced",
-  "points": 25,
+  "lessonId": "lesson-031-cpu-basics",
+  "chapterId": "ch3-computing",
+  "title": "CPU Fetch-Decode-Execute Simulator",
+  "description": "Build a simple CPU simulator using functions and dictionaries to demonstrate the fetch-decode-execute cycle — the fundamental operation of every processor.\n\nImplement these functions:\n- `create_cpu()` — Returns a dict representing a CPU with `registers` ({\"A\": 0, \"B\": 0}), `memory` (list of 8 zeros), and `program_counter` (0)\n- `fetch(cpu, program)` — Returns the instruction string at the current `program_counter` index in the program list, then advances `program_counter` by 1\n- `decode(instruction)` — Splits the instruction on the first space and returns a tuple of `(operation, operand)`. If there is no space, operand is an empty string\n- `execute(cpu, operation, operand)` — Performs the operation on the CPU dict and returns the updated CPU:\n  - `LOAD value` — Stores `int(value)` in `registers[\"A\"]`\n  - `ADD value` — Adds `int(value)` to `registers[\"A\"]`\n  - `SUB value` — Subtracts `int(value)` from `registers[\"A\"]`\n  - `STORE addr` — Copies `registers[\"A\"]` into `memory[int(addr)]`\n\nExample:\n```python\ncpu = create_cpu()\nprogram = [\"LOAD 10\", \"ADD 20\", \"STORE 0\"]\ninstr = fetch(cpu, program)       # \"LOAD 10\", program_counter -> 1\nop, operand = decode(instr)       # (\"LOAD\", \"10\")\nexecute(cpu, op, operand)         # registers[\"A\"] = 10\n```",
+  "difficulty": "intermediate",
+  "points": 20,
   "language": "python",
-  "starterCode": "class CPU:\n    \"\"\"Simple CPU simulator.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize CPU with registers.\"\"\"\n        # TODO: Create registers dictionary with A, B, C, D set to 0\n        self.registers = {}\n    \n    def fetch(self, instruction):\n        \"\"\"Fetch instruction (just return it for simulation).\"\"\"\n        # TODO: Print fetch message and return instruction\n        pass\n    \n    def decode(self, instruction):\n        \"\"\"Decode instruction into operation and operands.\"\"\"\n        # TODO: Split instruction by spaces\n        # First part is operation, rest are operands\n        # Print decode message\n        # Return tuple of (operation, operands_list)\n        pass\n    \n    def execute(self, parts):\n        \"\"\"Execute the decoded instruction.\"\"\"\n        operation, operands = parts\n        \n        # TODO: Implement LOAD operation\n        # LOAD register value\n        if operation == \"LOAD\":\n            pass\n        \n        # TODO: Implement ADD operation\n        # ADD reg1 reg2 result\n        elif operation == \"ADD\":\n            pass\n        \n        # TODO: Implement SUB operation\n        # SUB reg1 reg2 result\n        elif operation == \"SUB\":\n            pass\n        \n        # TODO: Implement MULT operation\n        # MULT reg1 reg2 result\n        elif operation == \"MULT\":\n            pass\n        \n        # TODO: Implement PRINT operation\n        # PRINT register\n        elif operation == \"PRINT\":\n            pass\n        \n        else:\n            print(f\"[EXECUTE] Unknown instruction: {operation}\")\n    \n    def run(self, program):\n        \"\"\"Run a program through fetch-decode-execute cycle.\"\"\"\n        # TODO: Loop through each instruction\n        # 1. Fetch the instruction\n        # 2. Decode the instruction\n        # 3. Execute the decoded parts\n        # 4. Print blank line between instructions\n        pass\n\n# Test the CPU\ncpu = CPU()\n\nprint(\"Program 1: Basic arithmetic\")\nprint(\"=\"*50)\nprogram1 = [\n    \"LOAD A 15\",\n    \"LOAD B 25\",\n    \"ADD A B C\",\n    \"PRINT C\"\n]\ncpu.run(program1)\n\nprint(\"\\n\" + \"=\"*50)\nprint(\"Program 2: Multiple operations\")\nprint(\"=\"*50)\nprogram2 = [\n    \"LOAD A 100\",\n    \"LOAD B 50\",\n    \"SUB A B C\",\n    \"LOAD D 2\",\n    \"MULT C D A\",\n    \"PRINT A\"\n]\ncpu.run(program2)",
-  "solution": "class CPU:\n    \"\"\"Simple CPU simulator.\"\"\"\n    \n    def __init__(self):\n        \"\"\"Initialize CPU with registers.\"\"\"\n        self.registers = {'A': 0, 'B': 0, 'C': 0, 'D': 0}\n    \n    def fetch(self, instruction):\n        \"\"\"Fetch instruction (just return it for simulation).\"\"\"\n        print(f\"[FETCH] {instruction}\")\n        return instruction\n    \n    def decode(self, instruction):\n        \"\"\"Decode instruction into operation and operands.\"\"\"\n        parts = instruction.split()\n        operation = parts[0]\n        operands = parts[1:]\n        \n        print(f\"[DECODE] Instruction: {operation}, Operands: {operands}\")\n        return (operation, operands)\n    \n    def execute(self, parts):\n        \"\"\"Execute the decoded instruction.\"\"\"\n        operation, operands = parts\n        \n        if operation == \"LOAD\":\n            register = operands[0]\n            value = int(operands[1])\n            self.registers[register] = value\n            print(f\"[EXECUTE] Loaded {value} into register {register}\")\n        \n        elif operation == \"ADD\":\n            reg1 = operands[0]\n            reg2 = operands[1]\n            result_reg = operands[2]\n            result = self.registers[reg1] + self.registers[reg2]\n            self.registers[result_reg] = result\n            print(f\"[EXECUTE] {reg1}({self.registers[reg1]}) + {reg2}({self.registers[reg2]}) = {result}, stored in {result_reg}\")\n        \n        elif operation == \"SUB\":\n            reg1 = operands[0]\n            reg2 = operands[1]\n            result_reg = operands[2]\n            result = self.registers[reg1] - self.registers[reg2]\n            self.registers[result_reg] = result\n            print(f\"[EXECUTE] {reg1}({self.registers[reg1]}) - {reg2}({self.registers[reg2]}) = {result}, stored in {result_reg}\")\n        \n        elif operation == \"MULT\":\n            reg1 = operands[0]\n            reg2 = operands[1]\n            result_reg = operands[2]\n            result = self.registers[reg1] * self.registers[reg2]\n            self.registers[result_reg] = result\n            print(f\"[EXECUTE] {reg1}({self.registers[reg1]}) * {reg2}({self.registers[reg2]}) = {result}, stored in {result_reg}\")\n        \n        elif operation == \"PRINT\":\n            register = operands[0]\n            value = self.registers[register]\n            print(f\"[EXECUTE] Register {register} = {value}\")\n        \n        else:\n            print(f\"[EXECUTE] Unknown instruction: {operation}\")\n    \n    def run(self, program):\n        \"\"\"Run a program through fetch-decode-execute cycle.\"\"\"\n        for instruction in program:\n            fetched = self.fetch(instruction)\n            decoded = self.decode(fetched)\n            self.execute(decoded)\n            print()\n\n# Test the CPU\ncpu = CPU()\n\nprint(\"Program 1: Basic arithmetic\")\nprint(\"=\"*50)\nprogram1 = [\n    \"LOAD A 15\",\n    \"LOAD B 25\",\n    \"ADD A B C\",\n    \"PRINT C\"\n]\ncpu.run(program1)\n\nprint(\"\\n\" + \"=\"*50)\nprint(\"Program 2: Multiple operations\")\nprint(\"=\"*50)\nprogram2 = [\n    \"LOAD A 100\",\n    \"LOAD B 50\",\n    \"SUB A B C\",\n    \"LOAD D 2\",\n    \"MULT C D A\",\n    \"PRINT A\"\n]\ncpu.run(program2)",
+  "starterCode": "def create_cpu():\n    \"\"\"Create a CPU as a dictionary.\n\n    Returns a dict with:\n    - 'registers': dict with 'A' and 'B' keys, both set to 0\n    - 'memory': list of 8 zeros\n    - 'program_counter': 0\n    \"\"\"\n    # TODO: Return the CPU dictionary\n    pass\n\n\ndef fetch(cpu, program):\n    \"\"\"Fetch the next instruction from the program.\n\n    Get the instruction at cpu['program_counter'] index in program.\n    Then advance program_counter by 1.\n    Return the instruction string.\n    \"\"\"\n    # TODO: Get instruction at program_counter, advance counter, return instruction\n    pass\n\n\ndef decode(instruction):\n    \"\"\"Decode an instruction string into (operation, operand).\n\n    Split instruction on the first space.\n    If no space exists, operand should be an empty string.\n    Return a tuple of (operation, operand).\n    \"\"\"\n    # TODO: Split and return (operation, operand) tuple\n    pass\n\n\ndef execute(cpu, operation, operand):\n    \"\"\"Execute an operation on the CPU.\n\n    LOAD value  -> store int(value) in registers['A']\n    ADD value   -> add int(value) to registers['A']\n    SUB value   -> subtract int(value) from registers['A']\n    STORE addr  -> copy registers['A'] into memory[int(addr)]\n\n    Return the updated cpu dict.\n    \"\"\"\n    # TODO: Implement each operation using if/elif\n    pass\n\n\n# Test your implementation\ncpu = create_cpu()\nprint('Initial CPU:', cpu)\n\nprogram = ['LOAD 10', 'ADD 20', 'STORE 0']\nfor i in range(len(program)):\n    instr = fetch(cpu, program)\n    op, operand = decode(instr)\n    print(f'Fetched: {instr} -> Operation: {op}, Operand: {operand}')\n    execute(cpu, op, operand)\n    print(f'  Register A: {cpu[\"registers\"][\"A\"]}, Memory: {cpu[\"memory\"]}')\n\nprint('\\nFinal CPU state:', cpu)",
+  "solution": "def create_cpu():\n    \"\"\"Create a CPU as a dictionary.\n\n    Returns a dict with:\n    - 'registers': dict with 'A' and 'B' keys, both set to 0\n    - 'memory': list of 8 zeros\n    - 'program_counter': 0\n    \"\"\"\n    return {\n        'registers': {'A': 0, 'B': 0},\n        'memory': [0, 0, 0, 0, 0, 0, 0, 0],\n        'program_counter': 0\n    }\n\n\ndef fetch(cpu, program):\n    \"\"\"Fetch the next instruction from the program.\n\n    Get the instruction at cpu['program_counter'] index in program.\n    Then advance program_counter by 1.\n    Return the instruction string.\n    \"\"\"\n    instruction = program[cpu['program_counter']]\n    cpu['program_counter'] = cpu['program_counter'] + 1\n    return instruction\n\n\ndef decode(instruction):\n    \"\"\"Decode an instruction string into (operation, operand).\n\n    Split instruction on the first space.\n    If no space exists, operand should be an empty string.\n    Return a tuple of (operation, operand).\n    \"\"\"\n    parts = instruction.split(' ', 1)\n    operation = parts[0]\n    operand = parts[1] if len(parts) > 1 else ''\n    return (operation, operand)\n\n\ndef execute(cpu, operation, operand):\n    \"\"\"Execute an operation on the CPU.\n\n    LOAD value  -> store int(value) in registers['A']\n    ADD value   -> add int(value) to registers['A']\n    SUB value   -> subtract int(value) from registers['A']\n    STORE addr  -> copy registers['A'] into memory[int(addr)]\n\n    Return the updated cpu dict.\n    \"\"\"\n    if operation == 'LOAD':\n        cpu['registers']['A'] = int(operand)\n    elif operation == 'ADD':\n        cpu['registers']['A'] = cpu['registers']['A'] + int(operand)\n    elif operation == 'SUB':\n        cpu['registers']['A'] = cpu['registers']['A'] - int(operand)\n    elif operation == 'STORE':\n        cpu['memory'][int(operand)] = cpu['registers']['A']\n    return cpu\n\n\n# Test your implementation\ncpu = create_cpu()\nprint('Initial CPU:', cpu)\n\nprogram = ['LOAD 10', 'ADD 20', 'STORE 0']\nfor i in range(len(program)):\n    instr = fetch(cpu, program)\n    op, operand = decode(instr)\n    print(f'Fetched: {instr} -> Operation: {op}, Operand: {operand}')\n    execute(cpu, op, operand)\n    print(f'  Register A: {cpu[\"registers\"][\"A\"]}, Memory: {cpu[\"memory\"]}')\n\nprint('\\nFinal CPU state:', cpu)",
   "hints": [
-    "Initialize registers as a dictionary: self.registers = {'A': 0, 'B': 0, 'C': 0, 'D': 0}",
-    "In decode(), use instruction.split() to break the instruction into parts",
-    "For LOAD, operands[0] is the register name and operands[1] is the value (convert to int)",
-    "For arithmetic operations, get values from registers using self.registers[reg1] and self.registers[reg2]",
-    "Store results back into registers using self.registers[result_reg] = result",
-    "In run(), call fetch(), decode(), and execute() in sequence for each instruction"
+    "create_cpu() should return a dictionary with three keys: 'registers', 'memory', and 'program_counter'",
+    "In fetch(), use cpu['program_counter'] as the index into the program list, then increment it by 1",
+    "In decode(), use split(' ', 1) to split into at most 2 parts — the operation and everything after the first space",
+    "In execute(), use if/elif to check the operation string and perform the matching action",
+    "Remember to convert the operand to int() before doing arithmetic or using it as a memory index",
+    "execute() should modify the cpu dict in-place AND return it"
   ],
   "testCases": [
     {
       "id": "tc1",
-      "description": "CPU initializes with four registers A, B, C, D set to 0",
-      "input": "cpu = CPU(); print(cpu.registers)",
-      "expectedOutput": "{'A': 0, 'B': 0, 'C': 0, 'D': 0}",
+      "description": "create_cpu returns correct initial CPU state",
+      "validation": "cpu = create_cpu()\nassert cpu['registers'] == {'A': 0, 'B': 0}\nassert cpu['memory'] == [0, 0, 0, 0, 0, 0, 0, 0]\nassert cpu['program_counter'] == 0",
       "isHidden": false
     },
     {
       "id": "tc2",
-      "description": "LOAD instruction correctly loads value into register",
-      "input": "cpu = CPU(); cpu.execute(('LOAD', ['A', '42'])); print(cpu.registers['A'])",
-      "expectedOutput": "42",
+      "description": "fetch returns correct instruction and advances program_counter",
+      "validation": "cpu = create_cpu()\nprogram = ['LOAD 5', 'ADD 3']\nresult = fetch(cpu, program)\nassert result == 'LOAD 5'\nassert cpu['program_counter'] == 1",
       "isHidden": false
     },
     {
       "id": "tc3",
-      "description": "ADD instruction correctly adds two registers",
-      "input": "cpu = CPU(); cpu.registers['A'] = 10; cpu.registers['B'] = 20; cpu.execute(('ADD', ['A', 'B', 'C'])); print(cpu.registers['C'])",
-      "expectedOutput": "30",
+      "description": "decode splits instruction into operation and operand",
+      "validation": "assert decode('LOAD 5') == ('LOAD', '5')\nassert decode('ADD 3') == ('ADD', '3')\nassert decode('HALT') == ('HALT', '')",
       "isHidden": false
     },
     {
       "id": "tc4",
-      "description": "SUB instruction correctly subtracts registers",
-      "input": "cpu = CPU(); cpu.registers['A'] = 100; cpu.registers['B'] = 30; cpu.execute(('SUB', ['A', 'B', 'C'])); print(cpu.registers['C'])",
-      "expectedOutput": "70",
-      "isHidden": true
+      "description": "execute LOAD stores value in register A",
+      "validation": "cpu = create_cpu()\nexecute(cpu, 'LOAD', '42')\nassert cpu['registers']['A'] == 42",
+      "isHidden": false
     },
     {
       "id": "tc5",
-      "description": "MULT instruction correctly multiplies registers",
-      "input": "cpu = CPU(); cpu.registers['A'] = 7; cpu.registers['B'] = 6; cpu.execute(('MULT', ['A', 'B', 'C'])); print(cpu.registers['C'])",
-      "expectedOutput": "42",
+      "description": "execute ADD and SUB update register A correctly",
+      "validation": "cpu = create_cpu()\nexecute(cpu, 'LOAD', '10')\nexecute(cpu, 'ADD', '5')\nassert cpu['registers']['A'] == 15\nexecute(cpu, 'SUB', '3')\nassert cpu['registers']['A'] == 12",
       "isHidden": true
     },
     {
       "id": "tc6",
-      "description": "Complete program executes correctly through fetch-decode-execute cycle",
-      "input": "cpu = CPU(); cpu.run(['LOAD A 15', 'LOAD B 25', 'ADD A B C']); print(cpu.registers['C'])",
-      "expectedOutput": "40",
+      "description": "Full fetch-decode-execute cycle processes a program correctly",
+      "validation": "cpu = create_cpu()\nprogram = ['LOAD 10', 'ADD 20', 'STORE 0']\nfor i in range(len(program)):\n    instr = fetch(cpu, program)\n    op, operand = decode(instr)\n    execute(cpu, op, operand)\nassert cpu['registers']['A'] == 30\nassert cpu['memory'][0] == 30\nassert cpu['program_counter'] == 3",
       "isHidden": true
     }
   ]

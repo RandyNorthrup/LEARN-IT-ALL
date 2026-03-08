@@ -1,8 +1,8 @@
 ---
-id: "118-list-memory-performance"
+id: lesson-104-list-memory-performance
 title: "List Memory and Performance"
 chapterId: ch8-lists
-order: 10
+order: 13
 duration: 25
 objectives:
   - Understand list memory usage
@@ -333,26 +333,21 @@ def optimize_memory():
     for value in results:
         pass  # Process value
 
-# Use __slots__ for many objects
-class Point:
-    """Regular class - each instance has __dict__"""
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+# Use tuples/namedtuples instead of dicts for memory savings
+from collections import namedtuple
 
-class PointOptimized:
-    """Optimized class - fixed attributes"""
-    __slots__ = ['x', 'y']
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+def make_point_dict(x, y):
+    """Create a point as a dictionary - flexible but uses more memory"""
+    return {"x": x, "y": y}
+
+Point = namedtuple('Point', ['x', 'y'])
 
 # Compare memory
-points_regular = [Point(i, i) for i in range(1000)]
-points_optimized = [PointOptimized(i, i) for i in range(1000)]
+points_dict = [make_point_dict(i, i) for i in range(1000)]
+points_tuple = [Point(i, i) for i in range(1000)]
 
-print(f"Regular:   {sys.getsizeof(points_regular[0])} bytes/object")
-print(f"Optimized: {sys.getsizeof(points_optimized[0])} bytes/object")
+print(f"Dict point:  {sys.getsizeof(points_dict[0])} bytes/object")
+print(f"Tuple point: {sys.getsizeof(points_tuple[0])} bytes/object")
 
 # Share common data
 # BAD - duplicate strings

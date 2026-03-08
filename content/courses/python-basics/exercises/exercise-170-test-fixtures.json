@@ -1,63 +1,70 @@
 {
   "id": "exercise-170-test-fixtures",
-  "lessonId": "lesson-160-test-fixtures",
+  "lessonId": "lesson-161-test-fixtures",
   "title": "Test Fixtures and Setup",
-  "description": "Create reusable test fixtures, use setup and teardown methods, manage test data effectively, and share fixtures across tests.",
+  "description": "Create reusable test fixtures using closures, implement setup/teardown patterns, run parameterized tests, and build simple test suites using functions.",
   "difficulty": "intermediate",
   "points": 20,
-  "starterCode": "# Exercise: Test Fixtures and Setup\nimport pytest\n\n@pytest.fixture\ndef sample_users():\n    \"\"\"Fixture returning list of sample users.\"\"\"\n    pass\n\n@pytest.fixture\ndef database_connection():\n    \"\"\"Fixture with setup and teardown.\"\"\"\n    pass\n\n@pytest.fixture\ndef temp_file(tmp_path):\n    \"\"\"Fixture creating temporary file.\"\"\"\n    pass\n\n@pytest.fixture\ndef user_service(database_connection):\n    \"\"\"Fixture with dependencies.\"\"\"\n    pass\n\n@pytest.fixture\ndef make_user():\n    \"\"\"Factory fixture for creating users.\"\"\"\n    pass\n\nclass TestUserService:\n    @pytest.fixture(autouse=True)\n    def setup(self):\n        \"\"\"Auto-use fixture for setup/teardown.\"\"\"\n        pass\n",
-  "solution": "# Solution: Test Fixtures and Setup\nimport pytest\nfrom typing import List, Dict, Callable\nfrom pathlib import Path\n\n@pytest.fixture\ndef sample_users() -> List[Dict[str, any]]:\n    \"\"\"\n    Fixture returning list of sample users.\n    \n    Returns:\n        List of user dictionaries\n    \"\"\"\n    return [\n        {\"id\": \"user1\", \"username\": \"alice\", \"email\": \"alice@example.com\"},\n        {\"id\": \"user2\", \"username\": \"bob\", \"email\": \"bob@example.com\"},\n        {\"id\": \"user3\", \"username\": \"charlie\", \"email\": \"charlie@example.com\"}\n    ]\n\nclass MockDatabase:\n    \"\"\"Mock database for testing.\"\"\"\n    \n    def __init__(self):\n        self.connected = False\n        self.data = {}\n    \n    def connect(self):\n        \"\"\"Connect to database.\"\"\"\n        self.connected = True\n    \n    def disconnect(self):\n        \"\"\"Disconnect from database.\"\"\"\n        self.connected = False\n    \n    def insert(self, table: str, data: dict):\n        \"\"\"Insert data into table.\"\"\"\n        if table not in self.data:\n            self.data[table] = []\n        self.data[table].append(data)\n    \n    def query(self, table: str) -> List[dict]:\n        \"\"\"Query table.\"\"\"\n        return self.data.get(table, [])\n\n@pytest.fixture\ndef database_connection():\n    \"\"\"\n    Fixture with setup and teardown.\n    \n    Yields:\n        Connected database instance\n    \"\"\"\n    db = MockDatabase()\n    db.connect()\n    \n    yield db\n    \n    # Teardown\n    db.disconnect()\n\n@pytest.fixture\ndef temp_file(tmp_path: Path) -> Path:\n    \"\"\"\n    Fixture creating temporary file.\n    \n    Args:\n        tmp_path: pytest's built-in temp directory fixture\n    \n    Returns:\n        Path to temporary file\n    \"\"\"\n    file_path = tmp_path / \"test_data.txt\"\n    file_path.write_text(\"Initial content\")\n    return file_path\n\nclass UserService:\n    \"\"\"User service for testing.\"\"\"\n    \n    def __init__(self, database):\n        self.db = database\n    \n    def create_user(self, username: str, email: str) -> dict:\n        \"\"\"Create user in database.\"\"\"\n        user = {\"username\": username, \"email\": email}\n        self.db.insert(\"users\", user)\n        return user\n    \n    def get_users(self) -> List[dict]:\n        \"\"\"Get all users.\"\"\"\n        return self.db.query(\"users\")\n\n@pytest.fixture\ndef user_service(database_connection):\n    \"\"\"\n    Fixture with dependencies.\n    \n    Args:\n        database_connection: Database fixture\n    \n    Returns:\n        UserService instance\n    \"\"\"\n    return UserService(database_connection)\n\n@pytest.fixture\ndef make_user():\n    \"\"\"\n    Factory fixture for creating users.\n    \n    Returns:\n        Function that creates users\n    \"\"\"\n    users = []\n    \n    def _make_user(username: str, email: str) -> dict:\n        user = {\"username\": username, \"email\": email}\n        users.append(user)\n        return user\n    \n    yield _make_user\n    \n    # Cleanup all created users\n    users.clear()\n\nclass TestUserService:\n    \"\"\"Test class with setup/teardown.\"\"\"\n    \n    @pytest.fixture(autouse=True)\n    def setup(self):\n        \"\"\"\n        Auto-use fixture for setup/teardown.\n        \n        Runs before each test method automatically.\n        \"\"\"\n        self.test_data = {\"initialized\": True}\n        yield\n        # Teardown\n        self.test_data.clear()\n    \n    def test_initialization(self):\n        \"\"\"Test that setup ran.\"\"\"\n        assert self.test_data[\"initialized\"] is True\n\n# Additional fixtures for comprehensive testing\n\n@pytest.fixture(scope=\"module\")\ndef shared_resource():\n    \"\"\"\n    Module-scoped fixture (runs once per module).\n    \n    Returns:\n        Shared resource dictionary\n    \"\"\"\n    resource = {\"count\": 0}\n    yield resource\n    # Cleanup runs once after all tests in module\n\n@pytest.fixture(params=[\"sqlite\", \"postgres\", \"mysql\"])\ndef database_type(request):\n    \"\"\"\n    Parametrized fixture for testing multiple database types.\n    \n    Args:\n        request: pytest request object\n    \n    Returns:\n        Database type string\n    \"\"\"\n    return request.param\n\n@pytest.fixture\ndef populated_database(database_connection, sample_users):\n    \"\"\"\n    Fixture composition - database with sample data.\n    \n    Args:\n        database_connection: Database fixture\n        sample_users: Sample user data fixture\n    \n    Returns:\n        Database with users already inserted\n    \"\"\"\n    for user in sample_users:\n        database_connection.insert(\"users\", user)\n    \n    return database_connection\n",
+  "starterCode": "# Exercise: Test Fixtures and Setup\nimport copy\n\n\ndef create_fixture(data):\n    \"\"\"Return a function that returns a fresh copy of data each time it's called.\"\"\"\n    pass\n\n\ndef setup_teardown(setup_func, test_func, teardown_func):\n    \"\"\"Run setup, then test, then teardown (always). Return test result.\"\"\"\n    pass\n\n\ndef parameterized_test(func, test_cases):\n    \"\"\"Run func with each (input, expected) case. Return list of result dicts.\"\"\"\n    pass\n\n\ndef test_suite(tests):\n    \"\"\"Run list of (name, test_func) tuples. Return dict of results.\"\"\"\n    pass\n",
+  "solution": "# Solution: Test Fixtures and Setup\nimport copy\n\n\ndef create_fixture(data):\n    \"\"\"Return a function that returns a fresh copy of data each time it's called.\n\n    Uses closure and deep copy to create a factory pattern.\n\n    Args:\n        data: The template data to copy\n\n    Returns:\n        A function that returns a fresh deep copy of data\n    \"\"\"\n    def fixture():\n        return copy.deepcopy(data)\n    return fixture\n\n\ndef setup_teardown(setup_func, test_func, teardown_func):\n    \"\"\"Run setup, then test, then teardown (always). Return test result.\n\n    Teardown runs even if test_func raises an exception.\n\n    Args:\n        setup_func: Function to call before test\n        test_func: Function to test (returns result)\n        teardown_func: Function to call after test (always)\n\n    Returns:\n        The return value of test_func\n    \"\"\"\n    setup_func()\n    try:\n        result = test_func()\n    finally:\n        teardown_func()\n    return result\n\n\ndef parameterized_test(func, test_cases):\n    \"\"\"Run func with each (input, expected) case. Return list of result dicts.\n\n    Args:\n        func: Function to test\n        test_cases: List of (input, expected) tuples\n\n    Returns:\n        List of dicts with 'input', 'expected', 'actual', 'passed' keys\n    \"\"\"\n    results = []\n    for case_input, expected in test_cases:\n        actual = func(case_input)\n        results.append({\n            'input': case_input,\n            'expected': expected,\n            'actual': actual,\n            'passed': actual == expected\n        })\n    return results\n\n\ndef test_suite(tests):\n    \"\"\"Run list of (name, test_func) tuples. Return dict of results.\n\n    Each test passes if it completes without raising an exception.\n    Failed tests record the error message.\n\n    Args:\n        tests: List of (name, test_func) tuples\n\n    Returns:\n        Dict mapping test name to 'passed' or error message string\n    \"\"\"\n    results = {}\n    for name, test_func in tests:\n        try:\n            test_func()\n            results[name] = 'passed'\n        except Exception as e:\n            results[name] = str(e)\n    return results\n",
   "hints": [
-    "Simple fixture: Use @pytest.fixture decorator, return test data",
-    "Setup/teardown: Use yield to separate setup from teardown code",
-    "Temp file: Use tmp_path fixture, create file with write_text()",
-    "Fixture dependencies: Add other fixtures as function parameters",
-    "Factory fixture: Return a function that creates objects, yield it",
-    "Autouse fixture: Add autouse=True to @pytest.fixture decorator"
+    "create_fixture: Use copy.deepcopy inside a closure to return fresh copies",
+    "setup_teardown: Use try/finally to ensure teardown always runs",
+    "parameterized_test: Loop through test_cases, call func(input), compare to expected",
+    "test_suite: Use try/except around each test_func call, catch Exception",
+    "Factory pattern: Return an inner function that captures data via closure",
+    "Result dicts: Include 'input', 'expected', 'actual', and 'passed' keys"
   ],
   "testCases": [
     {
-      "input": "users = sample_users()\\nlen(users)",
-      "description": "Test sample_users fixture",
       "id": "test1",
-      "expectedOutput": "3",
-      "isHidden": false
+      "description": "create_fixture returns fresh copies each call",
+      "input": "import copy\\nfixture = create_fixture([1, 2, 3])\\ndata1 = fixture()\\ndata2 = fixture()\\ndata1 == [1, 2, 3] and data1 is not data2",
+      "expectedOutput": "True",
+      "isHidden": false,
+      "validation": "assert create_fixture([1, 2, 3])() == [1, 2, 3]"
     },
     {
-      "input": "db = MockDatabase()\\ndb.connect()\\ndb.connected",
-      "description": "Test database_connection setup",
       "id": "test2",
-      "expectedOutput": "True",
-      "isHidden": false
+      "description": "setup_teardown runs all three functions in order",
+      "input": "log = []\\nresult = setup_teardown(lambda: log.append('s'), lambda: 'ok', lambda: log.append('t'))\\n(result, log)",
+      "expectedOutput": "('ok', ['s', 't'])",
+      "isHidden": false,
+      "validation": "log = []\nresult = setup_teardown(lambda: log.append('s'), lambda: 'ok', lambda: log.append('t'))\nassert result == 'ok' and log == ['s', 't']"
     },
     {
-      "input": "import tempfile\\nfrom pathlib import Path\\ntmp = Path(tempfile.mkdtemp())\\nfile = tmp / 'test.txt'\\nfile.write_text('test')\\nfile.read_text()",
-      "description": "Test temp_file creation",
       "id": "test3",
-      "expectedOutput": "'test'",
-      "isHidden": false
+      "description": "parameterized_test checks each case correctly",
+      "input": "results = parameterized_test(lambda x: x * 2, [(1, 2), (3, 6), (4, 9)])\\n[r['passed'] for r in results]",
+      "expectedOutput": "[True, True, False]",
+      "isHidden": false,
+      "validation": "assert [r['passed'] for r in parameterized_test(lambda x: x * 2, [(1, 2), (3, 6), (4, 9)])] == [True, True, False]"
     },
     {
-      "input": "db = MockDatabase()\\ndb.connect()\\nservice = UserService(db)\\nservice.create_user('alice', 'alice@example.com')\\nlen(service.get_users())",
-      "description": "Test user_service creates users",
       "id": "test4",
-      "expectedOutput": "1",
-      "isHidden": true
+      "description": "test_suite records passed and failed tests",
+      "input": "def t1(): pass\\ndef t2(): raise ValueError('oops')\\nresults = test_suite([('t1', t1), ('t2', t2)])\\nresults['t1']",
+      "expectedOutput": "'passed'",
+      "isHidden": false,
+      "validation": "def t1(): pass\ndef t2(): raise ValueError('oops')\nassert test_suite([('t1', t1), ('t2', t2)])['t1'] == 'passed'"
     },
     {
-      "input": "users = []\\ndef factory(username, email):\\n    user = {'username': username, 'email': email}\\n    users.append(user)\\n    return user\\nfactory('alice', 'a@ex.com')\\nfactory('bob', 'b@ex.com')\\nlen(users)",
-      "description": "Test make_user factory",
       "id": "test5",
-      "expectedOutput": "2",
-      "isHidden": true
+      "description": "create_fixture deep copy prevents mutation across calls",
+      "input": "import copy\\nfixture = create_fixture({'a': [1, 2]})\\ndata1 = fixture()\\ndata1['a'].append(3)\\ndata2 = fixture()\\ndata2['a']",
+      "expectedOutput": "[1, 2]",
+      "isHidden": true,
+      "validation": "fixture = create_fixture({'a': [1, 2]})\ndata1 = fixture()\ndata1['a'].append(3)\nassert fixture()['a'] == [1, 2]"
     },
     {
-      "input": "test_obj = TestUserService()\\ntest_obj.test_data = {'initialized': True}\\ntest_obj.test_data['initialized']",
-      "description": "Test TestUserService setup",
       "id": "test6",
-      "expectedOutput": "True",
-      "isHidden": true
+      "description": "setup_teardown runs teardown even when test raises",
+      "input": "log = []\\ntry:\\n    setup_teardown(lambda: log.append('s'), lambda: 1/0, lambda: log.append('t'))\\nexcept ZeroDivisionError:\\n    pass\\nlen(log)",
+      "expectedOutput": "2",
+      "isHidden": true,
+      "validation": "log = []\ntry:\n    setup_teardown(lambda: log.append('s'), lambda: 1/0, lambda: log.append('t'))\nexcept ZeroDivisionError:\n    pass\nassert len(log) == 2"
     }
   ],
-  "language": "python"
+  "language": "python",
+  "chapterId": "ch12-testing"
 }

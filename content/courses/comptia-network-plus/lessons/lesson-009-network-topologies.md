@@ -1,5 +1,5 @@
 ---
-id: network-topologies
+id: lesson-009-network-topologies
 title: Network Topologies
 chapterId: ch1-networking-fundamentals
 order: 9
@@ -723,9 +723,143 @@ Network topologies define how devices connect and communicate:
 
 ---
 
+## Practice Questions
+
+**Q1.** Which network topology connects all devices to a single central device such as a switch?
+
+A) Bus
+B) Star
+C) Ring
+D) Mesh
+
+<details>
+<summary>Answer</summary>
+
+**B)** A star topology connects all devices to a single central device (hub or switch). This is the most common topology in modern LANs. One cable failure only affects a single device, making troubleshooting easy, though the central device is a single point of failure.
+</details>
+
+**Q2.** A company requires maximum redundancy for its critical network links between data centers. Which topology provides the highest level of fault tolerance?
+
+A) Bus
+B) Star
+C) Full mesh
+D) Ring
+
+<details>
+<summary>Answer</summary>
+
+**C)** A full mesh topology provides the highest redundancy because every device is connected to every other device. If any single link fails, traffic can be rerouted through alternative paths. The formula for connections is n(n-1)/2. While expensive, it eliminates single points of failure for critical links.
+</details>
+
+**Q3.** In a bus topology, what happens if the main cable (backbone) is severed?
+
+A) Only the devices on one side of the break lose connectivity
+B) The entire network goes down
+C) The network automatically reroutes traffic
+D) Only the two devices nearest the break are affected
+
+<details>
+<summary>Answer</summary>
+
+**B)** In a bus topology, the single cable is the backbone for the entire network. If the cable is severed, the unterminated ends cause signal reflections, and the entire network goes down. This single point of failure is one of the major disadvantages of bus topology and a key reason it is obsolete.
+</details>
+
+**Q4.** What is the difference between a physical topology and a logical topology?
+
+A) Physical topology describes data flow; logical topology describes cable layout
+B) Physical topology describes the actual cable layout; logical topology describes how data flows
+C) They are the same thing
+D) Physical topology is for WANs; logical topology is for LANs
+
+<details>
+<summary>Answer</summary>
+
+**B)** Physical topology describes the actual physical arrangement of cables and devices, while logical topology describes the path data takes through the network. These can differ — for example, a Token Ring network may be physically wired as a star (to a MAU) but logically operates as a ring.
+</details>
+
+**Q5.** A network uses a hierarchical design with a core switch connecting to distribution switches, which in turn connect to access switches. What type of topology is this?
+
+A) Bus
+B) Ring
+C) Extended star (hierarchical star)
+D) Full mesh
+
+<details>
+<summary>Answer</summary>
+
+**C)** An extended star (hierarchical star) topology is a multi-tier star design commonly used in enterprise networks. It has core, distribution, and access layers, with each layer using a star topology. This design provides scalability, ease of management, and organized network segmentation.
+</details>
+
+**Q6.** Which topology requires terminators at both ends of the cable to prevent signal reflections?
+
+A) Star
+B) Ring
+C) Bus
+D) Mesh
+
+<details>
+<summary>Answer</summary>
+
+**C)** Bus topology requires terminators at both ends of the central cable. Without terminators, electrical signals would bounce back along the cable (reflection), causing interference and network errors. Star, ring, and mesh topologies do not use terminators because they don't have open cable ends.
+</details>
+
+**Q7.** A data center architect is designing a network that requires predictable latency and easy scalability. Which modern topology design is best suited for this?
+
+A) Bus topology
+B) Ring topology
+C) Spine-leaf topology
+D) Token Ring topology
+
+<details>
+<summary>Answer</summary>
+
+**C)** Spine-leaf topology is the modern standard for data center networks. Every leaf switch connects to every spine switch, providing predictable latency (traffic always crosses the same number of hops), easy scalability (add more leafs or spines), and high bandwidth through multiple parallel paths. Bus and Token Ring are obsolete.
+</details>
+
+**Q8.** In a ring topology, how does data travel between devices?
+
+A) Data is broadcast to all devices simultaneously
+B) Data travels in one direction (or both in dual ring) around the ring
+C) Data is sent only to the destination device via the central switch
+D) Data travels along a single backbone cable
+
+<details>
+<summary>Answer</summary>
+
+**B)** In a ring topology, data travels in one direction around the ring, passing through each device until it reaches the destination. In a dual-ring (FDDI), data can travel in both directions for redundancy. If one ring fails, the other can carry traffic. This is different from a bus (backbone) or star (central device) approach.
+</details>
+
+**Q9.** A partial mesh network has 6 devices, but not every device is connected to every other device. What distinguishes a partial mesh from a full mesh?
+
+A) Partial mesh uses hubs instead of switches
+B) In a partial mesh, only some devices have redundant connections, not all
+C) Partial mesh is a type of bus topology
+D) Partial mesh does not support routing
+
+<details>
+<summary>Answer</summary>
+
+**B)** In a partial mesh topology, only some devices (typically the most critical ones) have redundant connections to other devices. A full mesh connects every device to every other device. Partial mesh provides a balance between redundancy and cost, as full mesh becomes expensive with many devices.
+</details>
+
+**Q10.** Which topology is most commonly used in modern Ethernet LANs?
+
+A) Bus
+B) Ring
+C) Star
+D) Full mesh
+
+<details>
+<summary>Answer</summary>
+
+**C)** Star topology is the most common topology in modern Ethernet LANs. Devices connect individually to a central switch, providing dedicated bandwidth per port, easy troubleshooting, and simple expansion. Bus topology is obsolete, ring is mostly legacy, and full mesh is typically reserved for WAN links or critical connections due to cost.
+</details>
+
+---
+
 ## References
 
-- **CompTIA Network+ N10-008 Objective 1.2**: Network topologies and types
+- **CompTIA Network+ N10-009 Objective 1.2**: Network topologies and types
 - **IEEE 802.3**: Ethernet standards
 - **Cisco CCNA**: Network design principles
-- **Professor Messer**: N10-008 Network+ Course
+- **Professor Messer**: N10-009 Network+ Course

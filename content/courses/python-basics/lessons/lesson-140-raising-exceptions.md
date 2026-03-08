@@ -1,19 +1,19 @@
 ---
-id: "147-raising-exceptions"
-title: "Raising and Custom Exceptions"
+id: lesson-140-raising-exceptions
+title: "Raising Exceptions and Error Design"
 chapterId: ch11-error-handling
 order: 3
 duration: 25
 objectives:
   - Master raising exceptions
-  - Create custom exception classes
+  - Write descriptive error messages with context
   - Implement exception chaining
-  - Design exception hierarchies
+  - Use Python's built-in exception hierarchy
 ---
 
-# Raising and Custom Exceptions
+# Raising Exceptions and Error Design
 
-Learn to raise exceptions and create custom exception types for your applications.
+Learn to raise exceptions and design descriptive error messages for your applications.
 
 ## Raising Built-in Exceptions
 
@@ -68,17 +68,18 @@ def get_average(numbers):
     return sum(numbers) / len(numbers)
 
 # State validation
-class BankAccount:
-    def __init__(self, balance=0):
-        self.balance = balance
-    
-    def withdraw(self, amount):
-        if amount <= 0:
-            raise ValueError("Withdrawal amount must be positive")
-        if amount > self.balance:
-            raise ValueError(f"Insufficient funds: {self.balance} < {amount}")
-        self.balance -= amount
-        return self.balance
+def create_bank_account(balance=0):
+    """Create a bank account"""
+    return {"balance": balance}
+
+def bank_withdraw(account, amount):
+    """Withdraw from bank account"""
+    if amount <= 0:
+        raise ValueError("Withdrawal amount must be positive")
+    if amount > account["balance"]:
+        raise ValueError(f"Insufficient funds: {account['balance']} < {amount}")
+    account["balance"] -= amount
+    return account["balance"]
 
 # Resource validation
 def open_file_read(filename):
@@ -92,116 +93,84 @@ def open_file_read(filename):
         raise FileNotFoundError(f"File not found: {filename}")
 ```
 
-## Custom Exception Classes
+## Using Descriptive Exceptions
 
 ```python
-# Basic custom exception
-class ValidationError(Exception):
-    """Raised when validation fails"""
-    pass
-
+# Use built-in exceptions with descriptive messages
 def validate_email(email):
     if "@" not in email:
-        raise ValidationError("Email must contain @")
+        raise ValueError("Email must contain @")
     if "." not in email.split("@")[1]:
-        raise ValidationError("Email domain must contain .")
+        raise ValueError("Email domain must contain .")
     return email
 
 # Usage
 try:
     email = validate_email("invalid")
-except ValidationError as e:
+except ValueError as e:
     print(f"Email validation failed: {e}")
 
-# Custom exception with attributes
-class InsufficientFundsError(Exception):
-    """Raised when account has insufficient funds"""
-    def __init__(self, balance, amount):
-        self.balance = balance
-        self.amount = amount
-        self.deficit = amount - balance
-        message = f"Insufficient funds: need {amount}, have {balance}"
-        super().__init__(message)
-
+# Providing error context with descriptive messages
 def withdraw(balance, amount):
     if amount > balance:
-        raise InsufficientFundsError(balance, amount)
+        deficit = amount - balance
+        raise ValueError(
+            f"Insufficient funds: need {amount}, have {balance} "
+            f"(deficit: {deficit})"
+        )
     return balance - amount
 
 # Usage
 try:
     balance = withdraw(100, 150)
-except InsufficientFundsError as e:
+except ValueError as e:
     print(f"Error: {e}")
-    print(f"Deficit: ${e.deficit}")
 
-# Custom exception with context
-class DatabaseError(Exception):
-    """Database operation error"""
-    def __init__(self, message, query=None, params=None):
-        self.query = query
-        self.params = params
-        super().__init__(message)
-    
-    def __str__(self):
-        msg = super().__str__()
-        if self.query:
-            msg += f"\nQuery: {self.query}"
-        if self.params:
-            msg += f"\nParams: {self.params}"
-        return msg
+# Including context in error messages
+def make_database_error(message, query=None, params=None):
+    """Create a descriptive database error with full context"""
+    full_message = message
+    if query:
+        full_message += f"\nQuery: {query}"
+    if params:
+        full_message += f"\nParams: {params}"
+    return RuntimeError(full_message)
 
 # Usage
 try:
-    raise DatabaseError(
+    raise make_database_error(
         "Failed to insert user",
         query="INSERT INTO users VALUES (?, ?)",
         params=("Alice", 30)
     )
-except DatabaseError as e:
+except RuntimeError as e:
     print(e)
 ```
 
-## Exception Hierarchies
+## Using Built-in Exception Types
 
 ```python
-# Base exception for application
-class AppError(Exception):
-    """Base exception for application errors"""
-    pass
+# Python provides a rich hierarchy of built-in exceptions:
+#   PermissionError  → access/auth issues
+#   ValueError       → invalid arguments
+#   LookupError      → missing resources
+#   RuntimeError     → operational failures
 
-# Specific error types
-class ValidationError(AppError):
-    """Validation failed"""
-    pass
-
-class AuthenticationError(AppError):
-    """Authentication failed"""
-    pass
-
-class AuthorizationError(AppError):
-    """Authorization failed"""
-    pass
-
-class ResourceNotFoundError(AppError):
-    """Resource not found"""
-    pass
-
-# Usage
+# Usage — pick the best built-in type for each error
 def get_user(user_id, current_user):
     """Get user with permission check"""
     if not current_user:
-        raise AuthenticationError("Must be logged in")
+        raise PermissionError("Must be logged in")
     
     if not user_id:
-        raise ValidationError("User ID is required")
+        raise ValueError("User ID is required")
     
     user = find_user(user_id)
     if not user:
-        raise ResourceNotFoundError(f"User {user_id} not found")
+        raise LookupError(f"User {user_id} not found")
     
     if not can_access(current_user, user):
-        raise AuthorizationError(f"Cannot access user {user_id}")
+        raise PermissionError(f"Cannot access user {user_id}")
     
     return user
 
@@ -213,30 +182,31 @@ def can_access(current_user, user):
     # Mock function
     return True
 
-# Catch specific or general
+# Catch at the right level of specificity
 try:
     user = get_user("123", None)
-except AuthenticationError:
-    print("Please log in")
-except AuthorizationError:
-    print("Access denied")
-except ResourceNotFoundError:
+except PermissionError:
+    print("Access denied — please log in or check permissions")
+except LookupError:
     print("User not found")
-except AppError as e:
-    print(f"Application error: {e}")
+except ValueError:
+    print("Invalid input")
+except Exception as e:
+    print(f"Unexpected error: {e}")
 ```
 
 ## Exception Chaining
 
 ```python
-# Implicit chaining (automatic)
+# Implicit chaining (automatic via __context__)
 def process_data(filename):
     try:
         with open(filename) as f:
             data = f.read()
             return int(data)
     except FileNotFoundError:
-        # Original exception is automatically chained
+        # Python sets __context__ automatically when raising inside except
+        # This preserves the original exception for debugging
         raise ValueError(f"Cannot process {filename}")
 
 # The traceback shows both exceptions
@@ -312,22 +282,55 @@ def safe_divide(a, b):
         raise ValueError("Division by zero is not allowed") from e
 ```
 
+## Defining Custom Exception Types
+
+Built-in exceptions like `ValueError` and `TypeError` cover many situations, but sometimes your code needs error types that describe **your** specific problems. Custom exceptions make error handling clearer — the caller can catch `InvalidEmailError` instead of guessing which `ValueError` means what.
+
+Defining a custom exception is a one-liner. You inherit from `Exception` and use `pass` for the body:
+
+```python
+# Define custom exceptions — one line each
+class InvalidEmailError(Exception): pass
+class InsufficientFundsError(Exception): pass
+class ConfigurationError(Exception): pass
+```
+
+Use them exactly like built-in exceptions — raise with a message and catch by name:
+
+```python
+def validate_email(email):
+    if "@" not in email:
+        raise InvalidEmailError(f"Missing @ symbol: {email}")
+    if "." not in email.split("@")[1]:
+        raise InvalidEmailError(f"Invalid domain: {email}")
+    return email
+
+def process_signup(email):
+    try:
+        validate_email(email)
+        print(f"Account created for {email}")
+    except InvalidEmailError as e:
+        print(f"Bad email: {e}")
+
+process_signup("user@example.com")   # Account created for user@example.com
+process_signup("not-an-email")       # Bad email: Missing @ symbol: not-an-email
+```
+
+Custom exceptions let you separate different error categories cleanly. Instead of catching a generic `ValueError` and inspecting the message, callers catch exactly the error type they expect. This makes `try/except` blocks more precise and your code easier to maintain.
+
 ## Exception Context Managers
 
 ```python
-# Custom exception handling context
-class suppress_exception:
+# Suppressing specific exceptions with a context manager
+from contextlib import contextmanager
+
+@contextmanager
+def suppress_exception(*exceptions):
     """Context manager to suppress specific exceptions"""
-    def __init__(self, *exceptions):
-        self.exceptions = exceptions
-    
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is None:
-            return False
-        return issubclass(exc_type, self.exceptions)
+    try:
+        yield
+    except exceptions:
+        pass  # Suppress matching exceptions
 
 # Usage
 with suppress_exception(ValueError, TypeError):
@@ -346,74 +349,51 @@ with suppress(FileNotFoundError):
 print("File not found, but we continue")
 ```
 
-## Validation with Custom Exceptions
+## Validation Functions
 
 ```python
-# Comprehensive validation system
-class ValidationError(Exception):
-    """Base validation error"""
-    pass
+# Comprehensive validation with helper functions
+def validate_required(data, field_name):
+    """Check that a required field is present"""
+    if field_name not in data:
+        raise ValueError(f"Required field missing: {field_name}")
 
-class RequiredFieldError(ValidationError):
-    """Required field missing"""
-    def __init__(self, field_name):
-        self.field_name = field_name
-        super().__init__(f"Required field missing: {field_name}")
-
-class InvalidFormatError(ValidationError):
-    """Invalid field format"""
-    def __init__(self, field_name, expected_format):
-        self.field_name = field_name
-        self.expected_format = expected_format
-        super().__init__(
+def validate_format(field_name, value, expected_format, check_fn):
+    """Check that a field matches the expected format"""
+    if not check_fn(value):
+        raise ValueError(
             f"Invalid format for {field_name}, expected {expected_format}"
         )
 
-class ValueOutOfRangeError(ValidationError):
-    """Value out of valid range"""
-    def __init__(self, field_name, min_val, max_val, actual_val):
-        self.field_name = field_name
-        self.min_val = min_val
-        self.max_val = max_val
-        self.actual_val = actual_val
-        super().__init__(
-            f"{field_name} must be between {min_val} and {max_val}, got {actual_val}"
+def validate_range(field_name, value, min_val, max_val):
+    """Check that a value is within a valid range"""
+    if not (min_val <= value <= max_val):
+        raise ValueError(
+            f"{field_name} must be between {min_val} and {max_val}, got {value}"
         )
 
-class Validator:
-    """Data validator"""
-    @staticmethod
-    def validate_user(data):
-        """Validate user data"""
-        # Required fields
-        if "name" not in data:
-            raise RequiredFieldError("name")
-        if "email" not in data:
-            raise RequiredFieldError("email")
-        if "age" not in data:
-            raise RequiredFieldError("age")
-        
-        # Format validation
-        if "@" not in data["email"]:
-            raise InvalidFormatError("email", "user@domain.com")
-        
-        # Range validation
-        age = data["age"]
-        if not (0 <= age <= 150):
-            raise ValueOutOfRangeError("age", 0, 150, age)
-        
-        return True
+def validate_user(data):
+    """Validate user data"""
+    # Required fields
+    validate_required(data, "name")
+    validate_required(data, "email")
+    validate_required(data, "age")
+    
+    # Format validation
+    validate_format(
+        "email", data["email"], "user@domain.com",
+        lambda e: "@" in e
+    )
+    
+    # Range validation
+    validate_range("age", data["age"], 0, 150)
+    
+    return True
 
 # Usage
 try:
-    Validator.validate_user({"name": "Alice"})
-except RequiredFieldError as e:
-    print(f"Missing field: {e.field_name}")
-except InvalidFormatError as e:
-    print(f"Format error: {e}")
-except ValueOutOfRangeError as e:
-    print(f"Range error: {e}")
-except ValidationError as e:
+    validate_user({"name": "Alice"})
+except ValueError as e:
     print(f"Validation error: {e}")
 ```
 
@@ -421,35 +401,26 @@ except ValidationError as e:
 
 ```python
 # DO: Provide helpful error messages
-class UserNotFoundError(Exception):
-    def __init__(self, user_id):
-        super().__init__(f"User not found: {user_id}")
+def raise_user_not_found(user_id):
+    """Raise a descriptive error when user is not found"""
+    raise LookupError(f"User not found: {user_id}")
 
-# DO: Include relevant context
-class PaymentError(Exception):
-    def __init__(self, amount, currency, error_code):
-        self.amount = amount
-        self.currency = currency
-        self.error_code = error_code
-        super().__init__(
-            f"Payment failed: {amount} {currency} (code: {error_code})"
-        )
+# DO: Include relevant context in error messages
+def raise_payment_error(amount, currency, error_code):
+    """Raise a descriptive payment error with context"""
+    raise RuntimeError(
+        f"Payment failed: {amount} {currency} (code: {error_code})"
+    )
 
 # DON'T: Use generic messages
-class BadError(Exception):
-    def __init__(self):
-        super().__init__("Something went wrong")  # Too vague!
+# raise RuntimeError("Something went wrong")  # Too vague!
 
-# DO: Create specific exception types
-class EmailAlreadyExistsError(Exception):
-    pass
+# DO: Use specific built-in exceptions with clear messages
+# raise ValueError("Email already registered: user@example.com")
+# raise ValueError("Password too weak: must be 8+ chars with a digit")
 
-class WeakPasswordError(Exception):
-    pass
-
-# DON'T: Use one exception for everything
-class GenericError(Exception):
-    pass  # Too generic!
+# DON'T: Use vague exceptions for everything
+# raise RuntimeError("error")  # Too generic!
 
 # DO: Document exceptions
 def process_payment(amount):
@@ -458,8 +429,7 @@ def process_payment(amount):
     
     Raises:
         ValueError: If amount is negative
-        PaymentError: If payment processing fails
-        InsufficientFundsError: If account has insufficient funds
+        RuntimeError: If payment processing fails
     """
     if amount < 0:
         raise ValueError("Amount cannot be negative")
@@ -474,11 +444,11 @@ def process_payment(amount):
 - Raise at the appropriate level
 - Validate inputs and preconditions
 
-**Custom Exceptions:**
-- Inherit from `Exception` or specific built-in
-- Add attributes for context
-- Override `__str__` for custom formatting
-- Create exception hierarchies
+**Descriptive Exceptions:**
+- Use built-in exceptions with clear messages
+- Include relevant context in error messages
+- Create helper functions for formatted errors
+- Leverage Python's built-in exception hierarchy
 
 **Exception Chaining:**
 - Implicit chaining: automatic
@@ -487,9 +457,9 @@ def process_payment(amount):
 - Access via `__cause__` and `__context__`
 
 **Best Practices:**
-- Create specific exception types
+- Choose specific built-in exception types
 - Provide helpful messages with context
-- Use exception hierarchies
+- Leverage the built-in exception hierarchy
 - Document raised exceptions
 - Re-raise after cleanup when needed
 - Chain exceptions to preserve context

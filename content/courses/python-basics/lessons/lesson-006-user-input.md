@@ -1,5 +1,5 @@
 ---
-id: user-input
+id: lesson-006-user-input
 title: Getting User Input
 chapterId: ch1-intro
 order: 6

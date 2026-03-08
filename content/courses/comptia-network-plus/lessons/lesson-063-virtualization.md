@@ -1,7 +1,7 @@
 ---
 id: lesson-063-virtualization
 title: "Virtualization Technologies (Hypervisors, VMs, Containers)"
-chapterId: "chapter-007-cloud-datacenter"
+chapterId: ch7-cloud-datacenter
 order: 63
 duration: 25
 objectives:
@@ -14,9 +14,23 @@ objectives:
 
 # Virtualization Technologies (Hypervisors, VMs, Containers)
 
+## Introduction
+
 **Virtualization** is the foundation of cloud computing and modern datacenters. It enables multiple virtual machines (VMs) to run on a single physical server, maximizing hardware utilization and reducing costs.
 
-This lesson covers **hypervisors**, **virtual machines**, and **containers**—core technologies for the CompTIA Network+ N10-008 exam.
+This lesson covers **hypervisors**, **virtual machines**, and **containers**—core technologies for the CompTIA Network+ N10-009 exam.
+
+---
+
+## Learning Objectives
+
+After completing this lesson, you will be able to:
+
+- Understand virtualization concepts and benefits
+- Differentiate between Type 1 and Type 2 hypervisors
+- Explain virtual machine architecture and components
+- Compare containers to traditional virtualization
+- Identify common virtualization platforms
 
 ---
 
@@ -564,7 +578,7 @@ VMs use **virtual hardware** that mimics physical hardware:
 
 ---
 
-## Key Takeaways
+## Summary
 
 1. **Virtualization** enables multiple VMs on one physical server, improving utilization and reducing costs
 2. **Type 1 hypervisors** run directly on hardware (bare metal) for production use
@@ -577,14 +591,148 @@ VMs use **virtual hardware** that mimics physical hardware:
 
 ---
 
-## References
+## Practice Questions
 
-- **CompTIA Network+ N10-008 Objective 1.8:** Summarize cloud concepts and connectivity options
-- VMware vSphere documentation
-- Microsoft Hyper-V documentation
-- Docker and Kubernetes documentation
-- Professor Messer: Network+ N10-008 - Virtualization
+**Q1.** Which type of hypervisor runs directly on the physical hardware without requiring a host operating system?
+
+A) Type 2
+B) Type 1
+C) Container engine
+D) Emulator
+
+<details>
+<summary>Answer</summary>
+
+**B)** A Type 1 (bare-metal) hypervisor runs directly on the physical hardware. Examples include VMware ESXi, Microsoft Hyper-V, and Citrix XenServer. It is used in production environments for better performance.
+</details>
+
+**Q2.** A developer wants to run a Linux virtual machine on their Windows laptop for testing. Which hypervisor type is MOST appropriate?
+
+A) Type 1
+B) Type 2
+C) Container runtime
+D) Bare-metal
+
+<details>
+<summary>Answer</summary>
+
+**B)** Type 2 hypervisors run on top of a host operating system and are ideal for desktop/testing use. Examples include VMware Workstation and Oracle VirtualBox.
+</details>
+
+**Q3.** What is the PRIMARY advantage of containers over virtual machines?
+
+A) Stronger isolation between workloads
+B) Ability to run different operating systems
+C) Lighter weight and faster startup times
+D) Built-in graphical interface
+
+<details>
+<summary>Answer</summary>
+
+**C)** Containers share the host OS kernel, making them much lighter weight than VMs. They start in seconds rather than minutes and use far less memory and disk space.
+</details>
+
+**Q4.** A VM administrator takes a snapshot before applying a critical patch. The patch causes system instability. What should the administrator do?
+
+A) Reinstall the operating system
+B) Revert to the snapshot
+C) Create a new VM
+D) Restore from a full backup
+
+<details>
+<summary>Answer</summary>
+
+**B)** Snapshots capture the complete state of a VM at a point in time and allow quick rollback. Reverting to the pre-patch snapshot will restore the VM to its previous working state.
+</details>
+
+**Q5.** Which technology is used to orchestrate and manage containers at scale across a cluster of hosts?
+
+A) VMware vSphere
+B) Docker Desktop
+C) Kubernetes
+D) Oracle VirtualBox
+
+<details>
+<summary>Answer</summary>
+
+**C)** Kubernetes is the leading container orchestration platform. It manages deployment, scaling, and operations of containers across clusters of hosts.
+</details>
+
+**Q6.** Which virtual hardware component allows a VM to communicate on the network?
+
+A) Virtual CPU
+B) Virtual disk
+C) Virtual NIC (vNIC)
+D) Virtual BIOS
+
+<details>
+<summary>Answer</summary>
+
+**C)** A virtual NIC (vNIC) provides network connectivity for a VM, connecting it to a virtual switch which then connects to the physical network.
+</details>
+
+**Q7.** What is a key limitation of containers compared to virtual machines?
+
+A) Containers cannot run on Linux
+B) Containers require more memory than VMs
+C) Containers share the host OS kernel, so they cannot run a different OS type
+D) Containers do not support networking
+
+<details>
+<summary>Answer</summary>
+
+**C)** Because containers share the host OS kernel, a Linux container cannot run on a Windows host natively (without a Linux VM). VMs include their own OS kernel and can run any OS regardless of host.
+</details>
+
+**Q8.** Why should VM snapshots NOT be used as long-term backups?
+
+A) Snapshots are too large
+B) Snapshots expire after 24 hours
+C) Snapshots accumulate changes and degrade performance over time
+D) Snapshots cannot capture disk data
+
+<details>
+<summary>Answer</summary>
+
+**C)** Snapshots track changes incrementally and grow over time, which degrades VM performance. They are designed for short-term rollback, not long-term backup. Proper backup solutions should be used instead.
+</details>
+
+**Q9.** Which of the following is an example of a Type 1 hypervisor?
+
+A) VMware Workstation
+B) Oracle VirtualBox
+C) VMware ESXi
+D) Docker
+
+<details>
+<summary>Answer</summary>
+
+**C)** VMware ESXi is a Type 1 (bare-metal) hypervisor that runs directly on hardware. VMware Workstation and VirtualBox are Type 2 hypervisors. Docker is a container engine, not a hypervisor.
+</details>
+
+**Q10.** A virtualization administrator needs to move a running VM from one physical host to another without any downtime. Which feature enables this?
+
+A) Snapshot
+B) Cloning
+C) Live migration (vMotion)
+D) Cold backup
+
+<details>
+<summary>Answer</summary>
+
+**C)** Live migration (called vMotion in VMware) moves a running VM from one physical host to another with no downtime. Snapshots capture VM state at a point in time, cloning creates a copy of a VM, and cold backups require shutting down the VM first.
+</details>
 
 ---
 
-**Next Lesson:** Lesson 64 - Datacenter Network Architecture (Spine-Leaf, ToR, SDN)
+## References
+
+- **CompTIA Network+ N10-009 Objective 1.8:** Summarize cloud concepts and connectivity options
+- VMware vSphere documentation
+- Microsoft Hyper-V documentation
+- Docker and Kubernetes documentation
+- Professor Messer: Network+ N10-009 - Virtualization
+
+---
+
+**Next Lesson:** Lesson 64 - Network Virtualization (vNICs, vSwitches, SDN)
