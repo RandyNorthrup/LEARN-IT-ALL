@@ -157,11 +157,10 @@ The platform will:
 ```
 LEARN-IT-ALL/
 ├── content/                      # All learning content (JSON-based)
-│   ├── courses/                  # Complete courses with thousands of lessons
-│   │   ├── python-basics/        # 180 lessons, 14 chapters
+│   ├── courses/                  # Complete courses with lessons, exercises, and quizzes
+│   │   ├── python-basics/        # 184 lessons, 17 chapters
 │   │   ├── python-oop/           # 61 lessons, 7 chapters
-│   │   ├── comptia-network-plus/ # 90 lessons, 10 chapters
-│   │   ├── freecodecamp-*/       # 13 freeCodeCamp certification courses
+│   │   ├── comptia-network-plus/ # 93 lessons, 10 chapters
 │   │   └── ...                   # (lessons, exercises, quizzes per course)
 │   └── projects/                 # Hundreds of project guides, multiple categories
 │       ├── index.json            # Project catalog
@@ -224,51 +223,20 @@ LEARN-IT-ALL/
 
 ### 🎓 Courses
 
-#### Python Programming (3 courses, 331 lessons)
-- **Learn Python - Fundamentals** (180 lessons, 14 chapters, 30 hours)
+#### Python Programming (2 courses, 245 lessons)
+- **Learn Python - Fundamentals** (184 lessons, 17 chapters, 50 hours)
   - Variables, data types, strings, conditionals, loops, functions
   - Lists, dictionaries, sets, error handling, testing
   - Real-world practice projects
 - **Learn Object Oriented Programming in Python** (61 lessons, 7 chapters, 18 hours)
   - Classes, objects, inheritance, polymorphism, encapsulation
   - Design patterns and OOP best practices
-- **Python OOP** (90 lessons planned) - Coming soon
 
-#### Web Development (2 courses, 1,270 lessons, 15 quizzes)
-- **Responsive Web Design (freeCodeCamp)** (1,095 lessons, 37 chapters, 300 hours, 5 quizzes)
-  - HTML, CSS, Flexbox, Grid, Responsive Design
-  - Accessibility, animations, and modern CSS techniques
-  - 15+ hands-on projects
-- **JavaScript Algorithms and Data Structures (freeCodeCamp)** (1,013 lessons, 46 chapters, 300 hours, 6 quizzes)
-  - JavaScript fundamentals, ES6, OOP, functional programming
-  - Data structures, algorithms, and problem-solving
-
-#### Front-End Development (1 course, 175 lessons, 3 quizzes)
-- **Front End Development Libraries (freeCodeCamp)** (175 lessons, 20 chapters, 300 hours)
-  - React, Redux, Bootstrap, jQuery, Sass
-  - Modern front-end frameworks and libraries
-
-#### Data Science & Python (4 courses, 297 lessons)
-- **Scientific Computing with Python** (187 lessons, 3 chapters)
-- **Data Analysis with Python** (42 lessons, 3 chapters)
-- **Machine Learning with Python** (41 lessons, 3 chapters)
-- **College Algebra with Python** (27 lessons, 14 chapters)
-
-#### Backend & APIs (2 courses, 73 lessons)
-- **Back End Development and APIs (freeCodeCamp)** (34 lessons, 3 chapters)
-- **Quality Assurance (freeCodeCamp)** (47 lessons, 2 chapters)
-- **Relational Database (freeCodeCamp)** (8 lessons, 8 chapters)
-
-#### Programming Languages (2 courses, 83 lessons)
-- **Foundational C# with Microsoft** (44 lessons, 6 chapters)
-- **Data Visualization (freeCodeCamp)** (39 lessons, 2 chapters)
-
-#### Security & Networking (2 courses, 111 lessons)
-- **CompTIA Network+ Certification Prep** (90 lessons, 10 chapters, 100 hours)
+#### Security & Networking (1 course, 93 lessons)
+- **CompTIA Network+ Certification Prep** (93 lessons, 10 chapters, 100 hours)
   - OSI model, TCP/IP, networking protocols
   - Network devices, topologies, subnetting
   - VLANs, routing, switching, troubleshooting
-- **Information Security (freeCodeCamp)** (21 lessons, 2 chapters)
 
 ### 🛠️ Project Guides
 
@@ -356,7 +324,7 @@ Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://
    - Earn certificates upon completion
 
 4. **Working with Projects**
-   - Browse 349+ project guides by category
+   - Browse 344+ project guides by category
    - Follow step-by-step instructions
    - Build real technologies from scratch
    - Learn by doing with external tutorials
@@ -676,18 +644,12 @@ This platform is built on the shoulders of giants. Special thanks to:
 ### Content Sources
 
 #### Course Content
-- **[freeCodeCamp](https://www.freecodecamp.org/)** - 13 certification courses (2,773 lessons)
-  - Licensed under [BSD 3-Clause License](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/LICENSE.md)
-  - Curriculum source: [github.com/freeCodeCamp/freeCodeCamp](https://github.com/freeCodeCamp/freeCodeCamp)
-  - One of the largest free coding education resources in the world
-  - Special thanks to Quincy Larson and the freeCodeCamp community
-
 - **Original Course Content** - Python Basics, Python OOP, CompTIA Network+
   - Custom-developed curriculum for this platform
   - Designed for hands-on, practical learning
 
 #### Project Guides
-- **[Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)** - 349 project tutorials
+- **[Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)** - 344 project tutorials
   - Curated by [CodeCrafters](https://codecrafters.io/)
   - Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
   - Compilation of tutorials for building technologies from scratch
@@ -721,7 +683,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### Third-Party Licenses
 
-- freeCodeCamp curriculum: [BSD 3-Clause License](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/LICENSE.md)
 - Build Your Own X guides: [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
 - All other dependencies: See individual package licenses
 
@@ -761,7 +722,7 @@ For security vulnerabilities, please email privately instead of opening a public
 
 ### Recently Completed ✅
 - [x] 16 courses with 3,000+ lessons
-- [x] 349 project guides across 26 categories
+- [x] 344 project guides across 26 categories
 - [x] 5 interactive learning games
 - [x] Complete progress tracking with SQLite
 - [x] Quiz system with 15+ quizzes

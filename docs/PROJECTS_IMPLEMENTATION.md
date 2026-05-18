@@ -13,11 +13,11 @@
   - One-time setup script (not for ongoing maintenance)
   - Fetches README.md from build-your-own-x repository
   - Parses markdown format: `* [**Language**: _Title_](URL)`
-  - Extracts all 349 projects across 26 categories
+  - Extracts all 344 projects across 26 categories
   - Generates structured JSON output
 
 - **Data File**: `content/projects/index.json`
-  - 349 projects extracted
+  - 344 projects extracted
   - 26 categories
   - Each project includes: title, URL, language, category
   - Metadata: source, license (CC0-1.0), last updated, counts
@@ -109,7 +109,7 @@
 ```
 content/
   projects/
-    index.json          # All 349 projects
+    index.json          # All 344 projects
     README.md           # Documentation
 
 src/
@@ -141,7 +141,7 @@ interface ProjectsIndex {
     license: string;          // CC0-1.0
     description: string;      // Project catalog description
     lastUpdated: string;      // ISO date
-    totalProjects: number;    // 349
+    totalProjects: number;    // 344
     totalCategories: number;  // 26
   };
   categories: string[];       // Array of category IDs
@@ -185,7 +185,7 @@ const data = await res.json();
 
 ✅ **TypeScript**: No type errors  
 ✅ **ESLint**: No errors, only pre-existing warnings in other files  
-✅ **Data Integrity**: All 349 projects extracted and validated  
+✅ **Data Integrity**: All 344 projects extracted and validated  
 ✅ **Performance**: Response caching implemented  
 ✅ **Accessibility**: Semantic HTML, ARIA labels, keyboard navigation  
 ✅ **Responsive Design**: Mobile-first, works on all screen sizes  
@@ -232,8 +232,8 @@ All project content sourced from [build-your-own-x](https://github.com/codecraft
 ## Next Steps
 
 1. ✅ Projects section complete
-2. ⏳ Begin freeCodeCamp course conversion
-3. ⏳ Build conversion automation for freeCodeCamp curriculum
+2. ⏳ Expand original course catalog
+3. ⏳ Build content import automation for approved sources
 4. ⏳ Test end-to-end user flow with real courses
 
-**Current Focus**: freeCodeCamp integration (Task 4 & 5)
+**Current Focus**: original course content and end-to-end validation
