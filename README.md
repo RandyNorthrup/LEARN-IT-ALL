@@ -15,7 +15,7 @@
 
 LEARN-IT-ALL is a comprehensive, **local-first learning platform** for mastering technology skills. Built with cutting-edge web technologies, it provides an immersive environment for learning programming, networking, data science, security, and more through structured courses, hands-on coding exercises, interactive quizzes, real-world projects, and gamified challenges.
 
-**Live Content**: Multiple comprehensive courses with thousands of lessons, hundreds of project guides across dozens of categories, and interactive learning games!
+**Live Content**: Multiple comprehensive courses with thousands of lessons, hands-on coding exercises and quizzes, and interactive learning games!
 
 ### ✨ Key Features
 
@@ -24,13 +24,12 @@ LEARN-IT-ALL is a comprehensive, **local-first learning platform** for mastering
 - 💻 **Interactive Code Editor** - Built-in Monaco Editor (VS Code engine) with full syntax highlighting
 - ✅ **Automated Exercise Validation** - Real-time code execution and testing with instant feedback
 - 📝 **Quiz & Test Systems** - 15+ quizzes with comprehensive scoring and pass/fail criteria
-- 🛠️ **Hundreds of Project Guides** - Step-by-step tutorials for building real technologies from scratch
 - 📊 **Progress Tracking** - Complete SQLite database tracking every lesson, exercise, quiz, and certificate
 
 #### 🎮 Interactive Features
 - 🕹️ **Learning Games** - Code Hunter, Code Lander, Algorithm Arena, Lunar Lander, Syntax Speed, Logic Maze, Code Builder
 - 🏆 **Gamification System** - Points, badges, and achievements for completed work
-- 📈 **Visual Progress Dashboard** - Track your journey across all courses and projects
+- 📈 **Visual Progress Dashboard** - Track your journey across all courses
 - 🎯 **Learning Tracks** - Curated paths through related courses
 - 🎨 **Modern UI/UX** - Responsive design with Tailwind CSS 4.0 and React 19
 
@@ -157,16 +156,11 @@ The platform will:
 ```
 LEARN-IT-ALL/
 ├── content/                      # All learning content (JSON-based)
-│   ├── courses/                  # Complete courses with lessons, exercises, and quizzes
-│   │   ├── python-basics/        # 184 lessons, 17 chapters
-│   │   ├── python-oop/           # 61 lessons, 7 chapters
-│   │   ├── comptia-network-plus/ # 93 lessons, 10 chapters
-│   │   └── ...                   # (lessons, exercises, quizzes per course)
-│   └── projects/                 # Hundreds of project guides, multiple categories
-│       ├── index.json            # Project catalog
-│       ├── database/             # Build Your Own Database guides
-│       ├── game/                 # Build Your Own Game guides
-│       └── ...                   # (more project categories)
+│   └── courses/                  # Complete courses with lessons, exercises, and quizzes
+│       ├── python-basics/        # 184 lessons, 17 chapters
+│       ├── python-oop/           # 61 lessons, 7 chapters
+│       ├── comptia-network-plus/ # 93 lessons, 10 chapters
+│       └── ...                   # (lessons, exercises, quizzes per course)
 ├── database/                     # SQLite database (auto-created)
 │   └── learn-it-all.db          # All user progress data
 ├── public/                       # Static assets (images, icons)
@@ -176,7 +170,6 @@ LEARN-IT-ALL/
 │   │   ├── api/                  # API routes (REST endpoints)
 │   │   │   ├── courses/          # Course data endpoints
 │   │   │   ├── progress/         # Progress tracking endpoints
-│   │   │   ├── projects/         # Project catalog endpoints
 │   │   │   ├── settings/         # User settings endpoints
 │   │   │   └── tracks/           # Learning tracks endpoints
 │   │   ├── courses/              # Course pages & lesson viewer
@@ -189,7 +182,6 @@ LEARN-IT-ALL/
 │   │   │   ├── syntax-speed/     # Speed coding challenges
 │   │   │   ├── logic-maze/       # Programming logic puzzles
 │   │   │   └── code-builder/     # Build projects step-by-step
-│   │   ├── projects/             # Project catalog & guides
 │   │   ├── progress/             # Progress tracking & analytics
 │   │   ├── settings/             # User preferences
 │   │   ├── tracks/               # Learning tracks (curated paths)
@@ -238,47 +230,6 @@ LEARN-IT-ALL/
   - Network devices, topologies, subnetting
   - VLANs, routing, switching, troubleshooting
 
-### 🛠️ Project Guides
-
-Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://github.com/codecrafters-io/build-your-own-x):
-
-**Systems & Infrastructure:**
-- 🐳 **Docker** - Container runtime implementations
-- 🗄️ **Database** - SQL and NoSQL database engines
-- 🌐 **Web Server** - HTTP servers from scratch
-- 🔀 **Git** - Version control systems
-- 🐚 **Shell** - Command-line interpreters
-- 🖥️ **Operating System** - OS kernels and components
-- 🌐 **Network Stack** - TCP/IP implementations
-
-**Programming Languages & Tools:**
-- 📝 **Programming Language** - Compilers and interpreters
-- 🔍 **Regex Engine** - Pattern matching engines
-- 📄 **Template Engine** - Template processors
-- 📝 **Text Editor** - Code editors and IDEs
-- 🧪 **Testing Framework** - Test runners
-
-**Web & Frontend:**
-- ⚛️ **Front-end Framework/Library** - React, Vue, Angular alternatives
-- 🌐 **Web Browser** - Browser engines
-- 🔍 **Search Engine** - Full-text search implementations
-
-**Games & Graphics:**
-- 🎮 **Game** - Game engines and games
-- 🎨 **3D Renderer** - Ray tracers and renderers
-- 🎲 **Voxel Engine** - Minecraft-like engines
-- 🏃 **Physics Engine** - Physics simulations
-
-**Advanced Topics:**
-- 🤖 **Bot** - Chat bots and AI agents
-- 🧠 **Neural Network** - Deep learning from scratch
-- ⛓️ **Blockchain/Cryptocurrency** - Distributed ledgers
-- 📦 **BitTorrent Client** - P2P file sharing
-- 🕶️ **Augmented Reality** - AR applications
-- 👁️ **Visual Recognition System** - Computer vision
-- 🔧 **Command Line Tool** - CLI applications
-- 🚁 **Emulator/Virtual Machine** - Hardware emulators
-
 ### 🎮 Interactive Learning Games
 
 - **Code Hunter** 🕵️ - Find and fix bugs in code snippets
@@ -312,7 +263,6 @@ Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://
    - View all available courses
    - See your progress across all content
    - Access learning games
-   - Browse project guides
    - Check learning tracks
 
 3. **Taking a Course**
@@ -323,13 +273,7 @@ Real-world, step-by-step guides from [codecrafters-io/build-your-own-x](https://
    - Take quizzes to test your knowledge
    - Earn certificates upon completion
 
-4. **Working with Projects**
-   - Browse 344+ project guides by category
-   - Follow step-by-step instructions
-   - Build real technologies from scratch
-   - Learn by doing with external tutorials
-
-5. **Playing Games**
+4. **Playing Games**
    - Access from dashboard Games section
    - Choose from 5 interactive learning games
    - Practice coding skills in fun ways
@@ -583,7 +527,6 @@ npm run build          # Must succeed
 **Also Welcome:**
 - UI/UX improvements
 - New learning games
-- Additional project guides
 - Database optimizations
 - Code refactoring
 
@@ -594,11 +537,6 @@ npm run build          # Must succeed
 - Follow existing course structure
 - Include lessons, exercises, and quizzes
 - Provide clear learning objectives
-
-#### Adding Projects
-- Must link to high-quality external tutorials
-- Include clear category and language tags
-- Ensure projects are buildable and educational
 
 #### Adding Games
 - Must be educational and engaging
@@ -648,13 +586,7 @@ This platform is built on the shoulders of giants. Special thanks to:
   - Custom-developed curriculum for this platform
   - Designed for hands-on, practical learning
 
-#### Project Guides
-- **[Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)** - 344 project tutorials
-  - Curated by [CodeCrafters](https://codecrafters.io/)
-  - Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
-  - Compilation of tutorials for building technologies from scratch
-  - Links to external high-quality learning resources
-
+#### Reference Resources
 - **[W3Schools](https://www.w3schools.com/)** - Reference and learning resources
   - Comprehensive web development tutorials and references
   - Used for supplemental learning materials and examples
@@ -683,7 +615,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### Third-Party Licenses
 
-- Build Your Own X guides: [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
 - All other dependencies: See individual package licenses
 
 ---
@@ -722,7 +653,6 @@ For security vulnerabilities, please email privately instead of opening a public
 
 ### Recently Completed ✅
 - [x] 16 courses with 3,000+ lessons
-- [x] 344 project guides across 26 categories
 - [x] 5 interactive learning games
 - [x] Complete progress tracking with SQLite
 - [x] Quiz system with 15+ quizzes
@@ -750,7 +680,6 @@ For security vulnerabilities, please email privately instead of opening a public
 
 ### Long-Term Vision 🌟
 - Expand to 50+ courses covering all major programming languages
-- Build largest collection of "Build Your Own X" projects
 - Create adaptive learning paths based on user progress
 - Develop AI-powered coding assistant
 - Support multiple languages (i18n)
@@ -763,8 +692,6 @@ For security vulnerabilities, please email privately instead of opening a public
 - **Total Courses**: Growing library of comprehensive courses
 - **Total Lessons**: Thousands of structured lessons
 - **Total Quizzes**: Multiple quizzes per course
-- **Project Guides**: Hundreds of real-world project tutorials
-- **Project Categories**: Dozens of technology categories
 - **Learning Games**: Multiple interactive games
 - **Estimated Learning Hours**: Thousands of hours of content
 - **Lines of Code**: ~15,000+ platform code
