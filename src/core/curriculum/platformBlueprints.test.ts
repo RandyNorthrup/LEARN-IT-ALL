@@ -255,6 +255,9 @@ const expectations = {
     activities: 326,
     projects: 5,
   },
+  'personal-project-1': { competencies: 60, modules: 12, activities: 126, projects: 5 },
+  'personal-project-2': { competencies: 70, modules: 14, activities: 146, projects: 5 },
+  'capstone-project': { competencies: 80, modules: 16, activities: 166, projects: 5 },
 } as const;
 
 const expectedPrerequisites: Record<string, string[]> = {
@@ -360,6 +363,9 @@ const expectedPrerequisites: Record<string, string[]> = {
     'git-basics',
     'repository-quality-gates',
   ],
+  'personal-project-1': ['python-dsa', 'c-memory-management'],
+  'personal-project-2': ['personal-project-1'],
+  'capstone-project': ['personal-project-2'],
 };
 
 function normalized(value: string) {
@@ -435,6 +441,9 @@ describe('platform course blueprints', () => {
           'build-blog-aggregator-typescript',
           'build-web-scraper-go',
           'build-web-scraper-typescript',
+          'personal-project-1',
+          'personal-project-2',
+          'capstone-project',
         ].includes(courseId)
       ) {
         const requiredModuleKinds = [

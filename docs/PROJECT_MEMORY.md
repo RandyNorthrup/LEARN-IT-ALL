@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-15 after the authorized Go and TypeScript web-crawler and accessible site-auditor release wave
+Last verified full gate: 2026-07-15 after the independent product studios and institution-grade capstone release wave
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -36,7 +36,7 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 
 ## Verified rebuild state
 
-At the last full gate, 49 courses were wired into the version 2 learner path and published in the catalog:
+At the last full gate, 52 courses were wired into the version 2 learner path and published in the catalog:
 
 - Responsive Web Design: 29 modules, 303 activities, 4,855 steps, and 5,407 checks.
 - Python Basics, Python OOP, and CompTIA Network+ N10-009: 45 modules, 529 activities, 4,588 steps, and 5,027 checks combined.
@@ -73,10 +73,25 @@ At the last full gate, 49 courses were wired into the version 2 learner path and
 - Build and Ship a Production Feed Aggregator in TypeScript 7 and Node 24: 32 modules, 326 activities, 2,656 steps, and 2,918 checks.
 - Build and Ship an Authorized Web Crawler and Accessible Site Auditor in Go 1.26: 30 modules, 306 activities, 2,494 steps, and 2,740 checks.
 - Build and Ship an Authorized Web Crawler and Accessible Site Auditor in TypeScript 7 and Node 24: 32 modules, 326 activities, 2,656 steps, and 2,918 checks.
+- Independent Product Studio I: 12 modules, 126 activities, 1,031 steps, and 1,133 checks.
+- Independent Product Studio II: 14 modules, 146 activities, 1,194 steps, and 1,312 checks.
+- Institution-Grade Computing Capstone: 16 modules, 166 activities, 1,356 steps, and 1,490 checks.
 
-Verified platform total at this checkpoint: 1,033 modules, 10,691 activities, 90,292 learner steps, and 98,945 checks across 49 version 2 courses.
+Verified platform total at this checkpoint: 1,075 modules, 11,129 activities, 93,873 learner steps, and 102,880 checks across 52 version 2 courses.
 
-The catalog contains 54 courses total. At this checkpoint, five catalog courses were not yet verified version 2 releases and still required some combination of research, blueprinting, robust original content, runtime integration, catalog migration, subject review, and learner-flow verification.
+The catalog contains 54 courses total. At this checkpoint, Job Search and current CompTIA A+ were the only catalog courses not yet verified version 2 releases and still required research, blueprinting, robust original content, runtime integration, catalog migration, subject review, and learner-flow verification.
+
+## Independent product studios and capstone release evidence
+
+Independent Product Studio I has 12 prerequisite-ordered modules, 60 competencies, 126 activities, 1,031 learner steps, 1,133 checks, and five distinct product milestones across about 199.8 guided hours. Studio II has 14 modules, 70 competencies, 146 activities, 1,194 steps, 1,312 checks, and five advanced milestones across about 225.6 hours. The Institution-Grade Computing Capstone has 16 modules, 80 competencies, 166 activities, 1,356 steps, 1,490 checks, and five gated defenses across about 251.4 hours. Together they add 210 distinct competency statements, 438 activities, 3,581 learner steps, 3,935 checks, and 15 non-duplicated stakeholder project needs.
+
+Studio I advances from prior-skill retrieval and evidence baselining through problem-first discovery, ethical inclusive research, outcome and guardrail contracts, riskiest-assumption prototypes, vertical slices, reproducible repository stewardship, bounded architecture and data invariants, cumulative core behavior, responsive accessible human evaluation, security/privacy/reliability evidence, release identity, clean recovery, documentation, and independent claim defense. Studio II begins with real maintenance evidence, then adds multi-actor service discovery, co-design and equity, auditable workflow state, quality-attribute architecture, governed data migrations, identity and accessible account recovery, tenant isolation and abuse resistance, idempotency and partial failure, collaboration governance, user-centered service levels and incident learning, capacity and cost, supply-chain provenance, progressive delivery, migration, clean restore, longitudinal validation, and personal versus team evidence. The capstone gates mastery claims, independence disclosure, significant public-value evidence, ethics and harms, authoritative domain and licensing boundaries, outcome evaluation, feasibility and exercised stop decisions, evidence-ordered scope, architecture review, domain/API/algorithm invariants, threat and privacy engineering, cumulative construction, integration resilience, layered automated and human evaluation, calibrated claims, capacity and operations, incident game day, trusted release, isolated restore, retirement, public documentation, unseen defense, and reflective transfer.
+
+Research was reviewed 2026-07-15 against ACM/IEEE/AAAI CS2023, the ACM Code of Ethics, NACE's current eight career-readiness competencies, WCAG 2.2 and its ISO/IEC 40500:2025 status, NIST SSDF 1.1 final, NIST Privacy Framework 1.0 final while explicitly identifying 1.1 as draft, current GitHub project-presentation, repository-health, and security documentation, GOV.UK discovery and alpha practices, SLSA 1.2, and SPDX 3.0.1. External sources control coverage and evidence depth only; all learner-facing scenarios, explanations, assessments, and projects are original.
+
+The new `portfolio` configuration workspace reviews stakeholder and decision evidence, problem counterevidence, accessibility and human review, security and abuse, privacy lifecycle, changed-case testing, release identity and provenance, clean recovery, contribution and unseen defense, deterministic verification, rejected failure and causal repair, and controlled transfer. Its browser simulator analyzes text only. Explicit bracketed starters score 1/12 until learners replace them with concrete evidence; a live browser audit caught and repaired a whitespace-regex false positive that had credited placeholder guidance. Visual review also caught and removed a generic Go-language rationale leak from all 3,581 product-course steps.
+
+Course-specific and cross-platform tests enforce schema and prerequisite order, all eight activity kinds, stage coverage, unique competency/module/project concepts, unique stakeholder needs, authoritative source versions, safe configuration-only browser workspaces, no generic Go leakage, exact counts, catalog publication, and initial placeholder rejection. A full live first-activity path completed prediction, theory, keyboard ordering, code evidence, and configuration review. Catalog, all three course routes, and the activity route passed one-H1, zero-overflow, 44-pixel button, reduced-motion, visible 3-pixel keyboard-focus, console, and page-error checks at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop. Visual screenshots passed review. Lighthouse remained intentionally paused.
 
 ## Authorized Go and TypeScript crawler release evidence
 
@@ -317,12 +332,12 @@ The Go audit parses and type-checks 852 starter and lesson sources across Go Bas
 
 ## Latest full verification checkpoint
 
-After both authorized Go and TypeScript crawler curricula, publication, native-stack proof, and learner-flow verification:
+After the product-studio and capstone curricula, publication, simulator repair, and learner-flow verification:
 
-- `npm test`: 73 test files and 501 tests passed under Node.js 24.18.0 and npm 12.0.1.
+- `npm test`: 74 test files and 513 tests passed under Node.js 24.18.0 and npm 12.0.1.
 - `npm run type-check`: passed.
-- `npm run lint`: passed across 295 source and script files.
-- `npm run lint:strict`: passed across 295 files with warnings treated as failures.
+- `npm run lint`: passed across 297 source and script files.
+- `npm run lint:strict`: passed across 297 files with warnings treated as failures.
 - `npm run build`: passed with Next.js 16.2.10.
 
 The Go Basics content gate parses and type-checks all 426 learner starters and lesson sources with the official Go toolchain, while the runtime tests verify local-only assets, import isolation, deterministic execution, output limits, and worker cleanup. Go research is reviewed 2026-07-14 against the Go 1.26 specification and release notes, modules reference, memory model, testing/fuzzing, race detector, context and pipelines, security, diagnostics, performance/PGO, code review guidance, and ACM/IEEE/AAAI CS2023. Current versions are Go 1.26.5 and Yaegi 0.16.1; the course explicitly distinguishes the browser subset from full-toolchain transfer gates.
@@ -333,14 +348,14 @@ Run focused tests after each track, then repeat full verification. Do not infer 
 
 ## Active next work
 
-1. Continue prerequisite-first with the five remaining catalog courses: current CompTIA A+, Job Search, Personal Project 1, Personal Project 2, and the cumulative Capstone Project. Terraform is not currently a catalog course; it appears only as a suggested next course and must not be added without an explicit scope decision. Give every wave strict tests for researched coverage, prerequisite order, scenario variety, runnable theory, hidden-answer safety, mechanical evidence, and cumulative transfer.
+1. Continue prerequisite-first with the two remaining catalog courses: Job Search, then current CompTIA A+. Terraform is not currently a catalog course; it appears only as a suggested next course and must not be added without an explicit scope decision. Give both releases strict tests for researched coverage, prerequisite order, scenario variety, runnable or mechanically reviewable theory, hidden-answer safety, authentic evidence, and cumulative transfer.
 2. Audit near duplication across all activities, starters, requirements, project scenarios, assessment stems, and generated explanations—not exact duplicates alone.
 3. Remove legacy routes/content only after equivalent version 2 learner flows, progress handling, and migration tests pass.
-4. Complete and verify all remaining five catalog courses, then run the full non-Lighthouse gates.
+4. Complete and verify both remaining catalog courses, then run the full non-Lighthouse gates.
 5. Only after all planned content, migration, and duplication work is complete may the Lighthouse hold be released for mobile, tablet, and desktop scores of at least 99 in performance, accessibility, and best practices, with SEO excluded.
 
 ## Known caution
 
 Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. Keep catalog status coming soon until all release gates pass.
 
-There is no external blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 11,773 files and the dynamic activity path matches 10,691 files; narrowing those traces is a scalability hardening task, not a release blocker for this wave. The Lighthouse hold is intentional unfinished-work policy, not a blocker. Five catalog courses and the later legacy/migration/deduplication waves remain before Lighthouse may run.
+There is no external blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,256 files and the dynamic activity path matches 11,129 files; narrowing those traces is a scalability hardening task, not a release blocker for this wave. The Lighthouse hold is intentional unfinished-work policy, not a blocker. Two catalog courses and the later legacy/migration/deduplication waves remain before Lighthouse may run.

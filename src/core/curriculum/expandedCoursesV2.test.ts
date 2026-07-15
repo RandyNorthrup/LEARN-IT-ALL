@@ -301,6 +301,30 @@ const expectations = {
     workspaces: ['typescript'],
     projects: 5,
   },
+  'personal-project-1': {
+    modules: 12,
+    activities: 126,
+    competencies: 60,
+    steps: 1031,
+    workspaces: ['config'],
+    projects: 5,
+  },
+  'personal-project-2': {
+    modules: 14,
+    activities: 146,
+    competencies: 70,
+    steps: 1194,
+    workspaces: ['config'],
+    projects: 5,
+  },
+  'capstone-project': {
+    modules: 16,
+    activities: 166,
+    competencies: 80,
+    steps: 1356,
+    workspaces: ['config'],
+    projects: 5,
+  },
 } as const;
 
 const requiredKinds = new Set([
@@ -447,6 +471,6 @@ describe('expanded interactive courses', () => {
         { modules: 0, activities: 0, steps: 0 }
       );
 
-    expect(totals).toEqual({ modules: 858, activities: 8800, steps: 71811 });
+    expect(totals).toEqual({ modules: 900, activities: 9238, steps: 75392 });
   }, 15_000);
 });

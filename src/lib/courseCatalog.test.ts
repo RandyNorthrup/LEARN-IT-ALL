@@ -646,4 +646,30 @@ describe('filterCourseCatalog', () => {
       expect(metadata?.lessonCount).toBe(activityCount);
     }
   });
+
+  it('publishes the independent product studio and capstone sequence through the safe v2 evidence studio', () => {
+    const courseIds = ['personal-project-1', 'personal-project-2', 'capstone-project'];
+    expect(courseIds.every(isV2Course)).toBe(true);
+    expect(
+      courseIds.every((courseId) =>
+        ALL_COURSES.some((course) => course.id === courseId && course.status === 'available')
+      )
+    ).toBe(true);
+
+    for (const courseId of courseIds) {
+      const generated = JSON.parse(
+        readFileSync(
+          path.join(process.cwd(), 'content', 'v2', 'courses', courseId, 'course.json'),
+          'utf8'
+        )
+      ) as { estimatedHours: number; moduleIds: string[] };
+      const activityCount = readdirSync(
+        path.join(process.cwd(), 'content', 'v2', 'courses', courseId, 'activities')
+      ).filter((fileName) => fileName.endsWith('.json')).length;
+      const metadata = ALL_COURSES.find((course) => course.id === courseId);
+      expect(metadata?.estimatedHours).toBe(generated.estimatedHours);
+      expect(metadata?.chapterCount).toBe(generated.moduleIds.length);
+      expect(metadata?.lessonCount).toBe(activityCount);
+    }
+  });
 });

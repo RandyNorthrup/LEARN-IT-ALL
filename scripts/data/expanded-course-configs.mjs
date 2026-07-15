@@ -24,6 +24,7 @@ import { httpProtocolGoConfig } from './http-protocol-go-course-config.mjs';
 import { httpServerGoConfig } from './http-server-go-course-config.mjs';
 import { httpServerTypescriptConfig } from './http-server-typescript-course-config.mjs';
 import { kubernetesBasicsConfig } from './kubernetes-course-config.mjs';
+import { portfolioProjectCourseConfigs } from './portfolio-project-course-configs.mjs';
 import { rabbitmqGoConfig } from './rabbitmq-go-course-config.mjs';
 import { rabbitmqTypescriptConfig } from './rabbitmq-typescript-course-config.mjs';
 import { ragRetrievalAugmentedGenerationConfig } from './rag-retrieval-augmented-generation-course-config.mjs';
@@ -4295,5 +4296,6 @@ export const expandedCourseConfigs = [
   buildBlogAggregatorTypescriptConfig,
   buildWebScraperGoConfig,
   buildWebScraperTypescriptConfig,
+  ...portfolioProjectCourseConfigs,
   ...httpClientCourseConfigs,
 ];

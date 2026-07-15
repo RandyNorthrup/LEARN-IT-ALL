@@ -316,6 +316,21 @@ const ACTIVITY_LABELS = {
     project: ['Repository Template Mission'],
     exam: ['Quality Engineering Board'],
   },
+  portfolio: {
+    theory: [
+      'Decision Evidence Lens',
+      'Stakeholder Case',
+      'Product Reasoning Brief',
+      'Claim Audit',
+    ],
+    workshop: ['Product Evidence Studio', 'Guided Vertical Slice', 'Stakeholder Workshop'],
+    debug: ['Claim Repair Board', 'Product Forensics', 'Evidence Triage'],
+    lab: ['Changed-Stakeholder Lab', 'Independent Product Trial', 'Transfer Studio'],
+    review: ['Decision Retrieval', 'Evidence Recall', 'Cumulative Product Review'],
+    quiz: ['Product Scenario Checkpoint', 'Claim Defense', 'Mastery Review'],
+    project: ['Stakeholder Product Defense'],
+    exam: ['Independent Product Review Board'],
+  },
   docker: {
     theory: [
       'Container Boundary Trace',
@@ -359,6 +374,8 @@ const ACTIVITY_LABELS = {
 };
 
 function familyFor(courseId) {
+  if (['personal-project-1', 'personal-project-2', 'capstone-project'].includes(courseId))
+    return 'portfolio';
   if (courseId === 'build-web-scraper-go') return 'go';
   if (courseId === 'build-web-scraper-typescript') return 'typescript';
   if (courseId === 'build-blog-aggregator-go') return 'go';
@@ -418,6 +435,93 @@ function unique(values) {
   return [...new Set(values)];
 }
 
+const PORTFOLIO_CASES = {
+  'pp1-readiness-evidence':
+    'A learner claims independent mastery from guided exercises, but a changed environment breaks the artifact and the evidence ledger has no dated reproduction.',
+  'pp1-problem-discovery':
+    'A neighborhood service requests a mobile app while observed handoffs suggest the delay comes from policy, language access, and incomplete intake information.',
+  'pp1-ethical-user-research':
+    'A research plan recruits only friends, records full sessions indefinitely, and excludes participants who need captions, flexible timing, or nonvisual materials.',
+  'pp1-outcomes-success':
+    'A team targets engagement growth without a baseline, causal path, burden guardrail, or threshold for stopping a harmful direction.',
+  'pp1-hypotheses-prototypes':
+    'A polished coded prototype appears persuasive, but it tests no predeclared assumption and quietly becomes production code after one positive comment.',
+  'pp1-scope-roadmap':
+    'A six-week backlog completes database, API, and interface layers separately while no affected user can finish one end-to-end task.',
+  'pp1-repository-toolchain':
+    'A promising product works only in a warm local directory with floating dependencies, an exposed sample token, unclear license, and no recovery anchor.',
+  'pp1-architecture-data-contracts':
+    'Framework handlers mutate shared records and call storage and services directly, making one changed rule require edits across the product.',
+  'pp1-incremental-core':
+    'A large feature branch presents plausible screens but cannot demonstrate an invariant, rejected transition, deployable slice, or causal defect repair.',
+  'pp1-inclusive-experience':
+    'The primary workflow works by mouse at one desktop width but loses reading order, focus, status, error recovery, and meaning under changed access needs.',
+  'pp1-trust-quality':
+    'A familiar happy-path test passes while hostile input, duplicate action, partial write, privacy deletion, dependency timeout, and restart remain unexamined.',
+  'pp1-release-defense':
+    'A polished developer-machine demo has no immutable artifact identity, clean setup, user-outcome evidence, restored backup, explicit limit, or unseen defense.',
+  'pp2-prior-product-audit':
+    'A first product has dependency drift, support burden, unresolved accessibility feedback, stale assumptions, and pressure for a feature-rich sequel.',
+  'pp2-multi-actor-discovery':
+    'End users, operators, administrators, support staff, and affected non-users disagree about speed, control, workload, privacy, and recourse.',
+  'pp2-codesign-equity':
+    'Affected people are invited after scope is fixed, receive inaccessible materials, and never learn which input changed the decision.',
+  'pp2-workflow-state':
+    'Two actors approve and cancel stale copies of one request while a support override bypasses the mutable status field and erases history.',
+  'pp2-architecture-interfaces':
+    'A team proposes five services without quality scenarios, independent deployment need, compatibility policy, failure containment, or ownership capacity.',
+  'pp2-data-lifecycle':
+    'Three stores claim authority for the same entity while copied data, conflicting meanings, irreversible migration, and deletion gaps accumulate.',
+  'pp2-identity-authentication':
+    'Account, person, credential, tenant, role, and session are conflated, and the accessible recovery path is weaker than ordinary sign-in.',
+  'pp2-authorization-tenancy-abuse':
+    'An authenticated member changes an identifier, crosses organization data, automates an expensive action, and exploits a standing administrator role.',
+  'pp2-distributed-correctness':
+    'A timed-out request succeeds remotely, its retry duplicates the effect, a delayed event arrives out of order, and automated recovery compounds the conflict.',
+  'pp2-collaboration-governance':
+    'Parallel contributors create oversized changes, invisible decisions, ambiguous ownership, rubber-stamp review, and a release nobody can fully explain.',
+  'pp2-observability-slo-support':
+    'Many logs report healthy servers while users cannot complete the task and support cannot correlate the failure with actor, workflow, dependency, or revision.',
+  'pp2-performance-cost':
+    'A fast average hides slow devices, large payloads, p99 queue growth, inaccessible loading states, dependency quotas, and an unbounded bill.',
+  'pp2-delivery-supply-chain':
+    'Automation rebuilds mutable inputs with broad secrets in each environment, then moves full traffic before provenance, guardrails, or rollback are verified.',
+  'pp2-migration-validation-defense':
+    'A big-bang cutover relies on one launch-day study and a backup job that has never produced a clean, reconciled restore.',
+  'capstone-mastery-contract':
+    'An ambitious proposal lists technologies but cannot map independent competency claims to authentic artifacts, counterexamples, contribution limits, or unseen questions.',
+  'capstone-significant-problem':
+    'A novel technical demonstration lacks durable need evidence, reachable affected people, current alternatives, or a causal route to public value.',
+  'capstone-stakeholders-harms':
+    'Primary-user convenience shifts surveillance, exclusion, labor, safety, environmental, and appeal costs onto people with less product power.',
+  'capstone-domain-regulation-license':
+    'Secondary summaries, a draft framework, incompatible content licenses, and a broad compliance claim are treated as equal governing authority.',
+  'capstone-measurement-baseline':
+    'Impact is inferred from vanity metrics after launch without a baseline, comparison, guardrail, subgroup view, or precommitted interpretation.',
+  'capstone-feasibility-options-stop':
+    'The plan assumes unavailable data, participants, approval, services, expertise, operating budget, and time while rejecting no-build alternatives.',
+  'capstone-scope-roadmap-risk':
+    'Component deadlines conceal prerequisite gaps, external waits, integration risk, missing evidence milestones, and no trigger for releasing scope.',
+  'capstone-architecture-decisions':
+    'A box diagram omits quality tradeoffs, trust and failure boundaries, cost, evolution, dissent, review triggers, and rejected alternatives.',
+  'capstone-data-api-invariants':
+    'Schemas and endpoints look complete while identity, authorization, concurrency, numerical, lifecycle, compatibility, and recovery invariants remain implicit.',
+  'capstone-security-privacy':
+    'Authentication, encryption, a scanner, and a policy page substitute for a system-specific threat model, privacy risk assessment, abuse case, and response plan.',
+  'capstone-walking-skeleton-core':
+    'Infrastructure and design artifacts grow while no deployed end-to-end slice proves user value can coexist with the full quality floor.',
+  'capstone-integrations-resilience':
+    'A critical provider changes schema during an outage while retries duplicate effects, cached fallback misleads users, and no vendor-exit rehearsal exists.',
+  'capstone-verification-human-eval':
+    'A large automated suite passes familiar data while affected-user tasks, assistive technology, hostile cases, causal impact, and evidence limits remain untested.',
+  'capstone-performance-operations':
+    'Feature completion hides an unrealistic workload, system-centered metrics, inaccessible support, untested runbook, and no compound incident rehearsal.',
+  'capstone-release-recovery':
+    'A mutable release has unknown components, weak builder identity, risky migration, successful backup status, and no isolated application-level restore proof.',
+  'capstone-documentation-defense':
+    'A polished final story hides failed hypotheses, assistance, affected-user evidence, accessibility, threat decisions, incident recovery, and remaining non-claims.',
+};
+
 function words(value) {
   return value
     .toLowerCase()
@@ -430,7 +534,7 @@ function words(value) {
 function humanize(value) {
   return value
     .replace(
-      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|fp|dsa2?|js|ts|go|sql|linux|git)-/,
+      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|pp1|pp2|capstone|fp|dsa2?|js|ts|go|sql|linux|git)-/,
       ''
     )
     .split('-')
@@ -699,6 +803,11 @@ function domainCase(family, moduleId, seed, activityKind = 'practice', competenc
   }
   if (family === 'cicd') {
     return cicdDomainCase(moduleId, n, activityKind, competency);
+  }
+  if (family === 'portfolio') {
+    const base =
+      PORTFOLIO_CASES[moduleId] ?? `A product review changes ${moduleId.replaceAll('-', ' ')}.`;
+    return `${base} The ${activityKind} variation ${n} changes the stakeholder, access need, evidence source, constraint, failure, and operating environment. Competency probe: ${competency?.statement ?? 'defend one bounded product claim'}`;
   }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
@@ -1069,6 +1178,9 @@ function domainReasoningMove(family, moduleId) {
   if (/^http-(?:go|ts|py)-/.test(moduleId)) {
     return 'State method semantics, target authority, credential scope, body ownership, byte and time budgets, and expected status or schema; trace resolution, transport, redirects, and attempts; then test one changed failure with deterministic cleanup evidence.';
   }
+  if (family === 'portfolio') {
+    return 'Name the stakeholder decision, affected people, authority, assumption, revision, artifact, observable behavior, changed case, rejected failure, accessibility, security, privacy, operation, recovery, contribution, residual risk, and transfer limit; then calibrate the public claim to that exact evidence.';
+  }
   if (family === 'linux') {
     return 'Capture identity, path, process, file, and service state; predict parsing and scope; run one safe simulated observation; interpret exit status; then change one bounded layer and verify rollback.';
   }
@@ -1373,6 +1485,20 @@ function domainExample(family, moduleId, seed) {
   if (family === 'docker') return dockerWorkedExample(moduleId, n);
   if (family === 'kubernetes') return kubernetesWorkedExample(moduleId, n);
   if (family === 'cicd') return cicdWorkedExample(moduleId, n);
+  if (family === 'portfolio') {
+    return `workspace: portfolio
+project-id: changed-product-${n}
+stakeholder: affected-user review panel
+decision: continue only if the changed task meets its outcome and guardrails
+artifact: revision-bound evidence packet
+claim: one bounded behavior survives the changed context
+verify: reproduce the task, inspect the artifact, and compare the predeclared measure
+changed-case: different access need, input, constraint, and dependency failure
+failure: reject plausible output without causal, human, recovery, or ownership evidence
+repair: isolate the first unsupported transition, correct it, and add a regression
+owner: named learner and stakeholder reviewer
+transfer-boundary: authorized controlled research and release environment`;
+  }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
       return `pwd\nprintf 'shell=%s\\n' "$BASH_VERSION"\ntype -a printf\ncommand -V pwd\nprintf 'status=%d\\n' "$?"`;
@@ -1850,6 +1976,7 @@ function targetFor(family, moduleId) {
   if (family === 'sql') return 'sql';
   if (family === 'network') return 'shell';
   if (family === 'prompt') return 'prompt';
+  if (family === 'portfolio') return 'config';
   if (family === 'gates') return 'config';
   if (family === 'docker') return 'config';
   if (family === 'kubernetes') return 'config';
@@ -1874,7 +2001,26 @@ function starterFiles(family, courseId) {
     config: '',
     c: '',
   };
-  if (courseId === 'build-web-scraper-go') {
+  if (family === 'portfolio') {
+    files.config = `# ${courseId} cumulative independent product evidence portfolio
+# Browser labs perform deterministic evidence-contract review only.
+# They never contact participants or services, execute commands, deploy, or claim live conformance.
+workspace: portfolio
+project-id: ${courseId}
+stakeholder: [replace with affected people and accountable decision owner]
+decision: [replace with the decision this evidence changes]
+problem-evidence: [replace with observed need, counterevidence, and uncertainty]
+accessibility: [replace with keyboard, structure, reflow, status, alternatives, and human review]
+security: [replace with threat, authorization, abuse, response, and residual risk]
+privacy: [replace with purpose, minimization, retention, access, correction, and deletion]
+test-strategy: [replace with behavior, changed case, fault, accessibility, security, and recovery]
+release-evidence: [replace with revision, artifact, inventory, provenance, validation, and rollback]
+recovery: [replace with backup, clean restore, reconciliation, communication, and ownership]
+portfolio-proof: [replace with contribution, limitations, counterexample, and unseen defense]
+transfer-boundary: authorized controlled research, toolchain, deployment, and review environments
+evidence:
+`;
+  } else if (courseId === 'build-web-scraper-go') {
     files.go = `// ${courseId} cumulative owner-approved accessible site-audit portfolio.
 // Browser execution uses deterministic pure-Go policy, URL, robots, response, tree, record,
 // frontier, scheduling, report, security, deployment, and recovery models with original fixtures.
@@ -3498,6 +3644,7 @@ function createBuilder({
   const rabbitEvidence = rabbitGoEvidence || rabbitTypescriptEvidence;
   const storageEvidence = storageGoEvidence || storageTypescriptEvidence;
   const httpEvidence = /^(?:http-(?:go|ts|py)|http-server-(?:go|ts))-/u.test(moduleId);
+  const portfolioEvidence = family === 'portfolio';
   const httpTrack = crawlerGoEvidence
     ? 'Authorized site auditing and Go'
     : crawlerTypescriptEvidence
@@ -3546,6 +3693,7 @@ function createBuilder({
                                                 ? 'Python'
                                                 : null;
   const usesExecutableEvidence =
+    portfolioEvidence ||
     family === 'sql' ||
     family === 'go' ||
     family === 'c' ||
@@ -3586,7 +3734,7 @@ function createBuilder({
         ? `${instruction}\n\nEvidence target: ${contextualTitle}.`
         : instruction,
       why: usesExecutableEvidence
-        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
+        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : portfolioEvidence ? 'mechanically reviewable stakeholder, affected-user, artifact, changed-case, failure, repair, release, recovery, and transfer decision' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
         : why,
       buildsOnStepIds: previous ? [previous] : [],
       content: extra.content ?? [],

@@ -105,4 +105,27 @@ repair: Reduce authority, pin identity, verify changed cases, rehearse rollback,
     expect(formatConfigLabReport(source)).toContain('CI/CD CONTRACT REVIEW: 12/12');
     expect(formatConfigLabReport(source)).toContain('never executes learner commands');
   });
+
+  it('reviews independent product evidence without contacting participants or executing delivery work', () => {
+    const source = `
+workspace: portfolio
+stakeholder: affected users and an accountable service owner
+decision: continue only if the changed task meets outcomes and guardrails
+problem-evidence: observation, existing alternative, contradiction, and uncertainty
+accessibility: keyboard, structure, reflow, status, alternatives, and human review
+security: threat, authorization, abuse, response, and residual risk
+privacy: purpose, minimization, retention, access, correction, and deletion
+test-strategy: behavior, changed case, fault, accessibility, security, and recovery
+release-evidence: revision, artifact, inventory, provenance, validation, and rollback
+recovery: backup, clean restore, reconciliation, communication, and ownership
+portfolio-proof: contribution, assistance, limits, counterexample, and unseen defense
+verify: reproduce the changed task and compare predeclared outcome plus guardrail evidence
+failure: Reject plausible output without human, causal, ownership, or recovery evidence.
+repair: Isolate the first unsupported transition and add a changed-case regression.
+transfer-boundary: authorized controlled research, toolchain, deployment, and review environments
+`;
+    expect(detectConfigWorkspace(source)).toBe('portfolio');
+    expect(formatConfigLabReport(source)).toContain('PRODUCT EVIDENCE REVIEW: 12/12');
+    expect(formatConfigLabReport(source)).toContain('never executes learner commands');
+  });
 });

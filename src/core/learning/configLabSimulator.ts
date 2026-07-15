@@ -395,6 +395,91 @@ const CICD_CRITERIA: ConfigCriterion[] = [
   },
 ];
 
+const PORTFOLIO_CRITERIA: ConfigCriterion[] = [
+  {
+    id: 'stakeholder-decision',
+    label: 'Stakeholder and decision',
+    patterns: [
+      /^\s*stakeholder\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}[\s\S]*?^\s*decision\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im,
+    ],
+    remediation:
+      'Name affected people, the accountable stakeholder, and the decision this evidence changes.',
+  },
+  {
+    id: 'problem-evidence',
+    label: 'Problem and counterevidence',
+    patterns: [/^\s*problem-evidence\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Link observed need, existing alternatives, counterevidence, and uncertainty.',
+  },
+  {
+    id: 'accessibility',
+    label: 'Accessibility and human review',
+    patterns: [/^\s*accessibility\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define keyboard, structure, reflow, status, alternatives, and knowledgeable human review.',
+  },
+  {
+    id: 'security',
+    label: 'Security and abuse boundary',
+    patterns: [/^\s*security\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Name threat, authorization, abuse, response, and residual-risk evidence.',
+  },
+  {
+    id: 'privacy',
+    label: 'Privacy lifecycle',
+    patterns: [/^\s*privacy\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Define purpose, minimization, retention, access, correction, and deletion.',
+  },
+  {
+    id: 'testing',
+    label: 'Changed-case test strategy',
+    patterns: [/^\s*test-strategy\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Map behavior, changed, fault, accessibility, security, and recovery claims to tests.',
+  },
+  {
+    id: 'release',
+    label: 'Release identity and provenance',
+    patterns: [/^\s*release-evidence\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Bind revision, artifact, inventory, provenance, validation, deployment, and rollback.',
+  },
+  {
+    id: 'recovery',
+    label: 'Recovery and reconciliation',
+    patterns: [/^\s*recovery\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Define backup, clean restore, reconciliation, communication, and ownership.',
+  },
+  {
+    id: 'portfolio-proof',
+    label: 'Contribution and defense proof',
+    patterns: [/^\s*portfolio-proof\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Disclose contribution, assistance, limits, counterexamples, and unseen defense evidence.',
+  },
+  {
+    id: 'verification',
+    label: 'Deterministic verification',
+    patterns: [/^\s*verify\s*:\s*\S/im],
+    remediation:
+      'Add a deterministic artifact, behavior, human-evidence, or recovery verification.',
+  },
+  {
+    id: 'failure-repair',
+    label: 'Rejected failure and causal repair',
+    patterns: [/^\s*failure\s*:\s*\S/im, /^\s*repair\s*:\s*\S/im],
+    remediation:
+      'Name the unsupported claim or failure and its cause-level repair and regression evidence.',
+  },
+  {
+    id: 'transfer',
+    label: 'Controlled transfer boundary',
+    patterns: [/^\s*transfer-boundary\s*:\s*\S/im],
+    remediation:
+      'Name the authorized research, toolchain, deployment, review, and production transfer gates.',
+  },
+];
+
 function evaluateCriteria(source: string, criteria: ConfigCriterion[]) {
   return criteria.map((criterion) => {
     const match = criterion.patterns
@@ -409,9 +494,17 @@ function evaluateCriteria(source: string, criteria: ConfigCriterion[]) {
   });
 }
 
-export type ConfigWorkspaceKind = 'quality' | 'skill' | 'mcp' | 'docker' | 'kubernetes' | 'cicd';
+export type ConfigWorkspaceKind =
+  | 'quality'
+  | 'skill'
+  | 'mcp'
+  | 'docker'
+  | 'kubernetes'
+  | 'cicd'
+  | 'portfolio';
 
 export function detectConfigWorkspace(source: string): ConfigWorkspaceKind {
+  if (/^workspace\s*:\s*portfolio\b/im.test(source)) return 'portfolio';
   if (/^workspace\s*:\s*cicd\b/im.test(source)) return 'cicd';
   if (/^workspace\s*:\s*kubernetes\b/im.test(source)) return 'kubernetes';
   if (/^workspace\s*:\s*docker\b/im.test(source)) return 'docker';
@@ -425,6 +518,7 @@ export function evaluateConfigContract(source: string, kind: ConfigWorkspaceKind
   if (kind === 'docker') return evaluateCriteria(source, DOCKER_CRITERIA);
   if (kind === 'kubernetes') return evaluateCriteria(source, KUBERNETES_CRITERIA);
   if (kind === 'cicd') return evaluateCriteria(source, CICD_CRITERIA);
+  if (kind === 'portfolio') return evaluateCriteria(source, PORTFOLIO_CRITERIA);
   return evaluateCriteria(source, kind === 'mcp' ? MCP_CRITERIA : SKILL_CRITERIA);
 }
 
@@ -441,6 +535,7 @@ export function formatConfigLabReport(source: string): string {
     docker: 'DOCKER CONTRACT REVIEW',
     kubernetes: 'KUBERNETES CONTRACT REVIEW',
     cicd: 'CI/CD CONTRACT REVIEW',
+    portfolio: 'PRODUCT EVIDENCE REVIEW',
   };
   return [
     `${labels[kind]}: ${passed}/${results.length}`,
