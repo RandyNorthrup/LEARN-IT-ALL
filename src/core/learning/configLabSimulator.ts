@@ -567,6 +567,111 @@ const CAREER_CRITERIA: ConfigCriterion[] = [
   },
 ];
 
+const SUPPORT_CRITERIA: ConfigCriterion[] = [
+  {
+    id: 'user-impact',
+    label: 'User impact and ticket identity',
+    patterns: [/^\s*user-impact\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Name the fictional ticket, affected user outcome, scope, severity, and urgency.',
+  },
+  {
+    id: 'environment',
+    label: 'Asset and environment identity',
+    patterns: [/^\s*environment\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Record device, version, configuration, location, owner, dependency, and evidence time.',
+  },
+  {
+    id: 'safety-authority',
+    label: 'Safety and authority boundary',
+    patterns: [/^\s*safety-authority\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define authorization, hazards, data custody, privacy, accessibility, and stop conditions.',
+  },
+  {
+    id: 'baseline',
+    label: 'Expected-behavior baseline',
+    patterns: [/^\s*baseline\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'State the expected behavior, known-good reference, conditions, and measurement.',
+  },
+  {
+    id: 'symptom',
+    label: 'Reproducible symptom',
+    patterns: [/^\s*symptom\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Record observed behavior, reproduction, frequency, scope, timing, and exact evidence.',
+  },
+  {
+    id: 'recent-change',
+    label: 'Recent change and timeline',
+    patterns: [/^\s*recent-change\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Name relevant changes, clocks, sequence, counterevidence, and unknowns without assuming cause.',
+  },
+  {
+    id: 'hypothesis',
+    label: 'Ranked causal hypothesis',
+    patterns: [/^\s*hypothesis\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'State a falsifiable cause, competing explanation, prediction, and confidence.',
+  },
+  {
+    id: 'test',
+    label: 'Bounded discriminating test',
+    patterns: [/^\s*test\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define one safe reversible test, expected outcomes, changed condition, and stop rule.',
+  },
+  {
+    id: 'observation',
+    label: 'Observed result and decision',
+    patterns: [/^\s*observation\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Record the actual result, provenance, interpretation, rejected inference, and next decision.',
+  },
+  {
+    id: 'repair-rollback',
+    label: 'Repair and rollback',
+    patterns: [/^\s*repair-rollback\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Name the least-change repair, authority, backup, rollback trigger, and restored state.',
+  },
+  {
+    id: 'verify',
+    label: 'Original and changed-case verification',
+    patterns: [/^\s*verify\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Verify user outcome, original case, changed case, side effects, restart, and recurrence evidence.',
+  },
+  {
+    id: 'prevention',
+    label: 'Prevention and monitoring',
+    patterns: [/^\s*prevention\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Record prevention, monitoring, owner, review date, and residual risk without overclaiming.',
+  },
+  {
+    id: 'escalation',
+    label: 'Escalation and stop rule',
+    patterns: [/^\s*escalation\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define when to stop, whom to escalate to, what evidence travels, and the requested decision.',
+  },
+  {
+    id: 'documentation',
+    label: 'Accessible privacy-safe documentation',
+    patterns: [/^\s*documentation\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Provide plain structured status, redaction, accessibility, user handoff, and retained uncertainty.',
+  },
+  {
+    id: 'transfer',
+    label: 'Controlled support transfer boundary',
+    patterns: [/^\s*transfer-boundary\s*:\s*\S[^\n]*/im],
+    remediation:
+      'Keep commands, devices, accounts, networks, malware, media, and physical work in authorized controlled environments.',
+  },
+];
+
 function evaluateCriteria(source: string, criteria: ConfigCriterion[]) {
   return criteria.map((criterion) => {
     const match = criterion.patterns
@@ -589,9 +694,11 @@ export type ConfigWorkspaceKind =
   | 'kubernetes'
   | 'cicd'
   | 'portfolio'
-  | 'career';
+  | 'career'
+  | 'support';
 
 export function detectConfigWorkspace(source: string): ConfigWorkspaceKind {
+  if (/^workspace\s*:\s*support\b/im.test(source)) return 'support';
   if (/^workspace\s*:\s*career\b/im.test(source)) return 'career';
   if (/^workspace\s*:\s*portfolio\b/im.test(source)) return 'portfolio';
   if (/^workspace\s*:\s*cicd\b/im.test(source)) return 'cicd';
@@ -607,6 +714,7 @@ export function evaluateConfigContract(source: string, kind: ConfigWorkspaceKind
   if (kind === 'docker') return evaluateCriteria(source, DOCKER_CRITERIA);
   if (kind === 'kubernetes') return evaluateCriteria(source, KUBERNETES_CRITERIA);
   if (kind === 'cicd') return evaluateCriteria(source, CICD_CRITERIA);
+  if (kind === 'support') return evaluateCriteria(source, SUPPORT_CRITERIA);
   if (kind === 'career') return evaluateCriteria(source, CAREER_CRITERIA);
   if (kind === 'portfolio') return evaluateCriteria(source, PORTFOLIO_CRITERIA);
   return evaluateCriteria(source, kind === 'mcp' ? MCP_CRITERIA : SKILL_CRITERIA);
@@ -627,6 +735,7 @@ export function formatConfigLabReport(source: string): string {
     cicd: 'CI/CD CONTRACT REVIEW',
     portfolio: 'PRODUCT EVIDENCE REVIEW',
     career: 'CAREER EVIDENCE REVIEW',
+    support: 'SUPPORT INCIDENT REVIEW',
   };
   return [
     `${labels[kind]}: ${passed}/${results.length}`,

@@ -71,6 +71,7 @@ export const V2_COURSE_IDS = new Set([
   'personal-project-2',
   'capstone-project',
   'job-search',
+  'comptia-a-plus',
 ]);
 
 export function isV2Course(courseId: string): boolean {
@@ -1048,11 +1049,11 @@ export const ALL_COURSES: CourseMetadata[] = [
   // ========== CERTIFICATION PREP COURSES ==========
   {
     id: 'comptia-a-plus',
-    title: 'CompTIA A+ Certification Prep',
+    title: 'CompTIA A+ V15 Applied IT Support and Troubleshooting',
     description:
-      'Comprehensive preparation for the CompTIA A+ certification exam. Master hardware, software, networking, security, and troubleshooting skills required for IT support professionals. Covers both Core 1 (220-1101) and Core 2 (220-1102) exam objectives.',
+      'Build safe causal IT support skill across every current Core 1 220-1201 and Core 2 220-1202 objective through hardware, mobile, network, operating-system, security, operations, workshop, debugging, PBQ, project, and incident evidence.',
     difficulty: 'beginner',
-    estimatedHours: 120,
+    estimatedHours: 568,
     language: undefined,
     tags: [
       'certification',
@@ -1064,9 +1065,9 @@ export const ALL_COURSES: CourseMetadata[] = [
       'security',
     ],
     prerequisites: [],
-    status: COURSE_STATUS.COMING_SOON,
-    lessonCount: 100,
-    chapterCount: 10,
+    status: COURSE_STATUS.AVAILABLE,
+    lessonCount: 407,
+    chapterCount: 40,
     type: 'course',
   },
   {

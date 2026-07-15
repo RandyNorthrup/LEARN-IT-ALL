@@ -185,4 +185,52 @@ transfer-boundary: learner-approved profile, application, contact, interview, an
     expect(formatConfigLabReport(source)).toContain('CAREER EVIDENCE REVIEW: 11/12');
     expect(formatConfigLabReport(source)).toContain('MISS  Rejected failure and causal repair');
   });
+
+  it('reviews a complete support incident without executing commands or touching devices', () => {
+    const source = `
+workspace: support
+ticket-id: fictional-ticket-42
+user-impact: one keyboard user cannot complete a scheduled print and scan workflow
+environment: fictional managed laptop, printer, dock, version, owner, and evidence time
+safety-authority: consented text simulation only; stop for battery, power, privacy, or access risk
+baseline: the same fixture prints, scans, and announces status through the known-good route
+symptom: the changed fixture queues a job but never records device receipt or accessible status
+recent-change: a driver and queue change preceded the symptom, but causation remains unproven
+hypothesis: queue-to-device transport is blocked; a local application defect is the competing cause
+test: compare one known-good queue route with predicted receipt evidence and no device mutation
+observation: only the changed route lacks receipt, rejecting the application-only explanation
+repair-rollback: restore the reviewed queue mapping; revert to the captured mapping if receipt regresses
+verify: repeat original, changed user, alternate format, restart, and side-effect cases
+prevention: monitor queue receipt, retain the known-good mapping, and review after the next update
+escalation: stop on physical, credential, malware, data, or production change and send the evidence packet
+documentation: structured plain-language status, redaction, keyboard route, user handoff, and uncertainty
+transfer-boundary: authorized disposable equipment or simulator only
+`;
+    expect(detectConfigWorkspace(source)).toBe('support');
+    expect(formatConfigLabReport(source)).toContain('SUPPORT INCIDENT REVIEW: 15/15');
+    expect(formatConfigLabReport(source)).toContain('never executes learner commands');
+  });
+
+  it('rejects placeholder support evidence and reports the missing causal repair', () => {
+    const source = `
+workspace: support
+user-impact: [replace with user outcome]
+environment: [replace with asset state]
+safety-authority: [replace with authorization]
+baseline: [replace with expected behavior]
+symptom: [replace with observed behavior]
+recent-change: [replace with timeline]
+hypothesis: [replace with prediction]
+test: [replace with bounded test]
+observation: [replace with actual result]
+repair-rollback: [replace with repair]
+verify: [replace with verification]
+prevention: [replace with monitoring]
+escalation: [replace with stop rule]
+documentation: [replace with accessible handoff]
+transfer-boundary: authorized disposable equipment or simulator only
+`;
+    expect(formatConfigLabReport(source)).toContain('SUPPORT INCIDENT REVIEW: 1/15');
+    expect(formatConfigLabReport(source)).toContain('MISS  Repair and rollback');
+  });
 });

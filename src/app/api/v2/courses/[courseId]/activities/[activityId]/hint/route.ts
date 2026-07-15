@@ -8,6 +8,7 @@ import {
   type StepProgressRecord,
 } from '@/core/learning/progress';
 import { dbHelpers } from '@/lib/db';
+import { readJsonRequestBody } from '@/lib/http/readJsonRequestBody';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
 
 const HintRequestSchema = z.object({ stepId: z.string().min(3) });
@@ -24,7 +25,7 @@ export async function POST(
     return NextResponse.json({ error: 'Activity not found.' }, { status: 404 });
   }
 
-  const parsed = HintRequestSchema.safeParse(await request.json());
+  const parsed = HintRequestSchema.safeParse(await readJsonRequestBody(request));
   if (!parsed.success) return NextResponse.json({ error: 'Step is required.' }, { status: 400 });
   if (!storedActivityAccess(courseId, activity).canOpen) {
     return NextResponse.json(

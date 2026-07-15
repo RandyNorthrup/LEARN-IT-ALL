@@ -12,6 +12,7 @@ import { buildWebScraperPythonConfig } from './build-web-scraper-python-course-c
 import { buildWebScraperTypescriptConfig } from './build-web-scraper-typescript-course-config.mjs';
 import { cMemoryManagementConfig } from './c-memory-management-course-config.mjs';
 import { cicdGithubActionsConfig } from './cicd-course-config.mjs';
+import { comptiaAPlusConfig } from './comptia-a-plus-course-config.mjs';
 import { finalizeCourse, module, project, skill } from './course-config-helpers.mjs';
 import { cryptographyGoConfig } from './cryptography-go-course-config.mjs';
 import { dockerBasicsConfig } from './docker-course-config.mjs';
@@ -4299,5 +4300,6 @@ export const expandedCourseConfigs = [
   buildWebScraperTypescriptConfig,
   ...portfolioProjectCourseConfigs,
   jobSearchConfig,
+  comptiaAPlusConfig,
   ...httpClientCourseConfigs,
 ];

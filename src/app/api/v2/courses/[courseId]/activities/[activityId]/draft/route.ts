@@ -3,6 +3,7 @@ import { loadCurriculumActivity } from '@/core/curriculum/repository';
 import type { CurriculumActivity } from '@/core/curriculum/schema';
 import { LearningDraftSchema } from '@/core/learning/submissionSchema';
 import { dbHelpers } from '@/lib/db';
+import { readJsonRequestBody } from '@/lib/http/readJsonRequestBody';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
 
 export async function POST(
@@ -17,7 +18,7 @@ export async function POST(
     return NextResponse.json({ error: 'Activity not found.' }, { status: 404 });
   }
 
-  const parsed = LearningDraftSchema.safeParse(await request.json());
+  const parsed = LearningDraftSchema.safeParse(await readJsonRequestBody(request));
   if (!parsed.success) return NextResponse.json({ error: 'Draft is not valid.' }, { status: 400 });
   if (!storedActivityAccess(courseId, activity).canOpen) {
     return NextResponse.json(

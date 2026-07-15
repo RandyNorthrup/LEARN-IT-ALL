@@ -9,6 +9,7 @@ import {
 } from '@/core/learning/progress';
 import { LearningSubmissionSchema } from '@/core/learning/submissionSchema';
 import { dbHelpers } from '@/lib/db';
+import { readJsonRequestBody } from '@/lib/http/readJsonRequestBody';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
 
 export async function POST(
@@ -23,7 +24,7 @@ export async function POST(
     return NextResponse.json({ error: 'Activity not found.' }, { status: 404 });
   }
 
-  const parsed = LearningSubmissionSchema.safeParse(await request.json());
+  const parsed = LearningSubmissionSchema.safeParse(await readJsonRequestBody(request));
   if (!parsed.success) {
     return NextResponse.json({ error: 'Submission is not valid.' }, { status: 400 });
   }

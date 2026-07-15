@@ -222,6 +222,7 @@ export async function generateCourseBlueprint(config) {
       title: definition.title,
       order: moduleIndex + 1,
       prerequisiteModuleIds: previousModuleId ? [previousModuleId] : [],
+      sourceObjectiveIds: definition.sourceObjectiveIds ?? [],
       objectives: definition.objectives,
       activities,
     });

@@ -35,6 +35,7 @@ const PlannedModuleSchema = z.object({
   title: z.string().min(5),
   order: z.number().int().positive(),
   prerequisiteModuleIds: z.array(IdSchema),
+  sourceObjectiveIds: z.array(z.string().min(3)).default([]),
   objectives: z.array(z.string().min(10)).min(1),
   activities: z.array(PlannedActivitySchema).min(1),
 });

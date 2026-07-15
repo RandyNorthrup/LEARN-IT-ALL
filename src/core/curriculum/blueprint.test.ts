@@ -90,6 +90,7 @@ function blueprint() {
         title: 'Interface foundations',
         order: 1,
         prerequisiteModuleIds: [],
+        sourceObjectiveIds: ['framework-1.1'],
         objectives: ['Build and verify a complete accessible responsive interface.'],
         activities: [
           ...introActivities,
@@ -181,7 +182,9 @@ function blueprint() {
 
 describe('course blueprint audit', () => {
   it('accepts complete cumulative coverage', () => {
-    expect(auditCourseBlueprint(blueprint())).toEqual([]);
+    const complete = blueprint();
+    expect(auditCourseBlueprint(complete)).toEqual([]);
+    expect(complete.modules[0].sourceObjectiveIds).toEqual(['framework-1.1']);
   });
 
   it('rejects a competency that is introduced but never transferred', () => {

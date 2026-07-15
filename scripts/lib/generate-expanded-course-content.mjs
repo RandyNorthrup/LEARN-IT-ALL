@@ -246,6 +246,16 @@ const ACTIVITY_LABELS = {
     project: ['Network Stakeholder Mission'],
     exam: ['N10-009 Certification Board'],
   },
+  support: {
+    theory: ['Support Evidence Lens', 'Device-State Clinic', 'Service Brief', 'Incident Case'],
+    workshop: ['Support Workbench', 'Guided Service Studio', 'Evidence Workshop'],
+    debug: ['Incident Repair Bay', 'Device Forensics', 'Fault-Isolation Clinic'],
+    lab: ['Changed-Device Lab', 'Independent Support Trial', 'Service Transfer'],
+    review: ['Support Retrieval', 'Causal Recall', 'Spiral Incident Review'],
+    quiz: ['PBQ Checkpoint', 'Support Decision Defense', 'Mastery Check'],
+    project: ['Stakeholder Support Mission'],
+    exam: ['A+ V15 Support Defense Board'],
+  },
   functional: {
     theory: ['Transformation Lens', 'Effects Clinic', 'Pipeline Brief', 'Evaluation Trace'],
     workshop: ['Pipeline Foundry', 'Composition Studio', 'Iterator Workshop'],
@@ -384,6 +394,7 @@ const ACTIVITY_LABELS = {
 };
 
 function familyFor(courseId) {
+  if (courseId === 'comptia-a-plus') return 'support';
   if (courseId === 'job-search') return 'career';
   if (['personal-project-1', 'personal-project-2', 'capstone-project'].includes(courseId))
     return 'portfolio';
@@ -576,6 +587,89 @@ const CAREER_CASES = {
     'A candidate interprets sparse rejection as a skill verdict, retains confidential work, closes relationships poorly, and enters a new role without an onboarding evidence plan.',
 };
 
+const SUPPORT_CASES = {
+  'support-evidence-method':
+    'A vague intermittent ticket triggers an unauthorized familiar fix before impact, baseline, recent change, prediction, rollback, or changed-case proof exists.',
+  'support-safety-hazards':
+    'A repair bench combines a swollen battery, energized supply, heavy printer, loose jewelry, blocked exit, poor ventilation, and no disposal authority.',
+  'support-requirements-compatibility':
+    'A low-cost upgrade physically fits but conflicts with firmware, power, application, accessibility, warranty, lifecycle, and recovery requirements.',
+  'support-display-audio-access':
+    'A hybrid classroom has an intermittent external image, echo, camera privacy conflict, unreadable scaling, and color-only status.',
+  'support-cables-connectors':
+    'Look-alike USB-C cables and adapters expose different data, video, direction, bandwidth, and negotiated-power behavior through one dock.',
+  'support-boards-cpu-firmware':
+    'A board and CPU change follows a failed boot and thermal throttle, but socket, firmware, lanes, power, TPM, and cooling evidence conflict.',
+  'support-memory-storage-raid':
+    'Crashes, storage pressure, a degraded array, and a healthy-looking drive blur capacity, hardware, filesystem, redundancy, backup, and custody boundaries.',
+  'support-power-workstations':
+    'A specialized workstation list ignores measured workload, transient power, thermal path, acoustics, ergonomics, access needs, and failure cost.',
+  'support-printer-mechanisms':
+    'Faded pages, repeated marks, skewed scans, jams, and high consumable use cross laser, inkjet, thermal, and feeder mechanisms.',
+  'support-printer-deployment':
+    'A clinic print rollout leaks held documents, overprivileges address books, breaks mobile paths, and excludes nonvisual operation.',
+  'support-printer-maintenance':
+    'A technician replaces multiple printer parts before mapping jam position, repeated image interval, queue state, safe cleaning, or user outcome.',
+  'support-mobile-hardware':
+    'A thin laptop has cracked glass, unreliable charging, a damaged hinge, possible battery swelling, urgent data needs, and uncertain service documentation.',
+  'support-mobile-accessories':
+    'A dock, stylus, headset, biometric reader, and charger connect but fail under changed profiles, power, ports, sleep, and alternate-input use.',
+  'support-mobile-management':
+    'A mixed personal and managed fleet loses sync, exposes notifications, blocks accessibility services, and reports conflicting enrollment and radio state.',
+  'support-transport-services':
+    'Web content partly loads, mail sends but does not receive, and a firewall log uses familiar ports that do not prove the actual service.',
+  'support-ip-config-services':
+    'Duplicate addresses, stale names, a guest isolation leak, an unreachable subnet, and VPN split behavior are all blamed on DNS.',
+  'support-network-media-devices':
+    'An office combines mislabeled copper, fiber, PoE, switches, injectors, and access points with intermittent link and power evidence.',
+  'support-wireless-radio':
+    'A warehouse needs voice, scanners, guests, and tags while congestion, walls, roaming, channel width, power, and privacy vary by zone.',
+  'support-soho-design':
+    'A home business mixes work, family, guests, cameras, printers, IoT, backups, and remote access behind a default ISP gateway.',
+  'support-network-troubleshooting':
+    'Slow calls and sync coexist with good average speed while loss, jitter, queueing, Wi-Fi, DNS, path, and application evidence disagree.',
+  'support-virtualization':
+    'A lab treats VMs, containers, snapshots, VDI, device passthrough, and disposable sandboxes as equivalent isolation and recovery mechanisms.',
+  'support-cloud-services':
+    'Several cloud services hold files, identity, backups, and apps, but offline, sync, recovery, cost, deletion, and responsibility remain unassigned.',
+  'support-os-landscape':
+    'Windows, macOS, Linux, ChromeOS, mobile, and embedded devices need one support decision despite different filesystems, editions, and lifecycles.',
+  'support-os-deployment':
+    'An encrypted fleet deployment changes firmware, boot media, partitions, drivers, apps, profiles, access settings, licenses, and rollback at once.',
+  'support-windows-editions-lifecycle':
+    'Unsupported Windows 10 devices and specialized apps create pressure to bypass Windows 11 eligibility without current lifecycle or recovery evidence.',
+  'support-windows-tools-settings':
+    'Startup delay, storage pressure, device errors, and update failures send support through many tools without recording effective state or time.',
+  'support-windows-cli-network':
+    'Copied Windows command output lacks shell, directory, identity, time, exit status, redaction, prediction, and side-effect evidence.',
+  'support-macos-ios':
+    'Mixed Apple silicon and Intel devices have sync conflicts, trust prompts, full storage, managed policy, encrypted recovery, and peripheral failures.',
+  'support-linux-chromeos-android':
+    'Several Linux distributions, Chromebooks, Android work profiles, and kiosks expose different packages, accounts, updates, permissions, and reset effects.',
+  'support-apps-remote-scripting-ai':
+    'A team installs apps, remotes into endpoints, runs scripts, and trusts AI suggestions without provenance, consent, secrets, tests, or rollback.',
+  'support-identity-access-controls':
+    'People, accounts, credentials, devices, roles, badges, sessions, groups, guests, and service identities are conflated after unauthorized access.',
+  'support-windows-security':
+    'Sensitive Windows data has inherited share permissions, a missing recovery key, weakened protection, and an inaccessible sign-in fallback.',
+  'support-endpoint-hardening':
+    'Browsers, extensions, mobile apps, personal devices, home routers, and public Wi-Fi use defaults with inconsistent updates and recovery.',
+  'support-threats-malware':
+    'An urgent call, QR login, repeated MFA prompt, redirect, encrypted files, and disabled tools demand a proportionate first response.',
+  'support-malware-sanitization-ir':
+    'A compromised encrypted endpoint needs recovery and reuse while credential exposure, persistence, legal hold, custody, and media method remain unknown.',
+  'support-hardware-integrated-triage':
+    'A mobile workstation intermittently fails POST, throttles, loses storage, corrupts display, and recovers after cooling after several simultaneous repairs.',
+  'support-software-security-triage':
+    'Slow startup, crashes, redirects, lockouts, certificate warnings, mobile pop-ups, and network errors follow an unknown change.',
+  'support-tickets-assets-knowledge':
+    'Duplicate tickets, mismatched assets, copied workarounds, breached targets, excess personal data, and weak closure hide the causal record.',
+  'support-change-backup-operations':
+    'A fleet change affects encrypted devices, backups, batteries, licenses, personal data, access settings, and a narrow rollback window.',
+  'support-professional-pbq-defense':
+    'An anxious user, access and language needs, a safety stop, competing priorities, and an ambiguous PBQ tempt immediate action without a support contract.',
+};
+
 function words(value) {
   return value
     .toLowerCase()
@@ -588,7 +682,7 @@ function words(value) {
 function humanize(value) {
   return value
     .replace(
-      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|pp1|pp2|capstone|career|fp|dsa2?|js|ts|go|sql|linux|git)-/,
+      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|pp1|pp2|capstone|career|support|fp|dsa2?|js|ts|go|sql|linux|git)-/,
       ''
     )
     .split('-')
@@ -867,6 +961,11 @@ function domainCase(family, moduleId, seed, activityKind = 'practice', competenc
     const base =
       CAREER_CASES[moduleId] ?? `A career review changes ${moduleId.replaceAll('-', ' ')}.`;
     return `${base} The ${activityKind} variation ${n} changes the candidate background, target role, jurisdiction, access need, source date, process state, and decision constraint. Competency probe: ${competency?.statement ?? 'defend one bounded career decision'}`;
+  }
+  if (family === 'support') {
+    const base =
+      SUPPORT_CASES[moduleId] ?? `A support incident changes ${moduleId.replaceAll('-', ' ')}.`;
+    return `${base} The ${activityKind} variation ${n} changes the user outcome, device, version, hazard, recent change, symptom, access need, competing cause, and transfer limit. Competency probe: ${competency?.statement ?? 'defend one safe causal support decision'}`;
   }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
@@ -1243,6 +1342,9 @@ function domainReasoningMove(family, moduleId) {
   if (family === 'career') {
     return 'Name learner goal, target role, jurisdiction, audience, claim, contribution, source date, evidence revision, accessibility, privacy, consent, process state, changed candidate, rejected failure, causal repair, decision owner, non-claim, and transfer limit; then calibrate the application or career decision to that exact evidence.';
   }
+  if (family === 'support') {
+    return 'Name user impact, fictional ticket, asset and environment identity, authorization, hazard and stop condition, baseline, symptom, timeline, competing hypotheses, bounded reversible test, prediction, observation, least-change repair, rollback, original and changed-case verification, prevention, escalation, accessible privacy-safe handoff, remaining uncertainty, and controlled transfer limit; then reject the first unsupported causal inference.';
+  }
   if (family === 'linux') {
     return 'Capture identity, path, process, file, and service state; predict parsing and scope; run one safe simulated observation; interpret exit status; then change one bounded layer and verify rollback.';
   }
@@ -1280,180 +1382,187 @@ function domainReasoningMove(family, moduleId) {
 }
 
 function domainOrderOptions(family, id, contextLabel, httpTrack) {
-  const labels = httpTrack?.startsWith('Feed aggregation and Go')
+  const labels = httpTrack?.startsWith('CompTIA A+ support')
     ? [
-        `Declare ${httpTrack} reader and publisher outcome, revision, tenant, source and URL identity, feed format, PostgreSQL ownership, accessibility need, and byte, time, concurrency, retention, and recovery budgets`,
-        `Predict ${httpTrack} discovery, fetch, XML admission, normalization, transaction, schedule, lease, API, reader, failure, cancellation, rollback, and recovery outcomes`,
-        `Run the smallest deterministic ${httpTrack} pure-Go model and retain exact identity, provenance, state, ownership, changed-case, rejection, and cleanup evidence`,
-        `Change one ${httpTrack} format, URL, response, XML, constraint, migration, schedule, lease, goroutine, tenant, reader, deployment, or restore condition, verify bounded rejection or repair, and state controlled native transfer limits`,
+        `Declare ${httpTrack} user outcome, fictional ticket, asset and environment identity, authorization, hazards, accessibility and privacy needs, baseline, and stop conditions`,
+        `Predict ${httpTrack} reproduction, timeline, competing hypotheses, bounded test outcomes, evidence quality, escalation, and rollback triggers`,
+        `Run the smallest deterministic ${httpTrack} manifest review and retain the actual observation, rejected inference, next decision, and remaining uncertainty`,
+        `Change one ${httpTrack} user, device, version, hazard, symptom, access need, or competing cause; verify repair, rollback, original and changed cases, prevention, handoff, and controlled equipment transfer limits`,
       ]
-    : httpTrack?.startsWith('Feed aggregation and TypeScript')
+    : httpTrack?.startsWith('Feed aggregation and Go')
       ? [
-          `Declare ${httpTrack} reader and publisher outcome, source and emitted revision, tenant, URL, unknown XML, runtime validation, PostgreSQL ownership, accessibility need, and byte, time, Promise, handle, retention, and recovery budgets`,
-          `Predict ${httpTrack} discovery, Fetch stream, XML parse, runtime admission, transaction, Promise, timer, lease, Express, reader, failure, abort, rollback, and recovery outcomes`,
-          `Run the smallest deterministic ${httpTrack} pure-TypeScript model and retain exact unknown input, validation, identity, immutable state, settlement, changed-case, rejection, and cleanup evidence`,
-          `Change one ${httpTrack} format, entity, dangerous key, stream, Promise order, query, migration, lease, tenant, sanitizer, package, deployment, or restore condition, verify bounded rejection or repair, and state controlled Node transfer limits`,
+          `Declare ${httpTrack} reader and publisher outcome, revision, tenant, source and URL identity, feed format, PostgreSQL ownership, accessibility need, and byte, time, concurrency, retention, and recovery budgets`,
+          `Predict ${httpTrack} discovery, fetch, XML admission, normalization, transaction, schedule, lease, API, reader, failure, cancellation, rollback, and recovery outcomes`,
+          `Run the smallest deterministic ${httpTrack} pure-Go model and retain exact identity, provenance, state, ownership, changed-case, rejection, and cleanup evidence`,
+          `Change one ${httpTrack} format, URL, response, XML, constraint, migration, schedule, lease, goroutine, tenant, reader, deployment, or restore condition, verify bounded rejection or repair, and state controlled native transfer limits`,
         ]
-      : httpTrack?.startsWith('Safe AI agents')
+      : httpTrack?.startsWith('Feed aggregation and TypeScript')
         ? [
-            `Declare ${httpTrack} stakeholder outcome, risk tier, revision, Python and dependency versions, model and tool boundaries, authority, data class, and turn, token, time, cost, and retry budgets`,
-            `Predict ${httpTrack} validation, model, tool proposal, authorization, execution, state, stream, failure, stop, rollback, and recovery outcomes`,
-            `Run the smallest deterministic ${httpTrack} pure-Python model and retain exact input, decision, trace, changed-case, rejection, and recovery evidence`,
-            `Change one ${httpTrack} input, schema, model response, tool argument, approval, state, failure, security, evaluation, or release condition, verify bounded rejection or repair, and state controlled native-provider transfer limits`,
+            `Declare ${httpTrack} reader and publisher outcome, source and emitted revision, tenant, URL, unknown XML, runtime validation, PostgreSQL ownership, accessibility need, and byte, time, Promise, handle, retention, and recovery budgets`,
+            `Predict ${httpTrack} discovery, Fetch stream, XML parse, runtime admission, transaction, Promise, timer, lease, Express, reader, failure, abort, rollback, and recovery outcomes`,
+            `Run the smallest deterministic ${httpTrack} pure-TypeScript model and retain exact unknown input, validation, identity, immutable state, settlement, changed-case, rejection, and cleanup evidence`,
+            `Change one ${httpTrack} format, entity, dangerous key, stream, Promise order, query, migration, lease, tenant, sanitizer, package, deployment, or restore condition, verify bounded rejection or repair, and state controlled Node transfer limits`,
           ]
-        : httpTrack?.startsWith('Authorized crawling')
+        : httpTrack?.startsWith('Safe AI agents')
           ? [
-              `Declare ${httpTrack} owner authorization, stakeholder outcome, revision, runtime and dependency versions, seed and URL identity, scope, robots policy, privacy boundary, and page, byte, time, concurrency, and retention budgets`,
-              `Predict ${httpTrack} admission, fetch, redirect, decode, parse, extract, normalize, schedule, render, report, failure, stop, rollback, and recovery outcomes`,
-              `Run the smallest deterministic ${httpTrack} fixed-fixture pure-Python model and retain exact policy, provenance, frontier, changed-case, and rejection evidence`,
-              `Change one ${httpTrack} authorization, URL, response, markup, selector, frontier, timing, session, browser, privacy, security, export, or recovery condition, verify bounded rejection or repair, and state controlled native and owner transfer limits`,
+              `Declare ${httpTrack} stakeholder outcome, risk tier, revision, Python and dependency versions, model and tool boundaries, authority, data class, and turn, token, time, cost, and retry budgets`,
+              `Predict ${httpTrack} validation, model, tool proposal, authorization, execution, state, stream, failure, stop, rollback, and recovery outcomes`,
+              `Run the smallest deterministic ${httpTrack} pure-Python model and retain exact input, decision, trace, changed-case, rejection, and recovery evidence`,
+              `Change one ${httpTrack} input, schema, model response, tool argument, approval, state, failure, security, evaluation, or release condition, verify bounded rejection or repair, and state controlled native-provider transfer limits`,
             ]
-          : httpTrack?.startsWith('Maze')
+          : httpTrack?.startsWith('Authorized crawling')
             ? [
-                `Declare ${httpTrack} player outcome, revision, Python and Tcl/Tk versions, grid identity, coordinate units, seed, accessibility profile, and state, callback, render, memory, and time budgets`,
-                `Predict ${httpTrack} topology, frontier, state transition, event, callback, rendering, accessibility, failure, cancellation, rollback, and recovery outcomes`,
-                `Run the smallest deterministic ${httpTrack} pure-Python model and retain exact topology, state, frontier, event, and changed-case evidence`,
-                `Change one ${httpTrack} dimension, seed, wall, algorithm, heuristic, callback, focus path, scale, save, package, or release condition, verify bounded rejection or repair, and state native Tk transfer limits`,
+                `Declare ${httpTrack} owner authorization, stakeholder outcome, revision, runtime and dependency versions, seed and URL identity, scope, robots policy, privacy boundary, and page, byte, time, concurrency, and retention budgets`,
+                `Predict ${httpTrack} admission, fetch, redirect, decode, parse, extract, normalize, schedule, render, report, failure, stop, rollback, and recovery outcomes`,
+                `Run the smallest deterministic ${httpTrack} fixed-fixture pure-Python model and retain exact policy, provenance, frontier, changed-case, and rejection evidence`,
+                `Change one ${httpTrack} authorization, URL, response, markup, selector, frontier, timing, session, browser, privacy, security, export, or recovery condition, verify bounded rejection or repair, and state controlled native and owner transfer limits`,
               ]
-            : httpTrack?.startsWith('Static-site')
+            : httpTrack?.startsWith('Maze')
               ? [
-                  `Declare ${httpTrack} reader outcome, content authority, revision, source identity, parser scope, trust policy, route base, accessibility need, and byte, depth, work, and output budgets`,
-                  `Predict ${httpTrack} admission, decoding, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery outcomes`,
-                  `Run the smallest deterministic ${httpTrack} publication model and retain exact intermediate and changed-case results`,
-                  `Change one ${httpTrack} document, delimiter, nesting, route, URL, asset, viewport, cache, deployment, or recovery condition, verify bounded rejection or repair, and state production transfer limits`,
+                  `Declare ${httpTrack} player outcome, revision, Python and Tcl/Tk versions, grid identity, coordinate units, seed, accessibility profile, and state, callback, render, memory, and time budgets`,
+                  `Predict ${httpTrack} topology, frontier, state transition, event, callback, rendering, accessibility, failure, cancellation, rollback, and recovery outcomes`,
+                  `Run the smallest deterministic ${httpTrack} pure-Python model and retain exact topology, state, frontier, event, and changed-case evidence`,
+                  `Change one ${httpTrack} dimension, seed, wall, algorithm, heuristic, callback, focus path, scale, save, package, or release condition, verify bounded rejection or repair, and state native Tk transfer limits`,
                 ]
-              : httpTrack?.startsWith('Asteroids')
+              : httpTrack?.startsWith('Static-site')
                 ? [
-                    `Declare ${httpTrack} player outcome, revision, runtime, seed, input trace, accessibility profile, and frame, entity, collision, audio, and memory budgets`,
-                    `Predict ${httpTrack} event, intent, simulation, collision, cleanup, rendering, cue, failure, pause, rollback, and recovery outcomes`,
-                    `Run the smallest deterministic ${httpTrack} simulation model and retain exact intermediate and changed-case results`,
-                    `Change one ${httpTrack} frame rate, stall, seam, device, collision, cue, save, package, or release condition, verify bounded rejection or repair, and state desktop transfer limits`,
+                    `Declare ${httpTrack} reader outcome, content authority, revision, source identity, parser scope, trust policy, route base, accessibility need, and byte, depth, work, and output budgets`,
+                    `Predict ${httpTrack} admission, decoding, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery outcomes`,
+                    `Run the smallest deterministic ${httpTrack} publication model and retain exact intermediate and changed-case results`,
+                    `Change one ${httpTrack} document, delimiter, nesting, route, URL, asset, viewport, cache, deployment, or recovery condition, verify bounded rejection or repair, and state production transfer limits`,
                   ]
-                : httpTrack?.startsWith('Bookbot')
+                : httpTrack?.startsWith('Asteroids')
                   ? [
-                      `Declare ${httpTrack} user outcome, corpus authority and identity, revision, text policy, command contract, and byte, time, memory, and output budgets`,
-                      `Predict ${httpTrack} admission, decoding, normalization, tokenization, counting, ranking, reporting, status, failure, cleanup, rollback, and recovery outcomes`,
-                      `Run the smallest deterministic ${httpTrack} evidence model and retain exact intermediate and changed-case results`,
-                      `Change one ${httpTrack} file, encoding, Unicode sequence, stream split, tie, argument, or release condition, verify bounded rejection or repair, and state native transfer limits`,
+                      `Declare ${httpTrack} player outcome, revision, runtime, seed, input trace, accessibility profile, and frame, entity, collision, audio, and memory budgets`,
+                      `Predict ${httpTrack} event, intent, simulation, collision, cleanup, rendering, cue, failure, pause, rollback, and recovery outcomes`,
+                      `Run the smallest deterministic ${httpTrack} simulation model and retain exact intermediate and changed-case results`,
+                      `Change one ${httpTrack} frame rate, stall, seam, device, collision, cue, save, package, or release condition, verify bounded rejection or repair, and state desktop transfer limits`,
                     ]
-                  : httpTrack?.startsWith('RAG')
+                  : httpTrack?.startsWith('Bookbot')
                     ? [
-                        `Declare ${httpTrack} stakeholder outcome, corpus, source, document, chunk, query, relevance, tenant, component versions, and time, token, memory, and cost budgets`,
-                        `Predict ${httpTrack} ingestion, retrieval, filter, fusion, reranking, context, generation, citation, abstention, failure, cleanup, rollback, and recovery outcomes`,
+                        `Declare ${httpTrack} user outcome, corpus authority and identity, revision, text policy, command contract, and byte, time, memory, and output budgets`,
+                        `Predict ${httpTrack} admission, decoding, normalization, tokenization, counting, ranking, reporting, status, failure, cleanup, rollback, and recovery outcomes`,
                         `Run the smallest deterministic ${httpTrack} evidence model and retain exact intermediate and changed-case results`,
-                        `Change one ${httpTrack} query, document, tenant, language, version, or attack condition, verify bounded rejection or abstention, and state native production transfer limits`,
+                        `Change one ${httpTrack} file, encoding, Unicode sequence, stream split, tie, argument, or release condition, verify bounded rejection or repair, and state native transfer limits`,
                       ]
-                    : httpTrack?.startsWith('Cryptography')
+                    : httpTrack?.startsWith('RAG')
                       ? [
-                          `Declare ${httpTrack} asset, adversary, required property, trust boundary, canonical bytes, suite, and byte, work, time, and secret-retention budgets`,
-                          `Predict ${httpTrack} key and nonce ownership, state transition, tamper result, failure visibility, cleanup, rollback, and recovery outcomes`,
-                          `Run the smallest deterministic ${httpTrack} decision or allowlisted API model and retain exact changed-case evidence`,
-                          `Inject one changed ${httpTrack} byte, context, key, nonce, order, or policy failure, verify clean rejection, and state native transfer limits`,
+                          `Declare ${httpTrack} stakeholder outcome, corpus, source, document, chunk, query, relevance, tenant, component versions, and time, token, memory, and cost budgets`,
+                          `Predict ${httpTrack} ingestion, retrieval, filter, fusion, reranking, context, generation, citation, abstention, failure, cleanup, rollback, and recovery outcomes`,
+                          `Run the smallest deterministic ${httpTrack} evidence model and retain exact intermediate and changed-case results`,
+                          `Change one ${httpTrack} query, document, tenant, language, version, or attack condition, verify bounded rejection or abstention, and state native production transfer limits`,
                         ]
-                      : httpTrack?.startsWith('S3')
+                      : httpTrack?.startsWith('Cryptography')
                         ? [
-                            `Declare ${httpTrack} stakeholder outcome, file and object identity, owner, state, and byte, time, concurrency, cache, and cost budgets`,
-                            `Predict ${httpTrack} authorization, custody, transfer, integrity, cache, failure, cancellation, cleanup, rollback, and recovery outcomes`,
-                            `Run the smallest deterministic ${httpTrack} storage decision model and retain inspectable changed-case evidence`,
-                            `Inject one changed ${httpTrack} failure, verify bounded cleanup and recovery, and state controlled AWS transfer limits`,
+                            `Declare ${httpTrack} asset, adversary, required property, trust boundary, canonical bytes, suite, and byte, work, time, and secret-retention budgets`,
+                            `Predict ${httpTrack} key and nonce ownership, state transition, tamper result, failure visibility, cleanup, rollback, and recovery outcomes`,
+                            `Run the smallest deterministic ${httpTrack} decision or allowlisted API model and retain exact changed-case evidence`,
+                            `Inject one changed ${httpTrack} byte, context, key, nonce, order, or policy failure, verify clean rejection, and state native transfer limits`,
                           ]
-                        : httpTrack?.startsWith('RabbitMQ')
+                        : httpTrack?.startsWith('S3')
                           ? [
-                              `Declare ${httpTrack} outcome, topology, ownership, identity, and byte, time, attempt, and concurrency budgets`,
-                              `Predict ${httpTrack} publish, route, custody, delivery, effect, failure, cancellation, and recovery outcomes`,
-                              `Run the smallest deterministic ${httpTrack} messaging model and retain inspectable changed-case evidence`,
-                              `Inject one changed ${httpTrack} failure, verify bounded cleanup, and state live-broker transfer limits`,
+                              `Declare ${httpTrack} stakeholder outcome, file and object identity, owner, state, and byte, time, concurrency, cache, and cost budgets`,
+                              `Predict ${httpTrack} authorization, custody, transfer, integrity, cache, failure, cancellation, cleanup, rollback, and recovery outcomes`,
+                              `Run the smallest deterministic ${httpTrack} storage decision model and retain inspectable changed-case evidence`,
+                              `Inject one changed ${httpTrack} failure, verify bounded cleanup and recovery, and state controlled AWS transfer limits`,
                             ]
-                          : httpTrack
+                          : httpTrack?.startsWith('RabbitMQ')
                             ? [
-                                `Declare ${httpTrack} method semantics, target authority, credentials, body ownership, and byte and time budgets`,
-                                `Predict ${httpTrack} resolution, transport, redirect, status, representation, retry, and cleanup outcomes`,
-                                `Run the smallest deterministic ${httpTrack} request or response model and retain inspectable evidence`,
-                                `Inject one changed ${httpTrack} failure, verify bounded cleanup, and state live-network transfer limits`,
+                                `Declare ${httpTrack} outcome, topology, ownership, identity, and byte, time, attempt, and concurrency budgets`,
+                                `Predict ${httpTrack} publish, route, custody, delivery, effect, failure, cancellation, and recovery outcomes`,
+                                `Run the smallest deterministic ${httpTrack} messaging model and retain inspectable changed-case evidence`,
+                                `Inject one changed ${httpTrack} failure, verify bounded cleanup, and state live-broker transfer limits`,
                               ]
-                            : family === 'linux'
+                            : httpTrack
                               ? [
-                                  'Capture user, directory, environment, target state, and authoritative command behavior',
-                                  'Predict shell parsing, expansion, permissions, side effects, exit status, and safety boundary',
-                                  'Run the smallest simulated observation or reversible change and retain exact output',
-                                  'Verify changed state, failure path, rollback, and an accessible operations handoff',
+                                  `Declare ${httpTrack} method semantics, target authority, credentials, body ownership, and byte and time budgets`,
+                                  `Predict ${httpTrack} resolution, transport, redirect, status, representation, retry, and cleanup outcomes`,
+                                  `Run the smallest deterministic ${httpTrack} request or response model and retain inspectable evidence`,
+                                  `Inject one changed ${httpTrack} failure, verify bounded cleanup, and state live-network transfer limits`,
                                 ]
-                              : family === 'git'
+                              : family === 'linux'
                                 ? [
-                                    'Inspect repository boundary, config origin, current operation, worktree, index, refs, and graph',
-                                    'Preserve uncommitted work and a recovery ref, then state intended tree and topology',
-                                    'Preview and perform the least destructive simulated Git operation',
-                                    'Verify status, staged and range diffs, graph, tests, remote target, and recovery path',
+                                    'Capture user, directory, environment, target state, and authoritative command behavior',
+                                    'Predict shell parsing, expansion, permissions, side effects, exit status, and safety boundary',
+                                    'Run the smallest simulated observation or reversible change and retain exact output',
+                                    'Verify changed state, failure path, rollback, and an accessible operations handoff',
                                   ]
-                                : family === 'typescript'
+                                : family === 'git'
                                   ? [
-                                      'Declare the domain relationship and identify every untrusted runtime boundary',
-                                      'Infer or annotate the smallest sound type and validate unknown values before narrowing',
-                                      'Run strict diagnostics, inspect emitted JavaScript, and execute the changed case',
-                                      'Add compile-time rejection and runtime boundary evidence, then document remaining limits',
+                                      'Inspect repository boundary, config origin, current operation, worktree, index, refs, and graph',
+                                      'Preserve uncommitted work and a recovery ref, then state intended tree and topology',
+                                      'Preview and perform the least destructive simulated Git operation',
+                                      'Verify status, staged and range diffs, graph, tests, remote target, and recovery path',
                                     ]
-                                  : family === 'javascript'
+                                  : family === 'typescript'
                                     ? [
-                                        'Declare inputs, observable output, ownership, and the runtime behavior being tested',
-                                        'Trace values, bindings, receivers, mutations, and queued work before editing code',
-                                        'Implement the smallest behavior and retain an assertion over the actual result',
-                                        'Run boundary and changed-event cases, inspect failures, and remove accidental coupling',
+                                        'Declare the domain relationship and identify every untrusted runtime boundary',
+                                        'Infer or annotate the smallest sound type and validate unknown values before narrowing',
+                                        'Run strict diagnostics, inspect emitted JavaScript, and execute the changed case',
+                                        'Add compile-time rejection and runtime boundary evidence, then document remaining limits',
                                       ]
-                                    : family === 'go'
+                                    : family === 'javascript'
                                       ? [
-                                          'Declare inputs, result and error contracts, ownership, and every goroutine stop condition',
-                                          'Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing',
-                                          'Run the smallest isolated Go program and retain output or invariant evidence',
-                                          'Change a boundary input or schedule, verify cleanup and races, then state toolchain limits',
+                                          'Declare inputs, observable output, ownership, and the runtime behavior being tested',
+                                          'Trace values, bindings, receivers, mutations, and queued work before editing code',
+                                          'Implement the smallest behavior and retain an assertion over the actual result',
+                                          'Run boundary and changed-event cases, inspect failures, and remove accidental coupling',
                                         ]
-                                      : family === 'sql'
+                                      : family === 'go'
                                         ? [
-                                            'Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality',
-                                            'Predict relational transformations, constraint or transaction effects, and dialect boundary before execution',
-                                            'Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan',
-                                            'Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits',
+                                            'Declare inputs, result and error contracts, ownership, and every goroutine stop condition',
+                                            'Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing',
+                                            'Run the smallest isolated Go program and retain output or invariant evidence',
+                                            'Change a boundary input or schedule, verify cleanup and races, then state toolchain limits',
                                           ]
-                                        : family === 'docker'
+                                        : family === 'sql'
                                           ? [
-                                              'Capture Docker versions, active context, desired artifact, current state, authority, and immutable identities',
-                                              'Predict build, image, process, storage, network, Compose, security, and cleanup effects before mutation',
-                                              'Review the smallest Dockerfile, Compose, Bake, or policy increment in the deterministic browser simulator',
-                                              'Reject one failure, record repair and cleanup, then name the disposable live-environment transfer evidence',
+                                              'Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality',
+                                              'Predict relational transformations, constraint or transaction effects, and dialect boundary before execution',
+                                              'Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan',
+                                              'Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits',
                                             ]
-                                          : family === 'kubernetes'
+                                          : family === 'docker'
                                             ? [
-                                                'Capture client and server versions, context, namespace, API discovery, current object state, ownership, and immutable release identity',
-                                                'Predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, security, disruption, and cleanup effects',
-                                                'Review the smallest manifest, Kustomize, Helm, policy, or runbook increment in the deterministic browser simulator',
-                                                'Reject one failure, record repair and rollback, then name authorized disposable-cluster transfer evidence',
+                                                'Capture Docker versions, active context, desired artifact, current state, authority, and immutable identities',
+                                                'Predict build, image, process, storage, network, Compose, security, and cleanup effects before mutation',
+                                                'Review the smallest Dockerfile, Compose, Bake, or policy increment in the deterministic browser simulator',
+                                                'Reject one failure, record repair and cleanup, then name the disposable live-environment transfer evidence',
                                               ]
-                                            : family === 'cicd'
+                                            : family === 'kubernetes'
                                               ? [
-                                                  'Capture event, workflow and revision identity, actor, permissions, runner, toolchain, dependency, artifact, environment, and release state',
-                                                  'Predict expression, shell, graph, trust, cache, artifact, deployment, user-signal, failure, and cleanup effects before mutation',
-                                                  'Review the smallest workflow, policy, build, attestation, or release increment in the deterministic browser simulator',
-                                                  'Inject one fault, record causal evidence, repair and rollback, then name authorized disposable delivery-environment transfer evidence',
+                                                  'Capture client and server versions, context, namespace, API discovery, current object state, ownership, and immutable release identity',
+                                                  'Predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, security, disruption, and cleanup effects',
+                                                  'Review the smallest manifest, Kustomize, Helm, policy, or runbook increment in the deterministic browser simulator',
+                                                  'Reject one failure, record repair and rollback, then name authorized disposable-cluster transfer evidence',
                                                 ]
-                                              : family === 'functional'
+                                              : family === 'cicd'
                                                 ? [
-                                                    'Separate immutable values from observable effects and ownership boundaries',
-                                                    'Specify a total transformation contract and explicit failure representation',
-                                                    'Compose and run the smallest pipeline while retaining an inspectable trace',
-                                                    'Repeat with changed input, verify input preservation, and move effects to the shell',
+                                                    'Capture event, workflow and revision identity, actor, permissions, runner, toolchain, dependency, artifact, environment, and release state',
+                                                    'Predict expression, shell, graph, trust, cache, artifact, deployment, user-signal, failure, and cleanup effects before mutation',
+                                                    'Review the smallest workflow, policy, build, attestation, or release increment in the deterministic browser simulator',
+                                                    'Inject one fault, record causal evidence, repair and rollback, then name authorized disposable delivery-environment transfer evidence',
                                                   ]
-                                                : family === 'algorithms'
+                                                : family === 'functional'
                                                   ? [
-                                                      'Define input, output, preconditions, size, and the operation being counted',
-                                                      'Choose a correct baseline and state its loop or representation invariant',
-                                                      'Trace the candidate on a minimal instance and derive time and space cost',
-                                                      'Attack it with boundary and adversarial cases, then justify any optimization',
+                                                      'Separate immutable values from observable effects and ownership boundaries',
+                                                      'Specify a total transformation contract and explicit failure representation',
+                                                      'Compose and run the smallest pipeline while retaining an inspectable trace',
+                                                      'Repeat with changed input, verify input preservation, and move effects to the shell',
                                                     ]
-                                                  : [
-                                                      'Define the stakeholder decision, quantities, authority, and constraints',
-                                                      'Choose and document the smallest defensible model or procedure',
-                                                      'Execute the model while preserving inspectable intermediate evidence',
-                                                      'Test boundaries and changed cases, communicate limits, and revise',
-                                                    ];
+                                                  : family === 'algorithms'
+                                                    ? [
+                                                        'Define input, output, preconditions, size, and the operation being counted',
+                                                        'Choose a correct baseline and state its loop or representation invariant',
+                                                        'Trace the candidate on a minimal instance and derive time and space cost',
+                                                        'Attack it with boundary and adversarial cases, then justify any optimization',
+                                                      ]
+                                                    : [
+                                                        'Define the stakeholder decision, quantities, authority, and constraints',
+                                                        'Choose and document the smallest defensible model or procedure',
+                                                        'Execute the model while preserving inspectable intermediate evidence',
+                                                        'Test boundaries and changed cases, communicate limits, and revise',
+                                                      ];
   return labels.map((text, index) => ({
     id: `${id}-${['frame', 'model', 'execute', 'verify'][index]}`,
     text: contextLabel ? `${text} for the ${contextLabel} case` : text,
@@ -1578,6 +1687,25 @@ failure: reject invented impact, hidden assistance, exposed data, or unverified 
 repair: correct the first unsupported claim and add a changed-candidate regression
 owner: learner controls every external action
 transfer-boundary: manual learner-approved profile, application, conversation, interview, and offer decisions`;
+  }
+  if (family === 'support') {
+    return `workspace: support
+ticket-id: fictional-ticket-${n}
+user-impact: one user cannot complete the scheduled accessible service task
+environment: fictional managed device, version, configuration, owner, dependency, and evidence time
+safety-authority: consented text simulation only with hazard, privacy, access, and escalation stop rules
+baseline: known-good fixture completes the task and records expected state plus user-visible status
+symptom: changed fixture fails reproducibly under one recorded condition and preserves exact evidence
+recent-change: one versioned change precedes the symptom while a competing unchanged case remains
+hypothesis: the changed layer causes the symptom; a neighboring layer is the competing explanation
+test: compare one safe reversible changed fixture with predicted outcomes and no real device mutation
+observation: the actual result rejects one explanation and changes the next bounded decision
+repair-rollback: restore the reviewed fixture state and revert on the named regression signal
+verify: repeat original, changed user, changed input, restart, side-effect, and recurrence cases
+prevention: monitor the causal signal, retain recovery evidence, assign an owner, and review on change
+escalation: stop for physical, electrical, credential, malware, data, legal, or production authority
+documentation: structured plain-language status, redaction, keyboard route, user handoff, and uncertainty
+transfer-boundary: authorized disposable equipment or simulator only`;
   }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
@@ -2056,6 +2184,7 @@ function targetFor(family, moduleId) {
   if (family === 'sql') return 'sql';
   if (family === 'network') return 'shell';
   if (family === 'prompt') return 'prompt';
+  if (family === 'support') return 'config';
   if (family === 'portfolio') return 'config';
   if (family === 'career') return 'config';
   if (family === 'gates') return 'config';
@@ -2082,7 +2211,31 @@ function starterFiles(family, courseId) {
     config: '',
     c: '',
   };
-  if (family === 'portfolio') {
+  if (family === 'support') {
+    files.config = `# ${courseId} cumulative fictional support evidence portfolio
+# Browser labs perform deterministic text-contract review only. They never execute learner
+# commands, inspect the host, touch devices or accounts, connect to networks, open equipment,
+# handle malware, erase media, contact people, or claim certification.
+workspace: support
+ticket-id: fictional-ticket
+user-impact: [replace with user outcome, scope, severity, and urgency]
+environment: [replace with asset, version, configuration, owner, dependency, and evidence time]
+safety-authority: [replace with consent, hazards, data custody, privacy, access, and stop rules]
+baseline: [replace with expected behavior, known-good state, conditions, and measurement]
+symptom: [replace with observed behavior, reproduction, frequency, timing, and evidence]
+recent-change: [replace with timeline, relevant changes, counterevidence, and unknowns]
+hypothesis: [replace with falsifiable cause, competing explanation, prediction, and confidence]
+test: [replace with one safe reversible discriminating test, changed case, and stop rule]
+observation: [replace with actual result, provenance, rejected inference, and next decision]
+repair-rollback: [replace with least-change repair, authority, backup, trigger, and restored state]
+verify: [replace with user outcome, original, changed, side-effect, restart, and recurrence checks]
+prevention: [replace with prevention, monitoring, owner, review date, and residual risk]
+escalation: [replace with stop threshold, destination, evidence packet, and requested decision]
+documentation: [replace with plain structured status, redaction, access, handoff, and uncertainty]
+transfer-boundary: authorized disposable equipment or simulator only
+review:
+`;
+  } else if (family === 'portfolio') {
     files.config = `# ${courseId} cumulative independent product evidence portfolio
 # Browser labs perform deterministic evidence-contract review only.
 # They never contact participants or services, execute commands, deploy, or claim live conformance.
@@ -3471,6 +3624,16 @@ func ${functionName}(input int) (int, bool) {
       requirement: `Append a safe ${family === 'git' ? 'repository' : family === 'linux' ? 'Linux operations' : 'network'} investigation headed "${marker}" with a concrete hypothesis, one bounded simulator command, and an observation that changes the next decision.`,
     };
   }
+  if (target === 'config' && family === 'support') {
+    const marker = `${competencyId}-${suffix}:`;
+    const concrete = '(?!\\[|describe|name|replace|todo)[^\\n]{12,}';
+    return {
+      marker,
+      pattern: `${marker}[\\s\\S]*?user-impact:\\s*${concrete}[\\s\\S]*?safety-authority:\\s*${concrete}[\\s\\S]*?hypothesis:\\s*${concrete}[\\s\\S]*?test:\\s*${concrete}[\\s\\S]*?observation:\\s*${concrete}[\\s\\S]*?repair-rollback:\\s*${concrete}[\\s\\S]*?verify:\\s*${concrete}[\\s\\S]*?escalation:\\s*${concrete}`,
+      example: `${marker}\n  user-impact: [replace with the bounded user outcome]\n  safety-authority: [replace with consent, hazards, and stop rule]\n  hypothesis: [replace with a falsifiable cause and competing explanation]\n  test: [replace with one reversible discriminating simulator test]\n  observation: [replace with the actual result and rejected inference]\n  repair-rollback: [replace with least-change repair and rollback trigger]\n  verify: [replace with original, changed, and side-effect checks]\n  escalation: [replace with threshold, destination, and evidence packet]`,
+      requirement: `Append a fictional support incident block headed "${marker}" with concrete user impact, safety and authority, competing hypothesis, bounded test, observation, repair and rollback, changed-case verification, and escalation evidence.`,
+    };
+  }
   const marker = `${competencyId}-${suffix}:`;
   return {
     marker,
@@ -3745,56 +3908,60 @@ function createBuilder({
   const httpEvidence = /^(?:http-(?:go|ts|py)|http-server-(?:go|ts))-/u.test(moduleId);
   const portfolioEvidence = family === 'portfolio';
   const careerEvidence = family === 'career';
-  const httpTrack = crawlerGoEvidence
-    ? 'Authorized site auditing and Go'
-    : crawlerTypescriptEvidence
-      ? 'Authorized site auditing and TypeScript'
-      : feedGoEvidence
-        ? 'Feed aggregation and Go'
-        : feedTypescriptEvidence
-          ? 'Feed aggregation and TypeScript'
-          : pokedexGoEvidence
-            ? 'Pokedex product engineering and Go'
-            : pokedexTypescriptEvidence
-              ? 'Pokedex product engineering and TypeScript'
-              : aiAgentPythonEvidence
-                ? 'Safe AI agents and Python'
-                : webScraperPythonEvidence
-                  ? 'Authorized crawling and Python'
-                  : mazePythonEvidence
-                    ? 'Maze solving, Tkinter, and Python'
-                    : staticSitePythonEvidence
-                      ? 'Static-site publishing and Python'
-                      : asteroidsPythonEvidence
-                        ? 'Asteroids, pygame-ce, and Python'
-                        : bookbotPythonEvidence
-                          ? 'Bookbot and Python'
-                          : ragPythonEvidence
-                            ? 'RAG and Python'
-                            : cryptographyGoEvidence
-                              ? 'Cryptography and Go'
-                              : storageTypescriptEvidence
-                                ? 'S3, CloudFront, and TypeScript'
-                                : storageGoEvidence
-                                  ? 'S3, CloudFront, and Go'
-                                  : rabbitGoEvidence
-                                    ? 'RabbitMQ and Go'
-                                    : rabbitTypescriptEvidence
-                                      ? 'RabbitMQ and TypeScript'
-                                      : moduleId.startsWith('http-go-')
-                                        ? 'Go'
-                                        : moduleId.startsWith('http-server-go-')
-                                          ? 'Go server'
-                                          : moduleId.startsWith('http-server-ts-')
-                                            ? 'Node and Express server'
-                                            : moduleId.startsWith('http-ts-')
-                                              ? 'Fetch and TypeScript'
-                                              : moduleId.startsWith('http-py-')
-                                                ? 'Python'
-                                                : null;
+  const supportEvidence = family === 'support';
+  const httpTrack = supportEvidence
+    ? 'CompTIA A+ support'
+    : crawlerGoEvidence
+      ? 'Authorized site auditing and Go'
+      : crawlerTypescriptEvidence
+        ? 'Authorized site auditing and TypeScript'
+        : feedGoEvidence
+          ? 'Feed aggregation and Go'
+          : feedTypescriptEvidence
+            ? 'Feed aggregation and TypeScript'
+            : pokedexGoEvidence
+              ? 'Pokedex product engineering and Go'
+              : pokedexTypescriptEvidence
+                ? 'Pokedex product engineering and TypeScript'
+                : aiAgentPythonEvidence
+                  ? 'Safe AI agents and Python'
+                  : webScraperPythonEvidence
+                    ? 'Authorized crawling and Python'
+                    : mazePythonEvidence
+                      ? 'Maze solving, Tkinter, and Python'
+                      : staticSitePythonEvidence
+                        ? 'Static-site publishing and Python'
+                        : asteroidsPythonEvidence
+                          ? 'Asteroids, pygame-ce, and Python'
+                          : bookbotPythonEvidence
+                            ? 'Bookbot and Python'
+                            : ragPythonEvidence
+                              ? 'RAG and Python'
+                              : cryptographyGoEvidence
+                                ? 'Cryptography and Go'
+                                : storageTypescriptEvidence
+                                  ? 'S3, CloudFront, and TypeScript'
+                                  : storageGoEvidence
+                                    ? 'S3, CloudFront, and Go'
+                                    : rabbitGoEvidence
+                                      ? 'RabbitMQ and Go'
+                                      : rabbitTypescriptEvidence
+                                        ? 'RabbitMQ and TypeScript'
+                                        : moduleId.startsWith('http-go-')
+                                          ? 'Go'
+                                          : moduleId.startsWith('http-server-go-')
+                                            ? 'Go server'
+                                            : moduleId.startsWith('http-server-ts-')
+                                              ? 'Node and Express server'
+                                              : moduleId.startsWith('http-ts-')
+                                                ? 'Fetch and TypeScript'
+                                                : moduleId.startsWith('http-py-')
+                                                  ? 'Python'
+                                                  : null;
   const usesExecutableEvidence =
     portfolioEvidence ||
     careerEvidence ||
+    supportEvidence ||
     family === 'sql' ||
     family === 'go' ||
     family === 'c' ||
@@ -3835,7 +4002,7 @@ function createBuilder({
         ? `${instruction}\n\nEvidence target: ${contextualTitle}.`
         : instruction,
       why: usesExecutableEvidence
-        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : portfolioEvidence ? 'mechanically reviewable stakeholder, affected-user, artifact, changed-case, failure, repair, release, recovery, and transfer decision' : careerEvidence ? 'mechanically reviewable target-role, truthful-claim, contribution, accessibility, privacy, consent, process-state, changed-candidate, failure, repair, decision, and transfer' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
+        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : supportEvidence ? 'mechanically reviewable user-impact, asset, safety, baseline, symptom, hypothesis, test, observation, repair, rollback, verification, escalation, documentation, and transfer decision' : portfolioEvidence ? 'mechanically reviewable stakeholder, affected-user, artifact, changed-case, failure, repair, release, recovery, and transfer decision' : careerEvidence ? 'mechanically reviewable target-role, truthful-claim, contribution, accessibility, privacy, consent, process-state, changed-candidate, failure, repair, decision, and transfer' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
         : why,
       buildsOnStepIds: previous ? [previous] : [],
       content: extra.content ?? [],
@@ -3845,9 +4012,9 @@ function createBuilder({
         extra.hints ??
         (usesExecutableEvidence
           ? [
-              `For ${contextualTitle}, name the ${crawlerGoEvidence ? 'owner, permission, revision, Go, seed, URL, scope, robots, response, body, tree, record, frontier, goroutine, accessibility, report, cleanup, recovery, and native-transfer boundary' : crawlerTypescriptEvidence ? 'owner, authorization, source and emitted revision, Node, TypeScript, URL, robots, unknown value, Fetch, Promise, AbortSignal, browser, accessibility, report, handle, recovery, and native-transfer boundary' : feedGoEvidence ? 'reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary' : feedTypescriptEvidence ? 'reader, publisher, source and emitted revision, Node, TypeScript, tenant, URL, unknown XML, runtime validation, Fetch, Promise, AbortSignal, PostgreSQL, Express, handle, accessibility, recovery, and native-transfer boundary' : aiAgentPythonEvidence ? 'stakeholder, risk, revision, Python, SDK, API, model, interaction, call, tool, authority, state, budget, approval, memory, evaluation, trace, privacy, security, accessibility, recovery, and provider-transfer boundary' : webScraperPythonEvidence ? 'owner, authorization, stakeholder, revision, runtime, dependency, seed, URL, origin, robots, response, parser, selector, record, frontier, privacy, report, stop, recovery, and transfer boundary' : mazePythonEvidence ? 'player, revision, Python, Tcl and Tk versions, grid, coordinate, seed, topology, frontier, path, event, state, render, accessibility, package, recovery, and native-transfer boundary' : staticSitePythonEvidence ? 'reader, content authority, revision, source, span, parser, trust, route, render, asset, accessibility, artifact, deployment, and recovery boundary' : asteroidsPythonEvidence ? 'player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary' : bookbotPythonEvidence ? 'stakeholder, corpus authority, revision, path, bytes, encoding, Unicode, token, count, rank, report, command, test, package, release, and transfer boundary' : ragPythonEvidence ? 'stakeholder, corpus, source, document, chunk, model, index, query, relevance, tenant, context, citation, evaluation, and transfer boundary' : careerEvidence ? 'learner goal, target role, jurisdiction, audience, truthful claim, contribution, source date, evidence revision, accessibility, privacy, consent, process state, decision owner, non-claim, and transfer boundary' : family === 'sql' ? 'row grain' : family === 'c' ? 'size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary' : storageTypescriptEvidence ? 'stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary' : storageGoEvidence ? 'stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary' : httpEvidence ? 'method, authority, body, byte, time, and credential boundary' : family === 'docker' ? 'daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary' : family === 'kubernetes' ? 'context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary' : family === 'cicd' ? 'event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary' : 'types, ownership, and stop path'}, ${concept} precondition, or invariant that must hold.`,
-              `At ${contextualTitle}, trace this concrete input and predict ${aiAgentPythonEvidence ? 'model request, interaction step, schema validation, tool choice, authorization, approval, result, state transition, memory, evaluation, trace, rejection, stop, rollback, recovery, and controlled-provider evidence' : webScraperPythonEvidence ? 'authorization, URL admission, robots, fetch, redirect, decode, parse, extract, provenance, schedule, report, rejection, stop, rollback, recovery, and native evidence' : mazePythonEvidence ? 'coordinate, wall, topology, frontier, route, callback, transition, render, accessibility, failure, rollback, recovery, and native evidence' : staticSitePythonEvidence ? 'admission, decoding, tokenization, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery evidence' : asteroidsPythonEvidence ? 'event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence' : bookbotPythonEvidence ? 'admission, decoding, normalization, tokenization, counting, ranking, formatting, stdout, stderr, status, test, package, failure, and recovery evidence' : ragPythonEvidence ? 'ingestion, normalization, retrieval, filter, fusion, reranking, context, claim, citation, abstention, latency, cost, failure, and recovery evidence' : careerEvidence ? 'targeting, source, evidence, contribution, access, privacy, consent, process, decision, rejection, repair, follow-up, and learner-controlled transfer evidence' : family === 'sql' ? 'rows or changes' : family === 'c' ? 'size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing' : storageEvidence ? 'runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence' : httpEvidence ? 'resolution, redirect, status, representation, retry, and cleanup evidence' : family === 'docker' ? 'build, image, container, mount, network, Compose, policy, and teardown evidence' : family === 'kubernetes' ? 'admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence' : family === 'cicd' ? 'evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence' : 'values, errors, blocking, and output'} before reviewing it: ${changedCase}`,
-              `For ${contextualTitle}, challenge the documented misconception with ${aiAgentPythonEvidence ? 'changed-model, API, schema, tool, authority, result, state, loop, approval, context, memory, retry, injection, evaluation, telemetry, rate, cost, framework, sandbox, deployment, recovery, and controlled provider-transfer' : webScraperPythonEvidence ? 'changed-authorization, URL, robots rule, response, encoding, markup, selector, frontier, timing, session, browser, privacy, security, export, failure, recovery, and controlled owner transfer' : mazePythonEvidence ? 'changed-grid, seed, wall, generator, solver, weight, heuristic, callback, state, focus, scale, save, package, recovery, and controlled native-transfer' : staticSitePythonEvidence ? 'changed-source, delimiter, Unicode, nesting, route, URL, asset, viewport, cache, security, deployment, recovery, and controlled production-transfer' : asteroidsPythonEvidence ? 'changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer' : bookbotPythonEvidence ? 'changed-file, changed-encoding, Unicode, token, ranking, stream, CLI, test, package, security, accessibility, failure, recovery, and controlled native-transfer' : ragPythonEvidence ? 'changed-query, changed-corpus, relevance, retrieval, grounding, citation, adversarial, accessibility, failure, recovery, and controlled native or production-transfer' : careerEvidence ? 'changed-candidate, target-role, source-date, jurisdiction, audience, access, privacy, consent, process-state, interview, offer, rejection, repair, and learner-controlled transfer' : family === 'sql' ? 'result, constraint, or plan' : family === 'c' ? 'changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer' : storageEvidence ? 'runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer' : httpEvidence ? 'request, response, fault, policy, and transfer' : family === 'docker' ? 'manifest, inspect, lifecycle, failure, repair, and transfer' : family === 'kubernetes' ? 'object, condition, event, policy, failure, repair, rollback, and transfer' : family === 'cicd' ? 'workflow, run, artifact, policy, fault, repair, rollback, and transfer' : 'runtime, failure, race, or toolchain'} evidence: ${competency?.misconceptions[0] ?? 'find the first violated contract'}`,
+              `For ${contextualTitle}, name the ${crawlerGoEvidence ? 'owner, permission, revision, Go, seed, URL, scope, robots, response, body, tree, record, frontier, goroutine, accessibility, report, cleanup, recovery, and native-transfer boundary' : crawlerTypescriptEvidence ? 'owner, authorization, source and emitted revision, Node, TypeScript, URL, robots, unknown value, Fetch, Promise, AbortSignal, browser, accessibility, report, handle, recovery, and native-transfer boundary' : feedGoEvidence ? 'reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary' : feedTypescriptEvidence ? 'reader, publisher, source and emitted revision, Node, TypeScript, tenant, URL, unknown XML, runtime validation, Fetch, Promise, AbortSignal, PostgreSQL, Express, handle, accessibility, recovery, and native-transfer boundary' : aiAgentPythonEvidence ? 'stakeholder, risk, revision, Python, SDK, API, model, interaction, call, tool, authority, state, budget, approval, memory, evaluation, trace, privacy, security, accessibility, recovery, and provider-transfer boundary' : webScraperPythonEvidence ? 'owner, authorization, stakeholder, revision, runtime, dependency, seed, URL, origin, robots, response, parser, selector, record, frontier, privacy, report, stop, recovery, and transfer boundary' : mazePythonEvidence ? 'player, revision, Python, Tcl and Tk versions, grid, coordinate, seed, topology, frontier, path, event, state, render, accessibility, package, recovery, and native-transfer boundary' : staticSitePythonEvidence ? 'reader, content authority, revision, source, span, parser, trust, route, render, asset, accessibility, artifact, deployment, and recovery boundary' : asteroidsPythonEvidence ? 'player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary' : bookbotPythonEvidence ? 'stakeholder, corpus authority, revision, path, bytes, encoding, Unicode, token, count, rank, report, command, test, package, release, and transfer boundary' : ragPythonEvidence ? 'stakeholder, corpus, source, document, chunk, model, index, query, relevance, tenant, context, citation, evaluation, and transfer boundary' : supportEvidence ? 'user impact, fictional ticket, asset, environment, authorization, hazard, baseline, symptom, timeline, hypothesis, test, observation, repair, rollback, verification, prevention, escalation, accessible documentation, and transfer boundary' : careerEvidence ? 'learner goal, target role, jurisdiction, audience, truthful claim, contribution, source date, evidence revision, accessibility, privacy, consent, process state, decision owner, non-claim, and transfer boundary' : family === 'sql' ? 'row grain' : family === 'c' ? 'size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary' : storageTypescriptEvidence ? 'stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary' : storageGoEvidence ? 'stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary' : httpEvidence ? 'method, authority, body, byte, time, and credential boundary' : family === 'docker' ? 'daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary' : family === 'kubernetes' ? 'context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary' : family === 'cicd' ? 'event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary' : 'types, ownership, and stop path'}, ${concept} precondition, or invariant that must hold.`,
+              `At ${contextualTitle}, trace this concrete input and predict ${aiAgentPythonEvidence ? 'model request, interaction step, schema validation, tool choice, authorization, approval, result, state transition, memory, evaluation, trace, rejection, stop, rollback, recovery, and controlled-provider evidence' : webScraperPythonEvidence ? 'authorization, URL admission, robots, fetch, redirect, decode, parse, extract, provenance, schedule, report, rejection, stop, rollback, recovery, and native evidence' : mazePythonEvidence ? 'coordinate, wall, topology, frontier, route, callback, transition, render, accessibility, failure, rollback, recovery, and native evidence' : staticSitePythonEvidence ? 'admission, decoding, tokenization, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery evidence' : asteroidsPythonEvidence ? 'event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence' : bookbotPythonEvidence ? 'admission, decoding, normalization, tokenization, counting, ranking, formatting, stdout, stderr, status, test, package, failure, and recovery evidence' : ragPythonEvidence ? 'ingestion, normalization, retrieval, filter, fusion, reranking, context, claim, citation, abstention, latency, cost, failure, and recovery evidence' : supportEvidence ? 'user impact, safety and authority, baseline, reproduction, timeline, hypothesis, bounded test, observation, rejection, repair, rollback, original and changed-case verification, prevention, escalation, and controlled transfer evidence' : careerEvidence ? 'targeting, source, evidence, contribution, access, privacy, consent, process, decision, rejection, repair, follow-up, and learner-controlled transfer evidence' : family === 'sql' ? 'rows or changes' : family === 'c' ? 'size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing' : storageEvidence ? 'runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence' : httpEvidence ? 'resolution, redirect, status, representation, retry, and cleanup evidence' : family === 'docker' ? 'build, image, container, mount, network, Compose, policy, and teardown evidence' : family === 'kubernetes' ? 'admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence' : family === 'cicd' ? 'evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence' : 'values, errors, blocking, and output'} before reviewing it: ${changedCase}`,
+              `For ${contextualTitle}, challenge the documented misconception with ${aiAgentPythonEvidence ? 'changed-model, API, schema, tool, authority, result, state, loop, approval, context, memory, retry, injection, evaluation, telemetry, rate, cost, framework, sandbox, deployment, recovery, and controlled provider-transfer' : webScraperPythonEvidence ? 'changed-authorization, URL, robots rule, response, encoding, markup, selector, frontier, timing, session, browser, privacy, security, export, failure, recovery, and controlled owner transfer' : mazePythonEvidence ? 'changed-grid, seed, wall, generator, solver, weight, heuristic, callback, state, focus, scale, save, package, recovery, and controlled native-transfer' : staticSitePythonEvidence ? 'changed-source, delimiter, Unicode, nesting, route, URL, asset, viewport, cache, security, deployment, recovery, and controlled production-transfer' : asteroidsPythonEvidence ? 'changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer' : bookbotPythonEvidence ? 'changed-file, changed-encoding, Unicode, token, ranking, stream, CLI, test, package, security, accessibility, failure, recovery, and controlled native-transfer' : ragPythonEvidence ? 'changed-query, changed-corpus, relevance, retrieval, grounding, citation, adversarial, accessibility, failure, recovery, and controlled native or production-transfer' : supportEvidence ? 'changed-user, device, version, hazard, baseline, symptom, timeline, access need, hypothesis, test result, repair, restart, recurrence, escalation, and controlled equipment-transfer' : careerEvidence ? 'changed-candidate, target-role, source-date, jurisdiction, audience, access, privacy, consent, process-state, interview, offer, rejection, repair, and learner-controlled transfer' : family === 'sql' ? 'result, constraint, or plan' : family === 'c' ? 'changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer' : storageEvidence ? 'runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer' : httpEvidence ? 'request, response, fault, policy, and transfer' : family === 'docker' ? 'manifest, inspect, lifecycle, failure, repair, and transfer' : family === 'kubernetes' ? 'object, condition, event, policy, failure, repair, rollback, and transfer' : family === 'cicd' ? 'workflow, run, artifact, policy, fault, repair, rollback, and transfer' : 'runtime, failure, race, or toolchain'} evidence: ${competency?.misconceptions[0] ?? 'find the first violated contract'}`,
             ]
           : [
               `Name the ${concept} precondition or invariant that the ${activityKind} case must preserve.`,
@@ -3901,25 +4068,27 @@ function createBuilder({
                               ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} query, omit corpus and version identity, relevance judgments, tenant policy, changed documents, abstention, citations, failure and recovery, then accept a plausible answer as RAG proof.`
                               : httpEvidence
                                 ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output.`
-                                : family === 'algorithms'
-                                  ? `Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for ${humanize(competencyId)}.`
-                                  : family === 'functional'
-                                    ? `Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of ${humanize(competencyId)}.`
-                                    : family === 'sql'
-                                      ? `Run a convenient ${humanize(competencyId)} query for ${title.toLowerCase()}, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid.`
-                                      : family === 'c'
-                                        ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe.`
-                                        : cryptographyGoEvidence
-                                          ? `For ${title.toLowerCase()}, run one deterministic ${humanize(competencyId)} model, omit canonical bytes, asset, adversary, key and nonce ownership, tamper rejection, secret-safe failure, and native transfer gates, then call the browser result cryptographically secure.`
-                                          : family === 'go'
-                                            ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output.`
-                                            : family === 'docker'
-                                              ? `For ${title.toLowerCase()}, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof.`
-                                              : family === 'kubernetes'
-                                                ? `For ${title.toLowerCase()}, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof.`
-                                                : family === 'cicd'
-                                                  ? `For ${title.toLowerCase()}, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof.`
-                                                  : 'Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof.',
+                                : supportEvidence
+                                  ? `For ${title.toLowerCase()}, apply one familiar repair, omit user impact, authorization, safety, asset and version identity, baseline, recent change, competing cause, prediction, observation, rollback, changed-case verification, accessibility, privacy, escalation, and controlled transfer, then accept a missing symptom as support proof.`
+                                  : family === 'algorithms'
+                                    ? `Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for ${humanize(competencyId)}.`
+                                    : family === 'functional'
+                                      ? `Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of ${humanize(competencyId)}.`
+                                      : family === 'sql'
+                                        ? `Run a convenient ${humanize(competencyId)} query for ${title.toLowerCase()}, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid.`
+                                        : family === 'c'
+                                          ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe.`
+                                          : cryptographyGoEvidence
+                                            ? `For ${title.toLowerCase()}, run one deterministic ${humanize(competencyId)} model, omit canonical bytes, asset, adversary, key and nonce ownership, tamper rejection, secret-safe failure, and native transfer gates, then call the browser result cryptographically secure.`
+                                            : family === 'go'
+                                              ? `For ${title.toLowerCase()}, run one convenient ${humanize(competencyId)} happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output.`
+                                              : family === 'docker'
+                                                ? `For ${title.toLowerCase()}, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof.`
+                                                : family === 'kubernetes'
+                                                  ? `For ${title.toLowerCase()}, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof.`
+                                                  : family === 'cicd'
+                                                    ? `For ${title.toLowerCase()}, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof.`
+                                                    : 'Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof.',
       },
     ];
     const rotation = (seed + steps.length) % options.length;
@@ -3977,7 +4146,7 @@ function createBuilder({
           (interaction === 'debug' || interaction === 'inspect'
             ? {
                 kind:
-                  family === 'network'
+                  family === 'network' || family === 'support'
                     ? 'network-map'
                     : family === 'math'
                       ? 'terminal'
@@ -4576,6 +4745,49 @@ function activityDifficulty(kind) {
 
 function researchSourceFor(config, family, moduleId, activityIndex) {
   const byTitle = (pattern) => config.sources.find((source) => pattern.test(source.title));
+  if (family === 'support') {
+    if (/safety-hazards|power-workstations/.test(moduleId))
+      return byTitle(/OSHA Computer Workstations|EPA Electronics/i) ?? config.sources[0];
+    if (/cables-connectors/.test(moduleId))
+      return byTitle(/USB-IF Document Library|Core 1/i) ?? config.sources[0];
+    if (/boards-cpu-firmware|memory-storage-raid/.test(moduleId))
+      return byTitle(/PCI Express|Core 1/i) ?? config.sources[0];
+    if (/printer|mobile-hardware|mobile-accessories/.test(moduleId))
+      return byTitle(/Core 1 220-1201/i) ?? config.sources[0];
+    if (/mobile-management|linux-chromeos-android/.test(moduleId))
+      return byTitle(/Android Enterprise|Core 2/i) ?? config.sources[0];
+    if (/transport-services|ip-config-services/.test(moduleId))
+      return byTitle(/IANA Service|Core 1/i) ?? config.sources[0];
+    if (/wireless-radio/.test(moduleId))
+      return byTitle(/IEEE 802\.11|Core 1/i) ?? config.sources[0];
+    if (/network-media-devices|soho-design|network-troubleshooting/.test(moduleId))
+      return byTitle(/Core 1 220-1201|Core 2 220-1202/i) ?? config.sources[0];
+    if (/virtualization/.test(moduleId))
+      return byTitle(/Full Virtualization/i) ?? config.sources[0];
+    if (/cloud-services/.test(moduleId))
+      return byTitle(/Definition of Cloud/i) ?? config.sources[0];
+    if (/windows-editions-lifecycle/.test(moduleId))
+      return byTitle(/Windows 10 End|Windows 11 Home/i) ?? config.sources[0];
+    if (/windows-tools-settings|windows-cli-network|os-deployment/.test(moduleId))
+      return byTitle(/Windows Commands|Windows 11 Requirements|Core 2/i) ?? config.sources[0];
+    if (/windows-security|endpoint-hardening/.test(moduleId))
+      return byTitle(/Windows Security Documentation/i) ?? config.sources[0];
+    if (/macos-ios/.test(moduleId)) return byTitle(/Apple Platform Security/i) ?? config.sources[0];
+    if (/malware-sanitization-ir/.test(moduleId))
+      return byTitle(/Media Sanitization|Incident Response/i) ?? config.sources[0];
+    if (/threats-malware|software-security-triage/.test(moduleId))
+      return byTitle(/Incident Response|Core 2/i) ?? config.sources[0];
+    if (/professional-pbq-defense/.test(moduleId))
+      return (
+        byTitle(/Web Content Accessibility|ACM Code|CompTIA A\+ Certification/i) ??
+        config.sources[0]
+      );
+    if (/tickets-assets-knowledge|change-backup-operations|apps-remote-scripting-ai/.test(moduleId))
+      return byTitle(/Core 2 220-1202|ACM Code|Web Content Accessibility/i) ?? config.sources[0];
+    return (
+      byTitle(/CompTIA A\+ Core [12]/i) ?? config.sources[activityIndex % config.sources.length]
+    );
+  }
   if (moduleId.startsWith('crawler-go-') || moduleId.startsWith('crawler-ts-')) {
     if (
       /outcomes|owner-duty|authorization-charter|session-security|authenticated-privacy/.test(
@@ -5697,6 +5909,7 @@ export async function generateExpandedCourseContent(config) {
       title: modulePlan.title,
       description: `${moduleProfile.context} Learners cumulatively produce ${moduleProfile.artifact} through theory, guided work, debugging, transfer, retrieval, and assessment.`,
       order: modulePlan.order,
+      sourceObjectiveIds: modulePlan.sourceObjectiveIds ?? [],
       objectives: modulePlan.objectives,
       competencyIds: unique(
         modulePlan.activities.flatMap((activity) =>

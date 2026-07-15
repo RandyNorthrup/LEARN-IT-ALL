@@ -58,6 +58,7 @@ function graph(): CurriculumGraph {
     title: 'Basic HTML',
     description: 'Build durable documents from meaningful elements and browser-safe metadata.',
     order: 1,
+    sourceObjectiveIds: ['framework-1.1'],
     objectives: ['Create valid documents with meaningful structure and useful metadata.'],
     competencyIds: ['semantic-document'],
     prerequisites: [],
@@ -128,7 +129,9 @@ function graph(): CurriculumGraph {
 
 describe('validateCurriculumGraph', () => {
   it('accepts a connected ordered graph', () => {
-    expect(validateCurriculumGraph(graph())).toEqual([]);
+    const valid = graph();
+    expect(validateCurriculumGraph(valid)).toEqual([]);
+    expect(valid.modules[0].sourceObjectiveIds).toEqual(['framework-1.1']);
   });
 
   it('reports dangling activity references', () => {

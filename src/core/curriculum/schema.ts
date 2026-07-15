@@ -331,6 +331,7 @@ export const CurriculumModuleSchema = z.object({
   title: z.string().min(5).max(140),
   description: z.string().min(20).max(500),
   order: z.number().int().positive(),
+  sourceObjectiveIds: z.array(z.string().min(3)).default([]),
   objectives: z.array(z.string().min(10)).min(1),
   competencyIds: z.array(IdentifierSchema).min(1),
   prerequisites: z.array(IdentifierSchema).default([]),

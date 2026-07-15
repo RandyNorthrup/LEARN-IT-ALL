@@ -10,7 +10,7 @@ interface QualityGatePanelProps {
 
 export function QualityGatePanel({ source }: QualityGatePanelProps) {
   const [output, setOutput] = useState(
-    'Run contract review to inspect career evidence, product evidence, repository gates, agent skills, MCP servers, containers, orchestration, or delivery evidence.'
+    'Run contract review to inspect support incidents, career evidence, product evidence, repository gates, agent skills, MCP servers, containers, orchestration, or delivery evidence.'
   );
 
   return (
