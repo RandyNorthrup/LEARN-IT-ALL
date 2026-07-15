@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { dbHelpers } from '@/lib/db';
+import { UpdateSettingsRequestSchema } from '@/lib/settingsContract';
 
 export async function GET() {
   try {
@@ -12,19 +13,24 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  let body: unknown;
   try {
-    const body = await request.json();
-    const { displayName } = body;
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Request body must be valid JSON' }, { status: 400 });
+  }
 
-    if (!displayName || displayName.trim().length < 3) {
-      return NextResponse.json(
-        { error: 'Username must be at least 3 characters' },
-        { status: 400 }
-      );
-    }
+  const parsed = UpdateSettingsRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Display name must be between 3 and 80 characters' },
+      { status: 400 }
+    );
+  }
 
-    dbHelpers.updateSettings(displayName.trim());
-    return NextResponse.json({ displayName: displayName.trim() });
+  try {
+    dbHelpers.updateSettings(parsed.data.displayName);
+    return NextResponse.json({ displayName: parsed.data.displayName });
   } catch (error) {
     console.error('Failed to save username:', error);
     return NextResponse.json({ error: 'Failed to save username' }, { status: 500 });

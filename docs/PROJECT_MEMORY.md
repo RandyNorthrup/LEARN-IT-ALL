@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-14 after the catalog-wide duplication repair and locked-route accessibility verification
+Last verified full gate: 2026-07-14 after catalog-wide duplication repair and version 1 curriculum retirement
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -82,7 +82,7 @@ At the last full gate, all 54 catalog courses were wired into the version 2 lear
 
 Verified platform total at this checkpoint: 1,135 modules, 11,742 activities, 98,870 learner steps, and 108,370 checks across 54 version 2 courses.
 
-The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair is complete; equivalent-flow legacy migration and retirement remain active, so publication count does not release the Lighthouse hold.
+The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair and equivalent-flow version 1 curriculum retirement are complete. Gamified practice modernization remains active, so publication count does not release the Lighthouse hold.
 
 ## Catalog-wide duplication repair evidence
 
@@ -92,7 +92,21 @@ The shared generators were rebuilt so theory, practice, prediction, worked examp
 
 The permanent duplication gate normalizes scaffold text, checks layout diversity per course and activity kind, uses trigram similarity to find near-duplicate activities, and uses project-term Jaccard similarity to reject renamed project copies. The final 2026-07-14 run audited 11,742 activities, 746,338 learner-facing fragments, 432 course-and-kind layout groups, 162,493 near-activity candidate pairs, and 253 projects. It reported zero excessive generic repetitions, zero insufficient-layout groups, zero near-duplicate activities, and zero near-duplicate projects. Official source citations are deliberately excluded from scaffold-text repetition because repeated primary authority is valid provenance.
 
-The full non-Lighthouse gate then passed 79 test files and 542 tests, type-check, normal and strict lint across 307 files, and the Next.js 16.2.10 production build. Production browser verification passed changed learner flows at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop with correct headings, no horizontal overflow, reduced-motion behavior, visible keyboard focus, announced feedback, and no console or page errors. Browser review found that the locked-activity brand link was only 17 pixels tall on mobile; it now has a verified 44-pixel target and a regression test. Lighthouse remains intentionally paused because equivalent-flow legacy migration and retirement are still planned.
+The full non-Lighthouse gate then passed 79 test files and 542 tests, type-check, normal and strict lint across 307 files, and the Next.js 16.2.10 production build. Production browser verification passed changed learner flows at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop with correct headings, no horizontal overflow, reduced-motion behavior, visible keyboard focus, announced feedback, and no console or page errors. Browser review found that the locked-activity brand link was only 17 pixels tall on mobile; it now has a verified 44-pixel target and a regression test. At that checkpoint, Lighthouse remained paused for the then-planned equivalent-flow legacy migration and retirement.
+
+## Version 1 curriculum retirement evidence
+
+The weak Markdown lesson, JSON exercise, quiz, fake-grading, and duplicated course-detail implementation has been retired. This removed 825 version 1 content files across Responsive Web Design, Python Basics, Python OOP, and CompTIA Network+, plus obsolete content audits, generators, PCAP fixtures, UI components, loaders, quiz/exercise types, stale planning documents, and 70 unused dependency packages. `content/v2` is now the only learner-content root.
+
+Compatibility is explicit instead of silently broken. The 366 old lesson ordinals, 410 exercise ordinals, and 45 quiz ordinals map proportionally into matching current activity types: lessons to theory, exercises to workshops/labs/debugging/review/projects, and quizzes to quizzes/exams. Course and nested learner bookmarks issue permanent redirects to real version 2 activities. Retired API methods return `410 Gone`, a current alternate link, and `methodNotReplayed: true`; old submissions can never reach the removed graders. Tests resolve all 821 historical ordinals against existing version 2 activities and reject unknown or out-of-range routes.
+
+Historical progress tables remain only to preserve local learner records and support deliberate deletion. Previous-edition completions are shown as history on the relevant course and progress pages but never grant XP, mastery, or activity access. Current progress statistics now come only from version 2 step attempts, completions, reviews, and XP. Reset contracts accept only all-progress, current-course, or current-activity scopes; retired lesson/chapter/quiz scopes are rejected. Course resets recalculate XP.
+
+The duplicated dashboard now permanently redirects to the modern home surface. The 54-course catalog links only to `/learn`. Learning tracks automatically insert transitive prerequisites, reject missing courses and cycles, compute hours from current course metadata, and link directly to current course journeys. The fake challenge-card page now loads six authentic labs and debugging clinics from the curriculum; when a target is locked, its action opens the first unmet prerequisite activity so practice can begin immediately without bypassing order. Progress and settings were rebuilt as responsive, keyboard-accessible version 2 surfaces with 44- or 48-pixel controls, live status, and a native confirmation dialog.
+
+The final retirement gate passed 86 test files and 561 tests, type-check, normal and strict lint across 311 files, and the Next.js 16.2.10 production build. The two known build warnings remain the broad content patterns for 12,931 version 2 files and 11,742 dynamic activity files. Browser verification passed old-bookmark redirects, API retirement, historical-progress visibility, catalog links, tracks, practice, progress, and settings at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop with one H1, zero horizontal overflow, no undersized visible controls, and no console or page errors. Browser review found and repaired two issues: all deep practice targets initially sent new learners only to locked course sections, and the mobile settings dialog was anchored at the top-left. Practice now opens the first accessible prerequisite and the dialog is exactly centered, viewport-bounded, focus-contained, and restores trigger focus on cancel.
+
+Lighthouse remains paused. The legacy audit exposed random-pass and other weak behavior in the separate game surfaces, so gamified practice modernization must finish before the content-complete marker can be created.
 
 ## CompTIA A+ V15 release evidence
 

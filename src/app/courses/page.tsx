@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, Clock3, Filter, Layers3 } from 'lucide-react';
 import Link from 'next/link';
 import { filterCourseCatalog } from '@/lib/courseCatalog';
-import { ALL_COURSES, isV2Course } from '@/lib/data/courses';
+import { ALL_COURSES } from '@/lib/data/courses';
 import styles from './Courses.module.css';
 
 interface CoursesPageProps {
@@ -65,10 +65,12 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
             <option value="portfolio-project">Portfolio projects</option>
           </select>
         </label>
-        <label className={styles.checkLabel}>
-          <input type="checkbox" name="planned" value="yes" defaultChecked={showPlanned} />
-          Include {plannedCount} rebuild-queue paths
-        </label>
+        {plannedCount > 0 && (
+          <label className={styles.checkLabel}>
+            <input type="checkbox" name="planned" value="yes" defaultChecked={showPlanned} />
+            Include {plannedCount} rebuild-queue paths
+          </label>
+        )}
         <button type="submit">Apply filters</button>
       </form>
 
@@ -83,18 +85,15 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
 
         <ol className={styles.courseList}>
           {visibleCourses.map((course, index) => {
-            const isV2 = isV2Course(course.id);
             const isPlanned = course.status === 'coming-soon';
-            const href = isV2 ? `/learn/${course.id}` : `/courses/${course.id}`;
+            const href = `/learn/${course.id}`;
             return (
               <li key={course.id}>
                 <article className={styles.courseCard}>
                   <div className={styles.courseIndex}>{String(index + 1).padStart(2, '0')}</div>
                   <div className={styles.courseBody}>
                     <div className={styles.courseMeta}>
-                      <span>
-                        {isV2 ? 'v2 studio' : isPlanned ? 'rebuild queue' : 'migration edition'}
-                      </span>
+                      <span>{isPlanned ? 'rebuild queue' : 'interactive studio'}</span>
                       <span>{course.difficulty}</span>
                       <span>{course.type.replaceAll('-', ' ')}</span>
                     </div>
@@ -105,8 +104,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                         <Clock3 aria-hidden="true" /> {course.estimatedHours} hours
                       </span>
                       <span>
-                        <Layers3 aria-hidden="true" /> {course.lessonCount}{' '}
-                        {isV2 ? 'interactive activities' : 'legacy units to remap'}
+                        <Layers3 aria-hidden="true" /> {course.lessonCount} interactive activities
                       </span>
                     </div>
                     <ul className={styles.tags} aria-label={`${course.title} topics`}>

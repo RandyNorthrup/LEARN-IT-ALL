@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCourseData } from '@/lib/courseLoader';
+import { getCourseById } from '@/lib/data/courses';
 
 export async function GET(
   _request: Request,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { courseId } = await params;
-    const courseData = getCourseData(courseId);
+    const courseData = getCourseById(courseId);
 
     if (!courseData) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });

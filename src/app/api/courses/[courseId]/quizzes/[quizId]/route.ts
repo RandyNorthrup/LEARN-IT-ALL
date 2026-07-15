@@ -1,22 +1,9 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { getQuizData } from '@/lib/lessonLoader';
+import { legacyCurriculumApiResponse } from '@/lib/legacyCurriculumApi';
 
 export async function GET(
-  _request: NextRequest,
-  context: { params: Promise<{ courseId: string; quizId: string }> }
+  _request: Request,
+  { params }: { params: Promise<{ courseId: string; quizId: string }> }
 ) {
-  try {
-    const { courseId, quizId } = await context.params;
-
-    const quiz = await getQuizData(courseId, quizId);
-
-    if (!quiz) {
-      return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
-    }
-
-    return NextResponse.json(quiz);
-  } catch (error) {
-    console.error('Error loading quiz:', error);
-    return NextResponse.json({ error: 'Failed to load quiz' }, { status: 500 });
-  }
+  const { courseId, quizId } = await params;
+  return legacyCurriculumApiResponse(courseId, 'quiz', quizId);
 }

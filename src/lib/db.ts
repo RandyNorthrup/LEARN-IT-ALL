@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 // Lazy initialization - only create DB connection when needed
 let db: Database.Database | null = null;
 
-export function getDb(): Database.Database {
+function getDb(): Database.Database {
   if (!db) {
     // Create singleton database connection
     const dbPath = join(process.cwd(), 'database', 'learn-it-all.db');
@@ -137,11 +137,6 @@ INSERT OR IGNORE INTO learning_profile (id) VALUES ('learner');
   return db;
 }
 
-// Helper to generate unique IDs
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
 // Query helpers
 export const dbHelpers = {
   // Settings
@@ -153,161 +148,6 @@ export const dbHelpers = {
     return getDb()
       .prepare('UPDATE settings SET displayName = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?')
       .run(displayName, 'settings');
-  },
-
-  // Course Enrollments
-  getEnrollment: (courseId: string) => {
-    return getDb().prepare('SELECT * FROM course_enrollments WHERE courseId = ?').get(courseId);
-  },
-
-  createEnrollment: (courseId: string) => {
-    const id = generateId();
-    return getDb()
-      .prepare(`
-      INSERT INTO course_enrollments (id, courseId, status, completionPercentage, updatedAt)
-      VALUES (?, ?, 'IN_PROGRESS', 0, CURRENT_TIMESTAMP)
-    `)
-      .run(id, courseId);
-  },
-
-  getAllEnrollments: () => {
-    return getDb().prepare('SELECT * FROM course_enrollments').all();
-  },
-
-  updateEnrollmentProgress: (courseId: string, percentage: number) => {
-    return getDb()
-      .prepare(`
-      UPDATE course_enrollments 
-      SET completionPercentage = ?, 
-          status = CASE WHEN ? >= 100 THEN 'COMPLETED' ELSE status END,
-          completedAt = CASE WHEN ? >= 100 THEN CURRENT_TIMESTAMP ELSE completedAt END,
-          updatedAt = CURRENT_TIMESTAMP
-      WHERE courseId = ?
-    `)
-      .run(percentage, percentage, percentage, courseId);
-  },
-
-  // Lesson Progress
-  getLessonProgress: (lessonId: string) => {
-    return getDb().prepare('SELECT * FROM lesson_progress WHERE lessonId = ?').get(lessonId);
-  },
-
-  getCourseLessonProgress: (courseId: string) => {
-    return getDb().prepare('SELECT * FROM lesson_progress WHERE courseId = ?').all(courseId);
-  },
-
-  markLessonComplete: (lessonId: string, courseId: string) => {
-    const existing = getDb()
-      .prepare('SELECT * FROM lesson_progress WHERE lessonId = ?')
-      .get(lessonId);
-
-    if (existing) {
-      return getDb()
-        .prepare(`
-        UPDATE lesson_progress 
-        SET status = 'COMPLETED', completedAt = CURRENT_TIMESTAMP 
-        WHERE lessonId = ?
-      `)
-        .run(lessonId);
-    } else {
-      const id = generateId();
-      return getDb()
-        .prepare(`
-        INSERT INTO lesson_progress (id, lessonId, courseId, status, startedAt, completedAt)
-        VALUES (?, ?, ?, 'COMPLETED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      `)
-        .run(id, lessonId, courseId);
-    }
-  },
-
-  // Exercise Submissions
-  createExerciseSubmission: (
-    exerciseId: string,
-    courseId: string,
-    code: string,
-    language: string,
-    status: string = 'PENDING',
-    score: number = 0
-  ) => {
-    const id = generateId();
-    return getDb()
-      .prepare(`
-      INSERT INTO exercise_submissions (id, exerciseId, courseId, code, language, status, score, completedAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    `)
-      .run(id, exerciseId, courseId, code, language, status, score);
-  },
-
-  getExerciseSubmissions: (exerciseId: string) => {
-    return getDb()
-      .prepare('SELECT * FROM exercise_submissions WHERE exerciseId = ?')
-      .all(exerciseId);
-  },
-
-  getLatestExerciseSubmission: (exerciseId: string) => {
-    return getDb()
-      .prepare(`
-      SELECT * FROM exercise_submissions 
-      WHERE exerciseId = ? 
-      ORDER BY submittedAt DESC 
-      LIMIT 1
-    `)
-      .get(exerciseId);
-  },
-
-  getPassedExercisesCount: () => {
-    return getDb()
-      .prepare(`
-      SELECT COUNT(DISTINCT exerciseId) as count 
-      FROM exercise_submissions 
-      WHERE status = 'PASSED'
-    `)
-      .get() as { count: number };
-  },
-
-  // Quiz Attempts
-  createQuizAttempt: (
-    quizId: string,
-    courseId: string,
-    answers: Record<string, unknown>,
-    passed: boolean,
-    score: number,
-    pointsEarned: number,
-    pointsPossible: number,
-    timeSpent?: number
-  ) => {
-    const id = generateId();
-    return getDb()
-      .prepare(`
-      INSERT INTO quiz_attempts (id, quizId, courseId, answers, score, pointsEarned, pointsPossible, passed, completedAt, timeSpent)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
-    `)
-      .run(
-        id,
-        quizId,
-        courseId,
-        JSON.stringify(answers),
-        score,
-        pointsEarned,
-        pointsPossible,
-        passed ? 1 : 0,
-        timeSpent || null
-      );
-  },
-
-  getQuizAttempts: (quizId: string) => {
-    return getDb().prepare('SELECT * FROM quiz_attempts WHERE quizId = ?').all(quizId);
-  },
-
-  getLatestQuizAttempt: (quizId: string) => {
-    return getDb()
-      .prepare(`
-      SELECT * FROM quiz_attempts 
-      WHERE quizId = ? 
-      ORDER BY startedAt DESC 
-      LIMIT 1
-    `)
-      .get(quizId);
   },
 
   // Version 2 learning engine
@@ -448,6 +288,30 @@ export const dbHelpers = {
       .all();
   },
 
+  getLegacyCourseProgressSummary: (courseId: string) => {
+    const completedLessons = getDb()
+      .prepare(
+        "SELECT COUNT(*) AS count FROM lesson_progress WHERE courseId = ? AND status = 'COMPLETED'"
+      )
+      .get(courseId) as { count: number };
+    const passedExercises = getDb()
+      .prepare(
+        "SELECT COUNT(DISTINCT exerciseId) AS count FROM exercise_submissions WHERE courseId = ? AND status = 'PASSED'"
+      )
+      .get(courseId) as { count: number };
+    const passedQuizzes = getDb()
+      .prepare(
+        'SELECT COUNT(DISTINCT quizId) AS count FROM quiz_attempts WHERE courseId = ? AND passed = 1'
+      )
+      .get(courseId) as { count: number };
+
+    return {
+      completedLessons: completedLessons.count,
+      passedExercises: passedExercises.count,
+      passedQuizzes: passedQuizzes.count,
+    };
+  },
+
   clearLearningActivityProgress: (activityId: string) => {
     const database = getDb();
     return database.transaction(() => {
@@ -466,34 +330,49 @@ export const dbHelpers = {
 
   // Progress Stats
   getProgressStats: () => {
-    const enrollments = getDb()
-      .prepare('SELECT COUNT(*) as count FROM course_enrollments')
+    const coursesStarted = getDb()
+      .prepare('SELECT COUNT(DISTINCT courseId) AS count FROM learning_step_progress')
       .get() as { count: number };
-    const completedCourses = getDb()
-      .prepare("SELECT COUNT(*) as count FROM course_enrollments WHERE status = 'COMPLETED'")
-      .get() as { count: number };
-    const completedLessons = getDb()
-      .prepare("SELECT COUNT(*) as count FROM lesson_progress WHERE status = 'COMPLETED'")
-      .get() as { count: number };
-    const passedExercises = getDb()
+    const activitiesPracticed = getDb()
       .prepare(
-        "SELECT COUNT(DISTINCT exerciseId) as count FROM exercise_submissions WHERE status = 'PASSED'"
+        'SELECT COUNT(DISTINCT activityId) AS count FROM learning_step_progress WHERE attempts > 0'
       )
       .get() as { count: number };
-    const passedQuizzes = getDb()
-      .prepare('SELECT COUNT(*) as count FROM quiz_attempts WHERE passed = 1')
+    const interactionsCompleted = getDb()
+      .prepare("SELECT COUNT(*) AS count FROM learning_step_progress WHERE status = 'COMPLETED'")
       .get() as { count: number };
-    const totalTimeSpent = getDb()
-      .prepare('SELECT COALESCE(SUM(timeSpent), 0) as total FROM lesson_progress')
-      .get() as { total: number };
+    const totalAttempts = getDb()
+      .prepare('SELECT COALESCE(SUM(attempts), 0) AS count FROM learning_step_progress')
+      .get() as { count: number };
+    const reviewsDue = getDb()
+      .prepare(
+        'SELECT COUNT(*) AS count FROM learning_review_queue WHERE completedAt IS NULL AND dueAt <= CURRENT_TIMESTAMP'
+      )
+      .get() as { count: number };
+    const profile = getDb()
+      .prepare(
+        "SELECT totalXp, currentStreak, longestStreak FROM learning_profile WHERE id = 'learner'"
+      )
+      .get() as { totalXp: number; currentStreak: number; longestStreak: number };
+    const legacyRecords = getDb()
+      .prepare(
+        `SELECT
+          (SELECT COUNT(*) FROM lesson_progress WHERE status = 'COMPLETED') +
+          (SELECT COUNT(DISTINCT exerciseId) FROM exercise_submissions WHERE status = 'PASSED') +
+          (SELECT COUNT(DISTINCT quizId) FROM quiz_attempts WHERE passed = 1) AS count`
+      )
+      .get() as { count: number };
 
     return {
-      coursesStarted: enrollments.count,
-      coursesCompleted: completedCourses.count,
-      lessonsCompleted: completedLessons.count,
-      exercisesPassed: passedExercises.count,
-      quizzesPassed: passedQuizzes.count,
-      totalStudyHours: Math.round((totalTimeSpent.total / 3600) * 10) / 10,
+      coursesStarted: coursesStarted.count,
+      activitiesPracticed: activitiesPracticed.count,
+      interactionsCompleted: interactionsCompleted.count,
+      totalAttempts: totalAttempts.count,
+      reviewsDue: reviewsDue.count,
+      totalXp: profile.totalXp,
+      currentStreak: profile.currentStreak,
+      longestStreak: profile.longestStreak,
+      legacyRecords: legacyRecords.count,
     };
   },
 
@@ -528,38 +407,16 @@ export const dbHelpers = {
       clearReviews.run(activityId);
     });
     getDb().prepare('DELETE FROM learning_step_progress WHERE courseId = ?').run(courseId);
-  },
-
-  clearChapterProgress: (courseId: string, chapterId: string) => {
     getDb()
-      .prepare('DELETE FROM lesson_progress WHERE courseId = ? AND lessonId LIKE ?')
-      .run(courseId, `%${chapterId}%`);
-    getDb()
-      .prepare('DELETE FROM quiz_attempts WHERE courseId = ? AND quizId LIKE ?')
-      .run(courseId, `%${chapterId}%`);
-    getDb()
-      .prepare('DELETE FROM exercise_submissions WHERE courseId = ? AND exerciseId LIKE ?')
-      .run(courseId, `%${chapterId}%`);
-  },
-
-  clearLessonProgress: (lessonId: string) => {
-    getDb().prepare('DELETE FROM lesson_progress WHERE lessonId = ?').run(lessonId);
-    getDb()
-      .prepare('DELETE FROM exercise_submissions WHERE exerciseId LIKE ?')
-      .run(`%${lessonId}%`);
-  },
-
-  clearQuizProgress: (quizId: string) => {
-    getDb().prepare('DELETE FROM quiz_attempts WHERE quizId = ?').run(quizId);
+      .prepare(
+        `UPDATE learning_profile
+         SET totalXp = COALESCE((SELECT SUM(earnedXp) FROM learning_step_progress), 0),
+             updatedAt = CURRENT_TIMESTAMP
+         WHERE id = 'learner'`
+      )
+      .run();
   },
 };
-
-// Export database connection and helper functions
-export { db, generateId };
-
-// Individual exports for commonly used functions
-export const createQuizAttempt = dbHelpers.createQuizAttempt;
-export const markLessonComplete = dbHelpers.markLessonComplete;
 
 // Graceful shutdown
 process.on('exit', () => {

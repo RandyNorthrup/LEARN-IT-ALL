@@ -1,5 +1,4 @@
-// Learning Tracks Data for LEARN-IT-ALL Platform
-// Source: DATA_PLAN.md - Official Learning Tracks
+import { ALL_COURSES, type CourseMetadata } from './courses';
 
 export interface LearningTrack {
   id: string;
@@ -12,7 +11,7 @@ export interface LearningTrack {
   color: string; // Tailwind gradient colors
 }
 
-export const LEARNING_TRACKS: LearningTrack[] = [
+const TRACK_TARGETS: LearningTrack[] = [
   {
     id: 'backend-python-typescript',
     title: 'Back-End Developer: Python & TypeScript',
@@ -213,3 +212,38 @@ export const LEARNING_TRACKS: LearningTrack[] = [
     color: 'from-yellow-500 to-orange-600',
   },
 ];
+
+export function orderTrackCourses(
+  targetIds: string[],
+  courses: CourseMetadata[] = ALL_COURSES
+): string[] {
+  const byId = new Map(courses.map((course) => [course.id, course]));
+  const visiting = new Set<string>();
+  const ordered = new Set<string>();
+
+  const visit = (courseId: string) => {
+    const course = byId.get(courseId);
+    if (!course) throw new Error(`Learning track references missing course: ${courseId}`);
+    if (visiting.has(courseId)) throw new Error(`Learning track prerequisite cycle: ${courseId}`);
+    if (ordered.has(courseId)) return;
+
+    visiting.add(courseId);
+    course.prerequisites.forEach(visit);
+    visiting.delete(courseId);
+    ordered.add(courseId);
+  };
+
+  targetIds.forEach(visit);
+  return [...ordered];
+}
+
+export const LEARNING_TRACKS: LearningTrack[] = TRACK_TARGETS.map((track) => {
+  const courses = orderTrackCourses(track.courses);
+  const metadata = new Map(ALL_COURSES.map((course) => [course.id, course]));
+  const estimatedHours = courses.reduce(
+    (total, courseId) => total + (metadata.get(courseId)?.estimatedHours ?? 0),
+    0
+  );
+
+  return { ...track, courses, estimatedHours: Math.round(estimatedHours * 10) / 10 };
+});

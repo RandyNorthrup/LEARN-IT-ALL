@@ -23,4 +23,12 @@ describe('course journey interaction layout', () => {
       /@media \(max-width:\s*560px\)[\s\S]*?\.hero h1\s*\{[^}]*font-size:\s*clamp\(2\.4rem,\s*11\.5vw,\s*4rem\);/
     );
   });
+
+  it('keeps migrated-progress history responsive without granting mastery', () => {
+    expect(styles).toMatch(/\.migrationNotice\s*\{[^}]*grid-template-columns:/);
+    expect(styles).toMatch(
+      /@media \(max-width:\s*900px\)[\s\S]*?\.migrationNotice\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\);/
+    );
+    expect(styles).toMatch(/\.migrationNotice\s*>\s*\*\s*\{[^}]*min-width:\s*0;/);
+  });
 });

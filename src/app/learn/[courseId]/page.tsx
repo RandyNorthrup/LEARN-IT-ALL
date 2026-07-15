@@ -12,6 +12,12 @@ interface CourseJourneyPageProps {
   searchParams: Promise<{ module?: string | string[] }>;
 }
 
+interface LegacyProgressSummary {
+  completedLessons: number;
+  passedExercises: number;
+  passedQuizzes: number;
+}
+
 function loadCourse(courseId: string) {
   try {
     return loadCurriculumGraph(courseId);
@@ -51,6 +57,11 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
     0
   );
   const profile = dbHelpers.getLearningProfile() as { totalXp: number } | undefined;
+  const legacyProgress = dbHelpers.getLegacyCourseProgressSummary(
+    courseId
+  ) as LegacyProgressSummary;
+  const legacyRecordCount =
+    legacyProgress.completedLessons + legacyProgress.passedExercises + legacyProgress.passedQuizzes;
   const firstActivity =
     activities.find((activity) => !activity.progress.activityCompleted) ?? activities[0];
   const firstModule = graph.modules.find((module) => module.id === firstActivity.moduleId);
@@ -110,6 +121,25 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
           </ul>
         </aside>
       </section>
+
+      {legacyRecordCount > 0 && (
+        <aside className={styles.migrationNotice} aria-labelledby="migration-notice-title">
+          <div>
+            <span className={styles.sectionKicker}>Previous edition preserved</span>
+            <h2 id="migration-notice-title">Your earlier work is still recorded.</h2>
+          </div>
+          <p>
+            We kept {legacyRecordCount} previous-edition completion{' '}
+            {legacyRecordCount === 1 ? 'record' : 'records'} as learning history. The rebuilt path
+            requires current evidence before granting mastery or unlocking later work.
+          </p>
+          <ul aria-label="Previous-edition progress records">
+            <li>{legacyProgress.completedLessons} lessons completed</li>
+            <li>{legacyProgress.passedExercises} exercises passed</li>
+            <li>{legacyProgress.passedQuizzes} quizzes passed</li>
+          </ul>
+        </aside>
+      )}
 
       <div className={styles.content}>
         <section className={styles.roadmap} id="roadmap">

@@ -1,345 +1,135 @@
-import { Brain, Code, Database, Globe, Trophy, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bug, FlaskConical, LockKeyhole, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { loadCurriculumActivity } from '@/core/curriculum/repository';
+import { getCourseById } from '@/lib/data/courses';
+import { storedActivityAccess } from '@/lib/learningActivityAccess';
+import styles from './Challenges.module.css';
 
-interface Challenge {
-  id: string;
-  title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
-  points: number;
-  category: string;
-  description: string;
-}
+export const dynamic = 'force-dynamic';
 
-interface Category {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-  description: string;
-  challenges: Challenge[];
-}
-
-const categories: Category[] = [
+const PRACTICE_ROOMS = [
   {
-    id: 'python',
-    name: 'Python',
-    icon: <Code className="h-6 w-6" />,
-    color: 'from-blue-500 to-cyan-600',
-    description: 'Python programming challenges from basics to advanced',
-    challenges: [
-      {
-        id: 'py-1',
-        title: 'List Comprehension Master',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'python',
-        description: 'Transform nested loops into elegant list comprehensions',
-      },
-      {
-        id: 'py-2',
-        title: 'Decorator Design',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'python',
-        description: 'Build a caching decorator with TTL support',
-      },
-      {
-        id: 'py-3',
-        title: 'Generator Pipeline',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'python',
-        description: 'Create efficient data processing pipeline using generators',
-      },
-    ],
+    courseId: 'responsive-web-design',
+    activityId: 'attribute-selectors-transfer-lab',
+    focus: 'Responsive interface repair',
   },
   {
-    id: 'javascript',
-    name: 'JavaScript',
-    icon: <Zap className="h-6 w-6" />,
-    color: 'from-yellow-500 to-orange-600',
-    description: 'JavaScript challenges for modern web development',
-    challenges: [
-      {
-        id: 'js-1',
-        title: 'Promise Chain Master',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'javascript',
-        description: 'Handle complex async operations with promise chains',
-      },
-      {
-        id: 'js-2',
-        title: 'Closure Challenge',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'javascript',
-        description: 'Build a module pattern using closures',
-      },
-      {
-        id: 'js-3',
-        title: 'Event Loop Expert',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'javascript',
-        description: 'Predict execution order in complex async scenarios',
-      },
-    ],
+    courseId: 'python-basics',
+    activityId: 'python-control-flow-debugging-clinic',
+    focus: 'Control-flow diagnosis',
   },
   {
-    id: 'sql',
-    name: 'SQL & Databases',
-    icon: <Database className="h-6 w-6" />,
-    color: 'from-purple-500 to-pink-600',
-    description: 'Database design and query optimization challenges',
-    challenges: [
-      {
-        id: 'sql-1',
-        title: 'Join Mastery',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'sql',
-        description: 'Complex multi-table joins and subqueries',
-      },
-      {
-        id: 'sql-2',
-        title: 'Query Optimization',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'sql',
-        description: 'Optimize slow queries for better performance',
-      },
-      {
-        id: 'sql-3',
-        title: 'Schema Design',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'sql',
-        description: 'Design normalized database schema from requirements',
-      },
-    ],
+    courseId: 'javascript-basics',
+    activityId: 'javascript-async-event-loop-debugging-clinic',
+    focus: 'Async state forensics',
   },
   {
-    id: 'react',
-    name: 'React & Frontend',
-    icon: <Globe className="h-6 w-6" />,
-    color: 'from-cyan-500 to-blue-600',
-    description: 'React components, hooks, and state management',
-    challenges: [
-      {
-        id: 'react-1',
-        title: 'Custom Hook Builder',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'react',
-        description: 'Create reusable custom React hooks',
-      },
-      {
-        id: 'react-2',
-        title: 'State Management',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'react',
-        description: 'Implement complex state with useReducer',
-      },
-      {
-        id: 'react-3',
-        title: 'Performance Optimization',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'react',
-        description: 'Optimize large list rendering with virtualization',
-      },
-    ],
+    courseId: 'sql-basics',
+    activityId: 'sql-aggregation-grouping-independent-lab',
+    focus: 'Changed-data evidence',
   },
   {
-    id: 'algorithms',
-    name: 'Algorithms & DS',
-    icon: <Brain className="h-6 w-6" />,
-    color: 'from-green-500 to-emerald-600',
-    description: 'Data structures and algorithm challenges',
-    challenges: [
-      {
-        id: 'algo-1',
-        title: 'Binary Search Tree',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'algorithms',
-        description: 'Implement BST with insert, delete, search',
-      },
-      {
-        id: 'algo-2',
-        title: 'Dynamic Programming',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'algorithms',
-        description: 'Solve knapsack problem with memoization',
-      },
-      {
-        id: 'algo-3',
-        title: 'Graph Traversal',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'algorithms',
-        description: 'Find shortest path in weighted graph',
-      },
-    ],
+    courseId: 'go-basics',
+    activityId: 'go-arrays-slices-memory-debugging-clinic',
+    focus: 'Memory-behavior diagnosis',
   },
   {
-    id: 'system-design',
-    name: 'System Design',
-    icon: <Trophy className="h-6 w-6" />,
-    color: 'from-indigo-500 to-violet-600',
-    description: 'Large-scale system architecture challenges',
-    challenges: [
-      {
-        id: 'sys-1',
-        title: 'URL Shortener Design',
-        difficulty: 'Medium',
-        points: 50,
-        category: 'system-design',
-        description: 'Design scalable URL shortening service',
-      },
-      {
-        id: 'sys-2',
-        title: 'Cache Strategy',
-        difficulty: 'Hard',
-        points: 100,
-        category: 'system-design',
-        description: 'Design distributed caching system',
-      },
-      {
-        id: 'sys-3',
-        title: 'Social Media Feed',
-        difficulty: 'Expert',
-        points: 150,
-        category: 'system-design',
-        description: 'Design Twitter-like feed at scale',
-      },
-    ],
+    courseId: 'comptia-network-plus',
+    activityId: 'network-access-management-independent-lab',
+    focus: 'Changed-topology investigation',
   },
-];
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const colors = {
-    Easy: 'bg-green-100 text-green-800',
-    Medium: 'bg-yellow-100 text-yellow-800',
-    Hard: 'bg-orange-100 text-orange-800',
-    Expert: 'bg-red-100 text-red-800',
-  };
-
-  return (
-    <span
-      className={`px-3 py-1 rounded-full text-xs font-semibold ${colors[difficulty as keyof typeof colors]}`}
-    >
-      {difficulty}
-    </span>
-  );
-}
+] as const;
 
 export default function ChallengesPage() {
+  const rooms = PRACTICE_ROOMS.map((room) => {
+    const course = getCourseById(room.courseId);
+    const activity = loadCurriculumActivity(room.courseId, room.activityId);
+    const access = storedActivityAccess(room.courseId, activity);
+    return { ...room, course, activity, access };
+  });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <Link href="/dashboard" className="text-blue-600 hover:underline mb-2 inline-block">
-                ← Back to Dashboard
-              </Link>
-              <h1 className="text-4xl font-bold text-gray-900">Coding Challenges</h1>
-              <p className="mt-1 text-gray-600">Test your skills with real-world coding problems</p>
-            </div>
-            <Trophy className="h-12 w-12 text-yellow-600" />
-          </div>
-        </div>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <Link href="/" className={styles.back}>
+          <ArrowLeft aria-hidden="true" /> Home
+        </Link>
+        <Link href="/" className={styles.brand}>
+          LEARN / BUILD
+        </Link>
+        <Link href="/courses" className={styles.catalogLink}>
+          Course catalog <ArrowRight aria-hidden="true" />
+        </Link>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Challenge Categories</h2>
-          <p className="mt-2 text-lg text-gray-600">
-            Select a category and start solving challenges to earn points
-          </p>
+      <section className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>Real curriculum, mixed modes</span>
+          <h1>Practice rooms with actual checks.</h1>
         </div>
+        <p>
+          No pretend points or dead challenge cards. Every room opens a real lab or debugging clinic
+          with prerequisite enforcement, feedback, hints, and saved evidence.
+        </p>
+      </section>
 
-        {/* Categories */}
-        <div className="space-y-8">
-          {categories.map((category) => (
-            <div key={category.id} className="rounded-2xl bg-white p-6 shadow-xl">
-              <div className="flex items-center gap-4 mb-4">
-                <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${category.color} text-white`}
-                >
-                  {category.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-gray-900">{category.name}</h3>
-                  <p className="text-gray-600">{category.description}</p>
-                </div>
-                <div className="text-sm text-gray-500">{category.challenges.length} challenges</div>
-              </div>
-
-              {/* Challenges Grid */}
-              <div className="grid gap-4 md:grid-cols-3">
-                {category.challenges.map((challenge) => (
-                  <Link
-                    key={challenge.id}
-                    href={`/challenges/${category.id}/${challenge.id}`}
-                    className="group border border-gray-200 rounded-lg p-4 hover:border-amber-500 hover:shadow-lg transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-gray-900 group-hover:text-amber-600">
-                        {challenge.title}
-                      </h4>
-                      <DifficultyBadge difficulty={challenge.difficulty} />
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">{challenge.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1 text-amber-600 font-semibold">
-                        <Trophy className="h-4 w-4" />
-                        {challenge.points} pts
+      <section className={styles.rooms} aria-labelledby="rooms-heading">
+        <header>
+          <span className={styles.eyebrow}>Practice mixer</span>
+          <h2 id="rooms-heading">Change the domain. Keep the habits.</h2>
+        </header>
+        <ol>
+          {rooms.map(({ courseId, focus, course, activity, access }, index) => {
+            const nextActivity = access.canOpen ? activity : access.unmetPrerequisites[0];
+            const href = `/learn/${courseId}/${nextActivity.moduleId}/${nextActivity.id}`;
+            return (
+              <li key={activity.id}>
+                <article className={styles.roomCard}>
+                  <span className={styles.number}>{String(index + 1).padStart(2, '0')}</span>
+                  <div className={styles.roomCopy}>
+                    <span className={styles.kind}>
+                      {activity.kind === 'debug' ? (
+                        <Bug aria-hidden="true" />
+                      ) : (
+                        <FlaskConical aria-hidden="true" />
+                      )}
+                      {activity.kind} · {focus}
+                    </span>
+                    <h3>{activity.title}</h3>
+                    <p>{activity.summary}</p>
+                    <span className={styles.courseName}>{course?.title ?? courseId}</span>
+                  </div>
+                  <div className={styles.roomMeta}>
+                    <span>{activity.steps.length} interactions</span>
+                    <span>{activity.estimatedMinutes} minutes</span>
+                    {access.canOpen ? (
+                      <span className={styles.ready}>
+                        <ShieldCheck aria-hidden="true" /> Ready
                       </span>
-                      <span className="text-blue-600 group-hover:underline">Start Challenge →</span>
-                    </div>
+                    ) : (
+                      <span className={styles.locked}>
+                        <LockKeyhole aria-hidden="true" /> {access.unmetPrerequisites.length}{' '}
+                        earlier {access.unmetPrerequisites.length === 1 ? 'activity' : 'activities'}
+                      </span>
+                    )}
+                  </div>
+                  <Link
+                    href={href}
+                    aria-label={
+                      access.canOpen
+                        ? `Open ${activity.title}`
+                        : `Start prerequisite ${nextActivity.title} to unlock ${activity.title}`
+                    }
+                  >
+                    {access.canOpen ? 'Enter room' : 'Start next prerequisite'}
+                    <ArrowRight aria-hidden="true" />
                   </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Info Section */}
-        <div className="mt-12 rounded-2xl bg-white p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">How Challenges Work</h3>
-          <div className="grid gap-6 md:grid-cols-4">
-            <div>
-              <div className="text-3xl font-bold text-amber-600 mb-2">1</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Pick a Challenge</h4>
-              <p className="text-gray-600 text-sm">
-                Choose from various difficulty levels and topics
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-amber-600 mb-2">2</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Write Code</h4>
-              <p className="text-gray-600 text-sm">Solve the problem using your coding skills</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-amber-600 mb-2">3</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Pass Tests</h4>
-              <p className="text-gray-600 text-sm">Your solution must pass all test cases</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-amber-600 mb-2">4</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Earn Points</h4>
-              <p className="text-gray-600 text-sm">Get points based on difficulty and efficiency</p>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    </main>
   );
 }
