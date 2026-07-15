@@ -1,201 +1,152 @@
-import { Brain, Code, Gamepad2, Puzzle, Rocket, Target, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Braces, Bug, Gauge, GitMerge, Keyboard, Orbit } from 'lucide-react';
 import Link from 'next/link';
+import styles from './Games.module.css';
 
-interface Game {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  icon: React.ReactNode;
-  color: string;
-}
-
-const games: Game[] = [
+const PRACTICE_CIRCUITS = [
   {
-    id: 'lunar-lander',
-    title: 'Lunar Lander',
-    description:
-      'Master physics and precision landing. Control thrust and rotation to safely land your spacecraft on the platform.',
-    difficulty: 'Medium',
-    icon: <Rocket className="h-8 w-8" />,
-    color: 'from-orange-500 to-red-600',
+    href: '/games/code-hunter',
+    number: '01',
+    title: 'Bug Forensics',
+    skill: 'causal debugging',
+    description: 'Locate the fault, predict its effect, then repair a changed case.',
+    icon: Bug,
   },
   {
-    id: 'code-lander',
-    title: 'Code Lander',
-    description:
-      'Land your spacecraft by writing code to control thrust and rotation. Learn physics and programming together.',
-    difficulty: 'Hard',
-    icon: <Code className="h-8 w-8" />,
-    color: 'from-purple-500 to-pink-600',
+    href: '/games/code-builder',
+    number: '02',
+    title: 'System Builder',
+    skill: 'workflow ordering',
+    description: 'Arrange production steps around safety, evidence, and rollback constraints.',
+    icon: GitMerge,
   },
   {
-    id: 'code-hunter',
-    title: 'Code Hunter',
-    description:
-      'Find and fix bugs in Python code snippets. Race against time to spot syntax errors, logic bugs, and improve code quality.',
-    difficulty: 'Easy',
-    icon: <Target className="h-8 w-8" />,
-    color: 'from-blue-500 to-cyan-600',
+    href: '/games/logic-maze',
+    number: '03',
+    title: 'Decision Labyrinth',
+    skill: 'operational reasoning',
+    description: 'Navigate incidents and releases without skipping prerequisite evidence.',
+    icon: Braces,
   },
   {
-    id: 'syntax-speed',
-    title: 'Syntax Speed',
-    description:
-      'Type code snippets as fast as you can with perfect accuracy. Improve your typing speed and muscle memory for common patterns.',
-    difficulty: 'Easy',
-    icon: <Zap className="h-8 w-8" />,
-    color: 'from-green-500 to-emerald-600',
-  },
-  {
-    id: 'logic-maze',
-    title: 'Logic Maze',
-    description:
-      'Navigate through a maze using Python logic and conditionals. Plan your path using if-else statements and loops.',
-    difficulty: 'Medium',
-    icon: <Brain className="h-8 w-8" />,
-    color: 'from-purple-500 to-pink-600',
-  },
-  {
-    id: 'code-builder',
-    title: 'Code Builder',
-    description:
-      'Build working programs from scrambled code blocks. Drag and drop code snippets into the correct order to solve problems.',
-    difficulty: 'Medium',
-    icon: <Puzzle className="h-8 w-8" />,
-    color: 'from-orange-500 to-red-600',
-  },
-  {
-    id: 'algorithm-arena',
+    href: '/games/algorithm-arena',
+    number: '04',
     title: 'Algorithm Arena',
-    description:
-      'Optimize algorithms for speed and efficiency. Compete to write the fastest sorting, searching, and data processing code.',
-    difficulty: 'Hard',
-    icon: <Code className="h-8 w-8" />,
-    color: 'from-indigo-500 to-violet-600',
+    skill: 'invariants and complexity',
+    description: 'Reason about searches, graphs, sorting, negative edges, and dynamic state.',
+    icon: Gauge,
   },
-];
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const colors = {
-    Easy: 'bg-green-100 text-green-800',
-    Medium: 'bg-yellow-100 text-yellow-800',
-    Hard: 'bg-red-100 text-red-800',
-  };
-
-  return (
-    <span
-      className={`px-3 py-1 rounded-full text-xs font-semibold ${colors[difficulty as keyof typeof colors]}`}
-    >
-      {difficulty}
-    </span>
-  );
-}
+  {
+    href: '/games/syntax-speed',
+    number: '05',
+    title: 'Syntax Recall Circuit',
+    skill: 'accurate code recall',
+    description: 'Type a language pattern, then transfer it to changed names and values.',
+    icon: Keyboard,
+  },
+] as const;
 
 export default function GamesPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <Link href="/" className="text-blue-600 hover:underline mb-2 inline-block">
-                ← Back to Home
-              </Link>
-              <h1 className="text-4xl font-bold text-gray-900">Coding Games</h1>
-              <p className="mt-1 text-gray-600">
-                Learn programming through interactive games and challenges
-              </p>
-            </div>
-            <Gamepad2 className="h-12 w-12 text-purple-600" />
-          </div>
-        </div>
+    <main className={styles.page}>
+      <header className={styles.siteHeader}>
+        <Link href="/" className={styles.back}>
+          <ArrowLeft aria-hidden="true" /> Home
+        </Link>
+        <Link href="/" className={styles.brand}>
+          LEARN / BUILD
+        </Link>
+        <Link href="/challenges" className={styles.roomsLink}>
+          Curriculum practice <ArrowRight aria-hidden="true" />
+        </Link>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Choose Your Game</h2>
-          <p className="mt-2 text-lg text-gray-600">
-            Select a game to start learning and having fun
+      <section className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>Low-stakes retrieval playground</span>
+          <h1>Practice skills. Prove the transfer.</h1>
+        </div>
+        <div className={styles.heroCopy}>
+          <p>
+            Every result follows explicit rules. Diagnose one case, handle a changed case, and read
+            the causal explanation. No random grades, fake execution, or timer punishment.
           </p>
+          <span>Session points stay separate from course mastery.</span>
         </div>
+      </section>
 
-        {/* Games Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {games.map((game) => (
-            <Link
-              key={game.id}
-              href={`/games/${game.id}`}
-              className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg transition-all hover:scale-105 hover:shadow-2xl"
-            >
-              <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${game.color}`} />
+      <section className={styles.flightDeck} aria-labelledby="flight-heading">
+        <header>
+          <span className={styles.eyebrow}>Control-systems flight deck</span>
+          <h2 id="flight-heading" className={styles.sectionHeading}>
+            Same physics. Two ways to think.
+          </h2>
+        </header>
+        <div className={styles.flightGrid}>
+          <Link href="/games/lunar-lander" className={styles.flightCard}>
+            <span className={styles.flightIcon}>
+              <Orbit aria-hidden="true" /> Manual control
+            </span>
+            <h3>Lunar Lander</h3>
+            <p>Choose one command per telemetry update and reason about feedback in real time.</p>
+            <span className={styles.openLabel}>
+              Enter cockpit <ArrowRight aria-hidden="true" />
+            </span>
+          </Link>
+          <Link href="/games/code-lander" className={styles.flightCard}>
+            <span className={styles.flightIcon}>
+              <Braces aria-hidden="true" /> Program control
+            </span>
+            <h3>Code Lander</h3>
+            <p>Write a safe command program, run it, inspect the full trace, and revise.</p>
+            <span className={styles.openLabel}>
+              Open console <ArrowRight aria-hidden="true" />
+            </span>
+          </Link>
+        </div>
+      </section>
 
-              <div className="mt-4">
-                <div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${game.color} text-white mb-4`}
-                >
-                  {game.icon}
-                </div>
-
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-bold text-gray-900">{game.title}</h3>
-                  <DifficultyBadge difficulty={game.difficulty} />
-                </div>
-
-                <p className="text-gray-600 mb-4">{game.description}</p>
-
-                <div className="flex items-center text-sm font-semibold text-purple-600 group-hover:text-purple-700">
-                  Play Game
-                  <svg
-                    aria-hidden="true"
-                    className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </Link>
+      <section className={styles.circuits} aria-labelledby="circuits-heading">
+        <header>
+          <span className={styles.eyebrow}>Five deterministic circuits</span>
+          <h2 id="circuits-heading" className={styles.sectionHeading}>
+            Short rounds. Changed cases. Real reasons.
+          </h2>
+        </header>
+        <ol>
+          {PRACTICE_CIRCUITS.map(({ href, number, title, skill, description, icon: Icon }) => (
+            <li key={href}>
+              <Link href={href}>
+                <span className={styles.number}>{number}</span>
+                <span className={styles.circuitIcon}>
+                  <Icon aria-hidden="true" />
+                </span>
+                <span className={styles.circuitCopy}>
+                  <span className={styles.skill}>{skill}</span>
+                  <strong>{title}</strong>
+                  <span>{description}</span>
+                </span>
+                <ArrowRight className={styles.arrow} aria-hidden="true" />
+              </Link>
+            </li>
           ))}
-        </div>
+        </ol>
+      </section>
 
-        {/* Info Section */}
-        <div className="mt-12 rounded-2xl bg-white p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">How to Play</h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-2">1</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Choose a Game</h4>
-              <p className="text-gray-600 text-sm">
-                Pick a game that matches your skill level and interests
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-2">2</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Complete Challenges</h4>
-              <p className="text-gray-600 text-sm">
-                Solve coding puzzles and complete objectives to earn points
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-2">3</div>
-              <h4 className="font-semibold text-gray-900 mb-1">Track Progress</h4>
-              <p className="text-gray-600 text-sm">
-                View your scores, achievements, and unlock new levels
-              </p>
-            </div>
-          </div>
+      <aside className={styles.masteryBoundary}>
+        <div>
+          <span className={styles.eyebrow}>Where mastery lives</span>
+          <h2 className={`${styles.sectionHeading} ${styles.masteryHeading}`}>
+            Games retrieve. Courses assess.
+          </h2>
         </div>
-      </main>
-    </div>
+        <p>
+          Use the arcade for repetition and feedback. Use curriculum workshops, debugging clinics,
+          labs, projects, quizzes, and exams for saved evidence and mastery progression.
+        </p>
+        <Link href="/courses" className={styles.masteryLink}>
+          Browse 54 courses <ArrowRight aria-hidden="true" />
+        </Link>
+      </aside>
+    </main>
   );
 }

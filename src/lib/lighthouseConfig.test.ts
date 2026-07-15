@@ -1,4 +1,6 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 interface LighthouseConfig {
@@ -30,6 +32,13 @@ function loadProfile(profile: string): LighthouseConfig {
 }
 
 describe('Lighthouse profiles', () => {
+  it('runs only after the audited version 2 completion marker is present', () => {
+    const marker = readFileSync(path.join(process.cwd(), 'content/v2/CONTENT_COMPLETE'), 'utf8');
+    expect(marker).toContain('All 54 published courses passed');
+    expect(marker).toContain('duplication, accessibility, and learner-flow gates');
+    expect(marker).toContain('mobile, tablet, and desktop Lighthouse gate may run');
+  });
+
   it.each([
     ['mobile', 412, 823],
     ['tablet', 768, 1024],

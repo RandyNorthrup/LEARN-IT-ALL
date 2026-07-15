@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-14 after catalog-wide duplication repair and version 1 curriculum retirement
+Last verified full gate: 2026-07-14 after deterministic gamified-practice modernization
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -82,7 +82,7 @@ At the last full gate, all 54 catalog courses were wired into the version 2 lear
 
 Verified platform total at this checkpoint: 1,135 modules, 11,742 activities, 98,870 learner steps, and 108,370 checks across 54 version 2 courses.
 
-The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair and equivalent-flow version 1 curriculum retirement are complete. Gamified practice modernization remains active, so publication count does not release the Lighthouse hold.
+The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair, equivalent-flow version 1 curriculum retirement, and gamified-practice modernization are complete. The audited `content/v2/CONTENT_COMPLETE` marker releases the Lighthouse hold for the final mobile, tablet, and desktop gate only.
 
 ## Catalog-wide duplication repair evidence
 
@@ -106,7 +106,15 @@ The duplicated dashboard now permanently redirects to the modern home surface. T
 
 The final retirement gate passed 86 test files and 561 tests, type-check, normal and strict lint across 311 files, and the Next.js 16.2.10 production build. The two known build warnings remain the broad content patterns for 12,931 version 2 files and 11,742 dynamic activity files. Browser verification passed old-bookmark redirects, API retirement, historical-progress visibility, catalog links, tracks, practice, progress, and settings at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop with one H1, zero horizontal overflow, no undersized visible controls, and no console or page errors. Browser review found and repaired two issues: all deep practice targets initially sent new learners only to locked course sections, and the mobile settings dialog was anchored at the top-left. Practice now opens the first accessible prerequisite and the dialog is exactly centered, viewport-bounded, focus-contained, and restores trigger focus on cancel.
 
-Lighthouse remains paused. The legacy audit exposed random-pass and other weak behavior in the separate game surfaces, so gamified practice modernization must finish before the content-complete marker can be created.
+## Deterministic gamified-practice evidence
+
+The seven separate game routes no longer contain random grading, fake execution, canvas-only control, timer punishment, or drag-only ordering. Five practice circuits now draw from 25 distinct challenges across algorithms, debugging, system construction, operational decisions, and exact syntax recall. Every challenge requires a verified primary response and a changed-case transfer response before exposing its causal explanation. Choice, keyboard ordering, and exact typing interactions share deterministic checks, three bounded hints, attempt-aware session scoring, announced feedback, visible focus, and 44- or 48-pixel controls. Practice points are explicitly session feedback and never grant curriculum XP, activity access, or mastery.
+
+Lunar Lander and Code Lander now use one pure deterministic flight model. Manual play chooses accessible thrust buttons one telemetry step at a time. Program play parses only `COAST`, `PULSE`, and `BURN` lines as data, never executes source, and exposes every altitude, velocity, fuel, command, and status transition in a semantic table. Unit tests prove same-state determinism, safe reference landings, unsafe all-coast impact, parser rejection, and command limits. Text telemetry and live status are the primary evidence; the decorative ship honors reduced motion.
+
+The game-focused gate passed 5 test files and 16 tests, strict lint, and type-check. Live interaction rejected a wrong answer, advanced a correct primary answer into transfer, unlocked explanation only after changed-case success, accepted exact syntax, produced a safe manual landing at 2.55, produced a safe program landing at 1.75, and exposed invalid program errors. The hub and all seven routes passed one-H1, zero-overflow, and page-error checks at 390x844 mobile, 768x1024 tablet, and 1440x1000 desktop. Desktop hub, mobile arcade, and tablet program-lander screenshots passed visual review.
+
+The final non-Lighthouse gate passed 91 test files and 577 tests, type-check, normal and strict lint across 323 files, and the Next.js 16.2.10 production build. All planned content, duplication, migration, and gamified-practice work is complete, so `content/v2/CONTENT_COMPLETE` was created and the Lighthouse hold is released.
 
 ## CompTIA A+ V15 release evidence
 
@@ -380,12 +388,12 @@ The Go audit parses and type-checks 852 starter and lesson sources across Go Bas
 
 ## Latest full verification checkpoint
 
-After the CompTIA A+ V15 curriculum, publication, support simulator, responsive long-title repair, malformed-autosave hardening, and learner-flow verification:
+After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, and three-viewport learner-flow verification:
 
-- `npm test`: 77 test files and 537 tests passed under Node.js 24.18.0 and npm 12.0.1.
+- `npm test`: 91 test files and 577 tests passed under Node.js 24.18.0 and npm 12.0.1.
 - `npm run type-check`: passed.
-- `npm run lint`: passed across 303 source and script files.
-- `npm run lint:strict`: passed across 303 files with warnings treated as failures.
+- `npm run lint`: passed across 323 source and script files.
+- `npm run lint:strict`: passed across 323 files with warnings treated as failures.
 - `npm run build`: passed with Next.js 16.2.10.
 
 The Go Basics content gate parses and type-checks all 426 learner starters and lesson sources with the official Go toolchain, while the runtime tests verify local-only assets, import isolation, deterministic execution, output limits, and worker cleanup. Go research is reviewed 2026-07-14 against the Go 1.26 specification and release notes, modules reference, memory model, testing/fuzzing, race detector, context and pipelines, security, diagnostics, performance/PGO, code review guidance, and ACM/IEEE/AAAI CS2023. Current versions are Go 1.26.5 and Yaegi 0.16.1; the course explicitly distinguishes the browser subset from full-toolchain transfer gates.
@@ -396,13 +404,13 @@ Run focused tests after each track, then repeat full verification. Do not infer 
 
 ## Active next work
 
-1. Audit near duplication across all activities, starters, requirements, project scenarios, assessment stems, and generated explanations—not exact duplicates alone. Repair shared generators and regenerate affected tracks instead of patching thousands of outputs by hand.
-2. Inventory every legacy route and content artifact, prove equivalent version 2 learner flows and progress handling, add migration tests, then remove or redirect legacy paths without losing learner state.
-3. Repeat focused and full non-Lighthouse gates after each duplication or migration wave; keep volatile totals dated and remeasure them before reporting.
-4. Only after all planned content, migration, and duplication work is complete may the Lighthouse hold be released for mobile, tablet, and desktop scores of at least 99 in performance, accessibility, and best practices, with SEO excluded.
+1. Run the released Lighthouse gate for mobile, tablet, and desktop. Measure performance, accessibility, and best practices only; every route and run must score at least 99.
+2. Repair any Lighthouse fallout without weakening the assertions, viewport profiles, content contracts, accessibility behavior, or interactive learning depth.
+3. Repeat focused tests, the full non-Lighthouse gate, browser verification, and all three Lighthouse profiles after any repair.
+4. Preserve the dated completion marker and final Lighthouse artifacts as release evidence.
 
 ## Known caution
 
-Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. Keep catalog status coming soon until all release gates pass.
+Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. New or regenerated content must repeat the same gates before publication.
 
-There is no external blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,931 files and the dynamic activity path matches 11,742 files; narrowing those traces is a scalability hardening task, not a release blocker for this wave. The Lighthouse hold is intentional unfinished-work policy, not a blocker. Catalog-wide near-duplication and legacy migration waves remain before Lighthouse may run.
+There is no external blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,931 files and the dynamic activity path matches 11,742 files; narrowing those traces is a scalability hardening task, not a release blocker. The content hold is released; the three-profile Lighthouse gate is active final work.
