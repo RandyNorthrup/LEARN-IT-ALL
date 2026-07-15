@@ -67,6 +67,15 @@ describe('toLearnerActivity', () => {
     expect(JSON.stringify(learner)).not.toContain('expectedOptionId');
     expect(JSON.stringify(learner)).not.toContain('check-hidden');
     expect(JSON.stringify(learner)).not.toContain('Prefer native semantics.');
+    expect(JSON.stringify(learner)).not.toContain('competencyIds');
     expect(learner.steps[0].hintCount).toBe(3);
+    expect(Object.keys(learner).sort()).toEqual([
+      'checks',
+      'courseId',
+      'id',
+      'kind',
+      'steps',
+      'title',
+    ]);
   });
 });

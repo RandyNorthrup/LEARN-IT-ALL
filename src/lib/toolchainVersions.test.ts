@@ -40,6 +40,13 @@ describe('production JavaScript toolchain pins', () => {
     });
   });
 
+  it('runs the latest Lighthouse engine through the latest compatible LHCI harness', () => {
+    expect(manifest.devDependencies?.['@lhci/cli']).toBe('^0.15.1');
+    expect(manifest.devDependencies?.lighthouse).toBe('^13.4.0');
+    expect(manifest.overrides?.lighthouse).toBe('^13.4.0');
+    expect(manifest.overrides?.['@sentry/node']).toBe('^10.65.0');
+  });
+
   it('uses the same verified runtime and package manager in production images', () => {
     expect(dockerfile).toContain('FROM node:24.18.0-alpine AS base');
     expect(dockerfile).toContain('ARG NPM_VERSION=12.0.1');
@@ -51,6 +58,24 @@ describe('production JavaScript toolchain pins', () => {
   it('ships TypeScript standard-library declarations in standalone runtime traces', () => {
     expect(nextConfig).toContain("'/api/v2/runtime/typescript'");
     expect(nextConfig).toContain("'./node_modules/@typescript/old/lib/*.d.ts'");
+  });
+
+  it('inlines production CSS to remove the first-load render-blocking waterfall', () => {
+    expect(nextConfig).toMatch(/experimental:\s*\{\s*inlineCss:\s*true,/u);
+  });
+
+  it('replaces redundant framework legacy patches with the narrow modern-browser fallback', () => {
+    expect(nextConfig).toContain("'../build/polyfills/polyfill-module'");
+    expect(nextConfig).toContain("'./src/lib/modernBrowserCompatibility.ts'");
+
+    const compatibility = readFileSync(
+      path.join(root, 'src/lib/modernBrowserCompatibility.ts'),
+      'utf8'
+    );
+    expect(compatibility).toContain("if (!('canParse' in URL))");
+    expect(compatibility).not.toMatch(
+      /trimStart|trimEnd|\.flat\(|\.flatMap\(|Promise\.prototype\.finally|Object\.fromEntries|\.at\(|Object\.hasOwn/u
+    );
   });
 
   it('pins every dependency install script that was reviewed for npm 12', () => {

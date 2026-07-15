@@ -10,6 +10,18 @@ const studio = readFileSync(
   path.join(process.cwd(), 'src/components/learning/LearningStudio.tsx'),
   'utf8'
 );
+const stepWorkspace = readFileSync(
+  path.join(process.cwd(), 'src/components/learning/StepWorkspace.tsx'),
+  'utf8'
+);
+const codeWorkspace = readFileSync(
+  path.join(process.cwd(), 'src/components/learning/CodeWorkspace.tsx'),
+  'utf8'
+);
+const activityPage = readFileSync(
+  path.join(process.cwd(), 'src/app/learn/[courseId]/[moduleId]/[activityId]/page.tsx'),
+  'utf8'
+);
 
 describe('learning studio responsive runtime layout', () => {
   it('gives every activity page a screen-reader-visible level-one heading', () => {
@@ -35,11 +47,62 @@ describe('learning studio responsive runtime layout', () => {
     expect(styles).toMatch(/\.feedback button\s*\{[^}]*min-height: 44px;/);
   });
 
+  it('uses the verified high-contrast studio token for hint consequences', () => {
+    expect(styles).toMatch(/\.hintSection small\s*\{[^}]*color: var\(--studio-muted\);/);
+  });
+
+  it('uses a direct exit without prefetch and does not post an unchanged first-paint draft', () => {
+    expect(studio).toContain('<a href="/" className={styles.exitButton}');
+    expect(studio).toContain('<span className={styles.visuallyHidden}>Exit learning studio</span>');
+    expect(studio).not.toContain("from 'next/link'");
+    expect(studio).toContain('const lastScheduledDraft = useRef(draftSnapshot);');
+    expect(studio).toContain('if (draftSnapshot === lastScheduledDraft.current) return;');
+  });
+
+  it('loads code runtimes only when the active step needs a code workspace', () => {
+    expect(stepWorkspace).toContain('lazy(async () =>');
+    expect(stepWorkspace).toContain("import('./CodeWorkspace')");
+    expect(stepWorkspace).toContain('<Suspense fallback={<CodeWorkspaceLoading />}>');
+    expect(stepWorkspace).toContain('role="status"');
+    expect(stepWorkspace).not.toMatch(
+      /from '\.\/(?:C|Go|JavaScript|Network|Python|Sql|TypeScript)RunPanel'/u
+    );
+    expect(codeWorkspace).toContain("from './TypeScriptRunPanel'");
+    expect(codeWorkspace).toContain('role="tablist"');
+  });
+
+  it('keeps the initial non-interactive task heading in the server-rendered path', () => {
+    expect(activityPage).toContain('initialStepIntro={<StepIntro step={initialStep} />}');
+    expect(studio).toContain('step.id === initialProgress.currentStepId');
+    expect(stepWorkspace).toContain('initialIntro ?? <StepIntro step={step} />');
+  });
+
   it('stacks evidence labels and long source text on narrow screens', () => {
     expect(styles).toMatch(
       /@media \(max-width: 640px\)[\s\S]*?\.inlineEvidence\s*\{[\s\S]*?grid-template-columns: 1fr;[\s\S]*?gap: 0\.35rem;/
     );
     expect(styles).toMatch(/\.inlineEvidence dd\s*\{[^}]*overflow-wrap: anywhere;/);
+  });
+
+  it('removes costly decorative paint and balanced text layout on mobile', () => {
+    expect(styles).toMatch(
+      /@media \(max-width: 640px\)[\s\S]*?\.topbar\s*\{[^}]*backdrop-filter: none;/
+    );
+    expect(styles).toMatch(
+      /@media \(max-width: 640px\)[\s\S]*?\.studioShell\s*\{[^}]*background-image: none;/
+    );
+    expect(styles).toMatch(
+      /@media \(max-width: 640px\)[\s\S]*?\.taskIntro h2\s*\{[^}]*text-wrap: wrap;/
+    );
+  });
+
+  it('uses solid chrome and bounded typography throughout the tablet layout', () => {
+    expect(styles).toMatch(
+      /@media \(641px <= width <= 1024px\)[\s\S]*?\.topbar\s*\{[^}]*backdrop-filter: none;/
+    );
+    expect(styles).toMatch(
+      /@media \(641px <= width <= 1024px\)[\s\S]*?\.taskIntro h2\s*\{[^}]*font-size: clamp\(2\.2rem, 5vw, 3rem\);[^}]*text-wrap: wrap;/
+    );
   });
 
   it('keeps long prose evidence readable inside the narrow desktop comparison pane', () => {

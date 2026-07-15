@@ -1,12 +1,15 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { z } from 'zod';
 import {
+  ActivityKindSchema,
   type CurriculumActivity,
   CurriculumActivitySchema,
   type CurriculumCourse,
   CurriculumCourseSchema,
   type CurriculumModule,
   CurriculumModuleSchema,
+  IdentifierSchema,
 } from './schema';
 
 const DEFAULT_CONTENT_ROOT = path.join(process.cwd(), 'content', 'v2', 'courses');
@@ -46,6 +49,41 @@ export interface CurriculumGraph {
   course: CurriculumCourse;
   modules: CurriculumModule[];
   activities: CurriculumActivity[];
+}
+
+const CurriculumOutlineActivitySchema = z.object({
+  schemaVersion: z.literal(2),
+  id: IdentifierSchema,
+  courseId: IdentifierSchema,
+  moduleId: IdentifierSchema,
+  kind: ActivityKindSchema,
+  title: z.string().min(5).max(140),
+  prerequisites: z.array(IdentifierSchema),
+  estimatedMinutes: z.number().int().positive().max(600),
+  stepIds: z.array(IdentifierSchema).min(1),
+});
+
+const CurriculumOutlineSchema = z.object({
+  schemaVersion: z.literal(1),
+  course: CurriculumCourseSchema,
+  modules: z.array(CurriculumModuleSchema).min(1),
+  activities: z.array(CurriculumOutlineActivitySchema).min(1),
+});
+
+export type CurriculumOutlineActivity = z.infer<typeof CurriculumOutlineActivitySchema>;
+export type CurriculumOutline = z.infer<typeof CurriculumOutlineSchema>;
+
+export function loadCurriculumOutline(
+  courseId: string,
+  contentRoot = DEFAULT_CONTENT_ROOT
+): CurriculumOutline {
+  const outline = CurriculumOutlineSchema.parse(
+    readJson(path.join(contentRoot, courseId, 'outline.json'))
+  );
+  if (outline.course.id !== courseId) {
+    throw new Error(`Curriculum outline ${outline.course.id} does not match ${courseId}`);
+  }
+  return outline;
 }
 
 export function validateCurriculumGraph(graph: CurriculumGraph): string[] {

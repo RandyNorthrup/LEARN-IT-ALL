@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { loadCurriculumGraph } from '@/core/curriculum/repository';
+import { loadCurriculumCourse, loadCurriculumOutline } from '@/core/curriculum/repository';
 import { activityAccess } from '@/core/learning/activityAccess';
 import { buildActivityProgress, type StepProgressRecord } from '@/core/learning/progress';
 import { dbHelpers } from '@/lib/db';
@@ -20,7 +20,7 @@ interface LegacyProgressSummary {
 
 function loadCourse(courseId: string) {
   try {
-    return loadCurriculumGraph(courseId);
+    return loadCurriculumOutline(courseId);
   } catch {
     return null;
   }
@@ -28,8 +28,11 @@ function loadCourse(courseId: string) {
 
 export async function generateMetadata({ params }: CourseJourneyPageProps): Promise<Metadata> {
   const { courseId } = await params;
-  const graph = loadCourse(courseId);
-  return { title: graph ? graph.course.title : 'Course not found' };
+  try {
+    return { title: loadCurriculumCourse(courseId).title };
+  } catch {
+    return { title: 'Course not found' };
+  }
 }
 
 export default async function CourseJourneyPage({ params, searchParams }: CourseJourneyPageProps) {
@@ -42,10 +45,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
     const records = dbHelpers.getLearningStepProgress(activity.id) as StepProgressRecord[];
     return {
       ...activity,
-      progress: buildActivityProgress(
-        activity.steps.map((step) => step.id),
-        records
-      ),
+      progress: buildActivityProgress(activity.stepIds, records),
     };
   });
   const completedSteps = activities.reduce(
@@ -70,6 +70,15 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
   const visibleModuleId = graph.modules.some((module) => module.id === requestedModuleId)
     ? requestedModuleId
     : firstModule.id;
+  const visibleModule = graph.modules.find((module) => module.id === visibleModuleId);
+  if (!visibleModule) notFound();
+  const competencyById = new Map(
+    graph.course.competencies.map((competency) => [competency.id, competency])
+  );
+  const visibleCompetencies = visibleModule.competencyIds.flatMap((competencyId) => {
+    const competency = competencyById.get(competencyId);
+    return competency ? [competency] : [];
+  });
   const completedActivityIds = new Set(
     activities
       .filter((activity) => activity.progress.activityCompleted)
@@ -79,7 +88,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link href="/" className={styles.brand}>
+        <Link href="/" prefetch={false} className={styles.brand}>
           LEARN / BUILD
         </Link>
         <div>
@@ -101,6 +110,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
             <Link
               className={styles.primaryLink}
               href={`/learn/${courseId}/${firstModule.id}/${firstActivity.id}`}
+              prefetch={false}
             >
               {completedSteps > 0 ? 'Continue the build' : 'Start with evidence'}
               <span aria-hidden="true">→</span>
@@ -151,7 +161,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
                 (activity) => activity.moduleId === module.id
               );
               const moduleStepCount = moduleActivities.reduce(
-                (total, activity) => total + activity.steps.length,
+                (total, activity) => total + activity.stepIds.length,
                 0
               );
               return (
@@ -171,6 +181,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
                         <Link
                           className={styles.moduleExplore}
                           href={`/learn/${courseId}?module=${module.id}#module-${module.id}`}
+                          prefetch={false}
                         >
                           Explore module <span aria-hidden="true">→</span>
                         </Link>
@@ -192,7 +203,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
                               </span>
                               <span>
                                 <small>
-                                  {activity.kind} · {activity.steps.length} interactions ·{' '}
+                                  {activity.kind} · {activity.stepIds.length} interactions ·{' '}
                                   {activity.estimatedMinutes} min
                                 </small>
                                 <strong>{activity.title}</strong>
@@ -212,6 +223,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
                                 <Link
                                   className={styles.activityLink}
                                   href={`/learn/${courseId}/${module.id}/${activity.id}`}
+                                  prefetch={false}
                                 >
                                   {content}
                                 </Link>
@@ -243,8 +255,12 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
               <li key={outcome}>{outcome}</li>
             ))}
           </ul>
-          <ul className={styles.competencyList} aria-label="Competencies currently mapped">
-            {graph.course.competencies.map((competency) => (
+          <p className={styles.competencySummary}>
+            {visibleCompetencies.length} capabilities in the open module ·{' '}
+            {graph.course.competencies.length} across the course
+          </p>
+          <ul className={styles.competencyList} aria-label="Competencies in the open module">
+            {visibleCompetencies.map((competency) => (
               <li key={competency.id}>
                 <span aria-hidden="true">✦</span> {competency.statement}
               </li>

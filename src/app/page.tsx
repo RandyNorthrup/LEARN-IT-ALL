@@ -11,7 +11,11 @@ import {
   Target,
 } from 'lucide-react';
 import Link from 'next/link';
-import { loadCurriculumGraph } from '@/core/curriculum/repository';
+import {
+  loadCurriculumActivity,
+  loadCurriculumCourse,
+  loadCurriculumModule,
+} from '@/core/curriculum/repository';
 import { buildActivityProgress, type StepProgressRecord } from '@/core/learning/progress';
 import { dbHelpers } from '@/lib/db';
 import styles from './Home.module.css';
@@ -19,10 +23,13 @@ import styles from './Home.module.css';
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const graph = loadCurriculumGraph('responsive-web-design');
-  const firstActivity = graph.activities[0];
-  const firstModule = graph.modules.find((module) => module.id === firstActivity.moduleId);
-  if (!firstModule) throw new Error(`Missing module for activity ${firstActivity.id}`);
+  const course = loadCurriculumCourse('responsive-web-design');
+  const firstModuleId = course.moduleIds[0];
+  if (!firstModuleId) throw new Error(`Course ${course.id} has no modules`);
+  const firstModule = loadCurriculumModule(course.id, firstModuleId);
+  const firstActivityId = firstModule.activityIds[0];
+  if (!firstActivityId) throw new Error(`Module ${firstModule.id} has no activities`);
+  const firstActivity = loadCurriculumActivity(course.id, firstActivityId);
   const records = dbHelpers.getLearningStepProgress(firstActivity.id) as StepProgressRecord[];
   const progress = buildActivityProgress(
     firstActivity.steps.map((step) => step.id),
@@ -39,15 +46,26 @@ export default function HomePage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link href="/" className={styles.brand}>
+        <Link href="/" prefetch={false} className={styles.brand}>
           LEARN / BUILD
         </Link>
         <nav aria-label="Primary navigation">
-          <Link href="/courses">Courses</Link>
-          <Link href="/challenges">Practice</Link>
-          <Link href="/progress">Progress</Link>
+          <Link href="/courses" prefetch={false}>
+            Courses
+          </Link>
+          <Link href="/challenges" prefetch={false}>
+            Practice
+          </Link>
+          <Link href="/progress" prefetch={false}>
+            Progress
+          </Link>
         </nav>
-        <Link className={styles.settings} href="/settings" aria-label="Learning settings">
+        <Link
+          className={styles.settings}
+          href="/settings"
+          prefetch={false}
+          aria-label="Learning settings"
+        >
           <Settings aria-hidden="true" />
         </Link>
       </header>
@@ -79,7 +97,10 @@ export default function HomePage() {
             <progress max={progress.totalSteps} value={progress.completedSteps}>
               {progress.percent}%
             </progress>
-            <Link href={`/learn/${graph.course.id}/${firstModule.id}/${firstActivity.id}`}>
+            <Link
+              href={`/learn/${course.id}/${firstModule.id}/${firstActivity.id}`}
+              prefetch={false}
+            >
               {progress.completedSteps ? 'Continue building' : 'Start the mission'}
               <ArrowRight aria-hidden="true" />
             </Link>
@@ -121,7 +142,7 @@ export default function HomePage() {
               <span className={styles.eyebrow}>Active path</span>
               <h2>Keep shipping</h2>
             </div>
-            <Link href="/learn/responsive-web-design">
+            <Link href="/learn/responsive-web-design" prefetch={false}>
               View course map <ArrowRight aria-hidden="true" />
             </Link>
           </header>
@@ -129,15 +150,19 @@ export default function HomePage() {
             <div className={styles.courseNumber}>01</div>
             <div>
               <span>Responsive systems · accessibility · design</span>
-              <h3>{graph.course.title}</h3>
-              <p>{graph.course.description}</p>
+              <h3>{course.title}</h3>
+              <p>{course.description}</p>
               <ul>
-                {graph.course.outcomes.map((outcome) => (
+                {course.outcomes.map((outcome) => (
                   <li key={outcome}>{outcome}</li>
                 ))}
               </ul>
             </div>
-            <Link href="/learn/responsive-web-design" aria-label={`Open ${graph.course.title}`}>
+            <Link
+              href="/learn/responsive-web-design"
+              prefetch={false}
+              aria-label={`Open ${course.title}`}
+            >
               <ArrowRight aria-hidden="true" />
             </Link>
           </article>
@@ -151,21 +176,21 @@ export default function HomePage() {
             </div>
           </header>
           <div className={styles.practiceGrid}>
-            <Link href="/challenges">
+            <Link href="/challenges" prefetch={false}>
               <Bug aria-hidden="true" />
               <span>
                 <strong>Debug room</strong>
                 <small>Find causes, not symptoms</small>
               </span>
             </Link>
-            <Link href="/games">
+            <Link href="/games" prefetch={false}>
               <Blocks aria-hidden="true" />
               <span>
                 <strong>Build sprint</strong>
                 <small>Make something under constraints</small>
               </span>
             </Link>
-            <Link href="/progress">
+            <Link href="/progress" prefetch={false}>
               <BookOpenCheck aria-hidden="true" />
               <span>
                 <strong>Retrieval queue</strong>

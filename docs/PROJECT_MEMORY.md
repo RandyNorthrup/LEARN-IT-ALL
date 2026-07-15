@@ -388,29 +388,36 @@ The Go audit parses and type-checks 852 starter and lesson sources across Go Bas
 
 ## Latest full verification checkpoint
 
-After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, and three-viewport learner-flow verification:
+After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, generated runtime-outline optimization, and final three-viewport verification on 2026-07-14:
 
-- `npm test`: 91 test files and 577 tests passed under Node.js 24.18.0 and npm 12.0.1.
+- `npm test`: 93 test files and 594 tests passed under Node.js 24.18.0 and npm 12.0.1.
 - `npm run type-check`: passed.
-- `npm run lint`: passed across 323 source and script files.
-- `npm run lint:strict`: passed across 323 files with warnings treated as failures.
+- `npm run lint`: passed across 329 source and script files.
+- `npm run lint:strict`: passed across 329 files with warnings treated as failures.
+- `npm run format:check`: passed across 329 files.
 - `npm run build`: passed with Next.js 16.2.10.
+- `npm audit --audit-level=moderate`: zero vulnerabilities across 536 audited packages.
+- Lighthouse 13.4.0 through LHCI 0.15.1 passed four representative routes three times per profile with pessimistic `>= 0.99` assertions and no SEO category. Phone and tablet performance were 99-100, and accessibility/best practices were 100 on all 24 runs. Desktop performance, accessibility, and best practices were 100 on all 12 runs.
+- The phone profile uses a 412x823 mobile-form-factor viewport, DPR 2.625, constrained 150 ms/1638.4 Kbps network, and 3x CPU slowdown. The tablet profile uses a 768x1024 mobile-form-factor viewport, DPR 2, the same constrained network, and 2x CPU slowdown. Desktop remains the 1440x900 Dense 4G profile at 1x CPU.
+- Final browser verification passed the responsive-web-design journey and first studio activity at 412x823, 768x1024, and 1440x900 with one H1, no horizontal overflow, working radio selection, visible rail and learning material, open-module competency scoping, and no console or page errors.
+- Every one of the 54 courses now has a generated `outline.json` containing exact ordered course, module, activity, prerequisite, estimate, and step-ID metadata. An exhaustive parity test checks every outline against source content. Course maps use outlines instead of parsing full lesson bodies; the Responsive Web Design route no longer validates a 16 MB graph just to render navigation.
+- First-paint learner payloads strip private competency IDs and hints, code runtimes lazy-load only for code steps, unchanged drafts do not autosave, initial task theory stays server-rendered, and navigation prefetch is disabled on large catalog and journey surfaces.
 
 The Go Basics content gate parses and type-checks all 426 learner starters and lesson sources with the official Go toolchain, while the runtime tests verify local-only assets, import isolation, deterministic execution, output limits, and worker cleanup. Go research is reviewed 2026-07-14 against the Go 1.26 specification and release notes, modules reference, memory model, testing/fuzzing, race detector, context and pipelines, security, diagnostics, performance/PGO, code review guidance, and ACM/IEEE/AAAI CS2023. Current versions are Go 1.26.5 and Yaegi 0.16.1; the course explicitly distinguishes the browser subset from full-toolchain transfer gates.
 
 The SQL content gate also executes every learner-facing SQL code block against the deterministic seed database. SQL research is reviewed 2026-07-14 against ACM/IEEE/AAAI CS2023 Data Management, SQLite 3.53.3 documentation, PostgreSQL 18.4 documentation, and OWASP SQL Injection Prevention. Browser labs are deliberately pinned to sql.js 1.14.1 with SQLite 3.49.1, and lessons identify dialect boundaries.
 
-Run focused tests after each track, then repeat full verification. Do not infer that unverified edits after this checkpoint pass.
+Run focused tests after each new change, then repeat the full non-Lighthouse gate. Repeat all three Lighthouse profiles only after later content or release-surface work is complete.
 
 ## Active next work
 
-1. Run the released Lighthouse gate for mobile, tablet, and desktop. Measure performance, accessibility, and best practices only; every route and run must score at least 99.
-2. Repair any Lighthouse fallout without weakening the assertions, viewport profiles, content contracts, accessibility behavior, or interactive learning depth.
-3. Repeat focused tests, the full non-Lighthouse gate, browser verification, and all three Lighthouse profiles after any repair.
-4. Preserve the dated completion marker and final Lighthouse artifacts as release evidence.
+1. Preserve the final Lighthouse profile definitions and `>= 0.99` pessimistic assertions in CI; retain or publish the filesystem artifacts when a deployment workflow is added.
+2. Narrow Turbopack curriculum file tracing through a generated manifest or explicit trace includes to remove the two non-failing broad-pattern build warnings.
+3. Conduct observed learner studies across representative beginner, intermediate, and advanced courses; use completion, retry, hint, transfer, and abandonment evidence to prioritize the next pedagogical revisions.
+4. Regenerate and parity-test runtime outlines whenever course, module, activity, prerequisite, estimate, or step ordering changes.
 
 ## Known caution
 
 Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. New or regenerated content must repeat the same gates before publication.
 
-There is no external blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,931 files and the dynamic activity path matches 11,742 files; narrowing those traces is a scalability hardening task, not a release blocker. The content hold is released; the three-profile Lighthouse gate is active final work.
+There is no external release blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,985 files and the dynamic activity path matches 11,742 files; narrowing those traces is a scalability hardening task, not a release blocker. The content hold and final three-profile Lighthouse gate are complete.

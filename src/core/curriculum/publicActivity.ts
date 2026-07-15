@@ -5,9 +5,11 @@ export interface LearnerCheck {
   description: string;
 }
 
-export type LearnerStep = Omit<CurriculumStep, 'hints'> & { hintCount: number };
+export type LearnerStep = Omit<CurriculumStep, 'hints' | 'competencyIds'> & {
+  hintCount: number;
+};
 
-export type LearnerActivity = Omit<CurriculumActivity, 'checks' | 'steps'> & {
+export type LearnerActivity = Pick<CurriculumActivity, 'id' | 'courseId' | 'kind' | 'title'> & {
   steps: LearnerStep[];
   checks: LearnerCheck[];
 };
@@ -17,8 +19,11 @@ export function toLearnerActivity(activity: CurriculumActivity): LearnerActivity
     activity.checks.filter((check) => !check.hidden).map((check) => check.id)
   );
   return {
-    ...activity,
-    steps: activity.steps.map(({ hints, ...step }) => ({
+    id: activity.id,
+    courseId: activity.courseId,
+    kind: activity.kind,
+    title: activity.title,
+    steps: activity.steps.map(({ hints, competencyIds: _competencyIds, ...step }) => ({
       ...step,
       hintCount: hints.length,
       checkIds: step.checkIds.filter((checkId) => publicCheckIds.has(checkId)),

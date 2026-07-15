@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LearningStudio } from '@/components/learning/LearningStudio';
 import { LockedActivity } from '@/components/learning/LockedActivity';
+import { StepIntro } from '@/components/learning/StepIntro';
 import { toLearnerActivity } from '@/core/curriculum/publicActivity';
 import {
   loadCurriculumActivity,
@@ -71,10 +72,13 @@ export default async function LearningPage({ params }: LearningPageProps) {
             dbHelpers.getLearningStepProgress(prerequisite.id) as StepProgressRecord[]
         )
     : [];
+  const learnerActivity = toLearnerActivity(data.activity);
+  const initialStep = learnerActivity.steps.find((step) => step.id === progress.currentStepId);
+  if (!initialStep) notFound();
 
   return (
     <LearningStudio
-      activity={toLearnerActivity(data.activity)}
+      activity={learnerActivity}
       courseTitle={data.course.title}
       moduleTitle={data.module.title}
       initialProgress={{
@@ -85,6 +89,7 @@ export default async function LearningPage({ params }: LearningPageProps) {
       initialXp={profile?.totalXp ?? 0}
       initialFiles={cumulativeLearningFiles(records, prerequisiteRecordGroups, starterFiles)}
       initialDrafts={learningInputDrafts(records)}
+      initialStepIntro={<StepIntro step={initialStep} />}
     />
   );
 }

@@ -64,6 +64,26 @@ describe('Lighthouse profiles', () => {
     });
   });
 
+  it('models a constrained modern phone with the mobile network profile', () => {
+    const mobile = loadProfile('mobile');
+    expect(mobile.ci.collect.settings.formFactor).toBe('mobile');
+    expect(mobile.ci.collect.settings.throttling).toMatchObject({
+      rttMs: 150,
+      throughputKbps: 1638.4,
+      cpuSlowdownMultiplier: 3,
+    });
+  });
+
+  it('models a midrange tablet without relaxing its constrained mobile network', () => {
+    const tablet = loadProfile('tablet');
+    expect(tablet.ci.collect.settings.formFactor).toBe('mobile');
+    expect(tablet.ci.collect.settings.throttling).toMatchObject({
+      rttMs: 150,
+      throughputKbps: 1638.4,
+      cpuSlowdownMultiplier: 2,
+    });
+  });
+
   it.each([
     'performance',
     'accessibility',

@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import type { LearnerActivity } from '@/core/curriculum/publicActivity';
 import type { LearningInputDrafts } from '@/core/learning/draft';
 import { ActivityRail } from './ActivityRail';
@@ -36,6 +35,7 @@ interface LearningStudioProps {
   initialXp: number;
   initialFiles: StudioFiles;
   initialDrafts: LearningInputDrafts;
+  initialStepIntro: ReactNode;
 }
 
 function scrambledOptionIds(activity: LearnerActivity, stepId: string): string[] {
@@ -67,6 +67,7 @@ export function LearningStudio({
   initialXp,
   initialFiles,
   initialDrafts,
+  initialStepIntro,
 }: LearningStudioProps) {
   const [activeStepId, setActiveStepId] = useState(initialProgress.currentStepId);
   const [completedStepIds, setCompletedStepIds] = useState(initialProgress.completedStepIds);
@@ -94,31 +95,27 @@ export function LearningStudio({
     .map((stepId) => activity.steps.find((entry) => entry.id === stepId)?.title)
     .filter((title): title is string => Boolean(title));
   const publicChecks = activity.checks.filter((check) => step.checkIds.includes(check.id));
+  const draftSnapshot = JSON.stringify({
+    stepId: step.id,
+    files,
+    selectedOptionId: selectedByStep[step.id],
+    orderedOptionIds,
+    textResponse: textByStep[step.id],
+  });
+  const lastScheduledDraft = useRef(draftSnapshot);
 
   useEffect(() => {
+    if (draftSnapshot === lastScheduledDraft.current) return;
     const timeout = window.setTimeout(() => {
+      lastScheduledDraft.current = draftSnapshot;
       void fetch(`/api/v2/courses/${activity.courseId}/activities/${activity.id}/draft`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          stepId: step.id,
-          files,
-          selectedOptionId: selectedByStep[step.id],
-          orderedOptionIds,
-          textResponse: textByStep[step.id],
-        }),
+        body: draftSnapshot,
       });
     }, 500);
     return () => window.clearTimeout(timeout);
-  }, [
-    activity.courseId,
-    activity.id,
-    files,
-    orderedOptionIds,
-    selectedByStep,
-    step.id,
-    textByStep,
-  ]);
+  }, [activity.courseId, activity.id, draftSnapshot]);
 
   function openStep(stepId: string) {
     const requestedIndex = activity.steps.findIndex((entry) => entry.id === stepId);
@@ -205,9 +202,10 @@ export function LearningStudio({
       <h1 className={styles.visuallyHidden}>{activity.title}</h1>
       <header className={styles.topbar}>
         <div className={styles.brandBlock}>
-          <Link href="/" className={styles.exitButton} aria-label="Exit learning studio">
+          <a href="/" className={styles.exitButton} aria-label="Exit learning studio">
+            <span className={styles.visuallyHidden}>Exit learning studio</span>
             <span aria-hidden="true">←</span>
-          </Link>
+          </a>
           <div>
             <span className={styles.brand}>LEARN / BUILD</span>
             <nav className={styles.breadcrumbs} aria-label="Course location">
@@ -265,6 +263,7 @@ export function LearningStudio({
             onTextChange={(response) =>
               setTextByStep((current) => ({ ...current, [step.id]: response }))
             }
+            initialIntro={step.id === initialProgress.currentStepId ? initialStepIntro : undefined}
           />
 
           {attempt && (

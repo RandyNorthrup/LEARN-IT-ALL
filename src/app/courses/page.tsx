@@ -19,10 +19,10 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link href="/" className={styles.back}>
+        <Link href="/" prefetch={false} className={styles.back}>
           <ArrowLeft aria-hidden="true" /> Home
         </Link>
-        <Link href="/" className={styles.brand}>
+        <Link href="/" prefetch={false} className={styles.brand}>
           LEARN / BUILD
         </Link>
         <span>{ALL_COURSES.length} paths mapped</span>
@@ -119,6 +119,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                     <Link
                       className={styles.openCourse}
                       href={href}
+                      prefetch={false}
                       aria-label={`Open ${course.title}`}
                     >
                       <ArrowRight aria-hidden="true" />
