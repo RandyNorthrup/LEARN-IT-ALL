@@ -1,0 +1,565 @@
+{
+  "schemaVersion": 2,
+  "id": "functional-purity-immutability-retrieval-review",
+  "courseId": "python-functional",
+  "moduleId": "functional-purity-immutability",
+  "kind": "review",
+  "title": "Pure Functions, Immutability, and Data Copies · Equational Recall",
+  "summary": "Repair a pricing pipeline where aliases mutate shared orders during validation. Learners retrieve rules and procedures before seeing feedback. Planned artifact: Extend the evidence record for a pure price transformation with alias-safety tests after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Write deterministic pure functions whose outputs and failures depend only on explicit inputs.",
+    "Predict mutation through shared aliases in nested Python containers.",
+    "Return updated immutable records while preserving unchanged data and input values.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "fp-pure-contract",
+      "fp-mutation-aliasing",
+      "fp-immutable-update",
+      "fp-copy-boundary",
+      "fp-purity-tests"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "functional-purity-immutability-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "python-functional-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-functional immutable transformation portfolio.\"\"\"\n\nfrom collections.abc import Callable, Iterable, Iterator\nfrom functools import partial, reduce\nfrom itertools import chain, islice\nfrom typing import TypeVar\n\nT = TypeVar('T')\nU = TypeVar('U')\n\n# Extend one pure, lazy, tested pipeline increment per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "retrieval-order",
+      "title": "Retrieve the complete evidence cycle",
+      "interaction": "arrange",
+      "instruction": "Order the Pure Contract value-and-effect pipeline for this review task before implementing it.",
+      "why": "Correct order keeps Pure Contract assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Pure Contract has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "fp-pure-contract"
+      ],
+      "hints": [
+        "Name the Pure Contract precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Avoiding global variables alone guarantees purity."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Separate immutable values from observable effects and ownership boundaries"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Specify a total transformation contract and explicit failure representation"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Compose and run the smallest pipeline while retaining an inspectable trace"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Repeat with changed input, verify input preservation, and move effects to the shell"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Pure Contract · changed case",
+      "interaction": "predict",
+      "instruction": "review case — An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nWhich action demonstrates Pure Contract without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for write deterministic pure functions whose outputs and failures depend only on explicit inputs.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pure Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "fp-pure-contract"
+      ],
+      "hints": [
+        "Name the Pure Contract precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Avoiding global variables alone guarantees purity."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Avoiding global variables alone guarantees purity."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Pure Contract."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Write deterministic pure functions whose outputs and failures depend only on explicit inputs. Apply it to the stated input and retain a reproducible trace for a pure price transformation with alias-safety tests."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Mutation Aliasing · changed case",
+      "interaction": "answer",
+      "instruction": "review case — An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nWhich action demonstrates Mutation Aliasing without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for predict mutation through shared aliases in nested python containers.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Mutation Aliasing condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "fp-mutation-aliasing"
+      ],
+      "hints": [
+        "Name the Mutation Aliasing precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: A new outer list also copies every nested value."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Mutation Aliasing."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Predict mutation through shared aliases in nested Python containers. Apply it to the stated input and retain a reproducible trace for a pure price transformation with alias-safety tests."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A new outer list also copies every nested value."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Immutable Update · changed case",
+      "interaction": "answer",
+      "instruction": "review case — An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nWhich action demonstrates Immutable Update without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for return updated immutable records while preserving unchanged data and input values.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Immutable Update condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "fp-immutable-update"
+      ],
+      "hints": [
+        "Name the Immutable Update precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Immutability requires copying the entire object graph every time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Return updated immutable records while preserving unchanged data and input values. Apply it to the stated input and retain a reproducible trace for a pure price transformation with alias-safety tests."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Immutability requires copying the entire object graph every time."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Immutable Update."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Copy Boundary · changed case",
+      "interaction": "predict",
+      "instruction": "review case — An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nWhich action demonstrates Copy Boundary without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Copy Boundary condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Deep copying is always safest and cheapest."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Copy Boundary."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately. Apply it to the stated input and retain a reproducible trace for a pure price transformation with alias-safety tests."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Purity Tests · changed case",
+      "interaction": "answer",
+      "instruction": "review case — An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nWhich action demonstrates Purity Tests without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for test determinism, input preservation, and order independence with changed data.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Purity Tests condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "hints": [
+        "Name the Purity Tests precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: One repeated example proves absence of side effects."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Purity Tests."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Test determinism, input preservation, and order independence with changed data. Apply it to the stated input and retain a reproducible trace for a pure price transformation with alias-safety tests."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "One repeated example proves absence of side effects."
+        }
+      ]
+    },
+    {
+      "id": "mixed-evidence",
+      "title": "Separate evidence from confidence",
+      "interaction": "inspect",
+      "instruction": "review case — An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nInspect the Purity Tests trace for this review case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for test determinism, input preservation, and order independence with changed data.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Purity Tests, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "hints": [
+        "Name the Purity Tests precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: One repeated example proves absence of side effects."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Purity Tests case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "One repeated example proves absence of side effects.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Test determinism, input preservation, and order independence with changed data. Artifact under review: a pure price transformation with alias-safety tests.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Purity Tests, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Purity Tests."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Record what required effort",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Purity Tests: explain the governing condition, one failure, and how this concrete case was verified — An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test determinism, input preservation, and order independence with changed data."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "hints": [
+        "Name the Purity Tests precondition or invariant that the review case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: One repeated example proves absence of side effects."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-pure-contract"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pure Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pure Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-pure-contract"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutation Aliasing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutation Aliasing.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-mutation-aliasing"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Immutable Update to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Immutable Update.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-immutable-update"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Copy Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Copy Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Purity Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Purity Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Purity Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Purity Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and determinism plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-purity-tests"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "test",
+        "determinism"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

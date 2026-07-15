@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "cd-environments-oidc-cloud-auth-guided-workshop",
+  "courseId": "cicd-github-actions",
+  "moduleId": "cd-environments-oidc-cloud-auth",
+  "kind": "workshop",
+  "title": "Deployment Environments, OIDC, Workload Identity, and Cloud Authority · CI/CD Control Room",
+  "summary": "A delivery pairing session predicts each automation transition before producing the first working environment and federated identity policy for deployment environments, oidc, workload identity, and cloud authority. Planned artifact: Build a complete first version of environment and federated identity policy while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.",
+    "Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims.",
+    "Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "ci-environment-protection-secret-scope",
+      "ci-github-oidc-claims-permission",
+      "ci-gcp-workload-identity-federation",
+      "ci-cloud-least-privilege-service-account",
+      "ci-auth-lifetime-audit-revocation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cd-environments-oidc-cloud-auth-ci-auth-lifetime-audit-revocation-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "cicd-github-actions-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# cicd-github-actions cumulative delivery-system portfolio\n# Browser labs perform deterministic workflow, policy, artifact, and release evidence review only.\n# They never call GitHub APIs, start runners, execute learner commands, access Docker or registries, exchange OIDC tokens, or contact cloud services.\nworkspace: cicd\nversion-baseline:\n  checkout: 7.0.0\n  setup-node: 7.0.0\n  upload-artifact: 7.0.1\n  download-artifact: 8.0.1\n  attest: 4.1.1\n  node: 24-lts\n  typescript-native: 7.0.2\n  typescript-api-compatibility: 6.0.2\n  build-push-action: 7\n  google-auth: 3\n  deploy-cloudrun: 3\ntransfer-boundary: authorized-disposable-delivery-environment\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Ci Environment Protection Secret Scope",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Ci Environment Protection Secret Scope.",
+      "why": "The decision supplies observable evidence for use named environments for approvals, branch and tag policies, scoped secrets, wait rules, url evidence, and deployment history. For Commit to the mission model · Workshop Ci Environment Protection Secret Scope, keep Ci Environment Protection Secret Scope connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ci Environment Protection Secret Scope condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "ci-environment-protection-secret-scope"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Ci Environment Protection Secret Scope, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Environment Protection Secret Scope precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Ci Environment Protection Secret Scope, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.",
+        "For Commit to the mission model · Workshop Ci Environment Protection Secret Scope, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: An environment name alone creates an approval gate and isolates every secret."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Ci Environment Protection Secret Scope preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "An environment name alone creates an approval gate and isolates every secret. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.\n\nWhich action demonstrates Ci Environment Protection Secret Scope without dropping earlier contracts?\n\nEvidence target: Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S….",
+      "why": "The decision supplies observable evidence for use named environments for approvals, branch and tag policies, scoped secrets, wait rules, url evidence, and deployment history. For Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S…, keep Ci Environment Protection Secret Scope connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ci Environment Protection Secret Scope condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "ci-environment-protection-secret-scope"
+      ],
+      "hints": [
+        "For Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S…, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Environment Protection Secret Scope precondition, or invariant that must hold.",
+        "At Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S…, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.",
+        "For Ci Environment Protection Secret Scope · changed case · Workshop Ci Environment Protection Secret S…, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: An environment name alone creates an approval gate and isolates every secret."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "An environment name alone creates an approval gate and isolates every secret. That claim does not survive the ci environment protection secret scope · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For ci environment protection secret scope · changed case, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history. Apply it to the stated input and retain a reproducible trace for environment and federated identity policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims.\n\nWhich action demonstrates Ci Github Oidc Claims Permission without dropping earlier contracts?\n\nEvidence target: Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission.",
+      "why": "The decision supplies observable evidence for request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims. For Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission, keep Ci Github Oidc Claims Permission connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Ci Github Oidc Claims Permission result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "ci-github-oidc-claims-permission"
+      ],
+      "hints": [
+        "For Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Github Oidc Claims Permission precondition, or invariant that must hold.",
+        "At Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims.",
+        "For Ci Github Oidc Claims Permission · changed case · Workshop Ci Github Oidc Claims Permission, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: id-token write grants direct write access to cloud resources."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ci Github Oidc Claims Permission case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "id-token write grants direct write access to cloud resources.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For ci github oidc claims permission · changed case, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims. Apply it to the stated input and retain a reproducible trace for environment and federated identity policy."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "id-token write grants direct write access to cloud resources. That claim does not survive the ci github oidc claims permission · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key.\n\nWhich action demonstrates Ci Gcp Workload Identity Federation without dropping earlier contracts?\n\nEvidence target: Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation.",
+      "why": "The decision supplies observable evidence for exchange github oidc identity through a constrained google workload identity provider and service account without storing a key. For Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation, keep Ci Gcp Workload Identity Federation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ci Gcp Workload Identity Federation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "ci-gcp-workload-identity-federation"
+      ],
+      "hints": [
+        "For Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Gcp Workload Identity Federation precondition, or invariant that must hold.",
+        "At Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key.",
+        "For Ci Gcp Workload Identity Federation · changed case · Workshop Ci Gcp Workload Identity Federation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Workload Identity Federation is safe with an unrestricted repository-name subject condition."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key. Apply it to the stated input and retain a reproducible trace for environment and federated identity policy."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Workload Identity Federation is safe with an unrestricted repository-name subject condition. That claim does not survive the ci gcp workload identity federation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For ci gcp workload identity federation · changed case, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service…",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations.\n\nWhich action demonstrates Ci Cloud Least Privilege Service Account without dropping earlier contracts?\n\nEvidence target: Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service….",
+      "why": "The decision supplies observable evidence for separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations. For Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service…, keep Ci Cloud Least Privilege Service Account connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Ci Cloud Least Privilege Service Account result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "ci-cloud-least-privilege-service-account"
+      ],
+      "hints": [
+        "For Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service…, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Cloud Least Privilege Service Account precondition, or invariant that must hold.",
+        "At Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service…, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations.",
+        "For Ci Cloud Least Privilege Service Account · changed case · Workshop Ci Cloud Least Privilege Service…, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Cloud Run Admin alone is the complete and least-privilege deployment permission set."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ci Cloud Least Privilege Service Account case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Cloud Run Admin alone is the complete and least-privilege deployment permission set.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Cloud Run Admin alone is the complete and least-privilege deployment permission set. That claim does not survive the ci cloud least privilege service account · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For ci cloud least privilege service account · changed case, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations. Apply it to the stated input and retain a reproducible trace for environment and federated identity policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.\n\nWhich action demonstrates Ci Auth Lifetime Audit Revocation without dropping earlier contracts?\n\nEvidence target: Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation.",
+      "why": "The decision supplies observable evidence for bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation. For Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation, keep Ci Auth Lifetime Audit Revocation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ci Auth Lifetime Audit Revocation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "hints": [
+        "For Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Auth Lifetime Audit Revocation precondition, or invariant that must hold.",
+        "At Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+        "For Ci Auth Lifetime Audit Revocation · changed case · Workshop Ci Auth Lifetime Audit Revocation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For ci auth lifetime audit revocation · changed case, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation. Apply it to the stated input and retain a reproducible trace for environment and federated identity policy."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Short-lived credentials do not require monitoring or an incident response plan. That claim does not survive the ci auth lifetime audit revocation · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.\n\nInspect the Ci Auth Lifetime Audit Revocation trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation.",
+      "why": "The decision supplies observable evidence for bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation. For Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation, keep Ci Auth Lifetime Audit Revocation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Ci Auth Lifetime Audit Revocation, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Auth Lifetime Audit Revocation precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+        "For Audit the proposed evidence packet · Workshop Ci Auth Lifetime Audit Revocation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ci Auth Lifetime Audit Revocation case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Short-lived credentials do not require monitoring or an incident response plan.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation. Artifact under review: environment and federated identity policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Ci Auth Lifetime Audit Revocation, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation",
+      "interaction": "code",
+      "instruction": "Append the CI/CD evidence item headed \"  # Evidence: ci-auth-lifetime-audit-revocation-1bpc9j\". Tailor its federated-deployment.yaml change to the current stakeholder case, retain a deterministic workflow or release review, reject one concrete failure, and record a repair. The browser analyzes text only; run GitHub Actions, runner, Docker, registry, OIDC, Google Cloud, and deployment work later in authorized disposable transfer environments.\n\nEvidence target: Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Ci Auth Lifetime Audit Revocation into observable performance evidence. For Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation, keep Ci Auth Lifetime Audit Revocation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: ci-auth-lifetime-audit-revocation-1bpc9j\n  - competency: ci-auth-lifetime-audit-revocation\n    artifact: federated-deployment.yaml\n    decision: auth lifetime audit revocation\n    environment: sandbox Google Cloud project with a private Cloud Run service\n    fault-injection: cancel an older run while its external mutation is in progress\n    retained-proof: lock hash cold install test report package contents and output digest\n    case-key: 1bpc9j\n    change: |\n      environment: production\n      reviewers: operations-and-security\n      branch-policy: protected-main\n      permissions: contents-read-id-token-write\n      oidc-issuer: token.actions.githubusercontent.com\n      oidc-audience: google-wif-provider\n      subject: immutable-repository-workflow-environment\n      google-auth-action: 3\n      service-account: cloud-run-deployer\n      roles: resource-scoped\n      credential-lifetime: job-bounded\n    verify: inspect environment history OIDC claims provider condition service-account impersonation IAM audit and credential cleanup\n    failure: Reject long-lived keys, repository-name-only trust, global admin, approval-free environments, or short lifetime as sufficient control.\n    repair: Constrain environment and claims, federate identity, separate service accounts, scope roles, audit exchange, expire credentials, and rehearse revocation.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Auth Lifetime Audit Revocation precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+        "For Extend the cumulative artifact · Workshop Ci Auth Lifetime Audit Revocation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation.",
+      "why": "The decision supplies observable evidence for bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation. For Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation, keep Ci Auth Lifetime Audit Revocation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ci Auth Lifetime Audit Revocation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Google GitHub Actions Authentication and Cloud Run Deployment — Controls Workload Identity Federation, service-account authority, action inputs, deployment output, IAM separation, and Node 24 action runtime."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Auth Lifetime Audit Revocation precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+        "For Test an acceptance boundary · Workshop Ci Auth Lifetime Audit Revocation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ci Auth Lifetime Audit Revocation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Short-lived credentials do not require monitoring or an incident response plan.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Ci Auth Lifetime Audit Revocation condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Ci Auth Lifetime Audit Revocation: explain the governing condition, one failure, and how this concrete case was verified — A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.\n\nEvidence target: Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation, keep Ci Auth Lifetime Audit Revocation connected to mechanically reviewable workflow, trust, artifact, deployment, and recovery evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation, name the event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary, Ci Auth Lifetime Audit Revocation precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation, trace this concrete input and predict evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence before reviewing it: A workshop deployment stores a long-lived cloud key, requests broad id-token and repository permissions, and trusts ambiguous OIDC claims. Constrain environment, audience, subject, workflow, revision, service account, approval, and audit evidence. Competency probe: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+        "For Defend the transferred model · Workshop Ci Auth Lifetime Audit Revocation, challenge the documented misconception with workflow, run, artifact, policy, fault, repair, rollback, and transfer evidence: Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Environment Protection Secret Scope to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Environment Protection Secret Scope.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-environment-protection-secret-scope"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Environment Protection Secret Scope to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Environment Protection Secret Scope.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-environment-protection-secret-scope"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Github Oidc Claims Permission to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Github Oidc Claims Permission.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-github-oidc-claims-permission"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Gcp Workload Identity Federation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Gcp Workload Identity Federation.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-gcp-workload-identity-federation"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Cloud Least Privilege Service Account to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Cloud Least Privilege Service Account.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-cloud-least-privilege-service-account"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Auth Lifetime Audit Revocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Auth Lifetime Audit Revocation.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Auth Lifetime Audit Revocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Auth Lifetime Audit Revocation.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: ci-auth-lifetime-audit-revocation-1bpc9j.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: ci-auth-lifetime-audit-revocation-1bpc9j"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: ci-auth-lifetime-audit-revocation-1bpc9j(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*ci-auth-lifetime-audit-revocation(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*federated-deployment\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:id-token-write|immutable-repository-workflow-environment|google-auth-action:\\s*3)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ci Auth Lifetime Audit Revocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ci Auth Lifetime Audit Revocation.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using bound and token plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "bound",
+        "token"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

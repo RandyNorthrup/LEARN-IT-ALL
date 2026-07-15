@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { dbHelpers } from '@/lib/db';
 import { getExerciseData } from '@/lib/lessonLoader';
+import { validateWebExercise } from '@/lib/webExerciseValidator';
+import type { WebExerciseFiles, WebRequirement } from '@/types/exercise';
 
 interface TestCase {
   id: string;
@@ -27,19 +29,72 @@ export async function POST(
   try {
     const { courseId, lessonId } = await params;
     const body = await request.json();
-    const { code, exerciseId, testCases, labResults, allPassed } = body;
+    const { code, exerciseId, files, labAnswers } = body;
 
-    // Lab exercise submissions (PCAP analysis, Python sandbox)
-    if (labResults) {
-      const exerciseData = getExerciseData(courseId, lessonId);
-      if (!exerciseData) {
-        return NextResponse.json({ error: 'Exercise not found' }, { status: 404 });
+    const exerciseData = getExerciseData(courseId, lessonId);
+    if (!exerciseData || exerciseData.id !== exerciseId) {
+      return NextResponse.json({ error: 'Exercise not found' }, { status: 404 });
+    }
+
+    if (exerciseData.language === 'html') {
+      if (
+        !files ||
+        typeof files.html !== 'string' ||
+        typeof files.css !== 'string' ||
+        !Array.isArray(exerciseData.requirements)
+      ) {
+        return NextResponse.json({ error: 'Invalid web exercise submission' }, { status: 400 });
       }
 
-      const totalQuestions = Object.keys(labResults).length;
-      const passedQuestions = Object.values(labResults).filter(Boolean).length;
+      const results = validateWebExercise(
+        files as WebExerciseFiles,
+        exerciseData.requirements as WebRequirement[]
+      );
+      const passedTests = results.filter((result) => result.passed).length;
+      const totalTests = results.length;
+      const score = totalTests ? Math.round((passedTests / totalTests) * 100) : 0;
+      const success = totalTests > 0 && passedTests === totalTests;
+
+      dbHelpers.createExerciseSubmission(
+        exerciseId,
+        courseId,
+        JSON.stringify(files),
+        'html',
+        success ? 'PASSED' : 'FAILED',
+        score
+      );
+      if (success) dbHelpers.markLessonComplete(lessonId, courseId);
+
+      return NextResponse.json({
+        success,
+        score,
+        totalTests,
+        passedTests,
+        results,
+        message: success
+          ? `All ${totalTests} requirements passed. Activity complete!`
+          : `${passedTests} of ${totalTests} requirements passed. Keep building.`,
+      });
+    }
+
+    // Lab exercise submissions (PCAP analysis, Python sandbox)
+    if (labAnswers && Array.isArray(exerciseData.labQuestions)) {
+      const canonicalQuestions = exerciseData.labQuestions as Array<{
+        id: string;
+        correctAnswer: string;
+      }>;
+      const gradedResults = Object.fromEntries(
+        canonicalQuestions.map((question) => [
+          question.id,
+          String(labAnswers[question.id] ?? '')
+            .trim()
+            .toLowerCase() === question.correctAnswer.trim().toLowerCase(),
+        ])
+      );
+      const totalQuestions = canonicalQuestions.length;
+      const passedQuestions = Object.values(gradedResults).filter(Boolean).length;
       const score = totalQuestions > 0 ? Math.round((passedQuestions / totalQuestions) * 100) : 0;
-      const success = allPassed === true || passedQuestions === totalQuestions;
+      const success = totalQuestions > 0 && passedQuestions === totalQuestions;
 
       dbHelpers.createExerciseSubmission(
         exerciseId,
@@ -66,21 +121,17 @@ export async function POST(
       });
     }
 
-    if (!code || !exerciseId || !testCases) {
+    if (!code || !Array.isArray(exerciseData.testCases)) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Load full exercise data to get solution and test validation
-    const exerciseData = getExerciseData(courseId, lessonId);
-    if (!exerciseData) {
-      return NextResponse.json({ error: 'Exercise not found' }, { status: 404 });
-    }
+    const canonicalTestCases = exerciseData.testCases as TestCase[];
 
     // Run test cases
     const results: TestResult[] = [];
     let passedTests = 0;
 
-    for (const testCase of testCases as TestCase[]) {
+    for (const testCase of canonicalTestCases) {
       try {
         // Execute the code with the test case
         const testResult = await runTestCase(code, testCase, exerciseData.language);
@@ -98,7 +149,7 @@ export async function POST(
       }
     }
 
-    const totalTests = testCases.length;
+    const totalTests = canonicalTestCases.length;
     const score = Math.round((passedTests / totalTests) * 100);
     const success = passedTests === totalTests;
 
@@ -163,7 +214,7 @@ async function runTestCase(
         expectedOutput: testCase.expectedOutput,
       };
     }
-    
+
     // For output-based tests (print statements, etc.)
     if (testCase.expectedOutput !== undefined) {
       const result = await evaluatePythonOutput(userCode, testCase.expectedOutput);
@@ -176,7 +227,7 @@ async function runTestCase(
         errorMessage: result.error,
       };
     }
-    
+
     // Default: assume code is well-formed
     return {
       testCaseId: testCase.id,
@@ -196,7 +247,7 @@ async function runTestCase(
 async function evaluatePythonValidation(code: string, validation: string): Promise<boolean> {
   // FIXME-PROD: Replace with actual Python sandbox execution
   // For now, perform basic syntax checks
-  
+
   // Check if validation expects certain variables or functions
   const variableMatch = validation.match(/assert\s+(\w+)/);
   if (variableMatch) {
@@ -205,7 +256,7 @@ async function evaluatePythonValidation(code: string, validation: string): Promi
     const hasDefinition = code.includes(varName) || code.includes(`def ${varName}`);
     return hasDefinition;
   }
-  
+
   // Basic validation: code should be non-empty and syntactically valid-looking
   return code.trim().length > 10;
 }
@@ -216,21 +267,21 @@ async function evaluatePythonOutput(
 ): Promise<{ passed: boolean; actualOutput?: string; error?: string }> {
   // FIXME-PROD: Replace with actual Python sandbox execution
   // For now, check if code has print statement with expected output
-  
+
   try {
     // Look for print statements in the code
     const printMatch = code.match(/print\s*\(\s*["'](.+?)["']\s*\)/);
-    
+
     if (!printMatch) {
       return {
         passed: false,
         error: 'No print statement found',
       };
     }
-    
+
     const actualOutput = printMatch[1];
     const passed = actualOutput.trim() === expectedOutput.trim();
-    
+
     return {
       passed,
       actualOutput,
@@ -242,5 +293,3 @@ async function evaluatePythonOutput(
     };
   }
 }
-
-

@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "docker-storage-mounts-backup-guided-workshop",
+  "courseId": "docker-basics",
+  "moduleId": "docker-storage-mounts-backup",
+  "kind": "workshop",
+  "title": "Writable Layers, Volumes, Bind Mounts, tmpfs, Ownership, and Recovery · Release Workshop",
+  "summary": "A platform pairing session must produce the first working storage selection, ownership, backup, and restore plan for writable layers, volumes, bind mounts, tmpfs, ownership, and recovery, with predictions recorded before each simulated build or lifecycle change. Planned artifact: Build a complete first version of storage selection, ownership, backup, and restore plan while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, caus…",
+  "objectives": [
+    "Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.",
+    "Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership.",
+    "Use bind mounts with deliberate host path, existence, read-only mode, propagation, SELinux, UID/GID, and portability boundaries.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "docker-writable-layer-copy-on-write",
+      "docker-volume-lifecycle",
+      "docker-bind-mount-authority",
+      "docker-tmpfs-sensitive-ephemeral",
+      "docker-storage-backup-restore-test"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "docker-storage-mounts-backup-docker-storage-backup-restore-test-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "docker-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# docker-basics cumulative container delivery portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never connect to a Docker daemon, mount a socket, or execute learner commands.\nworkspace: docker\nversion-baseline:\n  engine: 29.6.1\n  compose: 5.3.1\n  buildx: 0.35.0\n  buildkit: 0.31.1\n  dockerfile-frontend: 1.25\ntransfer-boundary: authorized-disposable-environment\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Docker Writable Layer Copy On Write",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Docker Writable Layer Copy On Write.",
+      "why": "The decision supplies observable evidence for explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries. For Commit to the mission model · Workshop Docker Writable Layer Copy On Write, keep Docker Writable Layer Copy On Write connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Writable Layer Copy On Write condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Docker Writable Layer Copy On Write, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Writable Layer Copy On Write precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Docker Writable Layer Copy On Write, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.",
+        "For Commit to the mission model · Workshop Docker Writable Layer Copy On Write, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: The container writable layer is durable application storage that follows a replacement container."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Docker Writable Layer Copy On Write preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "The container writable layer is durable application storage that follows a replacement container. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write",
+      "interaction": "arrange",
+      "instruction": "Order the Docker Writable Layer Copy On Write container delivery evidence cycle for this workshop task before implementing it.\n\nEvidence target: Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write.",
+      "why": "Correct order keeps Docker Writable Layer Copy On Write assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write, keep Docker Writable Layer Copy On Write connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Docker Writable Layer Copy On Write has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Writable Layer Copy On Write precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.",
+        "For Plan the evidence sequence · Workshop Docker Writable Layer Copy On Write, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: The container writable layer is durable application storage that follows a replacement container."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Capture Docker versions, active context, desired artifact, current state, authority, and immutable identities for the workshop Docker Writable Layer Copy On Write case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict build, image, process, storage, network, Compose, security, and cleanup effects before mutation for the workshop Docker Writable Layer Copy On Write case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Review the smallest Dockerfile, Compose, Bake, or policy increment in the deterministic browser simulator for the workshop Docker Writable Layer Copy On Write case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Reject one failure, record repair and cleanup, then name the disposable live-environment transfer evidence for the workshop Docker Writable Layer Copy On Write case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.\n\nWhich action demonstrates Docker Writable Layer Copy On Write without dropping earlier contracts?\n\nEvidence target: Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write.",
+      "why": "The decision supplies observable evidence for explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries. For Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write, keep Docker Writable Layer Copy On Write connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Writable Layer Copy On Write condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "hints": [
+        "For Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Writable Layer Copy On Write precondition, or invariant that must hold.",
+        "At Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries.",
+        "For Docker Writable Layer Copy On Write · changed case · Workshop Docker Writable Layer Copy On Write, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: The container writable layer is durable application storage that follows a replacement container."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "The container writable layer is durable application storage that follows a replacement container. That claim does not survive the docker writable layer copy on write · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For docker writable layer copy on write · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Explain immutable image layers, container writable-layer lifetime, copy-on-write costs, and containerd image-store versus classic-driver boundaries. Apply it to the stated input and retain a reproducible trace for storage selection, ownership, backup, and restore plan."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership.\n\nWhich action demonstrates Docker Volume Lifecycle without dropping earlier contracts?\n\nEvidence target: Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle.",
+      "why": "The decision supplies observable evidence for create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership. For Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle, keep Docker Volume Lifecycle connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Docker Volume Lifecycle result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "docker-volume-lifecycle"
+      ],
+      "hints": [
+        "For Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Volume Lifecycle precondition, or invariant that must hold.",
+        "At Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership.",
+        "For Docker Volume Lifecycle · changed case · Workshop Docker Volume Lifecycle, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Removing a container always removes every named and anonymous volume it used."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Volume Lifecycle case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Removing a container always removes every named and anonymous volume it used.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For docker volume lifecycle · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Create, inspect, mount, share, label, back up, restore, migrate, and remove named and anonymous volumes with explicit ownership. Apply it to the stated input and retain a reproducible trace for storage selection, ownership, backup, and restore plan."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Removing a container always removes every named and anonymous volume it used. That claim does not survive the docker volume lifecycle · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Use bind mounts with deliberate host path, existence, read-only mode, propagation, SELinux, UID/GID, and portability boundaries.\n\nWhich action demonstrates Docker Bind Mount Authority without dropping earlier contracts?\n\nEvidence target: Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority.",
+      "why": "The decision supplies observable evidence for use bind mounts with deliberate host path, existence, read-only mode, propagation, selinux, uid/gid, and portability boundaries. For Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority, keep Docker Bind Mount Authority connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Use bind mounts with deliberate host path, existence, read-only mode, propagation, SELinux, UID/GID, and portability boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Bind Mount Authority condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "docker-bind-mount-authority"
+      ],
+      "hints": [
+        "For Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Bind Mount Authority precondition, or invariant that must hold.",
+        "At Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Use bind mounts with deliberate host path, existence, read-only mode, propagation, SELinux, UID/GID, and portability boundaries.",
+        "For Docker Bind Mount Authority · changed case · Workshop Docker Bind Mount Authority, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: A bind mount is isolated from the host and cannot overwrite host data."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Use bind mounts with deliberate host path, existence, read-only mode, propagation, SELinux, UID/GID, and portability boundaries. Apply it to the stated input and retain a reproducible trace for storage selection, ownership, backup, and restore plan."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A bind mount is isolated from the host and cannot overwrite host data. That claim does not survive the docker bind mount authority · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For docker bind mount authority · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss.\n\nWhich action demonstrates Docker Tmpfs Sensitive Ephemeral without dropping earlier contracts?\n\nEvidence target: Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral.",
+      "why": "The decision supplies observable evidence for choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss. For Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral, keep Docker Tmpfs Sensitive Ephemeral connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Docker Tmpfs Sensitive Ephemeral result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "docker-tmpfs-sensitive-ephemeral"
+      ],
+      "hints": [
+        "For Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Tmpfs Sensitive Ephemeral precondition, or invariant that must hold.",
+        "At Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss.",
+        "For Docker Tmpfs Sensitive Ephemeral · changed case · Workshop Docker Tmpfs Sensitive Ephemeral, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: tmpfs guarantees secrets can never reach disk under any host configuration."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Tmpfs Sensitive Ephemeral case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "tmpfs guarantees secrets can never reach disk under any host configuration.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "tmpfs guarantees secrets can never reach disk under any host configuration. That claim does not survive the docker tmpfs sensitive ephemeral · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For docker tmpfs sensitive ephemeral · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Choose tmpfs for bounded ephemeral or sensitive data while accounting for memory, swap, permissions, size, and restart loss. Apply it to the stated input and retain a reproducible trace for storage selection, ownership, backup, and restore plan."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.\n\nWhich action demonstrates Docker Storage Backup Restore Test without dropping earlier contracts?\n\nEvidence target: Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test.",
+      "why": "The decision supplies observable evidence for quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery. For Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test, keep Docker Storage Backup Restore Test connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Storage Backup Restore Test condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "hints": [
+        "For Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Storage Backup Restore Test precondition, or invariant that must hold.",
+        "At Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.",
+        "For Docker Storage Backup Restore Test · changed case · Workshop Docker Storage Backup Restore Test, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: A successful archive command proves the application can restore consistent data."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For docker storage backup restore test · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery. Apply it to the stated input and retain a reproducible trace for storage selection, ownership, backup, and restore plan."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A successful archive command proves the application can restore consistent data. That claim does not survive the docker storage backup restore test · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test",
+      "interaction": "code",
+      "instruction": "Append the Docker evidence item headed \"  # Evidence: docker-storage-backup-restore-test-cf1tcb\". Tailor its storage-contract.yaml change to the current stakeholder case, retain a deterministic review command, reject one concrete failure, and record a repair. The browser analyzes text only; run Docker commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Docker Storage Backup Restore Test into observable performance evidence. For Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test, keep Docker Storage Backup Restore Test connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: docker-storage-backup-restore-test-cf1tcb\n  - competency: docker-storage-backup-restore-test\n    artifact: storage-contract.yaml\n    decision: storage backup restore test\n    scenario-variant: 4\n    environment: ephemeral development host with constrained disk and memory\n    fault-injection: deny outbound DNS after initial service discovery\n    retained-proof: restored checksum and application-level consistency query\n    case-key: cf1tcb\n    change: |\n      mount-type: named-volume\n      target: /var/lib/intake\n      ownership: 10001:10001\n      backup: application-consistent\n      restore-test: fresh-volume\n    verify: docker volume inspect intake-data && sha256sum restore-manifest.txt\n    failure: Reject an anonymous volume as a named backup plan, bind-mount portability assumptions, or archive creation without a restore rehearsal.\n    repair: Name ownership and lifecycle, quiesce or coordinate the application, checksum the artifact, and restore into a clean isolated volume.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Storage Backup Restore Test precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.",
+        "For Extend the cumulative artifact · Workshop Docker Storage Backup Restore Test, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: A successful archive command proves the application can restore consistent data."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Docker Storage Backup Restore Test",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Docker Storage Backup Restore Test.",
+      "why": "The decision supplies observable evidence for quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery. For Test an acceptance boundary · Workshop Docker Storage Backup Restore Test, keep Docker Storage Backup Restore Test connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Docker Storage Backup Restore Test symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Storage and Containerd Image Store Documentation — Controls layers, writable storage, volumes, bind mounts, tmpfs, snapshotters, storage drivers, ownership, backup, restore, and cleanup."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Docker Storage Backup Restore Test, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Storage Backup Restore Test precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Docker Storage Backup Restore Test, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.",
+        "For Test an acceptance boundary · Workshop Docker Storage Backup Restore Test, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: A successful archive command proves the application can restore consistent data."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Storage Backup Restore Test failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A successful archive command proves the application can restore consistent data.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Docker Storage Backup Restore Test condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Docker Storage Backup Restore Test",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Docker Storage Backup Restore Test: explain the governing condition, one failure, and how this concrete case was verified — A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.\n\nEvidence target: Defend the transferred model · Workshop Docker Storage Backup Restore Test.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Docker Storage Backup Restore Test, keep Docker Storage Backup Restore Test connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Docker Storage Backup Restore Test, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Storage Backup Restore Test precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Docker Storage Backup Restore Test, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop database writes into an anonymous volume while developers rely on a host-path bind mount. A backup archive exists but has never restored. Define ownership, consistency, lifecycle, checksum, and clean-volume recovery. Competency probe: Quiesce or snapshot consistently, create a bounded backup, verify integrity, restore into a fresh volume, and rehearse application recovery.",
+        "For Defend the transferred model · Workshop Docker Storage Backup Restore Test, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: A successful archive command proves the application can restore consistent data."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Writable Layer Copy On Write to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Writable Layer Copy On Write.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Writable Layer Copy On Write to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Writable Layer Copy On Write.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-writable-layer-copy-on-write"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Volume Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Volume Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-volume-lifecycle"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Bind Mount Authority to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Bind Mount Authority.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-bind-mount-authority"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Tmpfs Sensitive Ephemeral to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Tmpfs Sensitive Ephemeral.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-tmpfs-sensitive-ephemeral"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Storage Backup Restore Test to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Storage Backup Restore Test.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: docker-storage-backup-restore-test-cf1tcb.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: docker-storage-backup-restore-test-cf1tcb"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: docker-storage-backup-restore-test-cf1tcb(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*docker-storage-backup-restore-test(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*storage-contract\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:mount-type:\\s*named-volume|restore-test:\\s*fresh-volume|docker\\s+volume\\s+inspect)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Storage Backup Restore Test to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Storage Backup Restore Test.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using quiesce and snapshot plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-storage-backup-restore-test"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "quiesce",
+        "snapshot"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

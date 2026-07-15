@@ -1,22 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getQuizData } from '@/lib/lessonLoader';
-import { createQuizAttempt, markLessonComplete } from '@/lib/db';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getCourseData } from '@/lib/courseLoader';
-import {
-  Quiz,
-  QuizSubmission,
-  QuizResult,
-  QuestionResult,
-  UserAnswer,
-  MultipleChoiceQuestion,
-  MultipleSelectQuestion,
-  TrueFalseQuestion,
+import { createQuizAttempt, markLessonComplete } from '@/lib/db';
+import { getQuizData } from '@/lib/lessonLoader';
+import type {
   CodeCompletionQuestion,
   CodingExerciseQuestion,
-  MultiPartQuestion,
-  EssayQuestion,
   DesignQuestion,
+  EssayQuestion,
+  MultiPartQuestion,
+  MultipleChoiceQuestion,
+  MultipleSelectQuestion,
+  QuestionResult,
+  Quiz,
+  QuizResult,
+  QuizSubmission,
   TestResult,
+  TrueFalseQuestion,
+  UserAnswer,
 } from '@/types/quiz';
 
 export async function POST(
@@ -53,7 +53,7 @@ export async function POST(
       try {
         // Load course structure
         const courseData = getCourseData(courseId);
-        
+
         if (courseData) {
           // Check if this is the final exam
           if (quizId === 'final-exam') {
@@ -68,22 +68,26 @@ export async function POST(
                 }
               }
             }
-            console.info(`Auto-completed entire course (${totalLessons} lessons) after passing final exam`);
+            console.info(
+              `Auto-completed entire course (${totalLessons} lessons) after passing final exam`
+            );
           } else {
             // Chapter quiz: mark only that chapter's lessons as complete
             const chapterMatch = quizId.match(/chapter-(\d+)/i);
             if (chapterMatch) {
               const chapterNumber = parseInt(chapterMatch[1], 10);
-              
+
               if (courseData.chapters && courseData.chapters.length >= chapterNumber) {
                 const chapter = courseData.chapters[chapterNumber - 1]; // 0-indexed array
-                
-                if (chapter && chapter.lessons) {
+
+                if (chapter?.lessons) {
                   for (const lessonFile of chapter.lessons) {
                     const lessonId = lessonFile.replace(/\.md$/, '');
                     markLessonComplete(lessonId, courseId);
                   }
-                  console.info(`Auto-completed ${chapter.lessons.length} lessons in ${chapter.title} after passing ${quizId}`);
+                  console.info(
+                    `Auto-completed ${chapter.lessons.length} lessons in ${chapter.title} after passing ${quizId}`
+                  );
                 }
               }
             }
@@ -137,7 +141,8 @@ function gradeQuiz(quiz: Quiz, submission: QuizSubmission): QuizResult {
     }
   }
 
-  const score = totalPointsPossible > 0 ? Math.round((totalPointsEarned / totalPointsPossible) * 100) : 0;
+  const score =
+    totalPointsPossible > 0 ? Math.round((totalPointsEarned / totalPointsPossible) * 100) : 0;
   const passed = score >= quiz.passingScore;
 
   return {
@@ -279,9 +284,8 @@ function gradeCodingExercise(
   }
 
   const allPassed = passedCount === question.testCases.length;
-  const partialCredit = question.testCases.length > 0 
-    ? (passedCount / question.testCases.length) * question.points 
-    : 0;
+  const partialCredit =
+    question.testCases.length > 0 ? (passedCount / question.testCases.length) * question.points : 0;
 
   return {
     correct: allPassed,
@@ -404,13 +408,18 @@ function evaluatePythonValidation(code: string, validation: string): boolean {
   const match = validation.match(/(\w+)\s*==\s*(.+)/);
   if (match) {
     const [, varName, expectedValue] = match;
-    const regex = new RegExp(`${varName}\\s*=\\s*${expectedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
+    const regex = new RegExp(
+      `${varName}\\s*=\\s*${expectedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`
+    );
     return regex.test(code);
   }
   return false;
 }
 
-function evaluatePythonOutput(code: string, expectedOutput: string): { passed: boolean; actualOutput: string } {
+function evaluatePythonOutput(
+  code: string,
+  expectedOutput: string
+): { passed: boolean; actualOutput: string } {
   const printMatch = code.match(/print\s*\(\s*["'](.+?)["']\s*\)/);
   if (printMatch) {
     const actualOutput = printMatch[1];

@@ -7,9 +7,6 @@ export async function GET() {
     return NextResponse.json(stats);
   } catch (error) {
     console.error('Failed to fetch progress:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch progress' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch progress' }, { status: 500 });
   }
 }

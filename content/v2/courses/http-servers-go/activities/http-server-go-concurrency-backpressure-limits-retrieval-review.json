@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "id": "http-server-go-concurrency-backpressure-limits-retrieval-review",
+  "courseId": "http-servers-go",
+  "moduleId": "http-server-go-concurrency-backpressure-limits",
+  "kind": "review",
+  "title": "Concurrency, Shared State, Backpressure, Rate Limits, and Load Shedding · Go Retrieval",
+  "summary": "A delayed operations handoff reconstructs concurrency, shared state, backpressure, rate limits, and load shedding from bounded request and server evidence, challenges one retained misconception, and revises the concurrency budget and overload decision model. Planned artifact: Extend the evidence record for concurrency budget and overload decision model after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defen…",
+  "objectives": [
+    "Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules.",
+    "Bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions.",
+    "Choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, Retry-After, and bypass policy from abuse risk.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpsgo-handler-concurrency-race",
+      "httpsgo-concurrency-budget-semaphore",
+      "httpsgo-rate-limit-identity-algorithm",
+      "httpsgo-load-shed-priority",
+      "httpsgo-overload-observability-recovery"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-server-go-concurrency-backpressure-limits-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "http-servers-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-servers-go cumulative secure server decision portfolio.\n// Browser execution uses deterministic pure-Go request, handler, dependency, response, and cleanup models only.\n// Listeners, TLS, net/http, databases, proxies, races, load, credentials, host state, and production changes require explicit authorized Go 1.26 transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype RequestEvidence struct { Method, Path, Authority string; BodyBytes int }\ntype ResponseEvidence struct { Status int; Effect, Cleanup string; Accepted bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP server decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "scenario-1",
+      "title": "Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race",
+      "interaction": "predict",
+      "instruction": "review case — A review team handles case 2944 in a canary service revision draining long-lived streams. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules.\n\nWhich action demonstrates Handler Concurrency Race without dropping earlier contracts?\n\nEvidence target: Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race.",
+      "why": "The decision supplies observable evidence for treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules. For Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race, keep Handler Concurrency Race connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2944 in a canary service revision draining long-lived streams. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Handler Concurrency Race condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpsgo-handler-concurrency-race"
+      ],
+      "hints": [
+        "For Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race, name the method, authority, body, byte, time, and credential boundary, Handler Concurrency Race precondition, or invariant that must hold.",
+        "At Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2944 in a canary service revision draining long-lived streams. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules.",
+        "For Go server Handler Concurrency Race · changed case · Review Handler Concurrency Race, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A map is safe in handlers when each request modifies a different key."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules. Apply it to the stated input and retain a reproducible trace for concurrency budget and overload decision model."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A map is safe in handlers when each request modifies a different key. That claim does not survive the handler concurrency race · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For handler concurrency race · changed case, run one convenient Handler Concurrency Race happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 2945 in a partner API with an outdated generated client. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions.\n\nWhich action demonstrates Concurrency Budget Semaphore without dropping earlier contracts?\n\nEvidence target: Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore.",
+      "why": "The decision supplies observable evidence for bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions. For Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore, keep Concurrency Budget Semaphore connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2945 in a partner API with an outdated generated client. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Concurrency Budget Semaphore condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpsgo-concurrency-budget-semaphore"
+      ],
+      "hints": [
+        "For Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore, name the method, authority, body, byte, time, and credential boundary, Concurrency Budget Semaphore precondition, or invariant that must hold.",
+        "At Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2945 in a partner API with an outdated generated client. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions.",
+        "For Go server Concurrency Budget Semaphore · changed case · Review Concurrency Budget Semaphore, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Starting one goroutine per request is bounded because the server controls request concurrency automatically."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Starting one goroutine per request is bounded because the server controls request concurrency automatically. That claim does not survive the concurrency budget semaphore · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For concurrency budget semaphore · changed case, run one convenient Concurrency Budget Semaphore happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Bound active expensive work with semaphores, worker pools, queue capacity, context-aware admission, fairness, and per-tenant partitions. Apply it to the stated input and retain a reproducible trace for concurrency budget and overload decision model."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 2946 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, Retry-After, and bypass policy from abuse risk.\n\nWhich action demonstrates Rate Limit Identity Algorithm without dropping earlier contracts?\n\nEvidence target: Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm.",
+      "why": "The decision supplies observable evidence for choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, retry-after, and bypass policy from abuse risk. For Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm, keep Rate Limit Identity Algorithm connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2946 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, Retry-After, and bypass policy from abuse risk."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Rate Limit Identity Algorithm condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpsgo-rate-limit-identity-algorithm"
+      ],
+      "hints": [
+        "For Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm, name the method, authority, body, byte, time, and credential boundary, Rate Limit Identity Algorithm precondition, or invariant that must hold.",
+        "At Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2946 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, Retry-After, and bypass policy from abuse risk.",
+        "For Go server Rate Limit Identity Algorithm · changed case · Review Rate Limit Identity Algorithm, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Rate limiting solely by RemoteAddr gives fair per-user protection behind proxies and NAT."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For rate limit identity algorithm · changed case, run one convenient Rate Limit Identity Algorithm happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Choose trusted identity, token bucket or window semantics, burst, refill, distributed consistency, Retry-After, and bypass policy from abuse risk. Apply it to the stated input and retain a reproducible trace for concurrency budget and overload decision model."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Rate limiting solely by RemoteAddr gives fair per-user protection behind proxies and NAT. That claim does not survive the rate limit identity algorithm · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Go server Load Shed Priority · changed case · Review Load Shed Priority",
+      "interaction": "predict",
+      "instruction": "review case — A review team handles case 2947 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reject before expensive work when queue, dependency, memory, deadline, or priority budgets are exhausted and preserve recovery capacity.\n\nWhich action demonstrates Load Shed Priority without dropping earlier contracts?\n\nEvidence target: Go server Load Shed Priority · changed case · Review Load Shed Priority.",
+      "why": "The decision supplies observable evidence for reject before expensive work when queue, dependency, memory, deadline, or priority budgets are exhausted and preserve recovery capacity. For Go server Load Shed Priority · changed case · Review Load Shed Priority, keep Load Shed Priority connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2947 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reject before expensive work when queue, dependency, memory, deadline, or priority budgets are exhausted and preserve recovery capacity."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Load Shed Priority condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpsgo-load-shed-priority"
+      ],
+      "hints": [
+        "For Go server Load Shed Priority · changed case · Review Load Shed Priority, name the method, authority, body, byte, time, and credential boundary, Load Shed Priority precondition, or invariant that must hold.",
+        "At Go server Load Shed Priority · changed case · Review Load Shed Priority, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2947 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reject before expensive work when queue, dependency, memory, deadline, or priority budgets are exhausted and preserve recovery capacity.",
+        "For Go server Load Shed Priority · changed case · Review Load Shed Priority, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Accepting and timing out excess work is fairer and safer than early load shedding."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Reject before expensive work when queue, dependency, memory, deadline, or priority budgets are exhausted and preserve recovery capacity. Apply it to the stated input and retain a reproducible trace for concurrency budget and overload decision model."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Accepting and timing out excess work is fairer and safer than early load shedding. That claim does not survive the load shed priority · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For load shed priority · changed case, run one convenient Load Shed Priority happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 2948 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.\n\nWhich action demonstrates Overload Observability Recovery without dropping earlier contracts?\n\nEvidence target: Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery.",
+      "why": "The decision supplies observable evidence for measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery. For Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery, keep Overload Observability Recovery connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2948 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Overload Observability Recovery condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "hints": [
+        "For Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery, name the method, authority, body, byte, time, and credential boundary, Overload Observability Recovery precondition, or invariant that must hold.",
+        "At Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2948 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.",
+        "For Go server Overload Observability Recovery · changed case · Review Overload Observability Recovery, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A low average latency proves the server has enough capacity during burst and tail conditions."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "A low average latency proves the server has enough capacity during burst and tail conditions. That claim does not survive the overload observability recovery · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For overload observability recovery · changed case, run one convenient Overload Observability Recovery happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery. Apply it to the stated input and retain a reproducible trace for concurrency budget and overload decision model."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race",
+      "interaction": "arrange",
+      "instruction": "Order the Handler Concurrency Race Go server HTTP evidence cycle for this review task before implementing it.\n\nEvidence target: Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race.",
+      "why": "Correct order keeps Handler Concurrency Race assumptions visible before execution and verifies its result against a boundary case afterward. For Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race, keep Handler Concurrency Race connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2949 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Handler Concurrency Race has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "httpsgo-handler-concurrency-race"
+      ],
+      "hints": [
+        "For Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race, name the method, authority, body, byte, time, and credential boundary, Handler Concurrency Race precondition, or invariant that must hold.",
+        "At Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2949 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then make specification and runtime disagree on one nullable field and block release. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Treat handlers as concurrent, protect shared state with ownership or synchronization, and verify with race tests under changed schedules.",
+        "For Go server Retrieve the complete evidence cycle · Review Handler Concurrency Race, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A map is safe in handlers when each request modifies a different key."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Declare Go server method semantics, target authority, credentials, body ownership, and byte and time budgets for the review Handler Concurrency Race case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Predict Go server resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the review Handler Concurrency Race case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Run the smallest deterministic Go server request or response model and retain inspectable evidence for the review Handler Concurrency Race case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Inject one changed Go server failure, verify bounded cleanup, and state live-network transfer limits for the review Handler Concurrency Race case"
+        }
+      ]
+    },
+    {
+      "id": "mixed-evidence",
+      "title": "Go server Separate evidence from confidence · Review Overload Observability Recovery",
+      "interaction": "inspect",
+      "instruction": "review case — A review team handles case 2950 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then repeat the request with a different method and retain status plus durable-effect evidence. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.\n\nInspect the Overload Observability Recovery trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Go server Separate evidence from confidence · Review Overload Observability Recovery.",
+      "why": "The decision supplies observable evidence for measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery. For Go server Separate evidence from confidence · Review Overload Observability Recovery, keep Overload Observability Recovery connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Overload Observability Recovery, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "hints": [
+        "For Go server Separate evidence from confidence · Review Overload Observability Recovery, name the method, authority, body, byte, time, and credential boundary, Overload Observability Recovery precondition, or invariant that must hold.",
+        "At Go server Separate evidence from confidence · Review Overload Observability Recovery, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2950 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then repeat the request with a different method and retain status plus durable-effect evidence. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.",
+        "For Go server Separate evidence from confidence · Review Overload Observability Recovery, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A low average latency proves the server has enough capacity during burst and tail conditions."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Overload Observability Recovery case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review team handles case 2950 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then repeat the request with a different method and retain status plus durable-effect evidence. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "A low average latency proves the server has enough capacity during burst and tail conditions.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery. Artifact under review: concurrency budget and overload decision model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Overload Observability Recovery, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        },
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Overload Observability Recovery happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Go server Record what required effort · Review Overload Observability Recovery",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Overload Observability Recovery: explain the governing condition, one failure, and how this concrete case was verified — A review team handles case 2951 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then repeat the request with a different method and retain status plus durable-effect evidence. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.\n\nEvidence target: Go server Record what required effort · Review Overload Observability Recovery.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Go server Record what required effort · Review Overload Observability Recovery, keep Overload Observability Recovery connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "hints": [
+        "For Go server Record what required effort · Review Overload Observability Recovery, name the method, authority, body, byte, time, and credential boundary, Overload Observability Recovery precondition, or invariant that must hold.",
+        "At Go server Record what required effort · Review Overload Observability Recovery, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2951 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to combine concurrency capacity with a separate tenant rate budget; then repeat the request with a different method and retain status plus durable-effect evidence. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Measure active, queued, rejected, canceled, completed, saturated, and recovered work without high-cardinality labels and rehearse changed-load recovery.",
+        "For Go server Record what required effort · Review Overload Observability Recovery, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A low average latency proves the server has enough capacity during burst and tail conditions."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Handler Concurrency Race to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Handler Concurrency Race.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-handler-concurrency-race"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Concurrency Budget Semaphore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Concurrency Budget Semaphore.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-concurrency-budget-semaphore"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Rate Limit Identity Algorithm to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Rate Limit Identity Algorithm.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-rate-limit-identity-algorithm"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Load Shed Priority to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Load Shed Priority.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-load-shed-priority"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Overload Observability Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Overload Observability Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-handler-concurrency-race"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Overload Observability Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Overload Observability Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using measure and active plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-overload-observability-recovery"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "measure",
+        "active"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

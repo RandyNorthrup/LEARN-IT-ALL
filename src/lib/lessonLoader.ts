@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import matter from 'gray-matter';
 
 export interface LessonFrontmatter {
@@ -48,13 +48,7 @@ export function getLessonData(courseId: string, lessonId: string): LessonData | 
 
 export function getExerciseData(courseId: string, lessonIdOrExerciseId: string) {
   try {
-    const exercisesDir = path.join(
-      process.cwd(),
-      'content',
-      'courses',
-      courseId,
-      'exercises'
-    );
+    const exercisesDir = path.join(process.cwd(), 'content', 'courses', courseId, 'exercises');
 
     if (!fs.existsSync(exercisesDir)) {
       return null;
@@ -68,13 +62,13 @@ export function getExerciseData(courseId: string, lessonIdOrExerciseId: string) 
     }
 
     // If not found, search all exercise files for matching lessonId
-    const files = fs.readdirSync(exercisesDir).filter(file => file.endsWith('.json'));
-    
+    const files = fs.readdirSync(exercisesDir).filter((file) => file.endsWith('.json'));
+
     for (const file of files) {
       const filePath = path.join(exercisesDir, file);
       const fileContents = fs.readFileSync(filePath, 'utf8');
       const exerciseData = JSON.parse(fileContents);
-      
+
       if (exerciseData.lessonId === lessonIdOrExerciseId) {
         return exerciseData;
       }

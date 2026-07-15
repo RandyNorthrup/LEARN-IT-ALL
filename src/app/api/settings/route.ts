@@ -27,9 +27,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ displayName: displayName.trim() });
   } catch (error) {
     console.error('Failed to save username:', error);
-    return NextResponse.json(
-      { error: 'Failed to save username' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to save username' }, { status: 500 });
   }
 }

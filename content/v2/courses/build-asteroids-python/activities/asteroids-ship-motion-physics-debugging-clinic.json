@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "asteroids-ship-motion-physics-debugging-clinic",
+  "courseId": "build-asteroids-python",
+  "moduleId": "asteroids-ship-motion-physics",
+  "kind": "debug",
+  "title": "Ship Rotation, Thrust, Inertia, Drag, and Speed Limits · Traceback Repair Bay",
+  "summary": "A preserved game trace contains one plausible state, timing, input, vector, rendering, collision, ownership, audio, accessibility, packaging, or release defect; locate the first failed invariant before editing. Planned artifact: Repair a changed failure in frame-rate-independent inertial ship controller and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.",
+    "Integrate acceleration into velocity and velocity into position with explicit seconds and bounded time.",
+    "Preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "asteroids-ship-facing",
+      "asteroids-thrust-integration",
+      "asteroids-inertia-drag",
+      "asteroids-speed-clamp",
+      "asteroids-ship-feel-evidence"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "asteroids-ship-motion-physics-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "build-asteroids-python-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"build-asteroids-python cumulative accessible real-time game portfolio.\n\nBrowser execution uses deterministic pure-Python simulation models and fixed fixtures only.\nNative pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers,\nGPU behavior, frame pacing, accessibility playtests, packaging, and production effects require controlled transfer gates.\n\"\"\"\n\nfrom dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass SimulationPolicy:\n    fixed_step_seconds: float = 1 / 120\n    max_frame_seconds: float = 0.1\n    max_updates_per_frame: int = 8\n    logical_width: int = 960\n    logical_height: int = 540\n\n\n@dataclass(frozen=True)\nclass RunEvidence:\n    revision: str\n    seed: int\n    input_trace_id: str\n    runtime_id: str\n    accessibility_profile: str\n\n\ndef portfolio_ready() -> str:\n    return \"Python Asteroids portfolio ready\"\n",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": ""
+  },
+  "steps": [
+    {
+      "id": "regression-sequence",
+      "title": "Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence",
+      "interaction": "arrange",
+      "instruction": "Order the Ship Feel Evidence Asteroids, pygame-ce, and Python player-input-to-release evidence cycle for this debug task before implementing it.\n\nEvidence target: Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence.",
+      "why": "Correct order keeps Ship Feel Evidence assumptions visible before execution and verifies its result against a boundary case afterward. For Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence, keep Ship Feel Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 2548 during a keyboard-only community arcade night. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Ship Feel Evidence has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Feel Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 2548 during a keyboard-only community arcade night. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.",
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Ship Feel Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Good game feel is only a personal numeric preference."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Asteroids, pygame-ce, and Python player outcome, revision, runtime, seed, input trace, accessibility profile, and frame, entity, collision, audio, and memory budgets for the debug Ship Feel Evidence case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Asteroids, pygame-ce, and Python event, intent, simulation, collision, cleanup, rendering, cue, failure, pause, rollback, and recovery outcomes for the debug Ship Feel Evidence case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Asteroids, pygame-ce, and Python simulation model and retain exact intermediate and changed-case results for the debug Ship Feel Evidence case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Change one Asteroids, pygame-ce, and Python frame rate, stall, seam, device, collision, cue, save, package, or release condition, verify bounded rejection or repair, and state desktop transfer limits for the debug Ship Feel Evidence case"
+        }
+      ]
+    },
+    {
+      "id": "incident-record",
+      "title": "Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug Asteroids team handles case 4167 during an offline cross-platform release rehearsal. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.\n\nInspect the Ship Facing trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing.",
+      "why": "The decision supplies observable evidence for update angle from action intent and derive a normalized facing vector without overwriting velocity direction. For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing, keep Ship Facing connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Ship Facing, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "asteroids-ship-facing"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Facing precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 4167 during an offline cross-platform release rehearsal. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.",
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Ship Facing, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: The ship must always move exactly where it faces."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ship Facing case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug Asteroids team handles case 4167 during an offline cross-platform release rehearsal. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "The ship must always move exactly where it faces.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction. Artifact under review: frame-rate-independent inertial ship controller.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Ship Facing, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 5786 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.\n\nWhich observation would disprove this suspected cause: “The ship must always move exactly where it faces.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing.",
+      "why": "The decision supplies observable evidence for update angle from action intent and derive a normalized facing vector without overwriting velocity direction. For Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing, keep Ship Facing connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 5786 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ship Facing symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Vector Mathematics — Vector2 operations, magnitude, normalization failures, rotation convention, interpolation, projection, reflection, and clamps."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "asteroids-ship-facing"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Facing precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 5786 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.",
+        "For Asteroids, pygame-ce, and Python Ship Facing · fault isolation · Debug Ship Facing, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: The ship must always move exactly where it faces."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ship Facing failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "The ship must always move exactly where it faces.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Update angle from action intent and derive a normalized facing vector without overwriting velocity direction.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For ship facing · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Ship Facing."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the ship facing · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 7405 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Integrate acceleration into velocity and velocity into position with explicit seconds and bounded time.\n\nWhich observation would disprove this suspected cause: “Thrust should be added directly to position for responsive controls.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration.",
+      "why": "The decision supplies observable evidence for integrate acceleration into velocity and velocity into position with explicit seconds and bounded time. For Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration, keep Thrust Integration connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 7405 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Integrate acceleration into velocity and velocity into position with explicit seconds and bounded time."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Thrust Integration condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Vector Mathematics — Vector2 operations, magnitude, normalization failures, rotation convention, interpolation, projection, reflection, and clamps."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "asteroids-thrust-integration"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Thrust Integration precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 7405 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Integrate acceleration into velocity and velocity into position with explicit seconds and bounded time.",
+        "For Asteroids, pygame-ce, and Python Thrust Integration · fault isolation · Debug Thrust Integration, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Thrust should be added directly to position for responsive controls."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Thrust Integration."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the thrust integration · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For thrust integration · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 2216 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates.\n\nWhich observation would disprove this suspected cause: “Multiplying velocity by one constant each frame is frame-rate independent.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag.",
+      "why": "The decision supplies observable evidence for preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates. For Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag, keep Inertia Drag connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 2216 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Inertia Drag symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Vector Mathematics — Vector2 operations, magnitude, normalization failures, rotation convention, interpolation, projection, reflection, and clamps."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "asteroids-inertia-drag"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Inertia Drag precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 2216 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates.",
+        "For Asteroids, pygame-ce, and Python Inertia Drag · fault isolation · Debug Inertia Drag, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Multiplying velocity by one constant each frame is frame-rate independent."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Inertia Drag failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Multiplying velocity by one constant each frame is frame-rate independent.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Preserve momentum and apply a time-scaled damping model whose behavior is tested across frame rates.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the inertia drag · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For inertia drag · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Inertia Drag."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 3835 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp vector magnitude rather than components and define reverse, zero, and boost behavior.\n\nWhich observation would disprove this suspected cause: “Clamping x and y separately preserves the same maximum speed in every direction.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp.",
+      "why": "The decision supplies observable evidence for clamp vector magnitude rather than components and define reverse, zero, and boost behavior. For Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp, keep Speed Clamp connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 3835 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp vector magnitude rather than components and define reverse, zero, and boost behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Speed Clamp condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Vector Mathematics — Vector2 operations, magnitude, normalization failures, rotation convention, interpolation, projection, reflection, and clamps."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "asteroids-speed-clamp"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Speed Clamp precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 3835 during a headless continuous-integration replay. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp vector magnitude rather than components and define reverse, zero, and boost behavior.",
+        "For Asteroids, pygame-ce, and Python Speed Clamp · fault isolation · Debug Speed Clamp, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Clamping x and y separately preserves the same maximum speed in every direction."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For speed clamp · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Speed Clamp."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the speed clamp · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 5454 during a controller-remapping accessibility review. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.\n\nWhich observation would disprove this suspected cause: “Good game feel is only a personal numeric preference.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence.",
+      "why": "The decision supplies observable evidence for tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces. For Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence, keep Ship Feel Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 5454 during a controller-remapping accessibility review. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ship Feel Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Vector Mathematics — Vector2 operations, magnitude, normalization failures, rotation convention, interpolation, projection, reflection, and clamps."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Feel Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 5454 during a controller-remapping accessibility review. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.",
+        "For Asteroids, pygame-ce, and Python Ship Feel Evidence · fault isolation · Debug Ship Feel Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Good game feel is only a personal numeric preference."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ship Feel Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Good game feel is only a personal numeric preference.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Ship Feel Evidence."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the ship feel evidence · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For ship feel evidence · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence",
+      "interaction": "code",
+      "instruction": "Append a runnable pure-Python function headed \"# Evidence: asteroids-ship-feel-evidence-n27123\" that uses case 1598 to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion. Keep its defaults runnable, assert an invariant, and return observable changed-case evidence. Browser code must not claim native pygame-ce, SDL, window, controller, mixer, filesystem, package, GPU, installer, or production behavior; verify those boundaries later with Python 3.14.6, released pygame-ce 2.5.7, fixed and headless SDL fixtures, real devices, licensed assets, accessibility playtests, profiling, clean installations, rollback, recovery, and release gates.\n\nEvidence target: Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Ship Feel Evidence into observable performance evidence. For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence, keep Ship Feel Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "# Evidence: asteroids-ship-feel-evidence-n27123\n# Competency: asteroids-ship-feel-evidence.\n# Case 1598: a low-power integrated-GPU frame-budget trial.\n# Operating constraint: record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner.\n# Changed case: lose window focus while thrust and fire are held, then prove both actions release safely.\ndef evidence_asteroids_ship_feel_evidence_n27123(speed: float = 140.0, thrust: float = 80.0, drag: float = 0.15, max_speed: float = 260.0, dt: float = 0.016) -> tuple[bool, int | float, str]:\n    evidence_variant_n27123 = \"n27123-32172n-1598\"\n    assert evidence_variant_n27123\n    evidence_axes_n27123 = (\n        \"playern27123\",\n        \"seed1598\",\n        \"input32172n\",\n        \"framen271231598\",\n        \"state1598n27123\",\n        \"playtest32172n1598\",\n    )\n    assert len(set(evidence_axes_n27123)) == 6\n    if min(speed, thrust, drag, max_speed, dt) < 0.0:\n        return False, speed, \"motion-domain\"\n    accelerated = speed + thrust * dt\n    damped = accelerated * max(0.0, 1.0 - drag * dt)\n    bounded = min(damped, max_speed)\n    if bounded > max_speed:\n        return False, bounded, \"speed-cap\"\n    assert 0.0 <= bounded <= max_speed\n    return True, round(bounded, 3), \"inertial-ship\"\n",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Feel Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 7073 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.",
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Ship Feel Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Good game feel is only a personal numeric preference."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "incident-report",
+      "title": "Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Ship Feel Evidence: explain the governing condition, one failure, and how this concrete case was verified — A debug Asteroids team handles case 8692 during a keyboard-only community arcade night. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.\n\nEvidence target: Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence, keep Ship Feel Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Ship Feel Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 8692 during a keyboard-only community arcade night. Build deterministic Python evidence to integrate rotation, thrust, inertia, drag, and speed limits with frame-rate-independent Vector2 motion; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Tune rotation, acceleration, drag, cap, input latency, and feedback against recorded player tasks and objective traces.",
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Ship Feel Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Good game feel is only a personal numeric preference."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ship Facing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ship Facing.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-facing"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ship Facing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ship Facing.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-facing"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Thrust Integration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Thrust Integration.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-thrust-integration"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inertia Drag to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inertia Drag.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-inertia-drag"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Speed Clamp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Speed Clamp.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-speed-clamp"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ship Feel Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ship Feel Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: asteroids-ship-feel-evidence-n27123.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "file": "python",
+      "expected": "# Evidence: asteroids-ship-feel-evidence-n27123"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "# Evidence: asteroids-ship-feel-evidence-n27123(?:(?!# Evidence:)[\\s\\S])*?def\\s+evidence_asteroids_ship_feel_evidence_n27123\\s*\\((?:(?!# Evidence:)[\\s\\S])*?\\)\\s*(?:->[^:]+)?\\s*:(?=(?:(?!# Evidence:)[\\s\\S])*?min\\(speed)(?=(?:(?!# Evidence:)[\\s\\S])*?thrust \\* dt)(?=(?:(?!# Evidence:)[\\s\\S])*?1.0 - drag \\* dt)(?=(?:(?!# Evidence:)[\\s\\S])*?min\\(damped, max_speed)(?=(?:(?!# Evidence:)[\\s\\S])*?assert)(?=(?:(?!# Evidence:)[\\s\\S])*?return)(?:(?!# Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using tune and rotation plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-ship-feel-evidence"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "tune",
+        "rotation"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

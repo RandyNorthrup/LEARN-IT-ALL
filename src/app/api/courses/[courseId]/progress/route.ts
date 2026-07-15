@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { dbHelpers } from '@/lib/db';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
@@ -23,9 +23,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('Failed to fetch course progress:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch course progress' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch course progress' }, { status: 500 });
   }
 }

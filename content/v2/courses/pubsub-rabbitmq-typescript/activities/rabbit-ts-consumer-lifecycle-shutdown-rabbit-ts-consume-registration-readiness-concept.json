@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-consumer-lifecycle-shutdown-rabbit-ts-consume-registration-readiness-concept",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-consumer-lifecycle-shutdown",
+  "kind": "theory",
+  "title": "Consumer Lifecycle, Cancellation, Readiness, and Graceful Shutdown · Type-System Trace: Consume Registration Readiness",
+  "summary": "A consumer reports ready before consume-ok, ignores broker cancellation, closes the connection while handlers run, and assumes cancel immediately stops every in-flight delivery. Planned artifact: Add and verify the consume registration readiness increment in consumer registration, readiness, and shutdown state machine. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+    "Retire confirmed entries, reject nacked entries, preserve ambiguous entries, cancel waiters, and prove zero memory or callback leaks across channel generations.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "rabbit-ts-consume-registration-readiness"
+    ],
+    "reinforces": [
+      "rabbit-ts-publisher-ledger-cleanup"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-ts-versioned-pubsub-backbone-project-build"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin…",
+      "interaction": "predict",
+      "instruction": "theory case — A theory messaging team handles case 9497 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.\n\nBefore reading, predict which action preserves the Consume Registration Readiness contract for the supplied data.\n\nEvidence target: RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin….",
+      "why": "The decision supplies observable evidence for report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. For RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory messaging team handles case 9497 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Consume Registration Readiness condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 9497 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Predict Consume Registration Readiness · Theory Consume Registration Readin…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-misread",
+          "text": "An open TCP connection proves the consumer can receive and safely process messages. That claim does not survive the predict consume registration readiness evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. Apply it to the concrete input and state the observable result."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness",
+      "interaction": "read",
+      "instruction": "theory case — A theory messaging team handles case 6068 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.\n\nAfter tracing the worked code, choose the Consume Registration Readiness application whose preconditions and limits still match the supplied case.\n\nEvidence target: RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness.",
+      "why": "The decision supplies observable evidence for report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. For RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Name publisher intent, exchange and routing evidence, queue responsibility, message identity, ownership transfer, byte, time, attempt, and concurrency budgets, terminal delivery decision, effect, cleanup, and recovery; run a pure deterministic TypeScript model; then change one message or failure and state the amqplib, RabbitMQ, TLS, partition, restart, load, upgrade, or production transfer gate."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example messaging team handles case 9497 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. A defensible solution applies Consume Registration Readiness, preserves the governing invariant or value contract, and connects the observed result to consumer registration, readiness, and shutdown state machine."
+        },
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-worked-rabbit-ts-consumer-lifecycle-shutdown-2\n// Competency: rabbit-ts-worked-rabbit-ts-consumer-lifecycle-shutdown-2.\n// Case 7417: quorum queue during a planned rolling maintenance window.\n// Operating constraint: retain a screen-reader-readable delivery and ownership trace.\n// Changed case: change one routing segment and prove the exact destination set.\nfunction worked_rabbit_ts_consumer_lifecycle_shutdown_2(registered: boolean, cancelled: boolean, inFlight: number, deadlineExpired: boolean): { ready: boolean; action: string } {\n  const evidenceVariant_worked2 = \"worked2-2dekrow-7417\";\n  void evidenceVariant_worked2;\n  const ready = registered && !cancelled && !deadlineExpired;\n  if (ready) return { ready: true, action: \"consume\" };\n  if (inFlight > 0 && !deadlineExpired) return { ready: false, action: \"drain\" };\n  return { ready: false, action: inFlight > 0 ? \"close-requeue\" : \"close\" };\n}",
+          "caption": "Runnable type-and-runtime contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "An open TCP connection proves the consumer can receive and safely process messages. This fails the Consume Registration Readiness contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "RabbitMQ Publishers and Consumers (RabbitMQ 4.3.2) — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 6068 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Bound Consume Registration Readiness · Theory Consume Registration Readiness, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Consume Registration Readiness after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "An open TCP connection proves the consumer can receive and safely process messages. That claim does not survive the bound consume registration readiness evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati…",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory messaging team handles case 7687 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.\n\nInspect the Consume Registration Readiness trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati….",
+      "why": "The decision supplies observable evidence for report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. For RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Consume Registration Readiness, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 7687 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Inspect Consume Registration Readiness evidence · Theory Consume Registrati…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Consume Registration Readiness case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory messaging team handles case 7687 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "An open TCP connection proves the consumer can receive and safely process messages.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. Artifact under review: consumer registration, readiness, and shutdown state machine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Consume Registration Readiness, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect consume registration readiness evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat…",
+      "interaction": "arrange",
+      "instruction": "Order the Consume Registration Readiness RabbitMQ and TypeScript HTTP evidence cycle for this theory task before implementing it.\n\nEvidence target: RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat….",
+      "why": "Correct order keeps Consume Registration Readiness assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory messaging team handles case 9306 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Consume Registration Readiness has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 9306 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Sequence Consume Registration Readiness evidence · Theory Consume Registrat…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare RabbitMQ and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the theory Consume Registration Readiness case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict RabbitMQ and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the theory Consume Registration Readiness case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest deterministic RabbitMQ and TypeScript request or response model and retain inspectable evidence for the theory Consume Registration Readiness case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Inject one changed RabbitMQ and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the theory Consume Registration Readiness case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration…",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: rabbit-ts-consume-registration-readiness-1x2awj\" that uses case 3528 to sequence readiness, cancellation, in-flight draining, deadline, and channel close. Return observable changed-case evidence. Browser code must not import amqplib or Node built-ins, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, or use credentials; verify those boundaries later with the named Node 24, amqplib 2.0.1, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production transfer gates.\n\nEvidence target: RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration….",
+      "why": "Building a runnable or mechanically reviewable artifact turns Consume Registration Readiness into observable performance evidence. For RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-consume-registration-readiness-1x2awj\n// Competency: rabbit-ts-consume-registration-readiness.\n// Case 3528: multi-tenant case event backbone with three subscriber responsibilities.\n// Operating constraint: separate browser evidence from disposable live-broker proof.\n// Changed case: remove the dead-letter binding and expose the resulting retention risk.\nfunction evidence_rabbit_ts_consume_registration_readiness_1x2awj(registered: boolean, cancelled: boolean, inFlight: number, deadlineExpired: boolean): { ready: boolean; action: string } {\n  const evidenceVariant_1x2awj = \"1x2awj-jwa2x1-3528\";\n  void evidenceVariant_1x2awj;\n  const ready = registered && !cancelled && !deadlineExpired;\n  if (ready) return { ready: true, action: \"consume\" };\n  if (inFlight > 0 && !deadlineExpired) return { ready: false, action: \"drain\" };\n  return { ready: false, action: inFlight > 0 ? \"close-requeue\" : \"close\" };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 1925 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Build Consume Registration Readiness evidence · Theory Consume Registration…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat…",
+      "interaction": "debug",
+      "instruction": "theory case — A theory messaging team handles case 8592 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.\n\nA teammate acts on this belief: “An open TCP connection proves the consumer can receive and safely process messages.” Which repair addresses the cause?\n\nEvidence target: RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat….",
+      "why": "The decision supplies observable evidence for report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready. For RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory messaging team handles case 8592 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Consume Registration Readiness symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 8592 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Repair the Consume Registration Readiness defect · Theory Consume Registrat…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Consume Registration Readiness failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "An open TCP connection proves the consumer can receive and safely process messages.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Consume Registration Readiness, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the consume registration readiness defect evidence boundary."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati…",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Consume Registration Readiness: explain the governing condition, one failure, and how this concrete case was verified — A theory messaging team handles case 1211 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.\n\nEvidence target: RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati….",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati…, keep Consume Registration Readiness connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati…, name the types, ownership, and stop path, Consume Registration Readiness precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory messaging team handles case 1211 in a partner publisher using an unroutable changed topic key. Build deterministic TypeScript evidence to sequence readiness, cancellation, in-flight draining, deadline, and channel close; keep every queue and subscriber responsibility explicitly named; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Report ready only after connection, topology, channel, prefetch, consume registration, and required dependencies are ready.",
+        "For RabbitMQ and TypeScript Defend the Consume Registration Readiness model · Theory Consume Registrati…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An open TCP connection proves the consumer can receive and safely process messages."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Consume Registration Readiness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Consume Registration Readiness.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Consume Registration Readiness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Consume Registration Readiness.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Consume Registration Readiness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Consume Registration Readiness.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-ts-consume-registration-readiness-1x2awj.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: rabbit-ts-consume-registration-readiness-1x2awj"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: rabbit-ts-consume-registration-readiness-1x2awj(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_rabbit_ts_consume_registration_readiness_1x2awj\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?registered\\s*&&\\s*!cancelled)(?=(?:(?!// Evidence:)[\\s\\S])*?inFlight\\s*>\\s*0)(?=(?:(?!// Evidence:)[\\s\\S])*?close-requeue)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Consume Registration Readiness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Consume Registration Readiness.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using report and ready plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consume-registration-readiness"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "report",
+        "ready"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "id": "http-server-ts-resource-apis-consistency-retrieval-review",
+  "courseId": "http-servers-typescript",
+  "moduleId": "http-server-ts-resource-apis-consistency",
+  "kind": "review",
+  "title": "Resource APIs, Idempotency, Concurrency, Pagination, and Consistency · Spiral Review",
+  "summary": "A delayed operations handoff reconstructs resource apis, idempotency, concurrency, pagination, and consistency from bounded code and request evidence, challenges one misconception, and revises the consistent resource API and operation ledger. Planned artifact: Extend the evidence record for consistent resource API and operation ledger after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout.",
+    "Scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches.",
+    "Connect version columns, ETags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpsts-resource-state-machine",
+      "httpsts-idempotency-key-fingerprint",
+      "httpsts-optimistic-concurrency-etag",
+      "httpsts-cursor-pagination-snapshot",
+      "httpsts-outbox-consistency"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-server-ts-resource-apis-consistency-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "http-servers-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// http-servers-typescript cumulative secure server decision portfolio.\n// Browser execution uses deterministic pure-TypeScript request, middleware, policy, dependency, response, and cleanup models only.\n// Node built-ins, Express, listeners, TLS, PostgreSQL, proxies, worker threads, load, credentials, host state, and production changes require explicit authorized Node 24 and Express 5 transfer gates.\n\ntype RequestEvidence = Readonly<{\n  method: string;\n  path: string;\n  authority: string;\n  bodyBytes: number;\n}>;\n\ntype ResponseEvidence = Readonly<{\n  status: number;\n  effect: string;\n  cleanup: string;\n  accepted: boolean;\n}>;\n\nconst portfolioReady = true;\nvoid portfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "scenario-1",
+      "title": "Node and Express server Resource State Machine · changed case · Review Resource State Machine",
+      "interaction": "predict",
+      "instruction": "review case — A review team handles case 3856 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then rotate a signing key while an old valid session remains within policy. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout.\n\nWhich action demonstrates Resource State Machine without dropping earlier contracts?\n\nEvidence target: Node and Express server Resource State Machine · changed case · Review Resource State Machine.",
+      "why": "The decision supplies observable evidence for model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout. For Node and Express server Resource State Machine · changed case · Review Resource State Machine, keep Resource State Machine connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 3856 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then rotate a signing key while an old valid session remains within policy. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Resource State Machine condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status, fields, conditional requests, negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpsts-resource-state-machine"
+      ],
+      "hints": [
+        "For Node and Express server Resource State Machine · changed case · Review Resource State Machine, name the method, authority, body, byte, time, and credential boundary, Resource State Machine precondition, or invariant that must hold.",
+        "At Node and Express server Resource State Machine · changed case · Review Resource State Machine, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 3856 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then rotate a signing key while an old valid session remains within policy. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout.",
+        "For Node and Express server Resource State Machine · changed case · Review Resource State Machine, challenge the documented misconception with request, response, fault, policy, and transfer evidence: CRUD endpoints directly mirror database tables and therefore define a complete resource model."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For resource state machine · changed case, run one convenient Resource State Machine happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout. Apply it to the stated input and retain a reproducible trace for consistent resource API and operation ledger."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "CRUD endpoints directly mirror database tables and therefore define a complete resource model. That claim does not survive the resource state machine · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp…",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 5475 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the method and preserve both status and durable-effect evidence. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches.\n\nWhich action demonstrates Idempotency Key Fingerprint without dropping earlier contracts?\n\nEvidence target: Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp….",
+      "why": "The decision supplies observable evidence for scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches. For Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp…, keep Idempotency Key Fingerprint connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 5475 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the method and preserve both status and durable-effect evidence. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Idempotency Key Fingerprint condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status, fields, conditional requests, negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpsts-idempotency-key-fingerprint"
+      ],
+      "hints": [
+        "For Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp…, name the method, authority, body, byte, time, and credential boundary, Idempotency Key Fingerprint precondition, or invariant that must hold.",
+        "At Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp…, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 5475 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the method and preserve both status and durable-effect evidence. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches.",
+        "For Node and Express server Idempotency Key Fingerprint · changed case · Review Idempotency Key Fingerp…, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Any repeated idempotency key should return the first response even when the body or user changed."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Scope idempotency keys to principal and operation, compare canonical request fingerprints, store outcome atomically, expire deliberately, and reject mismatches. Apply it to the stated input and retain a reproducible trace for consistent resource API and operation ledger."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Any repeated idempotency key should return the first response even when the body or user changed. That claim does not survive the idempotency key fingerprint · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For idempotency key fingerprint · changed case, run one convenient Idempotency Key Fingerprint happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency…",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 4570 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then lower a byte or time budget and prove rejection occurs at its owner. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Connect version columns, ETags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior.\n\nWhich action demonstrates Optimistic Concurrency Etag without dropping earlier contracts?\n\nEvidence target: Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency….",
+      "why": "The decision supplies observable evidence for connect version columns, etags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior. For Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency…, keep Optimistic Concurrency Etag connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 4570 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then lower a byte or time budget and prove rejection occurs at its owner. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Connect version columns, ETags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Optimistic Concurrency Etag condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status, fields, conditional requests, negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpsts-optimistic-concurrency-etag"
+      ],
+      "hints": [
+        "For Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency…, name the method, authority, body, byte, time, and credential boundary, Optimistic Concurrency Etag precondition, or invariant that must hold.",
+        "At Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency…, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 4570 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then lower a byte or time budget and prove rejection occurs at its owner. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Connect version columns, ETags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior.",
+        "For Node and Express server Optimistic Concurrency Etag · changed case · Review Optimistic Concurrency…, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Reading a version and later comparing it in application code prevents concurrent lost updates."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Reading a version and later comparing it in application code prevents concurrent lost updates. That claim does not survive the optimistic concurrency etag · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For optimistic concurrency etag · changed case, run one convenient Optimistic Concurrency Etag happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Connect version columns, ETags, preconditions, atomic updates, affected-row checks, conflict disclosure, and safe retry behavior. Apply it to the stated input and retain a reproducible trace for consistent resource API and operation ledger."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh…",
+      "interaction": "predict",
+      "instruction": "review case — A review team handles case 6189 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then remove one trusted proxy hop and recompute authority from the socket boundary. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Design stable cursor ordering, tie breakers, direction, signed opaque cursors, filters, snapshot expectations, limits, and insert or delete behavior.\n\nWhich action demonstrates Cursor Pagination Snapshot without dropping earlier contracts?\n\nEvidence target: Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh….",
+      "why": "The decision supplies observable evidence for design stable cursor ordering, tie breakers, direction, signed opaque cursors, filters, snapshot expectations, limits, and insert or delete behavior. For Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh…, keep Cursor Pagination Snapshot connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 6189 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then remove one trusted proxy hop and recompute authority from the socket boundary. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Design stable cursor ordering, tie breakers, direction, signed opaque cursors, filters, snapshot expectations, limits, and insert or delete behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cursor Pagination Snapshot condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status, fields, conditional requests, negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpsts-cursor-pagination-snapshot"
+      ],
+      "hints": [
+        "For Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh…, name the method, authority, body, byte, time, and credential boundary, Cursor Pagination Snapshot precondition, or invariant that must hold.",
+        "At Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh…, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 6189 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then remove one trusted proxy hop and recompute authority from the socket boundary. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Design stable cursor ordering, tie breakers, direction, signed opaque cursors, filters, snapshot expectations, limits, and insert or delete behavior.",
+        "For Node and Express server Cursor Pagination Snapshot · changed case · Review Cursor Pagination Snapsh…, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Offset pagination returns stable non-duplicated pages while rows are inserted or removed."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For cursor pagination snapshot · changed case, run one convenient Cursor Pagination Snapshot happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Design stable cursor ordering, tie breakers, direction, signed opaque cursors, filters, snapshot expectations, limits, and insert or delete behavior. Apply it to the stated input and retain a reproducible trace for consistent resource API and operation ledger."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Offset pagination returns stable non-duplicated pages while rows are inserted or removed. That claim does not survive the cursor pagination snapshot · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Node and Express server Outbox Consistency · changed case · Review Outbox Consistency",
+      "interaction": "answer",
+      "instruction": "review case — A review team handles case 1332 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the tenant and prove denial before repository access. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.\n\nWhich action demonstrates Outbox Consistency without dropping earlier contracts?\n\nEvidence target: Node and Express server Outbox Consistency · changed case · Review Outbox Consistency.",
+      "why": "The decision supplies observable evidence for persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery. For Node and Express server Outbox Consistency · changed case · Review Outbox Consistency, keep Outbox Consistency connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 1332 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the tenant and prove denial before repository access. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Outbox Consistency condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status, fields, conditional requests, negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "hints": [
+        "For Node and Express server Outbox Consistency · changed case · Review Outbox Consistency, name the method, authority, body, byte, time, and credential boundary, Outbox Consistency precondition, or invariant that must hold.",
+        "At Node and Express server Outbox Consistency · changed case · Review Outbox Consistency, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 1332 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then change the tenant and prove denial before repository access. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.",
+        "For Node and Express server Outbox Consistency · changed case · Review Outbox Consistency, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Publishing an event immediately after COMMIT makes state and message delivery atomic."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery. Apply it to the stated input and retain a reproducible trace for consistent resource API and operation ledger."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Publishing an event immediately after COMMIT makes state and message delivery atomic. That claim does not survive the outbox consistency · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For outbox consistency · changed case, run one convenient Outbox Consistency happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine",
+      "interaction": "arrange",
+      "instruction": "Order the Resource State Machine Node and Express server HTTP evidence cycle for this review task before implementing it.\n\nEvidence target: Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine.",
+      "why": "Correct order keeps Resource State Machine assumptions visible before execution and verifies its result against a boundary case afterward. For Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine, keep Resource State Machine connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review team handles case 2951 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then abort during a dependency phase and preserve cleanup plus response ownership. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Resource State Machine has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "httpsts-resource-state-machine"
+      ],
+      "hints": [
+        "For Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine, name the method, authority, body, byte, time, and credential boundary, Resource State Machine precondition, or invariant that must hold.",
+        "At Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2951 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then abort during a dependency phase and preserve cleanup plus response ownership. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Model resource states, legal transitions, commands, representations, invariants, tombstones, and conflict outcomes independently of table layout.",
+        "For Node and Express server Retrieve the complete evidence cycle · Review Resource State Machine, challenge the documented misconception with request, response, fault, policy, and transfer evidence: CRUD endpoints directly mirror database tables and therefore define a complete resource model."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Declare Node and Express server method semantics, target authority, credentials, body ownership, and byte and time budgets for the review Resource State Machine case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Predict Node and Express server resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the review Resource State Machine case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Run the smallest deterministic Node and Express server request or response model and retain inspectable evidence for the review Resource State Machine case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Inject one changed Node and Express server failure, verify bounded cleanup, and state live-network transfer limits for the review Resource State Machine case"
+        }
+      ]
+    },
+    {
+      "id": "mixed-evidence",
+      "title": "Node and Express server Separate evidence from confidence · Review Outbox Consistency",
+      "interaction": "inspect",
+      "instruction": "review case — A review team handles case 2046 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then saturate one tenant budget while another tenant remains serviceable. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.\n\nInspect the Outbox Consistency trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Node and Express server Separate evidence from confidence · Review Outbox Consistency.",
+      "why": "The decision supplies observable evidence for persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery. For Node and Express server Separate evidence from confidence · Review Outbox Consistency, keep Outbox Consistency connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Outbox Consistency, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "hints": [
+        "For Node and Express server Separate evidence from confidence · Review Outbox Consistency, name the method, authority, body, byte, time, and credential boundary, Outbox Consistency precondition, or invariant that must hold.",
+        "At Node and Express server Separate evidence from confidence · Review Outbox Consistency, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 2046 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then saturate one tenant budget while another tenant remains serviceable. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.",
+        "For Node and Express server Separate evidence from confidence · Review Outbox Consistency, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Publishing an event immediately after COMMIT makes state and message delivery atomic."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Outbox Consistency case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review team handles case 2046 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then saturate one tenant budget while another tenant remains serviceable. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "Publishing an event immediately after COMMIT makes state and message delivery atomic.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery. Artifact under review: consistent resource API and operation ledger.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Outbox Consistency happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Outbox Consistency, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Node and Express server Record what required effort · Review Outbox Consistency",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Outbox Consistency: explain the governing condition, one failure, and how this concrete case was verified — A review team handles case 3665 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then reuse an idempotency key with different input and reject the fingerprint mismatch. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.\n\nEvidence target: Node and Express server Record what required effort · Review Outbox Consistency.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Node and Express server Record what required effort · Review Outbox Consistency, keep Outbox Consistency connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "hints": [
+        "For Node and Express server Record what required effort · Review Outbox Consistency, name the method, authority, body, byte, time, and credential boundary, Outbox Consistency precondition, or invariant that must hold.",
+        "At Node and Express server Record what required effort · Review Outbox Consistency, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A review team handles case 3665 in a partner integration using an older generated TypeScript client. Build deterministic TypeScript evidence to join idempotency fingerprints, optimistic concurrency, and transactional outbox evidence; preserve one tenant fairness invariant; then reuse an idempotency key with different input and reject the fingerprint mismatch. Browser code models pure decisions only. Node, Express, listener, TLS, PostgreSQL, proxy, worker, load, and production behavior require explicit authorized transfer gates. Competency probe: Persist state and an outbox fact atomically, publish with deduplication and ordering assumptions, and reconcile stuck or duplicate delivery.",
+        "For Node and Express server Record what required effort · Review Outbox Consistency, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Publishing an event immediately after COMMIT makes state and message delivery atomic."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resource State Machine to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resource State Machine.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-resource-state-machine"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Idempotency Key Fingerprint to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Idempotency Key Fingerprint.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-idempotency-key-fingerprint"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimistic Concurrency Etag to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimistic Concurrency Etag.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-optimistic-concurrency-etag"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cursor Pagination Snapshot to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cursor Pagination Snapshot.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-cursor-pagination-snapshot"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Outbox Consistency to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Outbox Consistency.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-resource-state-machine"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Outbox Consistency to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Outbox Consistency.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using persist and state plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsts-outbox-consistency"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "persist",
+        "state"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

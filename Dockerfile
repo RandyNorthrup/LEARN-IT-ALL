@@ -1,5 +1,8 @@
 # Multi-stage build for LEARN-IT-ALL platform
-FROM node:20-alpine AS base
+FROM node:24.18.0-alpine AS base
+
+ARG NPM_VERSION=12.0.1
+RUN npm install --global "npm@${NPM_VERSION}" && npm cache clean --force
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -13,8 +16,8 @@ RUN apk add --no-cache \
     pkgconfig
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json ./
+# Copy package policy and lock files
+COPY package.json package-lock.json .npmrc ./
 # Install all dependencies (including dev deps needed for build)
 RUN npm ci && npm cache clean --force
 

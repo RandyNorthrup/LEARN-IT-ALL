@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "docker-security-least-privilege-guided-workshop",
+  "courseId": "docker-basics",
+  "moduleId": "docker-security-least-privilege",
+  "kind": "workshop",
+  "title": "Container Threat Models, Users, Capabilities, Seccomp, Rootless, and Daemon Authority · Release Workshop",
+  "summary": "A platform pairing session must produce the first working least-privilege container threat model and hardening profile for container threat models, users, capabilities, seccomp, rootless, and daemon authority, with predictions recorded before each simulated build or lifecycle change. Planned artifact: Build a complete first version of least-privilege container threat model and hardening profile while every earlier competency remains active. Learners progress through prediction, explicit theory,…",
+  "objectives": [
+    "Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default.",
+    "Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work.",
+    "Start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and Docker socket access as host authority.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "docker-threat-boundary-host-kernel",
+      "docker-user-uid-gid-files",
+      "docker-capabilities-privileged-devices",
+      "docker-seccomp-apparmor-selinux-no-new",
+      "docker-rootless-userns-daemon-socket"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "docker-security-least-privilege-docker-rootless-userns-daemon-socket-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "docker-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# docker-basics cumulative container delivery portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never connect to a Docker daemon, mount a socket, or execute learner commands.\nworkspace: docker\nversion-baseline:\n  engine: 29.6.1\n  compose: 5.3.1\n  buildx: 0.35.0\n  buildkit: 0.31.1\n  dockerfile-frontend: 1.25\ntransfer-boundary: authorized-disposable-environment\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Docker Threat Boundary Host Kernel",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Docker Threat Boundary Host Kernel.",
+      "why": "The decision supplies observable evidence for model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default. For Commit to the mission model · Workshop Docker Threat Boundary Host Kernel, keep Docker Threat Boundary Host Kernel connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Threat Boundary Host Kernel condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "docker-threat-boundary-host-kernel"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Docker Threat Boundary Host Kernel, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Threat Boundary Host Kernel precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Docker Threat Boundary Host Kernel, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default.",
+        "For Commit to the mission model · Workshop Docker Threat Boundary Host Kernel, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Any process inside a container is safe to run because namespaces prevent host impact."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Docker Threat Boundary Host Kernel preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Any process inside a container is safe to run because namespaces prevent host impact. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default.\n\nWhich action demonstrates Docker Threat Boundary Host Kernel without dropping earlier contracts?\n\nEvidence target: Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel.",
+      "why": "The decision supplies observable evidence for model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default. For Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel, keep Docker Threat Boundary Host Kernel connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Threat Boundary Host Kernel condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "docker-threat-boundary-host-kernel"
+      ],
+      "hints": [
+        "For Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Threat Boundary Host Kernel precondition, or invariant that must hold.",
+        "At Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default.",
+        "For Docker Threat Boundary Host Kernel · changed case · Workshop Docker Threat Boundary Host Kernel, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Any process inside a container is safe to run because namespaces prevent host impact."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Model untrusted image, build, registry, daemon, runtime, kernel, mount, device, network, and supply-chain threats without treating containers as sandboxes by default. Apply it to the stated input and retain a reproducible trace for least-privilege container threat model and hardening profile."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Any process inside a container is safe to run because namespaces prevent host impact. That claim does not survive the docker threat boundary host kernel · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For docker threat boundary host kernel · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work.\n\nWhich action demonstrates Docker User Uid Gid Files without dropping earlier contracts?\n\nEvidence target: Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files.",
+      "why": "The decision supplies observable evidence for run as a deliberate non-root uid/gid and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work. For Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files, keep Docker User Uid Gid Files connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Docker User Uid Gid Files result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "docker-user-uid-gid-files"
+      ],
+      "hints": [
+        "For Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker User Uid Gid Files precondition, or invariant that must hold.",
+        "At Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work.",
+        "For Docker User Uid Gid Files · changed case · Workshop Docker User Uid Gid Files, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: USER app guarantees the process is unprivileged on every host and mounted path."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker User Uid Gid Files case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "USER app guarantees the process is unprivileged on every host and mounted path.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "USER app guarantees the process is unprivileged on every host and mounted path. That claim does not survive the docker user uid gid files · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For docker user uid gid files · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Run as a deliberate non-root UID/GID and reconcile image ownership, mounted files, rootless mappings, and required privileged startup work. Apply it to the stated input and retain a reproducible trace for least-privilege container threat model and hardening profile."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and Docker socket access as host authority.\n\nWhich action demonstrates Docker Capabilities Privileged Devices without dropping earlier contracts?\n\nEvidence target: Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev….",
+      "why": "The decision supplies observable evidence for start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and docker socket access as host authority. For Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev…, keep Docker Capabilities Privileged Devices connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and Docker socket access as host authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Capabilities Privileged Devices condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "docker-capabilities-privileged-devices"
+      ],
+      "hints": [
+        "For Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev…, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Capabilities Privileged Devices precondition, or invariant that must hold.",
+        "At Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev…, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and Docker socket access as host authority.",
+        "For Docker Capabilities Privileged Devices · changed case · Workshop Docker Capabilities Privileged Dev…, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: --privileged is a convenient compatibility switch with only container-local effects."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For docker capabilities privileged devices · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Start from dropped capabilities and add only measured needs while treating privileged, devices, host namespaces, and Docker socket access as host authority. Apply it to the stated input and retain a reproducible trace for least-privilege container threat model and hardening profile."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "--privileged is a convenient compatibility switch with only container-local effects. That claim does not survive the docker capabilities privileged devices · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No…",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Retain or tighten seccomp, AppArmor or SELinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions.\n\nWhich action demonstrates Docker Seccomp Apparmor Selinux No New without dropping earlier contracts?\n\nEvidence target: Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No….",
+      "why": "The decision supplies observable evidence for retain or tighten seccomp, apparmor or selinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions. For Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No…, keep Docker Seccomp Apparmor Selinux No New connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Retain or tighten seccomp, AppArmor or SELinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Docker Seccomp Apparmor Selinux No New result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "docker-seccomp-apparmor-selinux-no-new"
+      ],
+      "hints": [
+        "For Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No…, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Seccomp Apparmor Selinux No New precondition, or invariant that must hold.",
+        "At Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No…, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Retain or tighten seccomp, AppArmor or SELinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions.",
+        "For Docker Seccomp Apparmor Selinux No New · changed case · Workshop Docker Seccomp Apparmor Selinux No…, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Running as non-root makes seccomp, mandatory access control, and capability policy unnecessary."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Seccomp Apparmor Selinux No New case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Running as non-root makes seccomp, mandatory access control, and capability policy unnecessary.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Retain or tighten seccomp, AppArmor or SELinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Retain or tighten seccomp, AppArmor or SELinux, no-new-privileges, read-only roots, masked paths, and writable tmpfs exceptions. Apply it to the stated input and retain a reproducible trace for least-privilege container threat model and hardening profile."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Running as non-root makes seccomp, mandatory access control, and capability policy unnecessary. That claim does not survive the docker seccomp apparmor selinux no new · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For docker seccomp apparmor selinux no new · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.\n\nWhich action demonstrates Docker Rootless Userns Daemon Socket without dropping earlier contracts?\n\nEvidence target: Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket.",
+      "why": "The decision supplies observable evidence for compare rootless mode, userns remap, rootful daemon groups, contexts, remote tls, and socket proxies and document remaining authority. For Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket, keep Docker Rootless Userns Daemon Socket connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Docker Rootless Userns Daemon Socket condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "hints": [
+        "For Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Rootless Userns Daemon Socket precondition, or invariant that must hold.",
+        "At Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+        "For Docker Rootless Userns Daemon Socket · changed case · Workshop Docker Rootless Userns Daemon Socket, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Membership in the docker group grants ordinary non-administrative access only."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Membership in the docker group grants ordinary non-administrative access only. That claim does not survive the docker rootless userns daemon socket · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For docker rootless userns daemon socket · changed case, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority. Apply it to the stated input and retain a reproducible trace for least-privilege container threat model and hardening profile."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.\n\nInspect the Docker Rootless Userns Daemon Socket trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket.",
+      "why": "The decision supplies observable evidence for compare rootless mode, userns remap, rootful daemon groups, contexts, remote tls, and socket proxies and document remaining authority. For Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket, keep Docker Rootless Userns Daemon Socket connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Docker Rootless Userns Daemon Socket, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Rootless Userns Daemon Socket precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+        "For Audit the proposed evidence packet · Workshop Docker Rootless Userns Daemon Socket, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Membership in the docker group grants ordinary non-administrative access only."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Rootless Userns Daemon Socket case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Membership in the docker group grants ordinary non-administrative access only.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority. Artifact under review: least-privilege container threat model and hardening profile.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Docker Rootless Userns Daemon Socket, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket",
+      "interaction": "code",
+      "instruction": "Append the Docker evidence item headed \"  # Evidence: docker-rootless-userns-daemon-socket-1q4hnt\". Tailor its security-policy.yaml change to the current stakeholder case, retain a deterministic review command, reject one concrete failure, and record a repair. The browser analyzes text only; run Docker commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Docker Rootless Userns Daemon Socket into observable performance evidence. For Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket, keep Docker Rootless Userns Daemon Socket connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: docker-rootless-userns-daemon-socket-1q4hnt\n  - competency: docker-rootless-userns-daemon-socket\n    artifact: security-policy.yaml\n    decision: rootless userns daemon socket\n    scenario-variant: 3\n    environment: ephemeral development host with constrained disk and memory\n    fault-injection: rebuild after the approved base digest is withdrawn\n    retained-proof: rendered Compose model and dependency health transition\n    case-key: 1q4hnt\n    change: |\n      user: 10001:10001\n      read_only: true\n      cap_drop: [ALL]\n      security_opt: [no-new-privileges:true]\n      tmpfs: [/tmp]\n      network_mode: none\n    verify: docker inspect document-worker --format json\n    failure: Reject privileged mode, daemon-socket mounting, broad devices, root-by-default, or a claim that containers form a hostile-code sandbox.\n    repair: Remove daemon authority, choose rootless or user namespaces where applicable, drop capabilities, bound writable paths, and state residual kernel risk.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Rootless Userns Daemon Socket precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+        "For Extend the cumulative artifact · Workshop Docker Rootless Userns Daemon Socket, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Membership in the docker group grants ordinary non-administrative access only."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket.",
+      "why": "The decision supplies observable evidence for compare rootless mode, userns remap, rootful daemon groups, contexts, remote tls, and socket proxies and document remaining authority. For Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket, keep Docker Rootless Userns Daemon Socket connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Docker Rootless Userns Daemon Socket symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Docker Engine Security, Rootless, Seccomp, and API Protection — Controls daemon authority, rootless and user namespaces, users, capabilities, seccomp, mandatory access control, secrets, privileged boundaries, and socket protection."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Rootless Userns Daemon Socket precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+        "For Test an acceptance boundary · Workshop Docker Rootless Userns Daemon Socket, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Membership in the docker group grants ordinary non-administrative access only."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Docker Rootless Userns Daemon Socket failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Membership in the docker group grants ordinary non-administrative access only.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar Docker command, omit daemon authority, immutable identity, failure, cleanup, and disposable-environment transfer checks, then accept a successful build as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Docker Rootless Userns Daemon Socket condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Docker Rootless Userns Daemon Socket: explain the governing condition, one failure, and how this concrete case was verified — A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.\n\nEvidence target: Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket, keep Docker Rootless Userns Daemon Socket connected to mechanically reviewable Docker artifact and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket, name the daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary, Docker Rootless Userns Daemon Socket precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket, trace this concrete input and predict build, image, container, mount, network, Compose, policy, and teardown evidence before reviewing it: A workshop document parser runs privileged as root, mounts daemon authority, writes the image filesystem, has network access, and no resource caps. Remove authority and state the remaining shared-kernel risk. Competency probe: Compare rootless mode, userns remap, rootful daemon groups, contexts, remote TLS, and socket proxies and document remaining authority.",
+        "For Defend the transferred model · Workshop Docker Rootless Userns Daemon Socket, challenge the documented misconception with manifest, inspect, lifecycle, failure, repair, and transfer evidence: Membership in the docker group grants ordinary non-administrative access only."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Threat Boundary Host Kernel to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Threat Boundary Host Kernel.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-threat-boundary-host-kernel"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Threat Boundary Host Kernel to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Threat Boundary Host Kernel.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-threat-boundary-host-kernel"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker User Uid Gid Files to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker User Uid Gid Files.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-user-uid-gid-files"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Capabilities Privileged Devices to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Capabilities Privileged Devices.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-capabilities-privileged-devices"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Seccomp Apparmor Selinux No New to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Seccomp Apparmor Selinux No New.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-seccomp-apparmor-selinux-no-new"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Rootless Userns Daemon Socket to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Rootless Userns Daemon Socket.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Rootless Userns Daemon Socket to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Rootless Userns Daemon Socket.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: docker-rootless-userns-daemon-socket-1q4hnt.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: docker-rootless-userns-daemon-socket-1q4hnt"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: docker-rootless-userns-daemon-socket-1q4hnt(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*docker-rootless-userns-daemon-socket(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*security-policy\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:cap_drop:\\s*\\[ALL\\]|no-new-privileges:true|network_mode:\\s*none)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Docker Rootless Userns Daemon Socket to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Docker Rootless Userns Daemon Socket.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using compare and rootless plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "docker-rootless-userns-daemon-socket"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "compare",
+        "rootless"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "storage-go-versioning-recovery-guided-workshop",
+  "courseId": "file-servers-s3-go",
+  "moduleId": "storage-go-versioning-recovery",
+  "kind": "workshop",
+  "title": "Versioning, Delete Markers, Object Lock, and Recovery · Concurrent Code Workshop",
+  "summary": "A delivery team incrementally builds version and immutable-retention recovery runbook, changes one file or failure, and keeps earlier HTTP, Go, accessibility, security, and resource-budget invariants active. Planned artifact: Build a complete first version of version and immutable-retention recovery runbook while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.",
+    "List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity.",
+    "Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "storage-go-versioning-state-transition",
+      "storage-go-delete-marker-resolution",
+      "storage-go-object-lock-modes",
+      "storage-go-worm-not-backup",
+      "storage-go-restore-drill-evidence"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "storage-go-versioning-recovery-storage-go-restore-drill-evidence-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "file-servers-s3-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// file-servers-s3-go cumulative file-delivery decision portfolio.\n// Browser execution uses deterministic pure-Go identity, range, integrity, policy, lifecycle, cache, cost, and recovery models only.\n// AWS SDK packages, S3, CloudFront, KMS, IAM, WAF, networks, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production changes require explicit authorized transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype FileEvidence struct {\n\tFileID      string\n\tObjectKey   string\n\tVersionID   string\n\tBytes       int\n\tChecksum    string\n}\n\ntype DeliveryEvidence struct {\n\tAuthorized bool\n\tState      string\n\tRangeStart int\n\tRangeEnd   int\n}\n\nfunc main() { fmt.Println(\"Go file-delivery portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 7528 during a high-traffic evidence intake window. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.\n\nWhat must be established before implementation?\n\nEvidence target: S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition.",
+      "why": "The decision supplies observable evidence for distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact. For S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition, keep Versioning State Transition connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 7528 during a high-traffic evidence intake window. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Versioning State Transition condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "storage-go-versioning-state-transition"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Versioning State Transition precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 7528 during a high-traffic evidence intake window. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.",
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Versioning State Transition, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Suspending versioning returns a bucket to its original unversioned behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Versioning State Transition happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Versioning State Transition preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Suspending versioning returns a bucket to its original unversioned behavior. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 9147 during an SDK and infrastructure canary. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.\n\nInspect the Restore Drill Evidence trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence.",
+      "why": "The decision supplies observable evidence for run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup. For S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence, keep Restore Drill Evidence connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Restore Drill Evidence, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Restore Drill Evidence precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9147 during an SDK and infrastructure canary. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+        "For S3, CloudFront, and Go Audit the initial evidence packet · Workshop Restore Drill Evidence, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A documented restore command proves recovery without executing a drill."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Restore Drill Evidence case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Go file-delivery team handles case 9147 during an SDK and infrastructure canary. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A documented restore command proves recovery without executing a drill.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup. Artifact under review: version and immutable-retention recovery runbook.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Restore Drill Evidence, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the initial evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the initial evidence packet, run one convenient Restore Drill Evidence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 1766 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.\n\nWhich action demonstrates Versioning State Transition without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans….",
+      "why": "The decision supplies observable evidence for distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact. For S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans…, keep Versioning State Transition connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 1766 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Versioning State Transition condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "storage-go-versioning-state-transition"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans…, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Versioning State Transition precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans…, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 1766 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; preserve accessible progress, cancellation, status, and recovery evidence; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.",
+        "For S3, CloudFront, and Go Versioning State Transition · changed case · Workshop Versioning State Trans…, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Suspending versioning returns a bucket to its original unversioned behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Suspending versioning returns a bucket to its original unversioned behavior. That claim does not survive the versioning state transition · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For versioning state transition · changed case, run one convenient Versioning State Transition happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact. Apply it to the stated input and retain a reproducible trace for version and immutable-retention recovery runbook."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 3385 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity.\n\nWhich action demonstrates Delete Marker Resolution without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution.",
+      "why": "The decision supplies observable evidence for list versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity. For S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution, keep Delete Marker Resolution connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 3385 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Delete Marker Resolution result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "storage-go-delete-marker-resolution"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Delete Marker Resolution precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 3385 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity.",
+        "For S3, CloudFront, and Go Delete Marker Resolution · changed case · Workshop Delete Marker Resolution, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A delete marker contains a recoverable copy of the deleted bytes."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Delete Marker Resolution case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A delete marker contains a recoverable copy of the deleted bytes.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For delete marker resolution · changed case, run one convenient Delete Marker Resolution happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity. Apply it to the stated input and retain a reproducible trace for version and immutable-retention recovery runbook."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A delete marker contains a recoverable copy of the deleted bytes. That claim does not survive the delete marker resolution · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 1052 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review.\n\nWhich action demonstrates Object Lock Modes without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes.",
+      "why": "The decision supplies observable evidence for apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review. For S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes, keep Object Lock Modes connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 1052 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Object Lock Modes condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "storage-go-object-lock-modes"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Object Lock Modes precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 1052 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review.",
+        "For S3, CloudFront, and Go Object Lock Modes · changed case · Workshop Object Lock Modes, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Object Lock prevents new versions and delete markers from being created."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review. Apply it to the stated input and retain a reproducible trace for version and immutable-retention recovery runbook."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Object Lock prevents new versions and delete markers from being created. That claim does not survive the object lock modes · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For object lock modes · changed case, run one convenient Object Lock Modes happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 2671 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries.\n\nWhich action demonstrates Worm Not Backup without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup.",
+      "why": "The decision supplies observable evidence for separate worm retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries. For S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup, keep Worm Not Backup connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 2671 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Worm Not Backup result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "storage-go-worm-not-backup"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Worm Not Backup precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 2671 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries.",
+        "For S3, CloudFront, and Go Worm Not Backup · changed case · Workshop Worm Not Backup, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Versioning plus Object Lock is a complete independent backup strategy."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Worm Not Backup case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Versioning plus Object Lock is a complete independent backup strategy.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Versioning plus Object Lock is a complete independent backup strategy. That claim does not survive the worm not backup · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For worm not backup · changed case, run one convenient Worm Not Backup happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries. Apply it to the stated input and retain a reproducible trace for version and immutable-retention recovery runbook."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 4290 during a regional dependency incident. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.\n\nWhich action demonstrates Restore Drill Evidence without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence.",
+      "why": "The decision supplies observable evidence for run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup. For S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence, keep Restore Drill Evidence connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 4290 during a regional dependency incident. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Restore Drill Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Restore Drill Evidence precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 4290 during a regional dependency incident. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+        "For S3, CloudFront, and Go Restore Drill Evidence · changed case · Workshop Restore Drill Evidence, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A documented restore command proves recovery without executing a drill."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For restore drill evidence · changed case, run one convenient Restore Drill Evidence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup. Apply it to the stated input and retain a reproducible trace for version and immutable-retention recovery runbook."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A documented restore command proves recovery without executing a drill. That claim does not survive the restore drill evidence · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: storage-go-restore-drill-evidence-1coi3g\" that uses case 8375 to validate version identity, immutable retention meaning, and executed restore evidence. Return observable changed-case evidence. Browser code must not import AWS SDK packages, open sockets, contact S3, CloudFront, KMS, IAM, WAF, networks, databases, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with Go 1.26.5 compile, vet, fuzz, race, leak, controlled AWS, load, fault, security, cost, restore, and production gates.\n\nEvidence target: S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Restore Drill Evidence into observable performance evidence. For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence, keep Restore Drill Evidence connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: storage-go-restore-drill-evidence-1coi3g\n// Competency: storage-go-restore-drill-evidence.\n// Case 8375: a private media release.\n// Operating constraint: cap bytes, time, attempts, concurrency, and spend before starting work.\n// Changed case: change region, range, or signed header and explain the exact failure boundary.\nfunc evidence_storage_go_restore_drill_evidence_1coi3g(versioning string, versionKnown, retained, legalHold, restoreVerified bool) (bool, string) {\n\tevidenceVariant1coi3g := \"1coi3g-g3ioc1-8375\"\n\t_ = evidenceVariant1coi3g\n\tif versioning != \"enabled\" && versioning != \"suspended\" { return false, \"versioning-state\" }\n\tif !versionKnown { return false, \"version-identity\" }\n\tif legalHold && !retained { return false, \"retention-model\" }\n\tif !restoreVerified { return false, \"restore-drill\" }\n\treturn true, \"version-recoverable\"\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Restore Drill Evidence precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9493 during a compliance restore drill. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; record cleanup, rollback, restoration, and residual-risk ownership; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Restore Drill Evidence, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A documented restore command proves recovery without executing a drill."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 7874 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; retain stable tenant and file identity without exposing it in metric labels; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence.",
+      "why": "The decision supplies observable evidence for run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup. For S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence, keep Restore Drill Evidence connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 7874 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; retain stable tenant and file identity without exposing it in metric labels; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Restore Drill Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Amazon S3 Versioning — Version states, version IDs, overwrites, delete markers, recovery, and lifecycle interaction."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Restore Drill Evidence precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 7874 during a cost-anomaly investigation. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; retain stable tenant and file identity without exposing it in metric labels; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Restore Drill Evidence, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A documented restore command proves recovery without executing a drill."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Restore Drill Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A documented restore command proves recovery without executing a drill.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Restore Drill Evidence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Restore Drill Evidence condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Restore Drill Evidence: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go file-delivery team handles case 6255 during an SDK and infrastructure canary. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; retain stable tenant and file identity without exposing it in metric labels; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.\n\nEvidence target: S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence, keep Restore Drill Evidence connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Restore Drill Evidence precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 6255 during an SDK and infrastructure canary. Build deterministic Go evidence to validate version identity, immutable retention meaning, and executed restore evidence; retain stable tenant and file identity without exposing it in metric labels; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Restore Drill Evidence, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A documented restore command proves recovery without executing a drill."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Versioning State Transition to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Versioning State Transition.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-versioning-state-transition"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Restore Drill Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Restore Drill Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Versioning State Transition to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Versioning State Transition.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-versioning-state-transition"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Delete Marker Resolution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Delete Marker Resolution.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-delete-marker-resolution"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Object Lock Modes to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Object Lock Modes.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-object-lock-modes"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Worm Not Backup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Worm Not Backup.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-worm-not-backup"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Restore Drill Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Restore Drill Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: storage-go-restore-drill-evidence-1coi3g.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "file": "go",
+      "expected": "// Evidence: storage-go-restore-drill-evidence-1coi3g"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: storage-go-restore-drill-evidence-1coi3g(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_storage_go_restore_drill_evidence_1coi3g\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?versioning\\s*!=\\s*\"enabled\")(?=(?:(?!// Evidence:)[\\s\\S])*?!versionKnown)(?=(?:(?!// Evidence:)[\\s\\S])*?legalHold\\s*&&\\s*!retained)(?=(?:(?!// Evidence:)[\\s\\S])*?!restoreVerified)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Restore Drill Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Restore Drill Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using sampled and restore plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "sampled",
+        "restore"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

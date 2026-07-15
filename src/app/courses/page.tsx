@@ -1,337 +1,141 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, Clock3, Filter, Layers3 } from 'lucide-react';
 import Link from 'next/link';
-import { ArrowLeft, Clock, BookOpen, Code2, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { filterCourseCatalog } from '@/lib/courseCatalog';
+import { ALL_COURSES, isV2Course } from '@/lib/data/courses';
+import styles from './Courses.module.css';
 
-interface Course {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: string;
-  estimatedHours: number;
-  language: string | null;
-  tags: string[];
-  prerequisites: string[];
-  status: string;
-  lessonCount: number;
-  chapterCount: number;
-  type: string;
+interface CoursesPageProps {
+  searchParams: Promise<{ difficulty?: string; type?: string; planned?: string }>;
 }
 
-const STATUS_CONFIG = {
-  complete: {
-    icon: CheckCircle2,
-    label: 'Complete',
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-  },
-  available: {
-    icon: BookOpen,
-    label: 'Available',
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-  },
-  'coming-soon': {
-    icon: AlertCircle,
-    label: 'Coming Soon',
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-100',
-  },
-  locked: {
-    icon: Lock,
-    label: 'Locked',
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
-  },
-};
-
-const DIFFICULTY_COLORS = {
-  beginner: 'bg-green-100 text-green-800',
-  intermediate: 'bg-yellow-100 text-yellow-800',
-  advanced: 'bg-red-100 text-red-800',
-};
-
-export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-
-  useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const response = await fetch('/api/courses');
-        if (response.ok) {
-          const data = await response.json();
-          setCourses(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch courses:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCourses();
-  }, []);
-
-  const filteredCourses = courses.filter((course) => {
-    const matchesDifficulty = filter === 'all' || course.difficulty === filter;
-    const matchesType = typeFilter === 'all' || course.type === typeFilter;
-    return matchesDifficulty && matchesType;
-  });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="text-2xl font-bold text-gray-700">Loading courses...</div>
-      </div>
-    );
-  }
+export default async function CoursesPage({ searchParams }: CoursesPageProps) {
+  const query = await searchParams;
+  const difficulty = query.difficulty ?? 'all';
+  const type = query.type ?? 'all';
+  const showPlanned = query.planned === 'yes';
+  const visibleCourses = filterCourseCatalog(ALL_COURSES, { difficulty, type, showPlanned });
+  const plannedCount = ALL_COURSES.filter((course) => course.status === 'coming-soon').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-2"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Dashboard
-              </Link>
-              <h1 className="text-4xl font-bold text-gray-900">All Courses</h1>
-              <p className="mt-2 text-lg text-gray-600">
-                Browse {courses.length} comprehensive courses across multiple technologies
-              </p>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="mt-6 flex flex-wrap gap-4">
-            <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Difficulty</label>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setFilter('all')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    filter === 'all'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setFilter('beginner')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    filter === 'beginner'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Beginner
-                </button>
-                <button
-                  onClick={() => setFilter('intermediate')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    filter === 'intermediate'
-                      ? 'bg-yellow-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Intermediate
-                </button>
-                <button
-                  onClick={() => setFilter('advanced')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    filter === 'advanced'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Advanced
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Type</label>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setTypeFilter('all')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    typeFilter === 'all'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  All Types
-                </button>
-                <button
-                  onClick={() => setTypeFilter('course')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    typeFilter === 'course'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Courses
-                </button>
-                <button
-                  onClick={() => setTypeFilter('guided-project')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    typeFilter === 'guided-project'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Guided Projects
-                </button>
-                <button
-                  onClick={() => setTypeFilter('portfolio-project')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    typeFilter === 'portfolio-project'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Portfolio Projects
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <Link href="/" className={styles.back}>
+          <ArrowLeft aria-hidden="true" /> Home
+        </Link>
+        <Link href="/" className={styles.brand}>
+          LEARN / BUILD
+        </Link>
+        <span>{ALL_COURSES.length} paths mapped</span>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCourses.map((course) => {
-            const statusConfig = STATUS_CONFIG[course.status as keyof typeof STATUS_CONFIG];
-            const StatusIcon = statusConfig.icon;
+      <section className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>Choose a capability, not a playlist</span>
+          <h1>Course field guide</h1>
+          <p>
+            Every rebuilt path ends in observable work: projects, investigations, explanations, and
+            retained-skill checks.
+          </p>
+        </div>
+        <aside>
+          <strong>Release standard</strong>
+          <span>Research → competency map → cumulative build → independent transfer → exam</span>
+        </aside>
+      </section>
 
-            const isComingSoon = course.status === 'coming-soon';
+      <form className={styles.filters} aria-label="Filter courses">
+        <span>
+          <Filter aria-hidden="true" /> Filter the field guide
+        </span>
+        <label>
+          Difficulty
+          <select name="difficulty" defaultValue={difficulty}>
+            <option value="all">All levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </label>
+        <label>
+          Experience
+          <select name="type" defaultValue={type}>
+            <option value="all">All experiences</option>
+            <option value="course">Courses</option>
+            <option value="guided-project">Guided projects</option>
+            <option value="portfolio-project">Portfolio projects</option>
+          </select>
+        </label>
+        <label className={styles.checkLabel}>
+          <input type="checkbox" name="planned" value="yes" defaultChecked={showPlanned} />
+          Include {plannedCount} rebuild-queue paths
+        </label>
+        <button type="submit">Apply filters</button>
+      </form>
 
-            const cardBody = (
-              <>
-                {/* Course Header */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusConfig.bgColor} ${statusConfig.color}`}
-                    >
-                      <StatusIcon className="h-4 w-4 mr-1" />
-                      {statusConfig.label}
-                    </span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
-                        DIFFICULTY_COLORS[course.difficulty as keyof typeof DIFFICULTY_COLORS]
-                      }`}
-                    >
-                      {course.difficulty}
-                    </span>
-                  </div>
+      <section className={styles.catalog} aria-labelledby="catalog-title">
+        <header>
+          <div>
+            <span className={styles.eyebrow}>Current catalog</span>
+            <h2 id="catalog-title">{showPlanned ? 'All mapped paths' : 'Ready to enter'}</h2>
+          </div>
+          <strong>{visibleCourses.length} results</strong>
+        </header>
 
-                  <h3 className={`text-xl font-bold mb-2 transition-colors ${isComingSoon ? 'text-gray-500' : 'text-gray-900 group-hover:text-blue-600'}`}>
-                    {course.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{course.description}</p>
-
-                  {/* Course Stats */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {course.estimatedHours}h
-                    </div>
-                    <div className="flex items-center">
-                      <BookOpen className="h-4 w-4 mr-1" />
-                      {course.lessonCount} lessons
-                    </div>
-                    {course.language && (
-                      <div className="flex items-center">
-                        <Code2 className="h-4 w-4 mr-1" />
-                        {course.language}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {course.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium"
-                      >
-                        {tag}
+        <ol className={styles.courseList}>
+          {visibleCourses.map((course, index) => {
+            const isV2 = isV2Course(course.id);
+            const isPlanned = course.status === 'coming-soon';
+            const href = isV2 ? `/learn/${course.id}` : `/courses/${course.id}`;
+            return (
+              <li key={course.id}>
+                <article className={styles.courseCard}>
+                  <div className={styles.courseIndex}>{String(index + 1).padStart(2, '0')}</div>
+                  <div className={styles.courseBody}>
+                    <div className={styles.courseMeta}>
+                      <span>
+                        {isV2 ? 'v2 studio' : isPlanned ? 'rebuild queue' : 'migration edition'}
                       </span>
-                    ))}
-                    {course.tags.length > 3 && (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
-                        +{course.tags.length - 3} more
+                      <span>{course.difficulty}</span>
+                      <span>{course.type.replaceAll('-', ' ')}</span>
+                    </div>
+                    <h3>{course.title}</h3>
+                    <p>{course.description}</p>
+                    <div className={styles.courseFacts}>
+                      <span>
+                        <Clock3 aria-hidden="true" /> {course.estimatedHours} hours
                       </span>
-                    )}
+                      <span>
+                        <Layers3 aria-hidden="true" /> {course.lessonCount}{' '}
+                        {isV2 ? 'interactive activities' : 'legacy units to remap'}
+                      </span>
+                    </div>
+                    <ul className={styles.tags} aria-label={`${course.title} topics`}>
+                      {course.tags.slice(0, 4).map((tag) => (
+                        <li key={tag}>{tag}</li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-
-                {/* Course Footer */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600 capitalize">
-                      {course.type.replace('-', ' ')}
-                    </span>
-                    <span className={`font-semibold text-sm inline-flex items-center ${isComingSoon ? 'text-gray-400' : 'text-blue-600 group-hover:translate-x-1 transition-transform'}`}>
-                      {isComingSoon ? 'Coming Soon' : 'View Course'}
-                      {!isComingSoon && (
-                        <svg
-                          className="ml-1 h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      )}
-                    </span>
-                  </div>
-                </div>
-              </>
-            );
-
-            return isComingSoon ? (
-              <div
-                key={course.id}
-                className="group rounded-2xl bg-white shadow-lg overflow-hidden transition-all opacity-75 cursor-not-allowed"
-              >
-                {cardBody}
-              </div>
-            ) : (
-              <Link
-                key={course.id}
-                href={`/courses/${course.id}`}
-                className="group rounded-2xl bg-white shadow-lg overflow-hidden transition-all hover:shadow-2xl hover:scale-105"
-              >
-                {cardBody}
-              </Link>
+                  {isPlanned ? (
+                    <span className={styles.queued}>Planned</span>
+                  ) : (
+                    <Link
+                      className={styles.openCourse}
+                      href={href}
+                      aria-label={`Open ${course.title}`}
+                    >
+                      <ArrowRight aria-hidden="true" />
+                    </Link>
+                  )}
+                </article>
+              </li>
             );
           })}
-        </div>
+        </ol>
 
-        {filteredCourses.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No courses found matching your filters.</p>
-          </div>
+        {visibleCourses.length === 0 && (
+          <p className={styles.empty}>No path matches those filters. Try a broader combination.</p>
         )}
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

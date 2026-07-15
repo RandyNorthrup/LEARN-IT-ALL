@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Search, ChevronDown, ChevronRight, Filter } from 'lucide-react';
+import { ChevronDown, ChevronRight, Filter, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 // PCAP packet data structure (pre-processed from .pcap files to JSON)
 export interface PcapPacket {
@@ -66,7 +66,11 @@ interface PcapViewerProps {
   className?: string;
 }
 
-export default function PcapViewer({ data, highlightPackets = [], className = '' }: PcapViewerProps) {
+export default function PcapViewer({
+  data,
+  highlightPackets = [],
+  className = '',
+}: PcapViewerProps) {
   const [selectedPacket, setSelectedPacket] = useState<PcapPacket | null>(null);
   const [expandedLayers, setExpandedLayers] = useState<Set<string>>(new Set());
   const [filterText, setFilterText] = useState('');
@@ -107,7 +111,9 @@ export default function PcapViewer({ data, highlightPackets = [], className = ''
   };
 
   return (
-    <div className={`rounded-xl border border-gray-300 bg-white shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`rounded-xl border border-gray-300 bg-white shadow-lg overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="bg-gray-800 text-white px-4 py-3">
         <div className="flex items-center justify-between">
@@ -204,6 +210,7 @@ export default function PcapViewer({ data, highlightPackets = [], className = ''
               Packet #{selectedPacket.number} — {selectedPacket.protocol}
             </span>
             <button
+              type="button"
               onClick={() => setShowHexDump(!showHexDump)}
               className="text-xs text-blue-600 hover:text-blue-800 underline"
             >
@@ -218,6 +225,7 @@ export default function PcapViewer({ data, highlightPackets = [], className = ''
               return (
                 <div key={layer.name} className="border border-gray-200 rounded">
                   <button
+                    type="button"
                     onClick={() => toggleLayer(layer.name)}
                     className="w-full flex items-center gap-1 px-2 py-1.5 text-xs font-semibold text-gray-800 hover:bg-gray-50"
                   >
@@ -230,9 +238,9 @@ export default function PcapViewer({ data, highlightPackets = [], className = ''
                   </button>
                   {isExpanded && (
                     <div className="px-4 pb-2 space-y-0.5">
-                      {layer.fields.map((field, i) => (
+                      {layer.fields.map((field) => (
                         <div
-                          key={i}
+                          key={`${field.name}-${field.value}`}
                           className={`flex text-xs font-mono ${field.highlight ? 'bg-yellow-100 px-1 rounded font-bold' : ''}`}
                         >
                           <span className="text-gray-500 w-48 flex-shrink-0">{field.name}:</span>

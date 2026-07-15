@@ -1,0 +1,863 @@
+{
+  "schemaVersion": 2,
+  "id": "gates-sanitizers-independent-lab",
+  "courseId": "repository-quality-gates",
+  "moduleId": "gates-sanitizers",
+  "kind": "lab",
+  "title": "Runtime Sanitizers, Dynamic Analysis, and Language Profiles · Clean-Machine Lab",
+  "summary": "Add runtime instrumentation to native and managed-language test profiles. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a sanitizer and dynamic-analysis matrix with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use AddressSanitizer builds to detect memory safety defects in native code.",
+    "Use UndefinedBehaviorSanitizer with appropriate recover or trap policy.",
+    "Select thread, memory, leak, race, or platform sanitizers according to risk and compatibility.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "gates-asan",
+      "gates-ubsan",
+      "gates-thread-memory-sanitizers",
+      "gates-managed-dynamic",
+      "gates-sanitizer-ci"
+    ]
+  },
+  "prerequisites": [
+    "gates-sanitizers-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "repository-quality-gates-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "python": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# Risk-profiled repository gate portfolio\n# Each gate needs purpose, command, failure fixture, owner, and suppression policy.\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. What must be established before implementation?",
+      "why": "The decision supplies observable evidence for use addresssanitizer builds to detect memory safety defects in native code.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use AddressSanitizer builds to detect memory safety defects in native code. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Asan, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Passing ordinary tests proves memory access is safe. This fails the Asan contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use AddressSanitizer builds to detect memory safety defects in native code."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "gates-asan"
+      ],
+      "hints": [
+        "Name the Asan precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Passing ordinary tests proves memory access is safe."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Asan preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Passing ordinary tests proves memory access is safe."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Asan · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Asan without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use addresssanitizer builds to detect memory safety defects in native code.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use AddressSanitizer builds to detect memory safety defects in native code. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Asan, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Passing ordinary tests proves memory access is safe. This fails the Asan contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use AddressSanitizer builds to detect memory safety defects in native code."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "gates-asan"
+      ],
+      "hints": [
+        "Name the Asan precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Passing ordinary tests proves memory access is safe."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Passing ordinary tests proves memory access is safe."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use AddressSanitizer builds to detect memory safety defects in native code. Apply it to the stated input and retain a reproducible trace for a sanitizer and dynamic-analysis matrix."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Ubsan · changed case",
+      "interaction": "inspect",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Ubsan without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use undefinedbehaviorsanitizer with appropriate recover or trap policy.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use UndefinedBehaviorSanitizer with appropriate recover or trap policy. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Ubsan, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Undefined behavior always crashes without instrumentation. This fails the Ubsan contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use UndefinedBehaviorSanitizer with appropriate recover or trap policy."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "gates-ubsan"
+      ],
+      "hints": [
+        "Name the Ubsan precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Undefined behavior always crashes without instrumentation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ubsan case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Undefined behavior always crashes without instrumentation.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use UndefinedBehaviorSanitizer with appropriate recover or trap policy.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Use UndefinedBehaviorSanitizer with appropriate recover or trap policy. Apply it to the stated input and retain a reproducible trace for a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Undefined behavior always crashes without instrumentation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Thread Memory Sanitizers · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Thread Memory Sanitizers without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for select thread, memory, leak, race, or platform sanitizers according to risk and compatibility.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Select thread, memory, leak, race, or platform sanitizers according to risk and compatibility. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Thread Memory Sanitizers, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "All sanitizers can run together in one fast build. This fails the Thread Memory Sanitizers contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Select thread, memory, leak, race, or platform sanitizers according to risk and compatibility."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "gates-thread-memory-sanitizers"
+      ],
+      "hints": [
+        "Name the Thread Memory Sanitizers precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: All sanitizers can run together in one fast build."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Select thread, memory, leak, race, or platform sanitizers according to risk and compatibility. Apply it to the stated input and retain a reproducible trace for a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "All sanitizers can run together in one fast build."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Managed Dynamic · changed case",
+      "interaction": "inspect",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Managed Dynamic without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use runtime warnings, leak checks, fuzzing, and framework diagnostics for managed languages.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use runtime warnings, leak checks, fuzzing, and framework diagnostics for managed languages. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Managed Dynamic, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Sanitizers are relevant only to C and C++. This fails the Managed Dynamic contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use runtime warnings, leak checks, fuzzing, and framework diagnostics for managed languages."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "gates-managed-dynamic"
+      ],
+      "hints": [
+        "Name the Managed Dynamic precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Sanitizers are relevant only to C and C++."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Managed Dynamic case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Sanitizers are relevant only to C and C++.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use runtime warnings, leak checks, fuzzing, and framework diagnostics for managed languages.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Sanitizers are relevant only to C and C++."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Use runtime warnings, leak checks, fuzzing, and framework diagnostics for managed languages. Apply it to the stated input and retain a reproducible trace for a sanitizer and dynamic-analysis matrix."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Sanitizer Ci · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Sanitizer Ci without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for run expensive dynamic checks in a documented matrix with symbolized actionable output.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Run expensive dynamic checks in a documented matrix with symbolized actionable output. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Compare plausible approaches against the decision, constraints, evidence quality, and cost of being wrong."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Sanitizer Ci, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "A sanitizer finding can be suppressed without root-cause review. This fails the Sanitizer Ci contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Run expensive dynamic checks in a documented matrix with symbolized actionable output."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "hints": [
+        "Name the Sanitizer Ci precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: A sanitizer finding can be suppressed without root-cause review."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Run expensive dynamic checks in a documented matrix with symbolized actionable output. Apply it to the stated input and retain a reproducible trace for a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A sanitizer finding can be suppressed without root-cause review."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet",
+      "interaction": "inspect",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nInspect the Sanitizer Ci trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for run expensive dynamic checks in a documented matrix with symbolized actionable output.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Sanitizer Ci, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "hints": [
+        "Name the Sanitizer Ci precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: A sanitizer finding can be suppressed without root-cause review."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Sanitizer Ci case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A sanitizer finding can be suppressed without root-cause review.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Run expensive dynamic checks in a documented matrix with symbolized actionable output. Artifact under review: a sanitizer and dynamic-analysis matrix.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Sanitizer Ci, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Append a gates-sanitizer-ci-qvszex: manifest entry with concrete verify plus failure, owner, or repair evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Sanitizer Ci into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "gates-sanitizer-ci-qvszex:\n  verify: [replace with a deterministic check]\n  failure: [replace with the rejected condition]\n  repair: [replace with a local reproduction and correction path]",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "hints": [
+        "Name the Sanitizer Ci precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: A sanitizer finding can be suppressed without root-cause review."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed acceptance case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. One precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for run expensive dynamic checks in a documented matrix with symbolized actionable output.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Run expensive dynamic checks in a documented matrix with symbolized actionable output. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Compare plausible approaches against the decision, constraints, evidence quality, and cost of being wrong."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Sanitizer Ci, preserves the governing invariant or value contract, and connects the observed result to a sanitizer and dynamic-analysis matrix."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "A sanitizer finding can be suppressed without root-cause review. This fails the Sanitizer Ci contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Clang AddressSanitizer and UndefinedBehaviorSanitizer (Clang 23 development documentation) — Controls native-code runtime sanitizer purpose, build profiles, output, limitations, and security cautions."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Run expensive dynamic checks in a documented matrix with symbolized actionable output."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "hints": [
+        "Name the Sanitizer Ci precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: A sanitizer finding can be suppressed without root-cause review."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Sanitizer Ci failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A sanitizer finding can be suppressed without root-cause review.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Run expensive dynamic checks in a documented matrix with symbolized actionable output.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Sanitizer Ci condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write a concise evidence note that explains when Sanitizer Ci applies, what can fail, and how the changed case was verified.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Run expensive dynamic checks in a documented matrix with symbolized actionable output."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "hints": [
+        "Name the Sanitizer Ci precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: gates sanitizers. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: A sanitizer finding can be suppressed without root-cause review."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Asan to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Asan.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-asan"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Asan to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Asan.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-asan"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ubsan to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ubsan.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-ubsan"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Thread Memory Sanitizers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Thread Memory Sanitizers.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-thread-memory-sanitizers"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Managed Dynamic to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Managed Dynamic.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-managed-dynamic"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sanitizer Ci to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sanitizer Ci.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sanitizer Ci to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sanitizer Ci.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker gates-sanitizer-ci-qvszex:.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "file": "config",
+      "expected": "gates-sanitizer-ci-qvszex:"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "gates-sanitizer-ci-qvszex:[\\s\\S]*?verify:\\s*(?!\\[|describe|todo)[^\\n]{12,}[\\s\\S]*?(?:failure|owner|repair):\\s*(?!\\[|name|give|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sanitizer Ci to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sanitizer Ci.",
+      "hidden": true,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using expensive and dynamic plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "gates-sanitizer-ci"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "expensive",
+        "dynamic"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

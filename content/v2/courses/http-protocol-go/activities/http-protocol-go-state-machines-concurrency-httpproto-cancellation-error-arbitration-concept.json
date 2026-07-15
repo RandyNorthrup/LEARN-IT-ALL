@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-state-machines-concurrency-httpproto-cancellation-error-arbitration-concept",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-state-machines-concurrency",
+  "kind": "theory",
+  "title": "Incremental State Machines, Concurrency, Cancellation, and Ownership · Go Semantics Case: Cancellation Error Arbitration",
+  "summary": "A parser is recursive and side-effectful, multiple goroutines read one connection, cancellation races with response writes, and error paths cannot state which component owns the buffer or close. Planned artifact: Add and verify the cancellation error arbitration increment in explicit protocol state, event, invariant, and ownership model. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+    "Assign one coordinated reader and ordered writer per HTTP/1.1 connection with explicit handoff for tunnels and shutdown.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "httpproto-cancellation-error-arbitration"
+    ],
+    "reinforces": [
+      "httpproto-single-reader-writer-ownership"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-state-machines-concurrency-httpproto-single-reader-writer-ownership-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration",
+      "interaction": "predict",
+      "instruction": "theory case — A theory protocol team handles case 1435 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.\n\nBefore reading, predict which action preserves the Cancellation Error Arbitration contract for the supplied data.\n\nEvidence target: Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration.",
+      "why": "The decision supplies observable evidence for arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. For Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 1435 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cancellation Error Arbitration condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1435 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Predict Cancellation Error Arbitration · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "The last goroutine to report an error should choose the connection outcome. That claim does not survive the predict cancellation error arbitration evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict cancellation error arbitration, run one convenient Cancellation Error Arbitration happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration",
+      "interaction": "read",
+      "instruction": "theory case — A theory protocol team handles case 1436 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.\n\nAfter tracing the worked code, choose the Cancellation Error Arbitration application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration.",
+      "why": "The decision supplies observable evidence for arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. For Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare types, ownership, goroutine lifetime, failure contract, and observable result; trace value copies, aliases, blocking, and happens-before edges; run the smallest isolated program; then change one boundary input and retain a regression invariant."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example protocol team handles case 1435 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. A defensible solution applies Cancellation Error Arbitration, preserves the governing invariant or value contract, and connects the observed result to explicit protocol state, event, invariant, and ownership model."
+        },
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-worked-http-protocol-go-state-machines-concurrency-5\n// Competency: httpproto-worked-http-protocol-go-state-machines-concurrency-5.\n// Case 7593: canary edge service advertising HTTP/3 with bounded fallback.\n// Operating constraint: diagnostics must omit credentials and attacker-controlled metric labels.\n// Changed case: split every structural delimiter across a different read and retain the same result.\nfunc worked_http_protocol_go_state_machines_concurrency_5(cursor int, inputBytes int, framingChoices int, readers int, terminalOwners int) (bool, string) {\n\tvalid, invariant := cursor >= 0 && cursor <= inputBytes, \"cursor\"\n\tif framingChoices != 1 { valid, invariant = false, \"framing\" }\n\tif readers != 1 { valid, invariant = false, \"reader-owner\" }\n\tif terminalOwners != 1 { valid, invariant = false, \"terminal-owner\" }\n\treturn valid, invariant\n}",
+          "caption": "Runnable Go value, failure, or concurrency contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "The last goroutine to report an error should choose the connection outcome. This fails the Cancellation Error Arbitration contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "HTTP/1.1 (RFC 9112 STD 99 updated by RFC 9931) — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1436 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Bound Cancellation Error Arbitration · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "The last goroutine to report an error should choose the connection outcome. That claim does not survive the bound cancellation error arbitration evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound cancellation error arbitration, run one convenient Cancellation Error Arbitration happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Cancellation Error Arbitration after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration",
+      "interaction": "arrange",
+      "instruction": "Order the Cancellation Error Arbitration evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration.",
+      "why": "Correct order keeps Cancellation Error Arbitration assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 1437 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Cancellation Error Arbitration has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1437 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then truncate one content octet and classify incomplete framing without connection reuse. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Sequence Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the theory Cancellation Error Arbitration case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the theory Cancellation Error Arbitration case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the theory Cancellation Error Arbitration case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the theory Cancellation Error Arbitration case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-cancellation-error-arbitration-1sagvr\" that uses case 2863 to enforce cursor, framing, reader, and terminal ownership invariants. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Cancellation Error Arbitration into observable performance evidence. For Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-cancellation-error-arbitration-1sagvr\n// Competency: httpproto-cancellation-error-arbitration.\n// Case 2863: partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN.\n// Operating constraint: diagnostics must omit credentials and attacker-controlled metric labels.\n// Changed case: append a second pipelined message and prove the first parser leaves the exact residual bytes.\nfunc evidence_httpproto_cancellation_error_arbitration_1sagvr(cursor int, inputBytes int, framingChoices int, readers int, terminalOwners int) (bool, string) {\n\tvalid, invariant := cursor >= 0 && cursor <= inputBytes, \"cursor\"\n\tif framingChoices != 1 { valid, invariant = false, \"framing\" }\n\tif readers != 1 { valid, invariant = false, \"reader-owner\" }\n\tif terminalOwners != 1 { valid, invariant = false, \"terminal-owner\" }\n\treturn valid, invariant\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1438 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Build Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory protocol team handles case 1439 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.\n\nInspect the Cancellation Error Arbitration trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration.",
+      "why": "The decision supplies observable evidence for arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. For Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Cancellation Error Arbitration, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1439 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Inspect Cancellation Error Arbitration evidence · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cancellation Error Arbitration case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory protocol team handles case 1439 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "The last goroutine to report an error should choose the connection outcome.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. Artifact under review: explicit protocol state, event, invariant, and ownership model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect cancellation error arbitration evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect cancellation error arbitration evidence, run one convenient Cancellation Error Arbitration happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Cancellation Error Arbitration, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration",
+      "interaction": "debug",
+      "instruction": "theory case — A theory protocol team handles case 1440 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.\n\nA teammate acts on this belief: “The last goroutine to report an error should choose the connection outcome.” Which repair addresses the cause?\n\nEvidence target: Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration.",
+      "why": "The decision supplies observable evidence for arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup. For Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 1440 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Cancellation Error Arbitration symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1440 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Repair the Cancellation Error Arbitration defect · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cancellation Error Arbitration failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "The last goroutine to report an error should choose the connection outcome.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the cancellation error arbitration defect, run one convenient Cancellation Error Arbitration happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Cancellation Error Arbitration, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the cancellation error arbitration defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Cancellation Error Arbitration: explain the governing condition, one failure, and how this concrete case was verified — A theory protocol team handles case 1441 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.\n\nEvidence target: Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration, keep Cancellation Error Arbitration connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "hints": [
+        "For Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration, name the types, ownership, and stop path, Cancellation Error Arbitration precondition, or invariant that must hold.",
+        "At Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 1441 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to enforce cursor, framing, reader, and terminal ownership invariants; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Arbitrate parse, application, peer, timeout, cancellation, write, and shutdown failures so exactly one terminal decision owns response and cleanup.",
+        "For Defend the Cancellation Error Arbitration model · Theory Cancellation Error Arbitration, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The last goroutine to report an error should choose the connection outcome."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancellation Error Arbitration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancellation Error Arbitration.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancellation Error Arbitration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancellation Error Arbitration.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-cancellation-error-arbitration-1sagvr.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-cancellation-error-arbitration-1sagvr"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-cancellation-error-arbitration-1sagvr(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_cancellation_error_arbitration_1sagvr\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?cursor\\s*<=\\s*inputBytes)(?=(?:(?!// Evidence:)[\\s\\S])*?terminalOwners\\s*!=\\s*1)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancellation Error Arbitration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancellation Error Arbitration.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancellation Error Arbitration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancellation Error Arbitration.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using arbitrate and parse plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-cancellation-error-arbitration"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "arbitrate",
+        "parse"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

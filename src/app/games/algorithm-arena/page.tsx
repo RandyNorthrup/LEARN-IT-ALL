@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Code, Trophy, Zap } from 'lucide-react';
 import Editor from '@monaco-editor/react';
+import { Code, Trophy, Zap } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 interface Challenge {
   title: string;
@@ -124,16 +124,16 @@ export default function AlgorithmArenaGame() {
       challenge.testCases.forEach((testCase, index) => {
         const passed = Math.random() > 0.3;
         results.push(passed);
-        
+
         if (passed) {
-          setOutput(prev => prev + `✅ Test ${index + 1}: PASSED\n`);
-          setOutput(prev => prev + `   Input: ${testCase.input}\n`);
-          setOutput(prev => prev + `   Expected: ${testCase.expectedOutput}\n\n`);
+          setOutput((prev) => `${prev}✅ Test ${index + 1}: PASSED\n`);
+          setOutput((prev) => `${prev}   Input: ${testCase.input}\n`);
+          setOutput((prev) => `${prev}   Expected: ${testCase.expectedOutput}\n\n`);
         } else {
           allPassed = false;
-          setOutput(prev => prev + `❌ Test ${index + 1}: FAILED\n`);
-          setOutput(prev => prev + `   Input: ${testCase.input}\n`);
-          setOutput(prev => prev + `   Expected: ${testCase.expectedOutput}\n\n`);
+          setOutput((prev) => `${prev}❌ Test ${index + 1}: FAILED\n`);
+          setOutput((prev) => `${prev}   Input: ${testCase.input}\n`);
+          setOutput((prev) => `${prev}   Expected: ${testCase.expectedOutput}\n\n`);
         }
       });
 
@@ -142,10 +142,10 @@ export default function AlgorithmArenaGame() {
       if (allPassed) {
         const points = showHint ? 5 : 10;
         setScore(score + points);
-        setOutput(prev => prev + `\n🎉 All tests passed! +${points} points\n`);
-        setOutput(prev => prev + `Optimal complexity: ${challenge.optimalComplexity}\n`);
+        setOutput((prev) => `${prev}\n🎉 All tests passed! +${points} points\n`);
+        setOutput((prev) => `${prev}Optimal complexity: ${challenge.optimalComplexity}\n`);
       } else {
-        setOutput(prev => prev + '\n⚠️ Some tests failed. Keep trying!\n');
+        setOutput((prev) => `${prev}\n⚠️ Some tests failed. Keep trying!\n`);
       }
     } catch (error) {
       setOutput(`❌ Error: ${error}\n`);
@@ -211,7 +211,7 @@ export default function AlgorithmArenaGame() {
             <div className="rounded-2xl bg-white p-6 shadow-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{challenge.title}</h2>
               <p className="text-gray-600 mb-4">{challenge.description}</p>
-              
+
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
                 <h3 className="font-semibold text-indigo-900 mb-2">Test Cases:</h3>
                 <div className="space-y-2">
@@ -220,7 +220,7 @@ export default function AlgorithmArenaGame() {
                     const testResult = testResults[testIndex];
                     let iconColor = 'text-gray-400';
                     let iconEmoji = '⚪';
-                    
+
                     if (testResult === true) {
                       iconColor = 'text-green-600';
                       iconEmoji = '✅';
@@ -228,12 +228,13 @@ export default function AlgorithmArenaGame() {
                       iconColor = 'text-red-600';
                       iconEmoji = '❌';
                     }
-                    
+
                     return (
-                      <div key={`${tc.input}-${tc.expectedOutput}`} className="flex items-start gap-2">
-                        <span className={`text-lg ${iconColor}`}>
-                          {iconEmoji}
-                        </span>
+                      <div
+                        key={`${tc.input}-${tc.expectedOutput}`}
+                        className="flex items-start gap-2"
+                      >
+                        <span className={`text-lg ${iconColor}`}>{iconEmoji}</span>
                         <div className="flex-1 font-mono text-sm text-indigo-800">
                           <div>Input: {tc.input}</div>
                           <div>Expected: {tc.expectedOutput}</div>
@@ -246,26 +247,31 @@ export default function AlgorithmArenaGame() {
 
               {showHint && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                  <p className="text-yellow-800"><strong>Hint:</strong> {challenge.hint}</p>
+                  <p className="text-yellow-800">
+                    <strong>Hint:</strong> {challenge.hint}
+                  </p>
                 </div>
               )}
 
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={() => setShowHint(true)}
                   disabled={showHint}
                   className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 text-sm"
                 >
                   Show Hint (-5 pts)
                 </button>
-                {testResults.every(r => r === true) && currentChallenge < challenges.length - 1 && (
-                  <button
-                    onClick={nextChallenge}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                  >
-                    Next Challenge →
-                  </button>
-                )}
+                {testResults.every((r) => r === true) &&
+                  currentChallenge < challenges.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={nextChallenge}
+                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Next Challenge →
+                    </button>
+                  )}
               </div>
             </div>
 
@@ -301,12 +307,14 @@ export default function AlgorithmArenaGame() {
             </div>
             <div className="flex gap-3">
               <button
+                type="button"
                 onClick={runCode}
                 className="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
               >
                 Run Tests
               </button>
               <button
+                type="button"
                 onClick={resetChallenge}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
               >

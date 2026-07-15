@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-observability-debugging-incidents-guided-workshop",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-observability-debugging-incidents",
+  "kind": "workshop",
+  "title": "Status, Events, Logs, Metrics, Traces, Audit, and Layered Incident Response · Platform Workshop",
+  "summary": "A platform pairing session predicts each API transition before producing the first working cluster and workload incident evidence record for status, events, logs, metrics, traces, audit, and layered incident response. Planned artifact: Build a complete first version of cluster and workload incident evidence record while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history.",
+    "Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries.",
+    "Distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-status-conditions-events",
+      "k8s-container-node-logs",
+      "k8s-metrics-resource-system",
+      "k8s-traces-audit-correlation",
+      "k8s-layered-debugging-method"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-observability-debugging-incidents-k8s-layered-debugging-method-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop K8s Status Conditions Events",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop K8s Status Conditions Events.",
+      "why": "The decision supplies observable evidence for correlate spec, observedgeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history. For Commit to the mission model · Workshop K8s Status Conditions Events, keep K8s Status Conditions Events connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Status Conditions Events condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "k8s-status-conditions-events"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop K8s Status Conditions Events, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Status Conditions Events precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop K8s Status Conditions Events, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history.",
+        "For Commit to the mission model · Workshop K8s Status Conditions Events, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Ready condition and desired replica count prove the application serves correct user responses."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the K8s Status Conditions Events preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A Ready condition and desired replica count prove the application serves correct user responses. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history.\n\nWhich action demonstrates K8s Status Conditions Events without dropping earlier contracts?\n\nEvidence target: K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events.",
+      "why": "The decision supplies observable evidence for correlate spec, observedgeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history. For K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events, keep K8s Status Conditions Events connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Status Conditions Events condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "k8s-status-conditions-events"
+      ],
+      "hints": [
+        "For K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Status Conditions Events precondition, or invariant that must hold.",
+        "At K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history.",
+        "For K8s Status Conditions Events · changed case · Workshop K8s Status Conditions Events, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Ready condition and desired replica count prove the application serves correct user responses."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Correlate spec, observedGeneration, conditions, reasons, messages, events, resource versions, controller ownership, and event retention without treating event order as durable history. Apply it to the stated input and retain a reproducible trace for cluster and workload incident evidence record."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A Ready condition and desired replica count prove the application serves correct user responses. That claim does not survive the k8s status conditions events · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For k8s status conditions events · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "K8s Container Node Logs · changed case · Workshop K8s Container Node Logs",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop workload restarts after revision 6; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries.\n\nWhich action demonstrates K8s Container Node Logs without dropping earlier contracts?\n\nEvidence target: K8s Container Node Logs · changed case · Workshop K8s Container Node Logs.",
+      "why": "The decision supplies observable evidence for collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries. For K8s Container Node Logs · changed case · Workshop K8s Container Node Logs, keep K8s Container Node Logs connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 6; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Container Node Logs result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "k8s-container-node-logs"
+      ],
+      "hints": [
+        "For K8s Container Node Logs · changed case · Workshop K8s Container Node Logs, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Container Node Logs precondition, or invariant that must hold.",
+        "At K8s Container Node Logs · changed case · Workshop K8s Container Node Logs, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 6; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries.",
+        "For K8s Container Node Logs · changed case · Workshop K8s Container Node Logs, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: kubectl logs is a durable cluster-wide log archive that survives Pod and node deletion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Container Node Logs case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "kubectl logs is a durable cluster-wide log archive that survives Pod and node deletion.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "kubectl logs is a durable cluster-wide log archive that survives Pod and node deletion. That claim does not survive the k8s container node logs · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For k8s container node logs · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Collect current and previous container logs, multi-container streams, timestamps, kubelet and runtime logs, rotation, retention, and node-loss boundaries. Apply it to the stated input and retain a reproducible trace for cluster and workload incident evidence record."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence.\n\nWhich action demonstrates K8s Metrics Resource System without dropping earlier contracts?\n\nEvidence target: K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System.",
+      "why": "The decision supplies observable evidence for distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence. For K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System, keep K8s Metrics Resource System connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Metrics Resource System condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "k8s-metrics-resource-system"
+      ],
+      "hints": [
+        "For K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Metrics Resource System precondition, or invariant that must hold.",
+        "At K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence.",
+        "For K8s Metrics Resource System · changed case · Workshop K8s Metrics Resource System, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: metrics-server provides durable application monitoring, dashboards, and alert history."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For k8s metrics resource system · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Distinguish resource metrics, component metrics, application metrics, state metrics, cardinality, scrape, storage, alert, and autoscaling evidence. Apply it to the stated input and retain a reproducible trace for cluster and workload incident evidence record."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "metrics-server provides durable application monitoring, dashboards, and alert history. That claim does not survive the k8s metrics resource system · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop workload restarts after revision 3; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate request IDs, trace context, API audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels.\n\nWhich action demonstrates K8s Traces Audit Correlation without dropping earlier contracts?\n\nEvidence target: K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation.",
+      "why": "The decision supplies observable evidence for correlate request ids, trace context, api audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels. For K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation, keep K8s Traces Audit Correlation connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 3; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate request IDs, trace context, API audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Traces Audit Correlation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "k8s-traces-audit-correlation"
+      ],
+      "hints": [
+        "For K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Traces Audit Correlation precondition, or invariant that must hold.",
+        "At K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 3; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Correlate request IDs, trace context, API audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels.",
+        "For K8s Traces Audit Correlation · changed case · Workshop K8s Traces Audit Correlation, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Distributed traces replace logs, metrics, events, and security audit records."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Traces Audit Correlation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Distributed traces replace logs, metrics, events, and security audit records.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Correlate request IDs, trace context, API audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Correlate request IDs, trace context, API audit events, release identity, workload logs, metrics, and policy decisions without leaking secrets or high-cardinality labels. Apply it to the stated input and retain a reproducible trace for cluster and workload incident evidence record."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Distributed traces replace logs, metrics, events, and security audit records. That claim does not survive the k8s traces audit correlation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For k8s traces audit correlation · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.\n\nWhich action demonstrates K8s Layered Debugging Method without dropping earlier contracts?\n\nEvidence target: K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method.",
+      "why": "The decision supplies observable evidence for diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, dns, policy, routing, storage, node, and application layers using the least invasive evidence. For K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method, keep K8s Layered Debugging Method connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Layered Debugging Method condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "hints": [
+        "For K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Layered Debugging Method precondition, or invariant that must hold.",
+        "At K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 4; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+        "For K8s Layered Debugging Method · changed case · Workshop K8s Layered Debugging Method, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Restarting or exec-editing the failing Pod is the fastest reliable root-cause method."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Restarting or exec-editing the failing Pod is the fastest reliable root-cause method. That claim does not survive the k8s layered debugging method · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For k8s layered debugging method · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence. Apply it to the stated input and retain a reproducible trace for cluster and workload incident evidence record."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop K8s Layered Debugging Method",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.\n\nInspect the K8s Layered Debugging Method trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop K8s Layered Debugging Method.",
+      "why": "The decision supplies observable evidence for diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, dns, policy, routing, storage, node, and application layers using the least invasive evidence. For Audit the proposed evidence packet · Workshop K8s Layered Debugging Method, keep K8s Layered Debugging Method connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Layered Debugging Method, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop K8s Layered Debugging Method, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Layered Debugging Method precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop K8s Layered Debugging Method, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+        "For Audit the proposed evidence packet · Workshop K8s Layered Debugging Method, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Restarting or exec-editing the failing Pod is the fastest reliable root-cause method."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Layered Debugging Method case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop workload restarts after revision 5; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Restarting or exec-editing the failing Pod is the fastest reliable root-cause method.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence. Artifact under review: cluster and workload incident evidence record.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies K8s Layered Debugging Method, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop K8s Layered Debugging Method",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-layered-debugging-method-tmls4p\". Tailor its incident-evidence.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop K8s Layered Debugging Method.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Layered Debugging Method into observable performance evidence. For Extend the cumulative artifact · Workshop K8s Layered Debugging Method, keep K8s Layered Debugging Method connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-layered-debugging-method-tmls4p\n  - competency: k8s-layered-debugging-method\n    artifact: incident-evidence.yaml\n    decision: layered debugging method\n    environment: clean conformance cluster with only required add-ons installed\n    fault-injection: make an admission dependency unavailable during an upgrade\n    retained-proof: EndpointSlice DNS policy route and packet-path correlation\n    case-key: tmls4p\n    change: |\n      correlation: release-uid-request-trace\n      status: generation-and-conditions\n      events: timestamped-short-retention\n      logs: current-previous-and-node\n      metrics: resource-system-application\n      audit: identity-verb-resource\n      diagnosis: first-causal-layer\n    verify: kubectl get deployment,pod,endpointslice -o json && kubectl logs status-api --previous --timestamps\n    failure: Reject green replica count as user proof, restart as diagnosis, events as durable history, kubectl logs as archival storage, or unbounded cardinality.\n    repair: Preserve identity and time, correlate desired and observed layers, reproduce one fault cleanly, retain the regression, and document telemetry limits.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop K8s Layered Debugging Method, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Layered Debugging Method precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop K8s Layered Debugging Method, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 6; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+        "For Extend the cumulative artifact · Workshop K8s Layered Debugging Method, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Restarting or exec-editing the failing Pod is the fastest reliable root-cause method."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop K8s Layered Debugging Method",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop K8s Layered Debugging Method.",
+      "why": "The decision supplies observable evidence for diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, dns, policy, routing, storage, node, and application layers using the least invasive evidence. For Test an acceptance boundary · Workshop K8s Layered Debugging Method, keep K8s Layered Debugging Method connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Layered Debugging Method symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Observability and Debugging Documentation — Controls status, conditions, events, application and system logs, metrics, traces, audit correlation, retention, cardinality, and layered incident response."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop K8s Layered Debugging Method, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Layered Debugging Method precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop K8s Layered Debugging Method, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 2; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+        "For Test an acceptance boundary · Workshop K8s Layered Debugging Method, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Restarting or exec-editing the failing Pod is the fastest reliable root-cause method."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Layered Debugging Method failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Restarting or exec-editing the failing Pod is the fastest reliable root-cause method.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated K8s Layered Debugging Method condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop K8s Layered Debugging Method",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for K8s Layered Debugging Method: explain the governing condition, one failure, and how this concrete case was verified — A workshop workload restarts after revision 3; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.\n\nEvidence target: Defend the transferred model · Workshop K8s Layered Debugging Method.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop K8s Layered Debugging Method, keep K8s Layered Debugging Method connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop K8s Layered Debugging Method, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Layered Debugging Method precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop K8s Layered Debugging Method, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop workload restarts after revision 3; logs rotated, metrics aggregate away one replica, events are delayed, and an operator deletes the Pod first. Preserve object status, events, current and previous logs, metrics, traces, node evidence, and a causal timeline. Competency probe: Diagnose desired state, admission, scheduling, image, mount, process, probe, endpoint, DNS, policy, routing, storage, node, and application layers using the least invasive evidence.",
+        "For Defend the transferred model · Workshop K8s Layered Debugging Method, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Restarting or exec-editing the failing Pod is the fastest reliable root-cause method."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Status Conditions Events to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Status Conditions Events.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-status-conditions-events"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Status Conditions Events to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Status Conditions Events.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-status-conditions-events"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Container Node Logs to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Container Node Logs.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-container-node-logs"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Metrics Resource System to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Metrics Resource System.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-metrics-resource-system"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Traces Audit Correlation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Traces Audit Correlation.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-traces-audit-correlation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Layered Debugging Method to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Layered Debugging Method.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Layered Debugging Method to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Layered Debugging Method.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-layered-debugging-method-tmls4p.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-layered-debugging-method-tmls4p"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-layered-debugging-method-tmls4p(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-layered-debugging-method(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*incident-evidence\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:release-uid-request-trace|current-previous-and-node|first-causal-layer)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Layered Debugging Method to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Layered Debugging Method.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using diagnose and desired plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-layered-debugging-method"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "diagnose",
+        "desired"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

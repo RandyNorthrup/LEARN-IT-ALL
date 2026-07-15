@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "http-ts-timeouts-cancellation-debugging-clinic",
+  "courseId": "http-clients-typescript",
+  "moduleId": "http-ts-timeouts-cancellation",
+  "kind": "debug",
+  "title": "Timeout Layers, Deadlines, Cancellation, Cleanup, and Budget Allocation · Browser and Node Client Systems · Boundary Failure Triage",
+  "summary": "A browser support engineer tracing a cross-runtime client incident must isolate a plausible but incorrect result from conflicting traces, repair its cause, and retain a regression witness for timeout layers, deadlines, cancellation, cleanup, and budget allocation, producing end-to-end request budget and cancellation model. Planned artifact: Repair a changed failure in a TypeScript 7 standards-based Fetch end-to-end request budget and cancellation model and publish the reproduction, evidence, re…",
+  "objectives": [
+    "Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Propagate caller cancellation and deadlines through request creation, helpers, parsing, retries, and downstream work. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "http-ts-timeout-layers",
+      "http-ts-caller-deadline-propagation",
+      "http-ts-phase-budget-allocation",
+      "http-ts-cancellation-cleanup",
+      "http-ts-timeout-classification"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-ts-timeouts-cancellation-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "http-clients-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// http-clients-typescript cumulative strict Fetch client portfolio.\n// This workspace performs strict diagnostics and deterministic contract modeling only.\ntype RequestEvidence = Readonly<{ method: string; target: string; attempt: number }>;\ntype ResponseEvidence = Readonly<{ status: number; bodyBytes: number; valid: boolean }>;\n\nconst baselineRequest: RequestEvidence = {\n  method: \"GET\",\n  target: \"https://api.example.test/status\",\n  attempt: 1,\n};\nconsole.assert(baselineRequest.attempt === 1);\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Fetch and TypeScript Inspect the failure record · Debug Timeout Layers",
+      "interaction": "inspect",
+      "instruction": "debug case — cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nInspect the Timeout Layers trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Fetch and TypeScript Inspect the failure record · Debug Timeout Layers.",
+      "why": "The decision supplies observable evidence for separate name resolution, connect, tls, response-header, body-read, idle, and whole-operation timeout controls. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Inspect the failure record · Debug Timeout Layers, keep Timeout Layers connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Timeout Layers, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-layers"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Inspect the failure record · Debug Timeout Layers, name the method, authority, body, byte, time, and credential boundary, Timeout Layers precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Inspect the failure record · Debug Timeout Layers, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Inspect the failure record · Debug Timeout Layers, challenge the documented misconception with request, response, fault, policy, and transfer evidence: One socket timeout bounds the entire HTTP operation. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Timeout Layers case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "One socket timeout bounds the entire HTTP operation. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Artifact under review: a TypeScript 7 standards-based Fetch end-to-end request budget and cancellation model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Timeout Layers happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Timeout Layers, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers",
+      "interaction": "debug",
+      "instruction": "debug case — cross-runtime browser support client has 900 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich observation would disprove this suspected cause: “One socket timeout bounds the entire HTTP operation. This remains false for TypeScript 7 standards-based Fetch.”?\n\nEvidence target: Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers.",
+      "why": "The decision supplies observable evidence for separate name resolution, connect, tls, response-header, body-read, idle, and whole-operation timeout controls. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers, keep Timeout Layers connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 900 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Timeout Layers symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-layers"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers, name the method, authority, body, byte, time, and credential boundary, Timeout Layers precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 900 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Timeout Layers · fault isolation · Debug Timeout Layers, challenge the documented misconception with request, response, fault, policy, and transfer evidence: One socket timeout bounds the entire HTTP operation. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Timeout Layers failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "One socket timeout bounds the entire HTTP operation. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate name resolution, connect, TLS, response-header, body-read, idle, and whole-operation timeout controls. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Timeout Layers."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the timeout layers · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For timeout layers · fault isolation, run one convenient Timeout Layers happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat…",
+      "interaction": "predict",
+      "instruction": "debug case — cross-runtime browser support client has 300 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Propagate caller cancellation and deadlines through request creation, helpers, parsing, retries, and downstream work. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich observation would disprove this suspected cause: “A helper may replace the caller deadline with its own longer timeout. This remains false for TypeScript 7 standards-based Fetch.”?\n\nEvidence target: Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat….",
+      "why": "The decision supplies observable evidence for propagate caller cancellation and deadlines through request creation, helpers, parsing, retries, and downstream work. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat…, keep Caller Deadline Propagation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 300 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Propagate caller cancellation and deadlines through request creation, helpers, parsing, retries, and downstream work. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Caller Deadline Propagation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "http-ts-caller-deadline-propagation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat…, name the method, authority, body, byte, time, and credential boundary, Caller Deadline Propagation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat…, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 300 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Propagate caller cancellation and deadlines through request creation, helpers, parsing, retries, and downstream work. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Caller Deadline Propagation · fault isolation · Debug Caller Deadline Propagat…, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A helper may replace the caller deadline with its own longer timeout. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the caller deadline propagation · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For caller deadline propagation · fault isolation, run one convenient Caller Deadline Propagation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Caller Deadline Propagation."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation",
+      "interaction": "debug",
+      "instruction": "debug case — cross-runtime browser support client has 450 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich observation would disprove this suspected cause: “Each retry may consume the original full timeout without affecting the caller budget. This remains false for TypeScript 7 standards-based Fetch.”?\n\nEvidence target: Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation.",
+      "why": "The decision supplies observable evidence for allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation, keep Phase Budget Allocation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 450 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Phase Budget Allocation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "http-ts-phase-budget-allocation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation, name the method, authority, body, byte, time, and credential boundary, Phase Budget Allocation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 450 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Phase Budget Allocation · fault isolation · Debug Phase Budget Allocation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Each retry may consume the original full timeout without affecting the caller budget. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Phase Budget Allocation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Each retry may consume the original full timeout without affecting the caller budget. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Allocate an end-to-end latency budget across attempts and phases while preserving time for cleanup and fallback. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For phase budget allocation · fault isolation, run one convenient Phase Budget Allocation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Phase Budget Allocation."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the phase budget allocation · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup",
+      "interaction": "predict",
+      "instruction": "debug case — cross-runtime browser support client has 600 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Stop body processing, producers, timers, and queued work after cancellation and release every owned resource. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich observation would disprove this suspected cause: “Canceling the visible request automatically stops every spawned task and stream. This remains false for TypeScript 7 standards-based Fetch.”?\n\nEvidence target: Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup.",
+      "why": "The decision supplies observable evidence for stop body processing, producers, timers, and queued work after cancellation and release every owned resource. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup, keep Cancellation Cleanup connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 600 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Stop body processing, producers, timers, and queued work after cancellation and release every owned resource. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cancellation Cleanup condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "http-ts-cancellation-cleanup"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup, name the method, authority, body, byte, time, and credential boundary, Cancellation Cleanup precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 600 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Stop body processing, producers, timers, and queued work after cancellation and release every owned resource. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Cancellation Cleanup · fault isolation · Debug Cancellation Cleanup, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Canceling the visible request automatically stops every spawned task and stream. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Cancellation Cleanup."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the cancellation cleanup · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For cancellation cleanup · fault isolation, run one convenient Cancellation Cleanup happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification",
+      "interaction": "debug",
+      "instruction": "debug case — cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich observation would disprove this suspected cause: “All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch.”?\n\nEvidence target: Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification.",
+      "why": "The decision supplies observable evidence for report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification, keep Timeout Classification connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Timeout Classification symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification, name the method, authority, body, byte, time, and credential boundary, Timeout Classification precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 750 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Timeout Classification · fault isolation · Debug Timeout Classification, challenge the documented misconception with request, response, fault, policy, and transfer evidence: All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Timeout Classification failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the timeout classification · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For timeout classification · fault isolation, run one convenient Timeout Classification happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Timeout Classification."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification",
+      "interaction": "code",
+      "instruction": "Add a typed evidence_http_ts_timeout_classification_1rqz6l function that uses deterministic TypeScript evidence to reserve cleanup time while allocating one phase from the caller deadline.\n\nEvidence target: Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Timeout Classification into observable performance evidence. For Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification, keep Timeout Classification connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "function evidence_http_ts_timeout_classification_1rqz6l(remainingMs: number, phaseBudgetMs: number, cleanupReserveMs: number): { start: boolean; usableMs: number } {\n  if (remainingMs <= 0 || phaseBudgetMs <= 0 || cleanupReserveMs < 0) {\n    return { start: false, usableMs: 0 };\n  }\n  const usableMs = Math.min(phaseBudgetMs, Math.max(0, remainingMs - cleanupReserveMs));\n  return { start: usableMs > 0, usableMs };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification, name the method, authority, body, byte, time, and credential boundary, Timeout Classification precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 900 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Implement the cause-level repair · Debug Timeout Classification, challenge the documented misconception with request, response, fault, policy, and transfer evidence: All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Fetch and TypeScript Order the regression proof · Debug Timeout Classification",
+      "interaction": "arrange",
+      "instruction": "Order the Timeout Classification Fetch and TypeScript HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: Fetch and TypeScript Order the regression proof · Debug Timeout Classification.",
+      "why": "Correct order keeps Timeout Classification assumptions visible before execution and verifies its result against a boundary case afterward. For Fetch and TypeScript Order the regression proof · Debug Timeout Classification, keep Timeout Classification connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "cross-runtime browser support client has 300 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Timeout Classification has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Order the regression proof · Debug Timeout Classification, name the method, authority, body, byte, time, and credential boundary, Timeout Classification precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Order the regression proof · Debug Timeout Classification, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 300 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Order the regression proof · Debug Timeout Classification, challenge the documented misconception with request, response, fault, policy, and transfer evidence: All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Fetch and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Timeout Classification case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Fetch and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Timeout Classification case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Fetch and TypeScript request or response model and retain inspectable evidence for the debug Timeout Classification case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed Fetch and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the debug Timeout Classification case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Fetch and TypeScript Publish the incident record · Debug Timeout Classification",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Timeout Classification: explain the governing condition, one failure, and how this concrete case was verified — cross-runtime browser support client has 450 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nEvidence target: Fetch and TypeScript Publish the incident record · Debug Timeout Classification.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Fetch and TypeScript Publish the incident record · Debug Timeout Classification, keep Timeout Classification connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Publish the incident record · Debug Timeout Classification, name the method, authority, body, byte, time, and credential boundary, Timeout Classification precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Publish the incident record · Debug Timeout Classification, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: cross-runtime browser support client has 450 ms end-to-end for DNS, connect, TLS, headers, streamed body, parse, and cleanup. A caller cancels during body read; allocate phase budgets, propagate the reason, stop owned work, and preserve unknown remote effect. Competency probe: Report which phase and policy ended an operation without exposing secrets or claiming the remote effect is known. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Publish the incident record · Debug Timeout Classification, challenge the documented misconception with request, response, fault, policy, and transfer evidence: All timeout errors are safely retryable and prove no server-side effect. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Timeout Layers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Timeout Layers.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-layers"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Timeout Layers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Timeout Layers.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-layers"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Caller Deadline Propagation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Caller Deadline Propagation.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-caller-deadline-propagation"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Phase Budget Allocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Phase Budget Allocation.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-phase-budget-allocation"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancellation Cleanup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancellation Cleanup.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-cancellation-cleanup"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Timeout Classification to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Timeout Classification.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_http_ts_timeout_classification_1rqz6l.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "file": "typescript",
+      "expected": "evidence_http_ts_timeout_classification_1rqz6l"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "function\\s+evidence_http_ts_timeout_classification_1rqz6l\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=[\\s\\S]*?remainingMs\\s*-\\s*cleanupReserveMs)(?=[\\s\\S]*?Math\\.min)(?=[\\s\\S]*?return)[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using report and phase plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-timeout-classification"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "report",
+        "phase"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

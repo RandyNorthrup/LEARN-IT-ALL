@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-connections-channels-heartbeats-guided-workshop",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-connections-channels-heartbeats",
+  "kind": "workshop",
+  "title": "Connections, Channels, Heartbeats, Errors, and Recovery · Narrowing Workshop",
+  "summary": "A messaging pairing room predicts publisher, exchange, queue, consumer, ownership, and failure transitions before assembling the first connection, channel, heartbeat, and recovery state machine for connections, channels, heartbeats, errors, and recovery. Planned artifact: Build a complete first version of connection, channel, heartbeat, and recovery state machine while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal d…",
+  "objectives": [
+    "Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost.",
+    "Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions.",
+    "Choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, TCP keepalive, and false-positive failure.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-ts-long-lived-connection",
+      "rabbit-ts-channel-ownership",
+      "rabbit-ts-heartbeat-timeout",
+      "rabbit-ts-reconnect-backoff-jitter",
+      "rabbit-ts-recovery-order-generation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-ts-connections-channels-heartbeats-rabbit-ts-recovery-order-generation-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop messaging team handles case 3329 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost.\n\nWhat must be established before implementation?\n\nEvidence target: RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection.",
+      "why": "The decision supplies observable evidence for use bounded long-lived amqp connections and explain multiplexed channels, negotiated limits, names, tls, and lifecycle cost. For RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection, keep Long Lived Connection connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 3329 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Long Lived Connection condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-long-lived-connection"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection, name the types, ownership, and stop path, Long Lived Connection precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 3329 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost.",
+        "For RabbitMQ and TypeScript Commit to the mission model · Workshop Long Lived Connection, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Opening a new connection for every publish provides the safest isolation with negligible cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Long Lived Connection preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Opening a new connection for every publish provides the safest isolation with negligible cost. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop messaging team handles case 7472 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.\n\nInspect the Recovery Order Generation trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation.",
+      "why": "The decision supplies observable evidence for recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks. For RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation, keep Recovery Order Generation connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Recovery Order Generation, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation, name the types, ownership, and stop path, Recovery Order Generation precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 7472 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+        "For RabbitMQ and TypeScript Audit the initial evidence packet · Workshop Recovery Order Generation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Once TCP reconnects, old channel references and consumer tags become valid again."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Recovery Order Generation case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop messaging team handles case 7472 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then exhaust the retry age before the attempt count reaches its maximum. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Once TCP reconnects, old channel references and consumer tags become valid again.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks. Artifact under review: connection, channel, heartbeat, and recovery state machine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Recovery Order Generation, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the initial evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop messaging team handles case 9091 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost.\n\nWhich action demonstrates Long Lived Connection without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection.",
+      "why": "The decision supplies observable evidence for use bounded long-lived amqp connections and explain multiplexed channels, negotiated limits, names, tls, and lifecycle cost. For RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection, keep Long Lived Connection connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 9091 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Long Lived Connection condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-long-lived-connection"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection, name the types, ownership, and stop path, Long Lived Connection precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 9091 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost.",
+        "For RabbitMQ and TypeScript Long Lived Connection · changed case · Workshop Long Lived Connection, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Opening a new connection for every publish provides the safest isolation with negligible cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Opening a new connection for every publish provides the safest isolation with negligible cost. That claim does not survive the long lived connection · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use bounded long-lived AMQP connections and explain multiplexed channels, negotiated limits, names, TLS, and lifecycle cost. Apply it to the stated input and retain a reproducible trace for connection, channel, heartbeat, and recovery state machine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop messaging team handles case 4234 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions.\n\nWhich action demonstrates Channel Ownership without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership.",
+      "why": "The decision supplies observable evidence for assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions. For RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership, keep Channel Ownership connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 4234 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Channel Ownership result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-channel-ownership"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership, name the types, ownership, and stop path, Channel Ownership precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 4234 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions.",
+        "For RabbitMQ and TypeScript Channel Ownership · changed case · Workshop Channel Ownership, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Channels are stateless thread-safe handles that can be shared across all work."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Channel Ownership case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Channels are stateless thread-safe handles that can be shared across all work.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Assign channel ownership by publisher or consumer lifecycle and prevent concurrent confirm, acknowledgement, and topology operations from corrupting assumptions. Apply it to the stated input and retain a reproducible trace for connection, channel, heartbeat, and recovery state machine."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Channels are stateless thread-safe handles that can be shared across all work. That claim does not survive the channel ownership · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop messaging team handles case 5853 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, TCP keepalive, and false-positive failure.\n\nWhich action demonstrates Heartbeat Timeout without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout.",
+      "why": "The decision supplies observable evidence for choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, tcp keepalive, and false-positive failure. For RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout, keep Heartbeat Timeout connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 5853 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, TCP keepalive, and false-positive failure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Heartbeat Timeout condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-heartbeat-timeout"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout, name the types, ownership, and stop path, Heartbeat Timeout precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 5853 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, TCP keepalive, and false-positive failure.",
+        "For RabbitMQ and TypeScript Heartbeat Timeout · changed case · Workshop Heartbeat Timeout, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A one-second heartbeat timeout always detects failures faster without risk."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Choose a heartbeat timeout with network and flow-control evidence and distinguish heartbeat interval, TCP keepalive, and false-positive failure. Apply it to the stated input and retain a reproducible trace for connection, channel, heartbeat, and recovery state machine."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A one-second heartbeat timeout always detects failures faster without risk. That claim does not survive the heartbeat timeout · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop messaging team handles case 2581 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner.\n\nWhich action demonstrates Reconnect Backoff Jitter without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter.",
+      "why": "The decision supplies observable evidence for reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner. For RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter, keep Reconnect Backoff Jitter connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 2581 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Reconnect Backoff Jitter result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-reconnect-backoff-jitter"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter, name the types, ownership, and stop path, Reconnect Backoff Jitter precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 2581 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner.",
+        "For RabbitMQ and TypeScript Reconnect Backoff Jitter · changed case · Workshop Reconnect Backoff Jitter, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every close should trigger an immediate recursive reconnect from every channel."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Reconnect Backoff Jitter case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Every close should trigger an immediate recursive reconnect from every channel.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Every close should trigger an immediate recursive reconnect from every channel. That claim does not survive the reconnect backoff jitter · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Reconnect with bounded exponential backoff, jitter, cancellation, credential refresh, readiness, and a single recovery owner. Apply it to the stated input and retain a reproducible trace for connection, channel, heartbeat, and recovery state machine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop messaging team handles case 6724 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.\n\nWhich action demonstrates Recovery Order Generation without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati….",
+      "why": "The decision supplies observable evidence for recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks. For RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati…, keep Recovery Order Generation connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 6724 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Recovery Order Generation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati…, name the types, ownership, and stop path, Recovery Order Generation precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 6724 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+        "For RabbitMQ and TypeScript Recovery Order Generation · changed case · Workshop Recovery Order Generati…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Once TCP reconnects, old channel references and consumer tags become valid again."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks. Apply it to the stated input and retain a reproducible trace for connection, channel, heartbeat, and recovery state machine."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Once TCP reconnects, old channel references and consumer tags become valid again. That claim does not survive the recovery order generation · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: rabbit-ts-recovery-order-generation-1e3bof\" that uses case 4471 to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks. Return observable changed-case evidence. Browser code must not import amqplib or Node built-ins, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, or use credentials; verify those boundaries later with the named Node 24, amqplib 2.0.1, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production transfer gates.\n\nEvidence target: RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Recovery Order Generation into observable performance evidence. For RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation, keep Recovery Order Generation connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-recovery-order-generation-1e3bof\n// Competency: rabbit-ts-recovery-order-generation.\n// Case 4471: multi-tenant case event backbone with three subscriber responsibilities.\n// Operating constraint: bound payload, buffer, and retained-ledger bytes.\n// Changed case: lower the byte or in-flight budget and preserve upstream rejection evidence.\nfunction evidence_rabbit_ts_recovery_order_generation_1e3bof(heartbeatSeconds: number, generation: number, callbackGeneration: number, attempt: number): { useCallback: boolean; delayMs: number; healthyPolicy: boolean } {\n  const evidenceVariant_1e3bof = \"1e3bof-fob3e1-4471\";\n  void evidenceVariant_1e3bof;\n  const healthyPolicy = heartbeatSeconds >= 5 && heartbeatSeconds <= 20;\n  const useCallback = generation > 0 && callbackGeneration === generation;\n  const exponent = Math.min(Math.max(attempt, 0), 6);\n  const delayMs = Math.min(30_000, 250 * (2 ** exponent));\n  return { useCallback, delayMs, healthyPolicy };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation, name the types, ownership, and stop path, Recovery Order Generation precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 8343 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+        "For RabbitMQ and TypeScript Extend the cumulative artifact · Workshop Recovery Order Generation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Once TCP reconnects, old channel references and consumer tags become valid again."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop messaging team handles case 3486 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation.",
+      "why": "The decision supplies observable evidence for recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks. For RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation, keep Recovery Order Generation connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop messaging team handles case 3486 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Recovery Order Generation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Connections, Channels, and Heartbeats — Controls long-lived connections, channel multiplexing, negotiated limits, TLS, lifecycle, heartbeats, errors, churn, and network recovery."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation, name the types, ownership, and stop path, Recovery Order Generation precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 3486 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+        "For RabbitMQ and TypeScript Test an acceptance boundary · Workshop Recovery Order Generation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Once TCP reconnects, old channel references and consumer tags become valid again."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Recovery Order Generation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Once TCP reconnects, old channel references and consumer tags become valid again.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Recovery Order Generation condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Recovery Order Generation: explain the governing condition, one failure, and how this concrete case was verified — A workshop messaging team handles case 5105 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.\n\nEvidence target: RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation, keep Recovery Order Generation connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation, name the types, ownership, and stop path, Recovery Order Generation precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop messaging team handles case 5105 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to bound heartbeat and reconnect policy while rejecting stale channel-generation callbacks; retain duplicate-safe identity through every ambiguous handoff; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Recreate connection, channels, topology, confirm state, prefetch, consumers, and publisher admission in generation order while rejecting stale callbacks.",
+        "For RabbitMQ and TypeScript Defend the transferred model · Workshop Recovery Order Generation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Once TCP reconnects, old channel references and consumer tags become valid again."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Long Lived Connection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Long Lived Connection.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-long-lived-connection"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Order Generation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Order Generation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Long Lived Connection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Long Lived Connection.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-long-lived-connection"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Channel Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Channel Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-channel-ownership"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Heartbeat Timeout to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Heartbeat Timeout.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-heartbeat-timeout"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reconnect Backoff Jitter to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reconnect Backoff Jitter.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-reconnect-backoff-jitter"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Order Generation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Order Generation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-ts-recovery-order-generation-1e3bof.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: rabbit-ts-recovery-order-generation-1e3bof"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: rabbit-ts-recovery-order-generation-1e3bof(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_rabbit_ts_recovery_order_generation_1e3bof\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?heartbeatSeconds\\s*>=\\s*5)(?=(?:(?!// Evidence:)[\\s\\S])*?callbackGeneration\\s*===\\s*generation)(?=(?:(?!// Evidence:)[\\s\\S])*?Math\\.min\\(30_000)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Order Generation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Order Generation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using recreate and connection plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-recovery-order-generation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "recreate",
+        "connection"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

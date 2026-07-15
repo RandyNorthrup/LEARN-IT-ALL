@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock, Code2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { ArrowLeft, ArrowRight, BookOpen, Clock, CheckCircle2, Code2 } from 'lucide-react';
 
 interface LessonData {
   frontmatter: {
@@ -53,7 +53,7 @@ export default function LessonPage() {
       await fetch(`/api/courses/${courseId}/lessons/${lessonId}/complete`, {
         method: 'POST',
       });
-      
+
       // Navigate to next lesson or back to course
       router.push(`/courses/${courseId}`);
     } catch (error) {
@@ -76,7 +76,10 @@ export default function LessonPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Lesson Not Found</h1>
-          <Link href={`/courses/${courseId}`} className="text-blue-600 hover:text-blue-700 font-semibold">
+          <Link
+            href={`/courses/${courseId}`}
+            className="text-blue-600 hover:text-blue-700 font-semibold"
+          >
             ← Back to Course
           </Link>
         </div>
@@ -113,7 +116,7 @@ export default function LessonPage() {
           {/* Lesson Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white">
             <h1 className="text-4xl font-bold mb-4">{lesson.frontmatter.title}</h1>
-            
+
             {/* Learning Objectives */}
             {lesson.frontmatter.objectives && lesson.frontmatter.objectives.length > 0 && (
               <div className="mt-6">
@@ -140,7 +143,7 @@ export default function LessonPage() {
                 code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   const isBlock = match && String(children).includes('\n');
-                  
+
                   if (isBlock) {
                     return (
                       <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
@@ -150,9 +153,12 @@ export default function LessonPage() {
                       </pre>
                     );
                   }
-                  
+
                   return (
-                    <code className={`${className} bg-gray-100 text-gray-900 px-2 py-1 rounded`} {...props}>
+                    <code
+                      className={`${className} bg-gray-100 text-gray-900 px-2 py-1 rounded`}
+                      {...props}
+                    >
                       {children}
                     </code>
                   );
@@ -170,8 +176,8 @@ export default function LessonPage() {
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Complete the Exercise</h3>
                 <p className="text-gray-700 mb-4">
-                  Practice what you&apos;ve learned by completing the exercise for this lesson.
-                  You must pass the exercise to proceed to the next lesson.
+                  Practice what you&apos;ve learned by completing the exercise for this lesson. You
+                  must pass the exercise to proceed to the next lesson.
                 </p>
                 <Link
                   href={`/courses/${courseId}/exercises/${lessonId}`}
@@ -193,8 +199,9 @@ export default function LessonPage() {
               <ArrowLeft className="h-5 w-5 mr-2" />
               Course Overview
             </Link>
-            
+
             <button
+              type="button"
               onClick={handleCompleteLesson}
               disabled={completing}
               className="inline-flex items-center px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold transition-all hover:from-green-700 hover:to-emerald-700 disabled:opacity-50"

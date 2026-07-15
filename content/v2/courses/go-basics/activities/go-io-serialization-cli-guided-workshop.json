@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "go-io-serialization-cli-guided-workshop",
+  "courseId": "go-basics",
+  "moduleId": "go-io-serialization-cli",
+  "kind": "workshop",
+  "title": "I/O Contracts, Files, Serialization, Time, and Command-Line Programs · Go Build Room",
+  "summary": "A command must stream records, validate JSON, write atomically, handle time and cancellation, and produce useful exit evidence. Planned artifact: Build a complete first version of a deterministic import and reporting command while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Compose io.Reader and io.Writer boundaries, buffering, limited reads, copying, and streaming without assuming one read fills a buffer.",
+    "Open files with explicit ownership and permissions, handle paths safely, and design temp-write, sync, rename, and cleanup evidence.",
+    "Encode and decode JSON with field visibility, tags, unknown-field policy, numbers, nulls, optional values, and streaming limits.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "go-reader-writer-streaming",
+      "go-files-paths-atomic-write",
+      "go-json-encoding-contracts",
+      "go-time-duration-boundaries",
+      "go-cli-flags-exits-signals"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "go-io-serialization-cli-go-cli-flags-exits-signals-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "go-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// go-basics cumulative Go systems portfolio.\n// Each increment names ownership, failure, boundary, and observable behavior.\n// Browser execution uses an isolated Yaegi subset; transfer evidence names full Go 1.26 toolchain gates.\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Go systems portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Reader Writer Streaming",
+      "interaction": "predict",
+      "instruction": "workshop case — Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Reader Writer Streaming.",
+      "why": "The decision supplies observable evidence for compose io.reader and io.writer boundaries, buffering, limited reads, copying, and streaming without assuming one read fills a buffer. For Commit to the mission model · Workshop Reader Writer Streaming, keep Reader Writer Streaming connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Reader Writer Streaming condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "go-reader-writer-streaming"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Reader Writer Streaming, name the types, ownership, and stop path, Reader Writer Streaming precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Reader Writer Streaming, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Commit to the mission model · Workshop Reader Writer Streaming, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Reader.Read always returns either data or an error, never both."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Reader Writer Streaming preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Reader.Read always returns either data or an error, never both. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Reader Writer Streaming happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Reader Writer Streaming · changed case · Workshop Reader Writer Streaming",
+      "interaction": "answer",
+      "instruction": "workshop case — Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhich action demonstrates Reader Writer Streaming without dropping earlier contracts?\n\nEvidence target: Reader Writer Streaming · changed case · Workshop Reader Writer Streaming.",
+      "why": "The decision supplies observable evidence for compose io.reader and io.writer boundaries, buffering, limited reads, copying, and streaming without assuming one read fills a buffer. For Reader Writer Streaming · changed case · Workshop Reader Writer Streaming, keep Reader Writer Streaming connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Reader Writer Streaming condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "go-reader-writer-streaming"
+      ],
+      "hints": [
+        "For Reader Writer Streaming · changed case · Workshop Reader Writer Streaming, name the types, ownership, and stop path, Reader Writer Streaming precondition, or invariant that must hold.",
+        "At Reader Writer Streaming · changed case · Workshop Reader Writer Streaming, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Reader Writer Streaming · changed case · Workshop Reader Writer Streaming, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Reader.Read always returns either data or an error, never both."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Reader.Read always returns either data or an error, never both. That claim does not survive the reader writer streaming · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For reader writer streaming · changed case, run one convenient Reader Writer Streaming happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Compose io.Reader and io.Writer boundaries, buffering, limited reads, copying, and streaming without assuming one read fills a buffer. Apply it to the stated input and retain a reproducible trace for a deterministic import and reporting command."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write",
+      "interaction": "inspect",
+      "instruction": "workshop case — Command import-2 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhich action demonstrates Files Paths Atomic Write without dropping earlier contracts?\n\nEvidence target: Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write.",
+      "why": "The decision supplies observable evidence for open files with explicit ownership and permissions, handle paths safely, and design temp-write, sync, rename, and cleanup evidence. For Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write, keep Files Paths Atomic Write connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-2 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Files Paths Atomic Write result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "go-files-paths-atomic-write"
+      ],
+      "hints": [
+        "For Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write, name the types, ownership, and stop path, Files Paths Atomic Write precondition, or invariant that must hold.",
+        "At Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-2 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Files Paths Atomic Write · changed case · Workshop Files Paths Atomic Write, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Writing directly to the destination and calling Close guarantees an atomic durable update."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Files Paths Atomic Write case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Writing directly to the destination and calling Close guarantees an atomic durable update.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Open files with explicit ownership and permissions, handle paths safely, and design temp-write, sync, rename, and cleanup evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For files paths atomic write · changed case, run one convenient Files Paths Atomic Write happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Open files with explicit ownership and permissions, handle paths safely, and design temp-write, sync, rename, and cleanup evidence. Apply it to the stated input and retain a reproducible trace for a deterministic import and reporting command."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Writing directly to the destination and calling Close guarantees an atomic durable update. That claim does not survive the files paths atomic write · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Json Encoding Contracts · changed case · Workshop Json Encoding Contracts",
+      "interaction": "answer",
+      "instruction": "workshop case — Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhich action demonstrates Json Encoding Contracts without dropping earlier contracts?\n\nEvidence target: Json Encoding Contracts · changed case · Workshop Json Encoding Contracts.",
+      "why": "The decision supplies observable evidence for encode and decode json with field visibility, tags, unknown-field policy, numbers, nulls, optional values, and streaming limits. For Json Encoding Contracts · changed case · Workshop Json Encoding Contracts, keep Json Encoding Contracts connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Json Encoding Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "go-json-encoding-contracts"
+      ],
+      "hints": [
+        "For Json Encoding Contracts · changed case · Workshop Json Encoding Contracts, name the types, ownership, and stop path, Json Encoding Contracts precondition, or invariant that must hold.",
+        "At Json Encoding Contracts · changed case · Workshop Json Encoding Contracts, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Json Encoding Contracts · changed case · Workshop Json Encoding Contracts, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Successful json.Unmarshal proves every input field matched the intended schema."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Encode and decode JSON with field visibility, tags, unknown-field policy, numbers, nulls, optional values, and streaming limits. Apply it to the stated input and retain a reproducible trace for a deterministic import and reporting command."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Successful json.Unmarshal proves every input field matched the intended schema. That claim does not survive the json encoding contracts · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For json encoding contracts · changed case, run one convenient Json Encoding Contracts happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Time Duration Boundaries · changed case · Workshop Time Duration Boundaries",
+      "interaction": "inspect",
+      "instruction": "workshop case — Command import-4 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhich action demonstrates Time Duration Boundaries without dropping earlier contracts?\n\nEvidence target: Time Duration Boundaries · changed case · Workshop Time Duration Boundaries.",
+      "why": "The decision supplies observable evidence for use time values, durations, locations, monotonic comparisons, timers, tickers, parsing, and serialization with explicit clock assumptions. For Time Duration Boundaries · changed case · Workshop Time Duration Boundaries, keep Time Duration Boundaries connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-4 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Time Duration Boundaries result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "go-time-duration-boundaries"
+      ],
+      "hints": [
+        "For Time Duration Boundaries · changed case · Workshop Time Duration Boundaries, name the types, ownership, and stop path, Time Duration Boundaries precondition, or invariant that must hold.",
+        "At Time Duration Boundaries · changed case · Workshop Time Duration Boundaries, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-4 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Time Duration Boundaries · changed case · Workshop Time Duration Boundaries, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A time.Duration stores a calendar-aware number of days and months."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Time Duration Boundaries case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A time.Duration stores a calendar-aware number of days and months.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use time values, durations, locations, monotonic comparisons, timers, tickers, parsing, and serialization with explicit clock assumptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "A time.Duration stores a calendar-aware number of days and months. That claim does not survive the time duration boundaries · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For time duration boundaries · changed case, run one convenient Time Duration Boundaries happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Use time values, durations, locations, monotonic comparisons, timers, tickers, parsing, and serialization with explicit clock assumptions. Apply it to the stated input and retain a reproducible trace for a deterministic import and reporting command."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals",
+      "interaction": "answer",
+      "instruction": "workshop case — Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nWhich action demonstrates Cli Flags Exits Signals without dropping earlier contracts?\n\nEvidence target: Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals.",
+      "why": "The decision supplies observable evidence for design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract. For Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals, keep Cli Flags Exits Signals connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cli Flags Exits Signals condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "hints": [
+        "For Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals, name the types, ownership, and stop path, Cli Flags Exits Signals precondition, or invariant that must hold.",
+        "At Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-5 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Cli Flags Exits Signals · changed case · Workshop Cli Flags Exits Signals, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Printing an error to stdout and returning from main guarantees a nonzero exit status."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For cli flags exits signals · changed case, run one convenient Cli Flags Exits Signals happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract. Apply it to the stated input and retain a reproducible trace for a deterministic import and reporting command."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Printing an error to stdout and returning from main guarantees a nonzero exit status. That claim does not survive the cli flags exits signals · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop Cli Flags Exits Signals",
+      "interaction": "inspect",
+      "instruction": "workshop case — Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nInspect the Cli Flags Exits Signals trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop Cli Flags Exits Signals.",
+      "why": "The decision supplies observable evidence for design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract. For Audit the proposed evidence packet · Workshop Cli Flags Exits Signals, keep Cli Flags Exits Signals connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Cli Flags Exits Signals, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop Cli Flags Exits Signals, name the types, ownership, and stop path, Cli Flags Exits Signals precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop Cli Flags Exits Signals, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Audit the proposed evidence packet · Workshop Cli Flags Exits Signals, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Printing an error to stdout and returning from main guarantees a nonzero exit status."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cli Flags Exits Signals case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Command import-6 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Printing an error to stdout and returning from main guarantees a nonzero exit status.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract. Artifact under review: a deterministic import and reporting command.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Cli Flags Exits Signals, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Cli Flags Exits Signals happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Cli Flags Exits Signals",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: go-cli-flags-exits-signals-29flbs\" that handles one concrete boundary, computes the changed case, verifies an invariant, and returns inspectable value plus validity evidence.\n\nEvidence target: Extend the cumulative artifact · Workshop Cli Flags Exits Signals.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Cli Flags Exits Signals into observable performance evidence. For Extend the cumulative artifact · Workshop Cli Flags Exits Signals, keep Cli Flags Exits Signals connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: go-cli-flags-exits-signals-29flbs\nfunc evidence_go_cli_flags_exits_signals_29flbs(input int) (int, bool) {\n\tif input < 0 { return 0, false }\n\tresult := input * 3\n\tif result < input { return 0, false }\n\treturn result, true\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Cli Flags Exits Signals, name the types, ownership, and stop path, Cli Flags Exits Signals precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Cli Flags Exits Signals, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-2 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Extend the cumulative artifact · Workshop Cli Flags Exits Signals, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Printing an error to stdout and returning from main guarantees a nonzero exit status."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Cli Flags Exits Signals",
+      "interaction": "debug",
+      "instruction": "workshop case — Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Cli Flags Exits Signals.",
+      "why": "The decision supplies observable evidence for design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract. For Test an acceptance boundary · Workshop Cli Flags Exits Signals, keep Cli Flags Exits Signals connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Cli Flags Exits Signals symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Code Review Comments and Doc Comments — Controls idiomatic API naming, package design, receiver choices, error style, documentation, readability, and maintainable review decisions."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Cli Flags Exits Signals, name the types, ownership, and stop path, Cli Flags Exits Signals precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Cli Flags Exits Signals, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-3 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Test an acceptance boundary · Workshop Cli Flags Exits Signals, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Printing an error to stdout and returning from main guarantees a nonzero exit status."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cli Flags Exits Signals failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Printing an error to stdout and returning from main guarantees a nonzero exit status.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Cli Flags Exits Signals happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Cli Flags Exits Signals condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Cli Flags Exits Signals",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Cli Flags Exits Signals: explain the governing condition, one failure, and how this concrete case was verified — Command import-4 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.\n\nEvidence target: Defend the transferred model · Workshop Cli Flags Exits Signals.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Cli Flags Exits Signals, keep Cli Flags Exits Signals connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Design command flags, stdin/stdout/stderr, exit status, signal cancellation, help, and machine-readable output as an interface contract."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Cli Flags Exits Signals, name the types, ownership, and stop path, Cli Flags Exits Signals precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Cli Flags Exits Signals, trace this concrete input and predict values, errors, blocking, and output before running it: Command import-4 reads chunked JSON with an unknown field and a 2 MiB string, writes a report through a temporary path, crosses a time-zone boundary, and receives cancellation. Define streaming limits, atomicity, cleanup, stderr, and exit evidence.",
+        "For Defend the transferred model · Workshop Cli Flags Exits Signals, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Printing an error to stdout and returning from main guarantees a nonzero exit status."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reader Writer Streaming to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reader Writer Streaming.",
+      "hidden": false,
+      "competencyIds": [
+        "go-reader-writer-streaming"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reader Writer Streaming to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reader Writer Streaming.",
+      "hidden": false,
+      "competencyIds": [
+        "go-reader-writer-streaming"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Files Paths Atomic Write to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Files Paths Atomic Write.",
+      "hidden": false,
+      "competencyIds": [
+        "go-files-paths-atomic-write"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Json Encoding Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Json Encoding Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "go-json-encoding-contracts"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Duration Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Duration Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "go-time-duration-boundaries"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cli Flags Exits Signals to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cli Flags Exits Signals.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cli Flags Exits Signals to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cli Flags Exits Signals.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: go-cli-flags-exits-signals-29flbs.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "file": "go",
+      "expected": "// Evidence: go-cli-flags-exits-signals-29flbs"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: go-cli-flags-exits-signals-29flbs(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_go_cli_flags_exits_signals_29flbs\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?:(?!// Evidence:)[\\s\\S])*?if\\s+(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cli Flags Exits Signals to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cli Flags Exits Signals.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using design and command plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cli-flags-exits-signals"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "design",
+        "command"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

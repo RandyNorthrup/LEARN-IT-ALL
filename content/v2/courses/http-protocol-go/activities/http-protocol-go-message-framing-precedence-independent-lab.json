@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-message-framing-precedence-independent-lab",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-message-framing-precedence",
+  "kind": "lab",
+  "title": "HTTP/1.1 Message Framing and Length Precedence · Changed-Input Lab",
+  "summary": "An independent protocol team receives different fragmentation, peer, trust, timing, and failure constraints and transfers http/1.1 message framing and length precedence into a new RFC 9112 message-body length decision table. Planned artifact: Produce an independent changed-context version of RFC 9112 message-body length decision table with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.",
+    "Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning.",
+    "Validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous Transfer-Encoding plus Content-Length input.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "httpproto-body-length-precedence",
+      "httpproto-no-content-responses",
+      "httpproto-transfer-encoding-precedence",
+      "httpproto-content-length-list-validation",
+      "httpproto-framing-completeness-evidence"
+    ]
+  },
+  "prerequisites": [
+    "http-protocol-go-message-framing-precedence-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Lab Body Length Precedence",
+      "interaction": "predict",
+      "instruction": "lab case — A lab protocol team handles case 7942 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Lab Body Length Precedence.",
+      "why": "The decision supplies observable evidence for apply the rfc 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure. For Commit to the mission model · Lab Body Length Precedence, keep Body Length Precedence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7942 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Body Length Precedence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "hints": [
+        "For Commit to the mission model · Lab Body Length Precedence, name the types, ownership, and stop path, Body Length Precedence precondition, or invariant that must hold.",
+        "At Commit to the mission model · Lab Body Length Precedence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7942 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.",
+        "For Commit to the mission model · Lab Body Length Precedence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Content-Length always determines message framing whenever the field appears."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Body Length Precedence preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Content-Length always determines message framing whenever the field appears. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Body Length Precedence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Body Length Precedence · changed case · Lab Body Length Precedence",
+      "interaction": "answer",
+      "instruction": "lab case — A lab protocol team handles case 7943 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.\n\nWhich action demonstrates Body Length Precedence without dropping earlier contracts?\n\nEvidence target: Body Length Precedence · changed case · Lab Body Length Precedence.",
+      "why": "The decision supplies observable evidence for apply the rfc 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure. For Body Length Precedence · changed case · Lab Body Length Precedence, keep Body Length Precedence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7943 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Body Length Precedence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "hints": [
+        "For Body Length Precedence · changed case · Lab Body Length Precedence, name the types, ownership, and stop path, Body Length Precedence precondition, or invariant that must hold.",
+        "At Body Length Precedence · changed case · Lab Body Length Precedence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7943 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.",
+        "For Body Length Precedence · changed case · Lab Body Length Precedence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Content-Length always determines message framing whenever the field appears."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Content-Length always determines message framing whenever the field appears. That claim does not survive the body length precedence · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For body length precedence · changed case, run one convenient Body Length Precedence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure. Apply it to the stated input and retain a reproducible trace for RFC 9112 message-body length decision table."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "No Content Responses · changed case · Lab No Content Responses",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab protocol team handles case 7944 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning.\n\nWhich action demonstrates No Content Responses without dropping earlier contracts?\n\nEvidence target: No Content Responses · changed case · Lab No Content Responses.",
+      "why": "The decision supplies observable evidence for forbid content framing for head responses, 1xx, 204, successful connect, and other context-specific cases while retaining metadata meaning. For No Content Responses · changed case · Lab No Content Responses, keep No Content Responses connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7944 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed No Content Responses result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpproto-no-content-responses"
+      ],
+      "hints": [
+        "For No Content Responses · changed case · Lab No Content Responses, name the types, ownership, and stop path, No Content Responses precondition, or invariant that must hold.",
+        "At No Content Responses · changed case · Lab No Content Responses, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7944 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning.",
+        "For No Content Responses · changed case · Lab No Content Responses, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A positive Content-Length means a 204 response includes that many content bytes."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "No Content Responses case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A positive Content-Length means a 204 response includes that many content bytes.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For no content responses · changed case, run one convenient No Content Responses happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Forbid content framing for HEAD responses, 1xx, 204, successful CONNECT, and other context-specific cases while retaining metadata meaning. Apply it to the stated input and retain a reproducible trace for RFC 9112 message-body length decision table."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A positive Content-Length means a 204 response includes that many content bytes. That claim does not survive the no content responses · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence",
+      "interaction": "answer",
+      "instruction": "lab case — A lab protocol team handles case 7945 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous Transfer-Encoding plus Content-Length input.\n\nWhich action demonstrates Transfer Encoding Precedence without dropping earlier contracts?\n\nEvidence target: Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence.",
+      "why": "The decision supplies observable evidence for validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous transfer-encoding plus content-length input. For Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence, keep Transfer Encoding Precedence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7945 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous Transfer-Encoding plus Content-Length input."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Transfer Encoding Precedence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpproto-transfer-encoding-precedence"
+      ],
+      "hints": [
+        "For Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence, name the types, ownership, and stop path, Transfer Encoding Precedence precondition, or invariant that must hold.",
+        "At Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7945 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous Transfer-Encoding plus Content-Length input.",
+        "For Transfer Encoding Precedence · changed case · Lab Transfer Encoding Precedence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Transfer-Encoding and Content-Length can be used together safely when both predict the same size."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Validate transfer-coding order, require final chunked coding for request framing, and close after ambiguous Transfer-Encoding plus Content-Length input. Apply it to the stated input and retain a reproducible trace for RFC 9112 message-body length decision table."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Transfer-Encoding and Content-Length can be used together safely when both predict the same size. That claim does not survive the transfer encoding precedence · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For transfer encoding precedence · changed case, run one convenient Transfer Encoding Precedence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Content Length List Validation · changed case · Lab Content Length List Validation",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab protocol team handles case 7946 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Parse decimal Content-Length values without overflow and accept repeated or list values only when every valid value is identical.\n\nWhich action demonstrates Content Length List Validation without dropping earlier contracts?\n\nEvidence target: Content Length List Validation · changed case · Lab Content Length List Validation.",
+      "why": "The decision supplies observable evidence for parse decimal content-length values without overflow and accept repeated or list values only when every valid value is identical. For Content Length List Validation · changed case · Lab Content Length List Validation, keep Content Length List Validation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7946 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Parse decimal Content-Length values without overflow and accept repeated or list values only when every valid value is identical."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Content Length List Validation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpproto-content-length-list-validation"
+      ],
+      "hints": [
+        "For Content Length List Validation · changed case · Lab Content Length List Validation, name the types, ownership, and stop path, Content Length List Validation precondition, or invariant that must hold.",
+        "At Content Length List Validation · changed case · Lab Content Length List Validation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7946 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Parse decimal Content-Length values without overflow and accept repeated or list values only when every valid value is identical.",
+        "For Content Length List Validation · changed case · Lab Content Length List Validation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Selecting the first Content-Length value is safe when later values differ."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Content Length List Validation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Selecting the first Content-Length value is safe when later values differ.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Parse decimal Content-Length values without overflow and accept repeated or list values only when every valid value is identical.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Selecting the first Content-Length value is safe when later values differ. That claim does not survive the content length list validation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For content length list validation · changed case, run one convenient Content Length List Validation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Parse decimal Content-Length values without overflow and accept repeated or list values only when every valid value is identical. Apply it to the stated input and retain a reproducible trace for RFC 9112 message-body length decision table."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence",
+      "interaction": "answer",
+      "instruction": "lab case — A lab protocol team handles case 7947 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.\n\nWhich action demonstrates Framing Completeness Evidence without dropping earlier contracts?\n\nEvidence target: Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence.",
+      "why": "The decision supplies observable evidence for record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason. For Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence, keep Framing Completeness Evidence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7947 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Framing Completeness Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "hints": [
+        "For Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence, name the types, ownership, and stop path, Framing Completeness Evidence precondition, or invariant that must hold.",
+        "At Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7947 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.",
+        "For Framing Completeness Evidence · changed case · Lab Framing Completeness Evidence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A valid start line and field section prove the complete message is safe to dispatch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For framing completeness evidence · changed case, run one convenient Framing Completeness Evidence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason. Apply it to the stated input and retain a reproducible trace for RFC 9112 message-body length decision table."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A valid start line and field section prove the complete message is safe to dispatch. That claim does not survive the framing completeness evidence · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Lab Body Length Precedence",
+      "interaction": "arrange",
+      "instruction": "Order the Body Length Precedence evidence cycle for this lab task before implementing it.\n\nEvidence target: Plan the evidence sequence · Lab Body Length Precedence.",
+      "why": "Correct order keeps Body Length Precedence assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Lab Body Length Precedence, keep Body Length Precedence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7948 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Body Length Precedence has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Lab Body Length Precedence, name the types, ownership, and stop path, Body Length Precedence precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Lab Body Length Precedence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7948 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Apply the RFC 9112 message-body length precedence in order using request or response role, method, status, transfer coding, content length, and connection closure.",
+        "For Plan the evidence sequence · Lab Body Length Precedence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Content-Length always determines message framing whenever the field appears."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the lab Body Length Precedence case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the lab Body Length Precedence case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the lab Body Length Precedence case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the lab Body Length Precedence case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Lab Framing Completeness Evidence",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-framing-completeness-evidence-1a0ab5\" that uses case 2697 to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Extend the cumulative artifact · Lab Framing Completeness Evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Framing Completeness Evidence into observable performance evidence. For Extend the cumulative artifact · Lab Framing Completeness Evidence, keep Framing Completeness Evidence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-framing-completeness-evidence-1a0ab5\n// Competency: httpproto-framing-completeness-evidence.\n// Case 2697: canary edge service advertising HTTP/3 with bounded fallback.\n// Operating constraint: no malformed framing may be normalized and forwarded to another recipient.\n// Changed case: saturate one stream window while another remains independently serviceable.\nfunc evidence_httpproto_framing_completeness_evidence_1a0ab5(status int, head bool, contentLength int, transferChunked bool) (string, bool) {\n\tframing, closeAfter := \"none\", false\n\tif !head && status >= 200 && status != 204 && contentLength >= 0 { framing = \"length\" }\n\tif !head && status >= 200 && status != 204 && transferChunked { framing = \"chunked\" }\n\tif contentLength >= 0 && transferChunked { framing, closeAfter = \"ambiguous\", true }\n\treturn framing, closeAfter\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Lab Framing Completeness Evidence, name the types, ownership, and stop path, Framing Completeness Evidence precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Lab Framing Completeness Evidence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7949 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.",
+        "For Extend the cumulative artifact · Lab Framing Completeness Evidence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A valid start line and field section prove the complete message is safe to dispatch."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Lab Framing Completeness Evidence",
+      "interaction": "debug",
+      "instruction": "lab case — A lab protocol team handles case 7950 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Lab Framing Completeness Evidence.",
+      "why": "The decision supplies observable evidence for record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason. For Test an acceptance boundary · Lab Framing Completeness Evidence, keep Framing Completeness Evidence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab protocol team handles case 7950 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Framing Completeness Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Lab Framing Completeness Evidence, name the types, ownership, and stop path, Framing Completeness Evidence precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Lab Framing Completeness Evidence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7950 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.",
+        "For Test an acceptance boundary · Lab Framing Completeness Evidence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A valid start line and field section prove the complete message is safe to dispatch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Framing Completeness Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A valid start line and field section prove the complete message is safe to dispatch.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Framing Completeness Evidence happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Framing Completeness Evidence condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Lab Framing Completeness Evidence",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Framing Completeness Evidence: explain the governing condition, one failure, and how this concrete case was verified — A lab protocol team handles case 7951 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.\n\nEvidence target: Defend the transferred model · Lab Framing Completeness Evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Lab Framing Completeness Evidence, keep Framing Completeness Evidence connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "hints": [
+        "For Defend the transferred model · Lab Framing Completeness Evidence, name the types, ownership, and stop path, Framing Completeness Evidence precondition, or invariant that must hold.",
+        "At Defend the transferred model · Lab Framing Completeness Evidence, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab protocol team handles case 7951 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to apply framing precedence and close on Transfer-Encoding plus Content-Length ambiguity; preserve this operating constraint: all attacker-controlled counts must be validated before allocation or slicing; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Record framing source, expected bytes, observed bytes, completion, residual buffer, close requirement, and rejection reason.",
+        "For Defend the transferred model · Lab Framing Completeness Evidence, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A valid start line and field section prove the complete message is safe to dispatch."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Body Length Precedence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Body Length Precedence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Body Length Precedence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Body Length Precedence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies No Content Responses to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about No Content Responses.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-no-content-responses"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transfer Encoding Precedence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transfer Encoding Precedence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transfer-encoding-precedence"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Content Length List Validation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Content Length List Validation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-content-length-list-validation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Framing Completeness Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Framing Completeness Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-body-length-precedence"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-framing-completeness-evidence-1a0ab5.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-framing-completeness-evidence-1a0ab5"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-framing-completeness-evidence-1a0ab5(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_framing_completeness_evidence_1a0ab5\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?status\\s*!=\\s*204)(?=(?:(?!// Evidence:)[\\s\\S])*?contentLength\\s*>=\\s*0\\s*&&\\s*transferChunked)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Framing Completeness Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Framing Completeness Evidence.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using record and framing plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-framing-completeness-evidence"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "record",
+        "framing"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

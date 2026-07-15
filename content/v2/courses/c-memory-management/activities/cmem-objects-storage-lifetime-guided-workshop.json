@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-objects-storage-lifetime-guided-workshop",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-objects-storage-lifetime",
+  "kind": "workshop",
+  "title": "Objects, Scope, Linkage, Storage Duration, and Lifetime · Lifetime Workshop",
+  "summary": "A guided implementation pair receives a clean input trace and acceptance examples, then builds the first working object lifetime and address ledger while narrating each size, lifetime, ownership, and cleanup decision. Planned artifact: Build a complete first version of object lifetime and address ledger while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Distinguish an object, its value, representation bytes, address, declared type, and current lifetime.",
+    "Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects.",
+    "Identify precisely when each object lifetime begins and ends, including allocated storage and subobjects.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-object-value-identity",
+      "cmem-scope-linkage-duration",
+      "cmem-lifetime-begin-end",
+      "cmem-address-reuse-generation",
+      "cmem-const-volatile-limits"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-objects-storage-lifetime-cmem-const-volatile-limits-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Object Value Identity",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9394. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Object Value Identity.",
+      "why": "The decision supplies observable evidence for distinguish an object, its value, representation bytes, address, declared type, and current lifetime. For Commit to the mission model · Workshop Object Value Identity, keep Object Value Identity connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9394. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Object Value Identity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-object-value-identity"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Object Value Identity, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Object Value Identity precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Object Value Identity, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9394. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime.",
+        "For Commit to the mission model · Workshop Object Value Identity, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer value is the object itself."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Object Value Identity case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Object Value Identity preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A pointer value is the object itself. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet · Workshop Const Volatile Limits",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 2013. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.\n\nInspect the Const Volatile Limits trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the initial evidence packet · Workshop Const Volatile Limits.",
+      "why": "The decision supplies observable evidence for use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization. For Audit the initial evidence packet · Workshop Const Volatile Limits, keep Const Volatile Limits connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Const Volatile Limits, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "hints": [
+        "For Audit the initial evidence packet · Workshop Const Volatile Limits, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Const Volatile Limits precondition, or invariant that must hold.",
+        "At Audit the initial evidence packet · Workshop Const Volatile Limits, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 2013. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+        "For Audit the initial evidence packet · Workshop Const Volatile Limits, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: const owns a value and volatile makes concurrent access race-free."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Const Volatile Limits case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop native-systems team handles memory case 2013. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "const owns a value and volatile makes concurrent access race-free.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization. Artifact under review: object lifetime and address ledger.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Const Volatile Limits, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the initial evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the initial evidence packet, run one convenient Const Volatile Limits case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Object Value Identity · changed case · Workshop Object Value Identity",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6156. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime.\n\nWhich action demonstrates Object Value Identity without dropping earlier contracts?\n\nEvidence target: Object Value Identity · changed case · Workshop Object Value Identity.",
+      "why": "The decision supplies observable evidence for distinguish an object, its value, representation bytes, address, declared type, and current lifetime. For Object Value Identity · changed case · Workshop Object Value Identity, keep Object Value Identity connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6156. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Object Value Identity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-object-value-identity"
+      ],
+      "hints": [
+        "For Object Value Identity · changed case · Workshop Object Value Identity, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Object Value Identity precondition, or invariant that must hold.",
+        "At Object Value Identity · changed case · Workshop Object Value Identity, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6156. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish an object, its value, representation bytes, address, declared type, and current lifetime.",
+        "For Object Value Identity · changed case · Workshop Object Value Identity, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer value is the object itself."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A pointer value is the object itself. That claim does not survive the object value identity · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For object value identity · changed case, run one convenient Object Value Identity case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Distinguish an object, its value, representation bytes, address, declared type, and current lifetime. Apply it to the stated input and retain a reproducible trace for object lifetime and address ledger."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Scope Linkage Duration · changed case · Workshop Scope Linkage Duration",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 7775. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects.\n\nWhich action demonstrates Scope Linkage Duration without dropping earlier contracts?\n\nEvidence target: Scope Linkage Duration · changed case · Workshop Scope Linkage Duration.",
+      "why": "The decision supplies observable evidence for map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects. For Scope Linkage Duration · changed case · Workshop Scope Linkage Duration, keep Scope Linkage Duration connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 7775. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Scope Linkage Duration result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-scope-linkage-duration"
+      ],
+      "hints": [
+        "For Scope Linkage Duration · changed case · Workshop Scope Linkage Duration, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Scope Linkage Duration precondition, or invariant that must hold.",
+        "At Scope Linkage Duration · changed case · Workshop Scope Linkage Duration, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 7775. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects.",
+        "For Scope Linkage Duration · changed case · Workshop Scope Linkage Duration, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: File scope implies static linkage and immutable lifetime."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Scope Linkage Duration case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "File scope implies static linkage and immutable lifetime.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For scope linkage duration · changed case, run one convenient Scope Linkage Duration case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Map scope, linkage, and storage duration independently for block, file, static, thread, and allocated objects. Apply it to the stated input and retain a reproducible trace for object lifetime and address ledger."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "File scope implies static linkage and immutable lifetime. That claim does not survive the scope linkage duration · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Lifetime Begin End · changed case · Workshop Lifetime Begin End",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6870. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Identify precisely when each object lifetime begins and ends, including allocated storage and subobjects.\n\nWhich action demonstrates Lifetime Begin End without dropping earlier contracts?\n\nEvidence target: Lifetime Begin End · changed case · Workshop Lifetime Begin End.",
+      "why": "The decision supplies observable evidence for identify precisely when each object lifetime begins and ends, including allocated storage and subobjects. For Lifetime Begin End · changed case · Workshop Lifetime Begin End, keep Lifetime Begin End connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6870. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Identify precisely when each object lifetime begins and ends, including allocated storage and subobjects."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Lifetime Begin End condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-lifetime-begin-end"
+      ],
+      "hints": [
+        "For Lifetime Begin End · changed case · Workshop Lifetime Begin End, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Lifetime Begin End precondition, or invariant that must hold.",
+        "At Lifetime Begin End · changed case · Workshop Lifetime Begin End, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6870. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Identify precisely when each object lifetime begins and ends, including allocated storage and subobjects.",
+        "For Lifetime Begin End · changed case · Workshop Lifetime Begin End, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Allocated storage has a live typed object from malloc until free regardless of how it is accessed."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Identify precisely when each object lifetime begins and ends, including allocated storage and subobjects. Apply it to the stated input and retain a reproducible trace for object lifetime and address ledger."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Allocated storage has a live typed object from malloc until free regardless of how it is accessed. That claim does not survive the lifetime begin end · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For lifetime begin end · changed case, run one convenient Lifetime Begin End case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Address Reuse Generation · changed case · Workshop Address Reuse Generation",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 8489. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible.\n\nWhich action demonstrates Address Reuse Generation without dropping earlier contracts?\n\nEvidence target: Address Reuse Generation · changed case · Workshop Address Reuse Generation.",
+      "why": "The decision supplies observable evidence for treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible. For Address Reuse Generation · changed case · Workshop Address Reuse Generation, keep Address Reuse Generation connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 8489. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Address Reuse Generation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-address-reuse-generation"
+      ],
+      "hints": [
+        "For Address Reuse Generation · changed case · Workshop Address Reuse Generation, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Address Reuse Generation precondition, or invariant that must hold.",
+        "At Address Reuse Generation · changed case · Workshop Address Reuse Generation, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 8489. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible.",
+        "For Address Reuse Generation · changed case · Workshop Address Reuse Generation, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: The same numeric address proves the same object still exists."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Address Reuse Generation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "The same numeric address proves the same object still exists.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "The same numeric address proves the same object still exists. That claim does not survive the address reuse generation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For address reuse generation · changed case, run one convenient Address Reuse Generation case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Treat a reused address as a new lifetime and preserve generation or identity evidence where stale handles are possible. Apply it to the stated input and retain a reproducible trace for object lifetime and address ledger."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Const Volatile Limits · changed case · Workshop Const Volatile Limits",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 3632. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.\n\nWhich action demonstrates Const Volatile Limits without dropping earlier contracts?\n\nEvidence target: Const Volatile Limits · changed case · Workshop Const Volatile Limits.",
+      "why": "The decision supplies observable evidence for use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization. For Const Volatile Limits · changed case · Workshop Const Volatile Limits, keep Const Volatile Limits connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 3632. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Const Volatile Limits condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "hints": [
+        "For Const Volatile Limits · changed case · Workshop Const Volatile Limits, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Const Volatile Limits precondition, or invariant that must hold.",
+        "At Const Volatile Limits · changed case · Workshop Const Volatile Limits, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 3632. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+        "For Const Volatile Limits · changed case · Workshop Const Volatile Limits, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: const owns a value and volatile makes concurrent access race-free."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For const volatile limits · changed case, run one convenient Const Volatile Limits case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization. Apply it to the stated input and retain a reproducible trace for object lifetime and address ledger."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "const owns a value and volatile makes concurrent access race-free. That claim does not survive the const volatile limits · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Const Volatile Limits",
+      "interaction": "code",
+      "instruction": "For this workshop demonstration of cmem-const-volatile-limits, write the complete compile-ready C program headed \"/* Evidence: cmem-const-volatile-limits-1l3zuk */\" for changed case 3997. It must validate object lifetime and generation evidence, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Workshop Const Volatile Limits.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Const Volatile Limits into observable performance evidence. For Extend the cumulative artifact · Workshop Const Volatile Limits, keep Const Volatile Limits connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-const-volatile-limits-1l3zuk */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 3997; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct lifetime_handle { int value; unsigned generation; int live; };\n\nstatic int evidence_cmem_const_volatile_limits_1l3zuk(const struct lifetime_handle *item, unsigned expected) {\n  if (item == NULL || !item->live) return -1;\n  if (item->generation != expected) return -2;\n  return item->value;\n}\n\nint main(void) {\n  struct lifetime_handle item = { 9, 3u, 1 };\n  int stale = evidence_cmem_const_volatile_limits_1l3zuk(&item, 4u);\n  int live = evidence_cmem_const_volatile_limits_1l3zuk(&item, 3u);\n  int invariant = stale == -2 && live == 9;\n  printf(\"lifetime stale=%d live=%d invariant=%d\\n\", stale, live, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Const Volatile Limits, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Const Volatile Limits precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Const Volatile Limits, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6047. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+        "For Extend the cumulative artifact · Workshop Const Volatile Limits, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: const owns a value and volatile makes concurrent access race-free."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Const Volatile Limits",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 4428. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Const Volatile Limits.",
+      "why": "The decision supplies observable evidence for use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization. For Test an acceptance boundary · Workshop Const Volatile Limits, keep Const Volatile Limits connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 4428. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Const Volatile Limits symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Const Volatile Limits, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Const Volatile Limits precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Const Volatile Limits, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 4428. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+        "For Test an acceptance boundary · Workshop Const Volatile Limits, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: const owns a value and volatile makes concurrent access race-free."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Const Volatile Limits failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "const owns a value and volatile makes concurrent access race-free.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Const Volatile Limits case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Const Volatile Limits condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Const Volatile Limits",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Const Volatile Limits: explain the governing condition, one failure, and how this concrete case was verified — A workshop native-systems team handles memory case 9285. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.\n\nEvidence target: Defend the transferred model · Workshop Const Volatile Limits.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Const Volatile Limits, keep Const Volatile Limits connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Const Volatile Limits, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Const Volatile Limits precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Const Volatile Limits, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9285. Produce bounded C evidence to validate object lifetime and generation evidence; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use const for mutation contracts and volatile only for its defined access semantics, never as ownership or synchronization.",
+        "For Defend the transferred model · Workshop Const Volatile Limits, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: const owns a value and volatile makes concurrent access race-free."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Object Value Identity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Object Value Identity.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-object-value-identity"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Const Volatile Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Const Volatile Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Object Value Identity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Object Value Identity.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-object-value-identity"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Scope Linkage Duration to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Scope Linkage Duration.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-scope-linkage-duration"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Lifetime Begin End to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Lifetime Begin End.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-lifetime-begin-end"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Address Reuse Generation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Address Reuse Generation.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-address-reuse-generation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Const Volatile Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Const Volatile Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-const-volatile-limits-1l3zuk */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-const-volatile-limits-1l3zuk */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-const-volatile-limits-1l3zuk \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_const_volatile_limits_1l3zuk\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Const Volatile Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Const Volatile Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using const and mutation plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-const-volatile-limits"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "const",
+        "mutation"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

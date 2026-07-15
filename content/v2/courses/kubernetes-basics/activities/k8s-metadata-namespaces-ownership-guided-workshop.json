@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-metadata-namespaces-ownership-guided-workshop",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-metadata-namespaces-ownership",
+  "kind": "workshop",
+  "title": "Namespaces, Metadata, Labels, Selectors, Ownership, and Deletion · Platform Workshop",
+  "summary": "A platform pairing session predicts each API transition before producing the first working resource identity and lifecycle policy for namespaces, metadata, labels, selectors, ownership, and deletion. Planned artifact: Build a complete first version of resource identity and lifecycle policy while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits.",
+    "Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch.",
+    "Separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-namespace-scope-boundaries",
+      "k8s-label-selector-contracts",
+      "k8s-annotations-managed-metadata",
+      "k8s-ownerrefs-garbage-collection",
+      "k8s-finalizers-deletion-recovery"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-metadata-namespaces-ownership-k8s-finalizers-deletion-recovery-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop K8s Namespace Scope Boundaries",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop K8s Namespace Scope Boundaries.",
+      "why": "The decision supplies observable evidence for distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits. For Commit to the mission model · Workshop K8s Namespace Scope Boundaries, keep K8s Namespace Scope Boundaries connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Namespace Scope Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "k8s-namespace-scope-boundaries"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop K8s Namespace Scope Boundaries, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Namespace Scope Boundaries precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop K8s Namespace Scope Boundaries, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits.",
+        "For Commit to the mission model · Workshop K8s Namespace Scope Boundaries, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A namespace is a security sandbox that automatically isolates network, nodes, storage, and administrators."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the K8s Namespace Scope Boundaries preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A namespace is a security sandbox that automatically isolates network, nodes, storage, and administrators. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.\n\nInspect the K8s Finalizers Deletion Recovery trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery.",
+      "why": "The decision supplies observable evidence for interpret deletiontimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely. For Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery, keep K8s Finalizers Deletion Recovery connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Finalizers Deletion Recovery, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "hints": [
+        "For Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Finalizers Deletion Recovery precondition, or invariant that must hold.",
+        "At Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+        "For Audit the initial evidence packet · Workshop K8s Finalizers Deletion Recovery, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Deleting finalizers immediately is the normal first repair for any terminating resource."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Finalizers Deletion Recovery case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Deleting finalizers immediately is the normal first repair for any terminating resource.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely. Artifact under review: resource identity and lifecycle policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies K8s Finalizers Deletion Recovery, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the initial evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the initial evidence packet, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits.\n\nWhich action demonstrates K8s Namespace Scope Boundaries without dropping earlier contracts?\n\nEvidence target: K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries.",
+      "why": "The decision supplies observable evidence for distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits. For K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries, keep K8s Namespace Scope Boundaries connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Namespace Scope Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "k8s-namespace-scope-boundaries"
+      ],
+      "hints": [
+        "For K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Namespace Scope Boundaries precondition, or invariant that must hold.",
+        "At K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits.",
+        "For K8s Namespace Scope Boundaries · changed case · Workshop K8s Namespace Scope Boundaries, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A namespace is a security sandbox that automatically isolates network, nodes, storage, and administrators."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A namespace is a security sandbox that automatically isolates network, nodes, storage, and administrators. That claim does not survive the k8s namespace scope boundaries · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For k8s namespace scope boundaries · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Distinguish namespaced and cluster-scoped resources, default namespaces, cross-namespace references, quotas, and isolation limits. Apply it to the stated input and retain a reproducible trace for resource identity and lifecycle policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch.\n\nWhich action demonstrates K8s Label Selector Contracts without dropping earlier contracts?\n\nEvidence target: K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts.",
+      "why": "The decision supplies observable evidence for design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch. For K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts, keep K8s Label Selector Contracts connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Label Selector Contracts result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "k8s-label-selector-contracts"
+      ],
+      "hints": [
+        "For K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Label Selector Contracts precondition, or invariant that must hold.",
+        "At K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch.",
+        "For K8s Label Selector Contracts · changed case · Workshop K8s Label Selector Contracts, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Changing a controller selector is a harmless way to retarget an existing workload."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Label Selector Contracts case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Changing a controller selector is a harmless way to retarget an existing workload.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For k8s label selector contracts · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Design stable recommended labels and equality or set selectors without accidental overlap, mutable identity, or controller mismatch. Apply it to the stated input and retain a reproducible trace for resource identity and lifecycle policy."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Changing a controller selector is a harmless way to retarget an existing workload. That claim does not survive the k8s label selector contracts · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership.\n\nWhich action demonstrates K8s Annotations Managed Metadata without dropping earlier contracts?\n\nEvidence target: K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata.",
+      "why": "The decision supplies observable evidence for separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership. For K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata, keep K8s Annotations Managed Metadata connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Annotations Managed Metadata condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "k8s-annotations-managed-metadata"
+      ],
+      "hints": [
+        "For K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Annotations Managed Metadata precondition, or invariant that must hold.",
+        "At K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership.",
+        "For K8s Annotations Managed Metadata · changed case · Workshop K8s Annotations Managed Metadata, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Large arbitrary application data belongs in labels because selectors can ignore it."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Separate identifying labels from non-identifying annotations and preserve controller, tooling, audit, and rollout metadata ownership. Apply it to the stated input and retain a reproducible trace for resource identity and lifecycle policy."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Large arbitrary application data belongs in labels because selectors can ignore it. That claim does not survive the k8s annotations managed metadata · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For k8s annotations managed metadata · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Trace owner references, UIDs, controller ownership, dependents, and foreground, background, or orphan deletion propagation.\n\nWhich action demonstrates K8s Ownerrefs Garbage Collection without dropping earlier contracts?\n\nEvidence target: K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection.",
+      "why": "The decision supplies observable evidence for trace owner references, uids, controller ownership, dependents, and foreground, background, or orphan deletion propagation. For K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection, keep K8s Ownerrefs Garbage Collection connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Trace owner references, UIDs, controller ownership, dependents, and foreground, background, or orphan deletion propagation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Ownerrefs Garbage Collection result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "k8s-ownerrefs-garbage-collection"
+      ],
+      "hints": [
+        "For K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ownerrefs Garbage Collection precondition, or invariant that must hold.",
+        "At K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Trace owner references, UIDs, controller ownership, dependents, and foreground, background, or orphan deletion propagation.",
+        "For K8s Ownerrefs Garbage Collection · changed case · Workshop K8s Ownerrefs Garbage Collection, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Matching object names are sufficient for garbage collection after an owner is recreated."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Ownerrefs Garbage Collection case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Matching object names are sufficient for garbage collection after an owner is recreated.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace owner references, UIDs, controller ownership, dependents, and foreground, background, or orphan deletion propagation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Matching object names are sufficient for garbage collection after an owner is recreated. That claim does not survive the k8s ownerrefs garbage collection · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For k8s ownerrefs garbage collection · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Trace owner references, UIDs, controller ownership, dependents, and foreground, background, or orphan deletion propagation. Apply it to the stated input and retain a reproducible trace for resource identity and lifecycle policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.\n\nWhich action demonstrates K8s Finalizers Deletion Recovery without dropping earlier contracts?\n\nEvidence target: K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery.",
+      "why": "The decision supplies observable evidence for interpret deletiontimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely. For K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery, keep K8s Finalizers Deletion Recovery connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Finalizers Deletion Recovery condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "hints": [
+        "For K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Finalizers Deletion Recovery precondition, or invariant that must hold.",
+        "At K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+        "For K8s Finalizers Deletion Recovery · changed case · Workshop K8s Finalizers Deletion Recovery, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Deleting finalizers immediately is the normal first repair for any terminating resource."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For k8s finalizers deletion recovery · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely. Apply it to the stated input and retain a reproducible trace for resource identity and lifecycle policy."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Deleting finalizers immediately is the normal first repair for any terminating resource. That claim does not survive the k8s finalizers deletion recovery · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-finalizers-deletion-recovery-1xzlbc\". Tailor its metadata-policy.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Finalizers Deletion Recovery into observable performance evidence. For Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery, keep K8s Finalizers Deletion Recovery connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-finalizers-deletion-recovery-1xzlbc\n  - competency: k8s-finalizers-deletion-recovery\n    artifact: metadata-policy.yaml\n    decision: finalizers deletion recovery\n    environment: high-latency edge cluster with intermittent control-plane access\n    fault-injection: rotate a projected token while the API dependency slows\n    retained-proof: Pod state previous exit endpoint readiness and request result\n    case-key: 1xzlbc\n    change: |\n      namespace: intake\n      labels: app.kubernetes.io/name=status-api\n      selector-owner: deployment-status-api\n      owner-uid: retained\n      deletion: foreground\n      finalizer-controller: archive-cleanup\n    verify: kubectl get all -n intake --show-labels -o json && kubectl get namespace intake -o json\n    failure: Reject namespace-as-sandbox claims, overlapping selectors, name-only owner matching, or blind finalizer removal.\n    repair: Separate scope and security, stabilize identity labels, trace owner UIDs and dependents, and identify external cleanup before deletion.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Finalizers Deletion Recovery precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+        "For Extend the cumulative artifact · Workshop K8s Finalizers Deletion Recovery, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Deleting finalizers immediately is the normal first repair for any terminating resource."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery.",
+      "why": "The decision supplies observable evidence for interpret deletiontimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely. For Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery, keep K8s Finalizers Deletion Recovery connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Finalizers Deletion Recovery symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Architecture, Objects, and Cluster Administration — Controls control-plane and node components, API and etcd boundaries, reconciliation, object identity and status, namespaces, ownership, cluster lifecycle, conformance, and recovery."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Finalizers Deletion Recovery precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+        "For Test an acceptance boundary · Workshop K8s Finalizers Deletion Recovery, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Deleting finalizers immediately is the normal first repair for any terminating resource."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Finalizers Deletion Recovery failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Deleting finalizers immediately is the normal first repair for any terminating resource.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated K8s Finalizers Deletion Recovery condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop K8s Finalizers Deletion Recovery",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for K8s Finalizers Deletion Recovery: explain the governing condition, one failure, and how this concrete case was verified — A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.\n\nEvidence target: Defend the transferred model · Workshop K8s Finalizers Deletion Recovery.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop K8s Finalizers Deletion Recovery, keep K8s Finalizers Deletion Recovery connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop K8s Finalizers Deletion Recovery, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Finalizers Deletion Recovery precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop K8s Finalizers Deletion Recovery, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop namespace contains similarly named objects, copied labels, a dangling owner reference, and a finalizer blocking deletion. Design names, labels, selectors, annotations, ownership, garbage collection, quota boundaries, and deletion evidence. Competency probe: Interpret deletionTimestamp and finalizers, identify the responsible controller, preserve external cleanup evidence, and repair stuck deletion safely.",
+        "For Defend the transferred model · Workshop K8s Finalizers Deletion Recovery, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Deleting finalizers immediately is the normal first repair for any terminating resource."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Namespace Scope Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Namespace Scope Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-namespace-scope-boundaries"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Finalizers Deletion Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Finalizers Deletion Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Namespace Scope Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Namespace Scope Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-namespace-scope-boundaries"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Label Selector Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Label Selector Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-label-selector-contracts"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Annotations Managed Metadata to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Annotations Managed Metadata.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-annotations-managed-metadata"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Ownerrefs Garbage Collection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Ownerrefs Garbage Collection.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ownerrefs-garbage-collection"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Finalizers Deletion Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Finalizers Deletion Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-finalizers-deletion-recovery-1xzlbc.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-finalizers-deletion-recovery-1xzlbc"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-finalizers-deletion-recovery-1xzlbc(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-finalizers-deletion-recovery(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*metadata-policy\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:app\\.kubernetes\\.io/name|owner-uid:\\s*retained|finalizer-controller)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Finalizers Deletion Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Finalizers Deletion Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using interpret and deletiontimestamp plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-finalizers-deletion-recovery"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "interpret",
+        "deletiontimestamp"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

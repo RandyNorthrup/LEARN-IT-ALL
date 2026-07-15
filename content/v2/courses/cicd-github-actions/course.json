@@ -1,0 +1,1554 @@
+{
+  "schemaVersion": 2,
+  "id": "cicd-github-actions",
+  "title": "Secure CI/CD with GitHub Actions, TypeScript, Docker, and Cloud Run",
+  "description": "Developers and delivery engineers who can build TypeScript and Docker projects and need to design, secure, debug, measure, and defend production CI/CD systems. This original, research-backed path uses repeated retrieval, cumulative artifacts, changed-case labs, stakeholder projects, and a performance exam.",
+  "outcomes": [
+    "Demonstrate continuous delivery outcomes, github actions execution, workflow syntax, expressions, events, refs, forks, runners, state, concurrency, caching, artifacts, and reusable automation through an independently verified stakeholder artifact.",
+    "Demonstrate node 24, the typescript 7.0.2 native cli, typescript 6.0.2 api compatibility tooling, npm reproducibility, layered tests, quality gates, matrices, failure semantics, diagnostics, observability, and delivery improvement through an independently verified stakeholder artifact.",
+    "Demonstrate workflow permissions, secrets, injection defense, action dependencies, full-sha pinning, codeql for actions, oidc, slsa 1.2, sbom, provenance, attestations, and verified promotion through an independently verified stakeholder artifact.",
+    "Demonstrate docker buildx ci, npm trusted publishing, google workload identity federation, cloud run revisions, progressive traffic, rollback, incident response, and governed production transfer through an independently verified stakeholder artifact."
+  ],
+  "prerequisites": [
+    "git-basics",
+    "repository-quality-gates",
+    "typescript-basics",
+    "docker-basics"
+  ],
+  "competencies": [
+    {
+      "id": "ci-ci-cd-release-boundaries",
+      "statement": "Distinguish continuous integration, delivery, deployment, release, and feature exposure by their automation, decision, and stakeholder boundaries.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [],
+      "misconceptions": [
+        "Continuous delivery means every successful commit must immediately receive production traffic."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish continuous integration, delivery, deployment, release, and feature exposure by their automation, decision, and stakeholder boundaries."
+      ]
+    },
+    {
+      "id": "ci-feedback-batch-risk",
+      "statement": "Relate batch size, queue time, feedback latency, failure isolation, recovery cost, and learning speed without treating deployment frequency as the objective.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-ci-cd-release-boundaries"
+      ],
+      "misconceptions": [
+        "More pipeline stages always reduce delivery risk."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Relate batch size, queue time, feedback latency, failure isolation, recovery cost, and learning speed without treating deployment frequency as the objective."
+      ]
+    },
+    {
+      "id": "ci-value-stream-evidence-chain",
+      "statement": "Trace requirement, source revision, review, checks, build inputs, immutable artifact, deployment, observation, and recovery evidence as one delivery chain.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-feedback-batch-risk"
+      ],
+      "misconceptions": [
+        "A green workflow run proves the deployed artifact came from the reviewed source."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace requirement, source revision, review, checks, build inputs, immutable artifact, deployment, observation, and recovery evidence as one delivery chain."
+      ]
+    },
+    {
+      "id": "ci-dora-outcome-interpretation",
+      "statement": "Interpret deployment frequency, lead time, change failure rate, recovery time, reliability, and contextual tradeoffs without gaming one metric.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-value-stream-evidence-chain"
+      ],
+      "misconceptions": [
+        "High deployment frequency alone proves delivery excellence."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Interpret deployment frequency, lead time, change failure rate, recovery time, reliability, and contextual tradeoffs without gaming one metric."
+      ]
+    },
+    {
+      "id": "ci-release-hypothesis-done",
+      "statement": "Define an observable release hypothesis, risk budget, evidence owner, success and abort signals, and done condition before automating.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "ci-dora-outcome-interpretation"
+      ],
+      "misconceptions": [
+        "Pipeline completion is the same as user-value completion."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define an observable release hypothesis, risk budget, evidence owner, success and abort signals, and done condition before automating."
+      ]
+    },
+    {
+      "id": "ci-workflow-run-job-step-model",
+      "statement": "Trace event, workflow run, job graph, runner allocation, step process, action execution, and post-step cleanup for one commit.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "ci-release-hypothesis-done"
+      ],
+      "misconceptions": [
+        "Every job in a workflow shares one runner filesystem and process environment."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace event, workflow run, job graph, runner allocation, step process, action execution, and post-step cleanup for one commit."
+      ]
+    },
+    {
+      "id": "ci-context-expression-env-timing",
+      "statement": "Distinguish server-side contexts and expression evaluation from runner-side environment expansion, shell parsing, and process state.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workflow-run-job-step-model"
+      ],
+      "misconceptions": [
+        "GitHub expressions and shell variables are interchangeable and evaluate at the same time."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish server-side contexts and expression evaluation from runner-side environment expansion, shell parsing, and process state."
+      ]
+    },
+    {
+      "id": "ci-workspace-output-artifact-cache-state",
+      "statement": "Classify workspace files, step outputs, job outputs, environment files, artifacts, caches, summaries, logs, and external releases by scope and lifetime.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-context-expression-env-timing"
+      ],
+      "misconceptions": [
+        "A cache is a durable release artifact and can safely pass trusted executables between workflows."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Classify workspace files, step outputs, job outputs, environment files, artifacts, caches, summaries, logs, and external releases by scope and lifetime."
+      ]
+    },
+    {
+      "id": "ci-action-types-runtime-boundary",
+      "statement": "Compare JavaScript, Docker container, composite, and reusable workflow components by runtime, inputs, isolation, portability, and trust.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workspace-output-artifact-cache-state"
+      ],
+      "misconceptions": [
+        "A composite action runs on a separate runner and creates a security boundary."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compare JavaScript, Docker container, composite, and reusable workflow components by runtime, inputs, isolation, portability, and trust."
+      ]
+    },
+    {
+      "id": "ci-run-identity-attempt-evidence",
+      "statement": "Use repository, workflow ref, workflow SHA, run ID, run attempt, actor, triggering actor, event, ref, and SHA to identify exact execution evidence.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-action-types-runtime-boundary"
+      ],
+      "misconceptions": [
+        "A workflow name and commit branch uniquely identify one execution."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use repository, workflow ref, workflow SHA, run ID, run attempt, actor, triggering actor, event, ref, and SHA to identify exact execution evidence."
+      ]
+    },
+    {
+      "id": "ci-workflow-schema-top-level",
+      "statement": "Author name, on, permissions, concurrency, env, defaults, jobs, and job-level contracts with explicit supported syntax.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-run-identity-attempt-evidence"
+      ],
+      "misconceptions": [
+        "Valid YAML is necessarily a valid and intended GitHub Actions workflow."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Author name, on, permissions, concurrency, env, defaults, jobs, and job-level contracts with explicit supported syntax."
+      ]
+    },
+    {
+      "id": "ci-yaml-scalars-multiline-keys",
+      "statement": "Control YAML scalars, booleans, quoting, multiline blocks, reserved-looking keys, indentation, and serialization boundaries.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workflow-schema-top-level"
+      ],
+      "misconceptions": [
+        "Every YAML parser interprets the on key and boolean-like scalars identically."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Control YAML scalars, booleans, quoting, multiline blocks, reserved-looking keys, indentation, and serialization boundaries."
+      ]
+    },
+    {
+      "id": "ci-expression-types-coercion-functions",
+      "statement": "Reason about expression literals, loose equality, coercion, truthiness, functions, object filters, fromJSON, and toJSON without leaking data.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-yaml-scalars-multiline-keys"
+      ],
+      "misconceptions": [
+        "Expression equality uses JavaScript strict equality and never coerces values."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Reason about expression literals, loose equality, coercion, truthiness, functions, object filters, fromJSON, and toJSON without leaking data."
+      ]
+    },
+    {
+      "id": "ci-context-availability-allowlist",
+      "statement": "Select contexts only where the workflow syntax permits them and separate configuration-time from runner-time values.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-expression-types-coercion-functions"
+      ],
+      "misconceptions": [
+        "Every context is available in every workflow key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select contexts only where the workflow syntax permits them and separate configuration-time from runner-time values."
+      ]
+    },
+    {
+      "id": "ci-workflow-static-validation",
+      "statement": "Combine schema validation, action input review, expression linting, local deterministic inspection, changed-event fixtures, and GitHub-run evidence.",
+      "knowledgeType": "metacognitive",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-context-availability-allowlist"
+      ],
+      "misconceptions": [
+        "A local workflow emulator proves hosted-runner, token, event, and service behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Combine schema validation, action input review, expression linting, local deterministic inspection, changed-event fixtures, and GitHub-run evidence."
+      ]
+    },
+    {
+      "id": "ci-event-payload-ref-sha",
+      "statement": "Derive workflow source, checked-out revision, GITHUB_REF, GITHUB_SHA, actor, permissions, and payload from each trigger.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workflow-static-validation"
+      ],
+      "misconceptions": [
+        "push, pull_request, pull_request_target, and workflow_run use the same workflow file and SHA."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive workflow source, checked-out revision, GITHUB_REF, GITHUB_SHA, actor, permissions, and payload from each trigger."
+      ]
+    },
+    {
+      "id": "ci-pr-merge-head-base-evidence",
+      "statement": "Choose pull request merge, head, or base revision intentionally and state what integration or source claim each can prove.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-event-payload-ref-sha"
+      ],
+      "misconceptions": [
+        "Testing only the pull request head proves it integrates with the current base branch."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose pull request merge, head, or base revision intentionally and state what integration or source claim each can prove."
+      ]
+    },
+    {
+      "id": "ci-fork-secret-token-approval-boundary",
+      "statement": "Model fork approvals, withheld secrets, read-only tokens, compute abuse, contributor changes, and re-run authority.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-pr-merge-head-base-evidence"
+      ],
+      "misconceptions": [
+        "A maintainer re-run makes untrusted pull request code trusted."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model fork approvals, withheld secrets, read-only tokens, compute abuse, contributor changes, and re-run authority."
+      ]
+    },
+    {
+      "id": "ci-pull-request-target-pwn-defense",
+      "statement": "Keep pull_request_target work on trusted base code or inspect untrusted content strictly as data without executing its scripts, dependencies, actions, or artifacts.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-fork-secret-token-approval-boundary"
+      ],
+      "misconceptions": [
+        "Checkout is harmless even when the next command executes files from the checked-out revision."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Keep pull_request_target work on trusted base code or inspect untrusted content strictly as data without executing its scripts, dependencies, actions, or artifacts."
+      ]
+    },
+    {
+      "id": "ci-workflow-run-artifact-trust",
+      "statement": "Treat workflow_run, issue_comment, repository_dispatch, and downloaded artifacts according to producer identity, revision, permissions, and content trust.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-pull-request-target-pwn-defense"
+      ],
+      "misconceptions": [
+        "An artifact from a successful low-privilege workflow is safe to execute in a privileged workflow."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Treat workflow_run, issue_comment, repository_dispatch, and downloaded artifacts according to producer identity, revision, permissions, and content trust."
+      ]
+    },
+    {
+      "id": "ci-hosted-runner-image-contract",
+      "statement": "Pin or record runner OS, architecture, installed software, action runtime, image release, and migration assumptions instead of trusting latest as immutable.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workflow-run-artifact-trust"
+      ],
+      "misconceptions": [
+        "ubuntu-latest identifies one permanent machine image."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pin or record runner OS, architecture, installed software, action runtime, image release, and migration assumptions instead of trusting latest as immutable."
+      ]
+    },
+    {
+      "id": "ci-self-hosted-runner-threat-model",
+      "statement": "Threat-model persistence, workspace residue, credentials, network reachability, daemon sockets, labels, groups, and repository eligibility for self-hosted runners.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-hosted-runner-image-contract"
+      ],
+      "misconceptions": [
+        "A fresh workspace directory makes a reused self-hosted runner ephemeral."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Threat-model persistence, workspace residue, credentials, network reachability, daemon sockets, labels, groups, and repository eligibility for self-hosted runners."
+      ]
+    },
+    {
+      "id": "ci-ephemeral-runner-cleanup",
+      "statement": "Design single-job ephemeral runner registration, identity, network segmentation, secret delivery, teardown, log retention, and orphan cleanup.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-self-hosted-runner-threat-model"
+      ],
+      "misconceptions": [
+        "Deleting a runner registration guarantees its host and credentials were destroyed."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design single-job ephemeral runner registration, identity, network segmentation, secret delivery, teardown, log retention, and orphan cleanup."
+      ]
+    },
+    {
+      "id": "ci-runner-capacity-queue-cost",
+      "statement": "Model concurrency, queue time, job duration, parallelism, rate limits, storage, egress, larger runners, and cost against feedback goals.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-ephemeral-runner-cleanup"
+      ],
+      "misconceptions": [
+        "Maximum matrix parallelism always minimizes lead time and cost."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model concurrency, queue time, job duration, parallelism, rate limits, storage, egress, larger runners, and cost against feedback goals."
+      ]
+    },
+    {
+      "id": "ci-runner-compatibility-action-node24",
+      "statement": "Verify runner version compatibility for Node 24-based actions and plan staged upgrades, rollback, and GHES differences.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-runner-capacity-queue-cost"
+      ],
+      "misconceptions": [
+        "Updating an action major version cannot require a newer runner service."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify runner version compatibility for Node 24-based actions and plan staged upgrades, rollback, and GHES differences."
+      ]
+    },
+    {
+      "id": "ci-node-npm-typescript-version-contract",
+      "statement": "Align Node 24, npm 11 or later, the TypeScript 7.0.2 native CLI, the TypeScript 6.0.2 compatibility API required by current tooling, package metadata, engines, action runtime, and local developer versions.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-runner-compatibility-action-node24"
+      ],
+      "misconceptions": [
+        "The Node version bundled inside an action is the Node version used by project scripts."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Align Node 24, npm 11 or later, the TypeScript 7.0.2 native CLI, the TypeScript 6.0.2 compatibility API required by current tooling, package metadata, engines, action runtime, and local developer versions."
+      ]
+    },
+    {
+      "id": "ci-npm-ci-lockfile-contract",
+      "statement": "Use npm ci with a committed matching lockfile and committed install flags while detecting lock drift and registry changes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-node-npm-typescript-version-contract"
+      ],
+      "misconceptions": [
+        "npm ci repairs a stale lockfile to match package.json."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use npm ci with a committed matching lockfile and committed install flags while detecting lock drift and registry changes."
+      ]
+    },
+    {
+      "id": "ci-install-script-network-risk",
+      "statement": "Bound dependency lifecycle scripts, registry authentication, private package access, network egress, install auditing, and secret exposure.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-npm-ci-lockfile-contract"
+      ],
+      "misconceptions": [
+        "A lockfile prevents dependencies from executing install scripts or contacting the network."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound dependency lifecycle scripts, registry authentication, private package access, network egress, install auditing, and secret exposure."
+      ]
+    },
+    {
+      "id": "ci-clean-build-source-artifact-boundary",
+      "statement": "Build from a clean checkout, exclude local residue, declare generated inputs, and compare packaged output with source and ignore rules.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-install-script-network-risk"
+      ],
+      "misconceptions": [
+        "A successful local build proves a clean runner will produce the same artifact."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build from a clean checkout, exclude local residue, declare generated inputs, and compare packaged output with source and ignore rules."
+      ]
+    },
+    {
+      "id": "ci-reproducibility-changed-environment",
+      "statement": "Repeat installs and builds across cold cache, supported Node versions, locale, timezone, architecture, and changed dependency conditions.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-clean-build-source-artifact-boundary"
+      ],
+      "misconceptions": [
+        "Matching application tests prove byte-identical or behaviorally equivalent builds."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Repeat installs and builds across cold cache, supported Node versions, locale, timezone, architecture, and changed dependency conditions."
+      ]
+    },
+    {
+      "id": "ci-gate-command-exit-contract",
+      "statement": "Define each formatter, lint, type, test, build, security, and policy command with deterministic inputs, exit semantics, output, and owner.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-reproducibility-changed-environment"
+      ],
+      "misconceptions": [
+        "Printing an error is sufficient to fail a workflow step."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define each formatter, lint, type, test, build, security, and policy command with deterministic inputs, exit semantics, output, and owner."
+      ]
+    },
+    {
+      "id": "ci-gate-order-parallelism",
+      "statement": "Order cheap deterministic gates before costly work while parallelizing independent evidence and preserving causal diagnosis.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-gate-command-exit-contract"
+      ],
+      "misconceptions": [
+        "Every gate must run sequentially to be trustworthy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Order cheap deterministic gates before costly work while parallelizing independent evidence and preserving causal diagnosis."
+      ]
+    },
+    {
+      "id": "ci-skipped-cancelled-neutral-failure",
+      "statement": "Distinguish success, failure, cancelled, skipped, neutral, timed out, and continued failures in job and required-check policy.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-gate-order-parallelism"
+      ],
+      "misconceptions": [
+        "A workflow conclusion of success means every intended gate ran and passed."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish success, failure, cancelled, skipped, neutral, timed out, and continued failures in job and required-check policy."
+      ]
+    },
+    {
+      "id": "ci-required-check-stable-identity",
+      "statement": "Design stable job names, required status checks, merge queues, branch rules, bypass authority, and migration without accidental deadlock.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-skipped-cancelled-neutral-failure"
+      ],
+      "misconceptions": [
+        "Renaming a required job automatically updates every repository rule."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design stable job names, required status checks, merge queues, branch rules, bypass authority, and migration without accidental deadlock."
+      ]
+    },
+    {
+      "id": "ci-gate-evidence-summary-ownership",
+      "statement": "Publish concise annotations and summaries with exact command, revision, environment, failure owner, retained artifact, and rerun limits.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "ci-required-check-stable-identity"
+      ],
+      "misconceptions": [
+        "Dumping complete logs is the clearest and safest failure handoff."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Publish concise annotations and summaries with exact command, revision, environment, failure owner, retained artifact, and rerun limits."
+      ]
+    },
+    {
+      "id": "ci-test-layer-risk-selection",
+      "statement": "Allocate unit, component, integration, contract, end-to-end, accessibility, security, and smoke tests from failure risk and feedback cost.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-gate-evidence-summary-ownership"
+      ],
+      "misconceptions": [
+        "More end-to-end tests always produce more confidence than lower-level tests."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Allocate unit, component, integration, contract, end-to-end, accessibility, security, and smoke tests from failure risk and feedback cost."
+      ]
+    },
+    {
+      "id": "ci-service-container-health-isolation",
+      "statement": "Configure service image identity, ports, health, credentials, network scope, per-job state, migrations, fixtures, and deterministic teardown.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-test-layer-risk-selection"
+      ],
+      "misconceptions": [
+        "Starting a service container means it is ready for tests."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure service image identity, ports, health, credentials, network scope, per-job state, migrations, fixtures, and deterministic teardown."
+      ]
+    },
+    {
+      "id": "ci-test-sharding-order-independence",
+      "statement": "Shard tests without duplicate or missing cases and detect order, time, locale, seed, port, and shared-state dependence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-service-container-health-isolation"
+      ],
+      "misconceptions": [
+        "A test that passes alone and in one shard is deterministic."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Shard tests without duplicate or missing cases and detect order, time, locale, seed, port, and shared-state dependence."
+      ]
+    },
+    {
+      "id": "ci-coverage-mutation-changed-lines",
+      "statement": "Interpret statement, branch, function, changed-line, mutation, and risk coverage as evidence with explicit exclusions and blind spots.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-test-sharding-order-independence"
+      ],
+      "misconceptions": [
+        "A higher coverage percentage proves stronger assertions."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Interpret statement, branch, function, changed-line, mutation, and risk coverage as evidence with explicit exclusions and blind spots."
+      ]
+    },
+    {
+      "id": "ci-test-report-quarantine-policy",
+      "statement": "Retain machine-readable reports, failed-case diagnostics, traces, screenshots, retries, quarantine owner, expiry, and re-entry criteria.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-coverage-mutation-changed-lines"
+      ],
+      "misconceptions": [
+        "Retrying until green is an acceptable repair for a flaky required test."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Retain machine-readable reports, failed-case diagnostics, traces, screenshots, retries, quarantine owner, expiry, and re-entry criteria."
+      ]
+    },
+    {
+      "id": "ci-matrix-axis-coverage",
+      "statement": "Design include and exclude rules, experimental axes, fail-fast, max-parallel, names, and support-policy coverage without combinatorial waste.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-test-report-quarantine-policy"
+      ],
+      "misconceptions": [
+        "Every matrix combination provides independent useful coverage."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design include and exclude rules, experimental axes, fail-fast, max-parallel, names, and support-policy coverage without combinatorial waste."
+      ]
+    },
+    {
+      "id": "ci-needs-if-result-propagation",
+      "statement": "Trace needs dependencies, job results, always and failure conditions, skipped ancestors, and cleanup behavior through a directed graph.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-matrix-axis-coverage"
+      ],
+      "misconceptions": [
+        "A job with if always runs even when a required predecessor is skipped."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace needs dependencies, job results, always and failure conditions, skipped ancestors, and cleanup behavior through a directed graph."
+      ]
+    },
+    {
+      "id": "ci-step-job-output-contract",
+      "statement": "Write multiline-safe step outputs, promote validated job outputs, handle size and secret redaction limits, and parse downstream types explicitly.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-needs-if-result-propagation"
+      ],
+      "misconceptions": [
+        "Job outputs preserve native boolean, number, array, and object types."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Write multiline-safe step outputs, promote validated job outputs, handle size and secret redaction limits, and parse downstream types explicitly."
+      ]
+    },
+    {
+      "id": "ci-artifact-identity-digest-retention",
+      "statement": "Upload unique immutable artifacts with digest, producer, revision, content scope, retention, hidden-file policy, and no-secret review.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-step-job-output-contract"
+      ],
+      "misconceptions": [
+        "An artifact name is an immutable identity and its contents can be appended across jobs."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Upload unique immutable artifacts with digest, producer, revision, content scope, retention, hidden-file policy, and no-secret review."
+      ]
+    },
+    {
+      "id": "ci-artifact-download-permission-integrity",
+      "statement": "Download by expected run and artifact identity, verify digest and file layout, preserve permissions deliberately, and treat cross-run contents as untrusted.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-artifact-identity-digest-retention"
+      ],
+      "misconceptions": [
+        "A successful download proves the artifact is safe to execute."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Download by expected run and artifact identity, verify digest and file layout, preserve permissions deliberately, and treat cross-run contents as untrusted."
+      ]
+    },
+    {
+      "id": "ci-cache-artifact-distinction",
+      "statement": "Separate disposable performance caches from immutable artifacts, job outputs, external registries, and release records by trust and lifetime.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-artifact-download-permission-integrity"
+      ],
+      "misconceptions": [
+        "A cache hit proves the restored content belongs to the current revision."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate disposable performance caches from immutable artifacts, job outputs, external registries, and release records by trust and lifetime."
+      ]
+    },
+    {
+      "id": "ci-cache-key-version-scope",
+      "statement": "Construct keys from OS, architecture, tool, dependency lock, relevant configuration, and cache version with bounded restore fallback.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-cache-artifact-distinction"
+      ],
+      "misconceptions": [
+        "A branch name alone is a safe dependency cache key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Construct keys from OS, architecture, tool, dependency lock, relevant configuration, and cache version with bounded restore fallback."
+      ]
+    },
+    {
+      "id": "ci-cache-poisoning-trust-boundary",
+      "statement": "Restrict who can save or restore executable caches across fork, branch, event, workflow, and privilege boundaries.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-cache-key-version-scope"
+      ],
+      "misconceptions": [
+        "Read-only repository access implies cache writes cannot affect trusted workflows."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Restrict who can save or restore executable caches across fork, branch, event, workflow, and privilege boundaries."
+      ]
+    },
+    {
+      "id": "ci-setup-node-package-cache",
+      "statement": "Use setup-node dependency caching without caching node_modules and disable automatic caching in privileged workflows when risk outweighs speed.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-cache-poisoning-trust-boundary"
+      ],
+      "misconceptions": [
+        "setup-node caches the installed node_modules directory."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use setup-node dependency caching without caching node_modules and disable automatic caching in privileged workflows when risk outweighs speed."
+      ]
+    },
+    {
+      "id": "ci-cold-warm-performance-evidence",
+      "statement": "Measure cold and warm dependency, build, test, upload, queue, and critical-path time while preserving a regular cold-path regression run.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-setup-node-package-cache"
+      ],
+      "misconceptions": [
+        "A warm-cache improvement proves the complete pipeline is faster."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Measure cold and warm dependency, build, test, upload, queue, and critical-path time while preserving a regular cold-path regression run."
+      ]
+    },
+    {
+      "id": "ci-concurrency-group-cancel-policy",
+      "statement": "Build concurrency keys from workflow, branch, pull request, service, or environment identity and choose cancellation from business semantics.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-cold-warm-performance-evidence"
+      ],
+      "misconceptions": [
+        "cancel-in-progress is always safe for tests and deployments."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build concurrency keys from workflow, branch, pull request, service, or environment identity and choose cancellation from business semantics."
+      ]
+    },
+    {
+      "id": "ci-stale-run-deployment-race",
+      "statement": "Prevent stale runs and out-of-order artifacts from overwriting newer deployments through revision, environment, and compare-before-mutate checks.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-concurrency-group-cancel-policy"
+      ],
+      "misconceptions": [
+        "Workflow runs finish in commit order."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Prevent stale runs and out-of-order artifacts from overwriting newer deployments through revision, environment, and compare-before-mutate checks."
+      ]
+    },
+    {
+      "id": "ci-job-step-timeout-process-cleanup",
+      "statement": "Set bounded job, step, command, network, and shutdown timeouts while terminating child processes and retaining partial evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-stale-run-deployment-race"
+      ],
+      "misconceptions": [
+        "A job timeout guarantees every spawned process and external mutation was cleaned up."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set bounded job, step, command, network, and shutdown timeouts while terminating child processes and retaining partial evidence."
+      ]
+    },
+    {
+      "id": "ci-retry-idempotency-first-failure",
+      "statement": "Retry only classified transient operations with idempotency, attempt limits, backoff, first-failure preservation, and duplicate-side-effect defense.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-job-step-timeout-process-cleanup"
+      ],
+      "misconceptions": [
+        "Any failed command is safer when automatically retried."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Retry only classified transient operations with idempotency, attempt limits, backoff, first-failure preservation, and duplicate-side-effect defense."
+      ]
+    },
+    {
+      "id": "ci-flake-detection-quarantine-repair",
+      "statement": "Detect nondeterminism through repeated changed schedules, classify cause, quarantine with owner and expiry, and require repaired regression evidence.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-retry-idempotency-first-failure"
+      ],
+      "misconceptions": [
+        "A flaky check should be removed from required status until someone has time to investigate."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Detect nondeterminism through repeated changed schedules, classify cause, quarantine with owner and expiry, and require repaired regression evidence."
+      ]
+    },
+    {
+      "id": "ci-secret-variable-config-classification",
+      "statement": "Classify public configuration, non-secret variables, sensitive values, credentials, OIDC identity, and derived secrets by authority and lifetime.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-flake-detection-quarantine-repair"
+      ],
+      "misconceptions": [
+        "Repository variables are encrypted secrets because they are configured in the same interface."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Classify public configuration, non-secret variables, sensitive values, credentials, OIDC identity, and derived secrets by authority and lifetime."
+      ]
+    },
+    {
+      "id": "ci-github-token-least-permission",
+      "statement": "Set default no or read authority and grant job-scoped GITHUB_TOKEN permissions only for exact API mutations.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-secret-variable-config-classification"
+      ],
+      "misconceptions": [
+        "Not referencing github.token prevents actions and scripts from using it."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set default no or read authority and grant job-scoped GITHUB_TOKEN permissions only for exact API mutations."
+      ]
+    },
+    {
+      "id": "ci-untrusted-context-shell-injection",
+      "statement": "Pass untrusted context through environment or structured input, quote at the receiving language, validate shape, and avoid generated shell or code.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-github-token-least-permission"
+      ],
+      "misconceptions": [
+        "Quoting a GitHub expression inside a shell string prevents command injection."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pass untrusted context through environment or structured input, quote at the receiving language, validate shape, and avoid generated shell or code."
+      ]
+    },
+    {
+      "id": "ci-secret-redaction-derived-leak",
+      "statement": "Avoid command-line, environment, cache, artifact, summary, process, debug, and structured-output leaks and explicitly mask derived sensitive values.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-untrusted-context-shell-injection"
+      ],
+      "misconceptions": [
+        "GitHub automatically masks every encoded or transformed form of a secret."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Avoid command-line, environment, cache, artifact, summary, process, debug, and structured-output leaks and explicitly mask derived sensitive values."
+      ]
+    },
+    {
+      "id": "ci-secret-scope-rotation-incident",
+      "statement": "Limit secrets by repository, environment, job, event, and actor; rotate on exposure; revoke sessions; preserve redacted evidence; and test absence.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-secret-redaction-derived-leak"
+      ],
+      "misconceptions": [
+        "Deleting a workflow log completes secret incident response."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Limit secrets by repository, environment, job, event, and actor; rotate on exposure; revoke sessions; preserve redacted evidence; and test absence."
+      ]
+    },
+    {
+      "id": "ci-action-source-runtime-authority-review",
+      "statement": "Review action publisher, source, bundled code, runtime, inputs, outputs, token access, network behavior, post steps, advisories, and maintenance.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-secret-scope-rotation-incident"
+      ],
+      "misconceptions": [
+        "Marketplace listing or verified creator status makes an action safe for every permission level."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Review action publisher, source, bundled code, runtime, inputs, outputs, token access, network behavior, post steps, advisories, and maintenance."
+      ]
+    },
+    {
+      "id": "ci-action-full-sha-pin-update",
+      "statement": "Pin third-party actions to reviewed full commit SHAs, retain readable version comments, and automate reviewed update proposals.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-action-source-runtime-authority-review"
+      ],
+      "misconceptions": [
+        "A major version tag is immutable because maintainers intend compatibility."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pin third-party actions to reviewed full commit SHAs, retain readable version comments, and automate reviewed update proposals."
+      ]
+    },
+    {
+      "id": "ci-transitive-action-dependency-inventory",
+      "statement": "Inventory direct, reusable, composite, Docker, and nested action dependencies plus their effective privilege and provenance.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-action-full-sha-pin-update"
+      ],
+      "misconceptions": [
+        "Only uses lines in the top-level workflow contribute supply-chain risk."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inventory direct, reusable, composite, Docker, and nested action dependencies plus their effective privilege and provenance."
+      ]
+    },
+    {
+      "id": "ci-workflow-change-ownership-protection",
+      "statement": "Protect workflow and action code with CODEOWNERS, required review, branch rules, environment separation, and constrained bypass.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-transitive-action-dependency-inventory"
+      ],
+      "misconceptions": [
+        "General code review rules always apply equally to workflow-file changes."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Protect workflow and action code with CODEOWNERS, required review, branch rules, environment separation, and constrained bypass."
+      ]
+    },
+    {
+      "id": "ci-actions-codeql-policy-enforcement",
+      "statement": "Use workflow schema checks, policy engines, dependency review, secret scanning, and CodeQL for Actions to detect unsafe patterns and exceptions.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-workflow-change-ownership-protection"
+      ],
+      "misconceptions": [
+        "Static analysis proves a workflow is safe under every event payload and runner condition."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use workflow schema checks, policy engines, dependency review, secret scanning, and CodeQL for Actions to detect unsafe patterns and exceptions."
+      ]
+    },
+    {
+      "id": "ci-reuse-component-selection",
+      "statement": "Choose reusable workflow, composite action, JavaScript action, Docker action, script, or package based on job boundary, portability, testing, and authority.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-actions-codeql-policy-enforcement"
+      ],
+      "misconceptions": [
+        "Reusable workflows and composite actions are interchangeable wrappers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose reusable workflow, composite action, JavaScript action, Docker action, script, or package based on job boundary, portability, testing, and authority."
+      ]
+    },
+    {
+      "id": "ci-workflow-call-typed-interface",
+      "statement": "Define workflow_call inputs, secrets, outputs, validation, defaults, required values, and failure semantics as a versioned interface.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-reuse-component-selection"
+      ],
+      "misconceptions": [
+        "Reusable workflow inputs accept arbitrary nested objects with runtime type safety."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define workflow_call inputs, secrets, outputs, validation, defaults, required values, and failure semantics as a versioned interface."
+      ]
+    },
+    {
+      "id": "ci-permission-secret-inheritance-flow",
+      "statement": "Trace caller and called-workflow permissions, secrets inheritance, environment secret boundaries, nested depth, and non-escalation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-workflow-call-typed-interface"
+      ],
+      "misconceptions": [
+        "A called workflow can increase GITHUB_TOKEN permissions beyond the caller."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace caller and called-workflow permissions, secrets inheritance, environment secret boundaries, nested depth, and non-escalation."
+      ]
+    },
+    {
+      "id": "ci-reusable-workflow-pin-provenance",
+      "statement": "Pin external reusable workflows, record workflow ref and SHA, verify producer identity, and update through compatibility tests.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-permission-secret-inheritance-flow"
+      ],
+      "misconceptions": [
+        "Referencing a workflow on the default branch preserves reproducible delivery."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pin external reusable workflows, record workflow ref and SHA, verify producer identity, and update through compatibility tests."
+      ]
+    },
+    {
+      "id": "ci-shared-automation-evolution",
+      "statement": "Evolve shared automation through semantic interface changes, canaries, deprecation, consumer inventory, rollback, telemetry, and migration ownership.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "ci-reusable-workflow-pin-provenance"
+      ],
+      "misconceptions": [
+        "Centralizing a workflow automatically eliminates configuration drift."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Evolve shared automation through semantic interface changes, canaries, deprecation, consumer inventory, rollback, telemetry, and migration ownership."
+      ]
+    },
+    {
+      "id": "ci-buildx-action-context-contract",
+      "statement": "Configure official Docker setup and build actions with explicit Git or path context, Dockerfile, target, platforms, inputs, and output mode.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-shared-automation-evolution"
+      ],
+      "misconceptions": [
+        "A file changed by an earlier step is always included when build-push-action uses its default Git context."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure official Docker setup and build actions with explicit Git or path context, Dockerfile, target, platforms, inputs, and output mode."
+      ]
+    },
+    {
+      "id": "ci-docker-build-secret-cache-boundary",
+      "statement": "Use secret mounts, scoped cache backends, deterministic keys, trusted writers, and no credential-bearing ARG, layer, log, or attestation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-buildx-action-context-contract"
+      ],
+      "misconceptions": [
+        "Build arguments are an acceptable way to pass secrets because final ENV can be unset."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use secret mounts, scoped cache backends, deterministic keys, trusted writers, and no credential-bearing ARG, layer, log, or attestation."
+      ]
+    },
+    {
+      "id": "ci-container-test-before-push",
+      "statement": "Test image configuration, non-root and read-only behavior, health, signals, resources, network, changed config, and failure before registry mutation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-docker-build-secret-cache-boundary"
+      ],
+      "misconceptions": [
+        "A successful Docker build proves the container starts and behaves correctly."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Test image configuration, non-root and read-only behavior, health, signals, resources, network, changed config, and failure before registry mutation."
+      ]
+    },
+    {
+      "id": "ci-multiplatform-builder-test-evidence",
+      "statement": "Build declared platforms with Buildx, distinguish native and emulated execution, test each output, and verify the manifest index and platform digests.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-container-test-before-push"
+      ],
+      "misconceptions": [
+        "One amd64 test proves an arm64 image built under emulation works."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build declared platforms with Buildx, distinguish native and emulated execution, test each output, and verify the manifest index and platform digests."
+      ]
+    },
+    {
+      "id": "ci-build-record-summary-debug",
+      "statement": "Retain build record, summary, stages, timings, cache use, inputs, warnings, digest, and controlled reproduction instructions without secrets.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-multiplatform-builder-test-evidence"
+      ],
+      "misconceptions": [
+        "A smaller final image proves the build pipeline became faster."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Retain build record, summary, stages, timings, cache use, inputs, warnings, digest, and controlled reproduction instructions without secrets."
+      ]
+    },
+    {
+      "id": "ci-image-tag-digest-promotion",
+      "statement": "Generate human-readable tags while binding promotion, deployment, rollback, and evidence to one registry digest.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-build-record-summary-debug"
+      ],
+      "misconceptions": [
+        "A protected semantic version tag is equivalent to an immutable digest."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate human-readable tags while binding promotion, deployment, rollback, and evidence to one registry digest."
+      ]
+    },
+    {
+      "id": "ci-sbom-provenance-attestation-contract",
+      "statement": "Generate image SBOM and max-appropriate provenance, identify builder, source, inputs, subject digest, limits, and registry attachment.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-image-tag-digest-promotion"
+      ],
+      "misconceptions": [
+        "An SBOM proves dependencies are safe and provenance proves source code is benign."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate image SBOM and max-appropriate provenance, identify builder, source, inputs, subject digest, limits, and registry attachment."
+      ]
+    },
+    {
+      "id": "ci-github-artifact-attest-action",
+      "statement": "Use actions/attest with least permissions and exact subject path or digest while recognizing plan, repository visibility, and registry constraints.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-sbom-provenance-attestation-contract"
+      ],
+      "misconceptions": [
+        "Creating an attestation automatically enforces it for consumers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use actions/attest with least permissions and exact subject path or digest while recognizing plan, repository visibility, and registry constraints."
+      ]
+    },
+    {
+      "id": "ci-attestation-verification-policy",
+      "statement": "Verify signature, issuer, subject, source repository, workflow identity, builder, digest, predicate, and policy before promotion or deployment.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-github-artifact-attest-action"
+      ],
+      "misconceptions": [
+        "A valid signature is sufficient even when its identity and subject are unexpected."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify signature, issuer, subject, source repository, workflow identity, builder, digest, predicate, and policy before promotion or deployment."
+      ]
+    },
+    {
+      "id": "ci-slsa-level-claim-boundary",
+      "statement": "Map actual build and source controls to SLSA 1.2 tracks and levels without claiming transitive dependency or code-quality guarantees.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-attestation-verification-policy"
+      ],
+      "misconceptions": [
+        "SLSA Build Level 3 means all dependencies are secure and the software is vulnerability-free."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Map actual build and source controls to SLSA 1.2 tracks and levels without claiming transitive dependency or code-quality guarantees."
+      ]
+    },
+    {
+      "id": "ci-environment-protection-secret-scope",
+      "statement": "Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-slsa-level-claim-boundary"
+      ],
+      "misconceptions": [
+        "An environment name alone creates an approval gate and isolates every secret."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use named environments for approvals, branch and tag policies, scoped secrets, wait rules, URL evidence, and deployment history."
+      ]
+    },
+    {
+      "id": "ci-github-oidc-claims-permission",
+      "statement": "Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-environment-protection-secret-scope"
+      ],
+      "misconceptions": [
+        "id-token write grants direct write access to cloud resources."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Request id-token write only in the deployment job and validate issuer, audience, subject, workflow ref, repository identity, event, and environment claims."
+      ]
+    },
+    {
+      "id": "ci-gcp-workload-identity-federation",
+      "statement": "Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-github-oidc-claims-permission"
+      ],
+      "misconceptions": [
+        "Workload Identity Federation is safe with an unrestricted repository-name subject condition."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Exchange GitHub OIDC identity through a constrained Google Workload Identity Provider and service account without storing a key."
+      ]
+    },
+    {
+      "id": "ci-cloud-least-privilege-service-account",
+      "statement": "Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-gcp-workload-identity-federation"
+      ],
+      "misconceptions": [
+        "Cloud Run Admin alone is the complete and least-privilege deployment permission set."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate build, registry, deploy, runtime, traffic, and rollback identities and grant resource-scoped roles for exact operations."
+      ]
+    },
+    {
+      "id": "ci-auth-lifetime-audit-revocation",
+      "statement": "Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-cloud-least-privilege-service-account"
+      ],
+      "misconceptions": [
+        "Short-lived credentials do not require monitoring or an incident response plan."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound token lifetime, exported credentials, audience, session, audit correlation, cleanup, trust-policy changes, and incident revocation."
+      ]
+    },
+    {
+      "id": "ci-cloud-run-revision-image-contract",
+      "statement": "Deploy one verified image digest with explicit service, region, configuration, runtime identity, revision suffix, labels, and no-traffic option.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-auth-lifetime-audit-revocation"
+      ],
+      "misconceptions": [
+        "Deploying the same image tag guarantees the same Cloud Run revision contents."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Deploy one verified image digest with explicit service, region, configuration, runtime identity, revision suffix, labels, and no-traffic option."
+      ]
+    },
+    {
+      "id": "ci-pretraffic-smoke-readiness",
+      "statement": "Validate revision readiness, configuration, identity, logs, authenticated smoke behavior, changed inputs, and dependency failure before traffic.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-cloud-run-revision-image-contract"
+      ],
+      "misconceptions": [
+        "Cloud Run accepting a deployment proves the application is ready for production traffic."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Validate revision readiness, configuration, identity, logs, authenticated smoke behavior, changed inputs, and dependency failure before traffic."
+      ]
+    },
+    {
+      "id": "ci-traffic-split-canary-signals",
+      "statement": "Move bounded traffic by revision or tag, define observation window, compare user and system signals, and stop on explicit abort conditions.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-pretraffic-smoke-readiness"
+      ],
+      "misconceptions": [
+        "A one-percent canary receives a representative one percent of every user and workload type."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Move bounded traffic by revision or tag, define observation window, compare user and system signals, and stop on explicit abort conditions."
+      ]
+    },
+    {
+      "id": "ci-cloud-run-rollback-rollforward",
+      "statement": "Restore traffic to a known healthy revision without rebuilding, verify recovery, preserve failed evidence, and coordinate incompatible data changes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-traffic-split-canary-signals"
+      ],
+      "misconceptions": [
+        "Redeploying old source is the fastest and most faithful rollback."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Restore traffic to a known healthy revision without rebuilding, verify recovery, preserve failed evidence, and coordinate incompatible data changes."
+      ]
+    },
+    {
+      "id": "ci-deployment-iam-separation",
+      "statement": "Keep application deployment separate from public access and IAM mutation, with explicit ownership, review, audit, and recovery for each.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-cloud-run-rollback-rollforward"
+      ],
+      "misconceptions": [
+        "The deployment workflow should automatically make a service public for convenience."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Keep application deployment separate from public access and IAM mutation, with explicit ownership, review, audit, and recovery for each."
+      ]
+    },
+    {
+      "id": "ci-release-version-source-authority",
+      "statement": "Derive version, tag, changelog, release notes, source commit, and authorization from a protected reviewed release process.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-deployment-iam-separation"
+      ],
+      "misconceptions": [
+        "A signed tag proves the tagged source passed current required checks."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive version, tag, changelog, release notes, source commit, and authorization from a protected reviewed release process."
+      ]
+    },
+    {
+      "id": "ci-build-once-promote-many",
+      "statement": "Build once from reviewed source, retain immutable artifacts and attestations, approve promotion, and avoid environment-specific rebuilds.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-release-version-source-authority"
+      ],
+      "misconceptions": [
+        "Rebuilding for each environment improves reproducibility because configuration differs."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build once from reviewed source, retain immutable artifacts and attestations, approve promotion, and avoid environment-specific rebuilds."
+      ]
+    },
+    {
+      "id": "ci-npm-trusted-publishing-oidc",
+      "statement": "Publish with npm trusted publishing on supported hosted runners using exact repository, workflow, environment, id-token permission, and npm 11.5.1 or later.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-build-once-promote-many"
+      ],
+      "misconceptions": [
+        "OIDC trusted publishing also authenticates private dependency installation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Publish with npm trusted publishing on supported hosted runners using exact repository, workflow, environment, id-token permission, and npm 11.5.1 or later."
+      ]
+    },
+    {
+      "id": "ci-package-provenance-verification",
+      "statement": "Verify package contents, pack list, version, repository identity, source commit, workflow, transparency entry, signatures, and provenance before adoption.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-npm-trusted-publishing-oidc"
+      ],
+      "misconceptions": [
+        "npm provenance guarantees a published package contains no malicious behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify package contents, pack list, version, repository identity, source commit, workflow, transparency entry, signatures, and provenance before adoption."
+      ]
+    },
+    {
+      "id": "ci-release-approval-separation-duty",
+      "statement": "Separate author, reviewer, builder, approver, publisher, rollback authority, emergency bypass, and audit evidence according to risk.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "ci-package-provenance-verification"
+      ],
+      "misconceptions": [
+        "More manual approval steps always improve release safety."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate author, reviewer, builder, approver, publisher, rollback authority, emergency bypass, and audit evidence according to risk."
+      ]
+    },
+    {
+      "id": "ci-pipeline-telemetry-cardinality-privacy",
+      "statement": "Instrument queue, duration, critical path, cache, failure class, artifact, deployment, and recovery with bounded cardinality and privacy.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-release-approval-separation-duty"
+      ],
+      "misconceptions": [
+        "Recording every branch, commit, actor, test, and error as metric labels gives the best observability."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Instrument queue, duration, critical path, cache, failure class, artifact, deployment, and recovery with bounded cardinality and privacy."
+      ]
+    },
+    {
+      "id": "ci-run-log-artifact-retention-cost",
+      "statement": "Set log, artifact, cache, attestation, test-report, and deployment-evidence retention from recovery, audit, privacy, quota, and cost needs.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-pipeline-telemetry-cardinality-privacy"
+      ],
+      "misconceptions": [
+        "Longer retention is always safer because more evidence is available."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set log, artifact, cache, attestation, test-report, and deployment-evidence retention from recovery, audit, privacy, quota, and cost needs."
+      ]
+    },
+    {
+      "id": "ci-first-causal-failure-debugging",
+      "statement": "Reconstruct event, workflow version, runner, inputs, dependency graph, first causal failure, retries, side effects, and downstream state before rerunning.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-run-log-artifact-retention-cost"
+      ],
+      "misconceptions": [
+        "The last red step in the UI is necessarily the root cause."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Reconstruct event, workflow version, runner, inputs, dependency graph, first causal failure, retries, side effects, and downstream state before rerunning."
+      ]
+    },
+    {
+      "id": "ci-delivery-incident-response",
+      "statement": "Contain credentials and mutations, stop unsafe workflows, preserve redacted evidence, restore a known artifact, notify owners, and retain regression controls.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "ci-first-causal-failure-debugging"
+      ],
+      "misconceptions": [
+        "Cancelling the active workflow fully contains a delivery incident."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Contain credentials and mutations, stop unsafe workflows, preserve redacted evidence, restore a known artifact, notify owners, and retain regression controls."
+      ]
+    },
+    {
+      "id": "ci-policy-exception-continuous-improvement",
+      "statement": "Govern required workflows, allowed actions, runner groups, permissions, attestations, exceptions, expiry, drills, metrics, and risk-based improvement.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "ci-delivery-incident-response"
+      ],
+      "misconceptions": [
+        "A centrally mandated pipeline template can replace local ownership and learning."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Govern required workflows, allowed actions, runner groups, permissions, attestations, exceptions, expiry, drills, metrics, and risk-based improvement."
+      ]
+    }
+  ],
+  "moduleIds": [
+    "ci-delivery-outcomes-flow-evidence",
+    "gha-execution-model-contexts",
+    "gha-workflow-syntax-expressions",
+    "gha-events-refs-trust-boundaries",
+    "gha-runners-isolation-capacity",
+    "ci-node-typescript-reproducibility",
+    "ci-quality-gate-orchestration",
+    "ci-testing-services-coverage",
+    "gha-matrices-needs-outputs-artifacts",
+    "gha-cache-performance-integrity",
+    "gha-concurrency-timeouts-flake-control",
+    "gha-secrets-tokens-injection",
+    "gha-actions-dependencies-supply-chain",
+    "gha-reuse-composite-workflow-contracts",
+    "ci-docker-build-test-cache",
+    "ci-image-release-attestations",
+    "cd-environments-oidc-cloud-auth",
+    "cd-cloud-run-progressive-delivery",
+    "cd-releases-packages-change-control",
+    "ci-observability-incidents-governance"
+  ],
+  "estimatedHours": 303,
+  "credential": {
+    "title": "Secure CI/CD with GitHub Actions, TypeScript, Docker, and Cloud Run Certificate",
+    "requiredProjectIds": [
+      "ci-trust-runner-map-project-build",
+      "ci-typescript-quality-pipeline-project-build",
+      "ci-attested-container-release-project-build",
+      "ci-cloud-run-progressive-release-project-build",
+      "ci-production-delivery-defense-project-build"
+    ],
+    "finalExamId": "cicd-github-actions-certification-exam",
+    "passingPercent": 85
+  },
+  "status": "preview"
+}

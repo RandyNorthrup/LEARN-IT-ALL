@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-publisher-buffer-backpressure-retrieval-review",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-publisher-buffer-backpressure",
+  "kind": "review",
+  "title": "Publisher Buffers, Drain, Admission, and Bounded Batching · Spiral Review",
+  "summary": "A delayed handoff reconstructs publisher buffers, drain, admission, and bounded batching from bounded publish, route, delivery, acknowledgement, and recovery evidence, challenges one misconception, and revises the publisher admission and buffer-pressure controller. Planned artifact: Extend the evidence record for publisher admission and buffer-pressure controller after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evi…",
+  "objectives": [
+    "Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises.",
+    "Pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks.",
+    "Propagate publisher capacity to HTTP or job admission with queue, byte, time, tenant, and rejection budgets.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-ts-publish-boolean-contract",
+      "rabbit-ts-drain-single-waiter",
+      "rabbit-ts-upstream-admission-budget",
+      "rabbit-ts-bounded-batch-window",
+      "rabbit-ts-blocked-unblocked-flow"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-ts-publisher-buffer-backpressure-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "scenario-1",
+      "title": "RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract",
+      "interaction": "predict",
+      "instruction": "review case — A review messaging team handles case 9055 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises.\n\nWhich action demonstrates Publish Boolean Contract without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract.",
+      "why": "The decision supplies observable evidence for treat amqplib publish and sendtoqueue return values as writable-buffer admission signals rather than delivery confirmations or promises. For RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract, keep Publish Boolean Contract connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 9055 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Publish Boolean Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-publish-boolean-contract"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract, name the types, ownership, and stop path, Publish Boolean Contract precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 9055 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises.",
+        "For RabbitMQ and TypeScript Publish Boolean Contract · changed case · Review Publish Boolean Contract, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A true return means RabbitMQ durably accepted the message."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises. Apply it to the stated input and retain a reproducible trace for publisher admission and buffer-pressure controller."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A true return means RabbitMQ durably accepted the message. That claim does not survive the publish boolean contract · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter",
+      "interaction": "answer",
+      "instruction": "review case — A review messaging team handles case 9246 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks.\n\nWhich action demonstrates Drain Single Waiter without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter.",
+      "why": "The decision supplies observable evidence for pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks. For RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter, keep Drain Single Waiter connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 9246 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Drain Single Waiter condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-drain-single-waiter"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter, name the types, ownership, and stop path, Drain Single Waiter precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 9246 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks.",
+        "For RabbitMQ and TypeScript Drain Single Waiter · changed case · Review Drain Single Waiter, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every blocked publish should attach an unlimited permanent drain listener."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Pause admission after false, coordinate a bounded drain waiter, handle close and abort, and avoid lost wakeups or listener leaks. Apply it to the stated input and retain a reproducible trace for publisher admission and buffer-pressure controller."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Every blocked publish should attach an unlimited permanent drain listener. That claim does not survive the drain single waiter · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget",
+      "interaction": "answer",
+      "instruction": "review case — A review messaging team handles case 1865 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Propagate publisher capacity to HTTP or job admission with queue, byte, time, tenant, and rejection budgets.\n\nWhich action demonstrates Upstream Admission Budget without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget.",
+      "why": "The decision supplies observable evidence for propagate publisher capacity to http or job admission with queue, byte, time, tenant, and rejection budgets. For RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget, keep Upstream Admission Budget connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 1865 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Propagate publisher capacity to HTTP or job admission with queue, byte, time, tenant, and rejection budgets."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Upstream Admission Budget condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-upstream-admission-budget"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget, name the types, ownership, and stop path, Upstream Admission Budget precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 1865 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Propagate publisher capacity to HTTP or job admission with queue, byte, time, tenant, and rejection budgets.",
+        "For RabbitMQ and TypeScript Upstream Admission Budget · changed case · Review Upstream Admission Budget, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Local memory can safely absorb any broker outage if requests are small."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Local memory can safely absorb any broker outage if requests are small. That claim does not survive the upstream admission budget · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Propagate publisher capacity to HTTP or job admission with queue, byte, time, tenant, and rejection budgets. Apply it to the stated input and retain a reproducible trace for publisher admission and buffer-pressure controller."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window",
+      "interaction": "predict",
+      "instruction": "review case — A review messaging team handles case 6008 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Batch by count, bytes, age, confirm window, and cancellation while retaining each message result and fairness.\n\nWhich action demonstrates Bounded Batch Window without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window.",
+      "why": "The decision supplies observable evidence for batch by count, bytes, age, confirm window, and cancellation while retaining each message result and fairness. For RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window, keep Bounded Batch Window connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 6008 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Batch by count, bytes, age, confirm window, and cancellation while retaining each message result and fairness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bounded Batch Window condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-bounded-batch-window"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window, name the types, ownership, and stop path, Bounded Batch Window precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 6008 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Batch by count, bytes, age, confirm window, and cancellation while retaining each message result and fairness.",
+        "For RabbitMQ and TypeScript Bounded Batch Window · changed case · Review Bounded Batch Window, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Larger batches always improve throughput without changing latency or loss exposure."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Batch by count, bytes, age, confirm window, and cancellation while retaining each message result and fairness. Apply it to the stated input and retain a reproducible trace for publisher admission and buffer-pressure controller."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Larger batches always improve throughput without changing latency or loss exposure. That claim does not survive the bounded batch window · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow",
+      "interaction": "answer",
+      "instruction": "review case — A review messaging team handles case 4773 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.\n\nWhich action demonstrates Blocked Unblocked Flow without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow.",
+      "why": "The decision supplies observable evidence for respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes. For RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow, keep Blocked Unblocked Flow connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 4773 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Blocked Unblocked Flow condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Publishers and Consumers — Controls publishing, unroutable messages, mandatory and alternate behavior, consumer lifecycle, cancellation, prefetch, capacity, and concurrency."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow, name the types, ownership, and stop path, Blocked Unblocked Flow precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 4773 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.",
+        "For RabbitMQ and TypeScript Blocked Unblocked Flow · changed case · Review Blocked Unblocked Flow, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A drain event proves RabbitMQ resource alarms and queue backlog have cleared."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes. Apply it to the stated input and retain a reproducible trace for publisher admission and buffer-pressure controller."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A drain event proves RabbitMQ resource alarms and queue backlog have cleared. That claim does not survive the blocked unblocked flow · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract",
+      "interaction": "arrange",
+      "instruction": "Order the Publish Boolean Contract RabbitMQ and TypeScript HTTP evidence cycle for this review task before implementing it.\n\nEvidence target: RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract.",
+      "why": "Correct order keeps Publish Boolean Contract assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract, keep Publish Boolean Contract connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review messaging team handles case 3154 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Publish Boolean Contract has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-publish-boolean-contract"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract, name the types, ownership, and stop path, Publish Boolean Contract precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 3154 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Treat amqplib publish and sendToQueue return values as writable-buffer admission signals rather than delivery confirmations or Promises.",
+        "For RabbitMQ and TypeScript Retrieve the complete evidence cycle · Review Publish Boolean Contract, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A true return means RabbitMQ durably accepted the message."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Declare RabbitMQ and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the review Publish Boolean Contract case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Predict RabbitMQ and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the review Publish Boolean Contract case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Run the smallest deterministic RabbitMQ and TypeScript request or response model and retain inspectable evidence for the review Publish Boolean Contract case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Inject one changed RabbitMQ and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the review Publish Boolean Contract case"
+        }
+      ]
+    },
+    {
+      "id": "mixed-evidence",
+      "title": "RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow",
+      "interaction": "inspect",
+      "instruction": "review case — A review messaging team handles case 1535 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.\n\nInspect the Blocked Unblocked Flow trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow.",
+      "why": "The decision supplies observable evidence for respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes. For RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow, keep Blocked Unblocked Flow connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Blocked Unblocked Flow, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow, name the types, ownership, and stop path, Blocked Unblocked Flow precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 1535 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.",
+        "For RabbitMQ and TypeScript Separate evidence from confidence · Review Blocked Unblocked Flow, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A drain event proves RabbitMQ resource alarms and queue backlog have cleared."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Blocked Unblocked Flow case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review messaging team handles case 1535 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "A drain event proves RabbitMQ resource alarms and queue backlog have cleared.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes. Artifact under review: publisher admission and buffer-pressure controller.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Blocked Unblocked Flow, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Blocked Unblocked Flow: explain the governing condition, one failure, and how this concrete case was verified — A review messaging team handles case 8916 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.\n\nEvidence target: RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow, keep Blocked Unblocked Flow connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow, name the types, ownership, and stop path, Blocked Unblocked Flow precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review messaging team handles case 8916 in a canary consumer reading old and new envelope versions. Build deterministic TypeScript evidence to propagate blocked, byte capacity, publish boolean, and drain state into upstream admission; prove topology rollback before deleting the old binding; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Respond to blocked and unblocked connection events, broker flow control, alarms, and local drain evidence without confusing their scopes.",
+        "For RabbitMQ and TypeScript Record what required effort · Review Blocked Unblocked Flow, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A drain event proves RabbitMQ resource alarms and queue backlog have cleared."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Publish Boolean Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Publish Boolean Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-publish-boolean-contract"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Drain Single Waiter to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Drain Single Waiter.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-drain-single-waiter"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Upstream Admission Budget to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Upstream Admission Budget.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-upstream-admission-budget"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bounded Batch Window to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bounded Batch Window.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-bounded-batch-window"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Blocked Unblocked Flow to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Blocked Unblocked Flow.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-publish-boolean-contract"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Blocked Unblocked Flow to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Blocked Unblocked Flow.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using respond and blocked plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-blocked-unblocked-flow"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "respond",
+        "blocked"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

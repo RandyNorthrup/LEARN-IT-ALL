@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "http-go-body-streams-limits-debugging-clinic",
+  "courseId": "http-clients-go",
+  "moduleId": "http-go-body-streams-limits",
+  "kind": "debug",
+  "title": "One-Shot Bodies, Streaming, Uploads, Decompression, and Resource Limits · Go Client Systems · Contract Triage",
+  "summary": "An on-call reliability engineer tracing a production client incident must isolate a plausible but incorrect result from conflicting traces, repair its cause, and retain a regression witness for one-shot bodies, streaming, uploads, decompression, and resource limits, producing bounded streaming body pipeline. Planned artifact: Repair a changed failure in a Go 1.26 net/http bounded streaming body pipeline and publish the reproduction, evidence, repair, and regression record. Learners progress thr…",
+  "objectives": [
+    "Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "http-go-one-shot-body-ownership",
+      "http-go-bounded-response-reads",
+      "http-go-streaming-uploads",
+      "http-go-message-delimitation-trailers",
+      "http-go-decompression-expansion"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-go-body-streams-limits-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "http-clients-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-clients-go cumulative protocol-correct client portfolio.\n// Browser execution uses deterministic request and response models only.\n// Live DNS, TLS, sockets, net/http, races, and load require full Go 1.26 transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype RequestEvidence struct { Method, Target string; Attempt int }\ntype ResponseEvidence struct { Status, BodyBytes int; Valid bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP client portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Go Inspect the failure record · Debug One Shot Body Ownership",
+      "interaction": "inspect",
+      "instruction": "debug case — Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nInspect the One Shot Body Ownership trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Go Inspect the failure record · Debug One Shot Body Ownership.",
+      "why": "The decision supplies observable evidence for treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Inspect the failure record · Debug One Shot Body Ownership, keep One Shot Body Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For One Shot Body Ownership, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "http-go-one-shot-body-ownership"
+      ],
+      "hints": [
+        "For Go Inspect the failure record · Debug One Shot Body Ownership, name the method, authority, body, byte, time, and credential boundary, One Shot Body Ownership precondition, or invariant that must hold.",
+        "At Go Inspect the failure record · Debug One Shot Body Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Inspect the failure record · Debug One Shot Body Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A body can always be reread after parsing without buffering or reconstruction. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "One Shot Body Ownership case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A body can always be reread after parsing without buffering or reconstruction. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence. Artifact under review: a Go 1.26 net/http bounded streaming body pipeline.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient One Shot Body Ownership happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies One Shot Body Ownership, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A body can always be reread after parsing without buffering or reconstruction. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership.",
+      "why": "The decision supplies observable evidence for treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership, keep One Shot Body Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the One Shot Body Ownership symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 net/http Package Documentation — Controls Client, Request, Response, Transport, RoundTripper, redirects, cookies, body ownership, timeouts, connection reuse, HTTP/2 configuration, and Go 1.26 ClientConn boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "http-go-one-shot-body-ownership"
+      ],
+      "hints": [
+        "For Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership, name the method, authority, body, byte, time, and credential boundary, One Shot Body Ownership precondition, or invariant that must hold.",
+        "At Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go One Shot Body Ownership · fault isolation · Debug One Shot Body Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A body can always be reread after parsing without buffering or reconstruction. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "One Shot Body Ownership failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A body can always be reread after parsing without buffering or reconstruction. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies One Shot Body Ownership."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the one shot body ownership · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For one shot body ownership · fault isolation, run one convenient One Shot Body Ownership happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads",
+      "interaction": "predict",
+      "instruction": "debug case — Go incident collection agent streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A Content-Length check alone bounds every response body. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads.",
+      "why": "The decision supplies observable evidence for limit compressed and decoded response reads before allocation, parsing, logging, or persistence. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads, keep Bounded Response Reads connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bounded Response Reads condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 net/http Package Documentation — Controls Client, Request, Response, Transport, RoundTripper, redirects, cookies, body ownership, timeouts, connection reuse, HTTP/2 configuration, and Go 1.26 ClientConn boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "http-go-bounded-response-reads"
+      ],
+      "hints": [
+        "For Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads, name the method, authority, body, byte, time, and credential boundary, Bounded Response Reads precondition, or invariant that must hold.",
+        "At Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Bounded Response Reads · fault isolation · Debug Bounded Response Reads, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A Content-Length check alone bounds every response body. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the bounded response reads · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For bounded response reads · fault isolation, run one convenient Bounded Response Reads happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Bounded Response Reads."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Go Streaming Uploads · fault isolation · Debug Streaming Uploads",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “Streaming an upload automatically makes it resumable and safe to retry. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Streaming Uploads · fault isolation · Debug Streaming Uploads.",
+      "why": "The decision supplies observable evidence for stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Streaming Uploads · fault isolation · Debug Streaming Uploads, keep Streaming Uploads connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Streaming Uploads symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 net/http Package Documentation — Controls Client, Request, Response, Transport, RoundTripper, redirects, cookies, body ownership, timeouts, connection reuse, HTTP/2 configuration, and Go 1.26 ClientConn boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "http-go-streaming-uploads"
+      ],
+      "hints": [
+        "For Go Streaming Uploads · fault isolation · Debug Streaming Uploads, name the method, authority, body, byte, time, and credential boundary, Streaming Uploads precondition, or invariant that must hold.",
+        "At Go Streaming Uploads · fault isolation · Debug Streaming Uploads, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Streaming Uploads · fault isolation · Debug Streaming Uploads, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Streaming an upload automatically makes it resumable and safe to retry. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Streaming Uploads failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Streaming an upload automatically makes it resumable and safe to retry. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For streaming uploads · fault isolation, run one convenient Streaming Uploads happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Streaming Uploads."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the streaming uploads · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers",
+      "interaction": "predict",
+      "instruction": "debug case — Go incident collection agent streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “Chunked transfer encoding is an application-level compression format. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers.",
+      "why": "The decision supplies observable evidence for reason about known lengths, http/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers, keep Message Delimitation Trailers connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Message Delimitation Trailers condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 net/http Package Documentation — Controls Client, Request, Response, Transport, RoundTripper, redirects, cookies, body ownership, timeouts, connection reuse, HTTP/2 configuration, and Go 1.26 ClientConn boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "http-go-message-delimitation-trailers"
+      ],
+      "hints": [
+        "For Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers, name the method, authority, body, byte, time, and credential boundary, Message Delimitation Trailers precondition, or invariant that must hold.",
+        "At Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Message Delimitation Trailers · fault isolation · Debug Message Delimitation Trailers, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Chunked transfer encoding is an application-level compression format. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Message Delimitation Trailers."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the message delimitation trailers · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For message delimitation trailers · fault isolation, run one convenient Message Delimitation Trailers happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Go Decompression Expansion · fault isolation · Debug Decompression Expansion",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Decompression Expansion · fault isolation · Debug Decompression Expansion.",
+      "why": "The decision supplies observable evidence for defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Decompression Expansion · fault isolation · Debug Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Decompression Expansion symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 net/http Package Documentation — Controls Client, Request, Response, Transport, RoundTripper, redirects, cookies, body ownership, timeouts, connection reuse, HTTP/2 configuration, and Go 1.26 ClientConn boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "hints": [
+        "For Go Decompression Expansion · fault isolation · Debug Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Go Decompression Expansion · fault isolation · Debug Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Decompression Expansion · fault isolation · Debug Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Decompression Expansion failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the decompression expansion · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For decompression expansion · fault isolation, run one convenient Decompression Expansion happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Decompression Expansion."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Go Implement the cause-level repair · Debug Decompression Expansion",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: http-go-decompression-expansion-5954n5\" that uses deterministic value evidence to bound decoded bytes and compression expansion.\n\nEvidence target: Go Implement the cause-level repair · Debug Decompression Expansion.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Decompression Expansion into observable performance evidence. For Go Implement the cause-level repair · Debug Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: http-go-decompression-expansion-5954n5\nfunc evidence_http_go_decompression_expansion_5954n5(compressedBytes int, decodedBytes int, maximumDecodedBytes int) (int, bool) {\n\tif compressedBytes <= 0 || decodedBytes < 0 || maximumDecodedBytes <= 0 { return 0, false }\n\texpansionRatio := decodedBytes / compressedBytes\n\treturn expansionRatio, decodedBytes <= maximumDecodedBytes && expansionRatio <= 100\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "hints": [
+        "For Go Implement the cause-level repair · Debug Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Go Implement the cause-level repair · Debug Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Implement the cause-level repair · Debug Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Go Order the regression proof · Debug Decompression Expansion",
+      "interaction": "arrange",
+      "instruction": "Order the Decompression Expansion Go HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: Go Order the regression proof · Debug Decompression Expansion.",
+      "why": "Correct order keeps Decompression Expansion assumptions visible before execution and verifies its result against a boundary case afterward. For Go Order the regression proof · Debug Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Decompression Expansion has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "hints": [
+        "For Go Order the regression proof · Debug Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Go Order the regression proof · Debug Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Order the regression proof · Debug Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Go method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Decompression Expansion case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Go resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Decompression Expansion case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Go request or response model and retain inspectable evidence for the debug Decompression Expansion case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed Go failure, verify bounded cleanup, and state live-network transfer limits for the debug Decompression Expansion case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Go Publish the incident record · Debug Decompression Expansion",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Decompression Expansion: explain the governing condition, one failure, and how this concrete case was verified — Go incident collection agent streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nEvidence target: Go Publish the incident record · Debug Decompression Expansion.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Go Publish the incident record · Debug Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "hints": [
+        "For Go Publish the incident record · Debug Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Go Publish the incident record · Debug Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Publish the incident record · Debug Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies One Shot Body Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about One Shot Body Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-one-shot-body-ownership"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies One Shot Body Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about One Shot Body Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-one-shot-body-ownership"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bounded Response Reads to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bounded Response Reads.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-bounded-response-reads"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Streaming Uploads to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Streaming Uploads.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-streaming-uploads"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Message Delimitation Trailers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Message Delimitation Trailers.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-message-delimitation-trailers"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Decompression Expansion to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Decompression Expansion.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: http-go-decompression-expansion-5954n5.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "file": "go",
+      "expected": "// Evidence: http-go-decompression-expansion-5954n5"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: http-go-decompression-expansion-5954n5(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_http_go_decompression_expansion_5954n5\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?decodedBytes\\s*/\\s*compressedBytes)(?=(?:(?!// Evidence:)[\\s\\S])*?maximumDecodedBytes)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using defend and decompression plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-decompression-expansion"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "defend",
+        "decompression"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

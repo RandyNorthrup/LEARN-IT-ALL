@@ -1,0 +1,839 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-shared-runtime-project-build",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-abi-ffi-shared-boundaries",
+  "kind": "project",
+  "title": "ABI, Shared Libraries, and Foreign-Function Memory · Stakeholder Native Systems Mission",
+  "summary": "A language tools cooperative. The cooperative needs pooled and traced objects, cycle policy, thread-safe publication and reclamation, opaque C handles, and allocator-safe Rust, Python, and WebAssembly boundaries. Planned artifact: Deliver Shared Object Runtime and Foreign API with acceptance evidence, rubric defense, reflection, and a changed-constraint extension. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+    "Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+    "Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-pool-free-list-integrity",
+      "cmem-cycle-leak-diagnosis",
+      "cmem-mark-sweep-invariant",
+      "cmem-reclamation-strategy",
+      "cmem-buffer-length-allocator-family",
+      "cmem-wasm-linear-memory"
+    ],
+    "assesses": [
+      "cmem-pool-free-list-integrity",
+      "cmem-cycle-leak-diagnosis",
+      "cmem-mark-sweep-invariant",
+      "cmem-reclamation-strategy",
+      "cmem-buffer-length-allocator-family",
+      "cmem-wasm-linear-memory"
+    ]
+  },
+  "prerequisites": [
+    "cmem-abi-ffi-shared-boundaries-mastery-quiz"
+  ],
+  "difficulty": "mastery",
+  "estimatedMinutes": 420,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Project Pool Free List Integrity",
+      "interaction": "predict",
+      "instruction": "project case — A project native-systems team handles memory case 4506. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Project Pool Free List Integrity.",
+      "why": "The decision supplies observable evidence for maintain free-list membership, generation, duplicate-release, and exhaustion invariants. For Commit to the mission model · Project Pool Free List Integrity, keep Pool Free List Integrity connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 4506. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pool Free List Integrity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "hints": [
+        "For Commit to the mission model · Project Pool Free List Integrity, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Pool Free List Integrity precondition, or invariant that must hold.",
+        "At Commit to the mission model · Project Pool Free List Integrity, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 4506. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+        "For Commit to the mission model · Project Pool Free List Integrity, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A singly linked free list needs no corruption checks because nodes are fixed size."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "A singly linked free list needs no corruption checks because nodes are fixed size. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Pool Free List Integrity case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Pool Free List Integrity preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Pool Free List Integrity · changed case · Project Pool Free List Integrity",
+      "interaction": "answer",
+      "instruction": "project case — A project native-systems team handles memory case 6125. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.\n\nWhich action demonstrates Pool Free List Integrity without dropping earlier contracts?\n\nEvidence target: Pool Free List Integrity · changed case · Project Pool Free List Integrity.",
+      "why": "The decision supplies observable evidence for maintain free-list membership, generation, duplicate-release, and exhaustion invariants. For Pool Free List Integrity · changed case · Project Pool Free List Integrity, keep Pool Free List Integrity connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 6125. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pool Free List Integrity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "hints": [
+        "For Pool Free List Integrity · changed case · Project Pool Free List Integrity, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Pool Free List Integrity precondition, or invariant that must hold.",
+        "At Pool Free List Integrity · changed case · Project Pool Free List Integrity, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 6125. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+        "For Pool Free List Integrity · changed case · Project Pool Free List Integrity, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A singly linked free list needs no corruption checks because nodes are fixed size."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For pool free list integrity · changed case, run one convenient Pool Free List Integrity case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Maintain free-list membership, generation, duplicate-release, and exhaustion invariants. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A singly linked free list needs no corruption checks because nodes are fixed size. That claim does not survive the pool free list integrity · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis",
+      "interaction": "inspect",
+      "instruction": "project case — A project native-systems team handles memory case 3792. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.\n\nWhich action demonstrates Cycle Leak Diagnosis without dropping earlier contracts?\n\nEvidence target: Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis.",
+      "why": "The decision supplies observable evidence for demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges. For Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis, keep Cycle Leak Diagnosis connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 3792. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Cycle Leak Diagnosis result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-cycle-leak-diagnosis"
+      ],
+      "hints": [
+        "For Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Cycle Leak Diagnosis precondition, or invariant that must hold.",
+        "At Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 3792. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+        "For Cycle Leak Diagnosis · changed case · Project Cycle Leak Diagnosis, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A reference count reaching zero eventually is guaranteed if the program stops using an object."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cycle Leak Diagnosis case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A reference count reaching zero eventually is guaranteed if the program stops using an object.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A reference count reaching zero eventually is guaranteed if the program stops using an object. That claim does not survive the cycle leak diagnosis · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For cycle leak diagnosis · changed case, run one convenient Cycle Leak Diagnosis case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Mark Sweep Invariant · changed case · Project Mark Sweep Invariant",
+      "interaction": "answer",
+      "instruction": "project case — A project native-systems team handles memory case 5411. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.\n\nWhich action demonstrates Mark Sweep Invariant without dropping earlier contracts?\n\nEvidence target: Mark Sweep Invariant · changed case · Project Mark Sweep Invariant.",
+      "why": "The decision supplies observable evidence for mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges. For Mark Sweep Invariant · changed case · Project Mark Sweep Invariant, keep Mark Sweep Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 5411. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Mark Sweep Invariant condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-mark-sweep-invariant"
+      ],
+      "hints": [
+        "For Mark Sweep Invariant · changed case · Project Mark Sweep Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mark Sweep Invariant precondition, or invariant that must hold.",
+        "At Mark Sweep Invariant · changed case · Project Mark Sweep Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 5411. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.",
+        "For Mark Sweep Invariant · changed case · Project Mark Sweep Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A single graph walk is enough without a complete allocation registry."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "A single graph walk is enough without a complete allocation registry. That claim does not survive the mark sweep invariant · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For mark sweep invariant · changed case, run one convenient Mark Sweep Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Reclamation Strategy · changed case · Project Reclamation Strategy",
+      "interaction": "inspect",
+      "instruction": "project case — A project native-systems team handles memory case 7030. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare locks, reference counts, hazard pointers, epochs, RCU-like schemes, and ownership transfer for safe reclamation.\n\nWhich action demonstrates Reclamation Strategy without dropping earlier contracts?\n\nEvidence target: Reclamation Strategy · changed case · Project Reclamation Strategy.",
+      "why": "The decision supplies observable evidence for compare locks, reference counts, hazard pointers, epochs, rcu-like schemes, and ownership transfer for safe reclamation. For Reclamation Strategy · changed case · Project Reclamation Strategy, keep Reclamation Strategy connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 7030. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare locks, reference counts, hazard pointers, epochs, RCU-like schemes, and ownership transfer for safe reclamation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Reclamation Strategy result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-reclamation-strategy"
+      ],
+      "hints": [
+        "For Reclamation Strategy · changed case · Project Reclamation Strategy, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Reclamation Strategy precondition, or invariant that must hold.",
+        "At Reclamation Strategy · changed case · Project Reclamation Strategy, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 7030. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare locks, reference counts, hazard pointers, epochs, RCU-like schemes, and ownership transfer for safe reclamation.",
+        "For Reclamation Strategy · changed case · Project Reclamation Strategy, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Lock-free deletion may free a node immediately after unlinking it."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Reclamation Strategy case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Lock-free deletion may free a node immediately after unlinking it.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare locks, reference counts, hazard pointers, epochs, RCU-like schemes, and ownership transfer for safe reclamation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For reclamation strategy · changed case, run one convenient Reclamation Strategy case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Compare locks, reference counts, hazard pointers, epochs, RCU-like schemes, and ownership transfer for safe reclamation. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Lock-free deletion may free a node immediately after unlinking it. That claim does not survive the reclamation strategy · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family",
+      "interaction": "answer",
+      "instruction": "project case — A project native-systems team handles memory case 8649. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pass buffers with lengths, ownership direction, allocator family, and release callback across FFI.\n\nWhich action demonstrates Buffer Length Allocator Family without dropping earlier contracts?\n\nEvidence target: Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family.",
+      "why": "The decision supplies observable evidence for pass buffers with lengths, ownership direction, allocator family, and release callback across ffi. For Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family, keep Buffer Length Allocator Family connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 8649. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pass buffers with lengths, ownership direction, allocator family, and release callback across FFI."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Buffer Length Allocator Family condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-buffer-length-allocator-family"
+      ],
+      "hints": [
+        "For Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Buffer Length Allocator Family precondition, or invariant that must hold.",
+        "At Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 8649. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pass buffers with lengths, ownership direction, allocator family, and release callback across FFI.",
+        "For Buffer Length Allocator Family · changed case · Project Buffer Length Allocator Family, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer and null terminator fully describe every foreign buffer."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Pass buffers with lengths, ownership direction, allocator family, and release callback across FFI. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A pointer and null terminator fully describe every foreign buffer. That claim does not survive the buffer length allocator family · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For buffer length allocator family · changed case, run one convenient Buffer Length Allocator Family case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-6",
+      "title": "Wasm Linear Memory · changed case · Project Wasm Linear Memory",
+      "interaction": "inspect",
+      "instruction": "project case — A project native-systems team handles memory case 4124. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.\n\nWhich action demonstrates Wasm Linear Memory without dropping earlier contracts?\n\nEvidence target: Wasm Linear Memory · changed case · Project Wasm Linear Memory.",
+      "why": "The decision supplies observable evidence for treat webassembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules. For Wasm Linear Memory · changed case · Project Wasm Linear Memory, keep Wasm Linear Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 4124. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Wasm Linear Memory result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "scenario-6-check"
+      ],
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "hints": [
+        "For Wasm Linear Memory · changed case · Project Wasm Linear Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Wasm Linear Memory precondition, or invariant that must hold.",
+        "At Wasm Linear Memory · changed case · Project Wasm Linear Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 4124. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+        "For Wasm Linear Memory · changed case · Project Wasm Linear Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A WebAssembly pointer is a host pointer and remains valid after memory growth."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Wasm Linear Memory case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-6-observed",
+            "label": "observed",
+            "text": "A WebAssembly pointer is a host pointer and remains valid after memory growth.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-6-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-6-misread",
+          "text": "A WebAssembly pointer is a host pointer and remains valid after memory growth. That claim does not survive the wasm linear memory · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-6-overreach",
+          "text": "For wasm linear memory · changed case, run one convenient Wasm Linear Memory case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-6-sound",
+          "text": "Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules. Apply it to the stated input and retain a reproducible trace for versioned cross-language ownership ABI."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Project Wasm Linear Memory",
+      "interaction": "inspect",
+      "instruction": "project case — A project native-systems team handles memory case 5743. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.\n\nInspect the Wasm Linear Memory trace for this project case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Project Wasm Linear Memory.",
+      "why": "The decision supplies observable evidence for treat webassembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules. For Audit the proposed evidence packet · Project Wasm Linear Memory, keep Wasm Linear Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-6"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Wasm Linear Memory, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Project Wasm Linear Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Wasm Linear Memory precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Project Wasm Linear Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 5743. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+        "For Audit the proposed evidence packet · Project Wasm Linear Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A WebAssembly pointer is a host pointer and remains valid after memory growth."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Wasm Linear Memory case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A project native-systems team handles memory case 5743. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A WebAssembly pointer is a host pointer and remains valid after memory growth.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules. Artifact under review: versioned cross-language ownership ABI.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Wasm Linear Memory case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Wasm Linear Memory, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Project Wasm Linear Memory",
+      "interaction": "code",
+      "instruction": "For this project demonstration of cmem-wasm-linear-memory, write the complete compile-ready C program headed \"/* Evidence: cmem-wasm-linear-memory-s5bihe */\" for changed case 1323. It must validate a versioned foreign buffer and allocator family, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Project Wasm Linear Memory.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Wasm Linear Memory into observable performance evidence. For Extend the cumulative artifact · Project Wasm Linear Memory, keep Wasm Linear Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-wasm-linear-memory-s5bihe */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 1323; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct ffi_buffer { unsigned abi_version; size_t length; size_t capacity; unsigned allocator_id; };\n\nstatic int evidence_cmem_wasm_linear_memory_s5bihe(const struct ffi_buffer *buffer, unsigned expected_allocator) {\n  if (buffer == NULL || buffer->abi_version != 1u) return 0;\n  if (buffer->length > buffer->capacity) return 0;\n  if (buffer->allocator_id != expected_allocator) return 0;\n  return (int)buffer->length;\n}\n\nint main(void) {\n  struct ffi_buffer buffer = { 1u, 3u, 7u, 7u };\n  int wrong_heap = evidence_cmem_wasm_linear_memory_s5bihe(&buffer, 8u);\n  int accepted = evidence_cmem_wasm_linear_memory_s5bihe(&buffer, 7u);\n  int invariant = !wrong_heap && accepted == 3;\n  printf(\"ffi length=%d invariant=%d\\n\", accepted, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Project Wasm Linear Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Wasm Linear Memory precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Project Wasm Linear Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 7362. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+        "For Extend the cumulative artifact · Project Wasm Linear Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A WebAssembly pointer is a host pointer and remains valid after memory growth."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Project Wasm Linear Memory",
+      "interaction": "debug",
+      "instruction": "project case — A project native-systems team handles memory case 8981. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Project Wasm Linear Memory.",
+      "why": "The decision supplies observable evidence for treat webassembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules. For Test an acceptance boundary · Project Wasm Linear Memory, keep Wasm Linear Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A project native-systems team handles memory case 8981. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Wasm Linear Memory symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Stability — Stable ABI, Limited API, unstable interfaces, extension compatibility, and versioning."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Project Wasm Linear Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Wasm Linear Memory precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Project Wasm Linear Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 8981. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+        "For Test an acceptance boundary · Project Wasm Linear Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A WebAssembly pointer is a host pointer and remains valid after memory growth."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Wasm Linear Memory failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A WebAssembly pointer is a host pointer and remains valid after memory growth.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Wasm Linear Memory case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Wasm Linear Memory condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the stakeholder delivery · Project Wasm Linear Memory",
+      "interaction": "reflect",
+      "instruction": "Write the project evidence note for Wasm Linear Memory: explain the governing condition, one failure, and how this concrete case was verified — A project native-systems team handles memory case 6648. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.\n\nEvidence target: Defend the stakeholder delivery · Project Wasm Linear Memory.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the stakeholder delivery · Project Wasm Linear Memory, keep Wasm Linear Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "hints": [
+        "For Defend the stakeholder delivery · Project Wasm Linear Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Wasm Linear Memory precondition, or invariant that must hold.",
+        "At Defend the stakeholder delivery · Project Wasm Linear Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A project native-systems team handles memory case 6648. Produce bounded C evidence to validate a versioned foreign buffer and allocator family; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat WebAssembly pointers as offsets into bounded linear memory with copy, growth, lifetime, and host-reference rules.",
+        "For Defend the stakeholder delivery · Project Wasm Linear Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A WebAssembly pointer is a host pointer and remains valid after memory growth."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pool Free List Integrity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pool Free List Integrity.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pool Free List Integrity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pool Free List Integrity.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cycle Leak Diagnosis to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cycle Leak Diagnosis.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-cycle-leak-diagnosis"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mark Sweep Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mark Sweep Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mark-sweep-invariant"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reclamation Strategy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reclamation Strategy.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-reclamation-strategy"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Buffer Length Allocator Family to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Buffer Length Allocator Family.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-buffer-length-allocator-family"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "scenario-6-check",
+      "type": "choice-equals",
+      "description": "The decision applies Wasm Linear Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Wasm Linear Memory.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "expectedOptionId": "scenario-6-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Wasm Linear Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Wasm Linear Memory.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-wasm-linear-memory-s5bihe */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-wasm-linear-memory-s5bihe */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-wasm-linear-memory-s5bihe \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_wasm_linear_memory_s5bihe\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Wasm Linear Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Wasm Linear Memory.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using treat and webassembly plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-wasm-linear-memory"
+      ],
+      "minimumCharacters": 160,
+      "requiredTerms": [
+        "treat",
+        "webassembly"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 90,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

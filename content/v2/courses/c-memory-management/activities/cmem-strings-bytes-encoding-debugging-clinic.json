@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-strings-bytes-encoding-debugging-clinic",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-strings-bytes-encoding",
+  "kind": "debug",
+  "title": "Strings, Byte Buffers, Length, Capacity, and Encoding · Pointer Forensics",
+  "summary": "An incident responder inherits a corrupted length-aware text and byte boundary, the earliest failing input, and two plausible hypotheses; they must preserve first-failure evidence, repair the cause, and add a regression. Planned artifact: Repair a changed failure in length-aware text and byte boundary and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.",
+    "Track logical length, allocated capacity, required terminator space, and maximum scan distance separately.",
+    "Use size-aware copying and formatting with return-value checks and truncation policy.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-string-buffer-distinction",
+      "cmem-length-capacity-termination",
+      "cmem-bounded-copy-format",
+      "cmem-encoding-boundaries",
+      "cmem-legacy-api-defense"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-strings-bytes-encoding-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug String Buffer Distinction",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug native-systems team handles memory case 9638. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.\n\nInspect the String Buffer Distinction trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug String Buffer Distinction.",
+      "why": "The decision supplies observable evidence for distinguish c strings, unterminated character arrays, byte buffers, string literals, and encoded text. For Inspect the failure record · Debug String Buffer Distinction, keep String Buffer Distinction connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For String Buffer Distinction, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "cmem-string-buffer-distinction"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug String Buffer Distinction, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, String Buffer Distinction precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug String Buffer Distinction, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9638. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.",
+        "For Inspect the failure record · Debug String Buffer Distinction, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Every char pointer names a writable null-terminated string."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "String Buffer Distinction case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug native-systems team handles memory case 9638. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Every char pointer names a writable null-terminated string.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text. Artifact under review: length-aware text and byte boundary.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient String Buffer Distinction case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies String Buffer Distinction, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "String Buffer Distinction · fault isolation · Debug String Buffer Distinction",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 2257. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.\n\nWhich observation would disprove this suspected cause: “Every char pointer names a writable null-terminated string.”?\n\nEvidence target: String Buffer Distinction · fault isolation · Debug String Buffer Distinction.",
+      "why": "The decision supplies observable evidence for distinguish c strings, unterminated character arrays, byte buffers, string literals, and encoded text. For String Buffer Distinction · fault isolation · Debug String Buffer Distinction, keep String Buffer Distinction connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 2257. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the String Buffer Distinction symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "cmem-string-buffer-distinction"
+      ],
+      "hints": [
+        "For String Buffer Distinction · fault isolation · Debug String Buffer Distinction, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, String Buffer Distinction precondition, or invariant that must hold.",
+        "At String Buffer Distinction · fault isolation · Debug String Buffer Distinction, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 2257. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.",
+        "For String Buffer Distinction · fault isolation · Debug String Buffer Distinction, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Every char pointer names a writable null-terminated string."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "String Buffer Distinction failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Every char pointer names a writable null-terminated string.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish C strings, unterminated character arrays, byte buffers, string literals, and encoded text.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For string buffer distinction · fault isolation, run one convenient String Buffer Distinction case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies String Buffer Distinction."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the string buffer distinction · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Length Capacity Termination · fault isolation · Debug Length Capacity Termination",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 6400. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Track logical length, allocated capacity, required terminator space, and maximum scan distance separately.\n\nWhich observation would disprove this suspected cause: “A capacity of n always permits n visible characters plus a terminator.”?\n\nEvidence target: Length Capacity Termination · fault isolation · Debug Length Capacity Termination.",
+      "why": "The decision supplies observable evidence for track logical length, allocated capacity, required terminator space, and maximum scan distance separately. For Length Capacity Termination · fault isolation · Debug Length Capacity Termination, keep Length Capacity Termination connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 6400. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Track logical length, allocated capacity, required terminator space, and maximum scan distance separately."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Length Capacity Termination condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "cmem-length-capacity-termination"
+      ],
+      "hints": [
+        "For Length Capacity Termination · fault isolation · Debug Length Capacity Termination, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Length Capacity Termination precondition, or invariant that must hold.",
+        "At Length Capacity Termination · fault isolation · Debug Length Capacity Termination, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 6400. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Track logical length, allocated capacity, required terminator space, and maximum scan distance separately.",
+        "For Length Capacity Termination · fault isolation · Debug Length Capacity Termination, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A capacity of n always permits n visible characters plus a terminator."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Length Capacity Termination."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the length capacity termination · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For length capacity termination · fault isolation, run one convenient Length Capacity Termination case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Bounded Copy Format · fault isolation · Debug Bounded Copy Format",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 8019. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size-aware copying and formatting with return-value checks and truncation policy.\n\nWhich observation would disprove this suspected cause: “Replacing strcpy with strncpy automatically produces a valid terminated string.”?\n\nEvidence target: Bounded Copy Format · fault isolation · Debug Bounded Copy Format.",
+      "why": "The decision supplies observable evidence for use size-aware copying and formatting with return-value checks and truncation policy. For Bounded Copy Format · fault isolation · Debug Bounded Copy Format, keep Bounded Copy Format connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 8019. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size-aware copying and formatting with return-value checks and truncation policy."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Bounded Copy Format symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "cmem-bounded-copy-format"
+      ],
+      "hints": [
+        "For Bounded Copy Format · fault isolation · Debug Bounded Copy Format, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bounded Copy Format precondition, or invariant that must hold.",
+        "At Bounded Copy Format · fault isolation · Debug Bounded Copy Format, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8019. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size-aware copying and formatting with return-value checks and truncation policy.",
+        "For Bounded Copy Format · fault isolation · Debug Bounded Copy Format, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Replacing strcpy with strncpy automatically produces a valid terminated string."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bounded Copy Format failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Replacing strcpy with strncpy automatically produces a valid terminated string.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use size-aware copying and formatting with return-value checks and truncation policy.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the bounded copy format · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For bounded copy format · fault isolation, run one convenient Bounded Copy Format case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Bounded Copy Format."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Encoding Boundaries · fault isolation · Debug Encoding Boundaries",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 2066. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate and preserve encoding at system boundaries without splitting multibyte sequences or equating bytes with characters.\n\nWhich observation would disprove this suspected cause: “char stores one user-visible character.”?\n\nEvidence target: Encoding Boundaries · fault isolation · Debug Encoding Boundaries.",
+      "why": "The decision supplies observable evidence for validate and preserve encoding at system boundaries without splitting multibyte sequences or equating bytes with characters. For Encoding Boundaries · fault isolation · Debug Encoding Boundaries, keep Encoding Boundaries connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 2066. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate and preserve encoding at system boundaries without splitting multibyte sequences or equating bytes with characters."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Encoding Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "cmem-encoding-boundaries"
+      ],
+      "hints": [
+        "For Encoding Boundaries · fault isolation · Debug Encoding Boundaries, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Encoding Boundaries precondition, or invariant that must hold.",
+        "At Encoding Boundaries · fault isolation · Debug Encoding Boundaries, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 2066. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate and preserve encoding at system boundaries without splitting multibyte sequences or equating bytes with characters.",
+        "For Encoding Boundaries · fault isolation · Debug Encoding Boundaries, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: char stores one user-visible character."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For encoding boundaries · fault isolation, run one convenient Encoding Boundaries case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Encoding Boundaries."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the encoding boundaries · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Legacy Api Defense · fault isolation · Debug Legacy Api Defense",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 3685. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.\n\nWhich observation would disprove this suspected cause: “A larger destination makes an unbounded legacy copy safe enough.”?\n\nEvidence target: Legacy Api Defense · fault isolation · Debug Legacy Api Defense.",
+      "why": "The decision supplies observable evidence for recognize unbounded and ambiguous string apis as defect-analysis material and migrate them behind tested contracts. For Legacy Api Defense · fault isolation · Debug Legacy Api Defense, keep Legacy Api Defense connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 3685. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Legacy Api Defense symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "hints": [
+        "For Legacy Api Defense · fault isolation · Debug Legacy Api Defense, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Legacy Api Defense precondition, or invariant that must hold.",
+        "At Legacy Api Defense · fault isolation · Debug Legacy Api Defense, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 3685. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.",
+        "For Legacy Api Defense · fault isolation · Debug Legacy Api Defense, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A larger destination makes an unbounded legacy copy safe enough."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Legacy Api Defense failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "A larger destination makes an unbounded legacy copy safe enough.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Legacy Api Defense."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the legacy api defense · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For legacy api defense · fault isolation, run one convenient Legacy Api Defense case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Legacy Api Defense",
+      "interaction": "code",
+      "instruction": "For this debug demonstration of cmem-legacy-api-defense, write the complete compile-ready C program headed \"/* Evidence: cmem-legacy-api-defense-rxb25 */\" for changed case 2022. It must preserve length, capacity, and termination invariants, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Implement the cause-level repair · Debug Legacy Api Defense.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Legacy Api Defense into observable performance evidence. For Implement the cause-level repair · Debug Legacy Api Defense, keep Legacy Api Defense connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-legacy-api-defense-rxb25 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 2022; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstatic int evidence_cmem_legacy_api_defense_rxb25(char *destination, size_t capacity, const char *source, size_t length) {\n  if (destination == NULL || source == NULL || capacity == 0 || length >= capacity) return 0;\n  memcpy(destination, source, length);\n  destination[length] = '\\0';\n  return 1;\n}\n\nint main(void) {\n  char text[8];\n  int rejected = evidence_cmem_legacy_api_defense_rxb25(text, sizeof text, \"changed-case\", 12);\n  int accepted = evidence_cmem_legacy_api_defense_rxb25(text, sizeof text, \"memory\", 6);\n  int invariant = !rejected && accepted && strlen(text) == 6 && text[6] == '\\0';\n  printf(\"string length=%lu case=3 invariant=%d\\n\", (unsigned long)strlen(text), invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Legacy Api Defense, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Legacy Api Defense precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Legacy Api Defense, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 3021. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.",
+        "For Implement the cause-level repair · Debug Legacy Api Defense, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A larger destination makes an unbounded legacy copy safe enough."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Legacy Api Defense",
+      "interaction": "arrange",
+      "instruction": "Order the Legacy Api Defense evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Legacy Api Defense.",
+      "why": "Correct order keeps Legacy Api Defense assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Legacy Api Defense, keep Legacy Api Defense connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 7164. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Legacy Api Defense has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Legacy Api Defense, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Legacy Api Defense precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Legacy Api Defense, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7164. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.",
+        "For Order the regression proof · Debug Legacy Api Defense, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A larger destination makes an unbounded legacy copy safe enough."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the debug Legacy Api Defense case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose and document the smallest defensible model or procedure for the debug Legacy Api Defense case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the debug Legacy Api Defense case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the debug Legacy Api Defense case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Legacy Api Defense",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Legacy Api Defense: explain the governing condition, one failure, and how this concrete case was verified — A debug native-systems team handles memory case 8783. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.\n\nEvidence target: Publish the incident record · Debug Legacy Api Defense.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Legacy Api Defense, keep Legacy Api Defense connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Legacy Api Defense, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Legacy Api Defense precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Legacy Api Defense, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8783. Produce bounded C evidence to preserve length, capacity, and termination invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Recognize unbounded and ambiguous string APIs as defect-analysis material and migrate them behind tested contracts.",
+        "For Publish the incident record · Debug Legacy Api Defense, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A larger destination makes an unbounded legacy copy safe enough."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Buffer Distinction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Buffer Distinction.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-string-buffer-distinction"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Buffer Distinction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Buffer Distinction.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-string-buffer-distinction"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Length Capacity Termination to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Length Capacity Termination.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-length-capacity-termination"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bounded Copy Format to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bounded Copy Format.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bounded-copy-format"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Encoding Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Encoding Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-encoding-boundaries"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Legacy Api Defense to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Legacy Api Defense.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-legacy-api-defense-rxb25 */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-legacy-api-defense-rxb25 */"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-legacy-api-defense-rxb25 \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_legacy_api_defense_rxb25\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using recognize and unbounded plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-legacy-api-defense"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "recognize",
+        "unbounded"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

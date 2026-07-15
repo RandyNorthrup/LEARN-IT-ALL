@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 2,
+  "id": "sql-joins-cardinality-sql-inner-join-concept",
+  "courseId": "sql-basics",
+  "moduleId": "sql-joins-cardinality",
+  "kind": "theory",
+  "title": "Joins, Cardinality, Unmatched Rows, and Fanout Control · Query Trace: Inner Join",
+  "summary": "Ticket, team, owner, and event data must be combined without losing unassigned work or multiplying effort totals. Planned artifact: Add and verify the sql inner join increment in a cardinality-safe support investigation. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Write explicit inner joins from relationship predicates and predict result cardinality before execution.",
+    "Reconcile totals, denominators, missing groups, and changed cases before publishing an aggregate claim.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "sql-inner-join"
+    ],
+    "reinforces": [
+      "sql-metric-validation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "sql-aggregation-grouping-mastery-quiz"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "sql-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "sql": "-- sql-basics cumulative relational data portfolio.\n-- Each increment declares grain, predicts cardinality or changed rows, runs in fresh browser SQLite,\n-- reconciles results, tests changed data, and records PostgreSQL or standard-SQL boundaries.\n\nSELECT sqlite_version() AS browser_sqlite_version;\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Inner Join · Theory Inner Join",
+      "interaction": "predict",
+      "instruction": "theory case — Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure.\n\nBefore reading, predict which action preserves the Inner Join contract for the supplied data.\n\nEvidence target: Predict Inner Join · Theory Inner Join.",
+      "why": "The decision supplies observable evidence for write explicit inner joins from relationship predicates and predict result cardinality before execution. For Predict Inner Join · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Inner Join condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite SQL Language Documentation — Controls executable browser syntax, expressions, query, DDL, DML, transaction, trigger, and dialect behavior."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Predict Inner Join · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Predict Inner Join · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure.",
+        "For Predict Inner Join · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Write explicit inner joins from relationship predicates and predict result cardinality before execution. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "JOIN automatically infers the correct relationship. That claim does not survive the predict inner join evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Run a convenient Inner Join query for predict inner join, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Inner Join · Theory Inner Join",
+      "interaction": "read",
+      "instruction": "theory case — Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 4 events; predict result grain and prove joins do not multiply either measure.\n\nAfter tracing the worked code, choose the Inner Join application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Inner Join · Theory Inner Join.",
+      "why": "The decision supplies observable evidence for write explicit inner joins from relationship predicates and predict result cardinality before execution. For Bound Inner Join · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Write explicit inner joins from relationship predicates and predict result cardinality before execution. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare result or mutation grain, keys, NULL meaning, and transaction boundary; predict cardinality and invariants; run the smallest query; reconcile counts and plans; then test changed data and dialect limits."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure. A defensible solution applies Inner Join, preserves the governing invariant or value contract, and connects the observed result to a cardinality-safe support investigation."
+        },
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "WITH effort AS (\n  SELECT ticket_id, SUM(minutes_spent) AS minutes\n  FROM ticket_events\n  GROUP BY ticket_id\n)\nSELECT teams.name, COUNT(tickets.ticket_id) AS tickets,\n       COALESCE(SUM(effort.minutes), 0) AS minutes\nFROM teams\nLEFT JOIN tickets ON tickets.team_id = teams.team_id\nLEFT JOIN effort ON effort.ticket_id = tickets.ticket_id\nGROUP BY teams.team_id, teams.name\nORDER BY teams.name;",
+          "caption": "Runnable relational query or data-system contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "JOIN automatically infers the correct relationship. This fails the Inner Join contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "SQLite SQL Language Documentation (SQLite 3.53.3 current; browser labs pinned to sql.js SQLite 3.49.1) — Controls executable browser syntax, expressions, query, DDL, DML, transaction, trigger, and dialect behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Write explicit inner joins from relationship predicates and predict result cardinality before execution."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Bound Inner Join · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Bound Inner Join · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 4 events; predict result grain and prove joins do not multiply either measure.",
+        "For Bound Inner Join · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "JOIN automatically infers the correct relationship. That claim does not survive the bound inner join evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "Run a convenient Inner Join query for bound inner join, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Inner Join after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Inner Join evidence · Theory Inner Join",
+      "interaction": "inspect",
+      "instruction": "theory case — Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 5 events; predict result grain and prove joins do not multiply either measure.\n\nInspect the Inner Join trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Inner Join evidence · Theory Inner Join.",
+      "why": "The decision supplies observable evidence for write explicit inner joins from relationship predicates and predict result cardinality before execution. For Inspect Inner Join evidence · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Inner Join, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Inspect Inner Join evidence · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Inspect Inner Join evidence · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 5 events; predict result grain and prove joins do not multiply either measure.",
+        "For Inspect Inner Join evidence · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Inner Join case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 5 events; predict result grain and prove joins do not multiply either measure.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "JOIN automatically infers the correct relationship.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Write explicit inner joins from relationship predicates and predict result cardinality before execution. Artifact under review: a cardinality-safe support investigation.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-overreach",
+          "text": "Run a convenient Inner Join query for inspect inner join evidence, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Inner Join, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect inner join evidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Inner Join evidence · Theory Inner Join",
+      "interaction": "arrange",
+      "instruction": "Order the Inner Join evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Inner Join evidence · Theory Inner Join.",
+      "why": "Correct order keeps Inner Join assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Inner Join evidence · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 6 events; predict result grain and prove joins do not multiply either measure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Inner Join has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Sequence Inner Join evidence · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Sequence Inner Join evidence · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 6 events; predict result grain and prove joins do not multiply either measure.",
+        "For Sequence Inner Join evidence · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality for the theory Inner Join case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict relational transformations, constraint or transaction effects, and dialect boundary before execution for the theory Inner Join case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan for the theory Inner Join case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits for the theory Inner Join case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Inner Join evidence · Theory Inner Join",
+      "interaction": "code",
+      "instruction": "Append a runnable SQLite increment headed \"-- Evidence: sql-inner-join-13fqlt\" with a concrete grain, hypothesis, or prediction; join relationship, unmatched-row, or fanout evidence; and an observation, reconciliation, or verification tied to returned rows, changed rows, an error, or a plan.\n\nEvidence target: Build Inner Join evidence · Theory Inner Join.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Inner Join into observable performance evidence. For Build Inner Join evidence · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "-- Evidence: sql-inner-join-13fqlt\n-- grain: declare the exact row or mutation grain before running\nSELECT teams.name, COUNT(tickets.ticket_id) AS ticket_count\nFROM teams\nLEFT JOIN tickets ON tickets.team_id = teams.team_id\nGROUP BY teams.team_id, teams.name\nORDER BY teams.name;\n-- observation: reconcile the returned rows, changed count, error, or plan with the prediction",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Build Inner Join evidence · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Build Inner Join evidence · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 2 events; predict result grain and prove joins do not multiply either measure.",
+        "For Build Inner Join evidence · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "targetFile": "sql"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Inner Join defect · Theory Inner Join",
+      "interaction": "debug",
+      "instruction": "theory case — Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure.\n\nA teammate acts on this belief: “JOIN automatically infers the correct relationship.” Which repair addresses the cause?\n\nEvidence target: Repair the Inner Join defect · Theory Inner Join.",
+      "why": "The decision supplies observable evidence for write explicit inner joins from relationship predicates and predict result cardinality before execution. For Repair the Inner Join defect · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Inner Join symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite SQL Language Documentation — Controls executable browser syntax, expressions, query, DDL, DML, transaction, trigger, and dialect behavior."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Repair the Inner Join defect · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Repair the Inner Join defect · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 3 events; predict result grain and prove joins do not multiply either measure.",
+        "For Repair the Inner Join defect · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Inner Join failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "JOIN automatically infers the correct relationship.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Write explicit inner joins from relationship predicates and predict result cardinality before execution.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Run a convenient Inner Join query for repair the inner join defect, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Inner Join, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the inner join defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Inner Join model · Theory Inner Join",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Inner Join: explain the governing condition, one failure, and how this concrete case was verified — Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 4 events; predict result grain and prove joins do not multiply either measure.\n\nEvidence target: Defend the Inner Join model · Theory Inner Join.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Inner Join model · Theory Inner Join, keep Inner Join connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Write explicit inner joins from relationship predicates and predict result cardinality before execution."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "hints": [
+        "For Defend the Inner Join model · Theory Inner Join, name the row grain, Inner Join precondition, or invariant that must hold.",
+        "At Defend the Inner Join model · Theory Inner Join, trace this concrete input and predict rows or changes before running it: Report every team with ticket count, unresolved count, and total event minutes. Team Drift has no tickets and ticket 101 has 4 events; predict result grain and prove joins do not multiply either measure.",
+        "For Defend the Inner Join model · Theory Inner Join, challenge the documented misconception with result, constraint, or plan evidence: JOIN automatically infers the correct relationship."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inner Join to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inner Join.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inner Join to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inner Join.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inner Join to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inner Join.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative sql portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker -- Evidence: sql-inner-join-13fqlt.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "file": "sql",
+      "expected": "-- Evidence: sql-inner-join-13fqlt"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "sql",
+      "pattern": "-- Evidence: sql-inner-join-13fqlt(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:grain|hypothesis|prediction):\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!-- Evidence:)[\\s\\S])*?(?:JOIN|CROSS\\s+JOIN|WITH)(?:(?!-- Evidence:)[\\s\\S])*?;(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:observation|reconciliation|verify):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "sql-inner-join"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inner Join to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inner Join.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using write and explicit plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-inner-join"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "write",
+        "explicit"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

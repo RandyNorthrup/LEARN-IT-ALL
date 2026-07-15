@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-sorting-independent-lab",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-sorting",
+  "kind": "lab",
+  "title": "Sorting Algorithms, Stability, and Ordering Contracts · Scale Transfer",
+  "summary": "Order customer records by multiple keys while preserving meaningful prior order. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a sorting laboratory with operation counts with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define total, partial, and key-based orderings including tie and missing-value policy.",
+    "Trace insertion and selection sorting invariants and identify useful input regimes.",
+    "Implement stable merge sort and account for auxiliary space and copying.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "dsa-ordering-contract",
+      "dsa-elementary-sorts",
+      "dsa-merge-sort",
+      "dsa-quicksort",
+      "dsa-python-sort"
+    ]
+  },
+  "prerequisites": [
+    "dsa-sorting-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for define total, partial, and key-based orderings including tie and missing-value policy.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ordering Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-ordering-contract"
+      ],
+      "hints": [
+        "Name the Ordering Contract precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: A comparison function may return inconsistent answers."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Ordering Contract."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Ordering Contract preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A comparison function may return inconsistent answers."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Ordering Contract · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Ordering Contract without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define total, partial, and key-based orderings including tie and missing-value policy.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ordering Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-ordering-contract"
+      ],
+      "hints": [
+        "Name the Ordering Contract precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: A comparison function may return inconsistent answers."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Define total, partial, and key-based orderings including tie and missing-value policy. Apply it to the stated input and retain a reproducible trace for a sorting laboratory with operation counts."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A comparison function may return inconsistent answers."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Ordering Contract."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Elementary Sorts · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Elementary Sorts without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace insertion and selection sorting invariants and identify useful input regimes.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Elementary Sorts result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-elementary-sorts"
+      ],
+      "hints": [
+        "Name the Elementary Sorts precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Quadratic algorithms have no legitimate use."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Elementary Sorts case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Quadratic algorithms have no legitimate use.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace insertion and selection sorting invariants and identify useful input regimes.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Quadratic algorithms have no legitimate use."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Elementary Sorts."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Trace insertion and selection sorting invariants and identify useful input regimes. Apply it to the stated input and retain a reproducible trace for a sorting laboratory with operation counts."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Merge Sort · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Merge Sort without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for implement stable merge sort and account for auxiliary space and copying.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Merge Sort condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-merge-sort"
+      ],
+      "hints": [
+        "Name the Merge Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Merge sort always operates in place."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Merge Sort."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Implement stable merge sort and account for auxiliary space and copying. Apply it to the stated input and retain a reproducible trace for a sorting laboratory with operation counts."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Merge sort always operates in place."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Quicksort · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Quicksort without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace partition invariants and pivot effects across duplicate and ordered inputs.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Quicksort result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-quicksort"
+      ],
+      "hints": [
+        "Name the Quicksort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Quicksort is guaranteed n log n."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Quicksort case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Quicksort is guaranteed n log n.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace partition invariants and pivot effects across duplicate and ordered inputs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Trace partition invariants and pivot effects across duplicate and ordered inputs. Apply it to the stated input and retain a reproducible trace for a sorting laboratory with operation counts."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Quicksort is guaranteed n log n."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Quicksort."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Python Sort · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Python Sort without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use python stable key sorting and multi-pass ordering without comparator mistakes.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Python Sort condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "hints": [
+        "Name the Python Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Reverse sorting reverses every tie relationship."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Reverse sorting reverses every tie relationship."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Python Sort."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Use Python stable key sorting and multi-pass ordering without comparator mistakes. Apply it to the stated input and retain a reproducible trace for a sorting laboratory with operation counts."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet",
+      "interaction": "inspect",
+      "instruction": "lab case — Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nInspect the Python Sort trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for use python stable key sorting and multi-pass ordering without comparator mistakes.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Python Sort, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "hints": [
+        "Name the Python Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Reverse sorting reverses every tie relationship."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Python Sort case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Reverse sorting reverses every tie relationship.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use Python stable key sorting and multi-pass ordering without comparator mistakes. Artifact under review: a sorting laboratory with operation counts.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Python Sort."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Python Sort, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_python_sort_132nv0 function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Python Sort into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_python_sort_132nv0(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "hints": [
+        "Name the Python Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Reverse sorting reverses every tie relationship."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for use python stable key sorting and multi-pass ordering without comparator mistakes.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Python Sort symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Collections and Container Datatypes — Deque, Counter, defaultdict, named tuple, and ChainMap contracts and complexity-relevant use."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "hints": [
+        "Name the Python Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Reverse sorting reverses every tie relationship."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Python Sort failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Reverse sorting reverses every tie relationship.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use Python stable key sorting and multi-pass ordering without comparator mistakes.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Python Sort."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Python Sort condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Python Sort: explain the governing condition, one failure, and how this concrete case was verified — Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use Python stable key sorting and multi-pass ordering without comparator mistakes."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "hints": [
+        "Name the Python Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Reverse sorting reverses every tie relationship."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ordering Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ordering Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-ordering-contract"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ordering Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ordering Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-ordering-contract"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Elementary Sorts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Elementary Sorts.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-elementary-sorts"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Merge Sort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Merge Sort.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-merge-sort"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Quicksort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Quicksort.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-quicksort"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Python Sort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Python Sort.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Python Sort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Python Sort.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_python_sort_132nv0.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_python_sort_132nv0"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_python_sort_132nv0\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-python-sort"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Python Sort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Python Sort.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using python and stable plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-python-sort"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "python",
+        "stable"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

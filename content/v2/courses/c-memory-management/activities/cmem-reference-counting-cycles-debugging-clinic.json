@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-reference-counting-cycles-debugging-clinic",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-reference-counting-cycles",
+  "kind": "debug",
+  "title": "Reference Counting, Weak References, and Cycles · Undefined-Behavior Triage",
+  "summary": "An incident responder inherits a corrupted overflow-safe reference-counted graph, the earliest failing input, and two plausible hypotheses; they must preserve first-failure evidence, repair the cause, and add a regression. Planned artifact: Repair a changed failure in overflow-safe reference-counted graph and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.",
+    "Prevent count overflow, underflow, resurrection, and release reentrancy with explicit states.",
+    "Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-retain-release-invariant",
+      "cmem-refcount-overflow-underflow",
+      "cmem-cycle-leak-diagnosis",
+      "cmem-weak-reference-generation",
+      "cmem-threaded-refcount-cost"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-reference-counting-cycles-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Retain Release Invariant",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug native-systems team handles memory case 6941. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.\n\nInspect the Retain Release Invariant trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Retain Release Invariant.",
+      "why": "The decision supplies observable evidence for maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends. For Inspect the failure record · Debug Retain Release Invariant, keep Retain Release Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Retain Release Invariant, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "cmem-retain-release-invariant"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Retain Release Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Retain Release Invariant precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Retain Release Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 6941. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.",
+        "For Inspect the failure record · Debug Retain Release Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Every pointer copy should increment a reference count."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Retain Release Invariant case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug native-systems team handles memory case 6941. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Every pointer copy should increment a reference count.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends. Artifact under review: overflow-safe reference-counted graph.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Retain Release Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Retain Release Invariant, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Retain Release Invariant · fault isolation · Debug Retain Release Invariant",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 5322. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.\n\nWhich observation would disprove this suspected cause: “Every pointer copy should increment a reference count.”?\n\nEvidence target: Retain Release Invariant · fault isolation · Debug Retain Release Invariant.",
+      "why": "The decision supplies observable evidence for maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends. For Retain Release Invariant · fault isolation · Debug Retain Release Invariant, keep Retain Release Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 5322. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Retain Release Invariant symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "cmem-retain-release-invariant"
+      ],
+      "hints": [
+        "For Retain Release Invariant · fault isolation · Debug Retain Release Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Retain Release Invariant precondition, or invariant that must hold.",
+        "At Retain Release Invariant · fault isolation · Debug Retain Release Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 5322. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.",
+        "For Retain Release Invariant · fault isolation · Debug Retain Release Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Every pointer copy should increment a reference count."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Retain Release Invariant failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Every pointer copy should increment a reference count.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain a reference count equal to defined strong ownership edges and release exactly when the last edge ends.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Retain Release Invariant."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the retain release invariant · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For retain release invariant · fault isolation, run one convenient Retain Release Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 6227. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Prevent count overflow, underflow, resurrection, and release reentrancy with explicit states.\n\nWhich observation would disprove this suspected cause: “Reference counts cannot overflow in realistic programs.”?\n\nEvidence target: Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow.",
+      "why": "The decision supplies observable evidence for prevent count overflow, underflow, resurrection, and release reentrancy with explicit states. For Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow, keep Refcount Overflow Underflow connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 6227. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Prevent count overflow, underflow, resurrection, and release reentrancy with explicit states."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Refcount Overflow Underflow condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "cmem-refcount-overflow-underflow"
+      ],
+      "hints": [
+        "For Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Refcount Overflow Underflow precondition, or invariant that must hold.",
+        "At Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 6227. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Prevent count overflow, underflow, resurrection, and release reentrancy with explicit states.",
+        "For Refcount Overflow Underflow · fault isolation · Debug Refcount Overflow Underflow, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Reference counts cannot overflow in realistic programs."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the refcount overflow underflow · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For refcount overflow underflow · fault isolation, run one convenient Refcount Overflow Underflow case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Refcount Overflow Underflow."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 4608. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.\n\nWhich observation would disprove this suspected cause: “A reference count reaching zero eventually is guaranteed if the program stops using an object.”?\n\nEvidence target: Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis.",
+      "why": "The decision supplies observable evidence for demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges. For Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis, keep Cycle Leak Diagnosis connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 4608. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Cycle Leak Diagnosis symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "cmem-cycle-leak-diagnosis"
+      ],
+      "hints": [
+        "For Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Cycle Leak Diagnosis precondition, or invariant that must hold.",
+        "At Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 4608. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+        "For Cycle Leak Diagnosis · fault isolation · Debug Cycle Leak Diagnosis, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A reference count reaching zero eventually is guaranteed if the program stops using an object."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cycle Leak Diagnosis failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "A reference count reaching zero eventually is guaranteed if the program stops using an object.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Demonstrate why pure reference counting cannot reclaim strong cycles and locate cycle-forming edges.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For cycle leak diagnosis · fault isolation, run one convenient Cycle Leak Diagnosis case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Cycle Leak Diagnosis."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the cycle leak diagnosis · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Weak Reference Generation · fault isolation · Debug Weak Reference Generation",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 9465. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate weak handles against liveness and generation before acquiring a new strong reference.\n\nWhich observation would disprove this suspected cause: “A weak pointer can be safely inspected after the object is destroyed.”?\n\nEvidence target: Weak Reference Generation · fault isolation · Debug Weak Reference Generation.",
+      "why": "The decision supplies observable evidence for validate weak handles against liveness and generation before acquiring a new strong reference. For Weak Reference Generation · fault isolation · Debug Weak Reference Generation, keep Weak Reference Generation connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9465. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate weak handles against liveness and generation before acquiring a new strong reference."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Weak Reference Generation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "cmem-weak-reference-generation"
+      ],
+      "hints": [
+        "For Weak Reference Generation · fault isolation · Debug Weak Reference Generation, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Weak Reference Generation precondition, or invariant that must hold.",
+        "At Weak Reference Generation · fault isolation · Debug Weak Reference Generation, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9465. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Validate weak handles against liveness and generation before acquiring a new strong reference.",
+        "For Weak Reference Generation · fault isolation · Debug Weak Reference Generation, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A weak pointer can be safely inspected after the object is destroyed."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Weak Reference Generation."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the weak reference generation · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For weak reference generation · fault isolation, run one convenient Weak Reference Generation case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 7846. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.\n\nWhich observation would disprove this suspected cause: “Making the count atomic makes the whole referenced object thread-safe.”?\n\nEvidence target: Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost.",
+      "why": "The decision supplies observable evidence for evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts. For Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost, keep Threaded Refcount Cost connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 7846. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Threaded Refcount Cost symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "hints": [
+        "For Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Threaded Refcount Cost precondition, or invariant that must hold.",
+        "At Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7846. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.",
+        "For Threaded Refcount Cost · fault isolation · Debug Threaded Refcount Cost, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Making the count atomic makes the whole referenced object thread-safe."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Threaded Refcount Cost failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Making the count atomic makes the whole referenced object thread-safe.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the threaded refcount cost · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For threaded refcount cost · fault isolation, run one convenient Threaded Refcount Cost case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Threaded Refcount Cost."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Threaded Refcount Cost",
+      "interaction": "arrange",
+      "instruction": "Order the Threaded Refcount Cost evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Threaded Refcount Cost.",
+      "why": "Correct order keeps Threaded Refcount Cost assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Threaded Refcount Cost, keep Threaded Refcount Cost connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 8751. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Threaded Refcount Cost has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Threaded Refcount Cost, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Threaded Refcount Cost precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Threaded Refcount Cost, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8751. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.",
+        "For Order the regression proof · Debug Threaded Refcount Cost, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Making the count atomic makes the whole referenced object thread-safe."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the debug Threaded Refcount Cost case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose and document the smallest defensible model or procedure for the debug Threaded Refcount Cost case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the debug Threaded Refcount Cost case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the debug Threaded Refcount Cost case"
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Threaded Refcount Cost",
+      "interaction": "code",
+      "instruction": "For this debug demonstration of cmem-threaded-refcount-cost, write the complete compile-ready C program headed \"/* Evidence: cmem-threaded-refcount-cost-o8q11q */\" for changed case 1918. It must model strong counts and expose a cycle that cannot reach zero, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Implement the cause-level repair · Debug Threaded Refcount Cost.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Threaded Refcount Cost into observable performance evidence. For Implement the cause-level repair · Debug Threaded Refcount Cost, keep Threaded Refcount Cost connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-threaded-refcount-cost-o8q11q */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 1918; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct ref_model { unsigned strong; unsigned outgoing_cycle; int live; };\n\nstatic int evidence_cmem_threaded_refcount_cost_o8q11q(struct ref_model *object, int release_external) {\n  if (object == NULL || !object->live || object->strong == 0u) return 0;\n  if (release_external) object->strong -= 1u;\n  if (object->strong == 0u) object->live = 0;\n  return object->live;\n}\n\nint main(void) {\n  struct ref_model acyclic = { 1u, 0u, 1 };\n  struct ref_model cyclic = { 2u, 1u, 1 };\n  int acyclic_live = evidence_cmem_threaded_refcount_cost_o8q11q(&acyclic, 1);\n  int cyclic_live = evidence_cmem_threaded_refcount_cost_o8q11q(&cyclic, 1);\n  int invariant = !acyclic_live && cyclic_live && cyclic.strong == 1u && 2 > 0;\n  printf(\"refcount cycle=%u invariant=%d\\n\", cyclic.strong, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Threaded Refcount Cost, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Threaded Refcount Cost precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Threaded Refcount Cost, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7132. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.",
+        "For Implement the cause-level repair · Debug Threaded Refcount Cost, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Making the count atomic makes the whole referenced object thread-safe."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Threaded Refcount Cost",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Threaded Refcount Cost: explain the governing condition, one failure, and how this concrete case was verified — A debug native-systems team handles memory case 2989. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.\n\nEvidence target: Publish the incident record · Debug Threaded Refcount Cost.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Threaded Refcount Cost, keep Threaded Refcount Cost connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Threaded Refcount Cost, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Threaded Refcount Cost precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Threaded Refcount Cost, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 2989. Produce bounded C evidence to model strong counts and expose a cycle that cannot reach zero; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate atomicity, contention, batching, deferred release, and memory-order requirements for shared counts.",
+        "For Publish the incident record · Debug Threaded Refcount Cost, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Making the count atomic makes the whole referenced object thread-safe."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retain Release Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retain Release Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-retain-release-invariant"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retain Release Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retain Release Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-retain-release-invariant"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Refcount Overflow Underflow to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Refcount Overflow Underflow.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-refcount-overflow-underflow"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cycle Leak Diagnosis to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cycle Leak Diagnosis.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-cycle-leak-diagnosis"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Weak Reference Generation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Weak Reference Generation.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-weak-reference-generation"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Threaded Refcount Cost to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Threaded Refcount Cost.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-threaded-refcount-cost-o8q11q */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-threaded-refcount-cost-o8q11q */"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-threaded-refcount-cost-o8q11q \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_threaded_refcount_cost_o8q11q\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using evaluate and atomicity plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-threaded-refcount-cost"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "evaluate",
+        "atomicity"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

@@ -2,13 +2,13 @@
 
 /**
  * Test Script: Verify Quiz Auto-Complete Logic
- * 
+ *
  * This script tests the chapter extraction logic and course structure loading
  * to ensure quiz submission will correctly identify and mark chapter lessons.
  */
 
-const path = require('path');
-const fs = require('fs');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Test Data
 const testCases = [
@@ -29,7 +29,9 @@ const courseData = JSON.parse(fs.readFileSync(coursePath, 'utf8'));
 console.log('🧪 Testing Quiz Auto-Complete Logic\n');
 console.log(`Course: ${courseData.title}`);
 console.log(`Total Chapters: ${courseData.chapters.length}`);
-console.log(`Total Lessons: ${courseData.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}\n`);
+console.log(
+  `Total Lessons: ${courseData.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}\n`
+);
 console.log('─'.repeat(80));
 
 let passedTests = 0;
@@ -43,25 +45,27 @@ testCases.forEach((testCase, index) => {
   // Check if this is the final exam (special case)
   if (testCase.quizId === 'final-exam' && testCase.expectedChapter === 'all') {
     console.log(`  Final Exam: Should complete ALL lessons in course`);
-    
+
     let totalLessons = 0;
     const allLessons = [];
-    
+
     for (const chapter of courseData.chapters) {
       if (chapter.lessons && chapter.lessons.length > 0) {
         totalLessons += chapter.lessons.length;
-        allLessons.push(...chapter.lessons.map(f => f.replace(/\.md$/, '')));
+        allLessons.push(...chapter.lessons.map((f) => f.replace(/\.md$/, '')));
       }
     }
-    
+
     console.log(`  Total lessons in course: ${totalLessons}`);
-    
+
     if (totalLessons !== testCase.expectedLessons) {
-      console.log(`❌ FAIL: Expected ${testCase.expectedLessons} total lessons but got ${totalLessons}`);
+      console.log(
+        `❌ FAIL: Expected ${testCase.expectedLessons} total lessons but got ${totalLessons}`
+      );
       failedTests++;
       return;
     }
-    
+
     console.log(`  Lessons to auto-complete: ${allLessons.length}`);
     console.log(`  First 5: ${allLessons.slice(0, 5).join(', ')}`);
     console.log(`  Last 5: ${allLessons.slice(-5).join(', ')}`);
@@ -72,7 +76,7 @@ testCases.forEach((testCase, index) => {
 
   // Parse quiz ID (same logic as API route)
   const chapterMatch = testCase.quizId.match(/chapter-(\d+)/i);
-  
+
   if (!chapterMatch && testCase.expectedChapter === null) {
     console.log(`✅ PASS: Correctly did NOT match (final exam should not auto-complete)`);
     passedTests++;
@@ -87,7 +91,7 @@ testCases.forEach((testCase, index) => {
 
   const chapterNumber = parseInt(chapterMatch[1], 10);
   console.log(`  Extracted Chapter Number: ${chapterNumber}`);
-  
+
   // Check expected chapter
   if (chapterNumber !== testCase.expectedChapter) {
     console.log(`❌ FAIL: Expected chapter ${testCase.expectedChapter} but got ${chapterNumber}`);
@@ -106,10 +110,12 @@ testCases.forEach((testCase, index) => {
   console.log(`  Chapter ID: ${chapter.id}`);
   console.log(`  Chapter Title: ${chapter.title}`);
   console.log(`  Lessons in Chapter: ${chapter.lessons.length}`);
-  
+
   // Check expected lesson count
   if (chapter.lessons.length !== testCase.expectedLessons) {
-    console.log(`❌ FAIL: Expected ${testCase.expectedLessons} lessons but got ${chapter.lessons.length}`);
+    console.log(
+      `❌ FAIL: Expected ${testCase.expectedLessons} lessons but got ${chapter.lessons.length}`
+    );
     failedTests++;
     return;
   }
@@ -126,7 +132,7 @@ testCases.forEach((testCase, index) => {
 });
 
 // Summary
-console.log('\n' + '═'.repeat(80));
+console.log(`\n${'═'.repeat(80)}`);
 console.log('📊 Test Summary');
 console.log('═'.repeat(80));
 console.log(`Total Tests: ${testCases.length}`);

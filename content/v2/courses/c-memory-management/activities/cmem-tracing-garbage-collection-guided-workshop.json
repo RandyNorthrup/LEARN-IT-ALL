@@ -1,0 +1,738 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-tracing-garbage-collection-guided-workshop",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-tracing-garbage-collection",
+  "kind": "workshop",
+  "title": "Tracing Garbage Collection and Conservative Limits · C Memory Workbench",
+  "summary": "A guided implementation pair receives a clean input trace and acceptance examples, then builds the first working small mark-and-sweep collector model while narrating each size, lifetime, ownership, and cleanup decision. Planned artifact: Build a complete first version of small mark-and-sweep collector model while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define objects, edges, roots, reachability, and collection safety independently from application usefulness.",
+    "Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.",
+    "Explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-reachability-roots",
+      "cmem-mark-sweep-invariant",
+      "cmem-conservative-pointer-risk",
+      "cmem-finalizer-resurrection",
+      "cmem-gc-barriers-pauses"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-tracing-garbage-collection-cmem-gc-barriers-pauses-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Reachability Roots",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 2475. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Reachability Roots.",
+      "why": "The decision supplies observable evidence for define objects, edges, roots, reachability, and collection safety independently from application usefulness. For Commit to the mission model · Workshop Reachability Roots, keep Reachability Roots connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 2475. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Reachability Roots condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Reachability Roots, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Reachability Roots precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Reachability Roots, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 2475. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness.",
+        "For Commit to the mission model · Workshop Reachability Roots, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An unreachable object is necessarily unused and safe to finalize immediately."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Reachability Roots preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "An unreachable object is necessarily unused and safe to finalize immediately. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Reachability Roots case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Reachability Roots · changed case · Workshop Reachability Roots",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9856. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness.\n\nWhich action demonstrates Reachability Roots without dropping earlier contracts?\n\nEvidence target: Reachability Roots · changed case · Workshop Reachability Roots.",
+      "why": "The decision supplies observable evidence for define objects, edges, roots, reachability, and collection safety independently from application usefulness. For Reachability Roots · changed case · Workshop Reachability Roots, keep Reachability Roots connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9856. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Reachability Roots condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "hints": [
+        "For Reachability Roots · changed case · Workshop Reachability Roots, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Reachability Roots precondition, or invariant that must hold.",
+        "At Reachability Roots · changed case · Workshop Reachability Roots, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9856. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness.",
+        "For Reachability Roots · changed case · Workshop Reachability Roots, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An unreachable object is necessarily unused and safe to finalize immediately."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "An unreachable object is necessarily unused and safe to finalize immediately. That claim does not survive the reachability roots · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For reachability roots · changed case, run one convenient Reachability Roots case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Define objects, edges, roots, reachability, and collection safety independently from application usefulness. Apply it to the stated input and retain a reproducible trace for small mark-and-sweep collector model."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 8237. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.\n\nWhich action demonstrates Mark Sweep Invariant without dropping earlier contracts?\n\nEvidence target: Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant.",
+      "why": "The decision supplies observable evidence for mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges. For Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant, keep Mark Sweep Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 8237. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Mark Sweep Invariant result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-mark-sweep-invariant"
+      ],
+      "hints": [
+        "For Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mark Sweep Invariant precondition, or invariant that must hold.",
+        "At Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 8237. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.",
+        "For Mark Sweep Invariant · changed case · Workshop Mark Sweep Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A single graph walk is enough without a complete allocation registry."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Mark Sweep Invariant case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A single graph walk is enough without a complete allocation registry.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For mark sweep invariant · changed case, run one convenient Mark Sweep Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Mark reachable objects, sweep only unmarked allocations, and reset metadata without losing new or mutated edges. Apply it to the stated input and retain a reproducible trace for small mark-and-sweep collector model."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A single graph walk is enough without a complete allocation registry. That claim does not survive the mark sweep invariant · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6618. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers.\n\nWhich action demonstrates Conservative Pointer Risk without dropping earlier contracts?\n\nEvidence target: Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk.",
+      "why": "The decision supplies observable evidence for explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers. For Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk, keep Conservative Pointer Risk connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6618. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Conservative Pointer Risk condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-conservative-pointer-risk"
+      ],
+      "hints": [
+        "For Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Conservative Pointer Risk precondition, or invariant that must hold.",
+        "At Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6618. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers.",
+        "For Conservative Pointer Risk · changed case · Workshop Conservative Pointer Risk, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Conservative collection finds every true pointer and no false pointer."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Explain false retention and invalid reclamation risks when arbitrary words may be treated as pointers. Apply it to the stated input and retain a reproducible trace for small mark-and-sweep collector model."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Conservative collection finds every true pointer and no false pointer. That claim does not survive the conservative pointer risk · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For conservative pointer risk · changed case, run one convenient Conservative Pointer Risk case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Finalizer Resurrection · changed case · Workshop Finalizer Resurrection",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 7050. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior.\n\nWhich action demonstrates Finalizer Resurrection without dropping earlier contracts?\n\nEvidence target: Finalizer Resurrection · changed case · Workshop Finalizer Resurrection.",
+      "why": "The decision supplies observable evidence for constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior. For Finalizer Resurrection · changed case · Workshop Finalizer Resurrection, keep Finalizer Resurrection connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 7050. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Finalizer Resurrection result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-finalizer-resurrection"
+      ],
+      "hints": [
+        "For Finalizer Resurrection · changed case · Workshop Finalizer Resurrection, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Finalizer Resurrection precondition, or invariant that must hold.",
+        "At Finalizer Resurrection · changed case · Workshop Finalizer Resurrection, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 7050. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior.",
+        "For Finalizer Resurrection · changed case · Workshop Finalizer Resurrection, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A garbage collector provides deterministic file and lock release."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Finalizer Resurrection case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A garbage collector provides deterministic file and lock release.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "A garbage collector provides deterministic file and lock release. That claim does not survive the finalizer resurrection · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For finalizer resurrection · changed case, run one convenient Finalizer Resurrection case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Constrain finalizer order, reentrancy, resurrection, external resources, and repeated collection behavior. Apply it to the stated input and retain a reproducible trace for small mark-and-sweep collector model."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 5431. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.\n\nWhich action demonstrates Gc Barriers Pauses without dropping earlier contracts?\n\nEvidence target: Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses.",
+      "why": "The decision supplies observable evidence for relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs. For Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses, keep Gc Barriers Pauses connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 5431. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Gc Barriers Pauses condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "hints": [
+        "For Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Gc Barriers Pauses precondition, or invariant that must hold.",
+        "At Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 5431. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.",
+        "For Gc Barriers Pauses · changed case · Workshop Gc Barriers Pauses, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Concurrent collection removes every stop-the-world phase and synchronization cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For gc barriers pauses · changed case, run one convenient Gc Barriers Pauses case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs. Apply it to the stated input and retain a reproducible trace for small mark-and-sweep collector model."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Concurrent collection removes every stop-the-world phase and synchronization cost. That claim does not survive the gc barriers pauses · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Workshop Reachability Roots",
+      "interaction": "arrange",
+      "instruction": "Order the Reachability Roots evidence cycle for this workshop task before implementing it.\n\nEvidence target: Plan the evidence sequence · Workshop Reachability Roots.",
+      "why": "Correct order keeps Reachability Roots assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Workshop Reachability Roots, keep Reachability Roots connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 3812. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Reachability Roots has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Workshop Reachability Roots, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Reachability Roots precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Workshop Reachability Roots, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 3812. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Define objects, edges, roots, reachability, and collection safety independently from application usefulness.",
+        "For Plan the evidence sequence · Workshop Reachability Roots, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An unreachable object is necessarily unused and safe to finalize immediately."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the workshop Reachability Roots case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose and document the smallest defensible model or procedure for the workshop Reachability Roots case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the workshop Reachability Roots case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the workshop Reachability Roots case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Gc Barriers Pauses",
+      "interaction": "code",
+      "instruction": "For this workshop demonstration of cmem-gc-barriers-pauses, write the complete compile-ready C program headed \"/* Evidence: cmem-gc-barriers-pauses-5ceisa */\" for changed case 8199. It must mark reachable objects and count only unreachable sweep candidates, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Workshop Gc Barriers Pauses.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Gc Barriers Pauses into observable performance evidence. For Extend the cumulative artifact · Workshop Gc Barriers Pauses, keep Gc Barriers Pauses connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-gc-barriers-pauses-5ceisa */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 8199; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct gc_node { int child; int marked; };\n\nstatic int evidence_cmem_gc_barriers_pauses_5ceisa(struct gc_node nodes[4], int root) {\n  int current = root;\n  int swept = 0;\n  int index;\n  while (current >= 0 && current < 4 && !nodes[current].marked) {\n    nodes[current].marked = 1;\n    current = nodes[current].child;\n  }\n  for (index = 0; index < 4; ++index) if (!nodes[index].marked) swept += 1;\n  return swept;\n}\n\nint main(void) {\n  struct gc_node nodes[4] = { { 1, 0 }, { -1, 0 }, { 3, 0 }, { 2, 0 } };\n  int swept = evidence_cmem_gc_barriers_pauses_5ceisa(nodes, 0);\n  int invariant = swept == 2 && nodes[0].marked && nodes[1].marked && 3 > 0;\n  printf(\"gc swept=%d invariant=%d\\n\", swept, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Gc Barriers Pauses, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Gc Barriers Pauses precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Gc Barriers Pauses, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 2193. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.",
+        "For Extend the cumulative artifact · Workshop Gc Barriers Pauses, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Concurrent collection removes every stop-the-world phase and synchronization cost."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Gc Barriers Pauses",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9574. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Gc Barriers Pauses.",
+      "why": "The decision supplies observable evidence for relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs. For Test an acceptance boundary · Workshop Gc Barriers Pauses, keep Gc Barriers Pauses connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9574. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Gc Barriers Pauses symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 C API Memory Management — Allocator domains, matching allocation families, object memory, debug hooks, and free-threaded requirements."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Gc Barriers Pauses, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Gc Barriers Pauses precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Gc Barriers Pauses, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9574. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.",
+        "For Test an acceptance boundary · Workshop Gc Barriers Pauses, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Concurrent collection removes every stop-the-world phase and synchronization cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Gc Barriers Pauses failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Concurrent collection removes every stop-the-world phase and synchronization cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Gc Barriers Pauses case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Gc Barriers Pauses condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Gc Barriers Pauses",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Gc Barriers Pauses: explain the governing condition, one failure, and how this concrete case was verified — A workshop native-systems team handles memory case 7955. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.\n\nEvidence target: Defend the transferred model · Workshop Gc Barriers Pauses.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Gc Barriers Pauses, keep Gc Barriers Pauses connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Gc Barriers Pauses, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Gc Barriers Pauses precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Gc Barriers Pauses, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 7955. Produce bounded C evidence to mark reachable objects and count only unreachable sweep candidates; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate generational and concurrent collection to write barriers, mutator cooperation, pause, throughput, and memory tradeoffs.",
+        "For Defend the transferred model · Workshop Gc Barriers Pauses, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Concurrent collection removes every stop-the-world phase and synchronization cost."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reachability Roots to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reachability Roots.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Reachability Roots to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Reachability Roots.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mark Sweep Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mark Sweep Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mark-sweep-invariant"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Conservative Pointer Risk to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Conservative Pointer Risk.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-conservative-pointer-risk"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Finalizer Resurrection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Finalizer Resurrection.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-finalizer-resurrection"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gc Barriers Pauses to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gc Barriers Pauses.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-reachability-roots"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-gc-barriers-pauses-5ceisa */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-gc-barriers-pauses-5ceisa */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-gc-barriers-pauses-5ceisa \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_gc_barriers_pauses_5ceisa\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gc Barriers Pauses to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gc Barriers Pauses.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using relate and generational plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-gc-barriers-pauses"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "relate",
+        "generational"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

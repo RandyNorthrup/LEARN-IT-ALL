@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa2-string-algorithms-independent-lab",
+  "courseId": "python-dsa-2",
+  "moduleId": "dsa2-string-algorithms",
+  "kind": "lab",
+  "title": "Linear-Time String Search and Prefix Structure · Adversarial-Input Lab",
+  "summary": "Scan large logs for many repeated patterns without repeated restart work. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a verified prefix-based matching engine with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Compute prefix-function fallback lengths while preserving matched-prefix meaning.",
+    "Use prefix evidence to avoid rechecking characters in Knuth-Morris-Pratt search.",
+    "Use rolling hashes with explicit modulus, collision verification, and numeric limits.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "dsa2-prefix-function",
+      "dsa2-kmp",
+      "dsa2-rolling-hash",
+      "dsa2-multi-pattern-trie",
+      "dsa2-string-adversaries"
+    ]
+  },
+  "prerequisites": [
+    "dsa2-string-algorithms-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-dsa-2-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa-2 algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for compute prefix-function fallback lengths while preserving matched-prefix meaning.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Prefix Function condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "hints": [
+        "Name the Prefix Function precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Fallback always resets matching to zero."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Prefix Function preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Fallback always resets matching to zero."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Prefix Function."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet",
+      "interaction": "inspect",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nInspect the String Adversaries trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for construct repeated-prefix, unicode, empty-pattern, and collision-heavy cases.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For String Adversaries, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "String Adversaries case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Natural-language samples expose worst-case string behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Construct repeated-prefix, Unicode, empty-pattern, and collision-heavy cases. Artifact under review: a verified prefix-based matching engine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for String Adversaries."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies String Adversaries, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Prefix Function · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhich action demonstrates Prefix Function without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for compute prefix-function fallback lengths while preserving matched-prefix meaning.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Prefix Function condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "hints": [
+        "Name the Prefix Function precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Fallback always resets matching to zero."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Prefix Function."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Compute prefix-function fallback lengths while preserving matched-prefix meaning. Apply it to the stated input and retain a reproducible trace for a verified prefix-based matching engine."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Fallback always resets matching to zero."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Kmp · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhich action demonstrates Kmp without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use prefix evidence to avoid rechecking characters in knuth-morris-pratt search.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Kmp result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa2-kmp"
+      ],
+      "hints": [
+        "Name the Kmp precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: KMP skips text characters that might begin a match."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Kmp case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "KMP skips text characters that might begin a match.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use prefix evidence to avoid rechecking characters in Knuth-Morris-Pratt search.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Use prefix evidence to avoid rechecking characters in Knuth-Morris-Pratt search. Apply it to the stated input and retain a reproducible trace for a verified prefix-based matching engine."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "KMP skips text characters that might begin a match."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Kmp."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Rolling Hash · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhich action demonstrates Rolling Hash without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use rolling hashes with explicit modulus, collision verification, and numeric limits.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Rolling Hash condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa2-rolling-hash"
+      ],
+      "hints": [
+        "Name the Rolling Hash precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Equal hashes prove equal substrings."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Equal hashes prove equal substrings."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Rolling Hash."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Use rolling hashes with explicit modulus, collision verification, and numeric limits. Apply it to the stated input and retain a reproducible trace for a verified prefix-based matching engine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Multi Pattern Trie · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhich action demonstrates Multi Pattern Trie without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for extend trie state with failure transitions for multi-pattern matching.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Multi Pattern Trie result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa2-multi-pattern-trie"
+      ],
+      "hints": [
+        "Name the Multi Pattern Trie precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Running one trie lookup from each text position is linear."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Multi Pattern Trie case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Running one trie lookup from each text position is linear.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Extend trie state with failure transitions for multi-pattern matching.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Multi Pattern Trie."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Extend trie state with failure transitions for multi-pattern matching. Apply it to the stated input and retain a reproducible trace for a verified prefix-based matching engine."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Running one trie lookup from each text position is linear."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "String Adversaries · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nWhich action demonstrates String Adversaries without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for construct repeated-prefix, unicode, empty-pattern, and collision-heavy cases.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which String Adversaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Construct repeated-prefix, Unicode, empty-pattern, and collision-heavy cases. Apply it to the stated input and retain a reproducible trace for a verified prefix-based matching engine."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Natural-language samples expose worst-case string behavior."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for String Adversaries."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa2_string_adversaries_vl5ezi function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns String Adversaries into observable performance evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa2_string_adversaries_vl5ezi(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for construct repeated-prefix, unicode, empty-pattern, and collision-heavy cases.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the String Adversaries symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Graphlib Topological Ordering — Directed acyclic graph preparation, topological ordering, cycle detection, and parallel readiness."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "String Adversaries failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Natural-language samples expose worst-case string behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Construct repeated-prefix, Unicode, empty-pattern, and collision-heavy cases.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for String Adversaries."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated String Adversaries condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for String Adversaries: explain the governing condition, one failure, and how this concrete case was verified — Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Construct repeated-prefix, Unicode, empty-pattern, and collision-heavy cases."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Index [\"resume\", \"résumé\", \"result\", \"rest\"] under an explicit Unicode policy, then query \"res\" and a repeated-prefix failure case without claiming hash equality proves text equality.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefix Function to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefix Function.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Adversaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Adversaries.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefix Function to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefix Function.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Kmp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Kmp.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-kmp"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Rolling Hash to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Rolling Hash.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-rolling-hash"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multi Pattern Trie to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multi Pattern Trie.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-multi-pattern-trie"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Adversaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Adversaries.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa2_string_adversaries_vl5ezi.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa2_string_adversaries_vl5ezi"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa2_string_adversaries_vl5ezi\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Adversaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Adversaries.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using construct and repeated plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "construct",
+        "repeated"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

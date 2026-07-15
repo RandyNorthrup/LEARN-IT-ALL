@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { ChevronDown, ChevronUp, Puzzle, RotateCcw, Trophy } from 'lucide-react';
 import Link from 'next/link';
-import { Puzzle, Trophy, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface CodeBlock {
   id: string;
@@ -76,13 +76,13 @@ export default function CodeBuilderGame() {
 
   function addBlock(blockId: string) {
     setSelectedBlocks([...selectedBlocks, blockId]);
-    setAvailableBlocks(availableBlocks.filter(b => b.id !== blockId));
+    setAvailableBlocks(availableBlocks.filter((b) => b.id !== blockId));
   }
 
   function removeBlock(blockId: string) {
-    const block = challenge.blocks.find(b => b.id === blockId);
+    const block = challenge.blocks.find((b) => b.id === blockId);
     if (block) {
-      setSelectedBlocks(selectedBlocks.filter(id => id !== blockId));
+      setSelectedBlocks(selectedBlocks.filter((id) => id !== blockId));
       setAvailableBlocks([...availableBlocks, block]);
     }
   }
@@ -104,14 +104,14 @@ export default function CodeBuilderGame() {
   }
 
   function checkSolution() {
-    const isCorrect = 
+    const isCorrect =
       selectedBlocks.length === challenge.correctOrder.length &&
       selectedBlocks.every((id, index) => id === challenge.correctOrder[index]);
 
     if (isCorrect) {
       setMessage('✅ Correct! Well done!');
       setScore(score + 10);
-      
+
       setTimeout(() => {
         if (currentChallenge < challenges.length - 1) {
           const nextChallenge = currentChallenge + 1;
@@ -166,7 +166,8 @@ export default function CodeBuilderGame() {
           <p className="text-gray-600 mb-4">{challenge.description}</p>
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
             <p className="text-sm text-orange-800">
-              <strong>Expected Output:</strong> <code className="font-mono">{challenge.expectedOutput}</code>
+              <strong>Expected Output:</strong>{' '}
+              <code className="font-mono">{challenge.expectedOutput}</code>
             </p>
           </div>
         </div>
@@ -181,6 +182,7 @@ export default function CodeBuilderGame() {
               ) : (
                 availableBlocks.map((block) => (
                   <button
+                    type="button"
                     key={block.id}
                     onClick={() => addBlock(block.id)}
                     className="w-full text-left bg-gray-100 hover:bg-gray-200 rounded-lg p-3 font-mono text-sm transition-colors"
@@ -201,14 +203,15 @@ export default function CodeBuilderGame() {
                 <p className="text-gray-500 text-center py-8">Drag blocks here</p>
               ) : (
                 selectedBlocks.map((blockId, index) => {
-                  const block = availableBlocks.find(b => b.id === blockId);
+                  const block = availableBlocks.find((b) => b.id === blockId);
                   if (!block) return null;
-                  
+
                   const uniqueKey = `selected-${blockId}-${index}-${block.code.substring(0, 10)}`;
                   return (
                     <div key={uniqueKey} className="flex items-center gap-2">
                       <div className="flex flex-col">
                         <button
+                          type="button"
                           onClick={() => moveBlockUp(index)}
                           disabled={index === 0}
                           className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
@@ -216,6 +219,7 @@ export default function CodeBuilderGame() {
                           <ChevronUp className="h-4 w-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => moveBlockDown(index)}
                           disabled={index === selectedBlocks.length - 1}
                           className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
@@ -230,6 +234,7 @@ export default function CodeBuilderGame() {
                         {block.code}
                       </div>
                       <button
+                        type="button"
                         onClick={() => removeBlock(blockId)}
                         className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
                       >
@@ -242,17 +247,20 @@ export default function CodeBuilderGame() {
             </div>
 
             {message && (
-              <div className={`mb-4 p-4 rounded-lg ${
-                message.includes('✅') || message.includes('🎉')
-                  ? 'bg-green-50 text-green-800'
-                  : 'bg-red-50 text-red-800'
-              }`}>
+              <div
+                className={`mb-4 p-4 rounded-lg ${
+                  message.includes('✅') || message.includes('🎉')
+                    ? 'bg-green-50 text-green-800'
+                    : 'bg-red-50 text-red-800'
+                }`}
+              >
                 {message}
               </div>
             )}
 
             <div className="flex gap-3">
               <button
+                type="button"
                 onClick={checkSolution}
                 disabled={selectedBlocks.length === 0}
                 className="flex-1 px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50"
@@ -260,6 +268,7 @@ export default function CodeBuilderGame() {
                 Check Solution
               </button>
               <button
+                type="button"
                 onClick={resetChallenge}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2"
               >

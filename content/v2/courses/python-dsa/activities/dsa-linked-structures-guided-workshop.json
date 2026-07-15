@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-linked-structures-guided-workshop",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-linked-structures",
+  "kind": "workshop",
+  "title": "Linked Lists, Nodes, and Pointer Invariants · Data-Structure Studio",
+  "summary": "Build a mutable work queue where stable node links matter more than random access. Planned artifact: Build a complete first version of a linked structure with diagrammed invariants while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Trace singly and doubly linked node references without losing head, tail, or reachability.",
+    "Insert and delete at boundaries while preserving connectivity and size invariants.",
+    "Implement traversal with termination evidence and malformed-cycle protection.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "dsa-node-link-model",
+      "dsa-linked-insert-delete",
+      "dsa-linked-traversal",
+      "dsa-fast-slow-pointers",
+      "dsa-array-list-choice"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "dsa-linked-structures-dsa-array-list-choice-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "workshop case — Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for trace singly and doubly linked node references without losing head, tail, or reachability.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Node Link Model condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-node-link-model"
+      ],
+      "hints": [
+        "Name the Node Link Model precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Variables holding nodes contain copied node values."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "Variables holding nodes contain copied node values."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Node Link Model."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Node Link Model preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Node Link Model · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Node Link Model without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace singly and doubly linked node references without losing head, tail, or reachability.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Node Link Model condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-node-link-model"
+      ],
+      "hints": [
+        "Name the Node Link Model precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Variables holding nodes contain copied node values."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Node Link Model."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Trace singly and doubly linked node references without losing head, tail, or reachability. Apply it to the stated input and retain a reproducible trace for a linked structure with diagrammed invariants."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Variables holding nodes contain copied node values."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Linked Insert Delete · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Linked Insert Delete without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for insert and delete at boundaries while preserving connectivity and size invariants.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Linked Insert Delete result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-linked-insert-delete"
+      ],
+      "hints": [
+        "Name the Linked Insert Delete precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Relinking one neighboring node is sufficient for every deletion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Linked Insert Delete case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Relinking one neighboring node is sufficient for every deletion.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Insert and delete at boundaries while preserving connectivity and size invariants.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Insert and delete at boundaries while preserving connectivity and size invariants. Apply it to the stated input and retain a reproducible trace for a linked structure with diagrammed invariants."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Relinking one neighboring node is sufficient for every deletion."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Linked Insert Delete."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Linked Traversal · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Linked Traversal without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for implement traversal with termination evidence and malformed-cycle protection.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Linked Traversal condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-linked-traversal"
+      ],
+      "hints": [
+        "Name the Linked Traversal precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Following next eventually reaches None in every linked structure."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Following next eventually reaches None in every linked structure."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Linked Traversal."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Implement traversal with termination evidence and malformed-cycle protection. Apply it to the stated input and retain a reproducible trace for a linked structure with diagrammed invariants."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Fast Slow Pointers · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Fast Slow Pointers without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use fast and slow pointers for cycle, midpoint, and phase-offset reasoning.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Fast Slow Pointers result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-fast-slow-pointers"
+      ],
+      "hints": [
+        "Name the Fast Slow Pointers precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Fast and slow pointers reveal cycle entry immediately."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Fast Slow Pointers case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Fast and slow pointers reveal cycle entry immediately.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use fast and slow pointers for cycle, midpoint, and phase-offset reasoning.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Fast Slow Pointers."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Use fast and slow pointers for cycle, midpoint, and phase-offset reasoning. Apply it to the stated input and retain a reproducible trace for a linked structure with diagrammed invariants."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Fast and slow pointers reveal cycle entry immediately."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Array List Choice · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Array List Choice without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for choose contiguous or linked storage from measured access, mutation, allocation, and locality needs.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Array List Choice condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "hints": [
+        "Name the Array List Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Linked lists are always faster for insertion."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Choose contiguous or linked storage from measured access, mutation, allocation, and locality needs. Apply it to the stated input and retain a reproducible trace for a linked structure with diagrammed invariants."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Linked lists are always faster for insertion."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Array List Choice."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet",
+      "interaction": "inspect",
+      "instruction": "workshop case — Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nInspect the Array List Choice trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for choose contiguous or linked storage from measured access, mutation, allocation, and locality needs.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Array List Choice, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "hints": [
+        "Name the Array List Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Linked lists are always faster for insertion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Array List Choice case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Linked lists are always faster for insertion.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose contiguous or linked storage from measured access, mutation, allocation, and locality needs. Artifact under review: a linked structure with diagrammed invariants.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Array List Choice."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Array List Choice, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_array_list_choice_17y02u function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Array List Choice into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_array_list_choice_17y02u(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "hints": [
+        "Name the Array List Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Linked lists are always faster for insertion."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for choose contiguous or linked storage from measured access, mutation, allocation, and locality needs.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Array List Choice symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "hints": [
+        "Name the Array List Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Linked lists are always faster for insertion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Array List Choice failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Linked lists are always faster for insertion.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose contiguous or linked storage from measured access, mutation, allocation, and locality needs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Array List Choice condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Array List Choice."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Array List Choice: explain the governing condition, one failure, and how this concrete case was verified — Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Choose contiguous or linked storage from measured access, mutation, allocation, and locality needs."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "hints": [
+        "Name the Array List Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Linked lists are always faster for insertion."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Node Link Model to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Node Link Model.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-node-link-model"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Node Link Model to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Node Link Model.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-node-link-model"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Linked Insert Delete to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Linked Insert Delete.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-linked-insert-delete"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Linked Traversal to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Linked Traversal.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-linked-traversal"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Fast Slow Pointers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Fast Slow Pointers.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-fast-slow-pointers"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Array List Choice to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Array List Choice.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Array List Choice to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Array List Choice.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_array_list_choice_17y02u.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_array_list_choice_17y02u"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_array_list_choice_17y02u\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Array List Choice to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Array List Choice.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using choose and contiguous plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-array-list-choice"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "choose",
+        "contiguous"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

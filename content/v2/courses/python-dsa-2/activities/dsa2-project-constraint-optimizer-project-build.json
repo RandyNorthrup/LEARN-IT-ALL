@@ -1,0 +1,1883 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa2-project-constraint-optimizer-project-build",
+  "courseId": "python-dsa-2",
+  "moduleId": "dsa2-network-flow-matching",
+  "kind": "project",
+  "title": "Network Flow, Cuts, and Bipartite Matching · Algorithm Stakeholder Mission",
+  "summary": "A staffing group needs feasible assignments and transparent tradeoffs. Compare greedy, dynamic-programming, search, and flow models on changed constraints. Planned artifact: Deliver Constraint and Allocation Optimizer with acceptance evidence, rubric defense, reflection, and a changed-constraint extension. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Model longest-common-subsequence and edit-distance choices with boundary rows and reconstruction.",
+    "Distinguish zero-one, unbounded, subset-sum, and value-indexed knapsack states.",
+    "Compress DP rows only when overwritten states are no longer needed.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "dsa2-sequence-dp",
+      "dsa2-knapsack-variants",
+      "dsa2-space-compression",
+      "dsa2-loop-order",
+      "dsa2-dp-bounds",
+      "dsa2-search-state",
+      "dsa2-pruning-soundness",
+      "dsa2-variable-ordering",
+      "dsa2-branch-bound",
+      "dsa2-search-instrumentation",
+      "dsa2-prefix-function",
+      "dsa2-kmp",
+      "dsa2-rolling-hash",
+      "dsa2-multi-pattern-trie",
+      "dsa2-string-adversaries",
+      "dsa2-flow-model",
+      "dsa2-residual-graph",
+      "dsa2-augmenting-path",
+      "dsa2-maxflow-mincut",
+      "dsa2-bipartite-matching"
+    ],
+    "assesses": [
+      "dsa2-sequence-dp",
+      "dsa2-knapsack-variants",
+      "dsa2-space-compression",
+      "dsa2-loop-order",
+      "dsa2-dp-bounds",
+      "dsa2-search-state",
+      "dsa2-pruning-soundness",
+      "dsa2-variable-ordering",
+      "dsa2-branch-bound",
+      "dsa2-search-instrumentation",
+      "dsa2-prefix-function",
+      "dsa2-kmp",
+      "dsa2-rolling-hash",
+      "dsa2-multi-pattern-trie",
+      "dsa2-string-adversaries",
+      "dsa2-flow-model",
+      "dsa2-residual-graph",
+      "dsa2-augmenting-path",
+      "dsa2-maxflow-mincut",
+      "dsa2-bipartite-matching"
+    ]
+  },
+  "prerequisites": [
+    "dsa2-network-flow-matching-mastery-quiz"
+  ],
+  "difficulty": "mastery",
+  "estimatedMinutes": 420,
+  "artifactId": "python-dsa-2-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa-2 algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for model longest-common-subsequence and edit-distance choices with boundary rows and reconstruction.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Sequence Dp condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "hints": [
+        "Name the Sequence Dp precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Greedy character matching always yields a longest subsequence."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Sequence Dp preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Greedy character matching always yields a longest subsequence."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Sequence Dp."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Sequence Dp · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Sequence Dp without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for model longest-common-subsequence and edit-distance choices with boundary rows and reconstruction.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Sequence Dp condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "hints": [
+        "Name the Sequence Dp precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Greedy character matching always yields a longest subsequence."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Greedy character matching always yields a longest subsequence."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Sequence Dp."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Model longest-common-subsequence and edit-distance choices with boundary rows and reconstruction. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Knapsack Variants · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Knapsack Variants without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for distinguish zero-one, unbounded, subset-sum, and value-indexed knapsack states.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Knapsack Variants result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa2-knapsack-variants"
+      ],
+      "hints": [
+        "Name the Knapsack Variants precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: One knapsack loop order works for every variant."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Knapsack Variants case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "One knapsack loop order works for every variant.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish zero-one, unbounded, subset-sum, and value-indexed knapsack states.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Knapsack Variants."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Distinguish zero-one, unbounded, subset-sum, and value-indexed knapsack states. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "One knapsack loop order works for every variant."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Space Compression · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Space Compression without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for compress dp rows only when overwritten states are no longer needed.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Space Compression condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa2-space-compression"
+      ],
+      "hints": [
+        "Name the Space Compression precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Any two-dimensional DP can use one row safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Compress DP rows only when overwritten states are no longer needed. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Any two-dimensional DP can use one row safely."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Space Compression."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Loop Order · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Loop Order without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for derive iteration order from transition dependencies rather than coding habit.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Loop Order result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa2-loop-order"
+      ],
+      "hints": [
+        "Name the Loop Order precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Loop order affects speed but not semantics."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Loop Order case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Loop order affects speed but not semantics.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Derive iteration order from transition dependencies rather than coding habit.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Loop order affects speed but not semantics."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Loop Order."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Derive iteration order from transition dependencies rather than coding habit. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Dp Bounds · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Dp Bounds without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for estimate pseudo-polynomial state growth and reject impractical exact models.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Dp Bounds condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa2-dp-bounds"
+      ],
+      "hints": [
+        "Name the Dp Bounds precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Polynomial in a numeric value is polynomial in input length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Dp Bounds."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Estimate pseudo-polynomial state growth and reject impractical exact models. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Polynomial in a numeric value is polynomial in input length."
+        }
+      ]
+    },
+    {
+      "id": "scenario-6",
+      "title": "Search State · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Search State without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define partial assignments, legal extensions, completion, and undo invariants.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Search State result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-6-check"
+      ],
+      "competencyIds": [
+        "dsa2-search-state"
+      ],
+      "hints": [
+        "Name the Search State precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Copying all state is required for correct backtracking."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Search State case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-6-observed",
+            "label": "observed",
+            "text": "Copying all state is required for correct backtracking.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-6-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Define partial assignments, legal extensions, completion, and undo invariants.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-6-sound",
+          "text": "Define partial assignments, legal extensions, completion, and undo invariants. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-6-misread",
+          "text": "Copying all state is required for correct backtracking."
+        },
+        {
+          "id": "scenario-6-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Search State."
+        }
+      ]
+    },
+    {
+      "id": "scenario-7",
+      "title": "Pruning Soundness · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Pruning Soundness without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for prune only with a condition that cannot remove a valid or better solution.",
+      "buildsOnStepIds": [
+        "scenario-6"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pruning Soundness condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-7-check"
+      ],
+      "competencyIds": [
+        "dsa2-pruning-soundness"
+      ],
+      "hints": [
+        "Name the Pruning Soundness precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A branch that looks unlikely may be discarded safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-7-misread",
+          "text": "A branch that looks unlikely may be discarded safely."
+        },
+        {
+          "id": "scenario-7-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Pruning Soundness."
+        },
+        {
+          "id": "scenario-7-sound",
+          "text": "Prune only with a condition that cannot remove a valid or better solution. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-8",
+      "title": "Variable Ordering · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Variable Ordering without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use constrained-first and value-order heuristics without confusing speed with correctness.",
+      "buildsOnStepIds": [
+        "scenario-7"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Variable Ordering result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-8-check"
+      ],
+      "competencyIds": [
+        "dsa2-variable-ordering"
+      ],
+      "hints": [
+        "Name the Variable Ordering precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A heuristic ordering changes the solution set."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Variable Ordering case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-8-observed",
+            "label": "observed",
+            "text": "A heuristic ordering changes the solution set.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-8-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use constrained-first and value-order heuristics without confusing speed with correctness.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-8-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Variable Ordering."
+        },
+        {
+          "id": "scenario-8-sound",
+          "text": "Use constrained-first and value-order heuristics without confusing speed with correctness. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-8-misread",
+          "text": "A heuristic ordering changes the solution set."
+        }
+      ]
+    },
+    {
+      "id": "scenario-9",
+      "title": "Branch Bound · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Branch Bound without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for maintain incumbent solutions and optimistic bounds for optimization search.",
+      "buildsOnStepIds": [
+        "scenario-8"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Branch Bound condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-9-check"
+      ],
+      "competencyIds": [
+        "dsa2-branch-bound"
+      ],
+      "hints": [
+        "Name the Branch Bound precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Any estimated score is a valid pruning bound."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-9-sound",
+          "text": "Maintain incumbent solutions and optimistic bounds for optimization search. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-9-misread",
+          "text": "Any estimated score is a valid pruning bound."
+        },
+        {
+          "id": "scenario-9-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Branch Bound."
+        }
+      ]
+    },
+    {
+      "id": "scenario-10",
+      "title": "Search Instrumentation · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Search Instrumentation without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for measure expanded nodes, pruned reasons, depth, and incumbent improvements.",
+      "buildsOnStepIds": [
+        "scenario-9"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Search Instrumentation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-10-check"
+      ],
+      "competencyIds": [
+        "dsa2-search-instrumentation"
+      ],
+      "hints": [
+        "Name the Search Instrumentation precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Elapsed time alone explains search behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Search Instrumentation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-10-observed",
+            "label": "observed",
+            "text": "Elapsed time alone explains search behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-10-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Measure expanded nodes, pruned reasons, depth, and incumbent improvements.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-10-misread",
+          "text": "Elapsed time alone explains search behavior."
+        },
+        {
+          "id": "scenario-10-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Search Instrumentation."
+        },
+        {
+          "id": "scenario-10-sound",
+          "text": "Measure expanded nodes, pruned reasons, depth, and incumbent improvements. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-11",
+      "title": "Prefix Function · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Prefix Function without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for compute prefix-function fallback lengths while preserving matched-prefix meaning.",
+      "buildsOnStepIds": [
+        "scenario-10"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Prefix Function condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-11-check"
+      ],
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "hints": [
+        "Name the Prefix Function precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Fallback always resets matching to zero."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-11-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Prefix Function."
+        },
+        {
+          "id": "scenario-11-sound",
+          "text": "Compute prefix-function fallback lengths while preserving matched-prefix meaning. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-11-misread",
+          "text": "Fallback always resets matching to zero."
+        }
+      ]
+    },
+    {
+      "id": "scenario-12",
+      "title": "Kmp · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Kmp without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use prefix evidence to avoid rechecking characters in knuth-morris-pratt search.",
+      "buildsOnStepIds": [
+        "scenario-11"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Kmp result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-12-check"
+      ],
+      "competencyIds": [
+        "dsa2-kmp"
+      ],
+      "hints": [
+        "Name the Kmp precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: KMP skips text characters that might begin a match."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Kmp case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-12-observed",
+            "label": "observed",
+            "text": "KMP skips text characters that might begin a match.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-12-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use prefix evidence to avoid rechecking characters in Knuth-Morris-Pratt search.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-12-sound",
+          "text": "Use prefix evidence to avoid rechecking characters in Knuth-Morris-Pratt search. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-12-misread",
+          "text": "KMP skips text characters that might begin a match."
+        },
+        {
+          "id": "scenario-12-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Kmp."
+        }
+      ]
+    },
+    {
+      "id": "scenario-13",
+      "title": "Rolling Hash · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Rolling Hash without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use rolling hashes with explicit modulus, collision verification, and numeric limits.",
+      "buildsOnStepIds": [
+        "scenario-12"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Rolling Hash condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-13-check"
+      ],
+      "competencyIds": [
+        "dsa2-rolling-hash"
+      ],
+      "hints": [
+        "Name the Rolling Hash precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Equal hashes prove equal substrings."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-13-misread",
+          "text": "Equal hashes prove equal substrings."
+        },
+        {
+          "id": "scenario-13-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Rolling Hash."
+        },
+        {
+          "id": "scenario-13-sound",
+          "text": "Use rolling hashes with explicit modulus, collision verification, and numeric limits. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-14",
+      "title": "Multi Pattern Trie · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Multi Pattern Trie without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for extend trie state with failure transitions for multi-pattern matching.",
+      "buildsOnStepIds": [
+        "scenario-13"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Multi Pattern Trie result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-14-check"
+      ],
+      "competencyIds": [
+        "dsa2-multi-pattern-trie"
+      ],
+      "hints": [
+        "Name the Multi Pattern Trie precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Running one trie lookup from each text position is linear."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Multi Pattern Trie case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-14-observed",
+            "label": "observed",
+            "text": "Running one trie lookup from each text position is linear.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-14-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Extend trie state with failure transitions for multi-pattern matching.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-14-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Multi Pattern Trie."
+        },
+        {
+          "id": "scenario-14-sound",
+          "text": "Extend trie state with failure transitions for multi-pattern matching. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-14-misread",
+          "text": "Running one trie lookup from each text position is linear."
+        }
+      ]
+    },
+    {
+      "id": "scenario-15",
+      "title": "String Adversaries · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates String Adversaries without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for construct repeated-prefix, unicode, empty-pattern, and collision-heavy cases.",
+      "buildsOnStepIds": [
+        "scenario-14"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which String Adversaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-15-check"
+      ],
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "hints": [
+        "Name the String Adversaries precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Natural-language samples expose worst-case string behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-15-sound",
+          "text": "Construct repeated-prefix, Unicode, empty-pattern, and collision-heavy cases. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-15-misread",
+          "text": "Natural-language samples expose worst-case string behavior."
+        },
+        {
+          "id": "scenario-15-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for String Adversaries."
+        }
+      ]
+    },
+    {
+      "id": "scenario-16",
+      "title": "Flow Model · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Flow Model without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for translate capacities, conservation, source, sink, and residual choices from a stakeholder problem.",
+      "buildsOnStepIds": [
+        "scenario-15"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Flow Model result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-16-check"
+      ],
+      "competencyIds": [
+        "dsa2-flow-model"
+      ],
+      "hints": [
+        "Name the Flow Model precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Every graph optimization problem is naturally a flow network."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Flow Model case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-16-observed",
+            "label": "observed",
+            "text": "Every graph optimization problem is naturally a flow network.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-16-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Translate capacities, conservation, source, sink, and residual choices from a stakeholder problem.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-16-misread",
+          "text": "Every graph optimization problem is naturally a flow network."
+        },
+        {
+          "id": "scenario-16-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Flow Model."
+        },
+        {
+          "id": "scenario-16-sound",
+          "text": "Translate capacities, conservation, source, sink, and residual choices from a stakeholder problem. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-17",
+      "title": "Residual Graph · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Residual Graph without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace forward and reverse residual capacity after augmentation.",
+      "buildsOnStepIds": [
+        "scenario-16"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Residual Graph condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-17-check"
+      ],
+      "competencyIds": [
+        "dsa2-residual-graph"
+      ],
+      "hints": [
+        "Name the Residual Graph precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A reverse residual edge means physical flow moves backward."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-17-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Residual Graph."
+        },
+        {
+          "id": "scenario-17-sound",
+          "text": "Trace forward and reverse residual capacity after augmentation. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-17-misread",
+          "text": "A reverse residual edge means physical flow moves backward."
+        }
+      ]
+    },
+    {
+      "id": "scenario-18",
+      "title": "Augmenting Path · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Augmenting Path without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for find augmenting paths and update flow without violating capacity or conservation.",
+      "buildsOnStepIds": [
+        "scenario-17"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Augmenting Path result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-18-check"
+      ],
+      "competencyIds": [
+        "dsa2-augmenting-path"
+      ],
+      "hints": [
+        "Name the Augmenting Path precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Any source-to-sink path increases flow by one."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Augmenting Path case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-18-observed",
+            "label": "observed",
+            "text": "Any source-to-sink path increases flow by one.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-18-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Find augmenting paths and update flow without violating capacity or conservation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-18-sound",
+          "text": "Find augmenting paths and update flow without violating capacity or conservation. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-18-misread",
+          "text": "Any source-to-sink path increases flow by one."
+        },
+        {
+          "id": "scenario-18-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Augmenting Path."
+        }
+      ]
+    },
+    {
+      "id": "scenario-19",
+      "title": "Maxflow Mincut · changed case",
+      "interaction": "answer",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Maxflow Mincut without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use a final residual reachability cut as optimality evidence.",
+      "buildsOnStepIds": [
+        "scenario-18"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Maxflow Mincut condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-19-check"
+      ],
+      "competencyIds": [
+        "dsa2-maxflow-mincut"
+      ],
+      "hints": [
+        "Name the Maxflow Mincut precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Maximum flow and minimum cut are the same edge set."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-19-misread",
+          "text": "Maximum flow and minimum cut are the same edge set."
+        },
+        {
+          "id": "scenario-19-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Maxflow Mincut."
+        },
+        {
+          "id": "scenario-19-sound",
+          "text": "Use a final residual reachability cut as optimality evidence. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-20",
+      "title": "Bipartite Matching · changed case",
+      "interaction": "inspect",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nWhich action demonstrates Bipartite Matching without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for reduce bipartite matching to flow and reconstruct matched stakeholder pairs.",
+      "buildsOnStepIds": [
+        "scenario-19"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Bipartite Matching result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-20-check"
+      ],
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "hints": [
+        "Name the Bipartite Matching precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 2. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A maximum matching assigns every participant."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bipartite Matching case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-20-observed",
+            "label": "observed",
+            "text": "A maximum matching assigns every participant.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-20-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reduce bipartite matching to flow and reconstruct matched stakeholder pairs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-20-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Bipartite Matching."
+        },
+        {
+          "id": "scenario-20-sound",
+          "text": "Reduce bipartite matching to flow and reconstruct matched stakeholder pairs. Apply it to the stated input and retain a reproducible trace for a flow-based assignment model and cut explanation."
+        },
+        {
+          "id": "scenario-20-misread",
+          "text": "A maximum matching assigns every participant."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence",
+      "interaction": "arrange",
+      "instruction": "Order the Sequence Dp correctness-and-cost proof for this project task before implementing it.",
+      "why": "Correct order keeps Sequence Dp assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "scenario-20"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Sequence Dp has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "hints": [
+        "Name the Sequence Dp precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 3. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: Greedy character matching always yields a longest subsequence."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define input, output, preconditions, size, and the operation being counted"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose a correct baseline and state its loop or representation invariant"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Trace the candidate on a minimal instance and derive time and space cost"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Attack it with boundary and adversarial cases, then justify any optimization"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa2_bipartite_matching_1dfqjd function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Bipartite Matching into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa2_bipartite_matching_1dfqjd(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "hints": [
+        "Name the Bipartite Matching precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 4. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A maximum matching assigns every participant."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "project case — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for reduce bipartite matching to flow and reconstruct matched stakeholder pairs.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Bipartite Matching symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "hints": [
+        "Name the Bipartite Matching precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 5. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A maximum matching assigns every participant."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bipartite Matching failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A maximum matching assigns every participant.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reduce bipartite matching to flow and reconstruct matched stakeholder pairs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Bipartite Matching."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Bipartite Matching condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the stakeholder delivery",
+      "interaction": "reflect",
+      "instruction": "Write the project evidence note for Bipartite Matching: explain the governing condition, one failure, and how this concrete case was verified — Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Reduce bipartite matching to flow and reconstruct matched stakeholder pairs."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "hints": [
+        "Name the Bipartite Matching precondition or invariant that the project case must preserve.",
+        "Trace this concrete case before choosing: Assign workers {A,B,C} to jobs {1,2,3} with one forbidden pair and capacity 6. Trace residual changes, reconstruct matched pairs, and use a cut as optimality evidence.",
+        "Use the documented misconception as a counterexample target: A maximum matching assigns every participant."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sequence Dp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sequence Dp.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sequence Dp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sequence Dp.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Knapsack Variants to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Knapsack Variants.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-knapsack-variants"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Space Compression to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Space Compression.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-space-compression"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Loop Order to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Loop Order.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-loop-order"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dp Bounds to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dp Bounds.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-dp-bounds"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "scenario-6-check",
+      "type": "choice-equals",
+      "description": "The decision applies Search State to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Search State.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-search-state"
+      ],
+      "expectedOptionId": "scenario-6-sound"
+    },
+    {
+      "id": "scenario-7-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pruning Soundness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pruning Soundness.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-pruning-soundness"
+      ],
+      "expectedOptionId": "scenario-7-sound"
+    },
+    {
+      "id": "scenario-8-check",
+      "type": "choice-equals",
+      "description": "The decision applies Variable Ordering to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Variable Ordering.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-variable-ordering"
+      ],
+      "expectedOptionId": "scenario-8-sound"
+    },
+    {
+      "id": "scenario-9-check",
+      "type": "choice-equals",
+      "description": "The decision applies Branch Bound to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Branch Bound.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-branch-bound"
+      ],
+      "expectedOptionId": "scenario-9-sound"
+    },
+    {
+      "id": "scenario-10-check",
+      "type": "choice-equals",
+      "description": "The decision applies Search Instrumentation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Search Instrumentation.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-search-instrumentation"
+      ],
+      "expectedOptionId": "scenario-10-sound"
+    },
+    {
+      "id": "scenario-11-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefix Function to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefix Function.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-prefix-function"
+      ],
+      "expectedOptionId": "scenario-11-sound"
+    },
+    {
+      "id": "scenario-12-check",
+      "type": "choice-equals",
+      "description": "The decision applies Kmp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Kmp.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-kmp"
+      ],
+      "expectedOptionId": "scenario-12-sound"
+    },
+    {
+      "id": "scenario-13-check",
+      "type": "choice-equals",
+      "description": "The decision applies Rolling Hash to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Rolling Hash.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-rolling-hash"
+      ],
+      "expectedOptionId": "scenario-13-sound"
+    },
+    {
+      "id": "scenario-14-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multi Pattern Trie to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multi Pattern Trie.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-multi-pattern-trie"
+      ],
+      "expectedOptionId": "scenario-14-sound"
+    },
+    {
+      "id": "scenario-15-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Adversaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Adversaries.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-string-adversaries"
+      ],
+      "expectedOptionId": "scenario-15-sound"
+    },
+    {
+      "id": "scenario-16-check",
+      "type": "choice-equals",
+      "description": "The decision applies Flow Model to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Flow Model.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-flow-model"
+      ],
+      "expectedOptionId": "scenario-16-sound"
+    },
+    {
+      "id": "scenario-17-check",
+      "type": "choice-equals",
+      "description": "The decision applies Residual Graph to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Residual Graph.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-residual-graph"
+      ],
+      "expectedOptionId": "scenario-17-sound"
+    },
+    {
+      "id": "scenario-18-check",
+      "type": "choice-equals",
+      "description": "The decision applies Augmenting Path to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Augmenting Path.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-augmenting-path"
+      ],
+      "expectedOptionId": "scenario-18-sound"
+    },
+    {
+      "id": "scenario-19-check",
+      "type": "choice-equals",
+      "description": "The decision applies Maxflow Mincut to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Maxflow Mincut.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-maxflow-mincut"
+      ],
+      "expectedOptionId": "scenario-19-sound"
+    },
+    {
+      "id": "scenario-20-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bipartite Matching to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bipartite Matching.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "expectedOptionId": "scenario-20-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-sequence-dp"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa2_bipartite_matching_1dfqjd.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa2_bipartite_matching_1dfqjd"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa2_bipartite_matching_1dfqjd\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bipartite Matching to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bipartite Matching.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using reduce and bipartite plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-bipartite-matching"
+      ],
+      "minimumCharacters": 160,
+      "requiredTerms": [
+        "reduce",
+        "bipartite"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 90,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

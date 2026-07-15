@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-graph-applications-independent-lab",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-graph-applications",
+  "kind": "lab",
+  "title": "Components, Cycles, Topological Order, and Unweighted Paths · Adversarial-Input Lab",
+  "summary": "Validate a deployment dependency plan and explain unreachable service routes. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a dependency analyzer with path evidence with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Find connected components and explain what connectivity means for the modeled domain.",
+    "Detect undirected and directed cycles with the correct parent or active-path state.",
+    "Produce and validate a topological order or return concrete cycle evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "dsa-components",
+      "dsa-cycle-detection",
+      "dsa-topological-sort",
+      "dsa-path-reconstruction",
+      "dsa-multi-source-bfs"
+    ]
+  },
+  "prerequisites": [
+    "dsa-graph-applications-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for find connected components and explain what connectivity means for the modeled domain.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Components condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-components"
+      ],
+      "hints": [
+        "Name the Components precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: A disconnected graph necessarily indicates bad data."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Components preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A disconnected graph necessarily indicates bad data."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Components."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Components · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhich action demonstrates Components without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for find connected components and explain what connectivity means for the modeled domain.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Components condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-components"
+      ],
+      "hints": [
+        "Name the Components precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: A disconnected graph necessarily indicates bad data."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A disconnected graph necessarily indicates bad data."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Components."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Find connected components and explain what connectivity means for the modeled domain. Apply it to the stated input and retain a reproducible trace for a dependency analyzer with path evidence."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Cycle Detection · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhich action demonstrates Cycle Detection without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for detect undirected and directed cycles with the correct parent or active-path state.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Cycle Detection result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-cycle-detection"
+      ],
+      "hints": [
+        "Name the Cycle Detection precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Any visited neighbor proves a directed cycle."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cycle Detection case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Any visited neighbor proves a directed cycle.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Detect undirected and directed cycles with the correct parent or active-path state.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Cycle Detection."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Detect undirected and directed cycles with the correct parent or active-path state. Apply it to the stated input and retain a reproducible trace for a dependency analyzer with path evidence."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Any visited neighbor proves a directed cycle."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Topological Sort · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhich action demonstrates Topological Sort without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for produce and validate a topological order or return concrete cycle evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Topological Sort condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-topological-sort"
+      ],
+      "hints": [
+        "Name the Topological Sort precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: A DAG has exactly one topological order."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Produce and validate a topological order or return concrete cycle evidence. Apply it to the stated input and retain a reproducible trace for a dependency analyzer with path evidence."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A DAG has exactly one topological order."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Topological Sort."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Path Reconstruction · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhich action demonstrates Path Reconstruction without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for reconstruct an actual path from predecessor evidence instead of reporting reachability alone.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Path Reconstruction result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-path-reconstruction"
+      ],
+      "hints": [
+        "Name the Path Reconstruction precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Visited state is enough to recover every path."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Path Reconstruction case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Visited state is enough to recover every path.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reconstruct an actual path from predecessor evidence instead of reporting reachability alone.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Visited state is enough to recover every path."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Reconstruction."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Reconstruct an actual path from predecessor evidence instead of reporting reachability alone. Apply it to the stated input and retain a reproducible trace for a dependency analyzer with path evidence."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Multi Source Bfs · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nWhich action demonstrates Multi Source Bfs without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use multiple initial frontier nodes for nearest-source and propagation problems.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Multi Source Bfs condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "hints": [
+        "Name the Multi Source Bfs precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Running separate BFS from every source has the same cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Multi Source Bfs."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Use multiple initial frontier nodes for nearest-source and propagation problems. Apply it to the stated input and retain a reproducible trace for a dependency analyzer with path evidence."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Running separate BFS from every source has the same cost."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet",
+      "interaction": "inspect",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nInspect the Multi Source Bfs trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for use multiple initial frontier nodes for nearest-source and propagation problems.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Multi Source Bfs, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "hints": [
+        "Name the Multi Source Bfs precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Running separate BFS from every source has the same cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Multi Source Bfs case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Running separate BFS from every source has the same cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use multiple initial frontier nodes for nearest-source and propagation problems. Artifact under review: a dependency analyzer with path evidence.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Multi Source Bfs, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Multi Source Bfs."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_multi_source_bfs_wlpewf function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Multi Source Bfs into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_multi_source_bfs_wlpewf(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "hints": [
+        "Name the Multi Source Bfs precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Running separate BFS from every source has the same cost."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for use multiple initial frontier nodes for nearest-source and propagation problems.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Multi Source Bfs symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "hints": [
+        "Name the Multi Source Bfs precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Running separate BFS from every source has the same cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Multi Source Bfs failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Running separate BFS from every source has the same cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use multiple initial frontier nodes for nearest-source and propagation problems.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Multi Source Bfs."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Multi Source Bfs condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Multi Source Bfs: explain the governing condition, one failure, and how this concrete case was verified — Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use multiple initial frontier nodes for nearest-source and propagation problems."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "hints": [
+        "Name the Multi Source Bfs precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Analyze directed edges A→B, A→C, B→D, C→D, and D→B. Report traversal order separately from reachability, return a cycle witness, and reject invalid topological claims.",
+        "Use the documented misconception as a counterexample target: Running separate BFS from every source has the same cost."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Components to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Components.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-components"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Components to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Components.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-components"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cycle Detection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cycle Detection.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-cycle-detection"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Topological Sort to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Topological Sort.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-topological-sort"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Reconstruction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Reconstruction.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-path-reconstruction"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multi Source Bfs to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multi Source Bfs.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multi Source Bfs to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multi Source Bfs.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_multi_source_bfs_wlpewf.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_multi_source_bfs_wlpewf"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_multi_source_bfs_wlpewf\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multi Source Bfs to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multi Source Bfs.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using multiple and initial plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-multi-source-bfs"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "multiple",
+        "initial"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

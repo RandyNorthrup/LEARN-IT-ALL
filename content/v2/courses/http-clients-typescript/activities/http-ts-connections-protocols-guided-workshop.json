@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "http-ts-connections-protocols-guided-workshop",
+  "courseId": "http-clients-typescript",
+  "moduleId": "http-ts-connections-protocols",
+  "kind": "workshop",
+  "title": "Connection Reuse, Pools, HTTP/1.1, HTTP/2, HTTP/3, and Concurrency · Browser and Node Client Systems · TypeScript Build Room",
+  "summary": "An accessibility product team integrating a staging browser API must build a first protocol model from narrated fixtures and explain each policy boundary for connection reuse, pools, http/1.1, http/2, http/3, and concurrency, producing connection lifecycle and concurrency plan. Planned artifact: Build a complete first version of a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan while every earlier competency remains active. Learners progress through prediction, expl…",
+  "objectives": [
+    "Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Model HTTP/2 streams, field compression, flow control, concurrency limits, and connection-level failure. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "http-ts-client-reuse-pooling",
+      "http-ts-http1-persistence",
+      "http-ts-http2-multiplexing",
+      "http-ts-http3-quic",
+      "http-ts-concurrency-saturation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-ts-connections-protocols-http-ts-concurrency-saturation-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "http-clients-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// http-clients-typescript cumulative strict Fetch client portfolio.\n// This workspace performs strict diagnostics and deterministic contract modeling only.\ntype RequestEvidence = Readonly<{ method: string; target: string; attempt: number }>;\ntype ResponseEvidence = Readonly<{ status: number; bodyBytes: number; valid: boolean }>;\n\nconst baselineRequest: RequestEvidence = {\n  method: \"GET\",\n  target: \"https://api.example.test/status\",\n  attempt: 1,\n};\nconsole.assert(baselineRequest.attempt === 1);\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling",
+      "interaction": "predict",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhat must be established before implementation?\n\nEvidence target: Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling.",
+      "why": "The decision supplies observable evidence for reuse configured clients and connection pools while separating per-request state from long-lived transport state. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling, keep Client Reuse Pooling connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Client Reuse Pooling condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling, name the method, authority, body, byte, time, and credential boundary, Client Reuse Pooling precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Commit to the mission model · Workshop Client Reuse Pooling, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Creating a fresh client per request guarantees isolation with no performance cost. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Client Reuse Pooling preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Creating a fresh client per request guarantees isolation with no performance cost. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Client Reuse Pooling happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 32 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 4 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Client Reuse Pooling without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling.",
+      "why": "The decision supplies observable evidence for reuse configured clients and connection pools while separating per-request state from long-lived transport state. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling, keep Client Reuse Pooling connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 32 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 4 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Client Reuse Pooling condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling, name the method, authority, body, byte, time, and credential boundary, Client Reuse Pooling precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 32 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 4 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Client Reuse Pooling · changed case · Workshop Client Reuse Pooling, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Creating a fresh client per request guarantees isolation with no performance cost. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Creating a fresh client per request guarantees isolation with no performance cost. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the client reuse pooling · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For client reuse pooling · changed case, run one convenient Client Reuse Pooling happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence",
+      "interaction": "inspect",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 40 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 5 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Http1 Persistence without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence.",
+      "why": "The decision supplies observable evidence for explain persistent http/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence, keep Http1 Persistence connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 40 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 5 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Http1 Persistence result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "http-ts-http1-persistence"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence, name the method, authority, body, byte, time, and credential boundary, Http1 Persistence precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 40 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 5 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Http1 Persistence · changed case · Workshop Http1 Persistence, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Calling close on a response always closes the underlying TCP connection. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Http1 Persistence case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Calling close on a response always closes the underlying TCP connection. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For http1 persistence · changed case, run one convenient Http1 Persistence happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Explain persistent HTTP/1.1 connections, body completion, idle reuse, pipelining limits, and close behavior. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Calling close on a response always closes the underlying TCP connection. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the http1 persistence · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Model HTTP/2 streams, field compression, flow control, concurrency limits, and connection-level failure. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Http2 Multiplexing without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing.",
+      "why": "The decision supplies observable evidence for model http/2 streams, field compression, flow control, concurrency limits, and connection-level failure. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing, keep Http2 Multiplexing connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Model HTTP/2 streams, field compression, flow control, concurrency limits, and connection-level failure. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Http2 Multiplexing condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "http-ts-http2-multiplexing"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing, name the method, authority, body, byte, time, and credential boundary, Http2 Multiplexing precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Model HTTP/2 streams, field compression, flow control, concurrency limits, and connection-level failure. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Http2 Multiplexing · changed case · Workshop Http2 Multiplexing, challenge the documented misconception with request, response, fault, policy, and transfer evidence: HTTP/2 removes every head-of-line and overload risk. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Model HTTP/2 streams, field compression, flow control, concurrency limits, and connection-level failure. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "HTTP/2 removes every head-of-line and overload risk. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the http2 multiplexing · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For http2 multiplexing · changed case, run one convenient Http2 Multiplexing happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic",
+      "interaction": "inspect",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 16 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 2 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain HTTP/3 over QUIC, independent streams, connection migration, negotiation, fallback, and observability limits. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Http3 Quic without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic.",
+      "why": "The decision supplies observable evidence for explain http/3 over quic, independent streams, connection migration, negotiation, fallback, and observability limits. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic, keep Http3 Quic connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 16 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 2 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain HTTP/3 over QUIC, independent streams, connection migration, negotiation, fallback, and observability limits. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Http3 Quic result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "http-ts-http3-quic"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic, name the method, authority, body, byte, time, and credential boundary, Http3 Quic precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 16 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 2 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Explain HTTP/3 over QUIC, independent streams, connection migration, negotiation, fallback, and observability limits. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Http3 Quic · changed case · Workshop Http3 Quic, challenge the documented misconception with request, response, fault, policy, and transfer evidence: HTTP/3 changes method, status, caching, and representation semantics. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Http3 Quic case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "HTTP/3 changes method, status, caching, and representation semantics. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain HTTP/3 over QUIC, independent streams, connection migration, negotiation, fallback, and observability limits. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "HTTP/3 changes method, status, caching, and representation semantics. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the http3 quic · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For http3 quic · changed case, run one convenient Http3 Quic happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Explain HTTP/3 over QUIC, independent streams, connection migration, negotiation, fallback, and observability limits. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Concurrency Saturation without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation.",
+      "why": "The decision supplies observable evidence for bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation, keep Concurrency Saturation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Concurrency Saturation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation, name the method, authority, body, byte, time, and credential boundary, Concurrency Saturation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 24 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 3 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Concurrency Saturation · changed case · Workshop Concurrency Saturation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For concurrency saturation · changed case, run one convenient Concurrency Saturation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch connection lifecycle and concurrency plan."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the concurrency saturation · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling",
+      "interaction": "arrange",
+      "instruction": "Order the Client Reuse Pooling Fetch and TypeScript HTTP evidence cycle for this workshop task before implementing it.\n\nEvidence target: Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling.",
+      "why": "Correct order keeps Client Reuse Pooling assumptions visible before execution and verifies its result against a boundary case afterward. For Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling, keep Client Reuse Pooling connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 32 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 4 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Client Reuse Pooling has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling, name the method, authority, body, byte, time, and credential boundary, Client Reuse Pooling precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 32 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 4 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Reuse configured clients and connection pools while separating per-request state from long-lived transport state. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Plan the evidence sequence · Workshop Client Reuse Pooling, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Creating a fresh client per request guarantees isolation with no performance cost. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare Fetch and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the workshop Client Reuse Pooling case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict Fetch and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the workshop Client Reuse Pooling case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic Fetch and TypeScript request or response model and retain inspectable evidence for the workshop Client Reuse Pooling case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed Fetch and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the workshop Client Reuse Pooling case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation",
+      "interaction": "code",
+      "instruction": "Add a typed evidence_http_ts_concurrency_saturation_15ilpm function that uses deterministic TypeScript evidence to model protocol multiplexing and stream capacity without changing HTTP semantics.\n\nEvidence target: Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Concurrency Saturation into observable performance evidence. For Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation, keep Concurrency Saturation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "function evidence_http_ts_concurrency_saturation_15ilpm(protocol: \"http/1.1\" | \"h2\" | \"h3\", activeStreams: number, streamLimit: number): { admit: boolean; multiplexed: boolean } {\n  if (activeStreams < 0 || streamLimit <= 0) return { admit: false, multiplexed: false };\n  const multiplexed = protocol === \"h2\" || protocol === \"h3\";\n  const effectiveLimit = multiplexed ? streamLimit : Math.min(1, streamLimit);\n  return { admit: activeStreams < effectiveLimit, multiplexed };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation, name the method, authority, body, byte, time, and credential boundary, Concurrency Saturation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 40 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 5 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Extend the cumulative artifact · Workshop Concurrency Saturation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation",
+      "interaction": "debug",
+      "instruction": "workshop case — accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation.",
+      "why": "The decision supplies observable evidence for bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation, keep Concurrency Saturation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Concurrency Saturation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RFC 9112, RFC 9113, and RFC 9114 HTTP Version Specifications — Controls HTTP/1.1 messaging and persistence, HTTP/2 streams and flow control, and HTTP/3 QUIC mappings while preserving RFC 9110 semantics."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation, name the method, authority, body, byte, time, and credential boundary, Concurrency Saturation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 48 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 6 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Test an acceptance boundary · Workshop Concurrency Saturation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Concurrency Saturation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Concurrency Saturation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Concurrency Saturation condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Concurrency Saturation: explain the governing condition, one failure, and how this concrete case was verified — accessible staging dashboard SDK schedules 16 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 2 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nEvidence target: Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation, keep Concurrency Saturation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation, name the method, authority, body, byte, time, and credential boundary, Concurrency Saturation precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK schedules 16 operations across HTTP/1.1 keep-alive, an HTTP/2 connection limited to 2 streams, and optional HTTP/3. Bound queues and memory, reuse clients, finish bodies, and distinguish transport from semantics. Competency probe: Bound concurrent requests, queued work, connections, streams, memory, and downstream pressure from measured capacity. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Defend the transferred model · Workshop Concurrency Saturation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Launching one task per item maximizes throughput without affecting reliability. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Client Reuse Pooling to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Client Reuse Pooling.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Client Reuse Pooling to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Client Reuse Pooling.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http1 Persistence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http1 Persistence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-http1-persistence"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http2 Multiplexing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http2 Multiplexing.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-http2-multiplexing"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http3 Quic to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http3 Quic.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-http3-quic"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Concurrency Saturation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Concurrency Saturation.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-client-reuse-pooling"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_http_ts_concurrency_saturation_15ilpm.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "file": "typescript",
+      "expected": "evidence_http_ts_concurrency_saturation_15ilpm"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "function\\s+evidence_http_ts_concurrency_saturation_15ilpm\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=[\\s\\S]*?protocol\\s*===\\s*[\"']h2[\"'])(?=[\\s\\S]*?effectiveLimit)(?=[\\s\\S]*?return)[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Concurrency Saturation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Concurrency Saturation.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using bound and concurrent plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-concurrency-saturation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "bound",
+        "concurrent"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

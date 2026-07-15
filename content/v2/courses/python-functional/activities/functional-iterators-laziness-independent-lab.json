@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "functional-iterators-laziness-independent-lab",
+  "courseId": "python-functional",
+  "moduleId": "functional-iterators-laziness",
+  "kind": "lab",
+  "title": "Iteration Protocols, Generators, and Lazy Evaluation · Changed-Stream Lab",
+  "summary": "Process records larger than memory while exposing malformed rows at a controlled boundary. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a bounded-memory lazy ingestion pipeline with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Trace iter, next, StopIteration, and single-pass iterator state exactly.",
+    "Explain generator suspension, local state retention, send points, and termination.",
+    "Measure memory and latency tradeoffs between eager and lazy transformation.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "fp-iteration-protocol",
+      "fp-generator-suspension",
+      "fp-lazy-memory",
+      "fp-one-shot-hazards",
+      "fp-generator-cleanup"
+    ]
+  },
+  "prerequisites": [
+    "functional-iterators-laziness-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-functional-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-functional immutable transformation portfolio.\"\"\"\n\nfrom collections.abc import Callable, Iterable, Iterator\nfrom functools import partial, reduce\nfrom itertools import chain, islice\nfrom typing import TypeVar\n\nT = TypeVar('T')\nU = TypeVar('U')\n\n# Extend one pure, lazy, tested pipeline increment per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for trace iter, next, stopiteration, and single-pass iterator state exactly.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Iteration Protocol condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "fp-iteration-protocol"
+      ],
+      "hints": [
+        "Name the Iteration Protocol precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Iterable and iterator mean the same reusable object."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Iteration Protocol preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Iterable and iterator mean the same reusable object."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Iteration Protocol."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet",
+      "interaction": "inspect",
+      "instruction": "lab case — A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source.\n\nInspect the Generator Cleanup trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for close generators and preserve cleanup behavior during early exit and exceptions.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Generator Cleanup, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "hints": [
+        "Name the Generator Cleanup precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Leaving a lazy pipeline early cannot retain resources."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Generator Cleanup case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Leaving a lazy pipeline early cannot retain resources.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Close generators and preserve cleanup behavior during early exit and exceptions. Artifact under review: a bounded-memory lazy ingestion pipeline.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Generator Cleanup."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Generator Cleanup, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Iteration Protocol · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — A one-pass sensor iterator yields [2, 5, malformed, 10, 15]. Consume at most 4 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhich action demonstrates Iteration Protocol without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace iter, next, stopiteration, and single-pass iterator state exactly.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [2, 5, malformed, 10, 15]. Consume at most 4 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Iteration Protocol condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "fp-iteration-protocol"
+      ],
+      "hints": [
+        "Name the Iteration Protocol precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [2, 5, malformed, 10, 15]. Consume at most 4 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Iterable and iterator mean the same reusable object."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Iteration Protocol."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Trace iter, next, StopIteration, and single-pass iterator state exactly. Apply it to the stated input and retain a reproducible trace for a bounded-memory lazy ingestion pipeline."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Iterable and iterator mean the same reusable object."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Generator Suspension · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhich action demonstrates Generator Suspension without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for explain generator suspension, local state retention, send points, and termination.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Generator Suspension result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "fp-generator-suspension"
+      ],
+      "hints": [
+        "Name the Generator Suspension precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: A generator computes and stores every result at creation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Generator Suspension case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A generator computes and stores every result at creation.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain generator suspension, local state retention, send points, and termination.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Explain generator suspension, local state retention, send points, and termination. Apply it to the stated input and retain a reproducible trace for a bounded-memory lazy ingestion pipeline."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A generator computes and stores every result at creation."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Generator Suspension."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Lazy Memory · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — A one-pass sensor iterator yields [4, 7, malformed, 12, 17]. Consume at most 6 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhich action demonstrates Lazy Memory without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for measure memory and latency tradeoffs between eager and lazy transformation.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [4, 7, malformed, 12, 17]. Consume at most 6 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Lazy Memory condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "fp-lazy-memory"
+      ],
+      "hints": [
+        "Name the Lazy Memory precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [4, 7, malformed, 12, 17]. Consume at most 6 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Lazy evaluation is always faster and lower risk."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Lazy evaluation is always faster and lower risk."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Lazy Memory."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Measure memory and latency tradeoffs between eager and lazy transformation. Apply it to the stated input and retain a reproducible trace for a bounded-memory lazy ingestion pipeline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "One Shot Hazards · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhich action demonstrates One Shot Hazards without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for prevent accidental exhaustion, duplicate consumption, and hidden ordering dependencies.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed One Shot Hazards result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "fp-one-shot-hazards"
+      ],
+      "hints": [
+        "Name the One Shot Hazards precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [5, 8, malformed, 13, 18]. Consume at most 7 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: An iterator restarts automatically in each loop."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "One Shot Hazards case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "An iterator restarts automatically in each loop.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Prevent accidental exhaustion, duplicate consumption, and hidden ordering dependencies.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of One Shot Hazards."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Prevent accidental exhaustion, duplicate consumption, and hidden ordering dependencies. Apply it to the stated input and retain a reproducible trace for a bounded-memory lazy ingestion pipeline."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "An iterator restarts automatically in each loop."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Generator Cleanup · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source.\n\nWhich action demonstrates Generator Cleanup without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for close generators and preserve cleanup behavior during early exit and exceptions.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Generator Cleanup condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "hints": [
+        "Name the Generator Cleanup precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [6, 9, malformed, 14, 19]. Consume at most 8 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Leaving a lazy pipeline early cannot retain resources."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Close generators and preserve cleanup behavior during early exit and exceptions. Apply it to the stated input and retain a reproducible trace for a bounded-memory lazy ingestion pipeline."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Leaving a lazy pipeline early cannot retain resources."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Generator Cleanup."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_fp_generator_cleanup_1m76mk function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Generator Cleanup into observable performance evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_fp_generator_cleanup_1m76mk(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "hints": [
+        "Name the Generator Cleanup precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [2, 5, malformed, 10, 15]. Consume at most 4 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Leaving a lazy pipeline early cannot retain resources."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for close generators and preserve cleanup behavior during early exit and exceptions.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Generator Cleanup symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "hints": [
+        "Name the Generator Cleanup precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [3, 6, malformed, 11, 16]. Consume at most 5 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Leaving a lazy pipeline early cannot retain resources."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Generator Cleanup failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Leaving a lazy pipeline early cannot retain resources.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Close generators and preserve cleanup behavior during early exit and exceptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Generator Cleanup."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Generator Cleanup condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Generator Cleanup: explain the governing condition, one failure, and how this concrete case was verified — A one-pass sensor iterator yields [4, 7, malformed, 12, 17]. Consume at most 6 records, report malformed input, and never restart or materialize the open-ended source.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Close generators and preserve cleanup behavior during early exit and exceptions."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "hints": [
+        "Name the Generator Cleanup precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: A one-pass sensor iterator yields [4, 7, malformed, 12, 17]. Consume at most 6 records, report malformed input, and never restart or materialize the open-ended source.",
+        "Use the documented misconception as a counterexample target: Leaving a lazy pipeline early cannot retain resources."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Iteration Protocol to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Iteration Protocol.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-iteration-protocol"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Generator Cleanup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Generator Cleanup.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Iteration Protocol to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Iteration Protocol.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-iteration-protocol"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Generator Suspension to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Generator Suspension.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-generator-suspension"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Lazy Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Lazy Memory.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-lazy-memory"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies One Shot Hazards to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about One Shot Hazards.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-one-shot-hazards"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Generator Cleanup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Generator Cleanup.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_fp_generator_cleanup_1m76mk.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "file": "python",
+      "expected": "evidence_fp_generator_cleanup_1m76mk"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_fp_generator_cleanup_1m76mk\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Generator Cleanup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Generator Cleanup.",
+      "hidden": true,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using close and generators plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-generator-cleanup"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "close",
+        "generators"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

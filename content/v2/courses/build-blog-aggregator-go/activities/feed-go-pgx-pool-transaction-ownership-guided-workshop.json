@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "feed-go-pgx-pool-transaction-ownership-guided-workshop",
+  "courseId": "build-blog-aggregator-go",
+  "moduleId": "feed-go-pgx-pool-transaction-ownership",
+  "kind": "workshop",
+  "title": "pgx Pooling, Query Contracts, Transactions, and Cancellation · Guided Systems Studio",
+  "summary": "A public-interest newsroom incrementally builds bounded pgx repository and unit-of-work layer from original RSS, Atom, HTTP, and PostgreSQL fixtures while retaining prior Go, HTTP-client, HTTP-server, SQL, Git, accessibility, security, testing, cancellation, and recovery requirements. Planned artifact: Build a complete first version of bounded pgx repository and unit-of-work layer while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case…",
+  "objectives": [
+    "Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown.",
+    "Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping.",
+    "Run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "feed-go-pool-lifecycle",
+      "feed-go-query-contract",
+      "feed-go-transaction-connection",
+      "feed-go-context-cancellation",
+      "feed-go-sql-error-policy"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "feed-go-pgx-pool-transaction-ownership-feed-go-sql-error-policy-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "build-blog-aggregator-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// build-blog-aggregator-go cumulative accessible publisher-respecting feed-service portfolio.\n// Browser execution uses deterministic pure-Go models with original RSS, Atom, HTTP, PostgreSQL,\n// scheduling, API, reader, security, deployment, and recovery fixtures only.\n// DNS, sockets, native XML, PostgreSQL, processes, signals, race and load claims, containers,\n// accessibility review, backups, restores, and production behavior require controlled transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype FeedPolicy struct {\n\tMaximumWireBytes int\n\tMaximumXMLDepth int\n\tMaximumOriginConcurrency int\n\tMaximumPageSize int\n}\n\ntype FeedEvidence struct {\n\tRevision string\n\tTenantKey string\n\tSourceKey string\n\tAttemptKey string\n\tStateDigest string\n\tRecoveryID string\n}\n\nfunc main() { fmt.Println(\"Accessible publisher-respecting Go feed-service portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go team handles case 6053 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown.\n\nWhat must be established before implementation?\n\nEvidence target: Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle.",
+      "why": "The decision supplies observable evidence for create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown. For Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle, keep Feed Go Pool Lifecycle connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 6053 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Feed Go Pool Lifecycle condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "feed-go-pool-lifecycle"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Pool Lifecycle precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 6053 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown.",
+        "For Feed aggregation and Go Commit to the mission model · Workshop Feed Go Pool Lifecycle, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A pool per request guarantees connection freshness."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "A pool per request guarantees connection freshness. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Feed Go Pool Lifecycle preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go team handles case 8768 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then inject one URL, DNS, redirect, compression, entity, depth, timeout, or publisher-budget failure and reject it safely. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown.\n\nWhich action demonstrates Feed Go Pool Lifecycle without dropping earlier contracts?\n\nEvidence target: Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle.",
+      "why": "The decision supplies observable evidence for create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown. For Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle, keep Feed Go Pool Lifecycle connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 8768 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then inject one URL, DNS, redirect, compression, entity, depth, timeout, or publisher-budget failure and reject it safely. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Feed Go Pool Lifecycle condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "feed-go-pool-lifecycle"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Pool Lifecycle precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 8768 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then inject one URL, DNS, redirect, compression, entity, depth, timeout, or publisher-budget failure and reject it safely. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown.",
+        "For Feed aggregation and Go Feed Go Pool Lifecycle · changed case · Workshop Feed Go Pool Lifecycle, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A pool per request guarantees connection freshness."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For feed go pool lifecycle · changed case, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Create one bounded pgxpool, verify startup deliberately, observe acquire wait, and close after admission and worker shutdown. Apply it to the stated input and retain a reproducible trace for bounded pgx repository and unit-of-work layer."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A pool per request guarantees connection freshness. That claim does not survive the feed go pool lifecycle · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go team handles case 1387 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping.\n\nWhich action demonstrates Feed Go Query Contract without dropping earlier contracts?\n\nEvidence target: Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract.",
+      "why": "The decision supplies observable evidence for use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping. For Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract, keep Feed Go Query Contract connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 1387 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Feed Go Query Contract result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "feed-go-query-contract"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Query Contract precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 1387 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping.",
+        "For Feed aggregation and Go Feed Go Query Contract · changed case · Workshop Feed Go Query Contract, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Scanning without error proves the query returned the intended row set."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Feed Go Query Contract case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Scanning without error proves the query returned the intended row set.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Use parameterized typed queries, explicit columns, row closure, iteration errors, cardinality expectations, and explainable mapping. Apply it to the stated input and retain a reproducible trace for bounded pgx repository and unit-of-work layer."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Scanning without error proves the query returned the intended row set. That claim does not survive the feed go query contract · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For feed go query contract · changed case, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go team handles case 5755 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; failed, canceled, stale, and cross-tenant operations must preserve the prior admitted state; then change one tenant, cursor, reader-state, authorization, cache, or accessibility condition without leaking state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause.\n\nWhich action demonstrates Feed Go Transaction Connection without dropping earlier contracts?\n\nEvidence target: Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio….",
+      "why": "The decision supplies observable evidence for run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause. For Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio…, keep Feed Go Transaction Connection connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 5755 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; failed, canceled, stale, and cross-tenant operations must preserve the prior admitted state; then change one tenant, cursor, reader-state, authorization, cache, or accessibility condition without leaking state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Feed Go Transaction Connection condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "feed-go-transaction-connection"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio…, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Transaction Connection precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 5755 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; failed, canceled, stale, and cross-tenant operations must preserve the prior admitted state; then change one tenant, cursor, reader-state, authorization, cache, or accessibility condition without leaking state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause.",
+        "For Feed aggregation and Go Feed Go Transaction Connection · changed case · Workshop Feed Go Transactio…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calls through the pool automatically join the active transaction."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Calls through the pool automatically join the active transaction. That claim does not survive the feed go transaction connection · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For feed go transaction connection · changed case, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Run every unit-of-work statement on one transaction, defer rollback safely, commit once, and preserve the original cause. Apply it to the stated input and retain a reproducible trace for bounded pgx repository and unit-of-work layer."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc…",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go team handles case 7374 during a publisher-fairness incident rehearsal. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Propagate request or worker context through acquire, query, transaction, and retry without substituting Background.\n\nWhich action demonstrates Feed Go Context Cancellation without dropping earlier contracts?\n\nEvidence target: Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc….",
+      "why": "The decision supplies observable evidence for propagate request or worker context through acquire, query, transaction, and retry without substituting background. For Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc…, keep Feed Go Context Cancellation connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 7374 during a publisher-fairness incident rehearsal. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Propagate request or worker context through acquire, query, transaction, and retry without substituting Background."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Feed Go Context Cancellation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "feed-go-context-cancellation"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc…, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Context Cancellation precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 7374 during a publisher-fairness incident rehearsal. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Propagate request or worker context through acquire, query, transaction, and retry without substituting Background.",
+        "For Feed aggregation and Go Feed Go Context Cancellation · changed case · Workshop Feed Go Context Canc…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A database statement timeout makes caller cancellation unnecessary."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Feed Go Context Cancellation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A database statement timeout makes caller cancellation unnecessary.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Propagate request or worker context through acquire, query, transaction, and retry without substituting Background.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For feed go context cancellation · changed case, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Propagate request or worker context through acquire, query, transaction, and retry without substituting Background. Apply it to the stated input and retain a reproducible trace for bounded pgx repository and unit-of-work layer."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "A database statement timeout makes caller cancellation unnecessary. That claim does not survive the feed go context cancellation · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go team handles case 8993 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.\n\nWhich action demonstrates Feed Go Sql Error Policy without dropping earlier contracts?\n\nEvidence target: Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy.",
+      "why": "The decision supplies observable evidence for classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking sql or secrets. For Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy, keep Feed Go Sql Error Policy connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 8993 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Feed Go Sql Error Policy condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Sql Error Policy precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 8993 during a multilingual university archive import. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then interleave one schedule, lease, fencing, goroutine, cancellation, or shutdown path and prove ownership. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+        "For Feed aggregation and Go Feed Go Sql Error Policy · changed case · Workshop Feed Go Sql Error Policy, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String matching PostgreSQL error messages is a stable API."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets. Apply it to the stated input and retain a reproducible trace for bounded pgx repository and unit-of-work layer."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "String matching PostgreSQL error messages is a stable API. That claim does not survive the feed go sql error policy · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For feed go sql error policy · changed case, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go team handles case 1612 during an accessible community-news reader review. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then change one schema, constraint, transaction, upsert, migration, query, or search plan and preserve admitted state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.\n\nInspect the Feed Go Sql Error Policy trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy.",
+      "why": "The decision supplies observable evidence for classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking sql or secrets. For Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy, keep Feed Go Sql Error Policy connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Feed Go Sql Error Policy, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Sql Error Policy precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 1612 during an accessible community-news reader review. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then change one schema, constraint, transaction, upsert, migration, query, or search plan and preserve admitted state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+        "For Feed aggregation and Go Audit the proposed evidence packet · Workshop Feed Go Sql Error Policy, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String matching PostgreSQL error messages is a stable API."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Feed Go Sql Error Policy case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Go team handles case 1612 during an accessible community-news reader review. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; every goroutine, body, row set, transaction, lease, timer, and pool needs named cleanup ownership; then change one schema, constraint, transaction, upsert, migration, query, or search plan and preserve admitted state. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "String matching PostgreSQL error messages is a stable API.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets. Artifact under review: bounded pgx repository and unit-of-work layer.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Feed Go Sql Error Policy, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: feed-go-sql-error-policy-1ckmnu\" that uses case 8164 to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership. Return observable changed-case evidence. Browser code must not open sockets, resolve DNS, parse through native XML libraries, contact publishers, access PostgreSQL, read host files, handle real signals, launch unbounded goroutines, or claim race, load, accessibility, container, backup, restore, or production behavior; verify those boundaries later with Go 1.26.5, pgx 5.10.0, goose 3.27.2, PostgreSQL 18.4, original fixtures, controlled RoundTrippers and httptest servers, disposable databases, race and fuzz runs, subprocesses, inspected images, accessibility review, capacity, backup, restore, rollback, and release gates.\n\nEvidence target: Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Feed Go Sql Error Policy into observable performance evidence. For Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy, keep Feed Go Sql Error Policy connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: feed-go-sql-error-policy-1ckmnu\n// Competency: feed-go-sql-error-policy.\n// Case 8164: an accessible community-news reader review.\n// Operating constraint: the release claim must bind source, migrations, dependencies, binary, image, configuration, and restored state.\n// Changed case: change one schema, constraint, transaction, upsert, migration, query, or search plan and preserve admitted state.\nfunc evidence_feed_go_sql_error_policy_1ckmnu(acquired int, released int, transactions int, mixedConnections int) (bool, int, string) {\n\tevidenceVariant1ckmnu := \"1ckmnu-unmkc1-8164\"\n\tif evidenceVariant1ckmnu == \"\" { return false, 0, \"variant\" }\n\tif acquired < 4 {\n\t\treturn false, acquired, \"pool-depth\"\n\t}\n\tif released != acquired {\n\t\treturn false, released, \"client-leak\"\n\t}\n\tif transactions < 2 {\n\t\treturn false, transactions, \"transaction-depth\"\n\t}\n\tif mixedConnections > 0 {\n\t\treturn false, mixedConnections, \"transaction-connection\"\n\t}\n\tif !(released == acquired && mixedConnections == 0) { return false, released, \"invariant\" }\n\treturn true, released, \"owned-pgx-lifecycle\"\n}\n",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Sql Error Policy precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 3231 during an isolated backup restore exercise. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then inject one URL, DNS, redirect, compression, entity, depth, timeout, or publisher-budget failure and reject it safely. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+        "For Feed aggregation and Go Extend the cumulative artifact · Workshop Feed Go Sql Error Policy, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String matching PostgreSQL error messages is a stable API."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go team handles case 4850 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy.",
+      "why": "The decision supplies observable evidence for classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking sql or secrets. For Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy, keep Feed Go Sql Error Policy connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go team handles case 4850 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Feed Go Sql Error Policy symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26 Release Notes — Controls the course compiler and standard-library baseline."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Sql Error Policy precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 4850 during a cross-tenant privacy audit. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; untrusted XML and feed content must not cross admission or rendering boundaries; then change one RSS, Atom, namespace, date, identity, content, or encoding case and reconcile provenance. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+        "For Feed aggregation and Go Test an acceptance boundary · Workshop Feed Go Sql Error Policy, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String matching PostgreSQL error messages is a stable API."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Feed Go Sql Error Policy failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "String matching PostgreSQL error messages is a stable API.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Feed Go Sql Error Policy condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, import one convenient trusted RSS feed, omit reader and publisher outcomes, revision, discovery and SSRF scope, Atom and namespace cases, XML and HTTP budgets, PostgreSQL constraints and transaction, schedule, lease, goroutine cleanup, tenant, accessibility, recovery, and controlled native transfer, then accept plausible rows as feed-service proof."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Feed Go Sql Error Policy: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go team handles case 6469 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; publisher fetch and retention budgets must remain explicit; then change one artifact, deployment, incident, backup, restore, rollback, or capacity condition and reconcile the release. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.\n\nEvidence target: Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy, keep Feed Go Sql Error Policy connected to executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "hints": [
+        "For Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy, name the reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary, Feed Go Sql Error Policy precondition, or invariant that must hold.",
+        "At Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go team handles case 6469 during a PostgreSQL claim and failover drill. Build deterministic Go evidence to prove pgx pool, rows, one-connection transactions, cancellation, and error ownership; publisher fetch and retention budgets must remain explicit; then change one artifact, deployment, incident, backup, restore, rollback, or capacity condition and reconcile the release. Browser Go uses pure bounded models and original RSS, Atom, HTTP, PostgreSQL, and reader fixtures only. Real DNS, sockets, XML libraries, PostgreSQL, processes, signals, race, load, containers, accessibility review, backups, and production behavior require explicit controlled transfer gates. Competency probe: Classify constraint, serialization, deadlock, cancellation, timeout, connection, and unknown failures without leaking SQL or secrets.",
+        "For Feed aggregation and Go Defend the transferred model · Workshop Feed Go Sql Error Policy, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String matching PostgreSQL error messages is a stable API."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Pool Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Pool Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-pool-lifecycle"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Pool Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Pool Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-pool-lifecycle"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Query Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Query Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-query-contract"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Transaction Connection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Transaction Connection.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-transaction-connection"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Context Cancellation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Context Cancellation.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-context-cancellation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Sql Error Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Sql Error Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Sql Error Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Sql Error Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: feed-go-sql-error-policy-1ckmnu.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "file": "go",
+      "expected": "// Evidence: feed-go-sql-error-policy-1ckmnu"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: feed-go-sql-error-policy-1ckmnu(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_feed_go_sql_error_policy_1ckmnu\\s*\\([^)]*\\)\\s*\\(bool,\\s*int,\\s*string\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?acquired < 4)(?=(?:(?!// Evidence:)[\\s\\S])*?released != acquired)(?=(?:(?!// Evidence:)[\\s\\S])*?transactions < 2)(?=(?:(?!// Evidence:)[\\s\\S])*?mixedConnections > 0)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Feed Go Sql Error Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Feed Go Sql Error Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using classify and constraint plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "feed-go-sql-error-policy"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "classify",
+        "constraint"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

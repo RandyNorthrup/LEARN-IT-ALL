@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 2,
+  "id": "sql-transactions-concurrency-recovery-sql-acid-transactions-concept",
+  "courseId": "sql-basics",
+  "moduleId": "sql-transactions-concurrency-recovery",
+  "kind": "theory",
+  "title": "Transactions, Isolation, Concurrency, and Recovery · Result-Grain Case: Acid Transactions",
+  "summary": "Two operators reassign and resolve the same ticket while a failure occurs between related writes. Planned artifact: Add and verify the sql acid transactions increment in a concurrency-safe ticket transition protocol. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant.",
+    "Profile legacy violations, quarantine ambiguity, repair deterministically, and validate constraints before enforcement.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "sql-acid-transactions"
+    ],
+    "reinforces": [
+      "sql-integrity-repair"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "sql-integrity-workflow-project-build"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "sql-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "sql": "-- sql-basics cumulative relational data portfolio.\n-- Each increment declares grain, predicts cardinality or changed rows, runs in fresh browser SQLite,\n-- reconciles results, tests changed data, and records PostgreSQL or standard-SQL boundaries.\n\nSELECT sqlite_version() AS browser_sqlite_version;\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Acid Transactions · Theory Acid Transactions",
+      "interaction": "predict",
+      "instruction": "theory case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nBefore reading, predict which action preserves the Acid Transactions contract for the supplied data.\n\nEvidence target: Predict Acid Transactions · Theory Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Predict Acid Transactions · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Acid Transactions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Predict Acid Transactions · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Predict Acid Transactions · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Predict Acid Transactions · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "ACID means every transaction runs one at a time. That claim does not survive the predict acid transactions evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Run a convenient Acid Transactions query for predict acid transactions, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Acid Transactions · Theory Acid Transactions",
+      "interaction": "read",
+      "instruction": "theory case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nAfter tracing the worked code, choose the Acid Transactions application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Acid Transactions · Theory Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Bound Acid Transactions · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare result or mutation grain, keys, NULL meaning, and transaction boundary; predict cardinality and invariants; run the smallest query; reconcile counts and plans; then test changed data and dialect limits."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence. A defensible solution applies Acid Transactions, preserves the governing invariant or value contract, and connects the observed result to a concurrency-safe ticket transition protocol."
+        },
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "BEGIN;\nUPDATE tickets\nSET owner_id = 3, status = 'investigating'\nWHERE ticket_id = 103 AND status = 'open';\nSELECT changes() AS transition_count;\nINSERT INTO ticket_events (ticket_id, event_type, occurred_at, minutes_spent)\nSELECT 103, 'assigned', '2026-07-14T08:10:00Z', 5\nWHERE changes() = 1;\nCOMMIT;",
+          "caption": "Runnable relational query or data-system contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "ACID means every transaction runs one at a time. This fails the Acid Transactions contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "PostgreSQL Concurrency Control and Indexes (PostgreSQL 18.4 stable documentation) — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Bound Acid Transactions · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Bound Acid Transactions · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Bound Acid Transactions · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "ACID means every transaction runs one at a time. That claim does not survive the bound acid transactions evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "Run a convenient Acid Transactions query for bound acid transactions, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Acid Transactions after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Acid Transactions evidence · Theory Acid Transactions",
+      "interaction": "arrange",
+      "instruction": "Order the Acid Transactions evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Acid Transactions evidence · Theory Acid Transactions.",
+      "why": "Correct order keeps Acid Transactions assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Acid Transactions evidence · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Acid Transactions has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Sequence Acid Transactions evidence · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Sequence Acid Transactions evidence · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Sequence Acid Transactions evidence · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality for the theory Acid Transactions case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict relational transformations, constraint or transaction effects, and dialect boundary before execution for the theory Acid Transactions case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan for the theory Acid Transactions case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits for the theory Acid Transactions case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Acid Transactions evidence · Theory Acid Transactions",
+      "interaction": "code",
+      "instruction": "Append a runnable SQLite increment headed \"-- Evidence: sql-acid-transactions-up1ng1\" with a concrete grain, hypothesis, or prediction; transaction boundary, concurrency, or recovery evidence; and an observation, reconciliation, or verification tied to returned rows, changed rows, an error, or a plan.\n\nEvidence target: Build Acid Transactions evidence · Theory Acid Transactions.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Acid Transactions into observable performance evidence. For Build Acid Transactions evidence · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "-- Evidence: sql-acid-transactions-up1ng1\n-- grain: declare the exact row or mutation grain before running\nBEGIN;\nSAVEPOINT before_assignment;\nUPDATE tickets SET owner_id = 3 WHERE ticket_id = 104;\nROLLBACK TO before_assignment;\nCOMMIT;\n-- observation: reconcile the returned rows, changed count, error, or plan with the prediction",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Build Acid Transactions evidence · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Build Acid Transactions evidence · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Build Acid Transactions evidence · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "targetFile": "sql"
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Acid Transactions evidence · Theory Acid Transactions",
+      "interaction": "inspect",
+      "instruction": "theory case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nInspect the Acid Transactions trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Acid Transactions evidence · Theory Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Inspect Acid Transactions evidence · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Acid Transactions, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Inspect Acid Transactions evidence · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Inspect Acid Transactions evidence · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Inspect Acid Transactions evidence · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Acid Transactions case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "ACID means every transaction runs one at a time.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. Artifact under review: a concurrency-safe ticket transition protocol.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect acid transactions evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "Run a convenient Acid Transactions query for inspect acid transactions evidence, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Acid Transactions, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Acid Transactions defect · Theory Acid Transactions",
+      "interaction": "debug",
+      "instruction": "theory case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nA teammate acts on this belief: “ACID means every transaction runs one at a time.” Which repair addresses the cause?\n\nEvidence target: Repair the Acid Transactions defect · Theory Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Repair the Acid Transactions defect · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Acid Transactions symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Repair the Acid Transactions defect · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Repair the Acid Transactions defect · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Repair the Acid Transactions defect · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Acid Transactions failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "ACID means every transaction runs one at a time.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Run a convenient Acid Transactions query for repair the acid transactions defect, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Acid Transactions, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the acid transactions defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Acid Transactions model · Theory Acid Transactions",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Acid Transactions: explain the governing condition, one failure, and how this concrete case was verified — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nEvidence target: Defend the Acid Transactions model · Theory Acid Transactions.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Acid Transactions model · Theory Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Defend the Acid Transactions model · Theory Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Defend the Acid Transactions model · Theory Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Defend the Acid Transactions model · Theory Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative sql portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker -- Evidence: sql-acid-transactions-up1ng1.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "file": "sql",
+      "expected": "-- Evidence: sql-acid-transactions-up1ng1"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "sql",
+      "pattern": "-- Evidence: sql-acid-transactions-up1ng1(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:grain|hypothesis|prediction):\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!-- Evidence:)[\\s\\S])*?(?:BEGIN|SAVEPOINT|COMMIT|ROLLBACK|changes|PRAGMA)(?:(?!-- Evidence:)[\\s\\S])*?;(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:observation|reconciliation|verify):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using atomicity and consistency plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "atomicity",
+        "consistency"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

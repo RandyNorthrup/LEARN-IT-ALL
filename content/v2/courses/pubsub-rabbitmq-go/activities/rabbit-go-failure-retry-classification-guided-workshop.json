@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-go-failure-retry-classification-guided-workshop",
+  "courseId": "pubsub-rabbitmq-go",
+  "moduleId": "rabbit-go-failure-retry-classification",
+  "kind": "workshop",
+  "title": "Failure Classification and Retry Budgets · Guided Systems Studio",
+  "summary": "A Go pairing room incrementally implements a typed Go failure and retry policy, first with deterministic values and then with a changed failure, while keeping prior messaging invariants active. Planned artifact: Build a complete first version of a typed Go failure and retry policy while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.",
+    "Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence.",
+    "Apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in Go, retain ownership, stop-path, and changed-case evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-go-transient-permanent-ambiguous",
+      "rabbit-go-retry-budget-deadline",
+      "rabbit-go-backoff-jitter-scheduling",
+      "rabbit-go-dependency-outage-pause",
+      "rabbit-go-retry-observability-ownership"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-go-failure-retry-classification-rabbit-go-retry-observability-ownership-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "pubsub-rabbitmq-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// pubsub-rabbitmq-go cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-Go topology, routing, ownership, acknowledgement, retry, concurrency, and recovery models only.\n// amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype MessageEvidence struct {\n\tID            string\n\tType          string\n\tSchemaVersion int\n\tBodyBytes     int\n}\n\ntype DeliveryEvidence struct {\n\tRoute            string\n\tOwner            string\n\tTerminalDecision string\n\tAttempt          int\n}\n\nfunc main() { fmt.Println(\"Go messaging portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go messaging team handles case 4798 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.\n\nWhat must be established before implementation?\n\nEvidence target: RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous.",
+      "why": "The decision supplies observable evidence for classify wrapped go failures with errors.is and errors.as, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition. For RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous, keep Transient Permanent Ambiguous connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 4798 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Transient Permanent Ambiguous condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous, name the types, ownership, and stop path, Transient Permanent Ambiguous precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 4798 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.",
+        "For RabbitMQ and Go Commit to the mission model · Workshop Transient Permanent Ambiguous, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A concrete Go error type alone proves whether a failed message is safe to retry."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "A concrete Go error type alone proves whether a failed message is safe to retry. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Transient Permanent Ambiguous happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Transient Permanent Ambiguous preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 3179 during stream-versus-queue architecture board. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; keep credentials and connection URLs out of output; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.\n\nWhich action demonstrates Transient Permanent Ambiguous without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo….",
+      "why": "The decision supplies observable evidence for classify wrapped go failures with errors.is and errors.as, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition. For RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo…, keep Transient Permanent Ambiguous connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 3179 during stream-versus-queue architecture board. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; keep credentials and connection URLs out of output; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Transient Permanent Ambiguous condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo…, name the types, ownership, and stop path, Transient Permanent Ambiguous precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 3179 during stream-versus-queue architecture board. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; keep credentials and connection URLs out of output; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.",
+        "For RabbitMQ and Go Transient Permanent Ambiguous · changed case · Workshop Transient Permanent Ambiguo…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A concrete Go error type alone proves whether a failed message is safe to retry."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For transient permanent ambiguous · changed case, run one convenient Transient Permanent Ambiguous happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition. Apply it to the stated input and retain a reproducible trace for a typed Go failure and retry policy."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A concrete Go error type alone proves whether a failed message is safe to retry. That claim does not survive the transient permanent ambiguous · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go messaging team handles case 1560 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; retain rollback topology before deleting old bindings; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Retry Budget Deadline without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline.",
+      "why": "The decision supplies observable evidence for bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline, keep Retry Budget Deadline connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 1560 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; retain rollback topology before deleting old bindings; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Retry Budget Deadline result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-retry-budget-deadline"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline, name the types, ownership, and stop path, Retry Budget Deadline precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 1560 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; retain rollback topology before deleting old bindings; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Retry Budget Deadline · changed case · Workshop Retry Budget Deadline, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A maximum attempt count alone prevents stale work and retry storms. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Retry Budget Deadline case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A maximum attempt count alone prevents stale work and retry storms. In Go, wrapping every failure as retryable improves resilience.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Bound attempts, total age, delay, processing deadline, queue residence, and operator escalation as one retry budget; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a typed Go failure and retry policy."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A maximum attempt count alone prevents stale work and retry storms. In Go, wrapping every failure as retryable improves resilience. That claim does not survive the retry budget deadline · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For retry budget deadline · changed case, run one convenient Retry Budget Deadline happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 7845 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; bound payload, queue, confirm-ledger, and handler bytes; then fail the canary and prove older Go consumers remain compatible. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Backoff Jitter Scheduling without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling.",
+      "why": "The decision supplies observable evidence for apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling, keep Backoff Jitter Scheduling connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 7845 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; bound payload, queue, confirm-ledger, and handler bytes; then fail the canary and prove older Go consumers remain compatible. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Backoff Jitter Scheduling condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-backoff-jitter-scheduling"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling, name the types, ownership, and stop path, Backoff Jitter Scheduling precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 7845 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; bound payload, queue, confirm-ledger, and handler bytes; then fail the canary and prove older Go consumers remain compatible. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Backoff Jitter Scheduling · changed case · Workshop Backoff Jitter Scheduling, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Sleeping inside each consumer handler is an efficient delayed retry mechanism. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Sleeping inside each consumer handler is an efficient delayed retry mechanism. In Go, wrapping every failure as retryable improves resilience. That claim does not survive the backoff jitter scheduling · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For backoff jitter scheduling · changed case, run one convenient Backoff Jitter Scheduling happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Apply exponential backoff and jitter without blocking consumer slots or requeueing hot loops and preserve intended availability time; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a typed Go failure and retry policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go messaging team handles case 6226 during confirm-window load test with broker flow control. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; reject stale connection and channel generations; then lower the byte and goroutine budget and preserve rejection evidence. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Dependency Outage Pause without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause.",
+      "why": "The decision supplies observable evidence for pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause, keep Dependency Outage Pause connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 6226 during confirm-window load test with broker flow control. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; reject stale connection and channel generations; then lower the byte and goroutine budget and preserve rejection evidence. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Dependency Outage Pause result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-dependency-outage-pause"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause, name the types, ownership, and stop path, Dependency Outage Pause precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 6226 during confirm-window load test with broker flow control. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; reject stale connection and channel generations; then lower the byte and goroutine budget and preserve rejection evidence. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Dependency Outage Pause · changed case · Workshop Dependency Outage Pause, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Returning every message with delay is always safer than pausing consumers during a total outage. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Dependency Outage Pause case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Returning every message with delay is always safer than pausing consumers during a total outage. In Go, wrapping every failure as retryable improves resilience.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For dependency outage pause · changed case, run one convenient Dependency Outage Pause happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Pause or shed broad consumer work when a shared dependency is unavailable instead of scheduling delayed retries for every message; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a typed Go failure and retry policy."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Returning every message with delay is always safer than pausing consumers during a total outage. In Go, wrapping every failure as retryable improves resilience. That claim does not survive the dependency outage pause · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh…",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 4607 during outbox relay recovery after a database commit. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; separate deterministic browser proof from race-enabled and live-broker evidence; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Retry Observability Ownership without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh….",
+      "why": "The decision supplies observable evidence for record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh…, keep Retry Observability Ownership connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 4607 during outbox relay recovery after a database commit. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; separate deterministic browser proof from race-enabled and live-broker evidence; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Retry Observability Ownership condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh…, name the types, ownership, and stop path, Retry Observability Ownership precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 4607 during outbox relay recovery after a database commit. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; separate deterministic browser proof from race-enabled and live-broker evidence; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Retry Observability Ownership · changed case · Workshop Retry Observability Ownersh…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a typed Go failure and retry policy."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience. That claim does not survive the retry observability ownership · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For retry observability ownership · changed case, run one convenient Retry Observability Ownership happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous",
+      "interaction": "arrange",
+      "instruction": "Order the Transient Permanent Ambiguous RabbitMQ and Go messaging evidence cycle for this workshop task before implementing it.\n\nEvidence target: RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous.",
+      "why": "Correct order keeps Transient Permanent Ambiguous assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous, keep Transient Permanent Ambiguous connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 2988 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; name the owner and stop path for every goroutine and notification channel; then reuse a message identity with a different payload fingerprint. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Transient Permanent Ambiguous has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous, name the types, ownership, and stop path, Transient Permanent Ambiguous precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 2988 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; name the owner and stop path for every goroutine and notification channel; then reuse a message identity with a different payload fingerprint. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Classify wrapped Go failures with errors.Is and errors.As, then combine typed cause evidence with bounded attempt, age, delay, cancellation, and terminal disposition.",
+        "For RabbitMQ and Go Plan the evidence sequence · Workshop Transient Permanent Ambiguous, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A concrete Go error type alone proves whether a failed message is safe to retry."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare RabbitMQ and Go outcome, topology, ownership, identity, and byte, time, attempt, and concurrency budgets for the workshop Transient Permanent Ambiguous case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict RabbitMQ and Go publish, route, custody, delivery, effect, failure, cancellation, and recovery outcomes for the workshop Transient Permanent Ambiguous case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic RabbitMQ and Go messaging model and retain inspectable changed-case evidence for the workshop Transient Permanent Ambiguous case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed RabbitMQ and Go failure, verify bounded cleanup, and state live-broker transfer limits for the workshop Transient Permanent Ambiguous case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: rabbit-go-retry-observability-ownership-1jl3sg\" that uses case 6885 to classify failures and enforce attempt, age, delay, and terminal retry budgets. Return observable changed-case evidence. Browser code must not import amqp091-go, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with Go 1.26.5 compile, vet, race, fuzz, leak, amqp091-go 1.12.0, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production gates.\n\nEvidence target: RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Retry Observability Ownership into observable performance evidence. For RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership, keep Retry Observability Ownership connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: rabbit-go-retry-observability-ownership-1jl3sg\n// Competency: rabbit-go-retry-observability-ownership.\n// Case 6885: canary Go consumer decoding old and new envelopes.\n// Operating constraint: allow exactly one terminal acknowledgement owner.\n// Changed case: lower the byte and goroutine budget and preserve rejection evidence.\nfunc evidence_rabbit_go_retry_observability_ownership_1jl3sg(classification string, attempt, maximumAttempts, ageMillis, maximumAgeMillis int) (bool, string) {\n\tevidenceVariant1jl3sg := \"1jl3sg-gs3lj1-6885\"\n\t_ = evidenceVariant1jl3sg\n\tif classification == \"permanent\" { return false, \"park\" }\n\tif classification == \"ambiguous\" { return false, \"reconcile\" }\n\twithin := attempt >= 0 && attempt < maximumAttempts && ageMillis >= 0 && ageMillis < maximumAgeMillis\n\tif within { return true, \"delayed-retry\" }\n\treturn false, \"exhausted\"\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership, name the types, ownership, and stop path, Retry Observability Ownership precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 1369 during stream-versus-queue architecture board. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; bound payload, queue, confirm-ledger, and handler bytes; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Extend the cumulative artifact · Workshop Retry Observability Ownership, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go messaging team handles case 8750 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then raise a broker resource alarm and halt new admission. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership.",
+      "why": "The decision supplies observable evidence for record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership, keep Retry Observability Ownership connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 8750 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then raise a broker resource alarm and halt new admission. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Retry Observability Ownership symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership, name the types, ownership, and stop path, Retry Observability Ownership precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 8750 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; allow exactly one terminal acknowledgement owner; then raise a broker resource alarm and halt new admission. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Test an acceptance boundary · Workshop Retry Observability Ownership, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Retry Observability Ownership failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Retry Observability Ownership condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Retry Observability Ownership happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Retry Observability Ownership: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go messaging team handles case 7131 during bounded worker pool during a dependency slowdown. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; separate deterministic browser proof from race-enabled and live-broker evidence; then make one state notification stale after recovery generation changes. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.\n\nEvidence target: RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership, keep Retry Observability Ownership connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership, name the types, ownership, and stop path, Retry Observability Ownership precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 7131 during bounded worker pool during a dependency slowdown. Build deterministic Go evidence to classify failures and enforce attempt, age, delay, and terminal retry budgets; separate deterministic browser proof from race-enabled and live-broker evidence; then make one state notification stale after recovery generation changes. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Record original identity, attempt, reason, first and next time, owner, budget, terminal disposition, and causal metrics without high-cardinality leaks; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Defend the transferred model · Workshop Retry Observability Ownership, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Queue depth alone explains whether retries are healthy. In Go, wrapping every failure as retryable improves resilience."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transient Permanent Ambiguous to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transient Permanent Ambiguous.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transient Permanent Ambiguous to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transient Permanent Ambiguous.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retry Budget Deadline to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retry Budget Deadline.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-retry-budget-deadline"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Backoff Jitter Scheduling to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Backoff Jitter Scheduling.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-backoff-jitter-scheduling"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dependency Outage Pause to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dependency Outage Pause.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-dependency-outage-pause"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retry Observability Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retry Observability Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-transient-permanent-ambiguous"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-go-retry-observability-ownership-1jl3sg.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "file": "go",
+      "expected": "// Evidence: rabbit-go-retry-observability-ownership-1jl3sg"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: rabbit-go-retry-observability-ownership-1jl3sg(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_rabbit_go_retry_observability_ownership_1jl3sg\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?classification\\s*==\\s*\"permanent\")(?=(?:(?!// Evidence:)[\\s\\S])*?classification\\s*==\\s*\"ambiguous\")(?=(?:(?!// Evidence:)[\\s\\S])*?attempt\\s*<\\s*maximumAttempts)(?=(?:(?!// Evidence:)[\\s\\S])*?ageMillis\\s*<\\s*maximumAgeMillis)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retry Observability Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retry Observability Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using record and original plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-retry-observability-ownership"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "record",
+        "original"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

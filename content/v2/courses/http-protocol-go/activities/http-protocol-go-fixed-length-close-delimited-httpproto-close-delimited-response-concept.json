@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-fixed-length-close-delimited-httpproto-close-delimited-response-concept",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-fixed-length-close-delimited",
+  "kind": "theory",
+  "title": "Fixed-Length, Close-Delimited, Absent, and Incomplete Content · Go Semantics Case: Close Delimited Response",
+  "summary": "A body reader allocates from attacker Content-Length, treats premature EOF as success, consumes the next pipelined message, and reuses a connection after incomplete content. Planned artifact: Add and verify the close delimited response increment in bounded fixed-length and close-delimited content reader. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+    "Stop after exactly the framed content and retain buffered residual bytes for the next message.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "httpproto-close-delimited-response"
+    ],
+    "reinforces": [
+      "httpproto-residual-byte-boundary"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-fixed-length-close-delimited-httpproto-residual-byte-boundary-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Close Delimited Response · Theory Close Delimited Response",
+      "interaction": "predict",
+      "instruction": "theory case — A theory protocol team handles case 9399 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nBefore reading, predict which action preserves the Close Delimited Response contract for the supplied data.\n\nEvidence target: Predict Close Delimited Response · Theory Close Delimited Response.",
+      "why": "The decision supplies observable evidence for use close-delimited response content only in permitted response contexts and mark the connection non-reusable. For Predict Close Delimited Response · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 9399 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Close Delimited Response condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Predict Close Delimited Response · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Predict Close Delimited Response · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9399 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Predict Close Delimited Response · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict close delimited response, run one convenient Close Delimited Response happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Use close-delimited response content only in permitted response contexts and mark the connection non-reusable. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "Requests without Content-Length are safely framed by closing the connection. That claim does not survive the predict close delimited response evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Close Delimited Response · Theory Close Delimited Response",
+      "interaction": "read",
+      "instruction": "theory case — A theory protocol team handles case 9400 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nAfter tracing the worked code, choose the Close Delimited Response application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Close Delimited Response · Theory Close Delimited Response.",
+      "why": "The decision supplies observable evidence for use close-delimited response content only in permitted response contexts and mark the connection non-reusable. For Bound Close Delimited Response · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use close-delimited response content only in permitted response contexts and mark the connection non-reusable. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare types, ownership, goroutine lifetime, failure contract, and observable result; trace value copies, aliases, blocking, and happens-before edges; run the smallest isolated program; then change one boundary input and retain a regression invariant."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example protocol team handles case 9399 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable. A defensible solution applies Close Delimited Response, preserves the governing invariant or value contract, and connects the observed result to bounded fixed-length and close-delimited content reader."
+        },
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-worked-http-protocol-go-fixed-length-close-delimited-5\n// Competency: httpproto-worked-http-protocol-go-fixed-length-close-delimited-5.\n// Case 7593: canary edge service advertising HTTP/3 with bounded fallback.\n// Operating constraint: diagnostics must omit credentials and attacker-controlled metric labels.\n// Changed case: split every structural delimiter across a different read and retain the same result.\nfunc worked_http_protocol_go_fixed_length_close_delimited_5(declared int, observed int, policyLimit int, responseSide bool) (string, int, bool) {\n\tstate, remaining, reusable := \"complete\", declared-observed, true\n\tif declared > policyLimit { state, reusable = \"too-large\", false }\n\tif observed < declared { state, reusable = \"incomplete\", false }\n\tif declared < 0 && responseSide { state, remaining, reusable = \"close-delimited\", 0, false }\n\treturn state, remaining, reusable\n}",
+          "caption": "Runnable Go value, failure, or concurrency contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Requests without Content-Length are safely framed by closing the connection. This fails the Close Delimited Response contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "HTTP/1.1 (RFC 9112 STD 99 updated by RFC 9931) — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Bound Close Delimited Response · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Bound Close Delimited Response · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9400 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then force a short write and retain the exact transmitted prefix plus remaining count. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Bound Close Delimited Response · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-sound",
+          "text": "Use Close Delimited Response after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "Requests without Content-Length are safely framed by closing the connection. That claim does not survive the bound close delimited response evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound close delimited response, run one convenient Close Delimited Response happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Close Delimited Response evidence · Theory Close Delimited Response",
+      "interaction": "arrange",
+      "instruction": "Order the Close Delimited Response evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Close Delimited Response evidence · Theory Close Delimited Response.",
+      "why": "Correct order keeps Close Delimited Response assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Close Delimited Response evidence · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 9401 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Close Delimited Response has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Sequence Close Delimited Response evidence · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Sequence Close Delimited Response evidence · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9401 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Sequence Close Delimited Response evidence · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the theory Close Delimited Response case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the theory Close Delimited Response case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the theory Close Delimited Response case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the theory Close Delimited Response case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Close Delimited Response evidence · Theory Close Delimited Response",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-close-delimited-response-2ws7ra\" that uses case 2486 to separate exact-length, incomplete, and response-only close-delimited content. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Build Close Delimited Response evidence · Theory Close Delimited Response.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Close Delimited Response into observable performance evidence. For Build Close Delimited Response evidence · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-close-delimited-response-2ws7ra\n// Competency: httpproto-close-delimited-response.\n// Case 2486: field-normalizing cache with an independent origin parser.\n// Operating constraint: the maintained Go protocol stack remains the production transfer target.\n// Changed case: replace one field with repeated non-combinable lines and preserve their order.\nfunc evidence_httpproto_close_delimited_response_2ws7ra(declared int, observed int, policyLimit int, responseSide bool) (string, int, bool) {\n\tstate, remaining, reusable := \"complete\", declared-observed, true\n\tif declared > policyLimit { state, reusable = \"too-large\", false }\n\tif observed < declared { state, reusable = \"incomplete\", false }\n\tif declared < 0 && responseSide { state, remaining, reusable = \"close-delimited\", 0, false }\n\treturn state, remaining, reusable\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Build Close Delimited Response evidence · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Build Close Delimited Response evidence · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9402 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Build Close Delimited Response evidence · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Close Delimited Response evidence · Theory Close Delimited Response",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory protocol team handles case 9403 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nInspect the Close Delimited Response trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Close Delimited Response evidence · Theory Close Delimited Response.",
+      "why": "The decision supplies observable evidence for use close-delimited response content only in permitted response contexts and mark the connection non-reusable. For Inspect Close Delimited Response evidence · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Close Delimited Response, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Inspect Close Delimited Response evidence · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Inspect Close Delimited Response evidence · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9403 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Inspect Close Delimited Response evidence · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Close Delimited Response case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory protocol team handles case 9403 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "Requests without Content-Length are safely framed by closing the connection.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable. Artifact under review: bounded fixed-length and close-delimited content reader.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Close Delimited Response, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect close delimited response evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect close delimited response evidence, run one convenient Close Delimited Response happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Close Delimited Response defect · Theory Close Delimited Response",
+      "interaction": "debug",
+      "instruction": "theory case — A theory protocol team handles case 9404 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nA teammate acts on this belief: “Requests without Content-Length are safely framed by closing the connection.” Which repair addresses the cause?\n\nEvidence target: Repair the Close Delimited Response defect · Theory Close Delimited Response.",
+      "why": "The decision supplies observable evidence for use close-delimited response content only in permitted response contexts and mark the connection non-reusable. For Repair the Close Delimited Response defect · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 9404 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Close Delimited Response symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Repair the Close Delimited Response defect · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Repair the Close Delimited Response defect · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9404 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Repair the Close Delimited Response defect · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Close Delimited Response failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "Requests without Content-Length are safely framed by closing the connection.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the close delimited response defect evidence boundary."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the close delimited response defect, run one convenient Close Delimited Response happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Close Delimited Response, gather a counterexample, repair the artifact, and add a regression case."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Close Delimited Response model · Theory Close Delimited Response",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Close Delimited Response: explain the governing condition, one failure, and how this concrete case was verified — A theory protocol team handles case 9405 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nEvidence target: Defend the Close Delimited Response model · Theory Close Delimited Response.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Close Delimited Response model · Theory Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Defend the Close Delimited Response model · Theory Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Defend the Close Delimited Response model · Theory Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 9405 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: the maintained Go protocol stack remains the production transfer target; then reject a protocol transition while optimistic bytes are buffered and prevent desynchronization. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Defend the Close Delimited Response model · Theory Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Close Delimited Response to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Close Delimited Response.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Close Delimited Response to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Close Delimited Response.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-close-delimited-response-2ws7ra.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-close-delimited-response-2ws7ra"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-close-delimited-response-2ws7ra(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_close_delimited_response_2ws7ra\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?observed\\s*<\\s*declared)(?=(?:(?!// Evidence:)[\\s\\S])*?declared\\s*<\\s*0\\s*&&\\s*responseSide)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Close Delimited Response to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Close Delimited Response.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Close Delimited Response to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Close Delimited Response.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using close and delimited plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "close",
+        "delimited"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

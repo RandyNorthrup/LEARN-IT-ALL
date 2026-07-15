@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "linux-bash-automation-guided-workshop",
+  "courseId": "linux-basics",
+  "moduleId": "linux-bash-automation",
+  "kind": "workshop",
+  "title": "Reliable Bash Automation and Tests · Guided Terminal Studio",
+  "summary": "Turn a fragile command history into a bounded script that validates inputs, preserves data, reports failures, and can be rerun safely. Planned artifact: Build a complete first version of a tested idempotent Bash operations script while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define script inputs, outputs, side effects, preconditions, exit codes, and rerun behavior before implementation.",
+    "Use set options, traps, explicit conditionals, and status handling while understanding where errexit and pipefail do not behave intuitively.",
+    "Handle positional parameters, defaults, validation, arrays, and quoted expansion without word splitting or glob injection.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "linux-script-contract",
+      "linux-bash-strictness",
+      "linux-bash-parameters-arrays",
+      "linux-bash-temporary-cleanup",
+      "linux-bash-test-evidence"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "linux-bash-automation-linux-bash-test-evidence-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "linux-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "shell": "# linux-basics cumulative operations evidence notebook\n# Commands run only in the deterministic stateful terminal simulator.\n# Record hypothesis, command, expected signal, observation, conclusion, and recovery.\n",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "workshop case — A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for define script inputs, outputs, side effects, preconditions, exit codes, and rerun behavior before implementation.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Script Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "linux-script-contract"
+      ],
+      "hints": [
+        "Name the Script Contract precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A script is correct if it succeeds once on the author’s machine."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "A script is correct if it succeeds once on the author’s machine."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Script Contract preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet",
+      "interaction": "inspect",
+      "instruction": "workshop case — A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nInspect the Bash Test Evidence trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Bash Test Evidence, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "hints": [
+        "Name the Bash Test Evidence precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A syntax check exercises command behavior and cleanup."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bash Test Evidence case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A syntax check exercises command behavior and cleanup.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks. Artifact under review: a tested idempotent Bash operations script.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Bash Test Evidence, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Script Contract · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — A report script receives filenames \"north 3.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhich action demonstrates Script Contract without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define script inputs, outputs, side effects, preconditions, exit codes, and rerun behavior before implementation.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 3.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Script Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "linux-script-contract"
+      ],
+      "hints": [
+        "Name the Script Contract precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 3.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A script is correct if it succeeds once on the author’s machine."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Define script inputs, outputs, side effects, preconditions, exit codes, and rerun behavior before implementation. Apply it to the stated input and retain a reproducible trace for a tested idempotent Bash operations script."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A script is correct if it succeeds once on the author’s machine."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Bash Strictness · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhich action demonstrates Bash Strictness without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use set options, traps, explicit conditionals, and status handling while understanding where errexit and pipefail do not behave intuitively.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Bash Strictness result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "linux-bash-strictness"
+      ],
+      "hints": [
+        "Name the Bash Strictness precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: set -e converts any Bash script into fail-safe automation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bash Strictness case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "set -e converts any Bash script into fail-safe automation.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use set options, traps, explicit conditionals, and status handling while understanding where errexit and pipefail do not behave intuitively.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "set -e converts any Bash script into fail-safe automation."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Use set options, traps, explicit conditionals, and status handling while understanding where errexit and pipefail do not behave intuitively. Apply it to the stated input and retain a reproducible trace for a tested idempotent Bash operations script."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Bash Parameters Arrays · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — A report script receives filenames \"north 5.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhich action demonstrates Bash Parameters Arrays without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for handle positional parameters, defaults, validation, arrays, and quoted expansion without word splitting or glob injection.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 5.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bash Parameters Arrays condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "linux-bash-parameters-arrays"
+      ],
+      "hints": [
+        "Name the Bash Parameters Arrays precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 5.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: Using $@ without quotes preserves argument boundaries."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Handle positional parameters, defaults, validation, arrays, and quoted expansion without word splitting or glob injection. Apply it to the stated input and retain a reproducible trace for a tested idempotent Bash operations script."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Using $@ without quotes preserves argument boundaries."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Bash Temporary Cleanup · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhich action demonstrates Bash Temporary Cleanup without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for create temporary resources safely and guarantee cleanup across success, expected failure, signals, and partial work.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Bash Temporary Cleanup result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "linux-bash-temporary-cleanup"
+      ],
+      "hints": [
+        "Name the Bash Temporary Cleanup precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 6.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A fixed /tmp filename is safe when a script runs quickly."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bash Temporary Cleanup case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A fixed /tmp filename is safe when a script runs quickly.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Create temporary resources safely and guarantee cleanup across success, expected failure, signals, and partial work.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Create temporary resources safely and guarantee cleanup across success, expected failure, signals, and partial work. Apply it to the stated input and retain a reproducible trace for a tested idempotent Bash operations script."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "A fixed /tmp filename is safe when a script runs quickly."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Bash Test Evidence · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nWhich action demonstrates Bash Test Evidence without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bash Test Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "hints": [
+        "Name the Bash Test Evidence precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 2.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A syntax check exercises command behavior and cleanup."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "A syntax check exercises command behavior and cleanup."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks. Apply it to the stated input and retain a reproducible trace for a tested idempotent Bash operations script."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Append a safe Linux operations investigation headed \"# Evidence: linux-bash-test-evidence-945kdl\" with a concrete hypothesis, one bounded simulator command, and an observation that changes the next decision.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Bash Test Evidence into observable performance evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "# Evidence: linux-bash-test-evidence-945kdl\n# hypothesis: [replace with one falsifiable cause]\n# command: choose one bounded simulator observation\n# observation: [replace with the result that changes the next decision]",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "hints": [
+        "Name the Bash Test Evidence precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 3.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A syntax check exercises command behavior and cleanup."
+      ],
+      "xp": 10,
+      "targetFile": "shell"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Bash Test Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "systemd Manual Pages — Controls unit, service, dependency, journal, boot, environment, and lifecycle behavior."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "hints": [
+        "Name the Bash Test Evidence precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 4.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A syntax check exercises command behavior and cleanup."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bash Test Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A syntax check exercises command behavior and cleanup.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Bash Test Evidence condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Bash Test Evidence: explain the governing condition, one failure, and how this concrete case was verified — A report script receives filenames \"north 5.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test scripts with fixtures, changed inputs, failure injection, shell analysis, exit status, and idempotence checks."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "hints": [
+        "Name the Bash Test Evidence precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: A report script receives filenames \"north 5.csv\" and \"--dry-run\" plus one missing file. Preserve argument boundaries, validate before mutation, clean temporary state, and prove rerunning is idempotent.",
+        "Use the documented misconception as a counterexample target: A syntax check exercises command behavior and cleanup."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Script Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Script Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-script-contract"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Test Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Test Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Script Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Script Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-script-contract"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Strictness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Strictness.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-strictness"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Parameters Arrays to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Parameters Arrays.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-parameters-arrays"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Temporary Cleanup to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Temporary Cleanup.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-temporary-cleanup"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Test Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Test Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative shell portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: linux-bash-test-evidence-945kdl.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "file": "shell",
+      "expected": "# Evidence: linux-bash-test-evidence-945kdl"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "shell",
+      "pattern": "# Evidence: linux-bash-test-evidence-945kdl[\\s\\S]*?#\\s*hypothesis:\\s*(?!\\[|todo)[^\\n]{12,}[\\s\\S]*?(?:pwd|ls|stat|find|grep|rg|sort|uniq|cut|sed|awk|id|umask|chmod|ps|pgrep|kill|systemctl|journalctl|df|du|lsblk|findmnt|tar|sha256sum|type|command)[^\\n]*[\\s\\S]*?#\\s*(?:observation|expected):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bash Test Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bash Test Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and scripts plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "linux-bash-test-evidence"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "test",
+        "scripts"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

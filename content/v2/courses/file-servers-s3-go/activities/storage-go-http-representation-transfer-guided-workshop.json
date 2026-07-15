@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "storage-go-http-representation-transfer-guided-workshop",
+  "courseId": "file-servers-s3-go",
+  "moduleId": "storage-go-http-representation-transfer",
+  "kind": "workshop",
+  "title": "HTTP Representations, Validators, Ranges, and File Transfer · Guided Systems Studio",
+  "summary": "A delivery team incrementally builds HTTP file-representation and transfer contract, changes one file or failure, and keeps earlier HTTP, Go, accessibility, security, and resource-budget invariants active. Planned artifact: Build a complete first version of HTTP file-representation and transfer contract while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.",
+    "Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence.",
+    "Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "storage-go-representation-metadata",
+      "storage-go-validators-conditionals",
+      "storage-go-byte-range-semantics",
+      "storage-go-stream-backpressure",
+      "storage-go-download-accessibility"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "storage-go-http-representation-transfer-storage-go-download-accessibility-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "file-servers-s3-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// file-servers-s3-go cumulative file-delivery decision portfolio.\n// Browser execution uses deterministic pure-Go identity, range, integrity, policy, lifecycle, cache, cost, and recovery models only.\n// AWS SDK packages, S3, CloudFront, KMS, IAM, WAF, networks, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production changes require explicit authorized transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype FileEvidence struct {\n\tFileID      string\n\tObjectKey   string\n\tVersionID   string\n\tBytes       int\n\tChecksum    string\n}\n\ntype DeliveryEvidence struct {\n\tAuthorized bool\n\tState      string\n\tRangeStart int\n\tRangeEnd   int\n}\n\nfunc main() { fmt.Println(\"Go file-delivery portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 9694 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.\n\nWhat must be established before implementation?\n\nEvidence target: S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata.",
+      "why": "The decision supplies observable evidence for define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts. For S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata, keep Representation Metadata connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 9694 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Representation Metadata condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "storage-go-representation-metadata"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Representation Metadata precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9694 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.",
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Representation Metadata, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A filename extension is authoritative proof of safe content type."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "A filename extension is authoritative proof of safe content type. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Representation Metadata happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Representation Metadata preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 2313 during an SDK and infrastructure canary. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.\n\nWhich action demonstrates Representation Metadata without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata.",
+      "why": "The decision supplies observable evidence for define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts. For S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata, keep Representation Metadata connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 2313 during an SDK and infrastructure canary. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Representation Metadata condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "storage-go-representation-metadata"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Representation Metadata precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 2313 during an SDK and infrastructure canary. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.",
+        "For S3, CloudFront, and Go Representation Metadata · changed case · Workshop Representation Metadata, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A filename extension is authoritative proof of safe content type."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For representation metadata · changed case, run one convenient Representation Metadata happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts. Apply it to the stated input and retain a reproducible trace for HTTP file-representation and transfer contract."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A filename extension is authoritative proof of safe content type. That claim does not survive the representation metadata · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 7884 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence.\n\nWhich action demonstrates Validators Conditionals without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals.",
+      "why": "The decision supplies observable evidence for apply etag and last-modified validators with if-match, if-none-match, if-range, 304, 412, and changed-state evidence. For S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals, keep Validators Conditionals connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 7884 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Validators Conditionals result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "storage-go-validators-conditionals"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Validators Conditionals precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 7884 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence.",
+        "For S3, CloudFront, and Go Validators Conditionals · changed case · Workshop Validators Conditionals, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: An S3 ETag is always the MD5 checksum and can be reused as every validator."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Validators Conditionals case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "An S3 ETag is always the MD5 checksum and can be reused as every validator.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence. Apply it to the stated input and retain a reproducible trace for HTTP file-representation and transfer contract."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "An S3 ETag is always the MD5 checksum and can be reused as every validator. That claim does not survive the validators conditionals · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For validators conditionals · changed case, run one convenient Validators Conditionals happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 9503 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416.\n\nWhich action demonstrates Byte Range Semantics without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics.",
+      "why": "The decision supplies observable evidence for parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, content-range, accept-ranges, and 416. For S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics, keep Byte Range Semantics connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 9503 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Byte Range Semantics condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "storage-go-byte-range-semantics"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Byte Range Semantics precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9503 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416.",
+        "For S3, CloudFront, and Go Byte Range Semantics · changed case · Workshop Byte Range Semantics, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A Range header requests a byte count rather than inclusive byte positions."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "A Range header requests a byte count rather than inclusive byte positions. That claim does not survive the byte range semantics · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For byte range semantics · changed case, run one convenient Byte Range Semantics happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416. Apply it to the stated input and retain a reproducible trace for HTTP file-representation and transfer contract."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 2122 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup.\n\nWhich action demonstrates Stream Backpressure without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure.",
+      "why": "The decision supplies observable evidence for stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup. For S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure, keep Stream Backpressure connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 2122 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Stream Backpressure result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "storage-go-stream-backpressure"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Stream Backpressure precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 2122 during a high-traffic evidence intake window. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup.",
+        "For S3, CloudFront, and Go Stream Backpressure · changed case · Workshop Stream Backpressure, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: io.Copy makes transfer memory, cancellation, and partial-response behavior automatically safe."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Stream Backpressure case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "io.Copy makes transfer memory, cancellation, and partial-response behavior automatically safe.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For stream backpressure · changed case, run one convenient Stream Backpressure happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup. Apply it to the stated input and retain a reproducible trace for HTTP file-representation and transfer contract."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "io.Copy makes transfer memory, cancellation, and partial-response behavior automatically safe. That claim does not survive the stream backpressure · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 8585 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.\n\nWhich action demonstrates Download Accessibility without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility.",
+      "why": "The decision supplies observable evidence for provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls. For S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility, keep Download Accessibility connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 8585 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Download Accessibility condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Accessibility precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 8585 during a private media release. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+        "For S3, CloudFront, and Go Download Accessibility · changed case · Workshop Download Accessibility, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser download link is accessible without contextual text or status."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls. Apply it to the stated input and retain a reproducible trace for HTTP file-representation and transfer contract."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A browser download link is accessible without contextual text or status. That claim does not survive the download accessibility · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For download accessibility · changed case, run one convenient Download Accessibility happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 6966 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.\n\nInspect the Download Accessibility trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility.",
+      "why": "The decision supplies observable evidence for provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls. For S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility, keep Download Accessibility connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Download Accessibility, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Accessibility precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 6966 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+        "For S3, CloudFront, and Go Audit the proposed evidence packet · Workshop Download Accessibility, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser download link is accessible without contextual text or status."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Download Accessibility case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Go file-delivery team handles case 6966 during a regional dependency incident. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A browser download link is accessible without contextual text or status.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls. Artifact under review: HTTP file-representation and transfer contract.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Download Accessibility happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Download Accessibility, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: storage-go-download-accessibility-1kqan7\" that uses case 5916 to validate conditional inclusive byte ranges and response-body cleanup. Return observable changed-case evidence. Browser code must not import AWS SDK packages, open sockets, contact S3, CloudFront, KMS, IAM, WAF, networks, databases, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with Go 1.26.5 compile, vet, fuzz, race, leak, controlled AWS, load, fault, security, cost, restore, and production gates.\n\nEvidence target: S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Download Accessibility into observable performance evidence. For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility, keep Download Accessibility connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: storage-go-download-accessibility-1kqan7\n// Competency: storage-go-download-accessibility.\n// Case 5916: a regional dependency incident.\n// Operating constraint: cap bytes, time, attempts, concurrency, and spend before starting work.\n// Changed case: introduce a duplicate event or ambiguous response and reconcile without duplicate effect.\nfunc evidence_storage_go_download_accessibility_1kqan7(start, end, objectBytes int, conditionMatches, bodyClosed bool) (int, int, string) {\n\tevidenceVariant1kqan7 := \"1kqan7-7naqk1-5916\"\n\t_ = evidenceVariant1kqan7\n\tif !conditionMatches { return 0, 0, \"precondition\" }\n\tif objectBytes < 0 || start < 0 || end < start || start >= objectBytes { return 0, 0, \"range\" }\n\tif end >= objectBytes { end = objectBytes - 1 }\n\tif !bodyClosed { return start, end, \"cleanup\" }\n\treturn start, end, \"partial-content\"\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Accessibility precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 5347 during a compliance restore drill. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Accessibility, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser download link is accessible without contextual text or status."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 3728 during a cost-anomaly investigation. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility.",
+      "why": "The decision supplies observable evidence for provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls. For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility, keep Download Accessibility connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 3728 during a cost-anomaly investigation. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Download Accessibility symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Accessibility precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 3728 during a cost-anomaly investigation. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Accessibility, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser download link is accessible without contextual text or status."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Download Accessibility failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A browser download link is accessible without contextual text or status.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Download Accessibility condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Download Accessibility happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Download Accessibility: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go file-delivery team handles case 6061 during a compliance restore drill. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.\n\nEvidence target: S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility, keep Download Accessibility connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Accessibility precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 6061 during a compliance restore drill. Build deterministic Go evidence to validate conditional inclusive byte ranges and response-body cleanup; keep browser execution deterministic and move AWS claims to an authorized transfer gate; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Download Accessibility, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser download link is accessible without contextual text or status."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Representation Metadata to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Representation Metadata.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-representation-metadata"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Representation Metadata to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Representation Metadata.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-representation-metadata"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Validators Conditionals to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Validators Conditionals.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-validators-conditionals"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Byte Range Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Byte Range Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-byte-range-semantics"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Stream Backpressure to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Stream Backpressure.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-stream-backpressure"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Download Accessibility to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Download Accessibility.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Download Accessibility to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Download Accessibility.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: storage-go-download-accessibility-1kqan7.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "file": "go",
+      "expected": "// Evidence: storage-go-download-accessibility-1kqan7"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: storage-go-download-accessibility-1kqan7(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_storage_go_download_accessibility_1kqan7\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?!conditionMatches)(?=(?:(?!// Evidence:)[\\s\\S])*?end\\s*<\\s*start)(?=(?:(?!// Evidence:)[\\s\\S])*?end\\s*=\\s*objectBytes\\s*-\\s*1)(?=(?:(?!// Evidence:)[\\s\\S])*?!bodyClosed)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Download Accessibility to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Download Accessibility.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using provide and accessible plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-accessibility"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "provide",
+        "accessible"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

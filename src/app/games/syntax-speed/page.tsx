@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { Clock, Trophy, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { Zap, Trophy, Clock } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const codeSnippets = [
   'print("Hello, World!")',
@@ -95,7 +95,9 @@ export default function SyntaxSpeedGame() {
                 <Zap className="h-10 w-10 text-green-600" />
                 Syntax Speed
               </h1>
-              <p className="mt-1 text-gray-600">Type code as fast as you can with perfect accuracy</p>
+              <p className="mt-1 text-gray-600">
+                Type code as fast as you can with perfect accuracy
+              </p>
             </div>
           </div>
         </div>
@@ -109,10 +111,11 @@ export default function SyntaxSpeedGame() {
                 <Zap className="h-20 w-20 text-green-600 mx-auto mb-4" />
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Syntax Speed!</h2>
                 <p className="text-gray-600 mb-6 text-lg">
-                  Type Python code snippets as accurately and quickly as possible.
-                  Each character typed correctly earns you points. You have 60 seconds!
+                  Type Python code snippets as accurately and quickly as possible. Each character
+                  typed correctly earns you points. You have 60 seconds!
                 </p>
                 <button
+                  type="button"
                   onClick={startGame}
                   className="px-8 py-4 bg-green-600 text-white rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors"
                 >
@@ -121,87 +124,88 @@ export default function SyntaxSpeedGame() {
               </div>
             );
           }
-          
+
           if (gameOver) {
             return (
               <div className="rounded-2xl bg-white p-8 shadow-xl text-center">
                 <Trophy className="h-20 w-20 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Game Over!</h2>
-            <div className="grid grid-cols-3 gap-6 mb-6">
-              <div>
-                <div className="text-4xl font-bold text-green-600">{score}</div>
-                <p className="text-gray-600">Points</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Game Over!</h2>
+                <div className="grid grid-cols-3 gap-6 mb-6">
+                  <div>
+                    <div className="text-4xl font-bold text-green-600">{score}</div>
+                    <p className="text-gray-600">Points</p>
+                  </div>
+                  <div>
+                    <div className="text-4xl font-bold text-blue-600">{correctCount}</div>
+                    <p className="text-gray-600">Snippets</p>
+                  </div>
+                  <div>
+                    <div className="text-4xl font-bold text-purple-600">{wpm}</div>
+                    <p className="text-gray-600">WPM</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={startGame}
+                  className="px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
+                  Play Again
+                </button>
               </div>
-              <div>
-                <div className="text-4xl font-bold text-blue-600">{correctCount}</div>
-                <p className="text-gray-600">Snippets</p>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-purple-600">{wpm}</div>
-                <p className="text-gray-600">WPM</p>
-              </div>
-            </div>
-            <button
-              onClick={startGame}
-              className="px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
-            >
-              Play Again
-            </button>
-          </div>
             );
           }
-          
+
           return (
-          <div className="space-y-6">
-            {/* Stats Bar */}
-            <div className="flex gap-4 justify-between items-center bg-white rounded-lg p-4 shadow-lg">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-yellow-500" />
-                <span className="font-bold text-gray-900">Score: {score}</span>
+            <div className="space-y-6">
+              {/* Stats Bar */}
+              <div className="flex gap-4 justify-between items-center bg-white rounded-lg p-4 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-6 w-6 text-yellow-500" />
+                  <span className="font-bold text-gray-900">Score: {score}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-6 w-6 text-green-600" />
+                  <span className="font-bold text-gray-900">Time: {timeLeft}s</span>
+                </div>
+                <div className="text-sm text-gray-600">Completed: {correctCount}</div>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-6 w-6 text-green-600" />
-                <span className="font-bold text-gray-900">Time: {timeLeft}s</span>
-              </div>
-              <div className="text-sm text-gray-600">
-                Completed: {correctCount}
+
+              {/* Typing Challenge */}
+              <div className="rounded-2xl bg-white p-8 shadow-xl">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Type this code:</h3>
+
+                {/* Display Code to Type */}
+                <div className="bg-gray-900 rounded-lg p-6 mb-6 min-h-24 flex items-center justify-center">
+                  <div className="font-mono text-2xl tracking-wide">
+                    {currentSnippet.split('').map((char, idx) => {
+                      const uniqueKey = `${currentSnippet}-${idx}-${char}-${char.charCodeAt(0)}`;
+                      return (
+                        <span key={uniqueKey} className={getCharacterClass(idx)}>
+                          {char}
+                        </span>
+                      );
+                    })}
+                    \n{' '}
+                  </div>
+                </div>
+
+                {/* Input Field */}
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={userInput}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono text-lg focus:border-green-500 focus:outline-none"
+                  placeholder="Start typing..."
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+
+                <p className="mt-4 text-sm text-gray-600 text-center">
+                  Type exactly what you see above. Green = correct, Red = incorrect
+                </p>
               </div>
             </div>
-
-            {/* Typing Challenge */}
-            <div className="rounded-2xl bg-white p-8 shadow-xl">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Type this code:</h3>
-              
-              {/* Display Code to Type */}
-              <div className="bg-gray-900 rounded-lg p-6 mb-6 min-h-24 flex items-center justify-center">
-                <div className="font-mono text-2xl tracking-wide">
-                  {currentSnippet.split('').map((char, idx) => {
-                    const uniqueKey = `${currentSnippet}-${idx}-${char}-${char.charCodeAt(0)}`;
-                    return (
-                      <span key={uniqueKey} className={getCharacterClass(idx)}>
-                        {char}
-                      </span>
-                    );
-                  })}\n                </div>
-              </div>
-
-              {/* Input Field */}
-              <input
-                ref={inputRef}
-                type="text"
-                value={userInput}
-                onChange={(e) => handleInputChange(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono text-lg focus:border-green-500 focus:outline-none"
-                placeholder="Start typing..."
-                spellCheck={false}
-                autoComplete="off"
-              />
-
-              <p className="mt-4 text-sm text-gray-600 text-center">
-                Type exactly what you see above. Green = correct, Red = incorrect
-              </p>
-            </div>
-          </div>
           );
         })()}
       </main>

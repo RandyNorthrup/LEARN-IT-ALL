@@ -15,10 +15,7 @@ export async function POST(request: Request) {
     const { type, courseId, chapterId, lessonId, quizId } = body;
 
     if (!type) {
-      return NextResponse.json(
-        { error: 'Type is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Type is required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -36,10 +33,7 @@ export async function POST(request: Request) {
 
       case 'course':
         if (!courseId) {
-          return NextResponse.json(
-            { error: 'Course ID is required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
         }
         // Clear all progress for specific course
         db.prepare('DELETE FROM course_enrollments WHERE courseId = ?').run(courseId);
@@ -57,55 +51,48 @@ export async function POST(request: Request) {
           );
         }
         // Clear chapter progress - lessons and quizzes that start with chapter ID
-        db.prepare('DELETE FROM lesson_progress WHERE courseId = ? AND lessonId LIKE ?')
-          .run(courseId, `%${chapterId}%`);
-        db.prepare('DELETE FROM quiz_attempts WHERE courseId = ? AND quizId LIKE ?')
-          .run(courseId, `%${chapterId}%`);
-        db.prepare('DELETE FROM exercise_submissions WHERE courseId = ? AND exerciseId LIKE ?')
-          .run(courseId, `%${chapterId}%`);
+        db.prepare('DELETE FROM lesson_progress WHERE courseId = ? AND lessonId LIKE ?').run(
+          courseId,
+          `%${chapterId}%`
+        );
+        db.prepare('DELETE FROM quiz_attempts WHERE courseId = ? AND quizId LIKE ?').run(
+          courseId,
+          `%${chapterId}%`
+        );
+        db.prepare('DELETE FROM exercise_submissions WHERE courseId = ? AND exerciseId LIKE ?').run(
+          courseId,
+          `%${chapterId}%`
+        );
         break;
 
       case 'lesson':
         if (!lessonId) {
-          return NextResponse.json(
-            { error: 'Lesson ID is required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
         }
         // Clear specific lesson progress
         db.prepare('DELETE FROM lesson_progress WHERE lessonId = ?').run(lessonId);
         // Also clear exercises for this lesson
-        db.prepare('DELETE FROM exercise_submissions WHERE exerciseId LIKE ?')
-          .run(`%${lessonId}%`);
+        db.prepare('DELETE FROM exercise_submissions WHERE exerciseId LIKE ?').run(`%${lessonId}%`);
         break;
 
       case 'quiz':
         if (!quizId) {
-          return NextResponse.json(
-            { error: 'Quiz ID is required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'Quiz ID is required' }, { status: 400 });
         }
         // Clear all attempts for specific quiz
         db.prepare('DELETE FROM quiz_attempts WHERE quizId = ?').run(quizId);
         break;
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid type' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: `Successfully cleared ${type} progress`
+      message: `Successfully cleared ${type} progress`,
     });
   } catch (error) {
     console.error('Failed to clear progress:', error);
-    return NextResponse.json(
-      { error: 'Failed to clear progress' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to clear progress' }, { status: 500 });
   }
 }

@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 2,
+  "id": "sql-window-analytics-time-sql-offset-functions-concept",
+  "courseId": "sql-basics",
+  "moduleId": "sql-window-analytics-time",
+  "kind": "theory",
+  "title": "Window Functions, Analytical Grain, and Time-Aware SQL · Result-Grain Case: Offset Functions",
+  "summary": "Service leaders need rankings, running effort, previous-event comparisons, and rolling metrics without collapsing detail rows. Planned artifact: Add and verify the sql offset functions increment in a time-aware service-level analytics report. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior.",
+    "Choose ROW_NUMBER, RANK, DENSE_RANK, and NTILE with explicit tie semantics.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "sql-offset-functions"
+    ],
+    "reinforces": [
+      "sql-ranking-functions"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "sql-window-analytics-time-sql-ranking-functions-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "sql-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "sql": "-- sql-basics cumulative relational data portfolio.\n-- Each increment declares grain, predicts cardinality or changed rows, runs in fresh browser SQLite,\n-- reconciles results, tests changed data, and records PostgreSQL or standard-SQL boundaries.\n\nSELECT sqlite_version() AS browser_sqlite_version;\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Offset Functions · Theory Offset Functions",
+      "interaction": "predict",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.\n\nBefore reading, predict which action preserves the Offset Functions contract for the supplied data.\n\nEvidence target: Predict Offset Functions · Theory Offset Functions.",
+      "why": "The decision supplies observable evidence for use lag, lead, first_value, and last_value with deliberate ordering and frame behavior. For Predict Offset Functions · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Offset Functions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite Query Planning and Window Function Documentation — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Predict Offset Functions · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Predict Offset Functions · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.",
+        "For Predict Offset Functions · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "LAST_VALUE always means the final row in the partition. That claim does not survive the predict offset functions evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Run a convenient Offset Functions query for predict offset functions, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Offset Functions · Theory Offset Functions",
+      "interaction": "read",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.\n\nAfter tracing the worked code, choose the Offset Functions application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Offset Functions · Theory Offset Functions.",
+      "why": "The decision supplies observable evidence for use lag, lead, first_value, and last_value with deliberate ordering and frame behavior. For Bound Offset Functions · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare result or mutation grain, keys, NULL meaning, and transaction boundary; predict cardinality and invariants; run the smallest query; reconcile counts and plans; then test changed data and dialect limits."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total. A defensible solution applies Offset Functions, preserves the governing invariant or value contract, and connects the observed result to a time-aware service-level analytics report."
+        },
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "SELECT team_id, ticket_id, severity,\n       ROW_NUMBER() OVER (PARTITION BY team_id ORDER BY opened_at, ticket_id) AS arrival,\n       LAG(opened_at) OVER (PARTITION BY team_id ORDER BY opened_at, ticket_id) AS previous_opened,\n       COUNT(*) OVER (PARTITION BY team_id) AS team_ticket_count\nFROM tickets\nORDER BY team_id, arrival;",
+          "caption": "Runnable relational query or data-system contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "LAST_VALUE always means the final row in the partition. This fails the Offset Functions contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "SQLite Query Planning and Window Function Documentation (Current 2026-07-14) — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Bound Offset Functions · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Bound Offset Functions · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.",
+        "For Bound Offset Functions · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "LAST_VALUE always means the final row in the partition. That claim does not survive the bound offset functions evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "Run a convenient Offset Functions query for bound offset functions, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Offset Functions after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Offset Functions evidence · Theory Offset Functions",
+      "interaction": "arrange",
+      "instruction": "Order the Offset Functions evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Offset Functions evidence · Theory Offset Functions.",
+      "why": "Correct order keeps Offset Functions assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Offset Functions evidence · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Offset Functions has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Sequence Offset Functions evidence · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Sequence Offset Functions evidence · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total.",
+        "For Sequence Offset Functions evidence · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality for the theory Offset Functions case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict relational transformations, constraint or transaction effects, and dialect boundary before execution for the theory Offset Functions case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan for the theory Offset Functions case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits for the theory Offset Functions case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Offset Functions evidence · Theory Offset Functions",
+      "interaction": "code",
+      "instruction": "Append a runnable SQLite increment headed \"-- Evidence: sql-offset-functions-u7uafc\" with a concrete grain, hypothesis, or prediction; window partition, ordering, frame, rank, or time evidence; and an observation, reconciliation, or verification tied to returned rows, changed rows, an error, or a plan.\n\nEvidence target: Build Offset Functions evidence · Theory Offset Functions.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Offset Functions into observable performance evidence. For Build Offset Functions evidence · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "-- Evidence: sql-offset-functions-u7uafc\n-- grain: declare the exact row or mutation grain before running\nSELECT ticket_id, team_id,\n       ROW_NUMBER() OVER (PARTITION BY team_id ORDER BY opened_at, ticket_id) AS arrival\nFROM tickets ORDER BY team_id, arrival;\n-- observation: reconcile the returned rows, changed count, error, or plan with the prediction",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Build Offset Functions evidence · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Build Offset Functions evidence · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 4 rows, and a reconciliation total.",
+        "For Build Offset Functions evidence · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "targetFile": "sql"
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Offset Functions evidence · Theory Offset Functions",
+      "interaction": "inspect",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 5 rows, and a reconciliation total.\n\nInspect the Offset Functions trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Offset Functions evidence · Theory Offset Functions.",
+      "why": "The decision supplies observable evidence for use lag, lead, first_value, and last_value with deliberate ordering and frame behavior. For Inspect Offset Functions evidence · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Offset Functions, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Inspect Offset Functions evidence · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Inspect Offset Functions evidence · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 5 rows, and a reconciliation total.",
+        "For Inspect Offset Functions evidence · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Offset Functions case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 5 rows, and a reconciliation total.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "LAST_VALUE always means the final row in the partition.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior. Artifact under review: a time-aware service-level analytics report.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect offset functions evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "Run a convenient Offset Functions query for inspect offset functions evidence, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Offset Functions, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Offset Functions defect · Theory Offset Functions",
+      "interaction": "debug",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.\n\nA teammate acts on this belief: “LAST_VALUE always means the final row in the partition.” Which repair addresses the cause?\n\nEvidence target: Repair the Offset Functions defect · Theory Offset Functions.",
+      "why": "The decision supplies observable evidence for use lag, lead, first_value, and last_value with deliberate ordering and frame behavior. For Repair the Offset Functions defect · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Offset Functions symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite Query Planning and Window Function Documentation — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Repair the Offset Functions defect · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Repair the Offset Functions defect · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.",
+        "For Repair the Offset Functions defect · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Offset Functions failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "LAST_VALUE always means the final row in the partition.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Run a convenient Offset Functions query for repair the offset functions defect, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Offset Functions, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the offset functions defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Offset Functions model · Theory Offset Functions",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Offset Functions: explain the governing condition, one failure, and how this concrete case was verified — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.\n\nEvidence target: Defend the Offset Functions model · Theory Offset Functions.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Offset Functions model · Theory Offset Functions, keep Offset Functions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use LAG, LEAD, FIRST_VALUE, and LAST_VALUE with deliberate ordering and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "hints": [
+        "For Defend the Offset Functions model · Theory Offset Functions, name the row grain, Offset Functions precondition, or invariant that must hold.",
+        "At Defend the Offset Functions model · Theory Offset Functions, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.",
+        "For Defend the Offset Functions model · Theory Offset Functions, challenge the documented misconception with result, constraint, or plan evidence: LAST_VALUE always means the final row in the partition."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Offset Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Offset Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Offset Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Offset Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative sql portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker -- Evidence: sql-offset-functions-u7uafc.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "file": "sql",
+      "expected": "-- Evidence: sql-offset-functions-u7uafc"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "sql",
+      "pattern": "-- Evidence: sql-offset-functions-u7uafc(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:grain|hypothesis|prediction):\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!-- Evidence:)[\\s\\S])*?(?:OVER\\s*\\(|ROW_NUMBER|RANK|LAG|ROWS\\s+BETWEEN)(?:(?!-- Evidence:)[\\s\\S])*?;(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:observation|reconciliation|verify):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "sql-offset-functions"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Offset Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Offset Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Offset Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Offset Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using lead and first plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-offset-functions"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "lead",
+        "first"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

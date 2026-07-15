@@ -1,0 +1,685 @@
+{
+  "schemaVersion": 2,
+  "id": "functional-callables-composition-debugging-clinic",
+  "courseId": "python-functional",
+  "moduleId": "functional-callables-composition",
+  "kind": "debug",
+  "title": "Functions as Values, Signatures, and Composition · Side-Effect Repair Bay",
+  "summary": "Turn repeated validation branches into reusable transformations for an intake service. Learners isolate plausible failures, compare competing hypotheses, and record cause-level repair evidence. Planned artifact: Repair a changed failure in a typed composition library with signature evidence and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Pass, store, return, and inspect callables while preserving clear input-output contracts.",
+    "Model callable parameter and return relationships with precise type annotations.",
+    "Compose compatible unary transformations and explain data flow across boundaries.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "fp-first-class-functions",
+      "fp-callable-signatures",
+      "fp-function-composition",
+      "fp-pipeline-adapters",
+      "fp-composition-law-tests"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "functional-callables-composition-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "python-functional-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-functional immutable transformation portfolio.\"\"\"\n\nfrom collections.abc import Callable, Iterable, Iterator\nfrom functools import partial, reduce\nfrom itertools import chain, islice\nfrom typing import TypeVar\n\nT = TypeVar('T')\nU = TypeVar('U')\n\n# Extend one pure, lazy, tested pipeline increment per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof",
+      "interaction": "arrange",
+      "instruction": "Order the Composition Law Tests value-and-effect pipeline for this debug task before implementing it.",
+      "why": "Correct order keeps Composition Law Tests assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Composition Law Tests has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "hints": [
+        "Name the Composition Law Tests precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Composition laws hold automatically for effectful functions."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Separate immutable values from observable effects and ownership boundaries"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Specify a total transformation contract and explicit failure representation"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Compose and run the smallest pipeline while retaining an inspectable trace"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Repeat with changed input, verify input preservation, and move effects to the shell"
+        }
+      ]
+    },
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record",
+      "interaction": "inspect",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nInspect the First Class Functions trace for this debug case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for pass, store, return, and inspect callables while preserving clear input-output contracts.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For First Class Functions, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "fp-first-class-functions"
+      ],
+      "hints": [
+        "Name the First Class Functions precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: First-class functions execute as soon as referenced."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "First Class Functions case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "First-class functions execute as soon as referenced.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Pass, store, return, and inspect callables while preserving clear input-output contracts. Artifact under review: a typed composition library with signature evidence.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of First Class Functions."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies First Class Functions, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "First Class Functions · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich observation would disprove this suspected cause: “First-class functions execute as soon as referenced.”?",
+      "why": "The decision supplies observable evidence for pass, store, return, and inspect callables while preserving clear input-output contracts.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the First Class Functions symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "fp-first-class-functions"
+      ],
+      "hints": [
+        "Name the First Class Functions precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: First-class functions execute as soon as referenced."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "First Class Functions failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "First-class functions execute as soon as referenced.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Pass, store, return, and inspect callables while preserving clear input-output contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of First Class Functions."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies First Class Functions."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Callable Signatures · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich observation would disprove this suspected cause: “Callable without details communicates every signature.”?",
+      "why": "The decision supplies observable evidence for model callable parameter and return relationships with precise type annotations.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Callable Signatures condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "fp-callable-signatures"
+      ],
+      "hints": [
+        "Name the Callable Signatures precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Callable without details communicates every signature."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Callable Signatures."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Callable Signatures."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Function Composition · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich observation would disprove this suspected cause: “Any two functions compose regardless of their domains.”?",
+      "why": "The decision supplies observable evidence for compose compatible unary transformations and explain data flow across boundaries.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Function Composition symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "fp-function-composition"
+      ],
+      "hints": [
+        "Name the Function Composition precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Any two functions compose regardless of their domains."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Function Composition failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Any two functions compose regardless of their domains.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compose compatible unary transformations and explain data flow across boundaries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Function Composition."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Function Composition."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Pipeline Adapters · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich observation would disprove this suspected cause: “Adapters should silently discard mismatched data.”?",
+      "why": "The decision supplies observable evidence for create small adapters when neighboring transformation signatures do not align.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pipeline Adapters condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "fp-pipeline-adapters"
+      ],
+      "hints": [
+        "Name the Pipeline Adapters precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Adapters should silently discard mismatched data."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Pipeline Adapters."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Pipeline Adapters."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Composition Law Tests · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich observation would disprove this suspected cause: “Composition laws hold automatically for effectful functions.”?",
+      "why": "The decision supplies observable evidence for test identity and associativity expectations where a composition abstraction claims them.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Composition Law Tests symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Data Model — Object identity, mutability, callables, iteration protocols, descriptors, and data behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "hints": [
+        "Name the Composition Law Tests precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Composition laws hold automatically for effectful functions."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Composition Law Tests failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Composition laws hold automatically for effectful functions.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test identity and associativity expectations where a composition abstraction claims them.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Composition Law Tests."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Composition Law Tests."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair",
+      "interaction": "code",
+      "instruction": "Add a evidence_fp_composition_law_tests_1081kc function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Composition Law Tests into observable performance evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_fp_composition_law_tests_1081kc(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "hints": [
+        "Name the Composition Law Tests precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Composition laws hold automatically for effectful functions."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Composition Law Tests: explain the governing condition, one failure, and how this concrete case was verified — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test identity and associativity expectations where a composition abstraction claims them."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "hints": [
+        "Name the Composition Law Tests precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Composition laws hold automatically for effectful functions."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies First Class Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about First Class Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-first-class-functions"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies First Class Functions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about First Class Functions.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-first-class-functions"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Callable Signatures to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Callable Signatures.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-callable-signatures"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Function Composition to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Function Composition.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-function-composition"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pipeline Adapters to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pipeline Adapters.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-pipeline-adapters"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Composition Law Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Composition Law Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_fp_composition_law_tests_1081kc.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "file": "python",
+      "expected": "evidence_fp_composition_law_tests_1081kc"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_fp_composition_law_tests_1081kc\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and identity plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-composition-law-tests"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "test",
+        "identity"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

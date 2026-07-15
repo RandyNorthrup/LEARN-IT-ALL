@@ -1,0 +1,2163 @@
+{
+  "schemaVersion": 2,
+  "id": "cryptography-go",
+  "title": "Applied Cryptographic Engineering in Go 1.26",
+  "description": "Go developers who can build and test ordinary programs and need to select, implement, verify, migrate, and operate cryptographic systems without inventing cryptography or overstating evidence. This original, research-backed path uses repeated retrieval, cumulative artifacts, changed-case labs, stakeholder projects, and a performance exam.",
+  "outcomes": [
+    "Demonstrate go 1.26.5 and x/crypto v0.54.0; threat modeling; bytes and canonical formats; randomness; secret lifecycle; classical defect labs; aes; modes; aead; hashes; hmac; hkdf; password hashing; modular reasoning; rsa; x25519; ed25519 and ecdsa; hpke; envelope encryption; key management; x.509; tls 1.3; secure protocol state machines; encrypted file formats; ml-kem, ml-dsa, and slh-dsa migration; misuse resistance; vectors, negative tests, fuzzing and interoperability; fips boundaries; operations, incidents, recovery, and release defense through an independently verified stakeholder artifact.",
+    "Demonstrate runnable deterministic pure-go security decision functions and allowlisted cryptographic api exercises plus explicit go 1.26.5 native compile, os entropy, native timing, vector, fuzz, race, interop, tls, hsm/kms, certificate, load, fault, compliance, recovery, and production transfer gates through an independently verified stakeholder artifact.",
+    "Demonstrate five cumulative authentic cryptographic systems and a performance-based production defense examination through an independently verified stakeholder artifact."
+  ],
+  "sharedRequirements": [
+    "Every activity retrieves Go correctness, canonical bytes, explicit threat and trust boundaries, purpose-separated keys, bounded attacker-controlled work, uniform safe failures, secret-safe observability, negative tests, and evidence limits before adding one cryptographic boundary.",
+    "Browser Go is deterministic and isolated. It models byte identity, formats, nonce and key state, policies, protocol transitions, attacks, migration, and evidence decisions and runs only an allowlisted side-effect-free cryptographic API subset with fixed fixtures. It never generates production keys, proves entropy or constant time, opens networks, contacts TLS, HSM/KMS or certificate systems, reads host secrets, executes commands, or causes external effects.",
+    "Passing work requires stable scenario and artifact identity, a named asset and adversary, exact security property, canonical inputs, versioned algorithm and parameter policy, key/nonce ownership, bounded work, observable success and failure, tamper and changed-case evidence, recovery, and explicit native or production transfer limits."
+  ],
+  "prerequisites": [
+    "go-basics"
+  ],
+  "competencies": [
+    {
+      "id": "crypto-go-security-properties",
+      "statement": "Define confidentiality, integrity, authenticity, freshness, forward secrecy, availability, privacy, and accountability as separate observable outcomes.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [],
+      "misconceptions": [
+        "Encryption automatically supplies every security property."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define confidentiality, integrity, authenticity, freshness, forward secrecy, availability, privacy, and accountability as separate observable outcomes."
+      ]
+    },
+    {
+      "id": "crypto-go-asset-adversary-model",
+      "statement": "Model assets, actors, capabilities, entry points, trust boundaries, abuse cases, and acceptable residual risk before choosing a primitive.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-security-properties"
+      ],
+      "misconceptions": [
+        "Selecting AES first is an adequate threat model."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model assets, actors, capabilities, entry points, trust boundaries, abuse cases, and acceptable residual risk before choosing a primitive."
+      ]
+    },
+    {
+      "id": "crypto-go-claim-evidence-ladder",
+      "statement": "Separate mathematical primitive claims, API behavior, implementation evidence, deployment controls, compliance status, and stakeholder outcomes.",
+      "knowledgeType": "metacognitive",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-asset-adversary-model"
+      ],
+      "misconceptions": [
+        "A passing encrypt-decrypt round trip proves production security."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate mathematical primitive claims, API behavior, implementation evidence, deployment controls, compliance status, and stakeholder outcomes."
+      ]
+    },
+    {
+      "id": "crypto-go-kerckhoffs-library",
+      "statement": "Apply Kerckhoffs principle and choose reviewed standard-library or maintained cryptographic APIs instead of secret algorithms.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-claim-evidence-ladder"
+      ],
+      "misconceptions": [
+        "An unpublished algorithm is secure because attackers cannot inspect it."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply Kerckhoffs principle and choose reviewed standard-library or maintained cryptographic APIs instead of secret algorithms."
+      ]
+    },
+    {
+      "id": "crypto-go-ethical-legal-boundary",
+      "statement": "Bound cryptographic testing by authorization, data minimization, export, privacy, disclosure, and incident duties.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-kerckhoffs-library"
+      ],
+      "misconceptions": [
+        "A security learning objective authorizes testing any reachable system."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound cryptographic testing by authorization, data minimization, export, privacy, disclosure, and incident duties."
+      ]
+    },
+    {
+      "id": "crypto-go-bytes-text-boundary",
+      "statement": "Trace strings, UTF-8, bytes, hexadecimal, base64, binary fields, lengths, and canonical encodings without changing their security meaning.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-ethical-legal-boundary"
+      ],
+      "misconceptions": [
+        "Encoding bytes makes them confidential."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace strings, UTF-8, bytes, hexadecimal, base64, binary fields, lengths, and canonical encodings without changing their security meaning."
+      ]
+    },
+    {
+      "id": "crypto-go-transform-distinction",
+      "statement": "Distinguish encoding, checksums, hashing, MACs, signatures, encryption, key agreement, KEMs, and password hashing by purpose and reversibility.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-bytes-text-boundary"
+      ],
+      "misconceptions": [
+        "Hashing, encryption, and encoding are interchangeable transforms."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish encoding, checksums, hashing, MACs, signatures, encryption, key agreement, KEMs, and password hashing by purpose and reversibility."
+      ]
+    },
+    {
+      "id": "crypto-go-primitive-composition",
+      "statement": "Choose a vetted high-level construction that supplies the required combined properties instead of composing low-level primitives casually.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-transform-distinction"
+      ],
+      "misconceptions": [
+        "Combining individually secure primitives always produces a secure protocol."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose a vetted high-level construction that supplies the required combined properties instead of composing low-level primitives casually."
+      ]
+    },
+    {
+      "id": "crypto-go-domain-separation",
+      "statement": "Assign unambiguous labels, contexts, versions, roles, and byte encodings so one cryptographic use cannot be replayed as another.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-primitive-composition"
+      ],
+      "misconceptions": [
+        "Reusing one digest or key across unrelated purposes is harmless when lengths match."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Assign unambiguous labels, contexts, versions, roles, and byte encodings so one cryptographic use cannot be replayed as another."
+      ]
+    },
+    {
+      "id": "crypto-go-format-canonicalization",
+      "statement": "Define injective length-delimited serialization and reject ambiguous or non-canonical inputs before signing or authenticating.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-domain-separation"
+      ],
+      "misconceptions": [
+        "Concatenating fields without boundaries produces one unique signed message."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define injective length-delimited serialization and reject ambiguous or non-canonical inputs before signing or authenticating."
+      ]
+    },
+    {
+      "id": "crypto-go-csprng-source",
+      "statement": "Use current Go cryptographic randomness APIs for keys, tokens, salts, nonces, and blinding while handling failure according to the API contract.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-format-canonicalization"
+      ],
+      "misconceptions": [
+        "math/rand becomes cryptographically secure when seeded frequently."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use current Go cryptographic randomness APIs for keys, tokens, salts, nonces, and blinding while handling failure according to the API contract."
+      ]
+    },
+    {
+      "id": "crypto-go-entropy-vs-randomness",
+      "statement": "Distinguish entropy sources, deterministic random bit generators, unpredictability, uniqueness, bias, and statistical appearance.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-csprng-source"
+      ],
+      "misconceptions": [
+        "A sequence that looks random is necessarily unpredictable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish entropy sources, deterministic random bit generators, unpredictability, uniqueness, bias, and statistical appearance."
+      ]
+    },
+    {
+      "id": "crypto-go-key-generation-strength",
+      "statement": "Generate algorithm-compatible keys at supported strengths and retain provenance, purpose, owner, and creation evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-entropy-vs-randomness"
+      ],
+      "misconceptions": [
+        "Any random byte string is a valid key for every algorithm."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate algorithm-compatible keys at supported strengths and retain provenance, purpose, owner, and creation evidence."
+      ]
+    },
+    {
+      "id": "crypto-go-nonce-uniqueness",
+      "statement": "Enforce construction-specific nonce uniqueness or misuse limits across concurrency, restart, rollback, and replication.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-key-generation-strength"
+      ],
+      "misconceptions": [
+        "A nonce must always be secret but may repeat."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Enforce construction-specific nonce uniqueness or misuse limits across concurrency, restart, rollback, and replication."
+      ]
+    },
+    {
+      "id": "crypto-go-salt-token-boundary",
+      "statement": "Separate public unique salts, unpredictable bearer tokens, nonces, IVs, seeds, and secret keys by their exact guarantees.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-nonce-uniqueness"
+      ],
+      "misconceptions": [
+        "Salt, nonce, IV, token, seed, and key are synonyms."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate public unique salts, unpredictable bearer tokens, nonces, IVs, seeds, and secret keys by their exact guarantees."
+      ]
+    },
+    {
+      "id": "crypto-go-secret-custody",
+      "statement": "Trace secret creation, copies, aliases, use, retention, rotation, destruction limits, logs, crashes, backups, and ownership across Go boundaries.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-salt-token-boundary"
+      ],
+      "misconceptions": [
+        "Calling clear on one slice proves every secret copy is erased."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace secret creation, copies, aliases, use, retention, rotation, destruction limits, logs, crashes, backups, and ownership across Go boundaries."
+      ]
+    },
+    {
+      "id": "crypto-go-secret-string-copy",
+      "statement": "Minimize conversions and copies of secret-bearing strings and byte slices while documenting unavoidable runtime limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-secret-custody"
+      ],
+      "misconceptions": [
+        "Strings are preferable secret containers because they are immutable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Minimize conversions and copies of secret-bearing strings and byte slices while documenting unavoidable runtime limits."
+      ]
+    },
+    {
+      "id": "crypto-go-constant-time-compare",
+      "statement": "Use constant-time comparison APIs for fixed-length secret-dependent values and reject length or parse errors without secret-dependent detail.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-secret-string-copy"
+      ],
+      "misconceptions": [
+        "Ordinary byte equality is safe for MACs because network noise hides timing."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use constant-time comparison APIs for fixed-length secret-dependent values and reject length or parse errors without secret-dependent detail."
+      ]
+    },
+    {
+      "id": "crypto-go-side-channel-scope",
+      "statement": "Identify timing, cache, branch, allocation, power, fault, error, and length channels and state which are or are not tested.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-constant-time-compare"
+      ],
+      "misconceptions": [
+        "Using a constant-time compare makes the whole application constant time."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Identify timing, cache, branch, allocation, power, fault, error, and length channels and state which are or are not tested."
+      ]
+    },
+    {
+      "id": "crypto-go-redaction-observability",
+      "statement": "Design useful logs, metrics, traces, dumps, and incident artifacts that never expose keys, plaintext, password material, tokens, or high-cardinality identities.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-side-channel-scope"
+      ],
+      "misconceptions": [
+        "Base64 or hashing a secret always makes it safe to log."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design useful logs, metrics, traces, dumps, and incident artifacts that never expose keys, plaintext, password material, tokens, or high-cardinality identities."
+      ]
+    },
+    {
+      "id": "crypto-go-caesar-frequency-break",
+      "statement": "Implement and break a bounded shift or substitution cipher to connect keyspace, language redundancy, frequency evidence, and attacker cost.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-redaction-observability"
+      ],
+      "misconceptions": [
+        "A large-looking text keyspace makes a classical cipher secure."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Implement and break a bounded shift or substitution cipher to connect keyspace, language redundancy, frequency evidence, and attacker cost."
+      ]
+    },
+    {
+      "id": "crypto-go-xor-reuse-break",
+      "statement": "Demonstrate how repeated XOR keystream use reveals relationships between plaintexts without presenting XOR alone as production encryption.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-caesar-frequency-break"
+      ],
+      "misconceptions": [
+        "XOR is secure whenever the key bytes are hidden."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Demonstrate how repeated XOR keystream use reveals relationships between plaintexts without presenting XOR alone as production encryption."
+      ]
+    },
+    {
+      "id": "crypto-go-one-time-pad-conditions",
+      "statement": "Explain one-time-pad key length, uniformity, secrecy, single use, distribution, and destruction requirements and their operational cost.",
+      "knowledgeType": "conceptual",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-xor-reuse-break"
+      ],
+      "misconceptions": [
+        "A short password repeated across a message is a one-time pad."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Explain one-time-pad key length, uniformity, secrecy, single use, distribution, and destruction requirements and their operational cost."
+      ]
+    },
+    {
+      "id": "crypto-go-bruteforce-cost-model",
+      "statement": "Model offline and online search by keyspace, guess rate, parallelism, detection, lockout, value, and uncertainty without attacking unauthorized targets.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-one-time-pad-conditions"
+      ],
+      "misconceptions": [
+        "Brute force feasibility is determined by key length alone."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model offline and online search by keyspace, guess rate, parallelism, detection, lockout, value, and uncertainty without attacking unauthorized targets."
+      ]
+    },
+    {
+      "id": "crypto-go-legacy-migration-boundary",
+      "statement": "Quarantine toy and obsolete algorithms behind fixtures, negative tests, decryption-only migration, telemetry, deadlines, and deletion criteria.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-bruteforce-cost-model"
+      ],
+      "misconceptions": [
+        "Legacy cryptography can remain available indefinitely if marked deprecated."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Quarantine toy and obsolete algorithms behind fixtures, negative tests, decryption-only migration, telemetry, deadlines, and deletion criteria."
+      ]
+    },
+    {
+      "id": "crypto-go-aes-key-block-size",
+      "statement": "Apply AES key-size and fixed block-size contracts without confusing key, block, message, and security strength.",
+      "knowledgeType": "conceptual",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-legacy-migration-boundary"
+      ],
+      "misconceptions": [
+        "AES-256 uses a 256-byte block and is always twice as secure as AES-128."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply AES key-size and fixed block-size contracts without confusing key, block, message, and security strength."
+      ]
+    },
+    {
+      "id": "crypto-go-block-permutation",
+      "statement": "Explain block-cipher keyed permutation behavior and why messages require an approved mode or higher-level construction.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-aes-key-block-size"
+      ],
+      "misconceptions": [
+        "Encrypting each block independently preserves message confidentiality."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Explain block-cipher keyed permutation behavior and why messages require an approved mode or higher-level construction."
+      ]
+    },
+    {
+      "id": "crypto-go-aes-api-bounds",
+      "statement": "Validate key and block lengths before using low-level AES APIs and convert panics or errors into bounded caller behavior.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-block-permutation"
+      ],
+      "misconceptions": [
+        "The AES API safely truncates keys and partial blocks."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Validate key and block lengths before using low-level AES APIs and convert panics or errors into bounded caller behavior."
+      ]
+    },
+    {
+      "id": "crypto-go-known-answer-test",
+      "statement": "Use authoritative known-answer vectors to verify byte order, exact inputs, exact outputs, and implementation wiring without treating vectors as a security proof.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-aes-api-bounds"
+      ],
+      "misconceptions": [
+        "An encrypt-decrypt round trip detects every incorrect AES implementation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use authoritative known-answer vectors to verify byte order, exact inputs, exact outputs, and implementation wiring without treating vectors as a security proof."
+      ]
+    },
+    {
+      "id": "crypto-go-hardware-fips-boundary",
+      "statement": "Distinguish algorithm approval, implementation selection, hardware acceleration, side-channel assumptions, and Go FIPS module status.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-known-answer-test"
+      ],
+      "misconceptions": [
+        "Using AES automatically means the application is FIPS compliant."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish algorithm approval, implementation selection, hardware acceleration, side-channel assumptions, and Go FIPS module status."
+      ]
+    },
+    {
+      "id": "crypto-go-ecb-pattern-leak",
+      "statement": "Demonstrate deterministic block-pattern leakage and prohibit ECB for application messages.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hardware-fips-boundary"
+      ],
+      "misconceptions": [
+        "ECB is acceptable when plaintext blocks are not human-readable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Demonstrate deterministic block-pattern leakage and prohibit ECB for application messages."
+      ]
+    },
+    {
+      "id": "crypto-go-cbc-padding-oracle",
+      "statement": "Trace CBC chaining, IV requirements, padding validation, malleability, and oracle behavior as a legacy risk.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-ecb-pattern-leak"
+      ],
+      "misconceptions": [
+        "A random CBC IV supplies authenticity and prevents padding oracles."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace CBC chaining, IV requirements, padding validation, malleability, and oracle behavior as a legacy risk."
+      ]
+    },
+    {
+      "id": "crypto-go-ctr-counter-reuse",
+      "statement": "Trace CTR keystream generation and prove that key-counter reuse destroys confidentiality and enables malleation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-cbc-padding-oracle"
+      ],
+      "misconceptions": [
+        "CTR can reuse a counter when plaintext lengths differ."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace CTR keystream generation and prove that key-counter reuse destroys confidentiality and enables malleation."
+      ]
+    },
+    {
+      "id": "crypto-go-encrypt-then-mac",
+      "statement": "For unavoidable legacy modes, authenticate versioned context and ciphertext before decryption with independent keys and uniform failures.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-ctr-counter-reuse"
+      ],
+      "misconceptions": [
+        "MAC-then-encrypt and encrypt-then-MAC are interchangeable compositions."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: For unavoidable legacy modes, authenticate versioned context and ciphertext before decryption with independent keys and uniform failures."
+      ]
+    },
+    {
+      "id": "crypto-go-legacy-decrypt-only",
+      "statement": "Build a bounded decrypt-only adapter that authenticates format, suppresses oracles, records migration, and never emits new legacy ciphertext.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-encrypt-then-mac"
+      ],
+      "misconceptions": [
+        "Supporting legacy decryption requires keeping legacy encryption enabled."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build a bounded decrypt-only adapter that authenticates format, suppresses oracles, records migration, and never emits new legacy ciphertext."
+      ]
+    },
+    {
+      "id": "crypto-go-aead-contract",
+      "statement": "Use AEAD Seal and Open as atomic confidentiality-and-integrity operations and release plaintext only after successful authentication.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-legacy-decrypt-only"
+      ],
+      "misconceptions": [
+        "AEAD decryption may stream unauthenticated plaintext safely if errors are checked later."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use AEAD Seal and Open as atomic confidentiality-and-integrity operations and release plaintext only after successful authentication."
+      ]
+    },
+    {
+      "id": "crypto-go-gcm-nonce-system",
+      "statement": "Design a crash-, concurrency-, rollback-, and replication-safe GCM nonce strategy within the construction limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-aead-contract"
+      ],
+      "misconceptions": [
+        "Random GCM nonces can be generated forever without collision analysis."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design a crash-, concurrency-, rollback-, and replication-safe GCM nonce strategy within the construction limits."
+      ]
+    },
+    {
+      "id": "crypto-go-aad-binding",
+      "statement": "Bind protocol version, tenant, object identity, algorithm suite, direction, and other non-secret context as canonical associated data.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-gcm-nonce-system"
+      ],
+      "misconceptions": [
+        "Associated data is encrypted and therefore suitable for secret metadata."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bind protocol version, tenant, object identity, algorithm suite, direction, and other non-secret context as canonical associated data."
+      ]
+    },
+    {
+      "id": "crypto-go-gcm-record-format",
+      "statement": "Define magic, version, suite, key ID, nonce, ciphertext, tag, lengths, and parsing limits before calling Open.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-aad-binding"
+      ],
+      "misconceptions": [
+        "Because GCM authenticates ciphertext, the outer record parser needs no bounds."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define magic, version, suite, key ID, nonce, ciphertext, tag, lengths, and parsing limits before calling Open."
+      ]
+    },
+    {
+      "id": "crypto-go-gcm-failure-uniformity",
+      "statement": "Collapse attacker-visible authentication failures while retaining safe internal classification and metrics.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-gcm-record-format"
+      ],
+      "misconceptions": [
+        "Detailed tag, key, nonce, and padding errors help clients recover securely."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Collapse attacker-visible authentication failures while retaining safe internal classification and metrics."
+      ]
+    },
+    {
+      "id": "crypto-go-chacha-aead-contract",
+      "statement": "Use ChaCha20-Poly1305 through its AEAD contract with correct key, nonce, tag, additional-data, and failure handling.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-gcm-failure-uniformity"
+      ],
+      "misconceptions": [
+        "ChaCha20 alone supplies message authenticity."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use ChaCha20-Poly1305 through its AEAD contract with correct key, nonce, tag, additional-data, and failure handling."
+      ]
+    },
+    {
+      "id": "crypto-go-xchacha-nonce",
+      "statement": "Distinguish standard and XChaCha nonce sizes, interoperability, random-nonce design, and protocol compatibility.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-chacha-aead-contract"
+      ],
+      "misconceptions": [
+        "XChaCha ciphertext can be opened by any ChaCha20-Poly1305 implementation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish standard and XChaCha nonce sizes, interoperability, random-nonce design, and protocol compatibility."
+      ]
+    },
+    {
+      "id": "crypto-go-aead-selection",
+      "statement": "Choose AES-GCM or ChaCha20-Poly1305 from platform acceleration, protocol requirements, misuse risk, compliance, interoperability, and measured performance.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-xchacha-nonce"
+      ],
+      "misconceptions": [
+        "One AEAD is universally faster and more secure on every platform."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose AES-GCM or ChaCha20-Poly1305 from platform acceleration, protocol requirements, misuse risk, compliance, interoperability, and measured performance."
+      ]
+    },
+    {
+      "id": "crypto-go-algorithm-agility-envelope",
+      "statement": "Represent algorithm suite and parameters in an authenticated allow-listed envelope without negotiation downgrade.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-aead-selection"
+      ],
+      "misconceptions": [
+        "An unauthenticated algorithm identifier safely enables agility."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Represent algorithm suite and parameters in an authenticated allow-listed envelope without negotiation downgrade."
+      ]
+    },
+    {
+      "id": "crypto-go-aead-cross-implementation",
+      "statement": "Verify authoritative vectors and cross-implementation fixtures for exact nonce, AAD, ciphertext, tag, and rejection behavior.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-algorithm-agility-envelope"
+      ],
+      "misconceptions": [
+        "Local round trips prove interoperability."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify authoritative vectors and cross-implementation fixtures for exact nonce, AAD, ciphertext, tag, and rejection behavior."
+      ]
+    },
+    {
+      "id": "crypto-go-hash-properties",
+      "statement": "Distinguish preimage, second-preimage, collision, length, domain, and security-strength properties required by a use case.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-aead-cross-implementation"
+      ],
+      "misconceptions": [
+        "A hash is either secure or insecure without regard to its use."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish preimage, second-preimage, collision, length, domain, and security-strength properties required by a use case."
+      ]
+    },
+    {
+      "id": "crypto-go-sha2-sha3-selection",
+      "statement": "Select supported SHA-2 or SHA-3 functions and output lengths from protocol, interoperability, performance, compliance, and security needs.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hash-properties"
+      ],
+      "misconceptions": [
+        "SHA-3 simply replaces SHA-2 in every existing protocol."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select supported SHA-2 or SHA-3 functions and output lengths from protocol, interoperability, performance, compliance, and security needs."
+      ]
+    },
+    {
+      "id": "crypto-go-streaming-hash",
+      "statement": "Hash bounded streams incrementally, propagate read errors, freeze canonical byte identity, and compare expected digests safely.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-sha2-sha3-selection"
+      ],
+      "misconceptions": [
+        "io.Copy into a hash proves the source bytes were complete and trusted."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Hash bounded streams incrementally, propagate read errors, freeze canonical byte identity, and compare expected digests safely."
+      ]
+    },
+    {
+      "id": "crypto-go-weak-hash-migration",
+      "statement": "Confine MD5 and SHA-1 to explicitly non-adversarial compatibility or migration checks and reject security claims based on them.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-streaming-hash"
+      ],
+      "misconceptions": [
+        "A collision-broken hash remains safe for signatures if the input is long."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Confine MD5 and SHA-1 to explicitly non-adversarial compatibility or migration checks and reject security claims based on them."
+      ]
+    },
+    {
+      "id": "crypto-go-hash-not-authentication",
+      "statement": "Require an authenticated trusted expected digest or MAC/signature when attackers can modify both data and digest.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-weak-hash-migration"
+      ],
+      "misconceptions": [
+        "Publishing a checksum next to a file proves the file is authentic."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Require an authenticated trusted expected digest or MAC/signature when attackers can modify both data and digest."
+      ]
+    },
+    {
+      "id": "crypto-go-mac-authenticity",
+      "statement": "Use a MAC to provide symmetric origin authentication and integrity while stating its lack of public verifiability and non-repudiation.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-hash-not-authentication"
+      ],
+      "misconceptions": [
+        "A MAC is a digital signature that anyone can verify."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use a MAC to provide symmetric origin authentication and integrity while stating its lack of public verifiability and non-repudiation."
+      ]
+    },
+    {
+      "id": "crypto-go-hmac-api",
+      "statement": "Compute and verify HMAC with a supported hash, sufficient independent key, canonical message, and constant-time tag comparison.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-mac-authenticity"
+      ],
+      "misconceptions": [
+        "Hashing key concatenated with message is equivalent to HMAC."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compute and verify HMAC with a supported hash, sufficient independent key, canonical message, and constant-time tag comparison."
+      ]
+    },
+    {
+      "id": "crypto-go-mac-key-separation",
+      "statement": "Derive or provision separate purpose- and direction-specific MAC keys and bind the use context.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hmac-api"
+      ],
+      "misconceptions": [
+        "The same symmetric key should encrypt and authenticate to simplify rotation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive or provision separate purpose- and direction-specific MAC keys and bind the use context."
+      ]
+    },
+    {
+      "id": "crypto-go-webhook-canonicalization",
+      "statement": "Define exact method, target, selected headers, body bytes, timestamp, key ID, and version canonicalization before MAC verification.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-mac-key-separation"
+      ],
+      "misconceptions": [
+        "Re-serializing parsed JSON preserves a sender MAC."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define exact method, target, selected headers, body bytes, timestamp, key ID, and version canonicalization before MAC verification."
+      ]
+    },
+    {
+      "id": "crypto-go-replay-window",
+      "statement": "Enforce bounded freshness and one-time request identity after authenticating the request, with durable duplicate handling.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-webhook-canonicalization"
+      ],
+      "misconceptions": [
+        "A valid MAC makes replayed requests harmless."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Enforce bounded freshness and one-time request identity after authenticating the request, with durable duplicate handling."
+      ]
+    },
+    {
+      "id": "crypto-go-kdf-purpose",
+      "statement": "Distinguish extraction, expansion, password stretching, entropy concentration limits, and deterministic key schedules.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-replay-window"
+      ],
+      "misconceptions": [
+        "A KDF creates new entropy from weak input."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish extraction, expansion, password stretching, entropy concentration limits, and deterministic key schedules."
+      ]
+    },
+    {
+      "id": "crypto-go-hkdf-extract-expand",
+      "statement": "Apply HKDF extract and expand with supported hashes, salt, labeled info, bounded output, and one-way key schedule ownership.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-kdf-purpose"
+      ],
+      "misconceptions": [
+        "HKDF salt and info are secret passwords."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply HKDF extract and expand with supported hashes, salt, labeled info, bounded output, and one-way key schedule ownership."
+      ]
+    },
+    {
+      "id": "crypto-go-key-separation-tree",
+      "statement": "Derive independent role, direction, epoch, algorithm, and purpose keys from a versioned hierarchy without key cycles.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hkdf-extract-expand"
+      ],
+      "misconceptions": [
+        "Taking adjacent bytes from one secret gives permanent domain separation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive independent role, direction, epoch, algorithm, and purpose keys from a versioned hierarchy without key cycles."
+      ]
+    },
+    {
+      "id": "crypto-go-transcript-binding",
+      "statement": "Bind negotiated identities, algorithms, public values, roles, and transcript hashes into derivation context.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-key-separation-tree"
+      ],
+      "misconceptions": [
+        "A shared secret alone authenticates who participated and what was negotiated."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bind negotiated identities, algorithms, public values, roles, and transcript hashes into derivation context."
+      ]
+    },
+    {
+      "id": "crypto-go-kdf-version-migration",
+      "statement": "Version derivation labels and parameters, preserve old read paths, prevent downgrade, and prove rotation rollback.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-transcript-binding"
+      ],
+      "misconceptions": [
+        "Changing HKDF labels is compatible because key length stays the same."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Version derivation labels and parameters, preserve old read paths, prevent downgrade, and prove rotation rollback."
+      ]
+    },
+    {
+      "id": "crypto-go-password-hash-not-encrypt",
+      "statement": "Store password verifiers with a slow password-hashing construction rather than plaintext, reversible encryption, or fast general hashes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-kdf-version-migration"
+      ],
+      "misconceptions": [
+        "Passwords should be encrypted so users can recover them."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Store password verifiers with a slow password-hashing construction rather than plaintext, reversible encryption, or fast general hashes."
+      ]
+    },
+    {
+      "id": "crypto-go-argon2id-parameters",
+      "statement": "Select and encode Argon2id memory, time, parallelism, salt, and output parameters from current guidance and measured service budgets.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-password-hash-not-encrypt"
+      ],
+      "misconceptions": [
+        "The largest possible Argon2 memory setting is always the safest production choice."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select and encode Argon2id memory, time, parallelism, salt, and output parameters from current guidance and measured service budgets."
+      ]
+    },
+    {
+      "id": "crypto-go-scrypt-pbkdf2-fallback",
+      "statement": "Choose scrypt or PBKDF2 only from explicit availability and compliance constraints with current calibrated parameters.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-argon2id-parameters"
+      ],
+      "misconceptions": [
+        "All password KDF parameter numbers measure the same work."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose scrypt or PBKDF2 only from explicit availability and compliance constraints with current calibrated parameters."
+      ]
+    },
+    {
+      "id": "crypto-go-password-record-parser",
+      "statement": "Parse an allow-listed versioned verifier record with strict lengths, integer bounds, base64 rules, and resource admission before deriving.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-scrypt-pbkdf2-fallback"
+      ],
+      "misconceptions": [
+        "An authenticated database makes password hash records safe to parse without limits."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Parse an allow-listed versioned verifier record with strict lengths, integer bounds, base64 rules, and resource admission before deriving."
+      ]
+    },
+    {
+      "id": "crypto-go-password-upgrade-pepper",
+      "statement": "Perform successful-login rehash, legacy migration, pepper custody and rotation, dummy verification, rate limits, and account recovery without weakening enumeration defenses.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-password-record-parser"
+      ],
+      "misconceptions": [
+        "A pepper can be rotated transparently without user passwords or resets."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Perform successful-login rehash, legacy migration, pepper custody and rotation, dummy verification, rate limits, and account recovery without weakening enumeration defenses."
+      ]
+    },
+    {
+      "id": "crypto-go-modular-congruence",
+      "statement": "Compute and explain modular equivalence, reduction, addition, multiplication, exponentiation, and negative representatives.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-password-upgrade-pepper"
+      ],
+      "misconceptions": [
+        "Modulo is ordinary remainder with identical behavior for negative inputs in every language."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compute and explain modular equivalence, reduction, addition, multiplication, exponentiation, and negative representatives."
+      ]
+    },
+    {
+      "id": "crypto-go-gcd-inverse",
+      "statement": "Use Euclid and extended Euclid to determine coprimality and modular inverses and identify non-invertible cases.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-modular-congruence"
+      ],
+      "misconceptions": [
+        "Every nonzero value has an inverse modulo any modulus."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use Euclid and extended Euclid to determine coprimality and modular inverses and identify non-invertible cases."
+      ]
+    },
+    {
+      "id": "crypto-go-fast-exponentiation",
+      "statement": "Trace square-and-multiply cost and state why secret exponent code must use vetted constant-time implementations.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-gcd-inverse"
+      ],
+      "misconceptions": [
+        "A mathematically correct big.Int exponentiation is automatically side-channel safe."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace square-and-multiply cost and state why secret exponent code must use vetted constant-time implementations."
+      ]
+    },
+    {
+      "id": "crypto-go-prime-group-boundary",
+      "statement": "Explain primes, groups, orders, generators, finite fields, and subgroup validation at the level needed to use approved APIs safely.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-fast-exponentiation"
+      ],
+      "misconceptions": [
+        "Any large prime and any point create a secure public-key group."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Explain primes, groups, orders, generators, finite fields, and subgroup validation at the level needed to use approved APIs safely."
+      ]
+    },
+    {
+      "id": "crypto-go-toy-math-separation",
+      "statement": "Keep small-number demonstrations outside production code and name the parameter, randomness, validation, and side-channel evidence they omit.",
+      "knowledgeType": "metacognitive",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-prime-group-boundary"
+      ],
+      "misconceptions": [
+        "A toy RSA example is production-ready after increasing the integer values."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Keep small-number demonstrations outside production code and name the parameter, randomness, validation, and side-channel evidence they omit."
+      ]
+    },
+    {
+      "id": "crypto-go-rsa-key-validation",
+      "statement": "Generate or parse supported RSA keys with minimum strength, valid public exponent, purpose, provenance, and bounded encodings.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-toy-math-separation"
+      ],
+      "misconceptions": [
+        "Any PEM block labeled RSA is a valid encryption and signing key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate or parse supported RSA keys with minimum strength, valid public exponent, purpose, provenance, and bounded encodings."
+      ]
+    },
+    {
+      "id": "crypto-go-rsa-oaep",
+      "statement": "Use RSA-OAEP only for bounded key material with matching hash and label context and uniform decryption failure.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-rsa-key-validation"
+      ],
+      "misconceptions": [
+        "RSA-OAEP is suitable for encrypting arbitrary files directly."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use RSA-OAEP only for bounded key material with matching hash and label context and uniform decryption failure."
+      ]
+    },
+    {
+      "id": "crypto-go-rsa-pss",
+      "statement": "Hash exact canonical bytes and use RSA-PSS with explicit hash and salt policy for new RSA signatures.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-rsa-oaep"
+      ],
+      "misconceptions": [
+        "RSA encryption and RSA signing are the same operation with reversed keys."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Hash exact canonical bytes and use RSA-PSS with explicit hash and salt policy for new RSA signatures."
+      ]
+    },
+    {
+      "id": "crypto-go-rsa-padding-oracles",
+      "statement": "Recognize textbook RSA and PKCS#1 v1.5 encryption oracle risks and isolate unavoidable legacy interoperability.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-rsa-pss"
+      ],
+      "misconceptions": [
+        "Keeping decryption errors generic fully repairs every RSA padding oracle."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Recognize textbook RSA and PKCS#1 v1.5 encryption oracle risks and isolate unavoidable legacy interoperability."
+      ]
+    },
+    {
+      "id": "crypto-go-rsa-agility-migration",
+      "statement": "Inventory RSA uses, migrate by purpose to modern approved alternatives, retain verified old-read windows, and remove obsolete private keys.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-rsa-padding-oracles"
+      ],
+      "misconceptions": [
+        "Increasing an RSA modulus solves every long-term cryptographic migration need."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inventory RSA uses, migrate by purpose to modern approved alternatives, retain verified old-read windows, and remove obsolete private keys."
+      ]
+    },
+    {
+      "id": "crypto-go-ecdh-contract",
+      "statement": "Use supported ECDH curves through Go interfaces with private/public key separation, strict parsing, and shared-secret error handling.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-rsa-agility-migration"
+      ],
+      "misconceptions": [
+        "ECDH encrypts messages by itself."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use supported ECDH curves through Go interfaces with private/public key separation, strict parsing, and shared-secret error handling."
+      ]
+    },
+    {
+      "id": "crypto-go-x25519-choice",
+      "statement": "Select X25519 or approved NIST curves from protocol, hardware, compliance, interoperability, and implementation constraints.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-ecdh-contract"
+      ],
+      "misconceptions": [
+        "All elliptic curves and encodings are interchangeable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select X25519 or approved NIST curves from protocol, hardware, compliance, interoperability, and implementation constraints."
+      ]
+    },
+    {
+      "id": "crypto-go-shared-secret-kdf",
+      "statement": "Feed the ECDH result and full context into a labeled KDF rather than using raw shared bytes directly.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-x25519-choice"
+      ],
+      "misconceptions": [
+        "ECDH output is already a uniformly formatted application key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Feed the ECDH result and full context into a labeled KDF rather than using raw shared bytes directly."
+      ]
+    },
+    {
+      "id": "crypto-go-peer-authentication",
+      "statement": "Authenticate peer identities and ephemeral public keys with signatures, certificates, PSKs, or an established trust channel.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-shared-secret-kdf"
+      ],
+      "misconceptions": [
+        "Successful ECDH proves the identity of the peer."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Authenticate peer identities and ephemeral public keys with signatures, certificates, PSKs, or an established trust channel."
+      ]
+    },
+    {
+      "id": "crypto-go-forward-secrecy-ephemeral",
+      "statement": "Rotate and erase ephemeral private keys, prevent reuse, bind roles, and state when compromise does or does not expose prior sessions.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-peer-authentication"
+      ],
+      "misconceptions": [
+        "Using elliptic curves automatically supplies forward secrecy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Rotate and erase ephemeral private keys, prevent reuse, bind roles, and state when compromise does or does not expose prior sessions."
+      ]
+    },
+    {
+      "id": "crypto-go-signature-guarantees",
+      "statement": "State exactly what a valid signature proves about bytes, key control, and context—and what it does not prove about truth, time, authorization, or intent.",
+      "knowledgeType": "conceptual",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-forward-secrecy-ephemeral"
+      ],
+      "misconceptions": [
+        "A valid signature proves that the signed statement is true and legally non-repudiable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: State exactly what a valid signature proves about bytes, key control, and context—and what it does not prove about truth, time, authorization, or intent."
+      ]
+    },
+    {
+      "id": "crypto-go-ed25519-api",
+      "statement": "Generate, parse, sign, and verify Ed25519 keys and signatures with exact message/context rules and trusted key selection.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-signature-guarantees"
+      ],
+      "misconceptions": [
+        "The public key embedded beside a signature establishes its own trust."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate, parse, sign, and verify Ed25519 keys and signatures with exact message/context rules and trusted key selection."
+      ]
+    },
+    {
+      "id": "crypto-go-ecdsa-api",
+      "statement": "Use ECDSA through current Go APIs with approved curves, supported hashes, canonical encodings, and no custom nonce generation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-ed25519-api"
+      ],
+      "misconceptions": [
+        "ECDSA signatures are deterministic and byte-identical by definition."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use ECDSA through current Go APIs with approved curves, supported hashes, canonical encodings, and no custom nonce generation."
+      ]
+    },
+    {
+      "id": "crypto-go-signature-context-canonical",
+      "statement": "Bind artifact type, version, role, tenant, key ID, expiry, and canonical bytes to prevent cross-protocol signature reuse.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-ecdsa-api"
+      ],
+      "misconceptions": [
+        "Signing a display string safely authenticates every structured interpretation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bind artifact type, version, role, tenant, key ID, expiry, and canonical bytes to prevent cross-protocol signature reuse."
+      ]
+    },
+    {
+      "id": "crypto-go-signature-policy",
+      "statement": "Apply threshold, authorization, revocation, expiry, transparency, and audit policy after cryptographic verification.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-signature-context-canonical"
+      ],
+      "misconceptions": [
+        "Cryptographic verification is the final authorization decision."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply threshold, authorization, revocation, expiry, transparency, and audit policy after cryptographic verification."
+      ]
+    },
+    {
+      "id": "crypto-go-hybrid-encryption",
+      "statement": "Combine public-key key establishment with symmetric AEAD for bounded scalable payload encryption and explicit recipient identity.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-signature-policy"
+      ],
+      "misconceptions": [
+        "Public-key encryption should process the entire large payload directly."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Combine public-key key establishment with symmetric AEAD for bounded scalable payload encryption and explicit recipient identity."
+      ]
+    },
+    {
+      "id": "crypto-go-hpke-contract",
+      "statement": "Use Go HPKE suites and modes with exact KEM, KDF, AEAD, info, associated data, key encoding, and one-shot or context lifecycle.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hybrid-encryption"
+      ],
+      "misconceptions": [
+        "HPKE authenticates sender identity in every mode automatically."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use Go HPKE suites and modes with exact KEM, KDF, AEAD, info, associated data, key encoding, and one-shot or context lifecycle."
+      ]
+    },
+    {
+      "id": "crypto-go-envelope-dek-kek",
+      "statement": "Generate per-object data keys, wrap them under recipient or key-encryption keys, authenticate metadata, and separate data from key custody.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-hpke-contract"
+      ],
+      "misconceptions": [
+        "Encrypting a DEK means its wrapping key may be stored beside it without concern."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Generate per-object data keys, wrap them under recipient or key-encryption keys, authenticate metadata, and separate data from key custody."
+      ]
+    },
+    {
+      "id": "crypto-go-multi-recipient-binding",
+      "statement": "Bind each recipient, wrapped key, suite, object version, and payload digest so entries cannot be swapped or replayed.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-envelope-dek-kek"
+      ],
+      "misconceptions": [
+        "All recipients may safely share one unauthenticated wrapped-key list."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bind each recipient, wrapped key, suite, object version, and payload digest so entries cannot be swapped or replayed."
+      ]
+    },
+    {
+      "id": "crypto-go-rewrap-without-reencrypt",
+      "statement": "Rotate recipient or KEK protection by authenticated rewrapping while preserving payload identity, audit, rollback, and revocation limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-multi-recipient-binding"
+      ],
+      "misconceptions": [
+        "Rewrapping a data key revokes every old copy of that key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Rotate recipient or KEK protection by authenticated rewrapping while preserving payload identity, audit, rollback, and revocation limits."
+      ]
+    },
+    {
+      "id": "crypto-go-key-lifecycle",
+      "statement": "Define generation, registration, activation, distribution, use, suspension, rotation, archival, recovery, revocation, destruction, and evidence ownership.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-rewrap-without-reencrypt"
+      ],
+      "misconceptions": [
+        "Key management begins and ends with generating random bytes."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define generation, registration, activation, distribution, use, suspension, rotation, archival, recovery, revocation, destruction, and evidence ownership."
+      ]
+    },
+    {
+      "id": "crypto-go-key-id-version-alias",
+      "statement": "Separate immutable key version, stable logical key ID, mutable alias, algorithm, purpose, state, and cryptoperiod.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-key-lifecycle"
+      ],
+      "misconceptions": [
+        "A key alias is immutable evidence of which key protected data."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate immutable key version, stable logical key ID, mutable alias, algorithm, purpose, state, and cryptoperiod."
+      ]
+    },
+    {
+      "id": "crypto-go-least-privilege-custody",
+      "statement": "Grant narrow sign, verify, encrypt, decrypt, wrap, unwrap, derive, rotate, export, and administer capabilities across separate identities.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-key-id-version-alias"
+      ],
+      "misconceptions": [
+        "A service that can encrypt must also be allowed to decrypt and export keys."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Grant narrow sign, verify, encrypt, decrypt, wrap, unwrap, derive, rotate, export, and administer capabilities across separate identities."
+      ]
+    },
+    {
+      "id": "crypto-go-hsm-kms-boundary",
+      "statement": "Design an interface for non-exportable HSM or KMS operations and state what attestation, latency, quota, availability, and audit evidence remains external.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-least-privilege-custody"
+      ],
+      "misconceptions": [
+        "Using a cloud KMS proves keys can never be exposed."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design an interface for non-exportable HSM or KMS operations and state what attestation, latency, quota, availability, and audit evidence remains external."
+      ]
+    },
+    {
+      "id": "crypto-go-key-compromise-recovery",
+      "statement": "Inventory affected uses, contain authority, rotate or revoke, rewrap or re-encrypt, restore service, notify stakeholders, and prove old-key handling.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-hsm-kms-boundary"
+      ],
+      "misconceptions": [
+        "Deleting the suspected key immediately is always the safest first response."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inventory affected uses, contain authority, rotate or revoke, rewrap or re-encrypt, restore service, notify stakeholders, and prove old-key handling."
+      ]
+    },
+    {
+      "id": "crypto-go-x509-structure",
+      "statement": "Parse certificates, names, SANs, key usages, extensions, serials, validity, signatures, and chains without treating parsed data as trusted.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-key-compromise-recovery"
+      ],
+      "misconceptions": [
+        "A certificate that parses successfully is valid for every purpose."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Parse certificates, names, SANs, key usages, extensions, serials, validity, signatures, and chains without treating parsed data as trusted."
+      ]
+    },
+    {
+      "id": "crypto-go-path-validation",
+      "statement": "Build and verify a path to an explicit trust anchor with DNS name, time, basic constraints, key usage, policy, and algorithm checks.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-x509-structure"
+      ],
+      "misconceptions": [
+        "Verifying a certificate signature alone verifies the full chain and hostname."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Build and verify a path to an explicit trust anchor with DNS name, time, basic constraints, key usage, policy, and algorithm checks."
+      ]
+    },
+    {
+      "id": "crypto-go-trust-store-scope",
+      "statement": "Separate system, application, private, tenant, and test roots and prevent accidental trust expansion.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-path-validation"
+      ],
+      "misconceptions": [
+        "Adding a root for one service safely trusts it for every application."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate system, application, private, tenant, and test roots and prevent accidental trust expansion."
+      ]
+    },
+    {
+      "id": "crypto-go-revocation-limits",
+      "statement": "Model short lifetimes, OCSP, CRLs, stapling, soft-fail or hard-fail policy, caching, privacy, and offline behavior.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-trust-store-scope"
+      ],
+      "misconceptions": [
+        "Revocation guarantees immediate rejection of every compromised certificate."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model short lifetimes, OCSP, CRLs, stapling, soft-fail or hard-fail policy, caching, privacy, and offline behavior."
+      ]
+    },
+    {
+      "id": "crypto-go-certificate-issuance",
+      "statement": "Issue bounded leaf certificates with unique serials, correct SANs, usages, profiles, audit, renewal, and protected CA keys.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-revocation-limits"
+      ],
+      "misconceptions": [
+        "Copying one certificate template is sufficient for servers, clients, and CAs."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Issue bounded leaf certificates with unique serials, correct SANs, usages, profiles, audit, renewal, and protected CA keys."
+      ]
+    },
+    {
+      "id": "crypto-go-tls-security-properties",
+      "statement": "Trace TLS negotiation, key exchange, certificate or PSK authentication, transcript binding, record protection, resumption, and closure.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-certificate-issuance"
+      ],
+      "misconceptions": [
+        "TLS only encrypts bytes and has no integrity or peer-authentication role."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace TLS negotiation, key exchange, certificate or PSK authentication, transcript binding, record protection, resumption, and closure."
+      ]
+    },
+    {
+      "id": "crypto-go-tls-config-safe",
+      "statement": "Configure current Go TLS defaults, minimum versions, certificates, roots, names, ALPN, timeouts, and safe verification hooks without insecure skip shortcuts.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-tls-security-properties"
+      ],
+      "misconceptions": [
+        "InsecureSkipVerify is acceptable when a custom hostname check happens later."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure current Go TLS defaults, minimum versions, certificates, roots, names, ALPN, timeouts, and safe verification hooks without insecure skip shortcuts."
+      ]
+    },
+    {
+      "id": "crypto-go-tls-resumption-early-data",
+      "statement": "Model tickets, PSKs, rotation, replay, forward secrecy, and application idempotency before enabling resumption or early data.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-tls-config-safe"
+      ],
+      "misconceptions": [
+        "TLS 1.3 early data has the same replay protection as ordinary application data."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model tickets, PSKs, rotation, replay, forward secrecy, and application idempotency before enabling resumption or early data."
+      ]
+    },
+    {
+      "id": "crypto-go-tls-post-quantum-hybrid",
+      "statement": "Understand Go 1.26 hybrid post-quantum key-exchange defaults, compatibility controls, size/latency effects, downgrade evidence, and rollout.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-tls-resumption-early-data"
+      ],
+      "misconceptions": [
+        "A hybrid TLS key exchange makes certificates and all application data quantum-safe forever."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Understand Go 1.26 hybrid post-quantum key-exchange defaults, compatibility controls, size/latency effects, downgrade evidence, and rollout."
+      ]
+    },
+    {
+      "id": "crypto-go-tls-live-evidence",
+      "statement": "Verify handshakes, chains, names, protocol, cipher, exporter, failure, rotation, resumption, and load in controlled environments.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-tls-post-quantum-hybrid"
+      ],
+      "misconceptions": [
+        "A unit test over net.Pipe proves public-network TLS deployment behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify handshakes, chains, names, protocol, cipher, exporter, failure, rotation, resumption, and load in controlled environments."
+      ]
+    },
+    {
+      "id": "crypto-go-protocol-goals-roles",
+      "statement": "Define initiator, responder, identities, trust assumptions, authentication goals, secrecy goals, compromise model, and terminal states.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-tls-live-evidence"
+      ],
+      "misconceptions": [
+        "Choosing strong primitives makes an informal message flow secure."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define initiator, responder, identities, trust assumptions, authentication goals, secrecy goals, compromise model, and terminal states."
+      ]
+    },
+    {
+      "id": "crypto-go-transcript-state-machine",
+      "statement": "Bind ordered message type, role, version, suite, identities, ephemeral values, session ID, sequence, and prior transcript into each state transition.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-protocol-goals-roles"
+      ],
+      "misconceptions": [
+        "Encrypting each message prevents reordering and cross-session replay."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bind ordered message type, role, version, suite, identities, ephemeral values, session ID, sequence, and prior transcript into each state transition."
+      ]
+    },
+    {
+      "id": "crypto-go-replay-duplicate-policy",
+      "statement": "Use nonces, counters, windows, durable identities, expiry, and idempotent effects according to channel and availability constraints.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-transcript-state-machine"
+      ],
+      "misconceptions": [
+        "Timestamps alone prevent replay in distributed systems."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use nonces, counters, windows, durable identities, expiry, and idempotent effects according to channel and availability constraints."
+      ]
+    },
+    {
+      "id": "crypto-go-downgrade-negotiation",
+      "statement": "Authenticate offered and selected versions, algorithms, parameters, and features and fail closed on unsupported or stripped choices.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-replay-duplicate-policy"
+      ],
+      "misconceptions": [
+        "Allowing both modern and legacy suites cannot weaken modern peers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Authenticate offered and selected versions, algorithms, parameters, and features and fail closed on unsupported or stripped choices."
+      ]
+    },
+    {
+      "id": "crypto-go-protocol-analysis-transfer",
+      "statement": "Use attack trees, state exploration, test vectors, interop peers, and formal tools as distinct evidence with explicit model limitations.",
+      "knowledgeType": "metacognitive",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-downgrade-negotiation"
+      ],
+      "misconceptions": [
+        "One protocol diagram and code review prove resistance to active attackers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use attack trees, state exploration, test vectors, interop peers, and formal tools as distinct evidence with explicit model limitations."
+      ]
+    },
+    {
+      "id": "crypto-go-file-envelope-format",
+      "statement": "Define a bounded versioned file envelope with magic, suite, key reference, KDF parameters, nonce base, chunk policy, metadata, and authenticated lengths.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-protocol-analysis-transfer"
+      ],
+      "misconceptions": [
+        "AEAD makes every surrounding file-format field trustworthy automatically."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define a bounded versioned file envelope with magic, suite, key reference, KDF parameters, nonce base, chunk policy, metadata, and authenticated lengths."
+      ]
+    },
+    {
+      "id": "crypto-go-chunk-nonce-derivation",
+      "statement": "Derive unique per-chunk nonces and associated data from immutable file identity, epoch, chunk index, length, and final marker.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-file-envelope-format"
+      ],
+      "misconceptions": [
+        "Incrementing a nonce is safe without bounding chunk count or restart behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive unique per-chunk nonces and associated data from immutable file identity, epoch, chunk index, length, and final marker."
+      ]
+    },
+    {
+      "id": "crypto-go-truncation-reorder-defense",
+      "statement": "Authenticate chunk position, total or final state, and file identity to reject deletion, duplication, insertion, reordering, and splicing.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-chunk-nonce-derivation"
+      ],
+      "misconceptions": [
+        "Valid independent chunk tags prove the file is complete and ordered."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Authenticate chunk position, total or final state, and file identity to reject deletion, duplication, insertion, reordering, and splicing."
+      ]
+    },
+    {
+      "id": "crypto-go-stream-release-policy",
+      "statement": "Buffer or stage plaintext until each chunk and required file-level commitments authenticate, then clean partial outputs on failure.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-truncation-reorder-defense"
+      ],
+      "misconceptions": [
+        "Streaming decryption may publish every plaintext byte before its tag is checked."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Buffer or stage plaintext until each chunk and required file-level commitments authenticate, then clean partial outputs on failure."
+      ]
+    },
+    {
+      "id": "crypto-go-format-migration-recovery",
+      "statement": "Support versioned read, controlled rewrite, interrupted migration recovery, key loss behavior, corrupt-media diagnostics, and deletion evidence.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-stream-release-policy"
+      ],
+      "misconceptions": [
+        "An encrypted backup is recoverable because ciphertext exists in two places."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Support versioned read, controlled rewrite, interrupted migration recovery, key loss behavior, corrupt-media diagnostics, and deletion evidence."
+      ]
+    },
+    {
+      "id": "crypto-go-quantum-threat-inventory",
+      "statement": "Inventory long-lived confidentiality, authentication, signatures, roots, protocols, dependencies, data lifetime, and migration lead time.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-format-migration-recovery"
+      ],
+      "misconceptions": [
+        "Quantum migration risk is determined only by when a large quantum computer arrives."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inventory long-lived confidentiality, authentication, signatures, roots, protocols, dependencies, data lifetime, and migration lead time."
+      ]
+    },
+    {
+      "id": "crypto-go-mlkem",
+      "statement": "Use Go ML-KEM interfaces for key encapsulation with strict key/ciphertext parsing, shared-key custody, failure handling, and hybrid context.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-quantum-threat-inventory"
+      ],
+      "misconceptions": [
+        "ML-KEM encrypts arbitrary application messages directly."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use Go ML-KEM interfaces for key encapsulation with strict key/ciphertext parsing, shared-key custody, failure handling, and hybrid context."
+      ]
+    },
+    {
+      "id": "crypto-go-mldsa",
+      "statement": "Use Go ML-DSA parameter sets and context-aware signing with explicit key, signature-size, interoperability, and policy tradeoffs.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-mlkem"
+      ],
+      "misconceptions": [
+        "ML-DSA signatures are drop-in byte-for-byte replacements for Ed25519."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use Go ML-DSA parameter sets and context-aware signing with explicit key, signature-size, interoperability, and policy tradeoffs."
+      ]
+    },
+    {
+      "id": "crypto-go-slhdsa-boundary",
+      "statement": "Explain SLH-DSA standardization, conservative hash-based assumptions, size/performance tradeoffs, and implementation availability limits.",
+      "knowledgeType": "conceptual",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-mldsa"
+      ],
+      "misconceptions": [
+        "Every NIST post-quantum signature has the same performance and deployment role."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Explain SLH-DSA standardization, conservative hash-based assumptions, size/performance tradeoffs, and implementation availability limits."
+      ]
+    },
+    {
+      "id": "crypto-go-hybrid-pq-migration",
+      "statement": "Design hybrid classical-plus-post-quantum rollout, transcript binding, downgrade defense, telemetry, compatibility, rollback, and cryptographic agility.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-slhdsa-boundary"
+      ],
+      "misconceptions": [
+        "A hybrid construction is secure if either secret is concatenated without a specified combiner."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design hybrid classical-plus-post-quantum rollout, transcript binding, downgrade defense, telemetry, compatibility, rollback, and cryptographic agility."
+      ]
+    },
+    {
+      "id": "crypto-go-oracle-classification",
+      "statement": "Identify padding, validity, format, key, user, replay, decompression, and timing oracles across direct and indirect observations.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "crypto-go-hybrid-pq-migration"
+      ],
+      "misconceptions": [
+        "Returning HTTP 400 for all errors removes every oracle."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Identify padding, validity, format, key, user, replay, decompression, and timing oracles across direct and indirect observations."
+      ]
+    },
+    {
+      "id": "crypto-go-resource-admission",
+      "statement": "Bound lengths, counts, nesting, KDF work, signature sets, certificate paths, retries, concurrency, memory, CPU, and deadlines before expensive cryptography.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-oracle-classification"
+      ],
+      "misconceptions": [
+        "Authenticated cryptographic inputs cannot be used for denial of service."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound lengths, counts, nesting, KDF work, signature sets, certificate paths, retries, concurrency, memory, CPU, and deadlines before expensive cryptography."
+      ]
+    },
+    {
+      "id": "crypto-go-error-taxonomy",
+      "statement": "Keep useful internal typed causes and safe telemetry while exposing uniform bounded failures and terminal cleanup to untrusted callers.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-resource-admission"
+      ],
+      "misconceptions": [
+        "All cryptographic errors must be discarded, making operations impossible to diagnose."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Keep useful internal typed causes and safe telemetry while exposing uniform bounded failures and terminal cleanup to untrusted callers."
+      ]
+    },
+    {
+      "id": "crypto-go-compression-encryption",
+      "statement": "Analyze compression-before-encryption length leakage, attacker influence, secret proximity, padding limits, and protocol-specific mitigations.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-error-taxonomy"
+      ],
+      "misconceptions": [
+        "Encryption hides compressed message length."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Analyze compression-before-encryption length leakage, attacker influence, secret proximity, padding limits, and protocol-specific mitigations."
+      ]
+    },
+    {
+      "id": "crypto-go-constant-time-transfer",
+      "statement": "Move timing, cache, compiler, hardware, co-tenancy, and fault claims to controlled native measurement and specialist review.",
+      "knowledgeType": "metacognitive",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-compression-encryption"
+      ],
+      "misconceptions": [
+        "Browser timing of a Go interpreter proves production constant-time behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Move timing, cache, compiler, hardware, co-tenancy, and fault claims to controlled native measurement and specialist review."
+      ]
+    },
+    {
+      "id": "crypto-go-authoritative-vectors",
+      "statement": "Use authoritative known-answer and protocol vectors with provenance, exact bytes, expected successes, expected failures, and stable fixtures.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-constant-time-transfer"
+      ],
+      "misconceptions": [
+        "Random local round trips are stronger than published vectors."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use authoritative known-answer and protocol vectors with provenance, exact bytes, expected successes, expected failures, and stable fixtures."
+      ]
+    },
+    {
+      "id": "crypto-go-negative-mutation-tests",
+      "statement": "Mutate every authenticated field, key, nonce, tag, length, order, version, context, and boundary and require clean rejection without partial effects.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-authoritative-vectors"
+      ],
+      "misconceptions": [
+        "Testing one wrong password sufficiently covers decryption failure."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Mutate every authenticated field, key, nonce, tag, length, order, version, context, and boundary and require clean rejection without partial effects."
+      ]
+    },
+    {
+      "id": "crypto-go-property-tests",
+      "statement": "Define properties such as round-trip within valid domains, tamper rejection, parser totality, uniqueness invariants, and version separation without asserting false universal laws.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-negative-mutation-tests"
+      ],
+      "misconceptions": [
+        "Property tests can prove cryptographic hardness."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define properties such as round-trip within valid domains, tamper rejection, parser totality, uniqueness invariants, and version separation without asserting false universal laws."
+      ]
+    },
+    {
+      "id": "crypto-go-fuzz-parsers-state",
+      "statement": "Fuzz deterministic parsers and state machines with bounded resources, seed corpora, regression artifacts, no global secrets, and reproducible failures.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-property-tests"
+      ],
+      "misconceptions": [
+        "Fuzzing a cryptographic primitive itself replaces protocol and parser tests."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Fuzz deterministic parsers and state machines with bounded resources, seed corpora, regression artifacts, no global secrets, and reproducible failures."
+      ]
+    },
+    {
+      "id": "crypto-go-interoperability-matrix",
+      "statement": "Cross-test supported Go versions, architectures, algorithms, parameter sets, external implementations, old data, malformed data, and rollout states.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-fuzz-parsers-state"
+      ],
+      "misconceptions": [
+        "Passing on one Go version and architecture proves long-term compatibility."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Cross-test supported Go versions, architectures, algorithms, parameter sets, external implementations, old data, malformed data, and rollout states."
+      ]
+    },
+    {
+      "id": "crypto-go-algorithm-inventory",
+      "statement": "Maintain machine-readable use, purpose, owner, suite, key location, dependency, data lifetime, protocol, version, and migration state for cryptographic assets.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-interoperability-matrix"
+      ],
+      "misconceptions": [
+        "A source search for AES finds the complete cryptographic inventory."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Maintain machine-readable use, purpose, owner, suite, key location, dependency, data lifetime, protocol, version, and migration state for cryptographic assets."
+      ]
+    },
+    {
+      "id": "crypto-go-agility-without-downgrade",
+      "statement": "Centralize policy and versioned suites, authenticate selection, reject unknowns, measure use, retain read compatibility, and remove obsolete write paths.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-algorithm-inventory"
+      ],
+      "misconceptions": [
+        "Supporting many algorithms is the same as cryptographic agility."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Centralize policy and versioned suites, authenticate selection, reject unknowns, measure use, retain read compatibility, and remove obsolete write paths."
+      ]
+    },
+    {
+      "id": "crypto-go-fips-module-status",
+      "statement": "Distinguish approved algorithms, Go cryptographic module version, GOFIPS140 selection, enforcement, validation status, operating environment, and application boundary.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-agility-without-downgrade"
+      ],
+      "misconceptions": [
+        "Turning on a FIPS flag certifies the whole application."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish approved algorithms, Go cryptographic module version, GOFIPS140 selection, enforcement, validation status, operating environment, and application boundary."
+      ]
+    },
+    {
+      "id": "crypto-go-dependency-vulnerability",
+      "statement": "Pin supported Go and x/crypto versions, review release and security notes, run govulncheck, verify reachable findings, and execute compatibility gates.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-fips-module-status"
+      ],
+      "misconceptions": [
+        "Cryptographic dependencies should never be updated because changes create risk."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pin supported Go and x/crypto versions, review release and security notes, run govulncheck, verify reachable findings, and execute compatibility gates."
+      ]
+    },
+    {
+      "id": "crypto-go-policy-exception",
+      "statement": "Record scoped exception owner, rationale, compensating controls, telemetry, expiry, migration work, approval, and verified closure.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "crypto-go-dependency-vulnerability"
+      ],
+      "misconceptions": [
+        "A documented exception may remain permanent if the legacy client is important."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Record scoped exception owner, rationale, compensating controls, telemetry, expiry, migration work, approval, and verified closure."
+      ]
+    },
+    {
+      "id": "crypto-go-observability-slos",
+      "statement": "Define low-cardinality success, reject, latency, work-factor, key-version, algorithm, expiry, rotation, migration, dependency, and recovery signals without secret leakage.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-policy-exception"
+      ],
+      "misconceptions": [
+        "Cryptographic operations are either correct or failed, so service-level objectives add no value."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define low-cardinality success, reject, latency, work-factor, key-version, algorithm, expiry, rotation, migration, dependency, and recovery signals without secret leakage."
+      ]
+    },
+    {
+      "id": "crypto-go-capacity-dependency-failure",
+      "statement": "Load-test entropy, CPU, memory-hard KDFs, HSM/KMS quotas, certificate services, revocation, key caches, queues, and degraded modes with bounded admission.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-observability-slos"
+      ],
+      "misconceptions": [
+        "Crypto capacity scales linearly with ordinary request throughput."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Load-test entropy, CPU, memory-hard KDFs, HSM/KMS quotas, certificate services, revocation, key caches, queues, and degraded modes with bounded admission."
+      ]
+    },
+    {
+      "id": "crypto-go-compatible-release",
+      "statement": "Canary reader/writer, algorithm, key, format, certificate, and dependency changes with old/new matrices, dual-read boundaries, telemetry, and rollback.",
+      "knowledgeType": "strategic",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-capacity-dependency-failure"
+      ],
+      "misconceptions": [
+        "A successful new-format write proves old readers and rollback remain safe."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Canary reader/writer, algorithm, key, format, certificate, and dependency changes with old/new matrices, dual-read boundaries, telemetry, and rollback."
+      ]
+    },
+    {
+      "id": "crypto-go-incident-response",
+      "statement": "Detect, contain, preserve evidence, classify exposure, rotate or revoke, migrate data, restore service, communicate, and verify closure after key or algorithm compromise.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "crypto-go-compatible-release"
+      ],
+      "misconceptions": [
+        "Immediate mass key deletion is always the correct incident response."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Detect, contain, preserve evidence, classify exposure, rotate or revoke, migrate data, restore service, communicate, and verify closure after key or algorithm compromise."
+      ]
+    },
+    {
+      "id": "crypto-go-production-defense",
+      "statement": "Defend threat model, primitive choice, parameters, implementation, key custody, tests, interoperability, side channels, compliance limits, rollout, rollback, recovery, and residual risk before release.",
+      "knowledgeType": "metacognitive",
+      "level": "create",
+      "prerequisiteIds": [
+        "crypto-go-incident-response"
+      ],
+      "misconceptions": [
+        "Passing unit tests and a security scan is sufficient release evidence."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Defend threat model, primitive choice, parameters, implementation, key custody, tests, interoperability, side channels, compliance limits, rollout, rollback, recovery, and residual risk before release."
+      ]
+    }
+  ],
+  "moduleIds": [
+    "crypto-go-outcomes-threat-evidence",
+    "crypto-go-primitives-encoding",
+    "crypto-go-randomness-nonces",
+    "crypto-go-secret-bytes-lifecycle",
+    "crypto-go-classical-cryptanalysis",
+    "crypto-go-aes-block-ciphers",
+    "crypto-go-modes-padding",
+    "crypto-go-aead-aes-gcm",
+    "crypto-go-chacha-poly1305",
+    "crypto-go-hashes-sha3",
+    "crypto-go-mac-hmac",
+    "crypto-go-kdf-hkdf",
+    "crypto-go-password-hashing",
+    "crypto-go-modular-arithmetic",
+    "crypto-go-rsa-oaep-pss",
+    "crypto-go-ecdh-x25519",
+    "crypto-go-ed25519-ecdsa",
+    "crypto-go-hpke-envelope",
+    "crypto-go-key-management",
+    "crypto-go-x509-pki",
+    "crypto-go-tls13",
+    "crypto-go-protocol-design",
+    "crypto-go-file-stream-formats",
+    "crypto-go-post-quantum",
+    "crypto-go-side-channels-misuse",
+    "crypto-go-testing-vectors-fuzz",
+    "crypto-go-agility-compliance",
+    "crypto-go-operations-release"
+  ],
+  "estimatedHours": 406.2,
+  "credential": {
+    "title": "Applied Cryptographic Engineering in Go 1.26 Certificate",
+    "requiredProjectIds": [
+      "crypto-go-password-vault-project-build",
+      "crypto-go-signed-update-project-build",
+      "crypto-go-secure-backup-project-build",
+      "crypto-go-device-channel-project-build",
+      "crypto-go-production-defense-project-build"
+    ],
+    "finalExamId": "cryptography-go-certification-exam",
+    "passingPercent": 85
+  },
+  "status": "preview"
+}

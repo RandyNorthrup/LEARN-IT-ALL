@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 2,
+  "id": "sql-transactions-concurrency-recovery-guided-workshop",
+  "courseId": "sql-basics",
+  "moduleId": "sql-transactions-concurrency-recovery",
+  "kind": "workshop",
+  "title": "Transactions, Isolation, Concurrency, and Recovery · SQL Query Room",
+  "summary": "Two operators reassign and resolve the same ticket while a failure occurs between related writes. Planned artifact: Build a complete first version of a concurrency-safe ticket transition protocol while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant.",
+    "Bound a unit of work with BEGIN, COMMIT, ROLLBACK, and savepoints and verify failure behavior.",
+    "Recognize dirty read, nonrepeatable read, phantom, lost update, and write-skew schedules.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "sql-acid-transactions",
+      "sql-begin-commit-rollback",
+      "sql-isolation-anomalies",
+      "sql-concurrency-control",
+      "sql-recovery-backup-restore"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "sql-transactions-concurrency-recovery-sql-recovery-backup-restore-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "sql-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "sql": "-- sql-basics cumulative relational data portfolio.\n-- Each increment declares grain, predicts cardinality or changed rows, runs in fresh browser SQLite,\n-- reconciles results, tests changed data, and records PostgreSQL or standard-SQL boundaries.\n\nSELECT sqlite_version() AS browser_sqlite_version;\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Acid Transactions",
+      "interaction": "predict",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Commit to the mission model · Workshop Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Acid Transactions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Commit to the mission model · Workshop Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Acid Transactions preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "ACID means every transaction runs one at a time. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Run a convenient Acid Transactions query for commit to the mission model, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Workshop Acid Transactions",
+      "interaction": "arrange",
+      "instruction": "Order the Acid Transactions evidence cycle for this workshop task before implementing it.\n\nEvidence target: Plan the evidence sequence · Workshop Acid Transactions.",
+      "why": "Correct order keeps Acid Transactions assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Workshop Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Acid Transactions has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Workshop Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Workshop Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Plan the evidence sequence · Workshop Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality for the workshop Acid Transactions case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict relational transformations, constraint or transaction effects, and dialect boundary before execution for the workshop Acid Transactions case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan for the workshop Acid Transactions case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits for the workshop Acid Transactions case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Acid Transactions · changed case · Workshop Acid Transactions",
+      "interaction": "answer",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhich action demonstrates Acid Transactions without dropping earlier contracts?\n\nEvidence target: Acid Transactions · changed case · Workshop Acid Transactions.",
+      "why": "The decision supplies observable evidence for explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. For Acid Transactions · changed case · Workshop Acid Transactions, keep Acid Transactions connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Acid Transactions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "hints": [
+        "For Acid Transactions · changed case · Workshop Acid Transactions, name the row grain, Acid Transactions precondition, or invariant that must hold.",
+        "At Acid Transactions · changed case · Workshop Acid Transactions, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Acid Transactions · changed case · Workshop Acid Transactions, challenge the documented misconception with result, constraint, or plan evidence: ACID means every transaction runs one at a time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "Run a convenient Acid Transactions query for acid transactions · changed case, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Explain atomicity, consistency, isolation, and durability using a multi-statement business invariant. Apply it to the stated input and retain a reproducible trace for a concurrency-safe ticket transition protocol."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "ACID means every transaction runs one at a time. That claim does not survive the acid transactions · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Begin Commit Rollback · changed case · Workshop Begin Commit Rollback",
+      "interaction": "inspect",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhich action demonstrates Begin Commit Rollback without dropping earlier contracts?\n\nEvidence target: Begin Commit Rollback · changed case · Workshop Begin Commit Rollback.",
+      "why": "The decision supplies observable evidence for bound a unit of work with begin, commit, rollback, and savepoints and verify failure behavior. For Begin Commit Rollback · changed case · Workshop Begin Commit Rollback, keep Begin Commit Rollback connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Begin Commit Rollback result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "sql-begin-commit-rollback"
+      ],
+      "hints": [
+        "For Begin Commit Rollback · changed case · Workshop Begin Commit Rollback, name the row grain, Begin Commit Rollback precondition, or invariant that must hold.",
+        "At Begin Commit Rollback · changed case · Workshop Begin Commit Rollback, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Begin Commit Rollback · changed case · Workshop Begin Commit Rollback, challenge the documented misconception with result, constraint, or plan evidence: Errors always roll back every earlier statement automatically."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Begin Commit Rollback case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Errors always roll back every earlier statement automatically.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound a unit of work with BEGIN, COMMIT, ROLLBACK, and savepoints and verify failure behavior.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Bound a unit of work with BEGIN, COMMIT, ROLLBACK, and savepoints and verify failure behavior. Apply it to the stated input and retain a reproducible trace for a concurrency-safe ticket transition protocol."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Errors always roll back every earlier statement automatically. That claim does not survive the begin commit rollback · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Run a convenient Begin Commit Rollback query for begin commit rollback · changed case, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Isolation Anomalies · changed case · Workshop Isolation Anomalies",
+      "interaction": "answer",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhich action demonstrates Isolation Anomalies without dropping earlier contracts?\n\nEvidence target: Isolation Anomalies · changed case · Workshop Isolation Anomalies.",
+      "why": "The decision supplies observable evidence for recognize dirty read, nonrepeatable read, phantom, lost update, and write-skew schedules. For Isolation Anomalies · changed case · Workshop Isolation Anomalies, keep Isolation Anomalies connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Isolation Anomalies condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "sql-isolation-anomalies"
+      ],
+      "hints": [
+        "For Isolation Anomalies · changed case · Workshop Isolation Anomalies, name the row grain, Isolation Anomalies precondition, or invariant that must hold.",
+        "At Isolation Anomalies · changed case · Workshop Isolation Anomalies, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Isolation Anomalies · changed case · Workshop Isolation Anomalies, challenge the documented misconception with result, constraint, or plan evidence: A transaction prevents all concurrency anomalies at every isolation level."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "A transaction prevents all concurrency anomalies at every isolation level. That claim does not survive the isolation anomalies · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Run a convenient Isolation Anomalies query for isolation anomalies · changed case, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Recognize dirty read, nonrepeatable read, phantom, lost update, and write-skew schedules. Apply it to the stated input and retain a reproducible trace for a concurrency-safe ticket transition protocol."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Concurrency Control · changed case · Workshop Concurrency Control",
+      "interaction": "inspect",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhich action demonstrates Concurrency Control without dropping earlier contracts?\n\nEvidence target: Concurrency Control · changed case · Workshop Concurrency Control.",
+      "why": "The decision supplies observable evidence for compare locking, multiversion, optimistic, and serialization-retry strategies from workload evidence. For Concurrency Control · changed case · Workshop Concurrency Control, keep Concurrency Control connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Concurrency Control result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "sql-concurrency-control"
+      ],
+      "hints": [
+        "For Concurrency Control · changed case · Workshop Concurrency Control, name the row grain, Concurrency Control precondition, or invariant that must hold.",
+        "At Concurrency Control · changed case · Workshop Concurrency Control, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Concurrency Control · changed case · Workshop Concurrency Control, challenge the documented misconception with result, constraint, or plan evidence: Retrying any failed transaction is always safe."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Concurrency Control case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Retrying any failed transaction is always safe.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare locking, multiversion, optimistic, and serialization-retry strategies from workload evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "Run a convenient Concurrency Control query for concurrency control · changed case, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Compare locking, multiversion, optimistic, and serialization-retry strategies from workload evidence. Apply it to the stated input and retain a reproducible trace for a concurrency-safe ticket transition protocol."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Retrying any failed transaction is always safe. That claim does not survive the concurrency control · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Recovery Backup Restore · changed case · Workshop Recovery Backup Restore",
+      "interaction": "answer",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nWhich action demonstrates Recovery Backup Restore without dropping earlier contracts?\n\nEvidence target: Recovery Backup Restore · changed case · Workshop Recovery Backup Restore.",
+      "why": "The decision supplies observable evidence for distinguish rollback, crash recovery, backup, replication, and tested point-in-time restoration. For Recovery Backup Restore · changed case · Workshop Recovery Backup Restore, keep Recovery Backup Restore connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Recovery Backup Restore condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "hints": [
+        "For Recovery Backup Restore · changed case · Workshop Recovery Backup Restore, name the row grain, Recovery Backup Restore precondition, or invariant that must hold.",
+        "At Recovery Backup Restore · changed case · Workshop Recovery Backup Restore, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Recovery Backup Restore · changed case · Workshop Recovery Backup Restore, challenge the documented misconception with result, constraint, or plan evidence: A replica is automatically a complete backup."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Distinguish rollback, crash recovery, backup, replication, and tested point-in-time restoration. Apply it to the stated input and retain a reproducible trace for a concurrency-safe ticket transition protocol."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A replica is automatically a complete backup. That claim does not survive the recovery backup restore · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Run a convenient Recovery Backup Restore query for recovery backup restore · changed case, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Recovery Backup Restore",
+      "interaction": "code",
+      "instruction": "Append a runnable SQLite increment headed \"-- Evidence: sql-recovery-backup-restore-dbpzsr\" with a concrete grain, hypothesis, or prediction; transaction boundary, concurrency, or recovery evidence; and an observation, reconciliation, or verification tied to returned rows, changed rows, an error, or a plan.\n\nEvidence target: Extend the cumulative artifact · Workshop Recovery Backup Restore.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Recovery Backup Restore into observable performance evidence. For Extend the cumulative artifact · Workshop Recovery Backup Restore, keep Recovery Backup Restore connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "-- Evidence: sql-recovery-backup-restore-dbpzsr\n-- grain: declare the exact row or mutation grain before running\nPRAGMA integrity_check;\n-- observation: reconcile the returned rows, changed count, error, or plan with the prediction",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Recovery Backup Restore, name the row grain, Recovery Backup Restore precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Recovery Backup Restore, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Extend the cumulative artifact · Workshop Recovery Backup Restore, challenge the documented misconception with result, constraint, or plan evidence: A replica is automatically a complete backup."
+      ],
+      "xp": 10,
+      "targetFile": "sql"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Recovery Backup Restore",
+      "interaction": "debug",
+      "instruction": "workshop case — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Recovery Backup Restore.",
+      "why": "The decision supplies observable evidence for distinguish rollback, crash recovery, backup, replication, and tested point-in-time restoration. For Test an acceptance boundary · Workshop Recovery Backup Restore, keep Recovery Backup Restore connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Recovery Backup Restore symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "PostgreSQL Concurrency Control and Indexes — Controls transaction isolation, concurrency phenomena, locking, serialization, index types, access paths, and operational tradeoffs."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Recovery Backup Restore, name the row grain, Recovery Backup Restore precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Recovery Backup Restore, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Test an acceptance boundary · Workshop Recovery Backup Restore, challenge the documented misconception with result, constraint, or plan evidence: A replica is automatically a complete backup."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Recovery Backup Restore failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A replica is automatically a complete backup.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish rollback, crash recovery, backup, replication, and tested point-in-time restoration.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Run a convenient Recovery Backup Restore query for test an acceptance boundary, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Recovery Backup Restore condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Recovery Backup Restore",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Recovery Backup Restore: explain the governing condition, one failure, and how this concrete case was verified — Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.\n\nEvidence target: Defend the transferred model · Workshop Recovery Backup Restore.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Recovery Backup Restore, keep Recovery Backup Restore connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Distinguish rollback, crash recovery, backup, replication, and tested point-in-time restoration."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Recovery Backup Restore, name the row grain, Recovery Backup Restore precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Recovery Backup Restore, trace this concrete input and predict rows or changes before running it: Operators A and B read ticket 103 as open; A assigns it while B resolves it and a failure occurs between event insert and status update. Identify the anomaly, transaction boundary, retry precondition, and restore evidence.",
+        "For Defend the transferred model · Workshop Recovery Backup Restore, challenge the documented misconception with result, constraint, or plan evidence: A replica is automatically a complete backup."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Acid Transactions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Acid Transactions.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-acid-transactions"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Begin Commit Rollback to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Begin Commit Rollback.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-begin-commit-rollback"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Isolation Anomalies to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Isolation Anomalies.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-isolation-anomalies"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Concurrency Control to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Concurrency Control.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-concurrency-control"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative sql portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker -- Evidence: sql-recovery-backup-restore-dbpzsr.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "file": "sql",
+      "expected": "-- Evidence: sql-recovery-backup-restore-dbpzsr"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "sql",
+      "pattern": "-- Evidence: sql-recovery-backup-restore-dbpzsr(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:grain|hypothesis|prediction):\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!-- Evidence:)[\\s\\S])*?(?:BEGIN|SAVEPOINT|COMMIT|ROLLBACK|changes|PRAGMA)(?:(?!-- Evidence:)[\\s\\S])*?;(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:observation|reconciliation|verify):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using rollback and crash plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-recovery-backup-restore"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "rollback",
+        "crash"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

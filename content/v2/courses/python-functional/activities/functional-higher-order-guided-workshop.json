@@ -1,0 +1,735 @@
+{
+  "schemaVersion": 2,
+  "id": "functional-higher-order-guided-workshop",
+  "courseId": "python-functional",
+  "moduleId": "functional-higher-order",
+  "kind": "workshop",
+  "title": "Higher-Order Operations, Map, Filter, and Fold · Pipeline Foundry",
+  "summary": "Summarize a stream of service records without hand-written accumulator loops. Planned artifact: Build a complete first version of a tested map-filter-fold analytics pipeline while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use mapping for one-output-per-input transformations without smuggling filtering effects.",
+    "Design total predicates that retain records for explicit, testable reasons.",
+    "Define an accumulator identity and invariant before implementing a fold.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "fp-map-transform",
+      "fp-filter-predicate",
+      "fp-fold-invariant",
+      "fp-comprehension-choice",
+      "fp-operation-fusion"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "functional-higher-order-fp-operation-fusion-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "python-functional-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-functional immutable transformation portfolio.\"\"\"\n\nfrom collections.abc import Callable, Iterable, Iterator\nfrom functools import partial, reduce\nfrom itertools import chain, islice\nfrom typing import TypeVar\n\nT = TypeVar('T')\nU = TypeVar('U')\n\n# Extend one pure, lazy, tested pipeline increment per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for use mapping for one-output-per-input transformations without smuggling filtering effects.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Map Transform condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "hints": [
+        "Name the Map Transform precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Map may freely change collection length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Map Transform preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Map may freely change collection length."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Map Transform."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Map Transform · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich action demonstrates Map Transform without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use mapping for one-output-per-input transformations without smuggling filtering effects.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Map Transform condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "hints": [
+        "Name the Map Transform precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Map may freely change collection length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Map may freely change collection length."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Map Transform."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use mapping for one-output-per-input transformations without smuggling filtering effects. Apply it to the stated input and retain a reproducible trace for a tested map-filter-fold analytics pipeline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Filter Predicate · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich action demonstrates Filter Predicate without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for design total predicates that retain records for explicit, testable reasons.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Filter Predicate result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "fp-filter-predicate"
+      ],
+      "hints": [
+        "Name the Filter Predicate precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Filter transforms values while preserving all inputs."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Filter Predicate case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Filter transforms values while preserving all inputs.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design total predicates that retain records for explicit, testable reasons.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Filter Predicate."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Design total predicates that retain records for explicit, testable reasons. Apply it to the stated input and retain a reproducible trace for a tested map-filter-fold analytics pipeline."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Filter transforms values while preserving all inputs."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Fold Invariant · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich action demonstrates Fold Invariant without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define an accumulator identity and invariant before implementing a fold.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Fold Invariant condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "fp-fold-invariant"
+      ],
+      "hints": [
+        "Name the Fold Invariant precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Reduce can infer a safe initial value for every operation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Define an accumulator identity and invariant before implementing a fold. Apply it to the stated input and retain a reproducible trace for a tested map-filter-fold analytics pipeline."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Reduce can infer a safe initial value for every operation."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Fold Invariant."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Comprehension Choice · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich action demonstrates Comprehension Choice without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for choose comprehensions, generator expressions, or functional calls by clarity and evaluation needs.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Comprehension Choice result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "fp-comprehension-choice"
+      ],
+      "hints": [
+        "Name the Comprehension Choice precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Functional syntax is always more functional than a comprehension."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Comprehension Choice case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Functional syntax is always more functional than a comprehension.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose comprehensions, generator expressions, or functional calls by clarity and evaluation needs.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Functional syntax is always more functional than a comprehension."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Comprehension Choice."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Choose comprehensions, generator expressions, or functional calls by clarity and evaluation needs. Apply it to the stated input and retain a reproducible trace for a tested map-filter-fold analytics pipeline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Operation Fusion · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nWhich action demonstrates Operation Fusion without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for combine adjacent transformations only when semantics, readability, and failure evidence remain intact.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Operation Fusion condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "hints": [
+        "Name the Operation Fusion precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Fewer passes always produce meaningfully faster code."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Operation Fusion."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Combine adjacent transformations only when semantics, readability, and failure evidence remain intact. Apply it to the stated input and retain a reproducible trace for a tested map-filter-fold analytics pipeline."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Fewer passes always produce meaningfully faster code."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence",
+      "interaction": "arrange",
+      "instruction": "Order the Map Transform value-and-effect pipeline for this workshop task before implementing it.",
+      "why": "Correct order keeps Map Transform assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Map Transform has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "hints": [
+        "Name the Map Transform precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Map may freely change collection length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Separate immutable values from observable effects and ownership boundaries"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Specify a total transformation contract and explicit failure representation"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Compose and run the smallest pipeline while retaining an inspectable trace"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Repeat with changed input, verify input preservation, and move effects to the shell"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_fp_operation_fusion_1xrr4e function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Operation Fusion into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_fp_operation_fusion_1xrr4e(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "hints": [
+        "Name the Operation Fusion precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Fewer passes always produce meaningfully faster code."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for combine adjacent transformations only when semantics, readability, and failure evidence remain intact.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Operation Fusion symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming HOWTO — Functional style, iterators, generators, comprehensions, and functional library patterns."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "hints": [
+        "Name the Operation Fusion precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Fewer passes always produce meaningfully faster code."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Operation Fusion failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Fewer passes always produce meaningfully faster code.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Combine adjacent transformations only when semantics, readability, and failure evidence remain intact.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Operation Fusion."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Operation Fusion condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Operation Fusion: explain the governing condition, one failure, and how this concrete case was verified — Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Combine adjacent transformations only when semantics, readability, and failure evidence remain intact."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "hints": [
+        "Name the Operation Fusion precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Three intake records need normalize → validate → score transformations. A rejected record must retain its reason, and adding a fourth transformation must not change earlier function contracts.",
+        "Use the documented misconception as a counterexample target: Fewer passes always produce meaningfully faster code."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Map Transform to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Map Transform.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Map Transform to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Map Transform.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Filter Predicate to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Filter Predicate.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-filter-predicate"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Fold Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Fold Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-fold-invariant"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Comprehension Choice to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Comprehension Choice.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-comprehension-choice"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Operation Fusion to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Operation Fusion.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-map-transform"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_fp_operation_fusion_1xrr4e.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "file": "python",
+      "expected": "evidence_fp_operation_fusion_1xrr4e"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_fp_operation_fusion_1xrr4e\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "fp-operation-fusion"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Operation Fusion to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Operation Fusion.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using combine and adjacent plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-operation-fusion"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "combine",
+        "adjacent"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

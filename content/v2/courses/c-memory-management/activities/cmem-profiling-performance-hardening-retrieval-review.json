@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-profiling-performance-hardening-retrieval-review",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-profiling-performance-hardening",
+  "kind": "review",
+  "title": "Profiling, Allocator Performance, and Hardening · Memory Retrieval",
+  "summary": "After a delay, a release reviewer reconstructs the measured allocator optimization report contract from partial traces, compares two near-miss implementations, and retrieves prior bounds and lifetime rules before feedback. Planned artifact: Extend the evidence record for measured allocator optimization report after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry.",
+    "Relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency.",
+    "Compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-allocation-telemetry",
+      "cmem-cache-locality-layout",
+      "cmem-allocator-selection",
+      "cmem-hardening-options",
+      "cmem-optimization-preserves-contract"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-profiling-performance-hardening-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "scenario-1",
+      "title": "Allocation Telemetry · changed case · Review Allocation Telemetry",
+      "interaction": "predict",
+      "instruction": "review case — A review native-systems team handles memory case 6396. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry.\n\nWhich action demonstrates Allocation Telemetry without dropping earlier contracts?\n\nEvidence target: Allocation Telemetry · changed case · Review Allocation Telemetry.",
+      "why": "The decision supplies observable evidence for measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry. For Allocation Telemetry · changed case · Review Allocation Telemetry, keep Allocation Telemetry connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 6396. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Allocation Telemetry condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-allocation-telemetry"
+      ],
+      "hints": [
+        "For Allocation Telemetry · changed case · Review Allocation Telemetry, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Allocation Telemetry precondition, or invariant that must hold.",
+        "At Allocation Telemetry · changed case · Review Allocation Telemetry, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 6396. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry.",
+        "For Allocation Telemetry · changed case · Review Allocation Telemetry, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: The number of malloc calls alone explains memory performance."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry. Apply it to the stated input and retain a reproducible trace for measured allocator optimization report."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "The number of malloc calls alone explains memory performance. That claim does not survive the allocation telemetry · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For allocation telemetry · changed case, run one convenient Allocation Telemetry case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Cache Locality Layout · changed case · Review Cache Locality Layout",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 4777. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency.\n\nWhich action demonstrates Cache Locality Layout without dropping earlier contracts?\n\nEvidence target: Cache Locality Layout · changed case · Review Cache Locality Layout.",
+      "why": "The decision supplies observable evidence for relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency. For Cache Locality Layout · changed case · Review Cache Locality Layout, keep Cache Locality Layout connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 4777. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cache Locality Layout condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-cache-locality-layout"
+      ],
+      "hints": [
+        "For Cache Locality Layout · changed case · Review Cache Locality Layout, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Cache Locality Layout precondition, or invariant that must hold.",
+        "At Cache Locality Layout · changed case · Review Cache Locality Layout, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 4777. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency.",
+        "For Cache Locality Layout · changed case · Review Cache Locality Layout, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Smaller source code or fewer pointers guarantees better cache locality."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Smaller source code or fewer pointers guarantees better cache locality. That claim does not survive the cache locality layout · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For cache locality layout · changed case, run one convenient Cache Locality Layout case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Relate object layout, traversal order, working set, cache behavior, false sharing, and measured latency. Apply it to the stated input and retain a reproducible trace for measured allocator optimization report."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Allocator Selection · changed case · Review Allocator Selection",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 3158. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints.\n\nWhich action demonstrates Allocator Selection without dropping earlier contracts?\n\nEvidence target: Allocator Selection · changed case · Review Allocator Selection.",
+      "why": "The decision supplies observable evidence for compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints. For Allocator Selection · changed case · Review Allocator Selection, keep Allocator Selection connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 3158. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Allocator Selection condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-allocator-selection"
+      ],
+      "hints": [
+        "For Allocator Selection · changed case · Review Allocator Selection, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Allocator Selection precondition, or invariant that must hold.",
+        "At Allocator Selection · changed case · Review Allocator Selection, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 3158. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints.",
+        "For Allocator Selection · changed case · Review Allocator Selection, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A benchmark winner on one micro-test is the best allocator for production."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For allocator selection · changed case, run one convenient Allocator Selection case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Compare system allocator, mimalloc, jemalloc, arenas, and pools using representative workloads and operational constraints. Apply it to the stated input and retain a reproducible trace for measured allocator optimization report."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A benchmark winner on one micro-test is the best allocator for production. That claim does not survive the allocator selection · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Hardening Options · changed case · Review Hardening Options",
+      "interaction": "predict",
+      "instruction": "review case — A review native-systems team handles memory case 1539. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate allocator checks, guard pages, canaries, randomization, control-flow defenses, fortification, and production cost.\n\nWhich action demonstrates Hardening Options without dropping earlier contracts?\n\nEvidence target: Hardening Options · changed case · Review Hardening Options.",
+      "why": "The decision supplies observable evidence for evaluate allocator checks, guard pages, canaries, randomization, control-flow defenses, fortification, and production cost. For Hardening Options · changed case · Review Hardening Options, keep Hardening Options connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 1539. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate allocator checks, guard pages, canaries, randomization, control-flow defenses, fortification, and production cost."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Hardening Options condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-hardening-options"
+      ],
+      "hints": [
+        "For Hardening Options · changed case · Review Hardening Options, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Hardening Options precondition, or invariant that must hold.",
+        "At Hardening Options · changed case · Review Hardening Options, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 1539. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate allocator checks, guard pages, canaries, randomization, control-flow defenses, fortification, and production cost.",
+        "For Hardening Options · changed case · Review Hardening Options, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Hardening flags repair undefined behavior in source code."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Evaluate allocator checks, guard pages, canaries, randomization, control-flow defenses, fortification, and production cost. Apply it to the stated input and retain a reproducible trace for measured allocator optimization report."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Hardening flags repair undefined behavior in source code. That claim does not survive the hardening options · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For hardening options · changed case, run one convenient Hardening Options case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Optimization Preserves Contract · changed case · Review Optimization Preserves Contract",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 8920. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.\n\nWhich action demonstrates Optimization Preserves Contract without dropping earlier contracts?\n\nEvidence target: Optimization Preserves Contract · changed case · Review Optimization Preserves Contract.",
+      "why": "The decision supplies observable evidence for require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization. For Optimization Preserves Contract · changed case · Review Optimization Preserves Contract, keep Optimization Preserves Contract connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 8920. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Optimization Preserves Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "hints": [
+        "For Optimization Preserves Contract · changed case · Review Optimization Preserves Contract, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Optimization Preserves Contract precondition, or invariant that must hold.",
+        "At Optimization Preserves Contract · changed case · Review Optimization Preserves Contract, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 8920. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.",
+        "For Optimization Preserves Contract · changed case · Review Optimization Preserves Contract, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A faster benchmark permits weaker cleanup or failure behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "A faster benchmark permits weaker cleanup or failure behavior. That claim does not survive the optimization preserves contract · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For optimization preserves contract · changed case, run one convenient Optimization Preserves Contract case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization. Apply it to the stated input and retain a reproducible trace for measured allocator optimization report."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Retrieve the complete evidence cycle · Review Allocation Telemetry",
+      "interaction": "arrange",
+      "instruction": "Order the Allocation Telemetry evidence cycle for this review task before implementing it.\n\nEvidence target: Retrieve the complete evidence cycle · Review Allocation Telemetry.",
+      "why": "Correct order keeps Allocation Telemetry assumptions visible before execution and verifies its result against a boundary case afterward. For Retrieve the complete evidence cycle · Review Allocation Telemetry, keep Allocation Telemetry connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 7301. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Allocation Telemetry has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "cmem-allocation-telemetry"
+      ],
+      "hints": [
+        "For Retrieve the complete evidence cycle · Review Allocation Telemetry, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Allocation Telemetry precondition, or invariant that must hold.",
+        "At Retrieve the complete evidence cycle · Review Allocation Telemetry, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 7301. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure allocation rate, size distribution, lifetime, peak live bytes, failures, and call sites with bounded telemetry.",
+        "For Retrieve the complete evidence cycle · Review Allocation Telemetry, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: The number of malloc calls alone explains memory performance."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the review Allocation Telemetry case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Choose and document the smallest defensible model or procedure for the review Allocation Telemetry case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the review Allocation Telemetry case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the review Allocation Telemetry case"
+        }
+      ]
+    },
+    {
+      "id": "mixed-evidence",
+      "title": "Separate evidence from confidence · Review Optimization Preserves Contract",
+      "interaction": "inspect",
+      "instruction": "review case — A review native-systems team handles memory case 5682. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.\n\nInspect the Optimization Preserves Contract trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Separate evidence from confidence · Review Optimization Preserves Contract.",
+      "why": "The decision supplies observable evidence for require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization. For Separate evidence from confidence · Review Optimization Preserves Contract, keep Optimization Preserves Contract connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Optimization Preserves Contract, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "hints": [
+        "For Separate evidence from confidence · Review Optimization Preserves Contract, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Optimization Preserves Contract precondition, or invariant that must hold.",
+        "At Separate evidence from confidence · Review Optimization Preserves Contract, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 5682. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.",
+        "For Separate evidence from confidence · Review Optimization Preserves Contract, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A faster benchmark permits weaker cleanup or failure behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Optimization Preserves Contract case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review native-systems team handles memory case 5682. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "A faster benchmark permits weaker cleanup or failure behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization. Artifact under review: measured allocator optimization report.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Optimization Preserves Contract, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        },
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Optimization Preserves Contract case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Record what required effort · Review Optimization Preserves Contract",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Optimization Preserves Contract: explain the governing condition, one failure, and how this concrete case was verified — A review native-systems team handles memory case 4063. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.\n\nEvidence target: Record what required effort · Review Optimization Preserves Contract.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Record what required effort · Review Optimization Preserves Contract, keep Optimization Preserves Contract connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "hints": [
+        "For Record what required effort · Review Optimization Preserves Contract, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Optimization Preserves Contract precondition, or invariant that must hold.",
+        "At Record what required effort · Review Optimization Preserves Contract, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 4063. Produce bounded C evidence to compare live, reserved, and peak memory before optimizing; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Require functional, sanitizer, resource, load, and changed-workload evidence before accepting a memory optimization.",
+        "For Record what required effort · Review Optimization Preserves Contract, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A faster benchmark permits weaker cleanup or failure behavior."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Allocation Telemetry to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Allocation Telemetry.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-allocation-telemetry"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cache Locality Layout to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cache Locality Layout.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-cache-locality-layout"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Allocator Selection to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Allocator Selection.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-allocator-selection"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Hardening Options to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Hardening Options.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-hardening-options"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Preserves Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Preserves Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-allocation-telemetry"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Preserves Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Preserves Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using require and functional plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-optimization-preserves-contract"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "require",
+        "functional"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

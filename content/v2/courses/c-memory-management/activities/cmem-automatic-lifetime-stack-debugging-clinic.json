@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-automatic-lifetime-stack-debugging-clinic",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-automatic-lifetime-stack",
+  "kind": "debug",
+  "title": "Automatic Storage, Recursion, VLAs, and Escaping Addresses · Pointer Forensics",
+  "summary": "An incident responder inherits a corrupted bounded stack-use redesign, the earliest failing input, and two plausible hypotheses; they must preserve first-failure evidence, repair the cause, and add a regression. Planned artifact: Repair a changed failure in bounded stack-use redesign and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.",
+    "Bound recursion by adversarial input depth, frame cost, and target stack limits or replace it with explicit storage.",
+    "Use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-automatic-object-lifetime",
+      "cmem-recursion-depth-budget",
+      "cmem-vla-risk-policy",
+      "cmem-alloca-portability-risk",
+      "cmem-escape-analysis-review"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-automatic-lifetime-stack-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Automatic Object Lifetime",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug native-systems team handles memory case 7941. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.\n\nInspect the Automatic Object Lifetime trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Automatic Object Lifetime.",
+      "why": "The decision supplies observable evidence for keep pointers to automatic objects within the execution and subobject lifetimes that make them valid. For Inspect the failure record · Debug Automatic Object Lifetime, keep Automatic Object Lifetime connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Automatic Object Lifetime, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "cmem-automatic-object-lifetime"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Automatic Object Lifetime, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Automatic Object Lifetime precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Automatic Object Lifetime, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7941. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.",
+        "For Inspect the failure record · Debug Automatic Object Lifetime, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A returned pointer remains valid if the stack bytes have not yet been overwritten."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Automatic Object Lifetime case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug native-systems team handles memory case 7941. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A returned pointer remains valid if the stack bytes have not yet been overwritten.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid. Artifact under review: bounded stack-use redesign.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Automatic Object Lifetime case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Automatic Object Lifetime, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Escape Analysis Review",
+      "interaction": "code",
+      "instruction": "For this debug demonstration of cmem-escape-analysis-review, write the complete compile-ready C program headed \"/* Evidence: cmem-escape-analysis-review-1j9vh9 */\" for changed case 7570. It must replace unbounded recursive work with bounded explicit storage, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Implement the cause-level repair · Debug Escape Analysis Review.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Escape Analysis Review into observable performance evidence. For Implement the cause-level repair · Debug Escape Analysis Review, keep Escape Analysis Review connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-escape-analysis-review-1j9vh9 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 7570; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstatic int evidence_cmem_escape_analysis_review_1j9vh9(const int *work, size_t count, size_t maximum, int *sum) {\n  size_t index;\n  int total = 0;\n  if (work == NULL || sum == NULL || count > maximum) return 0;\n  for (index = 0; index < count; ++index) total += work[index];\n  *sum = total;\n  return 1;\n}\n\nint main(void) {\n  int explicit_stack[4] = { 4, 5, 6, 7 };\n  int sum = 0;\n  int accepted = evidence_cmem_escape_analysis_review_1j9vh9(explicit_stack, 4, 4, &sum);\n  int rejected = evidence_cmem_escape_analysis_review_1j9vh9(explicit_stack, 4, 3, &sum);\n  int invariant = accepted && !rejected && sum == 22;\n  printf(\"stack sum=%d invariant=%d\\n\", sum, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Escape Analysis Review, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Escape Analysis Review precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Escape Analysis Review, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 3084. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.",
+        "For Implement the cause-level repair · Debug Escape Analysis Review, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Only return statements can cause a local address to escape."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "fault-1",
+      "title": "Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 4703. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.\n\nWhich observation would disprove this suspected cause: “A returned pointer remains valid if the stack bytes have not yet been overwritten.”?\n\nEvidence target: Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime.",
+      "why": "The decision supplies observable evidence for keep pointers to automatic objects within the execution and subobject lifetimes that make them valid. For Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime, keep Automatic Object Lifetime connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 4703. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Automatic Object Lifetime symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC 16.1 Manual — C dialects, diagnostics, optimization, sanitizers, hardening, extensions, linking, and target options."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "cmem-automatic-object-lifetime"
+      ],
+      "hints": [
+        "For Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Automatic Object Lifetime precondition, or invariant that must hold.",
+        "At Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 4703. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.",
+        "For Automatic Object Lifetime · fault isolation · Debug Automatic Object Lifetime, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A returned pointer remains valid if the stack bytes have not yet been overwritten."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Automatic Object Lifetime failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A returned pointer remains valid if the stack bytes have not yet been overwritten.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Keep pointers to automatic objects within the execution and subobject lifetimes that make them valid.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Automatic Object Lifetime."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the automatic object lifetime · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For automatic object lifetime · fault isolation, run one convenient Automatic Object Lifetime case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 2702. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bound recursion by adversarial input depth, frame cost, and target stack limits or replace it with explicit storage.\n\nWhich observation would disprove this suspected cause: “Tail recursion is guaranteed to consume constant stack space in C.”?\n\nEvidence target: Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget.",
+      "why": "The decision supplies observable evidence for bound recursion by adversarial input depth, frame cost, and target stack limits or replace it with explicit storage. For Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget, keep Recursion Depth Budget connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 2702. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bound recursion by adversarial input depth, frame cost, and target stack limits or replace it with explicit storage."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Recursion Depth Budget condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC 16.1 Manual — C dialects, diagnostics, optimization, sanitizers, hardening, extensions, linking, and target options."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "cmem-recursion-depth-budget"
+      ],
+      "hints": [
+        "For Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Recursion Depth Budget precondition, or invariant that must hold.",
+        "At Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 2702. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bound recursion by adversarial input depth, frame cost, and target stack limits or replace it with explicit storage.",
+        "For Recursion Depth Budget · fault isolation · Debug Recursion Depth Budget, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Tail recursion is guaranteed to consume constant stack space in C."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the recursion depth budget · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For recursion depth budget · fault isolation, run one convenient Recursion Depth Budget case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Recursion Depth Budget."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Vla Risk Policy · fault isolation · Debug Vla Risk Policy",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 4321. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives.\n\nWhich observation would disprove this suspected cause: “A VLA allocation fails like malloc and can be checked for null.”?\n\nEvidence target: Vla Risk Policy · fault isolation · Debug Vla Risk Policy.",
+      "why": "The decision supplies observable evidence for use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives. For Vla Risk Policy · fault isolation · Debug Vla Risk Policy, keep Vla Risk Policy connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 4321. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Vla Risk Policy symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC 16.1 Manual — C dialects, diagnostics, optimization, sanitizers, hardening, extensions, linking, and target options."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "cmem-vla-risk-policy"
+      ],
+      "hints": [
+        "For Vla Risk Policy · fault isolation · Debug Vla Risk Policy, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Vla Risk Policy precondition, or invariant that must hold.",
+        "At Vla Risk Policy · fault isolation · Debug Vla Risk Policy, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 4321. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives.",
+        "For Vla Risk Policy · fault isolation · Debug Vla Risk Policy, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A VLA allocation fails like malloc and can be checked for null."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Vla Risk Policy failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "A VLA allocation fails like malloc and can be checked for null.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use variable-length arrays only under explicit positive bounds and stack budgets, with portable alternatives.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For vla risk policy · fault isolation, run one convenient Vla Risk Policy case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Vla Risk Policy."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the vla risk policy · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 8464. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat alloca-like facilities as nonstandard stack allocation with lifetime, overflow, loop, and portability hazards.\n\nWhich observation would disprove this suspected cause: “alloca is a faster malloc with equivalent failure and release behavior.”?\n\nEvidence target: Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk.",
+      "why": "The decision supplies observable evidence for treat alloca-like facilities as nonstandard stack allocation with lifetime, overflow, loop, and portability hazards. For Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk, keep Alloca Portability Risk connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 8464. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat alloca-like facilities as nonstandard stack allocation with lifetime, overflow, loop, and portability hazards."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Alloca Portability Risk condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC 16.1 Manual — C dialects, diagnostics, optimization, sanitizers, hardening, extensions, linking, and target options."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "cmem-alloca-portability-risk"
+      ],
+      "hints": [
+        "For Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Alloca Portability Risk precondition, or invariant that must hold.",
+        "At Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8464. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Treat alloca-like facilities as nonstandard stack allocation with lifetime, overflow, loop, and portability hazards.",
+        "For Alloca Portability Risk · fault isolation · Debug Alloca Portability Risk, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: alloca is a faster malloc with equivalent failure and release behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Alloca Portability Risk."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the alloca portability risk · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For alloca portability risk · fault isolation, run one convenient Alloca Portability Risk case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Escape Analysis Review · fault isolation · Debug Escape Analysis Review",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 1083. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.\n\nWhich observation would disprove this suspected cause: “Only return statements can cause a local address to escape.”?\n\nEvidence target: Escape Analysis Review · fault isolation · Debug Escape Analysis Review.",
+      "why": "The decision supplies observable evidence for trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts. For Escape Analysis Review · fault isolation · Debug Escape Analysis Review, keep Escape Analysis Review connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 1083. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Escape Analysis Review symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC 16.1 Manual — C dialects, diagnostics, optimization, sanitizers, hardening, extensions, linking, and target options."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "hints": [
+        "For Escape Analysis Review · fault isolation · Debug Escape Analysis Review, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Escape Analysis Review precondition, or invariant that must hold.",
+        "At Escape Analysis Review · fault isolation · Debug Escape Analysis Review, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 1083. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.",
+        "For Escape Analysis Review · fault isolation · Debug Escape Analysis Review, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Only return statements can cause a local address to escape."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Escape Analysis Review failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Only return statements can cause a local address to escape.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the escape analysis review · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For escape analysis review · fault isolation, run one convenient Escape Analysis Review case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Escape Analysis Review."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Escape Analysis Review",
+      "interaction": "arrange",
+      "instruction": "Order the Escape Analysis Review evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Escape Analysis Review.",
+      "why": "Correct order keeps Escape Analysis Review assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Escape Analysis Review, keep Escape Analysis Review connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9178. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Escape Analysis Review has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Escape Analysis Review, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Escape Analysis Review precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Escape Analysis Review, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9178. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.",
+        "For Order the regression proof · Debug Escape Analysis Review, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Only return statements can cause a local address to escape."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the debug Escape Analysis Review case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose and document the smallest defensible model or procedure for the debug Escape Analysis Review case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the debug Escape Analysis Review case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the debug Escape Analysis Review case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Escape Analysis Review",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Escape Analysis Review: explain the governing condition, one failure, and how this concrete case was verified — A debug native-systems team handles memory case 1797. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.\n\nEvidence target: Publish the incident record · Debug Escape Analysis Review.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Escape Analysis Review, keep Escape Analysis Review connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Escape Analysis Review, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Escape Analysis Review precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Escape Analysis Review, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 1797. Produce bounded C evidence to replace unbounded recursive work with bounded explicit storage; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace every stored or returned pointer back to its referent lifetime, including compound literals and callback contexts.",
+        "For Publish the incident record · Debug Escape Analysis Review, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Only return statements can cause a local address to escape."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Automatic Object Lifetime to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Automatic Object Lifetime.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-automatic-object-lifetime"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-escape-analysis-review-1j9vh9 */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-escape-analysis-review-1j9vh9 */"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-escape-analysis-review-1j9vh9 \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_escape_analysis_review_1j9vh9\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ]
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Automatic Object Lifetime to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Automatic Object Lifetime.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-automatic-object-lifetime"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recursion Depth Budget to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recursion Depth Budget.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-recursion-depth-budget"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Vla Risk Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Vla Risk Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-vla-risk-policy"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Alloca Portability Risk to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Alloca Portability Risk.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-alloca-portability-risk"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Escape Analysis Review to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Escape Analysis Review.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using trace and stored plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-escape-analysis-review"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "trace",
+        "stored"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

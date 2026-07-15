@@ -1,0 +1,2158 @@
+{
+  "schemaVersion": 2,
+  "id": "file-servers-s3-go",
+  "title": "Production File Delivery with Amazon S3 and CloudFront in Go 1.26",
+  "description": "Go backend developers who can defend production HTTP services and need to build, secure, test, operate, and recover high-volume file and media delivery with Amazon S3 and CloudFront. This original, research-backed path uses repeated retrieval, cumulative artifacts, changed-case labs, stakeholder projects, and a performance exam.",
+  "outcomes": [
+    "Demonstrate go 1.26.5, aws sdk for go v2 1.42.1, s3 1.105.0, transfermanager 0.3.2, cloudfront/sign 1.11.7, http file semantics, s3 object and bucket models, sdk clients, credentials, retries, bounded upload and download, integrity, multipart, direct browser upload, go gateways, metadata transactions, versioning, object lock, lifecycle, iam, encryption, signed access, oac, cloudfront caching, media ranges, edge security, replication, recovery, events, observability, capacity, cost, tests, faults, and release defense through an independently verified stakeholder artifact.",
+    "Demonstrate runnable deterministic pure-go storage decision functions plus explicit go compile, vet, race, fuzz, leak, controlled aws integration, load, security, cost, restore, and production transfer gates through an independently verified stakeholder artifact.",
+    "Demonstrate five cumulative real-world file-delivery systems and a performance-based production defense examination through an independently verified stakeholder artifact."
+  ],
+  "prerequisites": [
+    "http-servers-go"
+  ],
+  "competencies": [
+    {
+      "id": "storage-go-stakeholder-outcome",
+      "statement": "Define file-delivery success with learner, uploader, viewer, owner, security, accessibility, operations, and finance evidence.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [],
+      "misconceptions": [
+        "A 200 response and an S3 object key prove the stakeholder outcome."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define file-delivery success with learner, uploader, viewer, owner, security, accessibility, operations, and finance evidence."
+      ]
+    },
+    {
+      "id": "storage-go-custody-effect-boundary",
+      "statement": "Trace browser, Go service, object store, CDN, identity provider, scanner, database, and stakeholder custody without assigning evidence a boundary cannot observe.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-stakeholder-outcome"
+      ],
+      "misconceptions": [
+        "Once a request body reaches the Go handler, the file is durably stored and usable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Trace browser, Go service, object store, CDN, identity provider, scanner, database, and stakeholder custody without assigning evidence a boundary cannot observe."
+      ]
+    },
+    {
+      "id": "storage-go-file-identity-bytes",
+      "statement": "Separate business file identity, object key, object version, representation bytes, metadata, checksum, URL, and cache entry.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-custody-effect-boundary"
+      ],
+      "misconceptions": [
+        "A filename, S3 key, URL, and file identity are interchangeable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate business file identity, object key, object version, representation bytes, metadata, checksum, URL, and cache entry."
+      ]
+    },
+    {
+      "id": "storage-go-service-level-budget",
+      "statement": "Set observable availability, latency, integrity, freshness, recovery, accessibility, privacy, and cost targets with measurement windows.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-file-identity-bytes"
+      ],
+      "misconceptions": [
+        "A vague goal of fast and reliable is an actionable service-level contract."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set observable availability, latency, integrity, freshness, recovery, accessibility, privacy, and cost targets with measurement windows."
+      ]
+    },
+    {
+      "id": "storage-go-transfer-evidence-plan",
+      "statement": "Plan deterministic browser models, Go compile and race gates, disposable integration, controlled AWS tests, load, fault, restore, security, cost, and production evidence.",
+      "knowledgeType": "metacognitive",
+      "level": "create",
+      "prerequisiteIds": [
+        "storage-go-service-level-budget"
+      ],
+      "misconceptions": [
+        "A browser simulation or local emulator proves AWS storage, CDN, IAM, encryption, and recovery behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Plan deterministic browser models, Go compile and race gates, disposable integration, controlled AWS tests, load, fault, restore, security, cost, and production evidence."
+      ]
+    },
+    {
+      "id": "storage-go-filesystem-object-cdn",
+      "statement": "Compare local filesystems, shared filesystems, object storage, databases, origin services, and CDNs by interface, consistency, scale, trust, and operations.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "storage-go-transfer-evidence-plan"
+      ],
+      "misconceptions": [
+        "S3 is a mounted POSIX filesystem with CDN behavior included."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compare local filesystems, shared filesystems, object storage, databases, origin services, and CDNs by interface, consistency, scale, trust, and operations."
+      ]
+    },
+    {
+      "id": "storage-go-control-data-plane",
+      "statement": "Separate control-plane metadata and authorization from high-volume data transfer while preserving one auditable decision.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-filesystem-object-cdn"
+      ],
+      "misconceptions": [
+        "All bytes must traverse the application server for the application to retain control."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate control-plane metadata and authorization from high-volume data transfer while preserving one auditable decision."
+      ]
+    },
+    {
+      "id": "storage-go-origin-path-selection",
+      "statement": "Choose server upload, direct upload, redirect, proxy, signed edge delivery, or public delivery from threat, transformation, audit, and performance evidence.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-control-data-plane"
+      ],
+      "misconceptions": [
+        "Direct-to-S3 upload always improves security because the application handles fewer bytes."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose server upload, direct upload, redirect, proxy, signed edge delivery, or public delivery from threat, transformation, audit, and performance evidence."
+      ]
+    },
+    {
+      "id": "storage-go-ownership-lifecycle",
+      "statement": "Assign creation, quarantine, scan, publish, replace, archive, restore, revoke, and delete ownership with terminal states.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-origin-path-selection"
+      ],
+      "misconceptions": [
+        "The component that uploads an object automatically owns its full business lifecycle."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Assign creation, quarantine, scan, publish, replace, archive, restore, revoke, and delete ownership with terminal states."
+      ]
+    },
+    {
+      "id": "storage-go-cost-failure-model",
+      "statement": "Model storage, request, transfer, retrieval, invalidation, compute, and operational cost together with regional and dependency failures.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-ownership-lifecycle"
+      ],
+      "misconceptions": [
+        "S3 storage price alone determines the cheapest architecture."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model storage, request, transfer, retrieval, invalidation, compute, and operational cost together with regional and dependency failures."
+      ]
+    },
+    {
+      "id": "storage-go-representation-metadata",
+      "statement": "Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cost-failure-model"
+      ],
+      "misconceptions": [
+        "A filename extension is authoritative proof of safe content type."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Define media type, content length, content encoding, language, disposition, filename parameters, and cache metadata as representation facts."
+      ]
+    },
+    {
+      "id": "storage-go-validators-conditionals",
+      "statement": "Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-representation-metadata"
+      ],
+      "misconceptions": [
+        "An S3 ETag is always the MD5 checksum and can be reused as every validator."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply ETag and Last-Modified validators with If-Match, If-None-Match, If-Range, 304, 412, and changed-state evidence."
+      ]
+    },
+    {
+      "id": "storage-go-byte-range-semantics",
+      "statement": "Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-validators-conditionals"
+      ],
+      "misconceptions": [
+        "A Range header requests a byte count rather than inclusive byte positions."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Parse and evaluate single byte ranges, suffix ranges, satisfiable bounds, 206, Content-Range, Accept-Ranges, and 416."
+      ]
+    },
+    {
+      "id": "storage-go-stream-backpressure",
+      "statement": "Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-byte-range-semantics"
+      ],
+      "misconceptions": [
+        "io.Copy makes transfer memory, cancellation, and partial-response behavior automatically safe."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Stream through bounded buffers with cancellation, backpressure, body ownership, partial-write awareness, and cleanup."
+      ]
+    },
+    {
+      "id": "storage-go-download-accessibility",
+      "statement": "Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "storage-go-stream-backpressure"
+      ],
+      "misconceptions": [
+        "A browser download link is accessible without contextual text or status."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Provide accessible file names, types, sizes, progress, cancellation, error recovery, transcripts or alternatives, and keyboard-operable controls."
+      ]
+    },
+    {
+      "id": "storage-go-bucket-key-version-identity",
+      "statement": "Distinguish bucket, key, version ID, delete marker, upload ID, part number, and application identity.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-download-accessibility"
+      ],
+      "misconceptions": [
+        "A key uniquely identifies immutable bytes across versioned writes."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish bucket, key, version ID, delete marker, upload ID, part number, and application identity."
+      ]
+    },
+    {
+      "id": "storage-go-key-prefix-design",
+      "statement": "Design opaque or structured keys with explicit delimiter, normalization, tenant, cardinality, migration, and disclosure rules.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-bucket-key-version-identity"
+      ],
+      "misconceptions": [
+        "A slash in an S3 key creates a secured directory boundary."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Design opaque or structured keys with explicit delimiter, normalization, tenant, cardinality, migration, and disclosure rules."
+      ]
+    },
+    {
+      "id": "storage-go-metadata-tag-boundary",
+      "statement": "Choose system metadata, user metadata, object tags, database metadata, and event payloads by mutability, limits, query, trust, and lifecycle needs.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-key-prefix-design"
+      ],
+      "misconceptions": [
+        "All descriptive and authorization data belongs in S3 user metadata."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose system metadata, user metadata, object tags, database metadata, and event payloads by mutability, limits, query, trust, and lifecycle needs."
+      ]
+    },
+    {
+      "id": "storage-go-list-pagination-order",
+      "statement": "Paginate ListObjectsV2 with continuation tokens, delimiter and prefix rules, duplicate-safe consumers, and no universal ordering assumption.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-metadata-tag-boundary"
+      ],
+      "misconceptions": [
+        "One listing response is complete and lexicographically ordered for every S3 bucket type."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Paginate ListObjectsV2 with continuation tokens, delimiter and prefix rules, duplicate-safe consumers, and no universal ordering assumption."
+      ]
+    },
+    {
+      "id": "storage-go-strong-consistency-atomicity",
+      "statement": "Use S3 strong read-after-write consistency while preserving single-key atomicity and cross-object transaction limits.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "storage-go-list-pagination-order"
+      ],
+      "misconceptions": [
+        "Strong consistency makes a multi-object workflow an atomic transaction."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use S3 strong read-after-write consistency while preserving single-key atomicity and cross-object transaction limits."
+      ]
+    },
+    {
+      "id": "storage-go-general-directory-bucket",
+      "statement": "Compare general-purpose and directory buckets by namespace, endpoint, zone, ordering, throughput, durability scope, versioning, lifecycle, and feature support.",
+      "knowledgeType": "conceptual",
+      "level": "analyze",
+      "prerequisiteIds": [
+        "storage-go-strong-consistency-atomicity"
+      ],
+      "misconceptions": [
+        "Directory buckets are faster general-purpose buckets with identical APIs and guarantees."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compare general-purpose and directory buckets by namespace, endpoint, zone, ordering, throughput, durability scope, versioning, lifecycle, and feature support."
+      ]
+    },
+    {
+      "id": "storage-go-virtual-hosted-zonal-endpoint",
+      "statement": "Construct regional virtual-hosted and zonal endpoints without confusing region, availability zone, bucket name, TLS name, or path style.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-general-directory-bucket"
+      ],
+      "misconceptions": [
+        "Every S3 bucket supports path-style endpoints and the same hostname format."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Construct regional virtual-hosted and zonal endpoints without confusing region, availability zone, bucket name, TLS name, or path style."
+      ]
+    },
+    {
+      "id": "storage-go-region-location-routing",
+      "statement": "Resolve intended region and endpoint explicitly and reject redirects, signing-region drift, and accidental cross-region transfer.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-virtual-hosted-zonal-endpoint"
+      ],
+      "misconceptions": [
+        "The SDK can safely discover any bucket region after signing every request for a default region."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Resolve intended region and endpoint explicitly and reject redirects, signing-region drift, and accidental cross-region transfer."
+      ]
+    },
+    {
+      "id": "storage-go-directory-session-reactivation",
+      "statement": "Model directory-bucket session authorization, inactivity, 503 reactivation, retry boundaries, and unsupported lifecycle or versioning.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-region-location-routing"
+      ],
+      "misconceptions": [
+        "A dormant directory bucket either responds normally or is permanently unavailable."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model directory-bucket session authorization, inactivity, 503 reactivation, retry boundaries, and unsupported lifecycle or versioning."
+      ]
+    },
+    {
+      "id": "storage-go-bucket-naming-creation-gate",
+      "statement": "Validate globally or zonally scoped naming, ownership, location, public-block, encryption, versioning, tags, and rollback before bucket creation.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-directory-session-reactivation"
+      ],
+      "misconceptions": [
+        "Creating a bucket is a harmless runtime operation that needs no reviewed infrastructure gate."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Validate globally or zonally scoped naming, ownership, location, public-block, encryption, versioning, tags, and rollback before bucket creation."
+      ]
+    },
+    {
+      "id": "storage-go-runtime-sdk-version",
+      "statement": "Pin Go 1.26.5, aws-sdk-go-v2 1.42.1, S3 1.105.0, CloudFront sign 1.11.7, and tested operating targets as one compatibility contract.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-bucket-naming-creation-gate"
+      ],
+      "misconceptions": [
+        "Any AWS SDK for Go example compiles and behaves unchanged across major and service module versions."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Pin Go 1.26.5, aws-sdk-go-v2 1.42.1, S3 1.105.0, CloudFront sign 1.11.7, and tested operating targets as one compatibility contract."
+      ]
+    },
+    {
+      "id": "storage-go-config-client-lifecycle",
+      "statement": "Load immutable shared configuration once, construct scoped clients, pass context, and assign transport and credential lifetimes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-runtime-sdk-version"
+      ],
+      "misconceptions": [
+        "A new S3 client and default transport should be created for every request."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Load immutable shared configuration once, construct scoped clients, pass context, and assign transport and credential lifetimes."
+      ]
+    },
+    {
+      "id": "storage-go-pointer-enum-document-types",
+      "statement": "Use SDK pointers, enums, document types, output metadata, paginators, and nil handling without losing API semantics.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-config-client-lifecycle"
+      ],
+      "misconceptions": [
+        "Generated SDK types guarantee required values and non-nil outputs at runtime."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use SDK pointers, enums, document types, output metadata, paginators, and nil handling without losing API semantics."
+      ]
+    },
+    {
+      "id": "storage-go-operation-options-scope",
+      "statement": "Apply per-operation functional options without mutating shared client configuration or leaking tenant-specific endpoints.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-pointer-enum-document-types"
+      ],
+      "misconceptions": [
+        "Changing one operation option safely reconfigures the shared client for later calls."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply per-operation functional options without mutating shared client configuration or leaking tenant-specific endpoints."
+      ]
+    },
+    {
+      "id": "storage-go-sdk-error-interface",
+      "statement": "Inspect smithy operation, API, transport, cancellation, and response errors with errors.Is and errors.As while preserving request evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-operation-options-scope"
+      ],
+      "misconceptions": [
+        "String matching an AWS error message is the stable way to classify failures."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inspect smithy operation, API, transport, cancellation, and response errors with errors.Is and errors.As while preserving request evidence."
+      ]
+    },
+    {
+      "id": "storage-go-credential-provider-chain",
+      "statement": "Use short-lived credential providers with explicit workload identity, refresh ownership, least privilege, and redaction.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-sdk-error-interface"
+      ],
+      "misconceptions": [
+        "Hard-coded access keys are acceptable when the repository is private."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use short-lived credential providers with explicit workload identity, refresh ownership, least privilege, and redaction."
+      ]
+    },
+    {
+      "id": "storage-go-sigv4-region-time",
+      "statement": "Explain SigV4 canonical request, region, service, signed headers, payload mode, clock, and credential scope without hand-building production signatures.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-credential-provider-chain"
+      ],
+      "misconceptions": [
+        "A valid access key alone makes a request signature portable across regions and headers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Explain SigV4 canonical request, region, service, signed headers, payload mode, clock, and credential scope without hand-building production signatures."
+      ]
+    },
+    {
+      "id": "storage-go-context-timeout-ownership",
+      "statement": "Compose request, attempt, transfer, and shutdown deadlines and propagate cancellation through body and goroutine ownership.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-sigv4-region-time"
+      ],
+      "misconceptions": [
+        "SDK retry time is automatically bounded by an HTTP handler timeout even if its context is discarded."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Compose request, attempt, transfer, and shutdown deadlines and propagate cancellation through body and goroutine ownership."
+      ]
+    },
+    {
+      "id": "storage-go-retry-classification-budget",
+      "statement": "Classify throttling, transient transport, server, permanent, cancellation, conflict, and ambiguous write outcomes with bounded attempts, time, delay, and bytes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-context-timeout-ownership"
+      ],
+      "misconceptions": [
+        "All 5xx and network failures are safe to retry without reconciliation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Classify throttling, transient transport, server, permanent, cancellation, conflict, and ambiguous write outcomes with bounded attempts, time, delay, and bytes."
+      ]
+    },
+    {
+      "id": "storage-go-idempotency-reconciliation",
+      "statement": "Make stable identity, conditional requests, upload records, checksums, and post-failure reconciliation explicit for repeatable operations.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-retry-classification-budget"
+      ],
+      "misconceptions": [
+        "Repeating PutObject after an unknown response cannot create an unintended overwrite."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Make stable identity, conditional requests, upload records, checksums, and post-failure reconciliation explicit for repeatable operations."
+      ]
+    },
+    {
+      "id": "storage-go-upload-byte-time-count-budget",
+      "statement": "Enforce per-file, request, tenant, concurrent, time, and aggregate byte budgets before and during transfer.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-idempotency-reconciliation"
+      ],
+      "misconceptions": [
+        "Content-Length alone prevents oversized or chunked uploads."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Enforce per-file, request, tenant, concurrent, time, and aggregate byte budgets before and during transfer."
+      ]
+    },
+    {
+      "id": "storage-go-filename-normalization",
+      "statement": "Treat filenames as display metadata, normalize safely, reject controls and path confusion, and generate storage keys independently.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-upload-byte-time-count-budget"
+      ],
+      "misconceptions": [
+        "filepath.Base turns every untrusted filename into a safe object key and response header value."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Treat filenames as display metadata, normalize safely, reject controls and path confusion, and generate storage keys independently."
+      ]
+    },
+    {
+      "id": "storage-go-media-type-sniff-policy",
+      "statement": "Combine bounded signature inspection, declared media type, extension, parser or scanner evidence, and allow-list policy without executing content.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-filename-normalization"
+      ],
+      "misconceptions": [
+        "http.DetectContentType proves a file is harmless and correctly named."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Combine bounded signature inspection, declared media type, extension, parser or scanner evidence, and allow-list policy without executing content."
+      ]
+    },
+    {
+      "id": "storage-go-quarantine-publish-state",
+      "statement": "Model admitted, uploading, quarantined, scanning, accepted, rejected, published, and deleted transitions with authorized owners.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-media-type-sniff-policy"
+      ],
+      "misconceptions": [
+        "Successful PutObject means an upload may immediately be served to users."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model admitted, uploading, quarantined, scanning, accepted, rejected, published, and deleted transitions with authorized owners."
+      ]
+    },
+    {
+      "id": "storage-go-upload-accessible-feedback",
+      "statement": "Expose preflight limits, progress, cancellation, validation details, recovery, and non-color status to keyboard and assistive-technology users.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "storage-go-quarantine-publish-state"
+      ],
+      "misconceptions": [
+        "A spinning progress icon is sufficient upload feedback."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Expose preflight limits, progress, cancellation, validation details, recovery, and non-color status to keyboard and assistive-technology users."
+      ]
+    },
+    {
+      "id": "storage-go-putobject-body-ownership",
+      "statement": "Own and close input bodies, preserve cancellation, bound bytes, and distinguish request completion from later business publication.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-upload-accessible-feedback"
+      ],
+      "misconceptions": [
+        "A nil PutObject error proves the original reader was fully and correctly consumed for the user outcome."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Own and close input bodies, preserve cancellation, bound bytes, and distinguish request completion from later business publication."
+      ]
+    },
+    {
+      "id": "storage-go-checksum-algorithm-contract",
+      "statement": "Select supported checksum algorithms, send full-object evidence, validate service response, and retain an application integrity record.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-putobject-body-ownership"
+      ],
+      "misconceptions": [
+        "ETag is the canonical content MD5 for every object and upload mode."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select supported checksum algorithms, send full-object evidence, validate service response, and retain an application integrity record."
+      ]
+    },
+    {
+      "id": "storage-go-content-metadata-preservation",
+      "statement": "Set and preserve Content-Type, Content-Disposition, Cache-Control, encoding, language, custom metadata, and tags during replacements and copies.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-checksum-algorithm-contract"
+      ],
+      "misconceptions": [
+        "Updating an object body automatically retains all previous metadata."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set and preserve Content-Type, Content-Disposition, Cache-Control, encoding, language, custom metadata, and tags during replacements and copies."
+      ]
+    },
+    {
+      "id": "storage-go-server-encryption-default",
+      "statement": "Verify S3 default encryption and choose SSE-S3 or SSE-KMS requirements without claiming transport or client-side confidentiality.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-content-metadata-preservation"
+      ],
+      "misconceptions": [
+        "Default server-side encryption removes the need for TLS, IAM, or key policy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Verify S3 default encryption and choose SSE-S3 or SSE-KMS requirements without claiming transport or client-side confidentiality."
+      ]
+    },
+    {
+      "id": "storage-go-write-result-evidence",
+      "statement": "Record bucket, key, version, checksum, size, request ID, encryption, policy decision, and changed-read verification without logging secrets.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-server-encryption-default"
+      ],
+      "misconceptions": [
+        "The object key is enough evidence to audit a write."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Record bucket, key, version, checksum, size, request ID, encryption, policy decision, and changed-read verification without logging secrets."
+      ]
+    },
+    {
+      "id": "storage-go-transfermanager-version-status",
+      "statement": "Adopt feature/s3/transfermanager 0.3.2 as a pinned pre-v1 dependency with explicit compatibility review and rollback.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-write-result-evidence"
+      ],
+      "misconceptions": [
+        "A newly published pre-v1 transfer manager has a stable API and production history equivalent to the core S3 client."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Adopt feature/s3/transfermanager 0.3.2 as a pinned pre-v1 dependency with explicit compatibility review and rollback."
+      ]
+    },
+    {
+      "id": "storage-go-manager-deprecation-migration",
+      "statement": "Inventory deprecated feature/s3/manager use, map behavior and options, characterize outputs, and migrate behind contract tests.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-transfermanager-version-status"
+      ],
+      "misconceptions": [
+        "A package rename is sufficient migration evidence from s3/manager to transfermanager."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Inventory deprecated feature/s3/manager use, map behavior and options, characterize outputs, and migrate behind contract tests."
+      ]
+    },
+    {
+      "id": "storage-go-upload-download-object-api",
+      "statement": "Choose UploadObject, DownloadObject, and GetObject by streaming, seekability, checksum, destination, and ownership requirements.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-manager-deprecation-migration"
+      ],
+      "misconceptions": [
+        "All transfer-manager download APIs have the same buffering and resume behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose UploadObject, DownloadObject, and GetObject by streaming, seekability, checksum, destination, and ownership requirements."
+      ]
+    },
+    {
+      "id": "storage-go-directory-transfer-failure-policy",
+      "statement": "Use directory transfer with explicit traversal, path mapping, symlink, overwrite, partial-success, cancellation, and failure policy.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-upload-download-object-api"
+      ],
+      "misconceptions": [
+        "UploadDirectory is an atomic recursive transaction."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use directory transfer with explicit traversal, path mapping, symlink, overwrite, partial-success, cancellation, and failure policy."
+      ]
+    },
+    {
+      "id": "storage-go-transfer-resource-budget",
+      "statement": "Bound aggregate part concurrency, buffers, descriptors, NICs, DNS behavior, progress callbacks, and caller admission across simultaneous transfers.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-directory-transfer-failure-policy"
+      ],
+      "misconceptions": [
+        "Per-transfer concurrency can be tuned independently without affecting process-wide capacity."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound aggregate part concurrency, buffers, descriptors, NICs, DNS behavior, progress callbacks, and caller admission across simultaneous transfers."
+      ]
+    },
+    {
+      "id": "storage-go-multipart-threshold-part-size",
+      "statement": "Choose single versus multipart transfer and part size from object size, part-count limits, memory, network, retry, and completion constraints.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-transfer-resource-budget"
+      ],
+      "misconceptions": [
+        "Smaller parts always improve throughput and recovery."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose single versus multipart transfer and part size from object size, part-count limits, memory, network, retry, and completion constraints."
+      ]
+    },
+    {
+      "id": "storage-go-uploadid-part-etag-ledger",
+      "statement": "Persist upload ID, part number, offset, size, checksum, ETag, attempt, and owner so completion uses the exact accepted part list.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-multipart-threshold-part-size"
+      ],
+      "misconceptions": [
+        "S3 reconstructs the intended ordered part list without the client retaining it."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Persist upload ID, part number, offset, size, checksum, ETag, attempt, and owner so completion uses the exact accepted part list."
+      ]
+    },
+    {
+      "id": "storage-go-multipart-concurrency-cancel",
+      "statement": "Bound part workers and bytes, cancel safely, drain results, preserve completed evidence, and prevent goroutine or buffer leaks.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-uploadid-part-etag-ledger"
+      ],
+      "misconceptions": [
+        "Canceling the request automatically deletes uploaded parts and upload state."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Bound part workers and bytes, cancel safely, drain results, preserve completed evidence, and prevent goroutine or buffer leaks."
+      ]
+    },
+    {
+      "id": "storage-go-complete-ambiguous-reconcile",
+      "statement": "Validate ordered parts, complete once, and reconcile timeout or connection-loss ambiguity with object metadata and upload state.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-multipart-concurrency-cancel"
+      ],
+      "misconceptions": [
+        "A failed CompleteMultipartUpload response proves the object does not exist."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Validate ordered parts, complete once, and reconcile timeout or connection-loss ambiguity with object metadata and upload state."
+      ]
+    },
+    {
+      "id": "storage-go-abort-lifecycle-cleanup",
+      "statement": "Abort known failures, inventory abandoned uploads, and configure AbortIncompleteMultipartUpload lifecycle cleanup where supported.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-complete-ambiguous-reconcile"
+      ],
+      "misconceptions": [
+        "Incomplete multipart parts expire automatically and never incur storage cost."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Abort known failures, inventory abandoned uploads, and configure AbortIncompleteMultipartUpload lifecycle cleanup where supported."
+      ]
+    },
+    {
+      "id": "storage-go-upload-session-intent",
+      "statement": "Create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-abort-lifecycle-cleanup"
+      ],
+      "misconceptions": [
+        "A presigned URL can safely authorize any file that the browser chooses later."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing."
+      ]
+    },
+    {
+      "id": "storage-go-presigned-put-header-parity",
+      "statement": "Presign PUT with exact region, expiry, key, checksum, content type, encryption, and required header parity.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-upload-session-intent"
+      ],
+      "misconceptions": [
+        "A browser may add, remove, or change signed headers without invalidating the URL."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Presign PUT with exact region, expiry, key, checksum, content type, encryption, and required header parity."
+      ]
+    },
+    {
+      "id": "storage-go-presigned-post-policy",
+      "statement": "Use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-presigned-put-header-parity"
+      ],
+      "misconceptions": [
+        "A POST policy reports the application-level validity of uploaded content."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently."
+      ]
+    },
+    {
+      "id": "storage-go-cors-not-authentication",
+      "statement": "Configure the smallest origin, method, header, exposure, and age CORS rules while keeping IAM and bucket policy as authorization.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-presigned-post-policy"
+      ],
+      "misconceptions": [
+        "If a browser passes CORS, an S3 request is authorized and safe."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure the smallest origin, method, header, exposure, and age CORS rules while keeping IAM and bucket policy as authorization."
+      ]
+    },
+    {
+      "id": "storage-go-direct-upload-finalization",
+      "statement": "Finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cors-not-authentication"
+      ],
+      "misconceptions": [
+        "The browser success event alone proves the expected object is complete and belongs to the session."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition."
+      ]
+    },
+    {
+      "id": "storage-go-head-vs-get",
+      "statement": "Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-direct-upload-finalization"
+      ],
+      "misconceptions": [
+        "Every download should call HeadObject immediately before GetObject."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority."
+      ]
+    },
+    {
+      "id": "storage-go-get-body-lifecycle",
+      "statement": "Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-head-vs-get"
+      ],
+      "misconceptions": [
+        "Garbage collection promptly closes every unread S3 response body."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes."
+      ]
+    },
+    {
+      "id": "storage-go-conditional-download",
+      "statement": "Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-get-body-lifecycle"
+      ],
+      "misconceptions": [
+        "A conditional S3 failure should always become a generic 500 response."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning."
+      ]
+    },
+    {
+      "id": "storage-go-range-download",
+      "statement": "Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-conditional-download"
+      ],
+      "misconceptions": [
+        "Forwarding an arbitrary Range header to S3 is a complete range policy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests."
+      ]
+    },
+    {
+      "id": "storage-go-download-error-boundary",
+      "statement": "Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-range-download"
+      ],
+      "misconceptions": [
+        "Returning 404 for every S3 failure prevents information disclosure without operational cost."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response."
+      ]
+    },
+    {
+      "id": "storage-go-http-request-admission",
+      "statement": "Apply trusted authority, authentication, authorization, method, route, headers, body, multipart, rate, and concurrency admission before storage work.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "misconceptions": [
+        "Authentication alone makes an upload or download request authorized for its object."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply trusted authority, authentication, authorization, method, route, headers, body, multipart, rate, and concurrency admission before storage work."
+      ]
+    },
+    {
+      "id": "storage-go-maxbytes-multipart-reader",
+      "statement": "Use MaxBytesReader or bounded readers and streaming multipart iteration without ParseMultipartForm disk or memory surprises.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-http-request-admission"
+      ],
+      "misconceptions": [
+        "ParseMultipartForm keeps all large file parts safely in bounded memory."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use MaxBytesReader or bounded readers and streaming multipart iteration without ParseMultipartForm disk or memory surprises."
+      ]
+    },
+    {
+      "id": "storage-go-streaming-response-commit",
+      "statement": "Delay response commitment until safe, set representation headers, stream bounded data, and record partial-write terminal states.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-maxbytes-multipart-reader"
+      ],
+      "misconceptions": [
+        "After WriteHeader, any later S3 failure can still be returned as a JSON error."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Delay response commitment until safe, set representation headers, stream bounded data, and record partial-write terminal states."
+      ]
+    },
+    {
+      "id": "storage-go-context-goroutine-cleanup",
+      "statement": "Tie storage calls, progress work, pipes, and goroutines to request and shutdown contexts and prove termination.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-streaming-response-commit"
+      ],
+      "misconceptions": [
+        "Starting an io.Pipe goroutine automatically ends it when the HTTP client disconnects."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Tie storage calls, progress work, pipes, and goroutines to request and shutdown contexts and prove termination."
+      ]
+    },
+    {
+      "id": "storage-go-gateway-abuse-defense",
+      "statement": "Defend slow bodies, range amplification, decompression, content sniffing, hot keys, tenant exhaustion, and response-header injection.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-context-goroutine-cleanup"
+      ],
+      "misconceptions": [
+        "The S3 service absorbs all resource-exhaustion risk behind a Go gateway."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Defend slow bodies, range amplification, decompression, content sniffing, hot keys, tenant exhaustion, and response-header injection."
+      ]
+    },
+    {
+      "id": "storage-go-system-of-record-boundary",
+      "statement": "Assign authoritative fields to application database, S3 object state, tags, events, or derived indexes and document reconciliation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-gateway-abuse-defense"
+      ],
+      "misconceptions": [
+        "One system can atomically own database rows and S3 objects in a normal transaction."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Assign authoritative fields to application database, S3 object state, tags, events, or derived indexes and document reconciliation."
+      ]
+    },
+    {
+      "id": "storage-go-upload-intent-state-machine",
+      "statement": "Persist idempotent intent, reservation, object identity, expected integrity, upload, quarantine, publish, failure, and expiry transitions.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-system-of-record-boundary"
+      ],
+      "misconceptions": [
+        "A boolean uploaded column captures every important file state."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Persist idempotent intent, reservation, object identity, expected integrity, upload, quarantine, publish, failure, and expiry transitions."
+      ]
+    },
+    {
+      "id": "storage-go-database-object-ordering",
+      "statement": "Choose database-first, object-first, or direct-upload ordering and expose each crash window, compensation, and user-visible state.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-upload-intent-state-machine"
+      ],
+      "misconceptions": [
+        "Putting the database write and SDK call in one Go function makes them transactional."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose database-first, object-first, or direct-upload ordering and expose each crash window, compensation, and user-visible state."
+      ]
+    },
+    {
+      "id": "storage-go-outbox-event-reconciliation",
+      "statement": "Publish file events from committed state with outbox, stable identity, duplicate-safe consumers, and observed object-version evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-database-object-ordering"
+      ],
+      "misconceptions": [
+        "S3 event delivery alone supplies exactly-once ordered application events."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Publish file events from committed state with outbox, stable identity, duplicate-safe consumers, and observed object-version evidence."
+      ]
+    },
+    {
+      "id": "storage-go-orphan-repair",
+      "statement": "Detect and safely repair orphan objects, orphan rows, stale upload intents, missing scans, and mismatched versions under bounded listing cost.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-outbox-event-reconciliation"
+      ],
+      "misconceptions": [
+        "Deleting every unreferenced key found in one list pass is safe garbage collection."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Detect and safely repair orphan objects, orphan rows, stale upload intents, missing scans, and mismatched versions under bounded listing cost."
+      ]
+    },
+    {
+      "id": "storage-go-copy-replace-metadata",
+      "statement": "Copy or replace with explicit source version, conditional evidence, metadata directive, encryption, checksum, tags, and destination validation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-orphan-repair"
+      ],
+      "misconceptions": [
+        "CopyObject automatically preserves every source property and authorization rule."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Copy or replace with explicit source version, conditional evidence, metadata directive, encryption, checksum, tags, and destination validation."
+      ]
+    },
+    {
+      "id": "storage-go-rename-nonatomic",
+      "statement": "Implement rename as version-aware copy, validation, metadata update, reference switch, and safe source deletion with recoverable intermediate states.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-copy-replace-metadata"
+      ],
+      "misconceptions": [
+        "S3 rename is one atomic operation like filesystem rename."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Implement rename as version-aware copy, validation, metadata update, reference switch, and safe source deletion with recoverable intermediate states."
+      ]
+    },
+    {
+      "id": "storage-go-conditional-write-conflict",
+      "statement": "Use validators, version IDs, idempotency records, or application locks to detect stale concurrent mutation and expose 409 or 412 meaning.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-rename-nonatomic"
+      ],
+      "misconceptions": [
+        "Strong consistency prevents lost updates between concurrent writers."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use validators, version IDs, idempotency records, or application locks to detect stale concurrent mutation and expose 409 or 412 meaning."
+      ]
+    },
+    {
+      "id": "storage-go-delete-version-marker",
+      "statement": "Distinguish unversioned deletion, current-version delete markers, version-specific deletion, retention, legal hold, and recovery.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-conditional-write-conflict"
+      ],
+      "misconceptions": [
+        "DELETE always erases the object bytes immediately and permanently."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish unversioned deletion, current-version delete markers, version-specific deletion, retention, legal hold, and recovery."
+      ]
+    },
+    {
+      "id": "storage-go-batch-partial-failure",
+      "statement": "Chunk batch operations, correlate per-object outcomes, retry only eligible items, preserve authorization, and report partial success accessibly.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-delete-version-marker"
+      ],
+      "misconceptions": [
+        "One successful batch HTTP response means every requested object changed."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Chunk batch operations, correlate per-object outcomes, retry only eligible items, preserve authorization, and report partial success accessibly."
+      ]
+    },
+    {
+      "id": "storage-go-versioning-state-transition",
+      "statement": "Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-batch-partial-failure"
+      ],
+      "misconceptions": [
+        "Suspending versioning returns a bucket to its original unversioned behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish unversioned, enabled, and suspended versioning and test null versions, overwrite behavior, and lifecycle impact."
+      ]
+    },
+    {
+      "id": "storage-go-delete-marker-resolution",
+      "statement": "List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-versioning-state-transition"
+      ],
+      "misconceptions": [
+        "A delete marker contains a recoverable copy of the deleted bytes."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: List versions and delete markers, resolve current reads, restore by removing a marker or copying a version, and preserve audit identity."
+      ]
+    },
+    {
+      "id": "storage-go-object-lock-modes",
+      "statement": "Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-delete-marker-resolution"
+      ],
+      "misconceptions": [
+        "Object Lock prevents new versions and delete markers from being created."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply governance, compliance, legal hold, retention date, and authorized bypass by version with irreversible-risk review."
+      ]
+    },
+    {
+      "id": "storage-go-worm-not-backup",
+      "statement": "Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-object-lock-modes"
+      ],
+      "misconceptions": [
+        "Versioning plus Object Lock is a complete independent backup strategy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate WORM retention, version recovery, replication, independent backup, restore testing, and account-compromise boundaries."
+      ]
+    },
+    {
+      "id": "storage-go-restore-drill-evidence",
+      "statement": "Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-worm-not-backup"
+      ],
+      "misconceptions": [
+        "A documented restore command proves recovery without executing a drill."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Run sampled restore drills with authorization, known bytes, metadata, dependencies, time objectives, audit evidence, and safe cleanup."
+      ]
+    },
+    {
+      "id": "storage-go-storage-class-access-pattern",
+      "statement": "Select storage class from access frequency, object size, retrieval latency, resilience, minimum duration, monitoring, and transition cost.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-restore-drill-evidence"
+      ],
+      "misconceptions": [
+        "The lowest per-gigabyte storage class is always cheapest."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Select storage class from access frequency, object size, retrieval latency, resilience, minimum duration, monitoring, and transition cost."
+      ]
+    },
+    {
+      "id": "storage-go-lifecycle-rule-precedence",
+      "statement": "Model filters, current and noncurrent transitions, expiration, delete markers, multipart cleanup, precedence, propagation, and unsupported bucket features.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-storage-class-access-pattern"
+      ],
+      "misconceptions": [
+        "Lifecycle rules run immediately and in authored order like a script."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model filters, current and noncurrent transitions, expiration, delete markers, multipart cleanup, precedence, propagation, and unsupported bucket features."
+      ]
+    },
+    {
+      "id": "storage-go-archive-restore-state",
+      "statement": "Request, monitor, authorize, and communicate temporary archive restoration with tier, expiry, duplicate request, and failure states.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-lifecycle-rule-precedence"
+      ],
+      "misconceptions": [
+        "Restoring an archived object permanently changes its storage class."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Request, monitor, authorize, and communicate temporary archive restoration with tier, expiry, duplicate request, and failure states."
+      ]
+    },
+    {
+      "id": "storage-go-retention-policy-conflict",
+      "statement": "Resolve lifecycle expiration against versioning, Object Lock, legal hold, replication, business retention, and deletion evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-archive-restore-state"
+      ],
+      "misconceptions": [
+        "An expiration rule overrides Object Lock when storage cost is high."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Resolve lifecycle expiration against versioning, Object Lock, legal hold, replication, business retention, and deletion evidence."
+      ]
+    },
+    {
+      "id": "storage-go-cost-model-changed-traffic",
+      "statement": "Calculate storage, requests, transitions, retrieval, early deletion, transfer, CDN, invalidation, logs, and operational labor under changed traffic.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-retention-policy-conflict"
+      ],
+      "misconceptions": [
+        "Cost estimation can ignore failure retries and cache-miss behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Calculate storage, requests, transitions, retrieval, early deletion, transfer, CDN, invalidation, logs, and operational labor under changed traffic."
+      ]
+    },
+    {
+      "id": "storage-go-principal-action-resource-condition",
+      "statement": "Evaluate identity and resource policies by principal, action, exact resource, condition, session, explicit deny, and organization boundary.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cost-model-changed-traffic"
+      ],
+      "misconceptions": [
+        "An IAM allow always wins over a bucket-policy deny."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Evaluate identity and resource policies by principal, action, exact resource, condition, session, explicit deny, and organization boundary."
+      ]
+    },
+    {
+      "id": "storage-go-block-public-ownership",
+      "statement": "Enforce Block Public Access and bucket-owner-enforced Object Ownership while explaining what each does and does not authorize.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-principal-action-resource-condition"
+      ],
+      "misconceptions": [
+        "Block Public Access makes all bucket access private and least-privileged."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Enforce Block Public Access and bucket-owner-enforced Object Ownership while explaining what each does and does not authorize."
+      ]
+    },
+    {
+      "id": "storage-go-prefix-tenant-isolation",
+      "statement": "Derive tenant-safe keys and list prefixes server-side and bind allowed actions and conditions without trusting user-supplied policy fragments.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-block-public-ownership"
+      ],
+      "misconceptions": [
+        "A key prefix containing the tenant ID is an authorization boundary by itself."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Derive tenant-safe keys and list prefixes server-side and bind allowed actions and conditions without trusting user-supplied policy fragments."
+      ]
+    },
+    {
+      "id": "storage-go-access-point-boundary",
+      "statement": "Use access points and VPC restrictions to separate application or dataset access while retaining bucket-policy and network evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-prefix-tenant-isolation"
+      ],
+      "misconceptions": [
+        "An access point creates a separate copy of the bucket data and policies."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use access points and VPC restrictions to separate application or dataset access while retaining bucket-policy and network evidence."
+      ]
+    },
+    {
+      "id": "storage-go-policy-simulation-negative-tests",
+      "statement": "Review effective permissions with policy analysis, simulation, denied changed cases, temporary credentials, and CloudTrail evidence.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-access-point-boundary"
+      ],
+      "misconceptions": [
+        "One successful authorized request proves there is no broader unintended access."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Review effective permissions with policy analysis, simulation, denied changed cases, temporary credentials, and CloudTrail evidence."
+      ]
+    },
+    {
+      "id": "storage-go-transport-at-rest-client",
+      "statement": "Separate TLS in transit, S3 server-side encryption, KMS envelope encryption, and application client-side encryption by threat and feature tradeoff.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-policy-simulation-negative-tests"
+      ],
+      "misconceptions": [
+        "SSE-KMS keeps plaintext hidden from the application and S3 service."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate TLS in transit, S3 server-side encryption, KMS envelope encryption, and application client-side encryption by threat and feature tradeoff."
+      ]
+    },
+    {
+      "id": "storage-go-sse-s3-kms-choice",
+      "statement": "Choose SSE-S3, SSE-KMS, dual-layer KMS where required, or client encryption from audit, tenancy, performance, cost, and service integration needs.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-transport-at-rest-client"
+      ],
+      "misconceptions": [
+        "SSE-KMS is automatically the safest and cheapest choice for every object."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose SSE-S3, SSE-KMS, dual-layer KMS where required, or client encryption from audit, tenancy, performance, cost, and service integration needs."
+      ]
+    },
+    {
+      "id": "storage-go-kms-key-policy-context",
+      "statement": "Constrain IAM and KMS key policy, grants, service principal, encryption context, region, rotation, disable, deletion, and break-glass ownership.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-sse-s3-kms-choice"
+      ],
+      "misconceptions": [
+        "IAM permission to an S3 object automatically grants use of its KMS key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Constrain IAM and KMS key policy, grants, service principal, encryption context, region, rotation, disable, deletion, and break-glass ownership."
+      ]
+    },
+    {
+      "id": "storage-go-bucket-key-cost-boundary",
+      "statement": "Evaluate S3 Bucket Keys for KMS request cost while documenting encryption-context and audit changes.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-kms-key-policy-context"
+      ],
+      "misconceptions": [
+        "Bucket Keys change only billing and never authorization or audit semantics."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Evaluate S3 Bucket Keys for KMS request cost while documenting encryption-context and audit changes."
+      ]
+    },
+    {
+      "id": "storage-go-key-rotation-revocation-drill",
+      "statement": "Prove new writes, old reads, role rotation, key disable recovery, compromised-session revocation limits, and residual cached or signed access.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-bucket-key-cost-boundary"
+      ],
+      "misconceptions": [
+        "Rotating a KMS key immediately re-encrypts every existing object and revokes every URL."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Prove new writes, old reads, role rotation, key disable recovery, compromised-session revocation limits, and residual cached or signed access."
+      ]
+    },
+    {
+      "id": "storage-go-s3-presigned-download",
+      "statement": "Presign the exact version, response metadata, method, region, credential scope, and shortest useful expiry while treating the URL as a bearer secret.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-key-rotation-revocation-drill"
+      ],
+      "misconceptions": [
+        "A presigned S3 URL has permissions independent from the signing principal."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Presign the exact version, response metadata, method, region, credential scope, and shortest useful expiry while treating the URL as a bearer secret."
+      ]
+    },
+    {
+      "id": "storage-go-cloudfront-url-cookie-choice",
+      "statement": "Choose signed URL or signed cookie by object count, path scope, player behavior, client constraints, and leakage surface.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-s3-presigned-download"
+      ],
+      "misconceptions": [
+        "Signed cookies are always more secure because the URL contains no signature."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose signed URL or signed cookie by object count, path scope, player behavior, client constraints, and leakage surface."
+      ]
+    },
+    {
+      "id": "storage-go-canned-custom-policy",
+      "statement": "Choose canned or custom CloudFront policy and constrain expiry, optional start time, resource wildcard, and IP range without accidental overbreadth.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cloudfront-url-cookie-choice"
+      ],
+      "misconceptions": [
+        "A wildcard resource in a custom policy is equivalent to signing one exact object."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Choose canned or custom CloudFront policy and constrain expiry, optional start time, resource wildcard, and IP range without accidental overbreadth."
+      ]
+    },
+    {
+      "id": "storage-go-cloudfront-signer-crypto",
+      "statement": "Use CloudFront sign 1.11.7 with reviewed RSA or ECDSA keys and explicit HashSHA256 support while preserving compatibility evidence for zero-value SHA-1 behavior.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-canned-custom-policy"
+      ],
+      "misconceptions": [
+        "Selecting a modern Go crypto default automatically changes every CloudFront signature to SHA-256."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use CloudFront sign 1.11.7 with reviewed RSA or ECDSA keys and explicit HashSHA256 support while preserving compatibility evidence for zero-value SHA-1 behavior."
+      ]
+    },
+    {
+      "id": "storage-go-signed-access-revocation",
+      "statement": "Model expiry-at-request-start, range continuation, key-group rotation, authorization changes, logs and referrers, cache behavior, and emergency revocation limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cloudfront-signer-crypto"
+      ],
+      "misconceptions": [
+        "Deleting an application session immediately revokes every issued S3 or CloudFront URL."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model expiry-at-request-start, range continuation, key-group rotation, authorization changes, logs and referrers, cache behavior, and emergency revocation limits."
+      ]
+    },
+    {
+      "id": "storage-go-s3-origin-website-boundary",
+      "statement": "Distinguish regular S3 origins from website endpoints by HTTPS, OAC, redirects, error pages, methods, and public-access requirements.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-signed-access-revocation"
+      ],
+      "misconceptions": [
+        "An S3 website endpoint can remain private behind OAC."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Distinguish regular S3 origins from website endpoints by HTTPS, OAC, redirects, error pages, methods, and public-access requirements."
+      ]
+    },
+    {
+      "id": "storage-go-oac-signing-behavior",
+      "statement": "Configure OAC with always-sign where appropriate and define viewer protocol, origin protocol, request signing, and forwarded Authorization behavior.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-s3-origin-website-boundary"
+      ],
+      "misconceptions": [
+        "OAC authenticates viewers as well as CloudFront to the S3 origin."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure OAC with always-sign where appropriate and define viewer protocol, origin protocol, request signing, and forwarded Authorization behavior."
+      ]
+    },
+    {
+      "id": "storage-go-oac-sourcearn-policy",
+      "statement": "Scope the CloudFront service principal to the exact distribution SourceArn and required object actions without public or cross-distribution access.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-oac-signing-behavior"
+      ],
+      "misconceptions": [
+        "Allowing cloudfront.amazonaws.com in a bucket policy is sufficiently narrow by default."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Scope the CloudFront service principal to the exact distribution SourceArn and required object actions without public or cross-distribution access."
+      ]
+    },
+    {
+      "id": "storage-go-oac-kms-policy",
+      "statement": "Grant the exact distribution use of the KMS key separately from S3 bucket access and verify encrypted read and write cases.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-oac-sourcearn-policy"
+      ],
+      "misconceptions": [
+        "A correct S3 bucket policy is enough for CloudFront to read SSE-KMS objects."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Grant the exact distribution use of the KMS key separately from S3 bucket access and verify encrypted read and write cases."
+      ]
+    },
+    {
+      "id": "storage-go-oai-oac-migration",
+      "statement": "Migrate OAI to OAC with temporary dual authorization, deployed distribution evidence, negative tests, monitoring, and policy rollback.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-oac-kms-policy"
+      ],
+      "misconceptions": [
+        "Replacing the origin identity ID in one policy statement is a zero-risk migration."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Migrate OAI to OAC with temporary dual authorization, deployed distribution evidence, negative tests, monitoring, and policy rollback."
+      ]
+    },
+    {
+      "id": "storage-go-cache-key-identity",
+      "statement": "Include only representation-changing path, query, header, cookie, encoding, and authorization dimensions in the cache key.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-oai-oac-migration"
+      ],
+      "misconceptions": [
+        "Forwarding a value to the origin automatically places it in the cache key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Include only representation-changing path, query, header, cookie, encoding, and authorization dimensions in the cache key."
+      ]
+    },
+    {
+      "id": "storage-go-origin-request-policy",
+      "statement": "Use origin request policy for additional required viewer data without unnecessary cache fragmentation or trust escalation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cache-key-identity"
+      ],
+      "misconceptions": [
+        "Cache policy and origin request policy are two names for the same configuration."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use origin request policy for additional required viewer data without unnecessary cache fragmentation or trust escalation."
+      ]
+    },
+    {
+      "id": "storage-go-ttl-revalidation-errors",
+      "statement": "Combine origin Cache-Control, minimum, default, maximum, stale behavior, validators, and error caching with content-change and privacy requirements.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-origin-request-policy"
+      ],
+      "misconceptions": [
+        "A short default TTL guarantees private or changed content cannot be served stale."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Combine origin Cache-Control, minimum, default, maximum, stale behavior, validators, and error caching with content-change and privacy requirements."
+      ]
+    },
+    {
+      "id": "storage-go-versioned-name-invalidation",
+      "statement": "Prefer content-versioned names for routine immutable releases and reserve path or cache-tag invalidation for bounded urgent purge with completion evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-ttl-revalidation-errors"
+      ],
+      "misconceptions": [
+        "Invalidating /* is the safest and cheapest deployment strategy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Prefer content-versioned names for routine immutable releases and reserve path or cache-tag invalidation for bounded urgent purge with completion evidence."
+      ]
+    },
+    {
+      "id": "storage-go-compression-vary",
+      "statement": "Configure Brotli or gzip variants, Accept-Encoding cache behavior, already-compressed media, content length, and changed client capability evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-versioned-name-invalidation"
+      ],
+      "misconceptions": [
+        "CloudFront compression reduces every file type and never changes cache identity."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure Brotli or gzip variants, Accept-Encoding cache behavior, already-compressed media, content length, and changed client capability evidence."
+      ]
+    },
+    {
+      "id": "storage-go-cloudfront-range-behavior",
+      "statement": "Meet ascending, nonoverlapping, valid Range behavior, understand larger origin fetches, 200 fallbacks, chunked-origin limits, and cache chunking.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-compression-vary"
+      ],
+      "misconceptions": [
+        "CloudFront forwards every Range byte boundary unchanged and always returns 206."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Meet ascending, nonoverlapping, valid Range behavior, understand larger origin fetches, 200 fallbacks, chunked-origin limits, and cache chunking."
+      ]
+    },
+    {
+      "id": "storage-go-mp4-progressive-download",
+      "statement": "Prepare correct media type, length, validators, byte ranges, and fast-start MP4 metadata for progressive download and seeking.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-cloudfront-range-behavior"
+      ],
+      "misconceptions": [
+        "Serving video/mp4 with Accept-Ranges automatically makes every MP4 seek efficiently."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Prepare correct media type, length, validators, byte ranges, and fast-start MP4 metadata for progressive download and seeking."
+      ]
+    },
+    {
+      "id": "storage-go-hls-dash-object-model",
+      "statement": "Model manifests, variant playlists, segments, codecs, durations, naming, cache lifetimes, and atomic publication for adaptive delivery.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-mp4-progressive-download"
+      ],
+      "misconceptions": [
+        "HLS or DASH is one continuously growing S3 object."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Model manifests, variant playlists, segments, codecs, durations, naming, cache lifetimes, and atomic publication for adaptive delivery."
+      ]
+    },
+    {
+      "id": "storage-go-private-media-authorization",
+      "statement": "Align manifest and segment authorization, signed cookies or URLs, CORS, key delivery, expiry, seeking, and leakage boundaries.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-hls-dash-object-model"
+      ],
+      "misconceptions": [
+        "Protecting the manifest URL alone keeps its media segments private."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Align manifest and segment authorization, signed cookies or URLs, CORS, key delivery, expiry, seeking, and leakage boundaries."
+      ]
+    },
+    {
+      "id": "storage-go-media-accessibility-quality",
+      "statement": "Provide captions, transcripts, audio description where needed, player keyboard operation, status, quality fallback, and representative network tests.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "storage-go-private-media-authorization"
+      ],
+      "misconceptions": [
+        "CDN throughput is the only quality metric that matters to media users."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Provide captions, transcripts, audio description where needed, player keyboard operation, status, quality fallback, and representative network tests."
+      ]
+    },
+    {
+      "id": "storage-go-waf-rate-bot-boundary",
+      "statement": "Apply WAF, rate limits, bot controls, request size and method rules with false-positive, cost, accessibility, and bypass evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-media-accessibility-quality"
+      ],
+      "misconceptions": [
+        "A WAF managed ruleset replaces application authorization and upload validation."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Apply WAF, rate limits, bot controls, request size and method rules with false-positive, cost, accessibility, and bypass evidence."
+      ]
+    },
+    {
+      "id": "storage-go-hotlink-origin-secret",
+      "statement": "Treat Referer hotlink controls as a weak cost signal and use signed access or a controlled origin header only within its actual threat boundary.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-waf-rate-bot-boundary"
+      ],
+      "misconceptions": [
+        "Blocking unknown Referer values securely prevents content theft."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Treat Referer hotlink controls as a weak cost signal and use signed access or a controlled origin header only within its actual threat boundary."
+      ]
+    },
+    {
+      "id": "storage-go-response-header-policy",
+      "statement": "Set HSTS, MIME sniffing, frame, referrer, content security, cross-origin, and content-disposition headers appropriate to file types and embedding.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-hotlink-origin-secret"
+      ],
+      "misconceptions": [
+        "One generic security-header policy is correct for downloads, media, and embeddable assets."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set HSTS, MIME sniffing, frame, referrer, content security, cross-origin, and content-disposition headers appropriate to file types and embedding."
+      ]
+    },
+    {
+      "id": "storage-go-geo-privacy-boundary",
+      "statement": "Use geographic restrictions only with documented business, legal, accuracy, accessibility, VPN, and privacy limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-response-header-policy"
+      ],
+      "misconceptions": [
+        "CloudFront country detection proves a viewer legal residence or identity."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use geographic restrictions only with documented business, legal, accuracy, accessibility, VPN, and privacy limits."
+      ]
+    },
+    {
+      "id": "storage-go-origin-shield-error-containment",
+      "statement": "Use Origin Shield, request collapsing, failover, bounded error caching, stale delivery, and load shedding without hiding recovery or serving private content.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-geo-privacy-boundary"
+      ],
+      "misconceptions": [
+        "Long error-cache TTL always protects the origin safely during incidents."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use Origin Shield, request collapsing, failover, bounded error caching, stale delivery, and load shedding without hiding recovery or serving private content."
+      ]
+    },
+    {
+      "id": "storage-go-durability-availability-recovery",
+      "statement": "Separate object durability, request availability, regional reachability, accidental deletion, corruption, account compromise, and application recovery.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-origin-shield-error-containment"
+      ],
+      "misconceptions": [
+        "Eleven-nines durability guarantees the application can recover every file immediately."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Separate object durability, request availability, regional reachability, accidental deletion, corruption, account compromise, and application recovery."
+      ]
+    },
+    {
+      "id": "storage-go-replication-prerequisites-status",
+      "statement": "Configure versioning, destination ownership, IAM, KMS, filters, delete-marker behavior, replication status, metrics, and failure remediation.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-durability-availability-recovery"
+      ],
+      "misconceptions": [
+        "Cross-Region Replication copies all existing objects and every delete automatically."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Configure versioning, destination ownership, IAM, KMS, filters, delete-marker behavior, replication status, metrics, and failure remediation."
+      ]
+    },
+    {
+      "id": "storage-go-mrap-routing-failover",
+      "statement": "Evaluate Multi-Region Access Points, latency routing, active-active writes, consistency, replication lag, failover controls, and client endpoint support.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-replication-prerequisites-status"
+      ],
+      "misconceptions": [
+        "A multi-region endpoint creates synchronous cross-region writes with zero conflicts."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Evaluate Multi-Region Access Points, latency routing, active-active writes, consistency, replication lag, failover controls, and client endpoint support."
+      ]
+    },
+    {
+      "id": "storage-go-rpo-rto-threat-matrix",
+      "statement": "Set RPO and RTO per failure and data class and connect them to replication, backup isolation, detection, decision, restore, and validation evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-mrap-routing-failover"
+      ],
+      "misconceptions": [
+        "One RPO and RTO pair covers deletion, corruption, region loss, and account compromise equally."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Set RPO and RTO per failure and data class and connect them to replication, backup isolation, detection, decision, restore, and validation evidence."
+      ]
+    },
+    {
+      "id": "storage-go-disaster-recovery-drill",
+      "statement": "Run controlled region, credential, deletion, corruption, dependency, and restore drills with abort, stakeholder communication, integrity checks, and lessons.",
+      "knowledgeType": "professional",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-rpo-rto-threat-matrix"
+      ],
+      "misconceptions": [
+        "A replication dashboard in a healthy region proves disaster recovery."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Run controlled region, credential, deletion, corruption, dependency, and restore drills with abort, stakeholder communication, integrity checks, and lessons."
+      ]
+    },
+    {
+      "id": "storage-go-event-delivery-semantics",
+      "statement": "Consume S3 notifications through supported destinations with duplicate, ordering, filtering, recursion, schema, delay, and lost-consumer recovery limits.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-disaster-recovery-drill"
+      ],
+      "misconceptions": [
+        "S3 event notifications are exactly once and globally ordered by key."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Consume S3 notifications through supported destinations with duplicate, ordering, filtering, recursion, schema, delay, and lost-consumer recovery limits."
+      ]
+    },
+    {
+      "id": "storage-go-request-trace-audit",
+      "statement": "Correlate application operation, AWS request IDs, CloudTrail data events where justified, access logs, CloudFront logs, and stakeholder result without secrets.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-event-delivery-semantics"
+      ],
+      "misconceptions": [
+        "One distributed trace contains every authoritative AWS audit fact."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Correlate application operation, AWS request IDs, CloudTrail data events where justified, access logs, CloudFront logs, and stakeholder result without secrets."
+      ]
+    },
+    {
+      "id": "storage-go-low-cardinality-metrics",
+      "statement": "Measure admitted and completed bytes, latency, failures, cache hit, range behavior, retries, backlog, replication, restore, and spend with bounded labels.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-request-trace-audit"
+      ],
+      "misconceptions": [
+        "Object key and user ID are safe metric labels because they improve debugging."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Measure admitted and completed bytes, latency, failures, cache hit, range behavior, retries, backlog, replication, restore, and spend with bounded labels."
+      ]
+    },
+    {
+      "id": "storage-go-inventory-storage-lens",
+      "statement": "Use S3 Inventory, Storage Lens, analytics, and sampled reconciliation for object estate, encryption, replication, lifecycle, ownership, and cost evidence.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-low-cardinality-metrics"
+      ],
+      "misconceptions": [
+        "A live ListObjects scan is always cheaper and more complete than inventory reports."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use S3 Inventory, Storage Lens, analytics, and sampled reconciliation for object estate, encryption, replication, lifecycle, ownership, and cost evidence."
+      ]
+    },
+    {
+      "id": "storage-go-capacity-cost-alerts",
+      "statement": "Forecast request, byte, concurrency, part, KMS, origin, egress, log, and budget limits and connect alerts to admission, degradation, and owner actions.",
+      "knowledgeType": "strategic",
+      "level": "evaluate",
+      "prerequisiteIds": [
+        "storage-go-inventory-storage-lens"
+      ],
+      "misconceptions": [
+        "S3 scales automatically, so application capacity and cost alarms are unnecessary."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Forecast request, byte, concurrency, part, KMS, origin, egress, log, and budget limits and connect alerts to admission, degradation, and owner actions."
+      ]
+    },
+    {
+      "id": "storage-go-pure-contract-property-tests",
+      "statement": "Use table, property, and fuzz tests for key, range, policy, lifecycle, state-machine, checksum, retry, and cache invariants with changed cases.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-capacity-cost-alerts"
+      ],
+      "misconceptions": [
+        "High line coverage proves file-delivery behavior under boundary inputs."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use table, property, and fuzz tests for key, range, policy, lifecycle, state-machine, checksum, retry, and cache invariants with changed cases."
+      ]
+    },
+    {
+      "id": "storage-go-fake-emulator-boundary",
+      "statement": "Use fakes and emulators for deterministic feedback while listing unsupported AWS semantics and assigning controlled integration tests.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-pure-contract-property-tests"
+      ],
+      "misconceptions": [
+        "A local S3-compatible emulator proves IAM, KMS, OAC, CloudFront, replication, and billing behavior."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Use fakes and emulators for deterministic feedback while listing unsupported AWS semantics and assigning controlled integration tests."
+      ]
+    },
+    {
+      "id": "storage-go-go-quality-race-leak",
+      "statement": "Gate formatting, vet, static analysis, tests, fuzz seeds, race, goroutine and body leaks, benchmarks, profiles, reproducible build, and dependency review.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-fake-emulator-boundary"
+      ],
+      "misconceptions": [
+        "Passing go test once proves race freedom and resource cleanup."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Gate formatting, vet, static analysis, tests, fuzz seeds, race, goroutine and body leaks, benchmarks, profiles, reproducible build, and dependency review."
+      ]
+    },
+    {
+      "id": "storage-go-aws-fault-load-security-tests",
+      "statement": "Run least-privilege controlled AWS tests for integrity, multipart ambiguity, throttling, cancellation, cache, signatures, WAF, KMS, replication, restore, load, and cost caps.",
+      "knowledgeType": "procedural",
+      "level": "apply",
+      "prerequisiteIds": [
+        "storage-go-go-quality-race-leak"
+      ],
+      "misconceptions": [
+        "A production smoke upload is sufficient integration and resilience evidence."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Run least-privilege controlled AWS tests for integrity, multipart ambiguity, throttling, cancellation, cache, signatures, WAF, KMS, replication, restore, load, and cost caps."
+      ]
+    },
+    {
+      "id": "storage-go-compatible-release-defense",
+      "statement": "Canary immutable artifacts and infrastructure, compare changed behavior and cost, preserve rollback data and policies, rehearse recovery, and defend residual risk.",
+      "knowledgeType": "professional",
+      "level": "create",
+      "prerequisiteIds": [
+        "storage-go-aws-fault-load-security-tests"
+      ],
+      "misconceptions": [
+        "Rolling back Go code automatically restores overwritten objects, expired URLs, cache state, IAM, KMS, and lifecycle policy."
+      ],
+      "masteryEvidence": [
+        "A changed authentic task independently demonstrates this outcome: Canary immutable artifacts and infrastructure, compare changed behavior and cost, preserve rollback data and policies, rehearse recovery, and defend residual risk."
+      ]
+    }
+  ],
+  "moduleIds": [
+    "storage-go-outcomes-evidence",
+    "storage-go-architecture-selection",
+    "storage-go-http-representation-transfer",
+    "storage-go-s3-object-model",
+    "storage-go-buckets-endpoints-regions",
+    "storage-go-sdk-v2-contract",
+    "storage-go-client-resilience",
+    "storage-go-upload-admission",
+    "storage-go-putobject-integrity",
+    "storage-go-transfermanager",
+    "storage-go-multipart-upload",
+    "storage-go-direct-browser-upload",
+    "storage-go-download-operations",
+    "storage-go-http-gateway",
+    "storage-go-metadata-transactions",
+    "storage-go-object-mutations",
+    "storage-go-versioning-recovery",
+    "storage-go-lifecycle-storage-classes",
+    "storage-go-iam-bucket-security",
+    "storage-go-encryption-key-management",
+    "storage-go-signed-access",
+    "storage-go-cloudfront-oac-origin",
+    "storage-go-cloudfront-cache",
+    "storage-go-media-range-streaming",
+    "storage-go-edge-security",
+    "storage-go-durability-disaster-recovery",
+    "storage-go-events-observability-cost",
+    "storage-go-testing-release-defense"
+  ],
+  "estimatedHours": 406.2,
+  "credential": {
+    "title": "Production File Delivery with Amazon S3 and CloudFront in Go 1.26 Certificate",
+    "requiredProjectIds": [
+      "storage-go-accessible-evidence-portal-project-build",
+      "storage-go-tenant-file-api-project-build",
+      "storage-go-regulated-records-vault-project-build",
+      "storage-go-private-media-platform-project-build",
+      "storage-go-multiregion-production-defense-project-build"
+    ],
+    "finalExamId": "file-servers-s3-go-certification-exam",
+    "passingPercent": 85
+  },
+  "status": "preview"
+}

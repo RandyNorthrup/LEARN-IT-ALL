@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-testing-benchmarking-guided-workshop",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-testing-benchmarking",
+  "kind": "workshop",
+  "title": "Invariant Testing, Fuzzing, and Reproducible Benchmarks · Proof Workshop",
+  "summary": "Audit custom structures whose happy paths pass but long random operation sequences corrupt state. Planned artifact: Build a complete first version of a model-based test and benchmark harness while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Write executable representation invariants that fail near the corrupting operation.",
+    "Compare custom operations against a simpler trusted reference model.",
+    "Generate reproducible operation sequences and retain seeds for failures.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "dsa-invariant-checkers",
+      "dsa-model-based-tests",
+      "dsa-random-sequences",
+      "dsa-benchmark-design",
+      "dsa-optimization-proof"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "dsa-testing-benchmarking-dsa-optimization-proof-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "workshop case — Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for write executable representation invariants that fail near the corrupting operation.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Invariant Checkers condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "hints": [
+        "Name the Invariant Checkers precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Invariant checks belong only in final tests."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Invariant Checkers."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Invariant Checkers preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Invariant checks belong only in final tests."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Invariant Checkers · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich action demonstrates Invariant Checkers without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for write executable representation invariants that fail near the corrupting operation.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Invariant Checkers condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "hints": [
+        "Name the Invariant Checkers precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Invariant checks belong only in final tests."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Write executable representation invariants that fail near the corrupting operation. Apply it to the stated input and retain a reproducible trace for a model-based test and benchmark harness."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Invariant checks belong only in final tests."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Invariant Checkers."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Model Based Tests · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Solve a bounded workshop instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich action demonstrates Model Based Tests without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for compare custom operations against a simpler trusted reference model.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Model Based Tests result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-model-based-tests"
+      ],
+      "hints": [
+        "Name the Model Based Tests precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Using a library oracle makes the custom implementation pointless."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Model Based Tests case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Using a library oracle makes the custom implementation pointless.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare custom operations against a simpler trusted reference model.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Using a library oracle makes the custom implementation pointless."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Model Based Tests."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Compare custom operations against a simpler trusted reference model. Apply it to the stated input and retain a reproducible trace for a model-based test and benchmark harness."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Random Sequences · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich action demonstrates Random Sequences without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for generate reproducible operation sequences and retain seeds for failures.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Random Sequences condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-random-sequences"
+      ],
+      "hints": [
+        "Name the Random Sequences precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Randomized tests cannot be debugged."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Random Sequences."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Generate reproducible operation sequences and retain seeds for failures. Apply it to the stated input and retain a reproducible trace for a model-based test and benchmark harness."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Randomized tests cannot be debugged."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Benchmark Design · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Solve a bounded workshop instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich action demonstrates Benchmark Design without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for control setup, warmup, repetition, input distribution, and measured operation.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Benchmark Design result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-benchmark-design"
+      ],
+      "hints": [
+        "Name the Benchmark Design precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Timing an entire script isolates algorithm cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Benchmark Design case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Timing an entire script isolates algorithm cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Control setup, warmup, repetition, input distribution, and measured operation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Control setup, warmup, repetition, input distribution, and measured operation. Apply it to the stated input and retain a reproducible trace for a model-based test and benchmark harness."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Timing an entire script isolates algorithm cost."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Benchmark Design."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Optimization Proof · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich action demonstrates Optimization Proof without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Optimization Proof condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Lower Big O guarantees faster production behavior."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Optimization Proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Require correctness equivalence and measured stakeholder benefit before keeping an optimization. Apply it to the stated input and retain a reproducible trace for a model-based test and benchmark harness."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet",
+      "interaction": "inspect",
+      "instruction": "workshop case — Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nInspect the Optimization Proof trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Optimization Proof, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Optimization Proof case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Solve a bounded workshop instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Lower Big O guarantees faster production behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Require correctness equivalence and measured stakeholder benefit before keeping an optimization. Artifact under review: a model-based test and benchmark harness.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Optimization Proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Optimization Proof, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_optimization_proof_krqlr7 function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Optimization Proof into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_optimization_proof_krqlr7(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Optimization Proof symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Optimization Proof failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Lower Big O guarantees faster production behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Optimization Proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Optimization Proof condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Optimization Proof: explain the governing condition, one failure, and how this concrete case was verified — Solve a bounded workshop instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Require correctness equivalence and measured stakeholder benefit before keeping an optimization."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded workshop instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Invariant Checkers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Invariant Checkers.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Invariant Checkers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Invariant Checkers.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Model Based Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Model Based Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-model-based-tests"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Random Sequences to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Random Sequences.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-random-sequences"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Benchmark Design to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Benchmark Design.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-benchmark-design"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Proof to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Proof.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Proof to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Proof.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_optimization_proof_krqlr7.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_optimization_proof_krqlr7"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_optimization_proof_krqlr7\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Proof to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Proof.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using require and correctness plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "require",
+        "correctness"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

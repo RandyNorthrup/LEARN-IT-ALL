@@ -1,0 +1,539 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa2-disjoint-sets-dsa2-path-compression-concept",
+  "courseId": "python-dsa-2",
+  "moduleId": "dsa2-disjoint-sets",
+  "kind": "theory",
+  "title": "Disjoint Sets, Connectivity, and Offline Grouping · Cost-Model Clinic: Path Compression",
+  "summary": "Track changing network connectivity across merges without scanning every member. Planned artifact: Add and verify the dsa2 path compression increment in a union-find service with measured compression. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Trace path compression and explain its interaction with later finds.",
+    "Apply union by rank or size without corrupting representative metadata.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "dsa2-path-compression"
+    ],
+    "reinforces": [
+      "dsa2-union-rank"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "dsa2-disjoint-sets-dsa2-union-rank-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "python-dsa-2-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa-2 algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Path Compression",
+      "interaction": "predict",
+      "instruction": "theory case — Connect four sites with weighted edges AB:3, AC:5, BC:4, BD:7, CD:3. Trace representatives or safe edges and state what resilience the result does not guarantee.\n\nBefore reading, predict which action preserves the Path Compression contract for the supplied data.",
+      "why": "The decision supplies observable evidence for trace path compression and explain its interaction with later finds.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Connect four sites with weighted edges AB:3, AC:5, BC:4, BD:7, CD:3. Trace representatives or safe edges and state what resilience the result does not guarantee."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Path Compression condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:3, AC:5, BC:4, BD:7, CD:3. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Compression."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Trace path compression and explain its interaction with later finds. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "Path compression makes every operation strict constant time."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Path Compression",
+      "interaction": "read",
+      "instruction": "theory case — Connect four sites with weighted edges AB:4, AC:6, BC:5, BD:8, CD:4. Trace representatives or safe edges and state what resilience the result does not guarantee.\n\nAfter tracing the worked code, choose the Path Compression application whose preconditions and limits still match the supplied case.",
+      "why": "The decision supplies observable evidence for trace path compression and explain its interaction with later finds.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Trace path compression and explain its interaction with later finds. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Define input size and invariant, trace a minimal instance, count the governing operation, then seek an adversarial counterexample before optimizing."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Connect four sites with weighted edges AB:3, AC:5, BC:4, BD:7, CD:3. Trace representatives or safe edges and state what resilience the result does not guarantee. A defensible solution applies Path Compression, preserves the governing invariant or value contract, and connects the observed result to a union-find service with measured compression."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def traced_baseline(values: list[int]) -> dict[str, object]:\n    comparisons = 0\n    best = None\n    for value in values:\n        comparisons += 1\n        if best is None or value < best: best = value\n    assert comparisons == len(values)\n    return {\"result\": best, \"comparisons\": comparisons}",
+          "caption": "Runnable trace or invariant example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Path compression makes every operation strict constant time. This fails the Path Compression contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "NIST Dictionary of Algorithms and Data Structures (NIST DADS reviewed 2026) — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Trace path compression and explain its interaction with later finds."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:4, AC:6, BC:5, BD:8, CD:4. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-sound",
+          "text": "Use Path Compression after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "Path compression makes every operation strict constant time."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Compression."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Path Compression evidence",
+      "interaction": "arrange",
+      "instruction": "Order the Path Compression correctness-and-cost proof for this theory task before implementing it.",
+      "why": "Correct order keeps Path Compression assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Connect four sites with weighted edges AB:5, AC:7, BC:6, BD:9, CD:5. Trace representatives or safe edges and state what resilience the result does not guarantee."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Path Compression has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:5, AC:7, BC:6, BD:9, CD:5. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Define input, output, preconditions, size, and the operation being counted"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Choose a correct baseline and state its loop or representation invariant"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Trace the candidate on a minimal instance and derive time and space cost"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Attack it with boundary and adversarial cases, then justify any optimization"
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Path Compression evidence",
+      "interaction": "inspect",
+      "instruction": "theory case — Connect four sites with weighted edges AB:6, AC:8, BC:7, BD:10, CD:6. Trace representatives or safe edges and state what resilience the result does not guarantee.\n\nInspect the Path Compression trace for this theory case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for trace path compression and explain its interaction with later finds.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Path Compression, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:6, AC:8, BC:7, BD:10, CD:6. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Path Compression case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "Connect four sites with weighted edges AB:6, AC:8, BC:7, BD:10, CD:6. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "Path compression makes every operation strict constant time.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace path compression and explain its interaction with later finds. Artifact under review: a union-find service with measured compression.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Compression."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Path Compression, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Path Compression defect",
+      "interaction": "debug",
+      "instruction": "theory case — Connect four sites with weighted edges AB:2, AC:4, BC:3, BD:6, CD:2. Trace representatives or safe edges and state what resilience the result does not guarantee.\n\nA teammate acts on this belief: “Path compression makes every operation strict constant time.” Which repair addresses the cause?",
+      "why": "The decision supplies observable evidence for trace path compression and explain its interaction with later finds.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Connect four sites with weighted edges AB:2, AC:4, BC:3, BD:6, CD:2. Trace representatives or safe edges and state what resilience the result does not guarantee."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Path Compression symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "NIST Dictionary of Algorithms and Data Structures — Canonical algorithm, complexity, abstract data type, graph, tree, sorting, and search terminology."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:2, AC:4, BC:3, BD:6, CD:2. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Path Compression failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "Path compression makes every operation strict constant time.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace path compression and explain its interaction with later finds.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Path Compression, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Compression."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Path Compression evidence",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa2_path_compression_xoru35 function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Path Compression into observable performance evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa2_path_compression_xoru35(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:3, AC:5, BC:4, BD:7, CD:3. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Path Compression model",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Path Compression: explain the governing condition, one failure, and how this concrete case was verified — Connect four sites with weighted edges AB:4, AC:6, BC:5, BD:8, CD:4. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Trace path compression and explain its interaction with later finds."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "hints": [
+        "Name the Path Compression precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: Connect four sites with weighted edges AB:4, AC:6, BC:5, BD:8, CD:4. Trace representatives or safe edges and state what resilience the result does not guarantee.",
+        "Use the documented misconception as a counterexample target: Path compression makes every operation strict constant time."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Compression to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Compression.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Compression to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Compression.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Compression to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Compression.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Compression to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Compression.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa2_path_compression_xoru35.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa2_path_compression_xoru35"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa2_path_compression_xoru35\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using trace and path plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-compression"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "trace",
+        "path"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

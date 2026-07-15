@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "http-server-go-resource-apis-consistency-debugging-clinic",
+  "courseId": "http-servers-go",
+  "moduleId": "http-server-go-resource-apis-consistency",
+  "kind": "debug",
+  "title": "Resource APIs, Pagination, Idempotency, and Concurrency Control · Goroutine Forensics",
+  "summary": "An incident responder inherits a plausible but defective stable resource and mutation consistency contract; retain the failing request and response, isolate the first causal server boundary, and keep a regression probe. Planned artifact: Repair a changed failure in stable resource and mutation consistency contract and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence def…",
+  "objectives": [
+    "Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.",
+    "Build opaque cursor pagination from a unique stable order, bound page size, preserve filters and authorization, and test inserts and deletes between pages.",
+    "Scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpsgo-resource-schema-boundary",
+      "httpsgo-cursor-pagination-order",
+      "httpsgo-idempotency-key-replay",
+      "httpsgo-optimistic-concurrency-version",
+      "httpsgo-partial-update-field-authority"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-server-go-resource-apis-consistency-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "http-servers-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-servers-go cumulative secure server decision portfolio.\n// Browser execution uses deterministic pure-Go request, handler, dependency, response, and cleanup models only.\n// Listeners, TLS, net/http, databases, proxies, races, load, credentials, host state, and production changes require explicit authorized Go 1.26 transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype RequestEvidence struct { Method, Path, Authority string; BodyBytes int }\ntype ResponseEvidence struct { Status int; Effect, Cleanup string; Accepted bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP server decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Go server Inspect the failure record · Debug Resource Schema Boundary",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug team handles case 2834 in a canary service revision draining long-lived streams. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.\n\nInspect the Resource Schema Boundary trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Go server Inspect the failure record · Debug Resource Schema Boundary.",
+      "why": "The decision supplies observable evidence for define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately. For Go server Inspect the failure record · Debug Resource Schema Boundary, keep Resource Schema Boundary connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Resource Schema Boundary, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "httpsgo-resource-schema-boundary"
+      ],
+      "hints": [
+        "For Go server Inspect the failure record · Debug Resource Schema Boundary, name the method, authority, body, byte, time, and credential boundary, Resource Schema Boundary precondition, or invariant that must hold.",
+        "At Go server Inspect the failure record · Debug Resource Schema Boundary, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2834 in a canary service revision draining long-lived streams. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.",
+        "For Go server Inspect the failure record · Debug Resource Schema Boundary, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Reusing database structs as JSON responses keeps the API and storage safely synchronized."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Resource Schema Boundary case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug team handles case 2834 in a canary service revision draining long-lived streams. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Reusing database structs as JSON responses keeps the API and storage safely synchronized.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately. Artifact under review: stable resource and mutation consistency contract.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Resource Schema Boundary happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Resource Schema Boundary, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Go server Implement the cause-level repair · Debug Partial Update Field Authority",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpsgo-partial-update-field-authority-xkjp6l\" that uses case 9229 to separate optimistic version conflicts from valid idempotency replay. Return observable changed-case evidence. The browser must not open listeners, contact networks or databases, read host state, or use credentials; verify those boundaries later with the named Go 1.26 transfer gates.\n\nEvidence target: Go server Implement the cause-level repair · Debug Partial Update Field Authority.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Partial Update Field Authority into observable performance evidence. For Go server Implement the cause-level repair · Debug Partial Update Field Authority, keep Partial Update Field Authority connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpsgo-partial-update-field-authority-xkjp6l\n// Competency: httpsgo-partial-update-field-authority.\n// Case 9229: recovery rehearsal with an ambiguous database commit.\n// Changed case: remove one trusted intermediary and recompute authority without forwarded fields.\nfunc evidence_httpsgo_partial_update_field_authority_xkjp6l(expectedVersion int, actualVersion int, idempotencyMatch bool) (int, string, bool) {\n\tstatus, decision := 409, \"version-conflict\"\n\treplay := false\n\tif expectedVersion == actualVersion { status, decision = 200, \"updated\" }\n\tif idempotencyMatch { status, decision, replay = 200, \"replayed\", true }\n\tif expectedVersion < 0 { status, decision = 400, \"invalid-version\" }\n\treturn status, decision, replay\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "hints": [
+        "For Go server Implement the cause-level repair · Debug Partial Update Field Authority, name the method, authority, body, byte, time, and credential boundary, Partial Update Field Authority precondition, or invariant that must hold.",
+        "At Go server Implement the cause-level repair · Debug Partial Update Field Authority, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2835 in a partner API with an outdated generated client. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.",
+        "For Go server Implement the cause-level repair · Debug Partial Update Field Authority, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "fault-1",
+      "title": "Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary",
+      "interaction": "debug",
+      "instruction": "debug case — A debug team handles case 2836 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.\n\nWhich observation would disprove this suspected cause: “Reusing database structs as JSON responses keeps the API and storage safely synchronized.”?\n\nEvidence target: Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary.",
+      "why": "The decision supplies observable evidence for define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately. For Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary, keep Resource Schema Boundary connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2836 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Resource Schema Boundary symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "httpsgo-resource-schema-boundary"
+      ],
+      "hints": [
+        "For Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary, name the method, authority, body, byte, time, and credential boundary, Resource Schema Boundary precondition, or invariant that must hold.",
+        "At Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2836 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.",
+        "For Go server Resource Schema Boundary · fault isolation · Debug Resource Schema Boundary, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Reusing database structs as JSON responses keeps the API and storage safely synchronized."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Resource Schema Boundary failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Reusing database structs as JSON responses keeps the API and storage safely synchronized.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Define stable transport schemas, domain models, persistence records, optional and null semantics, field ownership, and evolution boundaries separately.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Resource Schema Boundary."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the resource schema boundary · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For resource schema boundary · fault isolation, run one convenient Resource Schema Boundary happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order",
+      "interaction": "predict",
+      "instruction": "debug case — A debug team handles case 2837 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Build opaque cursor pagination from a unique stable order, bound page size, preserve filters and authorization, and test inserts and deletes between pages.\n\nWhich observation would disprove this suspected cause: “OFFSET pagination cannot skip or duplicate results when rows are inserted concurrently.”?\n\nEvidence target: Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order.",
+      "why": "The decision supplies observable evidence for build opaque cursor pagination from a unique stable order, bound page size, preserve filters and authorization, and test inserts and deletes between pages. For Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order, keep Cursor Pagination Order connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2837 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Build opaque cursor pagination from a unique stable order, bound page size, preserve filters and authorization, and test inserts and deletes between pages."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cursor Pagination Order condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "httpsgo-cursor-pagination-order"
+      ],
+      "hints": [
+        "For Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order, name the method, authority, body, byte, time, and credential boundary, Cursor Pagination Order precondition, or invariant that must hold.",
+        "At Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2837 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Build opaque cursor pagination from a unique stable order, bound page size, preserve filters and authorization, and test inserts and deletes between pages.",
+        "For Go server Cursor Pagination Order · fault isolation · Debug Cursor Pagination Order, challenge the documented misconception with request, response, fault, policy, and transfer evidence: OFFSET pagination cannot skip or duplicate results when rows are inserted concurrently."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the cursor pagination order · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For cursor pagination order · fault isolation, run one convenient Cursor Pagination Order happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Cursor Pagination Order."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay",
+      "interaction": "debug",
+      "instruction": "debug case — A debug team handles case 2838 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay.\n\nWhich observation would disprove this suspected cause: “An Idempotency-Key header alone makes any handler idempotent without storage.”?\n\nEvidence target: Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay.",
+      "why": "The decision supplies observable evidence for scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay. For Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay, keep Idempotency Key Replay connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2838 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Idempotency Key Replay symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "httpsgo-idempotency-key-replay"
+      ],
+      "hints": [
+        "For Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay, name the method, authority, body, byte, time, and credential boundary, Idempotency Key Replay precondition, or invariant that must hold.",
+        "At Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2838 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then replay the same operation key with different content and reject the mismatch. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay.",
+        "For Go server Idempotency Key Replay · fault isolation · Debug Idempotency Key Replay, challenge the documented misconception with request, response, fault, policy, and transfer evidence: An Idempotency-Key header alone makes any handler idempotent without storage."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Idempotency Key Replay failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "An Idempotency-Key header alone makes any handler idempotent without storage.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Scope and validate idempotency keys, bind request fingerprints, serialize first execution, persist terminal outcome, expire records, and reject mismatched replay.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For idempotency key replay · fault isolation, run one convenient Idempotency Key Replay happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Idempotency Key Replay."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the idempotency key replay · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version",
+      "interaction": "predict",
+      "instruction": "debug case — A debug team handles case 2839 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Use version fields or validators with conditional updates, distinguish absence from conflict, and return current-state recovery information safely.\n\nWhich observation would disprove this suspected cause: “Last-write-wins is optimistic concurrency control because every update eventually succeeds.”?\n\nEvidence target: Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version.",
+      "why": "The decision supplies observable evidence for use version fields or validators with conditional updates, distinguish absence from conflict, and return current-state recovery information safely. For Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version, keep Optimistic Concurrency Version connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2839 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Use version fields or validators with conditional updates, distinguish absence from conflict, and return current-state recovery information safely."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Optimistic Concurrency Version condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "httpsgo-optimistic-concurrency-version"
+      ],
+      "hints": [
+        "For Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version, name the method, authority, body, byte, time, and credential boundary, Optimistic Concurrency Version precondition, or invariant that must hold.",
+        "At Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2839 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Use version fields or validators with conditional updates, distinguish absence from conflict, and return current-state recovery information safely.",
+        "For Go server Optimistic Concurrency Version · fault isolation · Debug Optimistic Concurrency Version, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Last-write-wins is optimistic concurrency control because every update eventually succeeds."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Optimistic Concurrency Version."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the optimistic concurrency version · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For optimistic concurrency version · fault isolation, run one convenient Optimistic Concurrency Version happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority",
+      "interaction": "debug",
+      "instruction": "debug case — A debug team handles case 2840 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.\n\nWhich observation would disprove this suspected cause: “Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values.”?\n\nEvidence target: Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority.",
+      "why": "The decision supplies observable evidence for model patch semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence. For Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority, keep Partial Update Field Authority connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2840 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Partial Update Field Authority symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls resources, methods, status codes, fields, conditional requests, content negotiation, authentication semantics, intermediaries, and caching relationships."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "hints": [
+        "For Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority, name the method, authority, body, byte, time, and credential boundary, Partial Update Field Authority precondition, or invariant that must hold.",
+        "At Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2840 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.",
+        "For Go server Partial Update Field Authority · fault isolation · Debug Partial Update Field Authority, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Partial Update Field Authority failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the partial update field authority · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For partial update field authority · fault isolation, run one convenient Partial Update Field Authority happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Partial Update Field Authority."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Go server Order the regression proof · Debug Partial Update Field Authority",
+      "interaction": "arrange",
+      "instruction": "Order the Partial Update Field Authority Go server HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: Go server Order the regression proof · Debug Partial Update Field Authority.",
+      "why": "Correct order keeps Partial Update Field Authority assumptions visible before execution and verifies its result against a boundary case afterward. For Go server Order the regression proof · Debug Partial Update Field Authority, keep Partial Update Field Authority connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug team handles case 2841 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Partial Update Field Authority has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "hints": [
+        "For Go server Order the regression proof · Debug Partial Update Field Authority, name the method, authority, body, byte, time, and credential boundary, Partial Update Field Authority precondition, or invariant that must hold.",
+        "At Go server Order the regression proof · Debug Partial Update Field Authority, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2841 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.",
+        "For Go server Order the regression proof · Debug Partial Update Field Authority, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Go server method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Partial Update Field Authority case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Go server resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Partial Update Field Authority case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Go server request or response model and retain inspectable evidence for the debug Partial Update Field Authority case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed Go server failure, verify bounded cleanup, and state live-network transfer limits for the debug Partial Update Field Authority case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Go server Publish the incident record · Debug Partial Update Field Authority",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Partial Update Field Authority: explain the governing condition, one failure, and how this concrete case was verified — A debug team handles case 2842 in a public status API serving assistive and low-bandwidth clients. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.\n\nEvidence target: Go server Publish the incident record · Debug Partial Update Field Authority.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Go server Publish the incident record · Debug Partial Update Field Authority, keep Partial Update Field Authority connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "hints": [
+        "For Go server Publish the incident record · Debug Partial Update Field Authority, name the method, authority, body, byte, time, and credential boundary, Partial Update Field Authority precondition, or invariant that must hold.",
+        "At Go server Publish the incident record · Debug Partial Update Field Authority, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A debug team handles case 2842 in a public status API serving assistive and low-bandwidth clients. Build deterministic Go evidence to separate optimistic version conflicts from valid idempotency replay; then return a five-hundred response and retain a low-cardinality causal trace. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Model PATCH semantics, missing versus explicit zero or null, immutable and server-owned fields, property authorization, atomic validation, and response evidence.",
+        "For Go server Publish the incident record · Debug Partial Update Field Authority, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Decoding PATCH into the full resource struct reliably distinguishes omitted fields from zero values."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resource Schema Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resource Schema Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-resource-schema-boundary"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpsgo-partial-update-field-authority-xkjp6l.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpsgo-partial-update-field-authority-xkjp6l"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpsgo-partial-update-field-authority-xkjp6l(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpsgo_partial_update_field_authority_xkjp6l\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?expectedVersion\\s*==\\s*actualVersion)(?=(?:(?!// Evidence:)[\\s\\S])*?idempotencyMatch)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ]
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resource Schema Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resource Schema Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-resource-schema-boundary"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cursor Pagination Order to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cursor Pagination Order.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-cursor-pagination-order"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Idempotency Key Replay to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Idempotency Key Replay.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-idempotency-key-replay"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimistic Concurrency Version to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimistic Concurrency Version.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-optimistic-concurrency-version"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Partial Update Field Authority to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Partial Update Field Authority.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using model and patch plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-partial-update-field-authority"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "model",
+        "patch"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

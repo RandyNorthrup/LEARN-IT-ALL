@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-arenas-pools-slabs-debugging-clinic",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-arenas-pools-slabs",
+  "kind": "debug",
+  "title": "Arenas, Pools, Slabs, and Fragmentation · Undefined-Behavior Triage",
+  "summary": "An incident responder inherits a corrupted instrumented arena and object pool, the earliest failing input, and two plausible hypotheses; they must preserve first-failure evidence, repair the cause, and add a regression. Planned artifact: Repair a changed failure in instrumented arena and object pool and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.",
+    "Bind every arena allocation to a phase or owner whose reset cannot race with surviving borrows.",
+    "Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-arena-bump-invariant",
+      "cmem-arena-lifetime-domain",
+      "cmem-pool-free-list-integrity",
+      "cmem-slab-size-class",
+      "cmem-fragmentation-measurement"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-arenas-pools-slabs-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Arena Bump Invariant",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug native-systems team handles memory case 9249. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.\n\nInspect the Arena Bump Invariant trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Arena Bump Invariant.",
+      "why": "The decision supplies observable evidence for implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence. For Inspect the failure record · Debug Arena Bump Invariant, keep Arena Bump Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Arena Bump Invariant, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "cmem-arena-bump-invariant"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Arena Bump Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Arena Bump Invariant precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Arena Bump Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9249. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.",
+        "For Inspect the failure record · Debug Arena Bump Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A bump allocator cannot overflow because it only adds small objects."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Arena Bump Invariant case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug native-systems team handles memory case 9249. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A bump allocator cannot overflow because it only adds small objects.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence. Artifact under review: instrumented arena and object pool.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Arena Bump Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Arena Bump Invariant, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 5820. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.\n\nWhich observation would disprove this suspected cause: “A bump allocator cannot overflow because it only adds small objects.”?\n\nEvidence target: Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant.",
+      "why": "The decision supplies observable evidence for implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence. For Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant, keep Arena Bump Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 5820. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Arena Bump Invariant symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "cmem-arena-bump-invariant"
+      ],
+      "hints": [
+        "For Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Arena Bump Invariant precondition, or invariant that must hold.",
+        "At Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 5820. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.",
+        "For Arena Bump Invariant · fault isolation · Debug Arena Bump Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A bump allocator cannot overflow because it only adds small objects."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Arena Bump Invariant failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A bump allocator cannot overflow because it only adds small objects.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Implement checked alignment and bump arithmetic with capacity, high-water, reset, and out-of-memory evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Arena Bump Invariant."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the arena bump invariant · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For arena bump invariant · fault isolation, run one convenient Arena Bump Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 7439. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bind every arena allocation to a phase or owner whose reset cannot race with surviving borrows.\n\nWhich observation would disprove this suspected cause: “Arena reset is equivalent to individually running every object destructor.”?\n\nEvidence target: Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain.",
+      "why": "The decision supplies observable evidence for bind every arena allocation to a phase or owner whose reset cannot race with surviving borrows. For Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain, keep Arena Lifetime Domain connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 7439. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bind every arena allocation to a phase or owner whose reset cannot race with surviving borrows."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Arena Lifetime Domain condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "cmem-arena-lifetime-domain"
+      ],
+      "hints": [
+        "For Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Arena Lifetime Domain precondition, or invariant that must hold.",
+        "At Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7439. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Bind every arena allocation to a phase or owner whose reset cannot race with surviving borrows.",
+        "For Arena Lifetime Domain · fault isolation · Debug Arena Lifetime Domain, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Arena reset is equivalent to individually running every object destructor."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the arena lifetime domain · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For arena lifetime domain · fault isolation, run one convenient Arena Lifetime Domain case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Arena Lifetime Domain."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 9058. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.\n\nWhich observation would disprove this suspected cause: “A singly linked free list needs no corruption checks because nodes are fixed size.”?\n\nEvidence target: Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity.",
+      "why": "The decision supplies observable evidence for maintain free-list membership, generation, duplicate-release, and exhaustion invariants. For Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity, keep Pool Free List Integrity connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9058. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Pool Free List Integrity symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "hints": [
+        "For Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Pool Free List Integrity precondition, or invariant that must hold.",
+        "At Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9058. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+        "For Pool Free List Integrity · fault isolation · Debug Pool Free List Integrity, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A singly linked free list needs no corruption checks because nodes are fixed size."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Pool Free List Integrity failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "A singly linked free list needs no corruption checks because nodes are fixed size.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain free-list membership, generation, duplicate-release, and exhaustion invariants.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For pool free list integrity · fault isolation, run one convenient Pool Free List Integrity case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Pool Free List Integrity."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the pool free list integrity · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Slab Size Class · fault isolation · Debug Slab Size Class",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 2443. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose size classes, alignment, page ownership, and internal-fragmentation metrics from workload evidence.\n\nWhich observation would disprove this suspected cause: “One size class minimizes both waste and allocator overhead.”?\n\nEvidence target: Slab Size Class · fault isolation · Debug Slab Size Class.",
+      "why": "The decision supplies observable evidence for choose size classes, alignment, page ownership, and internal-fragmentation metrics from workload evidence. For Slab Size Class · fault isolation · Debug Slab Size Class, keep Slab Size Class connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 2443. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose size classes, alignment, page ownership, and internal-fragmentation metrics from workload evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Slab Size Class condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "cmem-slab-size-class"
+      ],
+      "hints": [
+        "For Slab Size Class · fault isolation · Debug Slab Size Class, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Slab Size Class precondition, or invariant that must hold.",
+        "At Slab Size Class · fault isolation · Debug Slab Size Class, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 2443. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose size classes, alignment, page ownership, and internal-fragmentation metrics from workload evidence.",
+        "For Slab Size Class · fault isolation · Debug Slab Size Class, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: One size class minimizes both waste and allocator overhead."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Slab Size Class."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the slab size class · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For slab size class · fault isolation, run one convenient Slab Size Class case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 9824. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.\n\nWhich observation would disprove this suspected cause: “RSS alone identifies allocator fragmentation.”?\n\nEvidence target: Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement.",
+      "why": "The decision supplies observable evidence for measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign. For Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement, keep Fragmentation Measurement connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9824. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Fragmentation Measurement symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "mimalloc Documentation — Allocator design, statistics, secure modes, performance claims, and workload measurement."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "hints": [
+        "For Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Fragmentation Measurement precondition, or invariant that must hold.",
+        "At Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9824. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.",
+        "For Fragmentation Measurement · fault isolation · Debug Fragmentation Measurement, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: RSS alone identifies allocator fragmentation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Fragmentation Measurement failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "RSS alone identifies allocator fragmentation.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the fragmentation measurement · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For fragmentation measurement · fault isolation, run one convenient Fragmentation Measurement case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Fragmentation Measurement."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Fragmentation Measurement",
+      "interaction": "code",
+      "instruction": "For this debug demonstration of cmem-fragmentation-measurement, write the complete compile-ready C program headed \"/* Evidence: cmem-fragmentation-measurement-g28t91 */\" for changed case 6462. It must maintain checked arena offset and high-water invariants, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Implement the cause-level repair · Debug Fragmentation Measurement.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Fragmentation Measurement into observable performance evidence. For Implement the cause-level repair · Debug Fragmentation Measurement, keep Fragmentation Measurement connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-fragmentation-measurement-g28t91 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 6462; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct arena_model { size_t used; size_t capacity; size_t high_water; };\n\nstatic int evidence_cmem_fragmentation_measurement_g28t91(struct arena_model *arena, size_t bytes, size_t alignment, size_t *offset) {\n  size_t padding;\n  if (arena == NULL || offset == NULL || alignment == 0) return 0;\n  padding = (alignment - (arena->used % alignment)) % alignment;\n  if (padding > arena->capacity - arena->used) return 0;\n  if (bytes > arena->capacity - arena->used - padding) return 0;\n  *offset = arena->used + padding;\n  arena->used = *offset + bytes;\n  if (arena->used > arena->high_water) arena->high_water = arena->used;\n  return 1;\n}\n\nint main(void) {\n  struct arena_model arena = { 3, 32, 3 };\n  size_t offset = 0;\n  int accepted = evidence_cmem_fragmentation_measurement_g28t91(&arena, 4, 4, &offset);\n  int rejected = evidence_cmem_fragmentation_measurement_g28t91(&arena, 40, 8, &offset);\n  int invariant = accepted && !rejected && arena.high_water <= arena.capacity;\n  printf(\"arena used=%lu invariant=%d\\n\", (unsigned long)arena.used, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Fragmentation Measurement, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Fragmentation Measurement precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Fragmentation Measurement, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 5681. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.",
+        "For Implement the cause-level repair · Debug Fragmentation Measurement, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: RSS alone identifies allocator fragmentation."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Fragmentation Measurement",
+      "interaction": "arrange",
+      "instruction": "Order the Fragmentation Measurement evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Fragmentation Measurement.",
+      "why": "Correct order keeps Fragmentation Measurement assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Fragmentation Measurement, keep Fragmentation Measurement connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 4062. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Fragmentation Measurement has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Fragmentation Measurement, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Fragmentation Measurement precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Fragmentation Measurement, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 4062. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.",
+        "For Order the regression proof · Debug Fragmentation Measurement, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: RSS alone identifies allocator fragmentation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the debug Fragmentation Measurement case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose and document the smallest defensible model or procedure for the debug Fragmentation Measurement case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the debug Fragmentation Measurement case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the debug Fragmentation Measurement case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Fragmentation Measurement",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Fragmentation Measurement: explain the governing condition, one failure, and how this concrete case was verified — A debug native-systems team handles memory case 8919. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.\n\nEvidence target: Publish the incident record · Debug Fragmentation Measurement.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Fragmentation Measurement, keep Fragmentation Measurement connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Fragmentation Measurement, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Fragmentation Measurement precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Fragmentation Measurement, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8919. Produce bounded C evidence to maintain checked arena offset and high-water invariants; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Measure internal and external fragmentation, peak live bytes, reserved bytes, churn, and locality before redesign.",
+        "For Publish the incident record · Debug Fragmentation Measurement, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: RSS alone identifies allocator fragmentation."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Arena Bump Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Arena Bump Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-arena-bump-invariant"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Arena Bump Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Arena Bump Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-arena-bump-invariant"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Arena Lifetime Domain to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Arena Lifetime Domain.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-arena-lifetime-domain"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pool Free List Integrity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pool Free List Integrity.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-pool-free-list-integrity"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Slab Size Class to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Slab Size Class.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-slab-size-class"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Fragmentation Measurement to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Fragmentation Measurement.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-fragmentation-measurement-g28t91 */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-fragmentation-measurement-g28t91 */"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-fragmentation-measurement-g28t91 \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_fragmentation_measurement_g28t91\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using measure and internal plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-fragmentation-measurement"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "measure",
+        "internal"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

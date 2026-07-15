@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-resource-ownership-raii-patterns-guided-workshop",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-resource-ownership-raii-patterns",
+  "kind": "workshop",
+  "title": "Files, Descriptors, Locks, and RAII-Like C Patterns · C Memory Workbench",
+  "summary": "A guided implementation pair receives a clean input trace and acceptance examples, then builds the first working uniform resource-lifetime wrapper while narrating each size, lifetime, ownership, and cleanup decision. Planned artifact: Build a complete first version of uniform resource-lifetime wrapper while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Model external handles as scarce lifetime-bound resources even when their storage is not heap memory.",
+    "Pair acquisition with one idempotent or guarded release operation and a valid empty state.",
+    "Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-resource-not-memory",
+      "cmem-constructor-destructor-pair",
+      "cmem-cleanup-attribute-portability",
+      "cmem-mutex-lock-ownership",
+      "cmem-composite-resource-object"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-resource-ownership-raii-patterns-cmem-composite-resource-object-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Resource Not Memory",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9764. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Resource Not Memory.",
+      "why": "The decision supplies observable evidence for model external handles as scarce lifetime-bound resources even when their storage is not heap memory. For Commit to the mission model · Workshop Resource Not Memory, keep Resource Not Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9764. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Resource Not Memory condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-resource-not-memory"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Resource Not Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Resource Not Memory precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Resource Not Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9764. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory.",
+        "For Commit to the mission model · Workshop Resource Not Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Memory leak tools detect every leaked file, descriptor, socket, and lock."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Resource Not Memory preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Memory leak tools detect every leaked file, descriptor, socket, and lock. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Resource Not Memory case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet · Workshop Composite Resource Object",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 2383. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.\n\nInspect the Composite Resource Object trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the initial evidence packet · Workshop Composite Resource Object.",
+      "why": "The decision supplies observable evidence for design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction. For Audit the initial evidence packet · Workshop Composite Resource Object, keep Composite Resource Object connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Composite Resource Object, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "hints": [
+        "For Audit the initial evidence packet · Workshop Composite Resource Object, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Composite Resource Object precondition, or invariant that must hold.",
+        "At Audit the initial evidence packet · Workshop Composite Resource Object, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 2383. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+        "For Audit the initial evidence packet · Workshop Composite Resource Object, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A structure assignment safely duplicates ownership of every nested handle."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Composite Resource Object case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop native-systems team handles memory case 2383. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A structure assignment safely duplicates ownership of every nested handle.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction. Artifact under review: uniform resource-lifetime wrapper.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the initial evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the initial evidence packet, run one convenient Composite Resource Object case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Composite Resource Object, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Resource Not Memory · changed case · Workshop Resource Not Memory",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 4002. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory.\n\nWhich action demonstrates Resource Not Memory without dropping earlier contracts?\n\nEvidence target: Resource Not Memory · changed case · Workshop Resource Not Memory.",
+      "why": "The decision supplies observable evidence for model external handles as scarce lifetime-bound resources even when their storage is not heap memory. For Resource Not Memory · changed case · Workshop Resource Not Memory, keep Resource Not Memory connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 4002. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Resource Not Memory condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-resource-not-memory"
+      ],
+      "hints": [
+        "For Resource Not Memory · changed case · Workshop Resource Not Memory, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Resource Not Memory precondition, or invariant that must hold.",
+        "At Resource Not Memory · changed case · Workshop Resource Not Memory, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 4002. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Model external handles as scarce lifetime-bound resources even when their storage is not heap memory.",
+        "For Resource Not Memory · changed case · Workshop Resource Not Memory, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Memory leak tools detect every leaked file, descriptor, socket, and lock."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For resource not memory · changed case, run one convenient Resource Not Memory case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Model external handles as scarce lifetime-bound resources even when their storage is not heap memory. Apply it to the stated input and retain a reproducible trace for uniform resource-lifetime wrapper."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Memory leak tools detect every leaked file, descriptor, socket, and lock. That claim does not survive the resource not memory · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 5237. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair acquisition with one idempotent or guarded release operation and a valid empty state.\n\nWhich action demonstrates Constructor Destructor Pair without dropping earlier contracts?\n\nEvidence target: Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair.",
+      "why": "The decision supplies observable evidence for pair acquisition with one idempotent or guarded release operation and a valid empty state. For Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair, keep Constructor Destructor Pair connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 5237. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair acquisition with one idempotent or guarded release operation and a valid empty state."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Constructor Destructor Pair result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-constructor-destructor-pair"
+      ],
+      "hints": [
+        "For Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Constructor Destructor Pair precondition, or invariant that must hold.",
+        "At Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 5237. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair acquisition with one idempotent or guarded release operation and a valid empty state.",
+        "For Constructor Destructor Pair · changed case · Workshop Constructor Destructor Pair, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Closing or destroying a resource twice is harmless if free(NULL) is harmless."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Constructor Destructor Pair case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Closing or destroying a resource twice is harmless if free(NULL) is harmless.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Pair acquisition with one idempotent or guarded release operation and a valid empty state.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Pair acquisition with one idempotent or guarded release operation and a valid empty state. Apply it to the stated input and retain a reproducible trace for uniform resource-lifetime wrapper."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Closing or destroying a resource twice is harmless if free(NULL) is harmless. That claim does not survive the constructor destructor pair · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For constructor destructor pair · changed case, run one convenient Constructor Destructor Pair case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 3618. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow.\n\nWhich action demonstrates Cleanup Attribute Portability without dropping earlier contracts?\n\nEvidence target: Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability.",
+      "why": "The decision supplies observable evidence for use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-c control flow. For Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability, keep Cleanup Attribute Portability connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 3618. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cleanup Attribute Portability condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-cleanup-attribute-portability"
+      ],
+      "hints": [
+        "For Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Cleanup Attribute Portability precondition, or invariant that must hold.",
+        "At Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 3618. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow.",
+        "For Cleanup Attribute Portability · changed case · Workshop Cleanup Attribute Portability, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Compiler cleanup attributes have standard C23 semantics on every toolchain."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Compiler cleanup attributes have standard C23 semantics on every toolchain. That claim does not survive the cleanup attribute portability · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For cleanup attribute portability · changed case, run one convenient Cleanup Attribute Portability case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow. Apply it to the stated input and retain a reproducible trace for uniform resource-lifetime wrapper."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 1999. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nWhich action demonstrates Mutex Lock Ownership without dropping earlier contracts?\n\nEvidence target: Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership.",
+      "why": "The decision supplies observable evidence for record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. For Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 1999. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Mutex Lock Ownership result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 1999. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Mutex Lock Ownership · changed case · Workshop Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Mutex Lock Ownership case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Freeing an object containing a locked mutex releases the lock safely.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For mutex lock ownership · changed case, run one convenient Mutex Lock Ownership case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. Apply it to the stated input and retain a reproducible trace for uniform resource-lifetime wrapper."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Freeing an object containing a locked mutex releases the lock safely. That claim does not survive the mutex lock ownership · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Composite Resource Object · changed case · Workshop Composite Resource Object",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9380. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.\n\nWhich action demonstrates Composite Resource Object without dropping earlier contracts?\n\nEvidence target: Composite Resource Object · changed case · Workshop Composite Resource Object.",
+      "why": "The decision supplies observable evidence for design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction. For Composite Resource Object · changed case · Workshop Composite Resource Object, keep Composite Resource Object connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9380. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Composite Resource Object condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "hints": [
+        "For Composite Resource Object · changed case · Workshop Composite Resource Object, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Composite Resource Object precondition, or invariant that must hold.",
+        "At Composite Resource Object · changed case · Workshop Composite Resource Object, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9380. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+        "For Composite Resource Object · changed case · Workshop Composite Resource Object, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A structure assignment safely duplicates ownership of every nested handle."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction. Apply it to the stated input and retain a reproducible trace for uniform resource-lifetime wrapper."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A structure assignment safely duplicates ownership of every nested handle. That claim does not survive the composite resource object · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For composite resource object · changed case, run one convenient Composite Resource Object case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Composite Resource Object",
+      "interaction": "code",
+      "instruction": "For this workshop demonstration of cmem-composite-resource-object, write the complete compile-ready C program headed \"/* Evidence: cmem-composite-resource-object-dh91nr */\" for changed case 5759. It must release nested resources once in reverse acquisition order, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Workshop Composite Resource Object.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Composite Resource Object into observable performance evidence. For Extend the cumulative artifact · Workshop Composite Resource Object, keep Composite Resource Object connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-composite-resource-object-dh91nr */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 5759; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct resources { int buffer; int stream; int lock; int release_trace; };\n\nstatic int evidence_cmem_composite_resource_object_dh91nr(struct resources *state) {\n  if (state == NULL) return 0;\n  if (state->lock) { state->release_trace = state->release_trace * 10 + 3; state->lock = 0; }\n  if (state->stream) { state->release_trace = state->release_trace * 10 + 2; state->stream = 0; }\n  if (state->buffer) { state->release_trace = state->release_trace * 10 + 1; state->buffer = 0; }\n  return 1;\n}\n\nint main(void) {\n  struct resources state = { 1, 1, 1, 0 };\n  int first = evidence_cmem_composite_resource_object_dh91nr(&state);\n  int second = evidence_cmem_composite_resource_object_dh91nr(&state);\n  int invariant = first && second && state.release_trace == 321 && 2 > 0;\n  printf(\"resources trace=%d invariant=%d\\n\", state.release_trace, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Composite Resource Object, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Composite Resource Object precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Composite Resource Object, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 7761. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+        "For Extend the cumulative artifact · Workshop Composite Resource Object, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A structure assignment safely duplicates ownership of every nested handle."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Composite Resource Object",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6142. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Composite Resource Object.",
+      "why": "The decision supplies observable evidence for design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction. For Test an acceptance boundary · Workshop Composite Resource Object, keep Composite Resource Object connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6142. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Composite Resource Object symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Composite Resource Object, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Composite Resource Object precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Composite Resource Object, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6142. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+        "For Test an acceptance boundary · Workshop Composite Resource Object, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A structure assignment safely duplicates ownership of every nested handle."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Composite Resource Object failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A structure assignment safely duplicates ownership of every nested handle.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Composite Resource Object case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Composite Resource Object condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Composite Resource Object",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Composite Resource Object: explain the governing condition, one failure, and how this concrete case was verified — A workshop native-systems team handles memory case 4523. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.\n\nEvidence target: Defend the transferred model · Workshop Composite Resource Object.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Composite Resource Object, keep Composite Resource Object connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Composite Resource Object, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Composite Resource Object precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Composite Resource Object, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 4523. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Design one lifecycle object that owns nested memory and operating-system resources with failure-atomic construction.",
+        "For Defend the transferred model · Workshop Composite Resource Object, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A structure assignment safely duplicates ownership of every nested handle."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resource Not Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resource Not Memory.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-resource-not-memory"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Composite Resource Object to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Composite Resource Object.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resource Not Memory to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resource Not Memory.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-resource-not-memory"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Constructor Destructor Pair to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Constructor Destructor Pair.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-constructor-destructor-pair"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cleanup Attribute Portability to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cleanup Attribute Portability.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-cleanup-attribute-portability"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutex Lock Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutex Lock Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Composite Resource Object to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Composite Resource Object.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-composite-resource-object-dh91nr */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-composite-resource-object-dh91nr */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-composite-resource-object-dh91nr \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_composite_resource_object_dh91nr\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Composite Resource Object to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Composite Resource Object.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using design and lifecycle plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-composite-resource-object"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "design",
+        "lifecycle"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

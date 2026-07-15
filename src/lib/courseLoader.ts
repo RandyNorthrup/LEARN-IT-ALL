@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export interface Chapter {
   id: string;
@@ -7,6 +7,7 @@ export interface Chapter {
   description: string;
   order: number;
   lessons: string[];
+  quizId?: string;
 }
 
 export interface CourseData {
@@ -24,18 +25,17 @@ export interface CourseData {
 export function getCourseData(courseId: string): CourseData | null {
   try {
     const coursePath = path.join(process.cwd(), 'content', 'courses', courseId, 'course.json');
-    
+
     if (!fs.existsSync(coursePath)) {
       return null;
     }
 
     const fileContents = fs.readFileSync(coursePath, 'utf8');
     const courseData = JSON.parse(fileContents);
-    
+
     return courseData;
   } catch (error) {
     console.error(`Failed to load course ${courseId}:`, error);
     return null;
   }
 }
-

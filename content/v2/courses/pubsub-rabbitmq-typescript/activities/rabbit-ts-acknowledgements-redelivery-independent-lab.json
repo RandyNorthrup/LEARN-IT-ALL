@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-acknowledgements-redelivery-independent-lab",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-acknowledgements-redelivery",
+  "kind": "lab",
+  "title": "Acknowledgements, Delivery Tags, Redelivery, and Effect Ownership · Transfer Build",
+  "summary": "An independent integration team receives different traffic, tenant, topology, schema, and failure constraints and transfers acknowledgements, delivery tags, redelivery, and effect ownership into a new delivery ownership and acknowledgement decision table. Planned artifact: Produce an independent changed-context version of delivery ownership and acknowledgement decision table with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causa…",
+  "objectives": [
+    "Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.",
+    "Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use.",
+    "Transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "rabbit-ts-manual-auto-ack-tradeoff",
+      "rabbit-ts-delivery-tag-channel-scope",
+      "rabbit-ts-ack-after-durable-effect",
+      "rabbit-ts-redelivered-evidence-limit",
+      "rabbit-ts-ack-race-single-owner"
+    ]
+  },
+  "prerequisites": [
+    "rabbit-ts-acknowledgements-redelivery-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff",
+      "interaction": "predict",
+      "instruction": "lab case — A lab messaging team handles case 6127 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.\n\nWhat must be established before implementation?\n\nEvidence target: RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff.",
+      "why": "The decision supplies observable evidence for choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership. For RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff, keep Manual Auto Ack Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 6127 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Manual Auto Ack Tradeoff condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff, name the types, ownership, and stop path, Manual Auto Ack Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 6127 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.",
+        "For RabbitMQ and TypeScript Commit to the mission model · Lab Manual Auto Ack Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Automatic acknowledgement means RabbitMQ waits for handler success before deleting the message."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Manual Auto Ack Tradeoff preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Automatic acknowledgement means RabbitMQ waits for handler success before deleting the message. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff",
+      "interaction": "arrange",
+      "instruction": "Order the Manual Auto Ack Tradeoff RabbitMQ and TypeScript HTTP evidence cycle for this lab task before implementing it.\n\nEvidence target: RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff.",
+      "why": "Correct order keeps Manual Auto Ack Tradeoff assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff, keep Manual Auto Ack Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 1270 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Manual Auto Ack Tradeoff has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff, name the types, ownership, and stop path, Manual Auto Ack Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 1270 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.",
+        "For RabbitMQ and TypeScript Plan the evidence sequence · Lab Manual Auto Ack Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Automatic acknowledgement means RabbitMQ waits for handler success before deleting the message."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare RabbitMQ and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the lab Manual Auto Ack Tradeoff case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict RabbitMQ and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the lab Manual Auto Ack Tradeoff case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic RabbitMQ and TypeScript request or response model and retain inspectable evidence for the lab Manual Auto Ack Tradeoff case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed RabbitMQ and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the lab Manual Auto Ack Tradeoff case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff",
+      "interaction": "answer",
+      "instruction": "lab case — A lab messaging team handles case 2889 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.\n\nWhich action demonstrates Manual Auto Ack Tradeoff without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff.",
+      "why": "The decision supplies observable evidence for choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership. For RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff, keep Manual Auto Ack Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 2889 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Manual Auto Ack Tradeoff condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff, name the types, ownership, and stop path, Manual Auto Ack Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 2889 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership.",
+        "For RabbitMQ and TypeScript Manual Auto Ack Tradeoff · changed case · Lab Manual Auto Ack Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Automatic acknowledgement means RabbitMQ waits for handler success before deleting the message."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Automatic acknowledgement means RabbitMQ waits for handler success before deleting the message. That claim does not survive the manual auto ack tradeoff · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Choose manual or automatic acknowledgement from loss tolerance, consumer memory, work duration, and effect ownership. Apply it to the stated input and retain a reproducible trace for delivery ownership and acknowledgement decision table."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab messaging team handles case 7032 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use.\n\nWhich action demonstrates Delivery Tag Channel Scope without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope.",
+      "why": "The decision supplies observable evidence for acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use. For RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope, keep Delivery Tag Channel Scope connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 7032 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Delivery Tag Channel Scope result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-delivery-tag-channel-scope"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope, name the types, ownership, and stop path, Delivery Tag Channel Scope precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 7032 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use.",
+        "For RabbitMQ and TypeScript Delivery Tag Channel Scope · changed case · Lab Delivery Tag Channel Scope, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Delivery tags are globally unique across a connection and survive channel recovery."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Delivery Tag Channel Scope case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Delivery tags are globally unique across a connection and survive channel recovery.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Acknowledge, nack, or reject a delivery exactly once on its owning channel and prevent stale or cross-channel tag use. Apply it to the stated input and retain a reproducible trace for delivery ownership and acknowledgement decision table."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Delivery tags are globally unique across a connection and survive channel recovery. That claim does not survive the delivery tag channel scope · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect",
+      "interaction": "answer",
+      "instruction": "lab case — A lab messaging team handles case 8651 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds.\n\nWhich action demonstrates Ack After Durable Effect without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect.",
+      "why": "The decision supplies observable evidence for transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds. For RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect, keep Ack After Durable Effect connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 8651 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ack After Durable Effect condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ack-after-durable-effect"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect, name the types, ownership, and stop path, Ack After Durable Effect precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 8651 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds.",
+        "For RabbitMQ and TypeScript Ack After Durable Effect · changed case · Lab Ack After Durable Effect, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Acknowledging before a database commit improves safety because it shortens the unacked window."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Transfer ownership only after the intended durable effect, transactional inbox record, or safely repeatable handoff succeeds. Apply it to the stated input and retain a reproducible trace for delivery ownership and acknowledgement decision table."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Acknowledging before a database commit improves safety because it shortens the unacked window. That claim does not survive the ack after durable effect · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab messaging team handles case 2698 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness.\n\nWhich action demonstrates Redelivered Evidence Limit without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit.",
+      "why": "The decision supplies observable evidence for use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness. For RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit, keep Redelivered Evidence Limit connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 2698 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Redelivered Evidence Limit result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-redelivered-evidence-limit"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit, name the types, ownership, and stop path, Redelivered Evidence Limit precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 2698 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness.",
+        "For RabbitMQ and TypeScript Redelivered Evidence Limit · changed case · Lab Redelivered Evidence Limit, challenge the documented misconception with runtime, failure, race, or toolchain evidence: redelivered false proves no consumer has ever seen the message."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Redelivered Evidence Limit case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "redelivered false proves no consumer has ever seen the message.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "redelivered false proves no consumer has ever seen the message. That claim does not survive the redelivered evidence limit · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Use redelivered and delivery-count evidence as hints while relying on stable application identity and durable deduplication for correctness. Apply it to the stated input and retain a reproducible trace for delivery ownership and acknowledgement decision table."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner",
+      "interaction": "answer",
+      "instruction": "lab case — A lab messaging team handles case 4317 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.\n\nWhich action demonstrates Ack Race Single Owner without dropping earlier contracts?\n\nEvidence target: RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner.",
+      "why": "The decision supplies observable evidence for use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting. For RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner, keep Ack Race Single Owner connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 4317 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ack Race Single Owner condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner, name the types, ownership, and stop path, Ack Race Single Owner precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 4317 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.",
+        "For RabbitMQ and TypeScript Ack Race Single Owner · changed case · Lab Ack Race Single Owner, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling ack twice is idempotent and safely ignored by RabbitMQ."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting. Apply it to the stated input and retain a reproducible trace for delivery ownership and acknowledgement decision table."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Calling ack twice is idempotent and safely ignored by RabbitMQ. That claim does not survive the ack race single owner · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: rabbit-ts-ack-race-single-owner-s9s5i8\" that uses case 9272 to enforce same-generation, exactly-one terminal acknowledgement after durable effect. Return observable changed-case evidence. Browser code must not import amqplib or Node built-ins, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, or use credentials; verify those boundaries later with the named Node 24, amqplib 2.0.1, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production transfer gates.\n\nEvidence target: RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Ack Race Single Owner into observable performance evidence. For RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner, keep Ack Race Single Owner connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-ack-race-single-owner-s9s5i8\n// Competency: rabbit-ts-ack-race-single-owner.\n// Case 9272: privacy-sensitive audit fanout with an offline subscriber.\n// Operating constraint: separate browser evidence from disposable live-broker proof.\n// Changed case: lose a quorum member and recompute majority availability.\nfunction evidence_rabbit_ts_ack_race_single_owner_s9s5i8(owningGeneration: number, currentGeneration: number, terminalChosen: boolean, effectDurable: boolean): { decision: string; terminal: boolean } {\n  const evidenceVariant_s9s5i8 = \"s9s5i8-8i5s9s-9272\";\n  void evidenceVariant_s9s5i8;\n  if (owningGeneration !== currentGeneration) return { decision: \"stale-delivery\", terminal: false };\n  if (terminalChosen) return { decision: \"already-decided\", terminal: false };\n  if (!effectDurable) return { decision: \"nack-with-policy\", terminal: true };\n  return { decision: \"ack\", terminal: true };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner, name the types, ownership, and stop path, Ack Race Single Owner precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 8460 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.",
+        "For RabbitMQ and TypeScript Extend the cumulative artifact · Lab Ack Race Single Owner, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling ack twice is idempotent and safely ignored by RabbitMQ."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner",
+      "interaction": "debug",
+      "instruction": "lab case — A lab messaging team handles case 1079 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner.",
+      "why": "The decision supplies observable evidence for use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting. For RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner, keep Ack Race Single Owner connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab messaging team handles case 1079 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ack Race Single Owner symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner, name the types, ownership, and stop path, Ack Race Single Owner precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 1079 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.",
+        "For RabbitMQ and TypeScript Test an acceptance boundary · Lab Ack Race Single Owner, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling ack twice is idempotent and safely ignored by RabbitMQ."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ack Race Single Owner failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Calling ack twice is idempotent and safely ignored by RabbitMQ.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Ack Race Single Owner condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Ack Race Single Owner: explain the governing condition, one failure, and how this concrete case was verified — A lab messaging team handles case 5222 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.\n\nEvidence target: RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner, keep Ack Race Single Owner connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner, name the types, ownership, and stop path, Ack Race Single Owner precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A lab messaging team handles case 5222 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to enforce same-generation, exactly-one terminal acknowledgement after durable effect; keep credentials and connection URLs out of learner output; then reuse one message identity with a different payload fingerprint. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use one terminal delivery decision owner to prevent timeout, abort, handler, and shutdown paths from double acknowledging or conflicting.",
+        "For RabbitMQ and TypeScript Defend the transferred model · Lab Ack Race Single Owner, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling ack twice is idempotent and safely ignored by RabbitMQ."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Manual Auto Ack Tradeoff to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Manual Auto Ack Tradeoff.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Manual Auto Ack Tradeoff to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Manual Auto Ack Tradeoff.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-manual-auto-ack-tradeoff"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Delivery Tag Channel Scope to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Delivery Tag Channel Scope.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-delivery-tag-channel-scope"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ack After Durable Effect to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ack After Durable Effect.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ack-after-durable-effect"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Redelivered Evidence Limit to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Redelivered Evidence Limit.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-redelivered-evidence-limit"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ack Race Single Owner to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ack Race Single Owner.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-ts-ack-race-single-owner-s9s5i8.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: rabbit-ts-ack-race-single-owner-s9s5i8"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: rabbit-ts-ack-race-single-owner-s9s5i8(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_rabbit_ts_ack_race_single_owner_s9s5i8\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?owningGeneration\\s*!==\\s*currentGeneration)(?=(?:(?!// Evidence:)[\\s\\S])*?if\\s*\\(terminalChosen\\))(?=(?:(?!// Evidence:)[\\s\\S])*?!effectDurable)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ack Race Single Owner to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ack Race Single Owner.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using terminal and delivery plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ack-race-single-owner"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "terminal",
+        "delivery"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

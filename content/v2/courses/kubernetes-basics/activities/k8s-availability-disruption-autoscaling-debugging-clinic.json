@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-availability-disruption-autoscaling-debugging-clinic",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-availability-disruption-autoscaling",
+  "kind": "debug",
+  "title": "Availability, Disruption Budgets, Graceful Draining, Autoscaling, and Capacity · Object and Event Forensics",
+  "summary": "An incident responder inherits a plausible but defective availability and autoscaling operating policy; preserve status and events, isolate the first causal fault in availability, disruption budgets, graceful draining, autoscaling, and capacity, and retain a regression check. Planned artifact: Repair a changed failure in availability and autoscaling operating policy and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, chan…",
+  "objectives": [
+    "Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.",
+    "Calculate minAvailable or maxUnavailable, unhealthy eviction policy, controller scale, simultaneous drains, and voluntary versus involuntary disruption limits.",
+    "Derive HPA desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-replica-failure-domain-capacity",
+      "k8s-pdb-voluntary-disruption",
+      "k8s-hpa-metrics-control-behavior",
+      "k8s-vertical-node-autoscale-boundaries",
+      "k8s-capacity-chaos-recovery-evidence"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-availability-disruption-autoscaling-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug K8s Replica Failure Domain Capacity",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.\n\nInspect the K8s Replica Failure Domain Capacity trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug K8s Replica Failure Domain Capacity.",
+      "why": "The decision supplies observable evidence for translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence. For Inspect the failure record · Debug K8s Replica Failure Domain Capacity, keep K8s Replica Failure Domain Capacity connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Replica Failure Domain Capacity, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "k8s-replica-failure-domain-capacity"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug K8s Replica Failure Domain Capacity, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Replica Failure Domain Capacity precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug K8s Replica Failure Domain Capacity, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.",
+        "For Inspect the failure record · Debug K8s Replica Failure Domain Capacity, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Three replicas always provide high availability regardless of nodes, zones, storage, or shared dependencies."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Replica Failure Domain Capacity case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Three replicas always provide high availability regardless of nodes, zones, storage, or shared dependencies.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence. Artifact under review: availability and autoscaling operating policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies K8s Replica Failure Domain Capacity, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service has 6 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.\n\nWhich observation would disprove this suspected cause: “Three replicas always provide high availability regardless of nodes, zones, storage, or shared dependencies.”?\n\nEvidence target: K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity.",
+      "why": "The decision supplies observable evidence for translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence. For K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity, keep K8s Replica Failure Domain Capacity connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 6 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Replica Failure Domain Capacity symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "k8s-replica-failure-domain-capacity"
+      ],
+      "hints": [
+        "For K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Replica Failure Domain Capacity precondition, or invariant that must hold.",
+        "At K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 6 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.",
+        "For K8s Replica Failure Domain Capacity · fault isolation · Debug K8s Replica Failure Domain Capacity, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Three replicas always provide high availability regardless of nodes, zones, storage, or shared dependencies."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Replica Failure Domain Capacity failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Three replicas always provide high availability regardless of nodes, zones, storage, or shared dependencies.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Translate service objectives into replica count, failure domains, topology placement, readiness, surge capacity, dependency limits, and recovery evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For k8s replica failure domain capacity · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Replica Failure Domain Capacity."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s replica failure domain capacity · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption",
+      "interaction": "predict",
+      "instruction": "debug case — A debug service has 2 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Calculate minAvailable or maxUnavailable, unhealthy eviction policy, controller scale, simultaneous drains, and voluntary versus involuntary disruption limits.\n\nWhich observation would disprove this suspected cause: “A PodDisruptionBudget prevents node failures and guarantees that applications remain available.”?\n\nEvidence target: K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption.",
+      "why": "The decision supplies observable evidence for calculate minavailable or maxunavailable, unhealthy eviction policy, controller scale, simultaneous drains, and voluntary versus involuntary disruption limits. For K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption, keep K8s Pdb Voluntary Disruption connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 2 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Calculate minAvailable or maxUnavailable, unhealthy eviction policy, controller scale, simultaneous drains, and voluntary versus involuntary disruption limits."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Pdb Voluntary Disruption condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "k8s-pdb-voluntary-disruption"
+      ],
+      "hints": [
+        "For K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Pdb Voluntary Disruption precondition, or invariant that must hold.",
+        "At K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 2 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Calculate minAvailable or maxUnavailable, unhealthy eviction policy, controller scale, simultaneous drains, and voluntary versus involuntary disruption limits.",
+        "For K8s Pdb Voluntary Disruption · fault isolation · Debug K8s Pdb Voluntary Disruption, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A PodDisruptionBudget prevents node failures and guarantees that applications remain available."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Pdb Voluntary Disruption."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s pdb voluntary disruption · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For k8s pdb voluntary disruption · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service has 3 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Derive HPA desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies.\n\nWhich observation would disprove this suspected cause: “HPA uses CPU limits and reacts continuously without delay or stabilization.”?\n\nEvidence target: K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior.",
+      "why": "The decision supplies observable evidence for derive hpa desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies. For K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior, keep K8s Hpa Metrics Control Behavior connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 3 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Derive HPA desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Hpa Metrics Control Behavior symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "k8s-hpa-metrics-control-behavior"
+      ],
+      "hints": [
+        "For K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Hpa Metrics Control Behavior precondition, or invariant that must hold.",
+        "At K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 3 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Derive HPA desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies.",
+        "For K8s Hpa Metrics Control Behavior · fault isolation · Debug K8s Hpa Metrics Control Behavior, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: HPA uses CPU limits and reacts continuously without delay or stabilization."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Hpa Metrics Control Behavior failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "HPA uses CPU limits and reacts continuously without delay or stabilization.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Derive HPA desired replicas from requests, utilization, custom or external metrics, missing samples, tolerance, stabilization, and scale policies.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s hpa metrics control behavior · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For k8s hpa metrics control behavior · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Hpa Metrics Control Behavior."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda…",
+      "interaction": "predict",
+      "instruction": "debug case — A debug service has 4 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Compare vertical resource recommendation or mutation, in-place resize support, node autoscaling, workload disruption, scheduling, quotas, and provider dependencies.\n\nWhich observation would disprove this suspected cause: “HPA, vertical scaling, and node autoscaling can be enabled together without feedback or capacity interactions.”?\n\nEvidence target: K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda….",
+      "why": "The decision supplies observable evidence for compare vertical resource recommendation or mutation, in-place resize support, node autoscaling, workload disruption, scheduling, quotas, and provider dependencies. For K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda…, keep K8s Vertical Node Autoscale Boundaries connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 4 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Compare vertical resource recommendation or mutation, in-place resize support, node autoscaling, workload disruption, scheduling, quotas, and provider dependencies."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Vertical Node Autoscale Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "k8s-vertical-node-autoscale-boundaries"
+      ],
+      "hints": [
+        "For K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda…, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Vertical Node Autoscale Boundaries precondition, or invariant that must hold.",
+        "At K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda…, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 4 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Compare vertical resource recommendation or mutation, in-place resize support, node autoscaling, workload disruption, scheduling, quotas, and provider dependencies.",
+        "For K8s Vertical Node Autoscale Boundaries · fault isolation · Debug K8s Vertical Node Autoscale Bounda…, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: HPA, vertical scaling, and node autoscaling can be enabled together without feedback or capacity interactions."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For k8s vertical node autoscale boundaries · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Vertical Node Autoscale Boundaries."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s vertical node autoscale boundaries · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.\n\nWhich observation would disprove this suspected cause: “A successful kubectl drain and replica count prove the availability objective under real traffic.”?\n\nEvidence target: K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence.",
+      "why": "The decision supplies observable evidence for test load, pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives. For K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence, keep K8s Capacity Chaos Recovery Evidence connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Capacity Chaos Recovery Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "hints": [
+        "For K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Capacity Chaos Recovery Evidence precondition, or invariant that must hold.",
+        "At K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 5 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.",
+        "For K8s Capacity Chaos Recovery Evidence · fault isolation · Debug K8s Capacity Chaos Recovery Evidence, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A successful kubectl drain and replica count prove the availability objective under real traffic."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Capacity Chaos Recovery Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "A successful kubectl drain and replica count prove the availability objective under real traffic.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Capacity Chaos Recovery Evidence."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s capacity chaos recovery evidence · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For k8s capacity chaos recovery evidence · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-capacity-chaos-recovery-evidence-1v5slv\". Tailor its availability-policy.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Capacity Chaos Recovery Evidence into observable performance evidence. For Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence, keep K8s Capacity Chaos Recovery Evidence connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-capacity-chaos-recovery-evidence-1v5slv\n  - competency: k8s-capacity-chaos-recovery-evidence\n    artifact: availability-policy.yaml\n    decision: capacity chaos recovery evidence\n    environment: remote context with short-lived federated workload identity\n    fault-injection: change a selector so one canary endpoint overlaps production\n    retained-proof: accessible incident timeline with causal regression evidence\n    case-key: 1v5slv\n    change: |\n      objective: 99.9-percent-availability\n      replicas: 4-across-2-zones\n      pdb: minAvailable-3\n      hpa: autoscaling-v2-cpu-and-queue\n      stabilization: bounded\n      node-headroom: measured\n      faults: drain-zone-loss-metrics-gap\n    verify: kubectl get deployment,pdb,hpa -n intake -o json\n    failure: Reject replica-count-only HA, PDB as involuntary-failure protection, limit-based HPA math, or autoscalers without capacity and feedback analysis.\n    repair: Tie replicas and topology to objectives, calculate disruption and scaling, reserve headroom, inject lag and failure, and measure user-visible service.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Capacity Chaos Recovery Evidence precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 6 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.",
+        "For Implement the cause-level repair · Debug K8s Capacity Chaos Recovery Evidence, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A successful kubectl drain and replica count prove the availability objective under real traffic."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence",
+      "interaction": "arrange",
+      "instruction": "Order the K8s Capacity Chaos Recovery Evidence orchestration evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence.",
+      "why": "Correct order keeps K8s Capacity Chaos Recovery Evidence assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence, keep K8s Capacity Chaos Recovery Evidence connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service has 2 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so K8s Capacity Chaos Recovery Evidence has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Capacity Chaos Recovery Evidence precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 2 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.",
+        "For Order the regression proof · Debug K8s Capacity Chaos Recovery Evidence, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A successful kubectl drain and replica count prove the availability objective under real traffic."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Capture client and server versions, context, namespace, API discovery, current object state, ownership, and immutable release identity for the debug K8s Capacity Chaos Recovery Evidence case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, security, disruption, and cleanup effects for the debug K8s Capacity Chaos Recovery Evidence case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Review the smallest manifest, Kustomize, Helm, policy, or runbook increment in the deterministic browser simulator for the debug K8s Capacity Chaos Recovery Evidence case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Reject one failure, record repair and rollback, then name authorized disposable-cluster transfer evidence for the debug K8s Capacity Chaos Recovery Evidence case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for K8s Capacity Chaos Recovery Evidence: explain the governing condition, one failure, and how this concrete case was verified — A debug service has 3 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.\n\nEvidence target: Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence, keep K8s Capacity Chaos Recovery Evidence connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Capacity Chaos Recovery Evidence precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service has 3 replicas but all share one zone, a strict disruption budget blocks drain, and HPA oscillates because requests and metrics are wrong. Balance failure domains, PDB, rollout surge, autoscaling signals, stabilization, and capacity. Competency probe: Test load, Pod loss, node drain, zone loss, slow dependency, scaling lag, quota, and recovery while measuring user-visible service objectives.",
+        "For Publish the incident record · Debug K8s Capacity Chaos Recovery Evidence, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A successful kubectl drain and replica count prove the availability objective under real traffic."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Replica Failure Domain Capacity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Replica Failure Domain Capacity.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-replica-failure-domain-capacity"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Replica Failure Domain Capacity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Replica Failure Domain Capacity.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-replica-failure-domain-capacity"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Pdb Voluntary Disruption to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Pdb Voluntary Disruption.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-pdb-voluntary-disruption"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Hpa Metrics Control Behavior to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Hpa Metrics Control Behavior.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-hpa-metrics-control-behavior"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Vertical Node Autoscale Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Vertical Node Autoscale Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-vertical-node-autoscale-boundaries"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Capacity Chaos Recovery Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Capacity Chaos Recovery Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-capacity-chaos-recovery-evidence-1v5slv.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-capacity-chaos-recovery-evidence-1v5slv"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-capacity-chaos-recovery-evidence-1v5slv(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-capacity-chaos-recovery-evidence(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*availability-policy\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:minAvailable-3|autoscaling-v2-cpu-and-queue|drain-zone-loss)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and load plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-capacity-chaos-recovery-evidence"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "test",
+        "load"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

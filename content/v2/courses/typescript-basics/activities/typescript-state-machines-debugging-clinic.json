@@ -1,0 +1,685 @@
+{
+  "schemaVersion": 2,
+  "id": "typescript-state-machines-debugging-clinic",
+  "courseId": "typescript-basics",
+  "moduleId": "typescript-state-machines",
+  "kind": "debug",
+  "title": "Discriminated Unions, Exhaustiveness, and Result Models · Boundary Failure Triage",
+  "summary": "Replace boolean status flags and ambiguous errors with explicit request, success, failure, and cancellation states. Learners isolate plausible failures, compare competing hypotheses, and record cause-level repair evidence. Planned artifact: Repair a changed failure in an exhaustive asynchronous state machine and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Design variants with stable literal discriminants and variant-specific required data.",
+    "Use never assignments or exhaustive helpers to make newly added variants produce actionable diagnostics.",
+    "Represent expected domain failure as typed result variants while preserving unexpected exceptions.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "ts-discriminated-unions",
+      "ts-exhaustive-never",
+      "ts-result-values",
+      "ts-state-transition-contracts",
+      "ts-pattern-evolution"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "typescript-state-machines-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "typescript-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// typescript-basics cumulative strict TypeScript portfolio.\n// Add one typed behavior, runtime boundary, changed case, and evidence return per activity.\n",
+    "python": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof",
+      "interaction": "arrange",
+      "instruction": "Order the Pattern Evolution evidence cycle for this debug task before implementing it.",
+      "why": "Correct order keeps Pattern Evolution assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 3. Each state owns only valid fields, stale request 2 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Pattern Evolution has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "hints": [
+        "Name the Pattern Evolution precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 3. Each state owns only valid fields, stale request 2 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Adding a union member is always backward compatible."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare the domain relationship and identify every untrusted runtime boundary"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Infer or annotate the smallest sound type and validate unknown values before narrowing"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run strict diagnostics, inspect emitted JavaScript, and execute the changed case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Add compile-time rejection and runtime boundary evidence, then document remaining limits"
+        }
+      ]
+    },
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record",
+      "interaction": "inspect",
+      "instruction": "debug case — Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nInspect the Discriminated Unions trace for this debug case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for design variants with stable literal discriminants and variant-specific required data.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Discriminated Unions, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "ts-discriminated-unions"
+      ],
+      "hints": [
+        "Name the Discriminated Unions precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Several optional properties express states as safely as a discriminated union."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Discriminated Unions case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Several optional properties express states as safely as a discriminated union.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Design variants with stable literal discriminants and variant-specific required data. Artifact under review: an exhaustive asynchronous state machine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Discriminated Unions, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Discriminated Unions · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Model idle → loading → success|failure for request 5. Each state owns only valid fields, stale request 4 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nWhich observation would disprove this suspected cause: “Several optional properties express states as safely as a discriminated union.”?",
+      "why": "The decision supplies observable evidence for design variants with stable literal discriminants and variant-specific required data.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 5. Each state owns only valid fields, stale request 4 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Discriminated Unions symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Announcing TypeScript 7.0 — Controls native compiler behavior, parallelism, TypeScript 7 defaults, removed options, JS changes, and TS6 API compatibility."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "ts-discriminated-unions"
+      ],
+      "hints": [
+        "Name the Discriminated Unions precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 5. Each state owns only valid fields, stale request 4 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Several optional properties express states as safely as a discriminated union."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Discriminated Unions failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Several optional properties express states as safely as a discriminated union.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design variants with stable literal discriminants and variant-specific required data.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Discriminated Unions."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Exhaustive Never · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Model idle → loading → success|failure for request 6. Each state owns only valid fields, stale request 5 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nWhich observation would disprove this suspected cause: “A default branch automatically proves every union member was handled.”?",
+      "why": "The decision supplies observable evidence for use never assignments or exhaustive helpers to make newly added variants produce actionable diagnostics.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 6. Each state owns only valid fields, stale request 5 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Exhaustive Never condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Announcing TypeScript 7.0 — Controls native compiler behavior, parallelism, TypeScript 7 defaults, removed options, JS changes, and TS6 API compatibility."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "ts-exhaustive-never"
+      ],
+      "hints": [
+        "Name the Exhaustive Never precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 6. Each state owns only valid fields, stale request 5 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: A default branch automatically proves every union member was handled."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Exhaustive Never."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Result Values · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Model idle → loading → success|failure for request 2. Each state owns only valid fields, stale request 1 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nWhich observation would disprove this suspected cause: “Every exception should be converted into a success-or-error union.”?",
+      "why": "The decision supplies observable evidence for represent expected domain failure as typed result variants while preserving unexpected exceptions.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 2. Each state owns only valid fields, stale request 1 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Result Values symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Announcing TypeScript 7.0 — Controls native compiler behavior, parallelism, TypeScript 7 defaults, removed options, JS changes, and TS6 API compatibility."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "ts-result-values"
+      ],
+      "hints": [
+        "Name the Result Values precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 2. Each state owns only valid fields, stale request 1 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Every exception should be converted into a success-or-error union."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Result Values failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Every exception should be converted into a success-or-error union.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Represent expected domain failure as typed result variants while preserving unexpected exceptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Result Values."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "State Transition Contracts · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Model idle → loading → success|failure for request 3. Each state owns only valid fields, stale request 2 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nWhich observation would disprove this suspected cause: “If each state is typed, every transition between them is automatically legal.”?",
+      "why": "The decision supplies observable evidence for constrain legal state transitions and outputs without permitting impossible intermediate combinations.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 3. Each state owns only valid fields, stale request 2 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which State Transition Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Announcing TypeScript 7.0 — Controls native compiler behavior, parallelism, TypeScript 7 defaults, removed options, JS changes, and TS6 API compatibility."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "ts-state-transition-contracts"
+      ],
+      "hints": [
+        "Name the State Transition Contracts precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 3. Each state owns only valid fields, stale request 2 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: If each state is typed, every transition between them is automatically legal."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies State Transition Contracts."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Pattern Evolution · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.\n\nWhich observation would disprove this suspected cause: “Adding a union member is always backward compatible.”?",
+      "why": "The decision supplies observable evidence for add, deprecate, and migrate variants with compatibility tests and consumer impact evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Pattern Evolution symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Announcing TypeScript 7.0 — Controls native compiler behavior, parallelism, TypeScript 7 defaults, removed options, JS changes, and TS6 API compatibility."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "hints": [
+        "Name the Pattern Evolution precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 4. Each state owns only valid fields, stale request 3 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Adding a union member is always backward compatible."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Pattern Evolution failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Adding a union member is always backward compatible.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Add, deprecate, and migrate variants with compatibility tests and consumer impact evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Pattern Evolution."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair",
+      "interaction": "code",
+      "instruction": "Add a evidence_ts_pattern_evolution_12uou1 function with typed input and output, narrow the changed external value, enforce one runtime invariant, and return inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Pattern Evolution into observable performance evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "function evidence_ts_pattern_evolution_12uou1(input: unknown): unknown {\n  // Narrow the external value and return typed evidence.\n  throw new Error('replace with narrowing, a runtime invariant, and an evidence return');\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "hints": [
+        "Name the Pattern Evolution precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 5. Each state owns only valid fields, stale request 4 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Adding a union member is always backward compatible."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Pattern Evolution: explain the governing condition, one failure, and how this concrete case was verified — Model idle → loading → success|failure for request 6. Each state owns only valid fields, stale request 5 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Add, deprecate, and migrate variants with compatibility tests and consumer impact evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "hints": [
+        "Name the Pattern Evolution precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Model idle → loading → success|failure for request 6. Each state owns only valid fields, stale request 5 cannot overwrite the result, and adding \"cancelled\" must create an exhaustiveness diagnostic until handled.",
+        "Use the documented misconception as a counterexample target: Adding a union member is always backward compatible."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Discriminated Unions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Discriminated Unions.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-discriminated-unions"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Discriminated Unions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Discriminated Unions.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-discriminated-unions"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Exhaustive Never to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Exhaustive Never.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-exhaustive-never"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Result Values to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Result Values.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-result-values"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies State Transition Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about State Transition Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-state-transition-contracts"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pattern Evolution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pattern Evolution.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_ts_pattern_evolution_12uou1.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "file": "typescript",
+      "expected": "evidence_ts_pattern_evolution_12uou1"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "function\\s+evidence_ts_pattern_evolution_12uou1\\s*\\([^)]*:[^)]*\\)\\s*:\\s*[^\\s{]+\\s*\\{[\\s\\S]*?(?:if\\s*\\(|console\\.assert\\s*\\()[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using deprecate and migrate plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "ts-pattern-evolution"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "deprecate",
+        "migrate"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

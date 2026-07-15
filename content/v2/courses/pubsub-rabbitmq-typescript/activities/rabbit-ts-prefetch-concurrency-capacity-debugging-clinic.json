@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-prefetch-concurrency-capacity-debugging-clinic",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-prefetch-concurrency-capacity",
+  "kind": "debug",
+  "title": "Prefetch, Consumer Concurrency, Capacity, and Fairness · Boundary Failure Triage",
+  "summary": "An incident engineer receives a plausible but defective prefetch, concurrency, and capacity budget model; preserve message identity and timing, locate the first broken ownership boundary, and retain a deterministic regression case. Planned artifact: Repair a changed failure in prefetch, concurrency, and capacity budget model and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and e…",
+  "objectives": [
+    "Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.",
+    "Bound concurrent handlers by CPU, memory, message bytes, downstream pools, deadlines, tenant fairness, and shutdown capacity.",
+    "Interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-ts-prefetch-window-semantics",
+      "rabbit-ts-concurrency-resource-budget",
+      "rabbit-ts-consumer-capacity-metric",
+      "rabbit-ts-adaptive-prefetch-caution",
+      "rabbit-ts-fair-tenant-dispatch"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-ts-prefetch-concurrency-capacity-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug messaging team handles case 1047 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.\n\nInspect the Prefetch Window Semantics trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics.",
+      "why": "The decision supplies observable evidence for explain rabbitmq per-consumer prefetch, deprecated global qos, in-flight races, quorum caps, and the zero-means-unbounded hazard. For RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics, keep Prefetch Window Semantics connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Prefetch Window Semantics, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-prefetch-window-semantics"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics, name the types, ownership, and stop path, Prefetch Window Semantics precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 1047 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.",
+        "For RabbitMQ and TypeScript Inspect the failure record · Debug Prefetch Window Semantics, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Prefetch controls the total number of ready messages stored in the queue."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Prefetch Window Semantics case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug messaging team handles case 1047 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Prefetch controls the total number of ready messages stored in the queue.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard. Artifact under review: prefetch, concurrency, and capacity budget model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Prefetch Window Semantics, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti…",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 5190 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.\n\nWhich observation would disprove this suspected cause: “Prefetch controls the total number of ready messages stored in the queue.”?\n\nEvidence target: RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti….",
+      "why": "The decision supplies observable evidence for explain rabbitmq per-consumer prefetch, deprecated global qos, in-flight races, quorum caps, and the zero-means-unbounded hazard. For RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti…, keep Prefetch Window Semantics connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 5190 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Prefetch Window Semantics symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-prefetch-window-semantics"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti…, name the types, ownership, and stop path, Prefetch Window Semantics precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 5190 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.",
+        "For RabbitMQ and TypeScript Prefetch Window Semantics · fault isolation · Debug Prefetch Window Semanti…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Prefetch controls the total number of ready messages stored in the queue."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Prefetch Window Semantics failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Prefetch controls the total number of ready messages stored in the queue.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Explain RabbitMQ per-consumer prefetch, deprecated global QoS, in-flight races, quorum caps, and the zero-means-unbounded hazard.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Prefetch Window Semantics."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the prefetch window semantics · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource…",
+      "interaction": "predict",
+      "instruction": "debug case — A debug messaging team handles case 6809 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound concurrent handlers by CPU, memory, message bytes, downstream pools, deadlines, tenant fairness, and shutdown capacity.\n\nWhich observation would disprove this suspected cause: “Setting prefetch alone limits every asynchronous task a handler may start.”?\n\nEvidence target: RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource….",
+      "why": "The decision supplies observable evidence for bound concurrent handlers by cpu, memory, message bytes, downstream pools, deadlines, tenant fairness, and shutdown capacity. For RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource…, keep Concurrency Resource Budget connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 6809 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound concurrent handlers by CPU, memory, message bytes, downstream pools, deadlines, tenant fairness, and shutdown capacity."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Concurrency Resource Budget condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-concurrency-resource-budget"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource…, name the types, ownership, and stop path, Concurrency Resource Budget precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 6809 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Bound concurrent handlers by CPU, memory, message bytes, downstream pools, deadlines, tenant fairness, and shutdown capacity.",
+        "For RabbitMQ and TypeScript Concurrency Resource Budget · fault isolation · Debug Concurrency Resource…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Setting prefetch alone limits every asynchronous task a handler may start."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the concurrency resource budget · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Concurrency Resource Budget."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 1952 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits.\n\nWhich observation would disprove this suspected cause: “Consumer capacity below 100 percent always means adding consumers will fix throughput.”?\n\nEvidence target: RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric.",
+      "why": "The decision supplies observable evidence for interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits. For RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric, keep Consumer Capacity Metric connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 1952 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Consumer Capacity Metric symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-consumer-capacity-metric"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric, name the types, ownership, and stop path, Consumer Capacity Metric precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 1952 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits.",
+        "For RabbitMQ and TypeScript Consumer Capacity Metric · fault isolation · Debug Consumer Capacity Metric, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Consumer capacity below 100 percent always means adding consumers will fix throughput."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Consumer Capacity Metric failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Consumer capacity below 100 percent always means adding consumers will fix throughput.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Interpret consumer capacity with delivery rate, processing latency, ready and unacked depth, dependency saturation, and queue single-core limits.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Consumer Capacity Metric."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the consumer capacity metric · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti…",
+      "interaction": "predict",
+      "instruction": "debug case — A debug messaging team handles case 3571 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Change prefetch only with bounded measurement windows, hysteresis, safe limits, in-flight accounting, and rollback evidence.\n\nWhich observation would disprove this suspected cause: “Prefetch can be continuously maximized from one recent latency sample without instability.”?\n\nEvidence target: RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti….",
+      "why": "The decision supplies observable evidence for change prefetch only with bounded measurement windows, hysteresis, safe limits, in-flight accounting, and rollback evidence. For RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti…, keep Adaptive Prefetch Caution connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 3571 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Change prefetch only with bounded measurement windows, hysteresis, safe limits, in-flight accounting, and rollback evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Adaptive Prefetch Caution condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-adaptive-prefetch-caution"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti…, name the types, ownership, and stop path, Adaptive Prefetch Caution precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 3571 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Change prefetch only with bounded measurement windows, hysteresis, safe limits, in-flight accounting, and rollback evidence.",
+        "For RabbitMQ and TypeScript Adaptive Prefetch Caution · fault isolation · Debug Adaptive Prefetch Cauti…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Prefetch can be continuously maximized from one recent latency sample without instability."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Adaptive Prefetch Caution."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the adaptive prefetch caution · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 7714 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.\n\nWhich observation would disprove this suspected cause: “One shared FIFO queue guarantees fair service across tenants and task costs.”?\n\nEvidence target: RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch.",
+      "why": "The decision supplies observable evidence for prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence. For RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch, keep Fair Tenant Dispatch connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 7714 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Fair Tenant Dispatch symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Consumer Acknowledgements and Publisher Confirms — Controls delivery tags, ack modes, requeue, prefetch, redelivery, confirm timing, multi-ack, data safety, and common client errors."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch, name the types, ownership, and stop path, Fair Tenant Dispatch precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 7714 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.",
+        "For RabbitMQ and TypeScript Fair Tenant Dispatch · fault isolation · Debug Fair Tenant Dispatch, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One shared FIFO queue guarantees fair service across tenants and task costs."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Fair Tenant Dispatch failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "One shared FIFO queue guarantees fair service across tenants and task costs.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the fair tenant dispatch · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Fair Tenant Dispatch."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: rabbit-ts-fair-tenant-dispatch-tudrm3\" that uses case 2620 to combine prefetch, active handlers, downstream capacity, and message-byte budgets. Return observable changed-case evidence. Browser code must not import amqplib or Node built-ins, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, or use credentials; verify those boundaries later with the named Node 24, amqplib 2.0.1, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production transfer gates.\n\nEvidence target: RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Fair Tenant Dispatch into observable performance evidence. For RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch, keep Fair Tenant Dispatch connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-fair-tenant-dispatch-tudrm3\n// Competency: rabbit-ts-fair-tenant-dispatch.\n// Case 2620: payment-effect relay after an ambiguous provider timeout.\n// Operating constraint: keep reconnection and retry work cancellable under one deadline.\n// Changed case: lower the byte or in-flight budget and preserve upstream rejection evidence.\nfunction evidence_rabbit_ts_fair_tenant_dispatch_tudrm3(prefetch: number, active: number, dependencyCapacity: number, messageBytes: number, byteBudget: number): { start: boolean; reason: string } {\n  const evidenceVariant_tudrm3 = \"tudrm3-3mrdut-2620\";\n  void evidenceVariant_tudrm3;\n  if (prefetch <= 0) return { start: false, reason: \"unbounded-prefetch\" };\n  if (messageBytes < 0 || messageBytes > byteBudget) return { start: false, reason: \"bytes\" };\n  const capacity = Math.min(prefetch, dependencyCapacity);\n  return { start: active >= 0 && active < capacity, reason: active < capacity ? \"capacity\" : \"saturated\" };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch, name the types, ownership, and stop path, Fair Tenant Dispatch precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 9333 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.",
+        "For RabbitMQ and TypeScript Implement the cause-level repair · Debug Fair Tenant Dispatch, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One shared FIFO queue guarantees fair service across tenants and task costs."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch",
+      "interaction": "arrange",
+      "instruction": "Order the Fair Tenant Dispatch RabbitMQ and TypeScript HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch.",
+      "why": "Correct order keeps Fair Tenant Dispatch assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch, keep Fair Tenant Dispatch connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 4476 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Fair Tenant Dispatch has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch, name the types, ownership, and stop path, Fair Tenant Dispatch precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 4476 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.",
+        "For RabbitMQ and TypeScript Order the regression proof · Debug Fair Tenant Dispatch, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One shared FIFO queue guarantees fair service across tenants and task costs."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare RabbitMQ and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Fair Tenant Dispatch case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict RabbitMQ and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Fair Tenant Dispatch case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic RabbitMQ and TypeScript request or response model and retain inspectable evidence for the debug Fair Tenant Dispatch case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed RabbitMQ and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the debug Fair Tenant Dispatch case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Fair Tenant Dispatch: explain the governing condition, one failure, and how this concrete case was verified — A debug messaging team handles case 6095 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.\n\nEvidence target: RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch, keep Fair Tenant Dispatch connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch, name the types, ownership, and stop path, Fair Tenant Dispatch precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 6095 in a multi-tenant case event backbone with three subscriber responsibilities. Build deterministic TypeScript evidence to combine prefetch, active handlers, downstream capacity, and message-byte budgets; separate browser evidence from disposable live-broker proof; then close the channel while one acknowledgement decision is still pending. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Prevent one tenant or expensive message class from monopolizing consumers using topology, admission, bounded scheduling, and separate evidence.",
+        "For RabbitMQ and TypeScript Publish the incident record · Debug Fair Tenant Dispatch, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One shared FIFO queue guarantees fair service across tenants and task costs."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefetch Window Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefetch Window Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-prefetch-window-semantics"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefetch Window Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefetch Window Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-prefetch-window-semantics"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Concurrency Resource Budget to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Concurrency Resource Budget.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-concurrency-resource-budget"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Consumer Capacity Metric to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Consumer Capacity Metric.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-consumer-capacity-metric"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Adaptive Prefetch Caution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Adaptive Prefetch Caution.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-adaptive-prefetch-caution"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Fair Tenant Dispatch to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Fair Tenant Dispatch.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-ts-fair-tenant-dispatch-tudrm3.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: rabbit-ts-fair-tenant-dispatch-tudrm3"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: rabbit-ts-fair-tenant-dispatch-tudrm3(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_rabbit_ts_fair_tenant_dispatch_tudrm3\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?prefetch\\s*<=\\s*0)(?=(?:(?!// Evidence:)[\\s\\S])*?messageBytes\\s*>\\s*byteBudget)(?=(?:(?!// Evidence:)[\\s\\S])*?Math\\.min\\(prefetch)(?=(?:(?!// Evidence:)[\\s\\S])*?active\\s*<\\s*capacity)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using prevent and tenant plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-fair-tenant-dispatch"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "prevent",
+        "tenant"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

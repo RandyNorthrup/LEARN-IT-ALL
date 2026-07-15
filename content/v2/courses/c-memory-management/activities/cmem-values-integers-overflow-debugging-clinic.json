@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-values-integers-overflow-debugging-clinic",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-values-integers-overflow",
+  "kind": "debug",
+  "title": "C Values, Integer Conversions, and Size Arithmetic · Memory Repair Bay",
+  "summary": "An incident responder inherits a corrupted checked size and conversion policy, the earliest failing input, and two plausible hypotheses; they must preserve first-failure evidence, repair the cause, and add a regression. Planned artifact: Repair a changed failure in checked size and conversion policy and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.",
+    "Trace integer promotions and usual arithmetic conversions before comparing, shifting, indexing, or sizing.",
+    "Use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at API boundaries.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-integer-ranges-ranks",
+      "cmem-integer-promotions-conversions",
+      "cmem-size-ptrdiff-contract",
+      "cmem-checked-size-arithmetic",
+      "cmem-bitint-c23-boundary"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-values-integers-overflow-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Integer Ranges Ranks",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug native-systems team handles memory case 9931. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.\n\nInspect the Integer Ranges Ranks trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Integer Ranges Ranks.",
+      "why": "The decision supplies observable evidence for select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling. For Inspect the failure record · Debug Integer Ranges Ranks, keep Integer Ranges Ranks connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Integer Ranges Ranks, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "cmem-integer-ranges-ranks"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Integer Ranges Ranks, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Integer Ranges Ranks precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Integer Ranges Ranks, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9931. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.",
+        "For Inspect the failure record · Debug Integer Ranges Ranks, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: int, long, and pointers have fixed widths on all supported targets."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Integer Ranges Ranks case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug native-systems team handles memory case 9931. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "int, long, and pointers have fixed widths on all supported targets.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling. Artifact under review: checked size and conversion policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Integer Ranges Ranks, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Integer Ranges Ranks case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 8312. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.\n\nWhich observation would disprove this suspected cause: “int, long, and pointers have fixed widths on all supported targets.”?\n\nEvidence target: Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks.",
+      "why": "The decision supplies observable evidence for select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling. For Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks, keep Integer Ranges Ranks connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 8312. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Integer Ranges Ranks symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "cmem-integer-ranges-ranks"
+      ],
+      "hints": [
+        "For Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Integer Ranges Ranks precondition, or invariant that must hold.",
+        "At Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 8312. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.",
+        "For Integer Ranges Ranks · fault isolation · Debug Integer Ranges Ranks, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: int, long, and pointers have fixed widths on all supported targets."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Integer Ranges Ranks failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "int, long, and pointers have fixed widths on all supported targets.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Select integer types from range, signedness, rank, width, and representation requirements rather than familiar spelling.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the integer ranges ranks · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For integer ranges ranks · fault isolation, run one convenient Integer Ranges Ranks case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Integer Ranges Ranks."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 1645. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace integer promotions and usual arithmetic conversions before comparing, shifting, indexing, or sizing.\n\nWhich observation would disprove this suspected cause: “A negative signed value stays negative when compared with an unsigned size.”?\n\nEvidence target: Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions.",
+      "why": "The decision supplies observable evidence for trace integer promotions and usual arithmetic conversions before comparing, shifting, indexing, or sizing. For Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions, keep Integer Promotions Conversions connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 1645. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace integer promotions and usual arithmetic conversions before comparing, shifting, indexing, or sizing."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Integer Promotions Conversions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "cmem-integer-promotions-conversions"
+      ],
+      "hints": [
+        "For Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Integer Promotions Conversions precondition, or invariant that must hold.",
+        "At Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 1645. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Trace integer promotions and usual arithmetic conversions before comparing, shifting, indexing, or sizing.",
+        "For Integer Promotions Conversions · fault isolation · Debug Integer Promotions Conversions, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A negative signed value stays negative when compared with an unsigned size."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-overreach",
+          "text": "For integer promotions conversions · fault isolation, run one convenient Integer Promotions Conversions case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Integer Promotions Conversions."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the integer promotions conversions · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 9026. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at API boundaries.\n\nWhich observation would disprove this suspected cause: “size_t is always unsigned long and therefore safe for arbitrary subtraction.”?\n\nEvidence target: Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract.",
+      "why": "The decision supplies observable evidence for use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at api boundaries. For Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract, keep Size Ptrdiff Contract connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9026. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at API boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Size Ptrdiff Contract symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "cmem-size-ptrdiff-contract"
+      ],
+      "hints": [
+        "For Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Size Ptrdiff Contract precondition, or invariant that must hold.",
+        "At Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9026. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at API boundaries.",
+        "For Size Ptrdiff Contract · fault isolation · Debug Size Ptrdiff Contract, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: size_t is always unsigned long and therefore safe for arbitrary subtraction."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Size Ptrdiff Contract failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "size_t is always unsigned long and therefore safe for arbitrary subtraction.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use size_t for object sizes, ptrdiff_t for valid pointer differences, and guarded conversions at API boundaries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Size Ptrdiff Contract."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the size ptrdiff contract · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For size ptrdiff contract · fault isolation, run one convenient Size Ptrdiff Contract case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic",
+      "interaction": "predict",
+      "instruction": "debug case — A debug native-systems team handles memory case 7407. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Reject overflowing addition, multiplication, alignment, and growth calculations before allocation using portable checked patterns or C23 checked arithmetic.\n\nWhich observation would disprove this suspected cause: “malloc reports an error when its size expression overflowed before the call.”?\n\nEvidence target: Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic.",
+      "why": "The decision supplies observable evidence for reject overflowing addition, multiplication, alignment, and growth calculations before allocation using portable checked patterns or c23 checked arithmetic. For Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic, keep Checked Size Arithmetic connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 7407. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Reject overflowing addition, multiplication, alignment, and growth calculations before allocation using portable checked patterns or C23 checked arithmetic."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Checked Size Arithmetic condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "cmem-checked-size-arithmetic"
+      ],
+      "hints": [
+        "For Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Checked Size Arithmetic precondition, or invariant that must hold.",
+        "At Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7407. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Reject overflowing addition, multiplication, alignment, and growth calculations before allocation using portable checked patterns or C23 checked arithmetic.",
+        "For Checked Size Arithmetic · fault isolation · Debug Checked Size Arithmetic, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: malloc reports an error when its size expression overflowed before the call."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the checked size arithmetic · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For checked size arithmetic · fault isolation, run one convenient Checked Size Arithmetic case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Checked Size Arithmetic."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary",
+      "interaction": "debug",
+      "instruction": "debug case — A debug native-systems team handles memory case 5788. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.\n\nWhich observation would disprove this suspected cause: “An exact bit width automatically has the same calling convention and library support everywhere.”?\n\nEvidence target: Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary.",
+      "why": "The decision supplies observable evidence for evaluate c23 _bitint and implementation limits without assuming a novel width improves abi portability. For Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary, keep Bitint C23 Boundary connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 5788. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Bitint C23 Boundary symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "ISO C23 Project and Working Draft — C23 language, library, conformance, implementation status, and current WG14 work."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "hints": [
+        "For Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bitint C23 Boundary precondition, or invariant that must hold.",
+        "At Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 5788. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.",
+        "For Bitint C23 Boundary · fault isolation · Debug Bitint C23 Boundary, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An exact bit width automatically has the same calling convention and library support everywhere."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bitint C23 Boundary failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "An exact bit width automatically has the same calling convention and library support everywhere.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-overreach",
+          "text": "For bitint c23 boundary · fault isolation, run one convenient Bitint C23 Boundary case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Bitint C23 Boundary."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the bitint c23 boundary · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Bitint C23 Boundary",
+      "interaction": "arrange",
+      "instruction": "Order the Bitint C23 Boundary evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Bitint C23 Boundary.",
+      "why": "Correct order keeps Bitint C23 Boundary assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Bitint C23 Boundary, keep Bitint C23 Boundary connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug native-systems team handles memory case 9217. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Bitint C23 Boundary has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Bitint C23 Boundary, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bitint C23 Boundary precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Bitint C23 Boundary, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 9217. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.",
+        "For Order the regression proof · Debug Bitint C23 Boundary, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An exact bit width automatically has the same calling convention and library support everywhere."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the debug Bitint C23 Boundary case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose and document the smallest defensible model or procedure for the debug Bitint C23 Boundary case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the debug Bitint C23 Boundary case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the debug Bitint C23 Boundary case"
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Bitint C23 Boundary",
+      "interaction": "code",
+      "instruction": "For this debug demonstration of cmem-bitint-c23-boundary, write the complete compile-ready C program headed \"/* Evidence: cmem-bitint-c23-boundary-186dv8 */\" for changed case 4128. It must reject a size calculation that exceeds its bound, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Implement the cause-level repair · Debug Bitint C23 Boundary.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Bitint C23 Boundary into observable performance evidence. For Implement the cause-level repair · Debug Bitint C23 Boundary, keep Bitint C23 Boundary connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-bitint-c23-boundary-186dv8 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 4128; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstatic int evidence_cmem_bitint_c23_boundary_186dv8(size_t count, size_t width, size_t limit, size_t *bytes) {\n  if (bytes == NULL || width == 0) return 0;\n  if (count > limit / width) return 0;\n  *bytes = count * width;\n  return 1;\n}\n\nint main(void) {\n  size_t bytes = 99;\n  int rejected = evidence_cmem_bitint_c23_boundary_186dv8((size_t)25, (size_t)8, (size_t)64, &bytes);\n  int accepted = evidence_cmem_bitint_c23_boundary_186dv8((size_t)5, (size_t)4, (size_t)64, &bytes);\n  int invariant = !rejected && accepted && bytes == (size_t)20;\n  printf(\"size bytes=%lu invariant=%d\\n\", (unsigned long)bytes, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Bitint C23 Boundary, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bitint C23 Boundary precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Bitint C23 Boundary, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 7598. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.",
+        "For Implement the cause-level repair · Debug Bitint C23 Boundary, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An exact bit width automatically has the same calling convention and library support everywhere."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Bitint C23 Boundary",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Bitint C23 Boundary: explain the governing condition, one failure, and how this concrete case was verified — A debug native-systems team handles memory case 5979. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.\n\nEvidence target: Publish the incident record · Debug Bitint C23 Boundary.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Bitint C23 Boundary, keep Bitint C23 Boundary connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Bitint C23 Boundary, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bitint C23 Boundary precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Bitint C23 Boundary, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A debug native-systems team handles memory case 5979. Produce bounded C evidence to reject a size calculation that exceeds its bound; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Evaluate C23 _BitInt and implementation limits without assuming a novel width improves ABI portability.",
+        "For Publish the incident record · Debug Bitint C23 Boundary, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An exact bit width automatically has the same calling convention and library support everywhere."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Integer Ranges Ranks to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Integer Ranges Ranks.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-integer-ranges-ranks"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Integer Ranges Ranks to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Integer Ranges Ranks.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-integer-ranges-ranks"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Integer Promotions Conversions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Integer Promotions Conversions.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-integer-promotions-conversions"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Size Ptrdiff Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Size Ptrdiff Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-size-ptrdiff-contract"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Checked Size Arithmetic to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Checked Size Arithmetic.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-checked-size-arithmetic"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bitint C23 Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bitint C23 Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-bitint-c23-boundary-186dv8 */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-bitint-c23-boundary-186dv8 */"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-bitint-c23-boundary-186dv8 \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_bitint_c23_boundary_186dv8\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using evaluate and bitint plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bitint-c23-boundary"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "evaluate",
+        "bitint"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

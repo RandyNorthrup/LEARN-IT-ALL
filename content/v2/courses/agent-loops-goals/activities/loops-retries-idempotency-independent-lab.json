@@ -1,0 +1,875 @@
+{
+  "schemaVersion": 2,
+  "id": "loops-retries-idempotency-independent-lab",
+  "courseId": "agent-loops-goals",
+  "moduleId": "loops-retries-idempotency",
+  "kind": "lab",
+  "title": "Retries, Idempotency, Compensation, and Recovery · Fault-Injection Lab",
+  "summary": "Harden a loop that calls unreliable external services. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a fault-injected recovery harness with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use bounded retries with backoff and error classification.",
+    "Design idempotent operations and deduplication for repeated requests.",
+    "Checkpoint durable state so a process can restart without replaying completed effects.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "loops-retry-policy",
+      "loops-idempotency-keys",
+      "loops-checkpoint-restart",
+      "loops-compensation",
+      "loops-recovery-tests"
+    ]
+  },
+  "prerequisites": [
+    "loops-retries-idempotency-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "agent-loops-goals-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "python": "\"\"\"Bounded agent-loop portfolio. No external effects occur in this browser lab.\"\"\"\n\nfrom dataclasses import dataclass\n\n# Add explicit state, stop, recovery, and evidence increments below.\n",
+    "shell": "",
+    "prompt": "# Persistent goal and operator-control portfolio\n",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. What must be established before implementation?",
+      "why": "The decision supplies observable evidence for use bounded retries with backoff and error classification.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use bounded retries with backoff and error classification. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Retry Policy, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Immediate unlimited retries maximize reliability. This fails the Retry Policy contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use bounded retries with backoff and error classification."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "hints": [
+        "Name the Retry Policy precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Immediate unlimited retries maximize reliability."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Retry Policy preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Immediate unlimited retries maximize reliability."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Retry Policy · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Retry Policy without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use bounded retries with backoff and error classification.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use bounded retries with backoff and error classification. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Retry Policy, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Immediate unlimited retries maximize reliability. This fails the Retry Policy contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use bounded retries with backoff and error classification."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "hints": [
+        "Name the Retry Policy precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Immediate unlimited retries maximize reliability."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Immediate unlimited retries maximize reliability."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use bounded retries with backoff and error classification. Apply it to the stated input and retain a reproducible trace for a fault-injected recovery harness."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Idempotency Keys · changed case",
+      "interaction": "inspect",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Idempotency Keys without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for design idempotent operations and deduplication for repeated requests.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Design idempotent operations and deduplication for repeated requests. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Idempotency Keys, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Read-only calls are the only operations that can be retried safely. This fails the Idempotency Keys contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Design idempotent operations and deduplication for repeated requests."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "loops-idempotency-keys"
+      ],
+      "hints": [
+        "Name the Idempotency Keys precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Read-only calls are the only operations that can be retried safely."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Idempotency Keys case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Read-only calls are the only operations that can be retried safely.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design idempotent operations and deduplication for repeated requests.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Design idempotent operations and deduplication for repeated requests. Apply it to the stated input and retain a reproducible trace for a fault-injected recovery harness."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Read-only calls are the only operations that can be retried safely."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Checkpoint Restart · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Checkpoint Restart without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for checkpoint durable state so a process can restart without replaying completed effects.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Checkpoint durable state so a process can restart without replaying completed effects. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Checkpoint Restart, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Restarting from the initial prompt is always safe. This fails the Checkpoint Restart contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Checkpoint durable state so a process can restart without replaying completed effects."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "loops-checkpoint-restart"
+      ],
+      "hints": [
+        "Name the Checkpoint Restart precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Restarting from the initial prompt is always safe."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Checkpoint durable state so a process can restart without replaying completed effects. Apply it to the stated input and retain a reproducible trace for a fault-injected recovery harness."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Restarting from the initial prompt is always safe."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Compensation · changed case",
+      "interaction": "inspect",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Compensation without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define compensating actions when atomic rollback is unavailable.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Define compensating actions when atomic rollback is unavailable. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Compensation, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Every external side effect can be rolled back automatically. This fails the Compensation contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Define compensating actions when atomic rollback is unavailable."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "loops-compensation"
+      ],
+      "hints": [
+        "Name the Compensation precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Every external side effect can be rolled back automatically."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Compensation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Every external side effect can be rolled back automatically.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Define compensating actions when atomic rollback is unavailable.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Every external side effect can be rolled back automatically."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Define compensating actions when atomic rollback is unavailable. Apply it to the stated input and retain a reproducible trace for a fault-injected recovery harness."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Recovery Tests · changed case",
+      "interaction": "answer",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. Which action demonstrates Recovery Tests without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for inject timeouts, partial failures, duplicates, and restarts into loop tests.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Inject timeouts, partial failures, duplicates, and restarts into loop tests. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Compare plausible approaches against the decision, constraints, evidence quality, and cost of being wrong."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Recovery Tests, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Happy-path integration tests cover distributed failure behavior. This fails the Recovery Tests contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Inject timeouts, partial failures, duplicates, and restarts into loop tests."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "hints": [
+        "Name the Recovery Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Happy-path integration tests cover distributed failure behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Inject timeouts, partial failures, duplicates, and restarts into loop tests. Apply it to the stated input and retain a reproducible trace for a fault-injected recovery harness."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Happy-path integration tests cover distributed failure behavior."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence",
+      "interaction": "arrange",
+      "instruction": "Order the Retry Policy evidence cycle before implementing it.",
+      "why": "Correct order keeps Retry Policy assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use bounded retries with backoff and error classification. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Retry Policy, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Immediate unlimited retries maximize reliability. This fails the Retry Policy contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Use bounded retries with backoff and error classification."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "hints": [
+        "Name the Retry Policy precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Immediate unlimited retries maximize reliability."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose and document the smallest defensible model or procedure"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_loops_recovery_tests_l9qmkv function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Recovery Tests into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_loops_recovery_tests_l9qmkv(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "hints": [
+        "Name the Recovery Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Happy-path integration tests cover distributed failure behavior."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.\n\nUse a changed acceptance case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. One precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for inject timeouts, partial failures, duplicates, and restarts into loop tests.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Inject timeouts, partial failures, duplicates, and restarts into loop tests. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Compare plausible approaches against the decision, constraints, evidence quality, and cost of being wrong."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Use a changed worked example case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result. A defensible solution applies Recovery Tests, preserves the governing invariant or value contract, and connects the observed result to a fault-injected recovery harness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Happy-path integration tests cover distributed failure behavior. This fails the Recovery Tests contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "OpenAI Codex Manual: Goals and Long-Running Work (Verified current 2026-07-13) — Controls persisted goals, automatic continuation, goal commands, planning, and long-running Codex behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Inject timeouts, partial failures, duplicates, and restarts into loop tests."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "hints": [
+        "Name the Recovery Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Happy-path integration tests cover distributed failure behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Recovery Tests failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Happy-path integration tests cover distributed failure behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Inject timeouts, partial failures, duplicates, and restarts into loop tests.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Recovery Tests condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write a concise evidence note that explains when Recovery Tests applies, what can fail, and how the changed case was verified.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Inject timeouts, partial failures, duplicates, and restarts into loop tests."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "hints": [
+        "Name the Recovery Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Use a changed lab case derived from this module: loops retries idempotency. Preserve inputs, constraints, an observable trace, and a boundary result.",
+        "Use the documented misconception as a counterexample target: Happy-path integration tests cover distributed failure behavior."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retry Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retry Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Retry Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Retry Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Idempotency Keys to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Idempotency Keys.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-idempotency-keys"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Checkpoint Restart to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Checkpoint Restart.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-checkpoint-restart"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Compensation.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-compensation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-retry-policy"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_loops_recovery_tests_l9qmkv.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "file": "python",
+      "expected": "evidence_loops_recovery_tests_l9qmkv"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_loops_recovery_tests_l9qmkv\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "loops-recovery-tests"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Recovery Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Recovery Tests.",
+      "hidden": true,
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using inject and timeouts plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "loops-recovery-tests"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "inject",
+        "timeouts"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

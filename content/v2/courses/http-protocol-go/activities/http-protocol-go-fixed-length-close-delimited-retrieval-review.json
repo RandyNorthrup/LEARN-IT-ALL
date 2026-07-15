@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-fixed-length-close-delimited-retrieval-review",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-fixed-length-close-delimited",
+  "kind": "review",
+  "title": "Fixed-Length, Close-Delimited, Absent, and Incomplete Content · Go Retrieval",
+  "summary": "A delayed handoff reconstructs fixed-length, close-delimited, absent, and incomplete content from bounded byte and state evidence, challenges one misconception, and revises the bounded fixed-length and close-delimited content reader. Planned artifact: Extend the evidence record for bounded fixed-length and close-delimited content reader after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Stream exactly the validated content length through independent policy limits without allocating the declared size.",
+    "Classify EOF before the required octet count as incomplete framing and prevent dispatch or connection reuse.",
+    "Stop after exactly the framed content and retain buffered residual bytes for the next message.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpproto-bounded-content-length-reader",
+      "httpproto-premature-eof-incomplete",
+      "httpproto-residual-byte-boundary",
+      "httpproto-close-delimited-response",
+      "httpproto-content-decoding-limit"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-fixed-length-close-delimited-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mixed-evidence",
+      "title": "Separate evidence from confidence · Review Content Decoding Limit",
+      "interaction": "inspect",
+      "instruction": "review case — A review protocol team handles case 9910 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.\n\nInspect the Content Decoding Limit trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Separate evidence from confidence · Review Content Decoding Limit.",
+      "why": "The decision supplies observable evidence for keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks. For Separate evidence from confidence · Review Content Decoding Limit, keep Content Decoding Limit connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Content Decoding Limit, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "hints": [
+        "For Separate evidence from confidence · Review Content Decoding Limit, name the types, ownership, and stop path, Content Decoding Limit precondition, or invariant that must hold.",
+        "At Separate evidence from confidence · Review Content Decoding Limit, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9910 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.",
+        "For Separate evidence from confidence · Review Content Decoding Limit, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A small framed gzip body guarantees a small decoded representation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Content Decoding Limit case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review protocol team handles case 9910 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "A small framed gzip body guarantees a small decoded representation.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks. Artifact under review: bounded fixed-length and close-delimited content reader.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Content Decoding Limit, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        },
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Content Decoding Limit happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Bounded Content Length Reader · changed case · Review Bounded Content Length Reader",
+      "interaction": "predict",
+      "instruction": "review case — A review protocol team handles case 9911 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stream exactly the validated content length through independent policy limits without allocating the declared size.\n\nWhich action demonstrates Bounded Content Length Reader without dropping earlier contracts?\n\nEvidence target: Bounded Content Length Reader · changed case · Review Bounded Content Length Reader.",
+      "why": "The decision supplies observable evidence for stream exactly the validated content length through independent policy limits without allocating the declared size. For Bounded Content Length Reader · changed case · Review Bounded Content Length Reader, keep Bounded Content Length Reader connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9911 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stream exactly the validated content length through independent policy limits without allocating the declared size."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bounded Content Length Reader condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpproto-bounded-content-length-reader"
+      ],
+      "hints": [
+        "For Bounded Content Length Reader · changed case · Review Bounded Content Length Reader, name the types, ownership, and stop path, Bounded Content Length Reader precondition, or invariant that must hold.",
+        "At Bounded Content Length Reader · changed case · Review Bounded Content Length Reader, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9911 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stream exactly the validated content length through independent policy limits without allocating the declared size.",
+        "For Bounded Content Length Reader · changed case · Review Bounded Content Length Reader, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A validated Content-Length is safe to use directly as a slice allocation length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A validated Content-Length is safe to use directly as a slice allocation length. That claim does not survive the bounded content length reader · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For bounded content length reader · changed case, run one convenient Bounded Content Length Reader happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Stream exactly the validated content length through independent policy limits without allocating the declared size. Apply it to the stated input and retain a reproducible trace for bounded fixed-length and close-delimited content reader."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Premature Eof Incomplete · changed case · Review Premature Eof Incomplete",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 9912 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Classify EOF before the required octet count as incomplete framing and prevent dispatch or connection reuse.\n\nWhich action demonstrates Premature Eof Incomplete without dropping earlier contracts?\n\nEvidence target: Premature Eof Incomplete · changed case · Review Premature Eof Incomplete.",
+      "why": "The decision supplies observable evidence for classify eof before the required octet count as incomplete framing and prevent dispatch or connection reuse. For Premature Eof Incomplete · changed case · Review Premature Eof Incomplete, keep Premature Eof Incomplete connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9912 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Classify EOF before the required octet count as incomplete framing and prevent dispatch or connection reuse."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Premature Eof Incomplete condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpproto-premature-eof-incomplete"
+      ],
+      "hints": [
+        "For Premature Eof Incomplete · changed case · Review Premature Eof Incomplete, name the types, ownership, and stop path, Premature Eof Incomplete precondition, or invariant that must hold.",
+        "At Premature Eof Incomplete · changed case · Review Premature Eof Incomplete, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9912 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: no malformed framing may be normalized and forwarded to another recipient; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Classify EOF before the required octet count as incomplete framing and prevent dispatch or connection reuse.",
+        "For Premature Eof Incomplete · changed case · Review Premature Eof Incomplete, challenge the documented misconception with runtime, failure, race, or toolchain evidence: EOF terminates any HTTP content successfully regardless of expected length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For premature eof incomplete · changed case, run one convenient Premature Eof Incomplete happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Classify EOF before the required octet count as incomplete framing and prevent dispatch or connection reuse. Apply it to the stated input and retain a reproducible trace for bounded fixed-length and close-delimited content reader."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "EOF terminates any HTTP content successfully regardless of expected length. That claim does not survive the premature eof incomplete · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Residual Byte Boundary · changed case · Review Residual Byte Boundary",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 9913 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stop after exactly the framed content and retain buffered residual bytes for the next message.\n\nWhich action demonstrates Residual Byte Boundary without dropping earlier contracts?\n\nEvidence target: Residual Byte Boundary · changed case · Review Residual Byte Boundary.",
+      "why": "The decision supplies observable evidence for stop after exactly the framed content and retain buffered residual bytes for the next message. For Residual Byte Boundary · changed case · Review Residual Byte Boundary, keep Residual Byte Boundary connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9913 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stop after exactly the framed content and retain buffered residual bytes for the next message."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Residual Byte Boundary condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpproto-residual-byte-boundary"
+      ],
+      "hints": [
+        "For Residual Byte Boundary · changed case · Review Residual Byte Boundary, name the types, ownership, and stop path, Residual Byte Boundary precondition, or invariant that must hold.",
+        "At Residual Byte Boundary · changed case · Review Residual Byte Boundary, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9913 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stop after exactly the framed content and retain buffered residual bytes for the next message.",
+        "For Residual Byte Boundary · changed case · Review Residual Byte Boundary, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Reading until no bytes are immediately available is equivalent to reading one HTTP body."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Stop after exactly the framed content and retain buffered residual bytes for the next message. Apply it to the stated input and retain a reproducible trace for bounded fixed-length and close-delimited content reader."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Reading until no bytes are immediately available is equivalent to reading one HTTP body. That claim does not survive the residual byte boundary · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For residual byte boundary · changed case, run one convenient Residual Byte Boundary happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Close Delimited Response · changed case · Review Close Delimited Response",
+      "interaction": "predict",
+      "instruction": "review case — A review protocol team handles case 9914 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.\n\nWhich action demonstrates Close Delimited Response without dropping earlier contracts?\n\nEvidence target: Close Delimited Response · changed case · Review Close Delimited Response.",
+      "why": "The decision supplies observable evidence for use close-delimited response content only in permitted response contexts and mark the connection non-reusable. For Close Delimited Response · changed case · Review Close Delimited Response, keep Close Delimited Response connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9914 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Close Delimited Response condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "hints": [
+        "For Close Delimited Response · changed case · Review Close Delimited Response, name the types, ownership, and stop path, Close Delimited Response precondition, or invariant that must hold.",
+        "At Close Delimited Response · changed case · Review Close Delimited Response, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9914 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Use close-delimited response content only in permitted response contexts and mark the connection non-reusable.",
+        "For Close Delimited Response · changed case · Review Close Delimited Response, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Requests without Content-Length are safely framed by closing the connection."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Requests without Content-Length are safely framed by closing the connection. That claim does not survive the close delimited response · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For close delimited response · changed case, run one convenient Close Delimited Response happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Use close-delimited response content only in permitted response contexts and mark the connection non-reusable. Apply it to the stated input and retain a reproducible trace for bounded fixed-length and close-delimited content reader."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Content Decoding Limit · changed case · Review Content Decoding Limit",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 9915 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.\n\nWhich action demonstrates Content Decoding Limit without dropping earlier contracts?\n\nEvidence target: Content Decoding Limit · changed case · Review Content Decoding Limit.",
+      "why": "The decision supplies observable evidence for keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks. For Content Decoding Limit · changed case · Review Content Decoding Limit, keep Content Decoding Limit connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9915 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Content Decoding Limit condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "hints": [
+        "For Content Decoding Limit · changed case · Review Content Decoding Limit, name the types, ownership, and stop path, Content Decoding Limit precondition, or invariant that must hold.",
+        "At Content Decoding Limit · changed case · Review Content Decoding Limit, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9915 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.",
+        "For Content Decoding Limit · changed case · Review Content Decoding Limit, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A small framed gzip body guarantees a small decoded representation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For content decoding limit · changed case, run one convenient Content Decoding Limit happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks. Apply it to the stated input and retain a reproducible trace for bounded fixed-length and close-delimited content reader."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A small framed gzip body guarantees a small decoded representation. That claim does not survive the content decoding limit · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Retrieve the complete evidence cycle · Review Bounded Content Length Reader",
+      "interaction": "arrange",
+      "instruction": "Order the Bounded Content Length Reader evidence cycle for this review task before implementing it.\n\nEvidence target: Retrieve the complete evidence cycle · Review Bounded Content Length Reader.",
+      "why": "Correct order keeps Bounded Content Length Reader assumptions visible before execution and verifies its result against a boundary case afterward. For Retrieve the complete evidence cycle · Review Bounded Content Length Reader, keep Bounded Content Length Reader connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 9916 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stream exactly the validated content length through independent policy limits without allocating the declared size."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Bounded Content Length Reader has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "httpproto-bounded-content-length-reader"
+      ],
+      "hints": [
+        "For Retrieve the complete evidence cycle · Review Bounded Content Length Reader, name the types, ownership, and stop path, Bounded Content Length Reader precondition, or invariant that must hold.",
+        "At Retrieve the complete evidence cycle · Review Bounded Content Length Reader, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9916 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Stream exactly the validated content length through independent policy limits without allocating the declared size.",
+        "For Retrieve the complete evidence cycle · Review Bounded Content Length Reader, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A validated Content-Length is safe to use directly as a slice allocation length."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the review Bounded Content Length Reader case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the review Bounded Content Length Reader case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the review Bounded Content Length Reader case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the review Bounded Content Length Reader case"
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Record what required effort · Review Content Decoding Limit",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Content Decoding Limit: explain the governing condition, one failure, and how this concrete case was verified — A review protocol team handles case 9917 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.\n\nEvidence target: Record what required effort · Review Content Decoding Limit.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Record what required effort · Review Content Decoding Limit, keep Content Decoding Limit connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "hints": [
+        "For Record what required effort · Review Content Decoding Limit, name the types, ownership, and stop path, Content Decoding Limit precondition, or invariant that must hold.",
+        "At Record what required effort · Review Content Decoding Limit, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 9917 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to separate exact-length, incomplete, and response-only close-delimited content; preserve this operating constraint: a timeout must reserve cleanup time and retain the terminal phase; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Keep message framing separate from content coding and bound both encoded and decoded sizes against expansion attacks.",
+        "For Record what required effort · Review Content Decoding Limit, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A small framed gzip body guarantees a small decoded representation."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Content Decoding Limit to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Content Decoding Limit.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bounded Content Length Reader to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bounded Content Length Reader.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-bounded-content-length-reader"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Premature Eof Incomplete to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Premature Eof Incomplete.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-premature-eof-incomplete"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Residual Byte Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Residual Byte Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-residual-byte-boundary"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Close Delimited Response to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Close Delimited Response.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-close-delimited-response"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Content Decoding Limit to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Content Decoding Limit.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-bounded-content-length-reader"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using keep and message plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-content-decoding-limit"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "keep",
+        "message"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

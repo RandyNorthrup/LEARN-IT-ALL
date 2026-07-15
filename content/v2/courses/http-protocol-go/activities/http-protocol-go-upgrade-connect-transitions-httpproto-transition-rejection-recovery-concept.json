@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-upgrade-connect-transitions-httpproto-transition-rejection-recovery-concept",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-upgrade-connect-transitions",
+  "kind": "theory",
+  "title": "Upgrade, CONNECT, Tunnels, WebSocket Boundaries, and Safe Transitions · Runtime Contract: Transition Rejection Recovery",
+  "summary": "A client sends new-protocol bytes before acceptance, a server parses tunneled data as another HTTP request, buffered bytes disappear during handoff, and rejected transitions desynchronize the connection. Planned artifact: Add and verify the transition rejection recovery increment in confirmed protocol-transition and buffered-byte handoff state machine. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+    "Apply RFC 9931 by forbidding unsafe optimistic new-protocol bytes in HTTP/1.1 until transition acceptance is known.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "httpproto-transition-rejection-recovery"
+    ],
+    "reinforces": [
+      "httpproto-rfc9931-no-optimistic-bytes"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-upgrade-connect-transitions-httpproto-rfc9931-no-optimistic-bytes-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Transition Rejection Recovery · Theory Transition Rejection Recovery",
+      "interaction": "predict",
+      "instruction": "theory case — A theory protocol team handles case 6290 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.\n\nBefore reading, predict which action preserves the Transition Rejection Recovery contract for the supplied data.\n\nEvidence target: Predict Transition Rejection Recovery · Theory Transition Rejection Recovery.",
+      "why": "The decision supplies observable evidence for continue http/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. For Predict Transition Rejection Recovery · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 6290 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Transition Rejection Recovery condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Considerations for Optimistic Protocol Transitions in HTTP/1.1 — Controls current HTTP/1.1 Upgrade and CONNECT transition safety, rejection behavior, optimistic bytes, and request-smuggling prevention."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Predict Transition Rejection Recovery · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Predict Transition Rejection Recovery · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6290 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Predict Transition Rejection Recovery · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-misread",
+          "text": "Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent. That claim does not survive the predict transition rejection recovery evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict transition rejection recovery, run one convenient Transition Rejection Recovery happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. Apply it to the concrete input and state the observable result."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Transition Rejection Recovery · Theory Transition Rejection Recovery",
+      "interaction": "read",
+      "instruction": "theory case — A theory protocol team handles case 6291 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.\n\nAfter tracing the worked code, choose the Transition Rejection Recovery application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Transition Rejection Recovery · Theory Transition Rejection Recovery.",
+      "why": "The decision supplies observable evidence for continue http/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. For Bound Transition Rejection Recovery · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare types, ownership, goroutine lifetime, failure contract, and observable result; trace value copies, aliases, blocking, and happens-before edges; run the smallest isolated program; then change one boundary input and retain a regression invariant."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example protocol team handles case 6290 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. A defensible solution applies Transition Rejection Recovery, preserves the governing invariant or value contract, and connects the observed result to confirmed protocol-transition and buffered-byte handoff state machine."
+        },
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-worked-http-protocol-go-upgrade-connect-transitions-4\n// Competency: httpproto-worked-http-protocol-go-upgrade-connect-transitions-4.\n// Case 7592: incident replay lab retaining minimized request-smuggling corpora.\n// Operating constraint: diagnostics must omit credentials and attacker-controlled metric labels.\n// Changed case: split every structural delimiter across a different read and retain the same result.\nfunc worked_http_protocol_go_upgrade_connect_transitions_4(requested bool, accepted bool, requestComplete bool, optimisticBytes int) (string, bool) {\n\tstate, reusable := \"http\", true\n\tif requested && accepted && requestComplete { state = \"transition\" }\n\tif optimisticBytes > 0 && !accepted { state, reusable = \"unsafe-optimistic\", false }\n\tif accepted && !requestComplete { state, reusable = \"incomplete-request\", false }\n\treturn state, reusable\n}",
+          "caption": "Runnable Go value, failure, or concurrency contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent. This fails the Transition Rejection Recovery contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Security Considerations for Optimistic Protocol Transitions in HTTP/1.1 (RFC 9931, March 2026) — Controls current HTTP/1.1 Upgrade and CONNECT transition safety, rejection behavior, optimistic bytes, and request-smuggling prevention."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Bound Transition Rejection Recovery · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Bound Transition Rejection Recovery · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6291 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Bound Transition Rejection Recovery · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound transition rejection recovery, run one convenient Transition Rejection Recovery happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Transition Rejection Recovery after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent. That claim does not survive the bound transition rejection recovery evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory protocol team handles case 6292 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.\n\nInspect the Transition Rejection Recovery trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery.",
+      "why": "The decision supplies observable evidence for continue http/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. For Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Transition Rejection Recovery, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6292 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Inspect Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Transition Rejection Recovery case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory protocol team handles case 6292 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. Artifact under review: confirmed protocol-transition and buffered-byte handoff state machine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Transition Rejection Recovery, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect transition rejection recovery evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect transition rejection recovery evidence, run one convenient Transition Rejection Recovery happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-transition-rejection-recovery-gyr6eq\" that uses case 5778 to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Transition Rejection Recovery into observable performance evidence. For Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-transition-rejection-recovery-gyr6eq\n// Competency: httpproto-transition-rejection-recovery.\n// Case 5778: regional status service with slow assistive and low-bandwidth clients.\n// Operating constraint: one connection has exactly one read owner and one terminal close owner.\n// Changed case: block extra QPACK streams and fall back without removing HTTP/2 availability.\nfunc evidence_httpproto_transition_rejection_recovery_gyr6eq(requested bool, accepted bool, requestComplete bool, optimisticBytes int) (string, bool) {\n\tstate, reusable := \"http\", true\n\tif requested && accepted && requestComplete { state = \"transition\" }\n\tif optimisticBytes > 0 && !accepted { state, reusable = \"unsafe-optimistic\", false }\n\tif accepted && !requestComplete { state, reusable = \"incomplete-request\", false }\n\treturn state, reusable\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6293 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Build Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery",
+      "interaction": "debug",
+      "instruction": "theory case — A theory protocol team handles case 6294 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.\n\nA teammate acts on this belief: “Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent.” Which repair addresses the cause?\n\nEvidence target: Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery.",
+      "why": "The decision supplies observable evidence for continue http/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous. For Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 6294 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Transition Rejection Recovery symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Considerations for Optimistic Protocol Transitions in HTTP/1.1 — Controls current HTTP/1.1 Upgrade and CONNECT transition safety, rejection behavior, optimistic bytes, and request-smuggling prevention."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6294 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Repair the Transition Rejection Recovery defect · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Transition Rejection Recovery failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the transition rejection recovery defect, run one convenient Transition Rejection Recovery happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Transition Rejection Recovery, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the transition rejection recovery defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery",
+      "interaction": "arrange",
+      "instruction": "Order the Transition Rejection Recovery evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery.",
+      "why": "Correct order keeps Transition Rejection Recovery assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 6295 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Transition Rejection Recovery has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6295 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then replace one field with repeated non-combinable lines and preserve their order. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Sequence Transition Rejection Recovery evidence · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the theory Transition Rejection Recovery case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the theory Transition Rejection Recovery case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the theory Transition Rejection Recovery case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the theory Transition Rejection Recovery case"
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Transition Rejection Recovery: explain the governing condition, one failure, and how this concrete case was verified — A theory protocol team handles case 6296 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then inject Transfer-Encoding plus Content-Length and close before any downstream forwarding. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.\n\nEvidence target: Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery, keep Transition Rejection Recovery connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "hints": [
+        "For Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery, name the types, ownership, and stop path, Transition Rejection Recovery precondition, or invariant that must hold.",
+        "At Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 6296 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to wait for confirmed Upgrade or CONNECT acceptance before transferring parser ownership; preserve this operating constraint: diagnostics must omit credentials and attacker-controlled metric labels; then inject Transfer-Encoding plus Content-Length and close before any downstream forwarding. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Continue HTTP/1.1 safely after a rejected transition only when buffered bytes, framing, peer behavior, and parser state remain unambiguous.",
+        "For Defend the Transition Rejection Recovery model · Theory Transition Rejection Recovery, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every rejected Upgrade or CONNECT must close the connection even when no optimistic bytes were sent."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transition Rejection Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transition Rejection Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transition Rejection Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transition Rejection Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transition Rejection Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transition Rejection Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-transition-rejection-recovery-gyr6eq.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-transition-rejection-recovery-gyr6eq"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-transition-rejection-recovery-gyr6eq(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_transition_rejection_recovery_gyr6eq\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?requested\\s*&&\\s*accepted\\s*&&\\s*requestComplete)(?=(?:(?!// Evidence:)[\\s\\S])*?optimisticBytes\\s*>\\s*0\\s*&&\\s*!accepted)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transition Rejection Recovery to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transition Rejection Recovery.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using continue and http plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-transition-rejection-recovery"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "continue",
+        "http"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

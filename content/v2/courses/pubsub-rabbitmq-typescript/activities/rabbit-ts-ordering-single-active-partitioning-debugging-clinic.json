@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-ts-ordering-single-active-partitioning-debugging-clinic",
+  "courseId": "pubsub-rabbitmq-typescript",
+  "moduleId": "rabbit-ts-ordering-single-active-partitioning",
+  "kind": "debug",
+  "title": "Ordering, Single Active Consumer, Keys, and Partitioning · Type Forensics",
+  "summary": "An incident engineer receives a plausible but defective ordering scope and partition strategy; preserve message identity and timing, locate the first broken ownership boundary, and retain a deterministic regression case. Planned artifact: Repair a changed failure in ordering scope and partition strategy and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.",
+    "Partition related messages by stable business key while bounding skew, hot keys, resharding, and cross-key independence.",
+    "Use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-ts-ordering-scope-contract",
+      "rabbit-ts-keyed-causal-order",
+      "rabbit-ts-single-active-consumer",
+      "rabbit-ts-version-sequence-defense",
+      "rabbit-ts-ordering-throughput-tradeoff"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-ts-ordering-single-active-partitioning-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "pubsub-rabbitmq-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// pubsub-rabbitmq-typescript cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-TypeScript topology, routing, ownership, acknowledgement, retry, and recovery models only.\n// amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\n\ntype MessageEvidence = Readonly<{\n  id: string;\n  type: string;\n  schemaVersion: number;\n  bodyBytes: number;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  route: string;\n  owner: string;\n  terminalDecision: string;\n  attempt: number;\n}>;\n\nconst messagingPortfolioReady = true;\nvoid messagingPortfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug messaging team handles case 7647 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.\n\nInspect the Ordering Scope Contract trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract.",
+      "why": "The decision supplies observable evidence for state ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers. For RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract, keep Ordering Scope Contract connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Ordering Scope Contract, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-scope-contract"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract, name the types, ownership, and stop path, Ordering Scope Contract precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 7647 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.",
+        "For RabbitMQ and TypeScript Inspect the failure record · Debug Ordering Scope Contract, challenge the documented misconception with runtime, failure, race, or toolchain evidence: RabbitMQ preserves one global order across all publishers, queues, and consumer completion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ordering Scope Contract case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug messaging team handles case 7647 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then remove the dead-letter binding and expose the resulting retention risk. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "RabbitMQ preserves one global order across all publishers, queues, and consumer completion.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers. Artifact under review: ordering scope and partition strategy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Ordering Scope Contract, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 6028 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.\n\nWhich observation would disprove this suspected cause: “RabbitMQ preserves one global order across all publishers, queues, and consumer completion.”?\n\nEvidence target: RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract.",
+      "why": "The decision supplies observable evidence for state ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers. For RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract, keep Ordering Scope Contract connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 6028 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ordering Scope Contract symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Quorum Queues — Controls Raft replication, majority, confirms, use-case fit, poison handling, delivery limits, dead lettering, priorities, and failure behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-scope-contract"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract, name the types, ownership, and stop path, Ordering Scope Contract precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 6028 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then lose a quorum member and recompute majority availability. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.",
+        "For RabbitMQ and TypeScript Ordering Scope Contract · fault isolation · Debug Ordering Scope Contract, challenge the documented misconception with runtime, failure, race, or toolchain evidence: RabbitMQ preserves one global order across all publishers, queues, and consumer completion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ordering Scope Contract failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "RabbitMQ preserves one global order across all publishers, queues, and consumer completion.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: State ordering scope across producer channel, exchange route, one queue, delivery, completion, redelivery, priority, and multiple consumers.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Ordering Scope Contract."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the ordering scope contract · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order",
+      "interaction": "predict",
+      "instruction": "debug case — A debug messaging team handles case 9457 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Partition related messages by stable business key while bounding skew, hot keys, resharding, and cross-key independence.\n\nWhich observation would disprove this suspected cause: “Hashing a key across queues preserves order when partition count changes.”?\n\nEvidence target: RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order.",
+      "why": "The decision supplies observable evidence for partition related messages by stable business key while bounding skew, hot keys, resharding, and cross-key independence. For RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order, keep Keyed Causal Order connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 9457 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Partition related messages by stable business key while bounding skew, hot keys, resharding, and cross-key independence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Keyed Causal Order condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Quorum Queues — Controls Raft replication, majority, confirms, use-case fit, poison handling, delivery limits, dead lettering, priorities, and failure behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-keyed-causal-order"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order, name the types, ownership, and stop path, Keyed Causal Order precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 9457 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then introduce a sequence gap for one partition while another stays healthy. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Partition related messages by stable business key while bounding skew, hot keys, resharding, and cross-key independence.",
+        "For RabbitMQ and TypeScript Keyed Causal Order · fault isolation · Debug Keyed Causal Order, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Hashing a key across queues preserves order when partition count changes."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Keyed Causal Order."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the keyed causal order · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 7838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits.\n\nWhich observation would disprove this suspected cause: “An exclusive consumer and single active consumer provide identical failover behavior.”?\n\nEvidence target: RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer.",
+      "why": "The decision supplies observable evidence for use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits. For RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer, keep Single Active Consumer connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 7838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Single Active Consumer symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Quorum Queues — Controls Raft replication, majority, confirms, use-case fit, poison handling, delivery limits, dead lettering, priorities, and failure behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-single-active-consumer"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer, name the types, ownership, and stop path, Single Active Consumer precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 7838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then raise a broker resource alarm and stop new publisher admission. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits.",
+        "For RabbitMQ and TypeScript Single Active Consumer · fault isolation · Debug Single Active Consumer, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An exclusive consumer and single active consumer provide identical failover behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Single Active Consumer failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "An exclusive consumer and single active consumer provide identical failover behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use single active consumer when one active delivery stream is required and account for failover, prefetch, recovery, and throughput limits.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the single active consumer · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Single Active Consumer."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense",
+      "interaction": "predict",
+      "instruction": "debug case — A debug messaging team handles case 6219 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Defend state with entity version, sequence, monotonic transition, deduplication, gap detection, and reconciliation rather than transport order alone.\n\nWhich observation would disprove this suspected cause: “Discarding any message older than the latest timestamp safely resolves all ordering races.”?\n\nEvidence target: RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense.",
+      "why": "The decision supplies observable evidence for defend state with entity version, sequence, monotonic transition, deduplication, gap detection, and reconciliation rather than transport order alone. For RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense, keep Version Sequence Defense connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 6219 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Defend state with entity version, sequence, monotonic transition, deduplication, gap detection, and reconciliation rather than transport order alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Version Sequence Defense condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Quorum Queues — Controls Raft replication, majority, confirms, use-case fit, poison handling, delivery limits, dead lettering, priorities, and failure behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-version-sequence-defense"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense, name the types, ownership, and stop path, Version Sequence Defense precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 6219 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then fail the canary and prove older consumers remain compatible during rollback. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Defend state with entity version, sequence, monotonic transition, deduplication, gap detection, and reconciliation rather than transport order alone.",
+        "For RabbitMQ and TypeScript Version Sequence Defense · fault isolation · Debug Version Sequence Defense, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Discarding any message older than the latest timestamp safely resolves all ordering races."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Version Sequence Defense."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the version sequence defense · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput…",
+      "interaction": "debug",
+      "instruction": "debug case — A debug messaging team handles case 9838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.\n\nWhich observation would disprove this suspected cause: “Strict global order can scale horizontally without coordination cost.”?\n\nEvidence target: RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput….",
+      "why": "The decision supplies observable evidence for measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope. For RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput…, keep Ordering Throughput Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 9838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Ordering Throughput Tradeoff symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Quorum Queues — Controls Raft replication, majority, confirms, use-case fit, poison handling, delivery limits, dead lettering, priorities, and failure behavior."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput…, name the types, ownership, and stop path, Ordering Throughput Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput…, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 9838 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then make the broker confirmation disappear after the message may have committed. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.",
+        "For RabbitMQ and TypeScript Ordering Throughput Tradeoff · fault isolation · Debug Ordering Throughput…, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Strict global order can scale horizontally without coordination cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Ordering Throughput Tradeoff failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Strict global order can scale horizontally without coordination cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Ordering Throughput Tradeoff."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the ordering throughput tradeoff · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff",
+      "interaction": "arrange",
+      "instruction": "Order the Ordering Throughput Tradeoff RabbitMQ and TypeScript HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff.",
+      "why": "Correct order keeps Ordering Throughput Tradeoff assumptions visible before execution and verifies its result against a boundary case afterward. For RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff, keep Ordering Throughput Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug messaging team handles case 2457 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Ordering Throughput Tradeoff has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff, name the types, ownership, and stop path, Ordering Throughput Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 2457 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then add one subscriber responsibility without changing publisher intent. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.",
+        "For RabbitMQ and TypeScript Order the regression proof · Debug Ordering Throughput Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Strict global order can scale horizontally without coordination cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare RabbitMQ and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Ordering Throughput Tradeoff case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict RabbitMQ and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Ordering Throughput Tradeoff case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic RabbitMQ and TypeScript request or response model and retain inspectable evidence for the debug Ordering Throughput Tradeoff case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed RabbitMQ and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the debug Ordering Throughput Tradeoff case"
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: rabbit-ts-ordering-throughput-tradeoff-h2vj2d\" that uses case 1549 to enforce partition, version, gap, and single-active evidence instead of claiming global order. Return observable changed-case evidence. Browser code must not import amqplib or Node built-ins, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, or use credentials; verify those boundaries later with the named Node 24, amqplib 2.0.1, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production transfer gates.\n\nEvidence target: RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Ordering Throughput Tradeoff into observable performance evidence. For RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff, keep Ordering Throughput Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: rabbit-ts-ordering-throughput-tradeoff-h2vj2d\n// Competency: rabbit-ts-ordering-throughput-tradeoff.\n// Case 1549: payment-effect relay after an ambiguous provider timeout.\n// Operating constraint: bound payload, buffer, and retained-ledger bytes.\n// Changed case: add one subscriber responsibility without changing publisher intent.\nfunction evidence_rabbit_ts_ordering_throughput_tradeoff_h2vj2d(sequence: number, lastSequence: number, partition: string, expectedPartition: string, singleActive: boolean): { apply: boolean; reason: string } {\n  const evidenceVariant_h2vj2d = \"h2vj2d-d2jv2h-1549\";\n  void evidenceVariant_h2vj2d;\n  if (partition !== expectedPartition) return { apply: false, reason: \"wrong-partition\" };\n  if (sequence <= lastSequence) return { apply: false, reason: \"duplicate-or-old\" };\n  if (sequence > lastSequence + 1) return { apply: false, reason: \"gap\" };\n  return { apply: singleActive, reason: singleActive ? \"next\" : \"concurrency-risk\" };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff, name the types, ownership, and stop path, Ordering Throughput Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 6600 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then change one routing segment and prove the exact destination set. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.",
+        "For RabbitMQ and TypeScript Implement the cause-level repair · Debug Ordering Throughput Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Strict global order can scale horizontally without coordination cost."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "incident-report",
+      "title": "RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Ordering Throughput Tradeoff: explain the governing condition, one failure, and how this concrete case was verified — A debug messaging team handles case 8219 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.\n\nEvidence target: RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff, keep Ordering Throughput Tradeoff connected to executable TypeScript messaging decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "hints": [
+        "For RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff, name the types, ownership, and stop path, Ordering Throughput Tradeoff precondition, or invariant that must hold.",
+        "At RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A debug messaging team handles case 8219 in a quorum queue during a planned rolling maintenance window. Build deterministic TypeScript evidence to enforce partition, version, gap, and single-active evidence instead of claiming global order; keep credentials and connection URLs out of learner output; then lower the byte or in-flight budget and preserve upstream rejection evidence. Browser code models pure messaging decisions only. amqplib, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, external effects, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Measure throughput, tail latency, skew, recovery, and correctness when selecting queue count, consumer concurrency, and order scope.",
+        "For RabbitMQ and TypeScript Publish the incident record · Debug Ordering Throughput Tradeoff, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Strict global order can scale horizontally without coordination cost."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ordering Scope Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ordering Scope Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-scope-contract"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ordering Scope Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ordering Scope Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-scope-contract"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Keyed Causal Order to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Keyed Causal Order.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-keyed-causal-order"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Single Active Consumer to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Single Active Consumer.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-single-active-consumer"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Version Sequence Defense to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Version Sequence Defense.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-version-sequence-defense"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ordering Throughput Tradeoff to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ordering Throughput Tradeoff.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-ts-ordering-throughput-tradeoff-h2vj2d.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: rabbit-ts-ordering-throughput-tradeoff-h2vj2d"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: rabbit-ts-ordering-throughput-tradeoff-h2vj2d(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_rabbit_ts_ordering_throughput_tradeoff_h2vj2d\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?partition\\s*!==\\s*expectedPartition)(?=(?:(?!// Evidence:)[\\s\\S])*?sequence\\s*<=\\s*lastSequence)(?=(?:(?!// Evidence:)[\\s\\S])*?lastSequence\\s*\\+\\s*1)(?=(?:(?!// Evidence:)[\\s\\S])*?singleActive\\s*\\?)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using measure and throughput plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-ts-ordering-throughput-tradeoff"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "measure",
+        "throughput"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

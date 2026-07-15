@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "http-server-go-context-deadlines-cleanup-independent-lab",
+  "courseId": "http-servers-go",
+  "moduleId": "http-server-go-context-deadlines-cleanup",
+  "kind": "lab",
+  "title": "Request Context, Deadlines, Cancellation, and Cleanup · Systems Transfer",
+  "summary": "An independent service team receives a different API, load, trust, persistence, and failure constraint and must transfer request context, deadlines, cancellation, and cleanup into a new deadline budget and cancellation propagation trace. Planned artifact: Produce an independent changed-context version of deadline budget and cancellation propagation trace with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evid…",
+  "objectives": [
+    "Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.",
+    "Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts.",
+    "Distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "httpsgo-request-context-lifecycle",
+      "httpsgo-deadline-budget-allocation",
+      "httpsgo-cancel-cause-classification",
+      "httpsgo-goroutine-result-channel-ownership",
+      "httpsgo-cleanup-compensation"
+    ]
+  },
+  "prerequisites": [
+    "http-server-go-context-deadlines-cleanup-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "http-servers-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-servers-go cumulative secure server decision portfolio.\n// Browser execution uses deterministic pure-Go request, handler, dependency, response, and cleanup models only.\n// Listeners, TLS, net/http, databases, proxies, races, load, credentials, host state, and production changes require explicit authorized Go 1.26 transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype RequestEvidence struct { Method, Path, Authority string; BodyBytes int }\ntype ResponseEvidence struct { Status int; Effect, Cleanup string; Accepted bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP server decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Go server Commit to the mission model · Lab Request Context Lifecycle",
+      "interaction": "predict",
+      "instruction": "lab case — A lab team handles case 5250 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.\n\nWhat must be established before implementation?\n\nEvidence target: Go server Commit to the mission model · Lab Request Context Lifecycle.",
+      "why": "The decision supplies observable evidence for trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs. For Go server Commit to the mission model · Lab Request Context Lifecycle, keep Request Context Lifecycle connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5250 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Request Context Lifecycle condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "hints": [
+        "For Go server Commit to the mission model · Lab Request Context Lifecycle, name the method, authority, body, byte, time, and credential boundary, Request Context Lifecycle precondition, or invariant that must hold.",
+        "At Go server Commit to the mission model · Lab Request Context Lifecycle, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5250 in a civic incident API behind one trusted regional proxy. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.",
+        "For Go server Commit to the mission model · Lab Request Context Lifecycle, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Request.Context remains valid until all goroutines started by the handler decide to finish."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Request Context Lifecycle happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Request Context Lifecycle preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Request.Context remains valid until all goroutines started by the handler decide to finish. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle",
+      "interaction": "answer",
+      "instruction": "lab case — A lab team handles case 5251 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.\n\nWhich action demonstrates Request Context Lifecycle without dropping earlier contracts?\n\nEvidence target: Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle.",
+      "why": "The decision supplies observable evidence for trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs. For Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle, keep Request Context Lifecycle connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5251 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Request Context Lifecycle condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "hints": [
+        "For Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle, name the method, authority, body, byte, time, and credential boundary, Request Context Lifecycle precondition, or invariant that must hold.",
+        "At Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5251 in a multi-tenant case service with a bounded PostgreSQL pool. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.",
+        "For Go server Request Context Lifecycle · changed case · Lab Request Context Lifecycle, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Request.Context remains valid until all goroutines started by the handler decide to finish."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs. Apply it to the stated input and retain a reproducible trace for deadline budget and cancellation propagation trace."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Request.Context remains valid until all goroutines started by the handler decide to finish. That claim does not survive the request context lifecycle · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For request context lifecycle · changed case, run one convenient Request Context Lifecycle happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab team handles case 5252 in a public status API serving assistive and low-bandwidth clients. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts.\n\nWhich action demonstrates Deadline Budget Allocation without dropping earlier contracts?\n\nEvidence target: Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation.",
+      "why": "The decision supplies observable evidence for allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts. For Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation, keep Deadline Budget Allocation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5252 in a public status API serving assistive and low-bandwidth clients. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Deadline Budget Allocation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpsgo-deadline-budget-allocation"
+      ],
+      "hints": [
+        "For Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation, name the method, authority, body, byte, time, and credential boundary, Deadline Budget Allocation precondition, or invariant that must hold.",
+        "At Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5252 in a public status API serving assistive and low-bandwidth clients. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts.",
+        "For Go server Deadline Budget Allocation · changed case · Lab Deadline Budget Allocation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Giving each dependency the full request timeout keeps total latency within the request deadline."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Deadline Budget Allocation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Giving each dependency the full request timeout keeps total latency within the request deadline.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Giving each dependency the full request timeout keeps total latency within the request deadline. That claim does not survive the deadline budget allocation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For deadline budget allocation · changed case, run one convenient Deadline Budget Allocation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Allocate caller deadline across validation, database, outbound dependency, response, and cleanup reserves instead of stacking independent full timeouts. Apply it to the stated input and retain a reproducible trace for deadline budget and cancellation propagation trace."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification",
+      "interaction": "answer",
+      "instruction": "lab case — A lab team handles case 5253 in a signed fulfillment webhook gateway under replay attack. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions.\n\nWhich action demonstrates Cancel Cause Classification without dropping earlier contracts?\n\nEvidence target: Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification.",
+      "why": "The decision supplies observable evidence for distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions. For Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification, keep Cancel Cause Classification connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5253 in a signed fulfillment webhook gateway under replay attack. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cancel Cause Classification condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpsgo-cancel-cause-classification"
+      ],
+      "hints": [
+        "For Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification, name the method, authority, body, byte, time, and credential boundary, Cancel Cause Classification precondition, or invariant that must hold.",
+        "At Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5253 in a signed fulfillment webhook gateway under replay attack. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions.",
+        "For Go server Cancel Cause Classification · changed case · Lab Cancel Cause Classification, challenge the documented misconception with request, response, fault, policy, and transfer evidence: All context cancellation is a server error that should increment the 5xx failure rate."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For cancel cause classification · changed case, run one convenient Cancel Cause Classification happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Distinguish client cancellation, server deadline, dependency timeout, shutdown, overload, and internal failure for response and observability decisions. Apply it to the stated input and retain a reproducible trace for deadline budget and cancellation propagation trace."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "All context cancellation is a server error that should increment the 5xx failure rate. That claim does not survive the cancel cause classification · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab team handles case 5254 in a canary service revision draining long-lived streams. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer.\n\nWhich action demonstrates Goroutine Result Channel Ownership without dropping earlier contracts?\n\nEvidence target: Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership.",
+      "why": "The decision supplies observable evidence for give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer. For Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership, keep Goroutine Result Channel Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5254 in a canary service revision draining long-lived streams. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Goroutine Result Channel Ownership result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpsgo-goroutine-result-channel-ownership"
+      ],
+      "hints": [
+        "For Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership, name the method, authority, body, byte, time, and credential boundary, Goroutine Result Channel Ownership precondition, or invariant that must hold.",
+        "At Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5254 in a canary service revision draining long-lived streams. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then cancel during the dependency phase and preserve cleanup plus response ownership. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer.",
+        "For Go server Goroutine Result Channel Ownership · changed case · Lab Goroutine Result Channel Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A buffered result channel automatically prevents goroutine leaks after request cancellation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Goroutine Result Channel Ownership case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A buffered result channel automatically prevents goroutine leaks after request cancellation.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Give every request goroutine a stop path, bounded result channel, single closer, retained error, and join or deliberate ownership transfer. Apply it to the stated input and retain a reproducible trace for deadline budget and cancellation propagation trace."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "A buffered result channel automatically prevents goroutine leaks after request cancellation. That claim does not survive the goroutine result channel ownership · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For goroutine result channel ownership · changed case, run one convenient Goroutine Result Channel Ownership happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Go server Cleanup Compensation · changed case · Lab Cleanup Compensation",
+      "interaction": "answer",
+      "instruction": "lab case — A lab team handles case 5255 in a partner API with an outdated generated client. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.\n\nWhich action demonstrates Cleanup Compensation without dropping earlier contracts?\n\nEvidence target: Go server Cleanup Compensation · changed case · Lab Cleanup Compensation.",
+      "why": "The decision supplies observable evidence for reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority. For Go server Cleanup Compensation · changed case · Lab Cleanup Compensation, keep Cleanup Compensation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5255 in a partner API with an outdated generated client. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cleanup Compensation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "hints": [
+        "For Go server Cleanup Compensation · changed case · Lab Cleanup Compensation, name the method, authority, body, byte, time, and credential boundary, Cleanup Compensation precondition, or invariant that must hold.",
+        "At Go server Cleanup Compensation · changed case · Lab Cleanup Compensation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5255 in a partner API with an outdated generated client. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.",
+        "For Go server Cleanup Compensation · changed case · Lab Cleanup Compensation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Deferred cleanup always completes even after the request deadline expires."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Deferred cleanup always completes even after the request deadline expires. That claim does not survive the cleanup compensation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For cleanup compensation · changed case, run one convenient Cleanup Compensation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority. Apply it to the stated input and retain a reproducible trace for deadline budget and cancellation propagation trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Go server Plan the evidence sequence · Lab Request Context Lifecycle",
+      "interaction": "arrange",
+      "instruction": "Order the Request Context Lifecycle Go server HTTP evidence cycle for this lab task before implementing it.\n\nEvidence target: Go server Plan the evidence sequence · Lab Request Context Lifecycle.",
+      "why": "Correct order keeps Request Context Lifecycle assumptions visible before execution and verifies its result against a boundary case afterward. For Go server Plan the evidence sequence · Lab Request Context Lifecycle, keep Request Context Lifecycle connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5256 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Request Context Lifecycle has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "hints": [
+        "For Go server Plan the evidence sequence · Lab Request Context Lifecycle, name the method, authority, body, byte, time, and credential boundary, Request Context Lifecycle precondition, or invariant that must hold.",
+        "At Go server Plan the evidence sequence · Lab Request Context Lifecycle, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5256 in a internal administrative API crossing two trust zones. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Trace when an incoming request context is canceled and pass it through every request-scoped operation without storing it in long-lived structs.",
+        "For Go server Plan the evidence sequence · Lab Request Context Lifecycle, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Request.Context remains valid until all goroutines started by the handler decide to finish."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare Go server method semantics, target authority, credentials, body ownership, and byte and time budgets for the lab Request Context Lifecycle case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict Go server resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the lab Request Context Lifecycle case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic Go server request or response model and retain inspectable evidence for the lab Request Context Lifecycle case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed Go server failure, verify bounded cleanup, and state live-network transfer limits for the lab Request Context Lifecycle case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Go server Extend the cumulative artifact · Lab Cleanup Compensation",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpsgo-cleanup-compensation-1sscbw\" that uses case 8772 to derive a dependency budget while reserving time for cancellation cleanup. Return observable changed-case evidence. The browser must not open listeners, contact networks or databases, read host state, or use credentials; verify those boundaries later with the named Go 1.26 transfer gates.\n\nEvidence target: Go server Extend the cumulative artifact · Lab Cleanup Compensation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Cleanup Compensation into observable performance evidence. For Go server Extend the cumulative artifact · Lab Cleanup Compensation, keep Cleanup Compensation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpsgo-cleanup-compensation-1sscbw\n// Competency: httpsgo-cleanup-compensation.\n// Case 8772: public status API serving assistive and low-bandwidth clients.\n// Changed case: replay the same operation key with different content and reject the mismatch.\nfunc evidence_httpsgo_cleanup_compensation_1sscbw(requestBudgetMs int, dependencyBudgetMs int, cleanupReserveMs int) (int, bool) {\n\tusable := requestBudgetMs - cleanupReserveMs\n\tif usable < 0 { usable = 0 }\n\tif dependencyBudgetMs < usable { usable = dependencyBudgetMs }\n\tstart := usable > 0 && cleanupReserveMs >= 0\n\treturn usable, start\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "hints": [
+        "For Go server Extend the cumulative artifact · Lab Cleanup Compensation, name the method, authority, body, byte, time, and credential boundary, Cleanup Compensation precondition, or invariant that must hold.",
+        "At Go server Extend the cumulative artifact · Lab Cleanup Compensation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5257 in a bursting intake service near its concurrency ceiling. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.",
+        "For Go server Extend the cumulative artifact · Lab Cleanup Compensation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Deferred cleanup always completes even after the request deadline expires."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Go server Test an acceptance boundary · Lab Cleanup Compensation",
+      "interaction": "debug",
+      "instruction": "lab case — A lab team handles case 5258 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Go server Test an acceptance boundary · Lab Cleanup Compensation.",
+      "why": "The decision supplies observable evidence for reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority. For Go server Test an acceptance boundary · Lab Cleanup Compensation, keep Cleanup Compensation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab team handles case 5258 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Cleanup Compensation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go 1.26.5 net/http Package — Controls handlers, requests, responses, ServeMux, Server, protocols, HTTP2Config, body limits, CrossOriginProtection, cookies, files, and response control."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "hints": [
+        "For Go server Test an acceptance boundary · Lab Cleanup Compensation, name the method, authority, body, byte, time, and credential boundary, Cleanup Compensation precondition, or invariant that must hold.",
+        "At Go server Test an acceptance boundary · Lab Cleanup Compensation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5258 in a privacy-sensitive records API using conditional requests. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.",
+        "For Go server Test an acceptance boundary · Lab Cleanup Compensation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Deferred cleanup always completes even after the request deadline expires."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cleanup Compensation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Deferred cleanup always completes even after the request deadline expires.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Cleanup Compensation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Cleanup Compensation condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Go server Defend the transferred model · Lab Cleanup Compensation",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Cleanup Compensation: explain the governing condition, one failure, and how this concrete case was verified — A lab team handles case 5259 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.\n\nEvidence target: Go server Defend the transferred model · Lab Cleanup Compensation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Go server Defend the transferred model · Lab Cleanup Compensation, keep Cleanup Compensation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "hints": [
+        "For Go server Defend the transferred model · Lab Cleanup Compensation, name the method, authority, body, byte, time, and credential boundary, Cleanup Compensation precondition, or invariant that must hold.",
+        "At Go server Defend the transferred model · Lab Cleanup Compensation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before reviewing it: A lab team handles case 5259 in a recovery rehearsal with an ambiguous database commit. Build deterministic Go evidence to derive a dependency budget while reserving time for cancellation cleanup; then saturate one admission budget while another tenant remains serviceable. Browser code models decisions only. Listener, TLS, database, proxy, race, load, and production behavior require explicit authorized transfer gates. Competency probe: Reserve cleanup time, release rows and transactions, compensate partial external effects, and verify no work outlives its intended authority.",
+        "For Go server Defend the transferred model · Lab Cleanup Compensation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Deferred cleanup always completes even after the request deadline expires."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Request Context Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Request Context Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Request Context Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Request Context Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Deadline Budget Allocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Deadline Budget Allocation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-deadline-budget-allocation"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancel Cause Classification to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancel Cause Classification.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-cancel-cause-classification"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Goroutine Result Channel Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Goroutine Result Channel Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-goroutine-result-channel-ownership"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cleanup Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cleanup Compensation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-request-context-lifecycle"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpsgo-cleanup-compensation-1sscbw.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpsgo-cleanup-compensation-1sscbw"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpsgo-cleanup-compensation-1sscbw(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpsgo_cleanup_compensation_1sscbw\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?requestBudgetMs\\s*-\\s*cleanupReserveMs)(?=(?:(?!// Evidence:)[\\s\\S])*?dependencyBudgetMs\\s*<\\s*usable)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cleanup Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cleanup Compensation.",
+      "hidden": true,
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using reserve and cleanup plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpsgo-cleanup-compensation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "reserve",
+        "cleanup"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

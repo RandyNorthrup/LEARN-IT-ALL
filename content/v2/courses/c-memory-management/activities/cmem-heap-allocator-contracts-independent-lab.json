@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-heap-allocator-contracts-independent-lab",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-heap-allocator-contracts",
+  "kind": "lab",
+  "title": "Heap Allocation Contracts and Failure Handling · Changed-Lifetime Lab",
+  "summary": "An independent maintainer ports the allocation wrapper with explicit outcomes to a changed target with tighter memory, different input shape, injected allocation failure, and no worked solution. Planned artifact: Produce an independent changed-context version of allocation wrapper with explicit outcomes with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions.",
+    "Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions.",
+    "Choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "cmem-malloc-calloc-contracts",
+      "cmem-allocation-failure-path",
+      "cmem-zero-size-policy",
+      "cmem-aligned-allocation",
+      "cmem-sized-free-c23"
+    ]
+  },
+  "prerequisites": [
+    "cmem-heap-allocator-contracts-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Lab Malloc Calloc Contracts",
+      "interaction": "predict",
+      "instruction": "lab case — A lab native-systems team handles memory case 8254. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Lab Malloc Calloc Contracts.",
+      "why": "The decision supplies observable evidence for apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions. For Commit to the mission model · Lab Malloc Calloc Contracts, keep Malloc Calloc Contracts connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 8254. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Malloc Calloc Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-malloc-calloc-contracts"
+      ],
+      "hints": [
+        "For Commit to the mission model · Lab Malloc Calloc Contracts, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Malloc Calloc Contracts precondition, or invariant that must hold.",
+        "At Commit to the mission model · Lab Malloc Calloc Contracts, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 8254. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions.",
+        "For Commit to the mission model · Lab Malloc Calloc Contracts, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: calloc is merely malloc followed by a universally equivalent zero value for every type."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Malloc Calloc Contracts preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "calloc is merely malloc followed by a universally equivalent zero value for every type. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Malloc Calloc Contracts case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 9873. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions.\n\nWhich action demonstrates Malloc Calloc Contracts without dropping earlier contracts?\n\nEvidence target: Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts.",
+      "why": "The decision supplies observable evidence for apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions. For Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts, keep Malloc Calloc Contracts connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 9873. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Malloc Calloc Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-malloc-calloc-contracts"
+      ],
+      "hints": [
+        "For Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Malloc Calloc Contracts precondition, or invariant that must hold.",
+        "At Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 9873. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions.",
+        "For Malloc Calloc Contracts · changed case · Lab Malloc Calloc Contracts, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: calloc is merely malloc followed by a universally equivalent zero value for every type."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "calloc is merely malloc followed by a universally equivalent zero value for every type. That claim does not survive the malloc calloc contracts · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For malloc calloc contracts · changed case, run one convenient Malloc Calloc Contracts case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Apply malloc and calloc size, initialization, alignment, zero-size, and failure contracts without dereferencing assumptions. Apply it to the stated input and retain a reproducible trace for allocation wrapper with explicit outcomes."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Allocation Failure Path · changed case · Lab Allocation Failure Path",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 7540. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions.\n\nWhich action demonstrates Allocation Failure Path without dropping earlier contracts?\n\nEvidence target: Allocation Failure Path · changed case · Lab Allocation Failure Path.",
+      "why": "The decision supplies observable evidence for propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions. For Allocation Failure Path · changed case · Lab Allocation Failure Path, keep Allocation Failure Path connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 7540. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Allocation Failure Path result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-allocation-failure-path"
+      ],
+      "hints": [
+        "For Allocation Failure Path · changed case · Lab Allocation Failure Path, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Allocation Failure Path precondition, or invariant that must hold.",
+        "At Allocation Failure Path · changed case · Lab Allocation Failure Path, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 7540. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions.",
+        "For Allocation Failure Path · changed case · Lab Allocation Failure Path, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Small allocations cannot fail on a modern virtual-memory system."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Allocation Failure Path case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Small allocations cannot fail on a modern virtual-memory system.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For allocation failure path · changed case, run one convenient Allocation Failure Path case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Propagate allocation failure without partial-state leaks, null dereferences, or impossible-error assumptions. Apply it to the stated input and retain a reproducible trace for allocation wrapper with explicit outcomes."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Small allocations cannot fail on a modern virtual-memory system. That claim does not survive the allocation failure path · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Zero Size Policy · changed case · Lab Zero Size Policy",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 9159. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer.\n\nWhich action demonstrates Zero Size Policy without dropping earlier contracts?\n\nEvidence target: Zero Size Policy · changed case · Lab Zero Size Policy.",
+      "why": "The decision supplies observable evidence for choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer. For Zero Size Policy · changed case · Lab Zero Size Policy, keep Zero Size Policy connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 9159. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Zero Size Policy condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-zero-size-policy"
+      ],
+      "hints": [
+        "For Zero Size Policy · changed case · Lab Zero Size Policy, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Zero Size Policy precondition, or invariant that must hold.",
+        "At Zero Size Policy · changed case · Lab Zero Size Policy, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 9159. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer.",
+        "For Zero Size Policy · changed case · Lab Zero Size Policy, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: malloc(0) must return null and may therefore be used as a portable emptiness test."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Choose and test a project policy for zero elements rather than depending on an implementation-specific returned pointer. Apply it to the stated input and retain a reproducible trace for allocation wrapper with explicit outcomes."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "malloc(0) must return null and may therefore be used as a portable emptiness test. That claim does not survive the zero size policy · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For zero size policy · changed case, run one convenient Zero Size Policy case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Aligned Allocation · changed case · Lab Aligned Allocation",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 1778. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage.\n\nWhich action demonstrates Aligned Allocation without dropping earlier contracts?\n\nEvidence target: Aligned Allocation · changed case · Lab Aligned Allocation.",
+      "why": "The decision supplies observable evidence for satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage. For Aligned Allocation · changed case · Lab Aligned Allocation, keep Aligned Allocation connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 1778. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Aligned Allocation result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-aligned-allocation"
+      ],
+      "hints": [
+        "For Aligned Allocation · changed case · Lab Aligned Allocation, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Aligned Allocation precondition, or invariant that must hold.",
+        "At Aligned Allocation · changed case · Lab Aligned Allocation, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 1778. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage.",
+        "For Aligned Allocation · changed case · Lab Aligned Allocation, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Any power-of-two alignment request is portable and free always matches every aligned allocator."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Aligned Allocation case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Any power-of-two alignment request is portable and free always matches every aligned allocator.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Any power-of-two alignment request is portable and free always matches every aligned allocator. That claim does not survive the aligned allocation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For aligned allocation · changed case, run one convenient Aligned Allocation case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Satisfy size-multiple, alignment, release-family, and implementation-support rules for aligned storage. Apply it to the stated input and retain a reproducible trace for allocation wrapper with explicit outcomes."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Sized Free C23 · changed case · Lab Sized Free C23",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 3397. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.\n\nWhich action demonstrates Sized Free C23 without dropping earlier contracts?\n\nEvidence target: Sized Free C23 · changed case · Lab Sized Free C23.",
+      "why": "The decision supplies observable evidence for adopt c23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts. For Sized Free C23 · changed case · Lab Sized Free C23, keep Sized Free C23 connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 3397. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Sized Free C23 condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "hints": [
+        "For Sized Free C23 · changed case · Lab Sized Free C23, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Sized Free C23 precondition, or invariant that must hold.",
+        "At Sized Free C23 · changed case · Lab Sized Free C23, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 3397. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+        "For Sized Free C23 · changed case · Lab Sized Free C23, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Supplying an approximate size to a sized deallocation is an optimization-only mistake."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For sized free c23 · changed case, run one convenient Sized Free C23 case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts. Apply it to the stated input and retain a reproducible trace for allocation wrapper with explicit outcomes."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Supplying an approximate size to a sized deallocation is an optimization-only mistake. That claim does not survive the sized free c23 · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Lab Sized Free C23",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 1064. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.\n\nInspect the Sized Free C23 trace for this lab case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Lab Sized Free C23.",
+      "why": "The decision supplies observable evidence for adopt c23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts. For Audit the proposed evidence packet · Lab Sized Free C23, keep Sized Free C23 connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Sized Free C23, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Lab Sized Free C23, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Sized Free C23 precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Lab Sized Free C23, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 1064. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+        "For Audit the proposed evidence packet · Lab Sized Free C23, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Supplying an approximate size to a sized deallocation is an optimization-only mistake."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Sized Free C23 case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A lab native-systems team handles memory case 1064. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Supplying an approximate size to a sized deallocation is an optimization-only mistake.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts. Artifact under review: allocation wrapper with explicit outcomes.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Sized Free C23, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Sized Free C23 case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Lab Sized Free C23",
+      "interaction": "code",
+      "instruction": "For this lab demonstration of cmem-sized-free-c23, write the complete compile-ready C program headed \"/* Evidence: cmem-sized-free-c23-17tlph */\" for changed case 5257. It must handle allocation failure and zero-size policy explicitly, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Lab Sized Free C23.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Sized Free C23 into observable performance evidence. For Extend the cumulative artifact · Lab Sized Free C23, keep Sized Free C23 connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-sized-free-c23-17tlph */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 5257; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstatic int evidence_cmem_sized_free_c23_17tlph(size_t count, int simulate_failure, int *observed) {\n  int *values;\n  size_t index;\n  if (observed == NULL || count == 0 || simulate_failure) return 0;\n  values = (int *)calloc(count, sizeof *values);\n  if (values == NULL) return 0;\n  for (index = 0; index < count; ++index) values[index] = (int)index + 6;\n  *observed = values[count - 1];\n  free(values);\n  return 1;\n}\n\nint main(void) {\n  int observed = -1;\n  int rejected = evidence_cmem_sized_free_c23_17tlph(3, 1, &observed);\n  int accepted = evidence_cmem_sized_free_c23_17tlph(3, 0, &observed);\n  int invariant = !rejected && accepted && observed == 8;\n  printf(\"heap observed=%d invariant=%d\\n\", observed, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Lab Sized Free C23, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Sized Free C23 precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Lab Sized Free C23, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 2683. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+        "For Extend the cumulative artifact · Lab Sized Free C23, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Supplying an approximate size to a sized deallocation is an optimization-only mistake."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Lab Sized Free C23",
+      "interaction": "debug",
+      "instruction": "lab case — A lab native-systems team handles memory case 4302. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Lab Sized Free C23.",
+      "why": "The decision supplies observable evidence for adopt c23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts. For Test an acceptance boundary · Lab Sized Free C23, keep Sized Free C23 connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 4302. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Sized Free C23 symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Lab Sized Free C23, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Sized Free C23 precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Lab Sized Free C23, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 4302. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+        "For Test an acceptance boundary · Lab Sized Free C23, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Supplying an approximate size to a sized deallocation is an optimization-only mistake."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Sized Free C23 failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Supplying an approximate size to a sized deallocation is an optimization-only mistake.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Sized Free C23 case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Sized Free C23 condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Lab Sized Free C23",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Sized Free C23: explain the governing condition, one failure, and how this concrete case was verified — A lab native-systems team handles memory case 5921. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.\n\nEvidence target: Defend the transferred model · Lab Sized Free C23.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Lab Sized Free C23, keep Sized Free C23 connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "hints": [
+        "For Defend the transferred model · Lab Sized Free C23, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Sized Free C23 precondition, or invariant that must hold.",
+        "At Defend the transferred model · Lab Sized Free C23, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 5921. Produce bounded C evidence to handle allocation failure and zero-size policy explicitly; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Adopt C23 free_sized and free_aligned_sized only behind exact size, alignment, availability, and fallback contracts.",
+        "For Defend the transferred model · Lab Sized Free C23, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Supplying an approximate size to a sized deallocation is an optimization-only mistake."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Malloc Calloc Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Malloc Calloc Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-malloc-calloc-contracts"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Malloc Calloc Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Malloc Calloc Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-malloc-calloc-contracts"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Allocation Failure Path to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Allocation Failure Path.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-allocation-failure-path"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Zero Size Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Zero Size Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-zero-size-policy"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Aligned Allocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Aligned Allocation.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-aligned-allocation"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sized Free C23 to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sized Free C23.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sized Free C23 to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sized Free C23.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-sized-free-c23-17tlph */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-sized-free-c23-17tlph */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-sized-free-c23-17tlph \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_sized_free_c23_17tlph\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sized Free C23 to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sized Free C23.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using adopt and free plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-sized-free-c23"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "adopt",
+        "free"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

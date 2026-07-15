@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-structs-unions-flexible-arrays-independent-lab",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-structs-unions-flexible-arrays",
+  "kind": "lab",
+  "title": "Structures, Unions, Tagged Variants, and Flexible Arrays · Independent C Trial",
+  "summary": "An independent maintainer ports the tagged packet representation to a changed target with tighter memory, different input shape, injected allocation failure, and no worked solution. Planned artifact: Produce an independent changed-context version of tagged packet representation with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions.",
+    "Pair a union with an explicit discriminant and access only the active, validated member.",
+    "Allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "cmem-aggregate-invariants",
+      "cmem-tagged-union-access",
+      "cmem-flexible-array-allocation",
+      "cmem-bitfield-portability",
+      "cmem-opaque-structure-evolution"
+    ]
+  },
+  "prerequisites": [
+    "cmem-structs-unions-flexible-arrays-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Lab Aggregate Invariants",
+      "interaction": "predict",
+      "instruction": "lab case — A lab native-systems team handles memory case 2419. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Lab Aggregate Invariants.",
+      "why": "The decision supplies observable evidence for initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions. For Commit to the mission model · Lab Aggregate Invariants, keep Aggregate Invariants connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 2419. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Aggregate Invariants condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-aggregate-invariants"
+      ],
+      "hints": [
+        "For Commit to the mission model · Lab Aggregate Invariants, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Aggregate Invariants precondition, or invariant that must hold.",
+        "At Commit to the mission model · Lab Aggregate Invariants, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 2419. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions.",
+        "For Commit to the mission model · Lab Aggregate Invariants, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: memcmp is a portable semantic equality test for structures."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "memcmp is a portable semantic equality test for structures. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Aggregate Invariants case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Aggregate Invariants preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Aggregate Invariants · changed case · Lab Aggregate Invariants",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 9800. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions.\n\nWhich action demonstrates Aggregate Invariants without dropping earlier contracts?\n\nEvidence target: Aggregate Invariants · changed case · Lab Aggregate Invariants.",
+      "why": "The decision supplies observable evidence for initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions. For Aggregate Invariants · changed case · Lab Aggregate Invariants, keep Aggregate Invariants connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 9800. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Aggregate Invariants condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-aggregate-invariants"
+      ],
+      "hints": [
+        "For Aggregate Invariants · changed case · Lab Aggregate Invariants, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Aggregate Invariants precondition, or invariant that must hold.",
+        "At Aggregate Invariants · changed case · Lab Aggregate Invariants, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 9800. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions.",
+        "For Aggregate Invariants · changed case · Lab Aggregate Invariants, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: memcmp is a portable semantic equality test for structures."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For aggregate invariants · changed case, run one convenient Aggregate Invariants case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Initialize, copy, compare, and validate structures by members and invariants rather than raw-byte assumptions. Apply it to the stated input and retain a reproducible trace for tagged packet representation."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "memcmp is a portable semantic equality test for structures. That claim does not survive the aggregate invariants · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Tagged Union Access · changed case · Lab Tagged Union Access",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 8181. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair a union with an explicit discriminant and access only the active, validated member.\n\nWhich action demonstrates Tagged Union Access without dropping earlier contracts?\n\nEvidence target: Tagged Union Access · changed case · Lab Tagged Union Access.",
+      "why": "The decision supplies observable evidence for pair a union with an explicit discriminant and access only the active, validated member. For Tagged Union Access · changed case · Lab Tagged Union Access, keep Tagged Union Access connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 8181. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair a union with an explicit discriminant and access only the active, validated member."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Tagged Union Access result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-tagged-union-access"
+      ],
+      "hints": [
+        "For Tagged Union Access · changed case · Lab Tagged Union Access, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Tagged Union Access precondition, or invariant that must hold.",
+        "At Tagged Union Access · changed case · Lab Tagged Union Access, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 8181. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Pair a union with an explicit discriminant and access only the active, validated member.",
+        "For Tagged Union Access · changed case · Lab Tagged Union Access, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Reading a different union member is a portable conversion mechanism for all representations."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Tagged Union Access case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Reading a different union member is a portable conversion mechanism for all representations.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Pair a union with an explicit discriminant and access only the active, validated member.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Pair a union with an explicit discriminant and access only the active, validated member. Apply it to the stated input and retain a reproducible trace for tagged packet representation."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Reading a different union member is a portable conversion mechanism for all representations. That claim does not survive the tagged union access · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For tagged union access · changed case, run one convenient Tagged Union Access case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Flexible Array Allocation · changed case · Lab Flexible Array Allocation",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 6562. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count.\n\nWhich action demonstrates Flexible Array Allocation without dropping earlier contracts?\n\nEvidence target: Flexible Array Allocation · changed case · Lab Flexible Array Allocation.",
+      "why": "The decision supplies observable evidence for allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count. For Flexible Array Allocation · changed case · Lab Flexible Array Allocation, keep Flexible Array Allocation connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 6562. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Flexible Array Allocation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-flexible-array-allocation"
+      ],
+      "hints": [
+        "For Flexible Array Allocation · changed case · Lab Flexible Array Allocation, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Flexible Array Allocation precondition, or invariant that must hold.",
+        "At Flexible Array Allocation · changed case · Lab Flexible Array Allocation, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 6562. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count.",
+        "For Flexible Array Allocation · changed case · Lab Flexible Array Allocation, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: sizeof a flexible-array structure includes space for the requested payload."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "sizeof a flexible-array structure includes space for the requested payload. That claim does not survive the flexible array allocation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For flexible array allocation · changed case, run one convenient Flexible Array Allocation case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Allocate flexible-array objects with checked header-plus-elements arithmetic and record their element count. Apply it to the stated input and retain a reproducible trace for tagged packet representation."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Bitfield Portability · changed case · Lab Bitfield Portability",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 4943. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Confine bit-fields to implementation-characterized layouts and use masks for external formats.\n\nWhich action demonstrates Bitfield Portability without dropping earlier contracts?\n\nEvidence target: Bitfield Portability · changed case · Lab Bitfield Portability.",
+      "why": "The decision supplies observable evidence for confine bit-fields to implementation-characterized layouts and use masks for external formats. For Bitfield Portability · changed case · Lab Bitfield Portability, keep Bitfield Portability connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 4943. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Confine bit-fields to implementation-characterized layouts and use masks for external formats."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Bitfield Portability result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-bitfield-portability"
+      ],
+      "hints": [
+        "For Bitfield Portability · changed case · Lab Bitfield Portability, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Bitfield Portability precondition, or invariant that must hold.",
+        "At Bitfield Portability · changed case · Lab Bitfield Portability, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 4943. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Confine bit-fields to implementation-characterized layouts and use masks for external formats.",
+        "For Bitfield Portability · changed case · Lab Bitfield Portability, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Bit-field order and packing follow declaration order on every ABI."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bitfield Portability case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Bit-field order and packing follow declaration order on every ABI.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Confine bit-fields to implementation-characterized layouts and use masks for external formats.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For bitfield portability · changed case, run one convenient Bitfield Portability case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Confine bit-fields to implementation-characterized layouts and use masks for external formats. Apply it to the stated input and retain a reproducible trace for tagged packet representation."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Bit-field order and packing follow declaration order on every ABI. That claim does not survive the bitfield portability · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution",
+      "interaction": "answer",
+      "instruction": "lab case — A lab native-systems team handles memory case 3708. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.\n\nWhich action demonstrates Opaque Structure Evolution without dropping earlier contracts?\n\nEvidence target: Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution.",
+      "why": "The decision supplies observable evidence for hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts. For Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution, keep Opaque Structure Evolution connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 3708. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Opaque Structure Evolution condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "hints": [
+        "For Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Opaque Structure Evolution precondition, or invariant that must hold.",
+        "At Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 3708. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+        "For Opaque Structure Evolution · changed case · Lab Opaque Structure Evolution, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Publishing structure fields cannot constrain future ABI-compatible changes."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts. Apply it to the stated input and retain a reproducible trace for tagged packet representation."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Publishing structure fields cannot constrain future ABI-compatible changes. That claim does not survive the opaque structure evolution · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For opaque structure evolution · changed case, run one convenient Opaque Structure Evolution case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Lab Opaque Structure Evolution",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab native-systems team handles memory case 5327. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.\n\nInspect the Opaque Structure Evolution trace for this lab case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Lab Opaque Structure Evolution.",
+      "why": "The decision supplies observable evidence for hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts. For Audit the proposed evidence packet · Lab Opaque Structure Evolution, keep Opaque Structure Evolution connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Opaque Structure Evolution, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Lab Opaque Structure Evolution, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Opaque Structure Evolution precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Lab Opaque Structure Evolution, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 5327. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+        "For Audit the proposed evidence packet · Lab Opaque Structure Evolution, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Publishing structure fields cannot constrain future ABI-compatible changes."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Opaque Structure Evolution case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A lab native-systems team handles memory case 5327. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Publishing structure fields cannot constrain future ABI-compatible changes.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts. Artifact under review: tagged packet representation.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Opaque Structure Evolution case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Opaque Structure Evolution, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Lab Opaque Structure Evolution",
+      "interaction": "code",
+      "instruction": "For this lab demonstration of cmem-opaque-structure-evolution, write the complete compile-ready C program headed \"/* Evidence: cmem-opaque-structure-evolution-19bezu */\" for changed case 6403. It must validate a tagged payload and its allocation size, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Lab Opaque Structure Evolution.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Opaque Structure Evolution into observable performance evidence. For Extend the cumulative artifact · Lab Opaque Structure Evolution, keep Opaque Structure Evolution connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-opaque-structure-evolution-19bezu */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 6403; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct packet_model { int tag; size_t count; int payload[4]; };\n\nstatic int evidence_cmem_opaque_structure_evolution_19bezu(const struct packet_model *packet, int *sum) {\n  size_t index;\n  int total = 0;\n  if (packet == NULL || sum == NULL || packet->tag != 1 || packet->count > 4) return 0;\n  for (index = 0; index < packet->count; ++index) total += packet->payload[index];\n  *sum = total;\n  return 1;\n}\n\nint main(void) {\n  struct packet_model packet = { 1, 3, { 5, 6, 7, 0 } };\n  int sum = 0;\n  int accepted = evidence_cmem_opaque_structure_evolution_19bezu(&packet, &sum);\n  packet.tag = 9;\n  int rejected = evidence_cmem_opaque_structure_evolution_19bezu(&packet, &sum);\n  int invariant = accepted && !rejected && sum == 18;\n  printf(\"packet sum=%d invariant=%d\\n\", sum, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Lab Opaque Structure Evolution, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Opaque Structure Evolution precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Lab Opaque Structure Evolution, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 6946. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+        "For Extend the cumulative artifact · Lab Opaque Structure Evolution, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Publishing structure fields cannot constrain future ABI-compatible changes."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Lab Opaque Structure Evolution",
+      "interaction": "debug",
+      "instruction": "lab case — A lab native-systems team handles memory case 8565. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Lab Opaque Structure Evolution.",
+      "why": "The decision supplies observable evidence for hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts. For Test an acceptance boundary · Lab Opaque Structure Evolution, keep Opaque Structure Evolution connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab native-systems team handles memory case 8565. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Opaque Structure Evolution symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Lab Opaque Structure Evolution, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Opaque Structure Evolution precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Lab Opaque Structure Evolution, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 8565. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+        "For Test an acceptance boundary · Lab Opaque Structure Evolution, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Publishing structure fields cannot constrain future ABI-compatible changes."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Opaque Structure Evolution failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Publishing structure fields cannot constrain future ABI-compatible changes.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Opaque Structure Evolution condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Opaque Structure Evolution case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Lab Opaque Structure Evolution",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Opaque Structure Evolution: explain the governing condition, one failure, and how this concrete case was verified — A lab native-systems team handles memory case 6232. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.\n\nEvidence target: Defend the transferred model · Lab Opaque Structure Evolution.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Lab Opaque Structure Evolution, keep Opaque Structure Evolution connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "hints": [
+        "For Defend the transferred model · Lab Opaque Structure Evolution, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Opaque Structure Evolution precondition, or invariant that must hold.",
+        "At Defend the transferred model · Lab Opaque Structure Evolution, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A lab native-systems team handles memory case 6232. Produce bounded C evidence to validate a tagged payload and its allocation size; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Hide representation behind incomplete types and constructor, observer, mutation, and destructor contracts.",
+        "For Defend the transferred model · Lab Opaque Structure Evolution, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Publishing structure fields cannot constrain future ABI-compatible changes."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Aggregate Invariants to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Aggregate Invariants.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-aggregate-invariants"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Aggregate Invariants to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Aggregate Invariants.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-aggregate-invariants"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Tagged Union Access to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Tagged Union Access.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-tagged-union-access"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Flexible Array Allocation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Flexible Array Allocation.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-flexible-array-allocation"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bitfield Portability to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bitfield Portability.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-bitfield-portability"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Opaque Structure Evolution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Opaque Structure Evolution.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Opaque Structure Evolution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Opaque Structure Evolution.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-opaque-structure-evolution-19bezu */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-opaque-structure-evolution-19bezu */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-opaque-structure-evolution-19bezu \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_opaque_structure_evolution_19bezu\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Opaque Structure Evolution to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Opaque Structure Evolution.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using hide and representation plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-opaque-structure-evolution"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "hide",
+        "representation"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

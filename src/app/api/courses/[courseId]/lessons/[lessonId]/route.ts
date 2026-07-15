@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getLessonData } from '@/lib/lessonLoader';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) {
   try {
@@ -10,18 +10,12 @@ export async function GET(
     const lessonData = getLessonData(courseId, lessonId);
 
     if (!lessonData) {
-      return NextResponse.json(
-        { error: 'Lesson not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }
 
     return NextResponse.json(lessonData);
   } catch (error) {
     console.error('Failed to fetch lesson:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch lesson' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch lesson' }, { status: 500 });
   }
 }

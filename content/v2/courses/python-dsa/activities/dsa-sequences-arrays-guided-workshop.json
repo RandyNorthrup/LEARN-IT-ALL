@@ -1,0 +1,735 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-sequences-arrays-guided-workshop",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-sequences-arrays",
+  "kind": "workshop",
+  "title": "Arrays, Dynamic Sequences, and Locality · Proof Workshop",
+  "summary": "Design an event buffer with predictable indexing, insertion, and memory behavior. Planned artifact: Build a complete first version of an array-backed sequence with operation traces while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Explain indexing and cache-local traversal from contiguous logical storage.",
+    "Trace capacity growth and amortized append behavior through resize events.",
+    "Compare indexed access, search, middle insertion, deletion, slicing, and copying costs.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "dsa-contiguous-layout",
+      "dsa-dynamic-array-growth",
+      "dsa-sequence-operations",
+      "dsa-two-pointer",
+      "dsa-prefix-aggregation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "dsa-sequences-arrays-dsa-prefix-aggregation-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "workshop case — Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for explain indexing and cache-local traversal from contiguous logical storage.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Contiguous Layout condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "hints": [
+        "Name the Contiguous Layout precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Python lists store full arbitrary objects inline."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Contiguous Layout."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Contiguous Layout preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Python lists store full arbitrary objects inline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Contiguous Layout · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Contiguous Layout without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for explain indexing and cache-local traversal from contiguous logical storage.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Contiguous Layout condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "hints": [
+        "Name the Contiguous Layout precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Python lists store full arbitrary objects inline."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Explain indexing and cache-local traversal from contiguous logical storage. Apply it to the stated input and retain a reproducible trace for an array-backed sequence with operation traces."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Python lists store full arbitrary objects inline."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Contiguous Layout."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Dynamic Array Growth · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Dynamic Array Growth without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for trace capacity growth and amortized append behavior through resize events.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Dynamic Array Growth result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-dynamic-array-growth"
+      ],
+      "hints": [
+        "Name the Dynamic Array Growth precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Every append has constant worst-case cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Dynamic Array Growth case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Every append has constant worst-case cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Trace capacity growth and amortized append behavior through resize events.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Every append has constant worst-case cost."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Dynamic Array Growth."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Trace capacity growth and amortized append behavior through resize events. Apply it to the stated input and retain a reproducible trace for an array-backed sequence with operation traces."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Sequence Operations · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Sequence Operations without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for compare indexed access, search, middle insertion, deletion, slicing, and copying costs.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Sequence Operations condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-sequence-operations"
+      ],
+      "hints": [
+        "Name the Sequence Operations precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: All list operations are constant time."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Sequence Operations."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Compare indexed access, search, middle insertion, deletion, slicing, and copying costs. Apply it to the stated input and retain a reproducible trace for an array-backed sequence with operation traces."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "All list operations are constant time."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Two Pointer · changed case",
+      "interaction": "inspect",
+      "instruction": "workshop case — Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Two Pointer without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for maintain explicit two-pointer invariants for partition and interval problems.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Two Pointer result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-two-pointer"
+      ],
+      "hints": [
+        "Name the Two Pointer precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Two pointers work only on sorted numeric arrays."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Two Pointer case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Two pointers work only on sorted numeric arrays.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain explicit two-pointer invariants for partition and interval problems.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Maintain explicit two-pointer invariants for partition and interval problems. Apply it to the stated input and retain a reproducible trace for an array-backed sequence with operation traces."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Two pointers work only on sorted numeric arrays."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Two Pointer."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Prefix Aggregation · changed case",
+      "interaction": "answer",
+      "instruction": "workshop case — Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nWhich action demonstrates Prefix Aggregation without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for precompute prefix information to answer repeated range queries with validated boundaries.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Prefix Aggregation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "hints": [
+        "Name the Prefix Aggregation precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [10, 6, 10, 5, 13, 7]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Prefix structures remove all update cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Prefix structures remove all update cost."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Prefix Aggregation."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Precompute prefix information to answer repeated range queries with validated boundaries. Apply it to the stated input and retain a reproducible trace for an array-backed sequence with operation traces."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence",
+      "interaction": "arrange",
+      "instruction": "Order the Contiguous Layout correctness-and-cost proof for this workshop task before implementing it.",
+      "why": "Correct order keeps Contiguous Layout assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Contiguous Layout has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "hints": [
+        "Name the Contiguous Layout precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [6, 2, 6, 1, 9, 3]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Python lists store full arbitrary objects inline."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define input, output, preconditions, size, and the operation being counted"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose a correct baseline and state its loop or representation invariant"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Trace the candidate on a minimal instance and derive time and space cost"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Attack it with boundary and adversarial cases, then justify any optimization"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_prefix_aggregation_oe8nx4 function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Prefix Aggregation into observable performance evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_prefix_aggregation_oe8nx4(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "hints": [
+        "Name the Prefix Aggregation precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [7, 3, 7, 2, 10, 4]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Prefix structures remove all update cost."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for precompute prefix information to answer repeated range queries with validated boundaries.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Prefix Aggregation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "hints": [
+        "Name the Prefix Aggregation precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [8, 4, 8, 3, 11, 5]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Prefix structures remove all update cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Prefix Aggregation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Prefix structures remove all update cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Precompute prefix information to answer repeated range queries with validated boundaries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Prefix Aggregation."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Prefix Aggregation condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Prefix Aggregation: explain the governing condition, one failure, and how this concrete case was verified — Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Precompute prefix information to answer repeated range queries with validated boundaries."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "hints": [
+        "Name the Prefix Aggregation precondition or invariant that the workshop case must preserve.",
+        "Trace this concrete case before choosing: Use the sequence [9, 5, 9, 4, 12, 6]. Preserve duplicate policy, identify the boundary target, and report comparisons rather than elapsed time alone.",
+        "Use the documented misconception as a counterexample target: Prefix structures remove all update cost."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Contiguous Layout to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Contiguous Layout.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Contiguous Layout to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Contiguous Layout.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dynamic Array Growth to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dynamic Array Growth.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-dynamic-array-growth"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Sequence Operations to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Sequence Operations.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-sequence-operations"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Two Pointer to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Two Pointer.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-two-pointer"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefix Aggregation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefix Aggregation.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-contiguous-layout"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_prefix_aggregation_oe8nx4.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_prefix_aggregation_oe8nx4"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_prefix_aggregation_oe8nx4\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Prefix Aggregation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Prefix Aggregation.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using precompute and prefix plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-prefix-aggregation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "precompute",
+        "prefix"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-stacks-queues-deques-independent-lab",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-stacks-queues-deques",
+  "kind": "lab",
+  "title": "Stacks, Queues, Deques, and Monotonic Structures · Independent Algorithm Trial",
+  "summary": "Coordinate undo history, request scheduling, and sliding-window alerts. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a suite of bounded linear abstract data types with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define stack, queue, and deque behavior independently from implementation details.",
+    "Apply LIFO state to parsing, undo, traversal, and nested-delimiter validation.",
+    "Apply FIFO ordering with bounded capacity and explicit overload behavior.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "dsa-adt-contracts",
+      "dsa-stack-applications",
+      "dsa-queue-applications",
+      "dsa-monotonic-deque",
+      "dsa-structure-tests"
+    ]
+  },
+  "prerequisites": [
+    "dsa-stacks-queues-deques-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for define stack, queue, and deque behavior independently from implementation details.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Adt Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa-adt-contracts"
+      ],
+      "hints": [
+        "Name the Adt Contracts precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: An abstract data type is a specific class layout."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "An abstract data type is a specific class layout."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Adt Contracts."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Adt Contracts preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the initial evidence packet",
+      "interaction": "inspect",
+      "instruction": "lab case — Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nInspect the Structure Tests trace for this lab case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for test underflow, overflow, wraparound, duplicates, and long operation sequences.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Structure Tests, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "hints": [
+        "Name the Structure Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Testing push then pop proves an ADT implementation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Structure Tests case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Testing push then pop proves an ADT implementation.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Test underflow, overflow, wraparound, duplicates, and long operation sequences. Artifact under review: a suite of bounded linear abstract data types.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Structure Tests."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Structure Tests, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Adt Contracts · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Adt Contracts without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for define stack, queue, and deque behavior independently from implementation details.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Adt Contracts condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa-adt-contracts"
+      ],
+      "hints": [
+        "Name the Adt Contracts precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: An abstract data type is a specific class layout."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Define stack, queue, and deque behavior independently from implementation details. Apply it to the stated input and retain a reproducible trace for a suite of bounded linear abstract data types."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "An abstract data type is a specific class layout."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Adt Contracts."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Stack Applications · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Stack Applications without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for apply lifo state to parsing, undo, traversal, and nested-delimiter validation.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Stack Applications result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa-stack-applications"
+      ],
+      "hints": [
+        "Name the Stack Applications precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Recursion never uses stack-like state."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Stack Applications case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Recursion never uses stack-like state.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Apply LIFO state to parsing, undo, traversal, and nested-delimiter validation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Recursion never uses stack-like state."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Stack Applications."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Apply LIFO state to parsing, undo, traversal, and nested-delimiter validation. Apply it to the stated input and retain a reproducible trace for a suite of bounded linear abstract data types."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Queue Applications · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Queue Applications without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for apply fifo ordering with bounded capacity and explicit overload behavior.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Queue Applications condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa-queue-applications"
+      ],
+      "hints": [
+        "Name the Queue Applications precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: A Python list front deletion is an efficient queue."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Queue Applications."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Apply FIFO ordering with bounded capacity and explicit overload behavior. Apply it to the stated input and retain a reproducible trace for a suite of bounded linear abstract data types."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A Python list front deletion is an efficient queue."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Monotonic Deque · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Monotonic Deque without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for maintain a monotonic deque invariant for window extrema without stale entries.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Monotonic Deque result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa-monotonic-deque"
+      ],
+      "hints": [
+        "Name the Monotonic Deque precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 7 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Sorting each window has equivalent scaling."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Monotonic Deque case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Sorting each window has equivalent scaling.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain a monotonic deque invariant for window extrema without stale entries.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Maintain a monotonic deque invariant for window extrema without stale entries. Apply it to the stated input and retain a reproducible trace for a suite of bounded linear abstract data types."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Sorting each window has equivalent scaling."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Monotonic Deque."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Structure Tests · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nWhich action demonstrates Structure Tests without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for test underflow, overflow, wraparound, duplicates, and long operation sequences.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Structure Tests condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "hints": [
+        "Name the Structure Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 8 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Testing push then pop proves an ADT implementation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Testing push then pop proves an ADT implementation."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Structure Tests."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Test underflow, overflow, wraparound, duplicates, and long operation sequences. Apply it to the stated input and retain a reproducible trace for a suite of bounded linear abstract data types."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_structure_tests_1ixchu function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Structure Tests into observable performance evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_structure_tests_1ixchu(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "hints": [
+        "Name the Structure Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 9 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Testing push then pop proves an ADT implementation."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for test underflow, overflow, wraparound, duplicates, and long operation sequences.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Structure Tests symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Sorting Techniques — Stable sorting, keys, decorate-sort-undecorate, comparison functions, and performance guidance."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "hints": [
+        "Name the Structure Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 10 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Testing push then pop proves an ADT implementation."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Structure Tests failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Testing push then pop proves an ADT implementation.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test underflow, overflow, wraparound, duplicates, and long operation sequences.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Structure Tests condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Structure Tests."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Structure Tests: explain the governing condition, one failure, and how this concrete case was verified — Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test underflow, overflow, wraparound, duplicates, and long operation sequences."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "hints": [
+        "Name the Structure Tests precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Apply 6 mixed insert, remove, peek, and empty operations. After each operation, verify size, reachable links, boundary pointers, and underflow behavior.",
+        "Use the documented misconception as a counterexample target: Testing push then pop proves an ADT implementation."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Adt Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Adt Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-adt-contracts"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Structure Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Structure Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Adt Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Adt Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-adt-contracts"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Stack Applications to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Stack Applications.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-stack-applications"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Queue Applications to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Queue Applications.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-queue-applications"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Monotonic Deque to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Monotonic Deque.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-monotonic-deque"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Structure Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Structure Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_structure_tests_1ixchu.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_structure_tests_1ixchu"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_structure_tests_1ixchu\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Structure Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Structure Tests.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and underflow plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-structure-tests"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "test",
+        "underflow"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

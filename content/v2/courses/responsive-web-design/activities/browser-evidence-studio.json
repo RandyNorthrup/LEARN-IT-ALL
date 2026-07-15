@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 2,
+  "id": "browser-evidence-studio",
+  "courseId": "responsive-web-design",
+  "moduleId": "computer-browser-foundations",
+  "kind": "workshop",
+  "title": "Trace a Page from File to Pixels",
+  "summary": "Investigate a broken community notice page by predicting, arranging, inspecting, debugging, building, and explaining the browser pipeline.",
+  "objectives": [
+    "Trace the hardware, operating-system, file, and browser responsibilities in a page load.",
+    "Distinguish saved HTML source from the DOM and rendered output.",
+    "Repair a document shell and verify the result with structural evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": ["browser-rendering-model"],
+    "reinforces": ["computer-systems-model", "files-folders-paths"],
+    "assesses": ["computer-systems-model", "files-folders-paths", "browser-rendering-model"]
+  },
+  "prerequisites": ["local-network-trace"],
+  "difficulty": "foundation",
+  "estimatedMinutes": 75,
+  "artifactId": "browser-evidence-case",
+  "starterFiles": {
+    "html": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n  </head>\n  <body>\n    <p>Repair clinic: Saturday at 10</p>\n  </body>\n</html>",
+    "css": "body {\n  font-family: system-ui, sans-serif;\n  margin: 2rem;\n}\n",
+    "javascript": ""
+  },
+  "steps": [
+    {
+      "id": "predict-system",
+      "title": "Predict the system",
+      "interaction": "predict",
+      "instruction": "Choose the explanation that accounts for the complete system behind the visible page.",
+      "why": "Web work becomes easier to debug when you can separate hardware, operating-system, application, and data responsibilities.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Incident brief",
+          "text": "A volunteer double-clicks notice.html. A browser window opens and shows text. What had to cooperate?"
+        }
+      ],
+      "checkIds": ["check-system-model"],
+      "competencyIds": ["computer-systems-model"],
+      "hints": [
+        "The browser cannot read storage or draw pixels without lower system layers.",
+        "Look for an answer that names data, the operating system, the browser, and hardware.",
+        "Choose the complete chain rather than a browser-only explanation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "option-browser-only",
+          "text": "The browser independently finds the file and draws the page without operating-system help."
+        },
+        {
+          "id": "option-system-chain",
+          "text": "Input hardware signals the operating system, which locates file data for the browser to parse and send through graphics hardware to the display."
+        },
+        {
+          "id": "option-file-runs",
+          "text": "The HTML file executes itself and tells the monitor which words to show."
+        }
+      ]
+    },
+    {
+      "id": "arrange-system",
+      "title": "Build the load chain",
+      "interaction": "arrange",
+      "instruction": "Put the events in causal order from the learner action to visible output.",
+      "why": "Ordering the mechanism exposes which layer to inspect when the expected output never appears.",
+      "buildsOnStepIds": ["predict-system"],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Reuse the complete-system model. This time, construct the chain instead of recognizing it."
+        }
+      ],
+      "checkIds": ["check-system-order"],
+      "competencyIds": ["computer-systems-model"],
+      "hints": [
+        "Start with the physical action and end with emitted light.",
+        "The operating system reads storage before the browser can parse file data.",
+        "Order: input, file read, browser processing, display output."
+      ],
+      "xp": 12,
+      "options": [
+        { "id": "event-input", "text": "Input device reports the open-file action" },
+        { "id": "event-read", "text": "Operating system reads bytes from storage" },
+        { "id": "event-browser", "text": "Browser interprets the received document data" },
+        { "id": "event-display", "text": "Graphics system and display produce visible pixels" }
+      ]
+    },
+    {
+      "id": "inspect-files",
+      "title": "Inspect the evidence",
+      "interaction": "inspect",
+      "instruction": "Inspect the project tree and identify the file that supplies the document structure.",
+      "why": "File roles and paths must be understood before a browser can reliably load linked resources.",
+      "buildsOnStepIds": ["arrange-system"],
+      "stimulus": {
+        "kind": "file-tree",
+        "title": "community-notice",
+        "caption": "A project folder captured before the page was opened.",
+        "lines": [
+          { "id": "tree-root", "label": "folder", "text": "community-notice/", "tone": "neutral" },
+          { "id": "tree-html", "label": "file", "text": "  notice.html", "tone": "focus" },
+          { "id": "tree-css", "label": "file", "text": "  styles.css", "tone": "neutral" },
+          { "id": "tree-image", "label": "file", "text": "  images/tools.jpg", "tone": "neutral" }
+        ]
+      },
+      "checkIds": ["check-document-file"],
+      "competencyIds": ["files-folders-paths"],
+      "hints": [
+        "HTML represents document structure and content.",
+        "The stylesheet describes presentation, not the document tree.",
+        "Choose notice.html."
+      ],
+      "xp": 10,
+      "options": [
+        { "id": "file-html", "text": "notice.html" },
+        { "id": "file-css", "text": "styles.css" },
+        { "id": "file-image", "text": "images/tools.jpg" }
+      ]
+    },
+    {
+      "id": "read-source-dom",
+      "title": "Source is not the DOM",
+      "interaction": "read",
+      "instruction": "Read the field note, then confirm which claim the available evidence supports.",
+      "why": "A saved file and the browser-built representation are related evidence, but they are not the same object.",
+      "buildsOnStepIds": ["inspect-files"],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Source is the text saved in a file or returned by a server. The browser parses that text and constructs an in-memory document object model, or DOM. Error recovery, scripts, and browser rules can make the DOM differ from the exact source text."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Evidence rule",
+          "text": "Inspect source to learn what arrived. Inspect the DOM to learn what the browser currently represents."
+        }
+      ],
+      "checkIds": ["check-source-dom-claim"],
+      "competencyIds": ["browser-rendering-model"],
+      "hints": [
+        "The browser creates the DOM after receiving source.",
+        "Error recovery can change the tree without changing the saved file.",
+        "Choose the claim that treats source and DOM as related but distinct evidence."
+      ],
+      "xp": 10,
+      "options": [
+        { "id": "claim-identical", "text": "Source and DOM are always identical character for character." },
+        { "id": "claim-distinct", "text": "Source is input text; the DOM is the browser's parsed, current document representation." },
+        { "id": "claim-css-dom", "text": "The DOM is another name for the page stylesheet." }
+      ]
+    },
+    {
+      "id": "predict-parser",
+      "title": "Predict browser recovery",
+      "interaction": "predict",
+      "instruction": "Predict what the browser does when it receives a paragraph without an explicit body element.",
+      "why": "Browsers recover from many source errors, so visible output alone cannot prove that source is complete or intentional.",
+      "buildsOnStepIds": ["read-source-dom", "predict-system"],
+      "content": [
+        {
+          "type": "code",
+          "language": "html",
+          "caption": "Incomplete source received by a browser",
+          "code": "<!doctype html>\n<p>Repair clinic</p>"
+        }
+      ],
+      "checkIds": ["check-parser-prediction"],
+      "competencyIds": ["browser-rendering-model"],
+      "hints": [
+        "HTML parsers have defined error-recovery behavior.",
+        "The browser can construct missing structural nodes in the DOM.",
+        "It builds html, head, and body nodes and places the paragraph in body."
+      ],
+      "xp": 12,
+      "options": [
+        { "id": "parser-refuses", "text": "It refuses to create a document until body is typed." },
+        { "id": "parser-recovers", "text": "It constructs required document nodes and places the paragraph into the DOM body." },
+        { "id": "parser-converts", "text": "It converts the paragraph into a CSS rule." }
+      ]
+    },
+    {
+      "id": "arrange-rendering",
+      "title": "Trace source to pixels",
+      "interaction": "arrange",
+      "instruction": "Arrange the simplified browser pipeline in causal order.",
+      "why": "The pipeline connects saved code to inspectable structures and final visual output.",
+      "buildsOnStepIds": ["predict-parser", "arrange-system"],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Zoom in on the browser portion of the full system chain you built earlier."
+        }
+      ],
+      "checkIds": ["check-rendering-order"],
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "hints": [
+        "A browser must receive source before parsing it.",
+        "The document tree exists before layout and paint use it.",
+        "Order: receive source, parse, build DOM, layout and paint."
+      ],
+      "xp": 14,
+      "options": [
+        { "id": "render-receive", "text": "Receive document source" },
+        { "id": "render-parse", "text": "Tokenize and parse HTML" },
+        { "id": "render-dom", "text": "Construct the document tree" },
+        { "id": "render-paint", "text": "Compute layout and paint pixels" }
+      ]
+    },
+    {
+      "id": "inspect-dom",
+      "title": "Read the browser-built tree",
+      "interaction": "inspect",
+      "instruction": "Inspect the DOM snapshot and identify evidence of browser-created structure.",
+      "why": "DOM inspection verifies what the browser represents after parsing rather than what source merely appears to say.",
+      "buildsOnStepIds": ["arrange-rendering", "inspect-files"],
+      "stimulus": {
+        "kind": "dom-tree",
+        "title": "Elements panel snapshot",
+        "caption": "The browser representation after parsing the incomplete paragraph source.",
+        "lines": [
+          { "id": "dom-html", "label": "node", "text": "html", "tone": "focus" },
+          { "id": "dom-head", "label": "node", "text": "  head", "tone": "good" },
+          { "id": "dom-body", "label": "node", "text": "  body", "tone": "good" },
+          { "id": "dom-p", "label": "node", "text": "    p — Repair clinic", "tone": "neutral" }
+        ]
+      },
+      "checkIds": ["check-dom-evidence"],
+      "competencyIds": ["browser-rendering-model"],
+      "hints": [
+        "Compare the snapshot with the incomplete source from two steps ago.",
+        "The source did not explicitly contain html, head, or body tags.",
+        "The created head and body nodes prove parser recovery."
+      ],
+      "xp": 12,
+      "options": [
+        { "id": "evidence-color", "text": "The paragraph has black text." },
+        { "id": "evidence-created-nodes", "text": "The DOM contains html, head, and body nodes absent from the source." },
+        { "id": "evidence-filename", "text": "The filename ends in .html." }
+      ]
+    },
+    {
+      "id": "debug-document-shell",
+      "title": "Repair the document shell",
+      "interaction": "debug",
+      "instruction": "Add an English language declaration and a useful Repair clinic page title to the starter HTML.",
+      "why": "A complete shell gives browsers and assistive technology the language and document identity missing from visible-only checks.",
+      "buildsOnStepIds": ["inspect-dom", "read-source-dom"],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Two hidden defects",
+          "text": "The page renders, but its root language and browser-tab title are missing. Repair source—not the temporary DOM snapshot."
+        }
+      ],
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Conformance report",
+        "caption": "Two structural defects found before the page is published.",
+        "lines": [
+          { "id": "defect-lang", "label": "html", "text": "Document language is missing", "tone": "problem" },
+          { "id": "defect-title", "label": "head", "text": "Document title is missing", "tone": "problem" }
+        ]
+      },
+      "checkIds": ["check-html-language", "check-page-title"],
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "hints": [
+        "The language belongs on the root html start tag; the title belongs inside head.",
+        "Use lang=\"en\" and a title element with meaningful text.",
+        "Write <html lang=\"en\"> and <title>Repair clinic</title>."
+      ],
+      "xp": 18,
+      "targetFile": "html"
+    },
+    {
+      "id": "build-main-region",
+      "title": "Add meaningful structure",
+      "interaction": "code",
+      "instruction": "Wrap the visible clinic notice in a main element and give the page an h1 named Community repair clinic.",
+      "why": "The same page now grows from valid machine context into a meaningful content hierarchy without discarding earlier repairs.",
+      "buildsOnStepIds": ["debug-document-shell", "arrange-rendering"],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Keep both repairs from the previous step. Add one bounded layer of semantic structure around the existing notice."
+        }
+      ],
+      "checkIds": ["check-main-region", "check-main-heading", "check-html-language", "check-page-title"],
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "hints": [
+        "Do not replace the repaired document shell.",
+        "Place main inside body, then place h1 and the existing paragraph inside main.",
+        "Use <main><h1>Community repair clinic</h1><p>...</p></main>."
+      ],
+      "xp": 20,
+      "targetFile": "html"
+    },
+    {
+      "id": "explain-evidence",
+      "title": "Explain with evidence",
+      "interaction": "reflect",
+      "instruction": "Explain how saved source, the DOM, and rendered pixels differ, and name which evidence you would inspect for each.",
+      "why": "Explaining the model from memory exposes gaps that recognition and copying can hide.",
+      "buildsOnStepIds": ["build-main-region", "inspect-dom", "predict-system"],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Transfer brief",
+          "text": "A teammate says, ‘It looks right, so the source must be right.’ Respond using the evidence model you practiced."
+        }
+      ],
+      "checkIds": ["check-evidence-explanation"],
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "hints": [
+        "Define each artifact before explaining how you inspect it.",
+        "Include the words source, DOM, and pixels, then connect each to evidence.",
+        "Source is saved input, DOM is the parsed tree, and pixels are painted output; inspect all three separately."
+      ],
+      "xp": 18
+    }
+  ],
+  "checks": [
+    {
+      "id": "check-system-model",
+      "type": "choice-equals",
+      "description": "The explanation includes the complete computer and browser chain.",
+      "failureMessage": "Account for the system layers below and around the browser.",
+      "hidden": false,
+      "competencyIds": ["computer-systems-model"],
+      "expectedOptionId": "option-system-chain"
+    },
+    {
+      "id": "check-system-order",
+      "type": "order-equals",
+      "description": "The page-load events follow a valid causal order.",
+      "failureMessage": "Trace the learner action before storage, browser work, and display output.",
+      "hidden": false,
+      "competencyIds": ["computer-systems-model"],
+      "expectedOptionIds": ["event-input", "event-read", "event-browser", "event-display"]
+    },
+    {
+      "id": "check-document-file",
+      "type": "choice-equals",
+      "description": "The HTML file is identified as the document-structure source.",
+      "failureMessage": "Separate document structure from styling and image resources.",
+      "hidden": false,
+      "competencyIds": ["files-folders-paths"],
+      "expectedOptionId": "file-html"
+    },
+    {
+      "id": "check-source-dom-claim",
+      "type": "choice-equals",
+      "description": "The claim distinguishes source input from the browser-built DOM.",
+      "failureMessage": "Treat source and DOM as related but distinct evidence.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "expectedOptionId": "claim-distinct"
+    },
+    {
+      "id": "check-parser-prediction",
+      "type": "choice-equals",
+      "description": "The prediction accounts for browser parser error recovery.",
+      "failureMessage": "Consider the required nodes a browser constructs during parsing.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "expectedOptionId": "parser-recovers"
+    },
+    {
+      "id": "check-rendering-order",
+      "type": "order-equals",
+      "description": "The browser processing stages follow a valid simplified order.",
+      "failureMessage": "Put received input and parsing before structures and painted output.",
+      "hidden": false,
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "expectedOptionIds": ["render-receive", "render-parse", "render-dom", "render-paint"]
+    },
+    {
+      "id": "check-dom-evidence",
+      "type": "choice-equals",
+      "description": "The selected evidence identifies browser-created DOM nodes.",
+      "failureMessage": "Compare the exact source with the later tree snapshot.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "expectedOptionId": "evidence-created-nodes"
+    },
+    {
+      "id": "check-html-language",
+      "type": "attribute-equals",
+      "description": "The root html element declares English content.",
+      "failureMessage": "Add the expected language attribute to the root element.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "selector": "html",
+      "attribute": "lang",
+      "expected": "en"
+    },
+    {
+      "id": "check-page-title",
+      "type": "text-includes",
+      "description": "The document title names the repair clinic.",
+      "failureMessage": "Add a useful title inside the document head.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "selector": "title",
+      "expected": "Repair clinic"
+    },
+    {
+      "id": "check-main-region",
+      "type": "selector-exists",
+      "description": "A main region contains the primary notice content.",
+      "failureMessage": "Wrap the page's unique primary content in main.",
+      "hidden": false,
+      "competencyIds": ["browser-rendering-model"],
+      "selector": "main",
+      "minimum": 1
+    },
+    {
+      "id": "check-main-heading",
+      "type": "text-includes",
+      "description": "The page heading names the community repair clinic.",
+      "failureMessage": "Add the requested h1 inside the main region.",
+      "hidden": true,
+      "competencyIds": ["browser-rendering-model"],
+      "selector": "main h1",
+      "expected": "Community repair clinic"
+    },
+    {
+      "id": "check-evidence-explanation",
+      "type": "text-response",
+      "description": "The explanation distinguishes source, DOM, and pixel evidence.",
+      "failureMessage": "Name all three artifacts and explain how their evidence differs.",
+      "hidden": false,
+      "competencyIds": ["computer-systems-model", "browser-rendering-model"],
+      "minimumCharacters": 120,
+      "requiredTerms": ["source", "DOM", "pixels"]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 100,
+    "maxHintsForMastery": 3,
+    "spacedReviewDays": [1, 7, 21, 60]
+  }
+}

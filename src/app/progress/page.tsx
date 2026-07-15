@@ -1,8 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {
+  ArrowLeft,
+  Award,
+  BookOpen,
+  CheckCircle,
+  Code2,
+  Target,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
 import Link from 'next/link';
-import { ArrowLeft, TrendingUp, BookOpen, Code2, CheckCircle, Award, Target, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ProgressStats {
   coursesStarted: number;
@@ -30,7 +39,7 @@ export default function ProgressPage() {
         const response = await fetch('/api/progress');
         if (response.ok) {
           const data = await response.json();
-          setStats(prev => ({ ...prev, ...data }));
+          setStats((prev) => ({ ...prev, ...data }));
         }
       } catch (error) {
         console.error('Failed to fetch progress:', error);
@@ -161,6 +170,7 @@ export default function ProgressPage() {
               >
                 Browse Courses
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5"
                   fill="none"
                   stroke="currentColor"
@@ -196,13 +206,16 @@ export default function ProgressPage() {
           {stats.coursesStarted === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg mb-4">You haven&apos;t started any courses yet.</p>
+              <p className="text-gray-600 text-lg mb-4">
+                You haven&apos;t started any courses yet.
+              </p>
               <Link
                 href="/courses"
                 className="inline-flex items-center px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold transition-all hover:from-purple-700 hover:to-pink-700"
               >
                 Start Learning
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5"
                   fill="none"
                   stroke="currentColor"

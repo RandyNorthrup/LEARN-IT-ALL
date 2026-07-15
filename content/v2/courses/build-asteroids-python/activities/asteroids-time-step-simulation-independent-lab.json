@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 2,
+  "id": "asteroids-time-step-simulation-independent-lab",
+  "courseId": "build-asteroids-python",
+  "moduleId": "asteroids-time-step-simulation",
+  "kind": "lab",
+  "title": "Clock, Delta Time, Fixed Steps, Interpolation, and Stalls · Transfer Build",
+  "summary": "An independent adaptive-arcade team receives a different viewport, device, frame rate, seed, entity count, accessibility profile, platform, and delivery constraint and transfers clock, delta time, fixed steps, interpolation, and stalls into a changed bounded deterministic time-step policy. Planned artifact: Produce an independent changed-context version of bounded deterministic time-step policy with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-…",
+  "objectives": [
+    "Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time.",
+    "Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates.",
+    "Accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "asteroids-clock-contract",
+      "asteroids-variable-step",
+      "asteroids-fixed-step",
+      "asteroids-stall-clamp",
+      "asteroids-time-evidence"
+    ]
+  },
+  "prerequisites": [
+    "asteroids-time-step-simulation-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "build-asteroids-python-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"build-asteroids-python cumulative accessible real-time game portfolio.\n\nBrowser execution uses deterministic pure-Python simulation models and fixed fixtures only.\nNative pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers,\nGPU behavior, frame pacing, accessibility playtests, packaging, and production effects require controlled transfer gates.\n\"\"\"\n\nfrom dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass SimulationPolicy:\n    fixed_step_seconds: float = 1 / 120\n    max_frame_seconds: float = 0.1\n    max_updates_per_frame: int = 8\n    logical_width: int = 960\n    logical_height: int = 540\n\n\n@dataclass(frozen=True)\nclass RunEvidence:\n    revision: str\n    seed: int\n    input_trace_id: str\n    runtime_id: str\n    accessibility_profile: str\n\n\ndef portfolio_ready() -> str:\n    return \"Python Asteroids portfolio ready\"\n",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract",
+      "interaction": "predict",
+      "instruction": "lab case — A lab Asteroids team handles case 2263 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time.\n\nWhat must be established before implementation?\n\nEvidence target: Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract.",
+      "why": "The decision supplies observable evidence for call clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time. For Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract, keep Clock Contract connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 2263 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Clock Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "asteroids-clock-contract"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Clock Contract precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 2263 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time.",
+        "For Asteroids, pygame-ce, and Python Commit to the mission model · Lab Clock Contract, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Clock.tick returns seconds and enforces exact frame pacing."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Clock Contract preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Clock.tick returns seconds and enforces exact frame pacing. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract",
+      "interaction": "answer",
+      "instruction": "lab case — A lab Asteroids team handles case 8306 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time.\n\nWhich action demonstrates Clock Contract without dropping earlier contracts?\n\nEvidence target: Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract.",
+      "why": "The decision supplies observable evidence for call clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time. For Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract, keep Clock Contract connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 8306 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Clock Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "asteroids-clock-contract"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Clock Contract precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 8306 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time.",
+        "For Asteroids, pygame-ce, and Python Clock Contract · changed case · Lab Clock Contract, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Clock.tick returns seconds and enforces exact frame pacing."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Call Clock.tick once per presented frame, convert milliseconds to seconds, and distinguish measured, capped, and simulation time. Apply it to the stated input and retain a reproducible trace for bounded deterministic time-step policy."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Clock.tick returns seconds and enforces exact frame pacing. That claim does not survive the clock contract · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For clock contract · changed case, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab Asteroids team handles case 9925 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates.\n\nWhich action demonstrates Variable Step without dropping earlier contracts?\n\nEvidence target: Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step.",
+      "why": "The decision supplies observable evidence for use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates. For Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step, keep Variable Step connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 9925 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Variable Step result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "asteroids-variable-step"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Variable Step precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 9925 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates.",
+        "For Asteroids, pygame-ce, and Python Variable Step · changed case · Lab Variable Step, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Multiplying by delta time makes every simulation frame-rate independent."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Variable Step case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Multiplying by delta time makes every simulation frame-rate independent.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Multiplying by delta time makes every simulation frame-rate independent. That claim does not survive the variable step · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For variable step · changed case, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Use variable delta time only where stability and determinism evidence justify it and test multiple presentation rates. Apply it to the stated input and retain a reproducible trace for bounded deterministic time-step policy."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step",
+      "interaction": "answer",
+      "instruction": "lab case — A lab Asteroids team handles case 5068 during a keyboard-only community arcade night. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation.\n\nWhich action demonstrates Fixed Step without dropping earlier contracts?\n\nEvidence target: Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step.",
+      "why": "The decision supplies observable evidence for accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation. For Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step, keep Fixed Step connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 5068 during a keyboard-only community arcade night. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Fixed Step condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "asteroids-fixed-step"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Fixed Step precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 5068 during a keyboard-only community arcade night. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation.",
+        "For Asteroids, pygame-ce, and Python Fixed Step · changed case · Lab Fixed Step, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: A fixed step means sleeping for a fixed amount before every update."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For fixed step · changed case, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Accumulate real time into bounded fixed simulation updates and preserve remainder for interpolation. Apply it to the stated input and retain a reproducible trace for bounded deterministic time-step policy."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A fixed step means sleeping for a fixed amount before every update. That claim does not survive the fixed step · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab Asteroids team handles case 6687 during an offline cross-platform release rehearsal. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact.\n\nWhich action demonstrates Stall Clamp without dropping earlier contracts?\n\nEvidence target: Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp.",
+      "why": "The decision supplies observable evidence for clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact. For Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp, keep Stall Clamp connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 6687 during an offline cross-platform release rehearsal. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Stall Clamp result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "asteroids-stall-clamp"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Stall Clamp precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 6687 during an offline cross-platform release rehearsal. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact.",
+        "For Asteroids, pygame-ce, and Python Stall Clamp · changed case · Lab Stall Clamp, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: The simulation should always process every missed update regardless of delay."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Stall Clamp case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "The simulation should always process every missed update regardless of delay.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Clamp pathological frame time and cap catch-up updates while recording discarded debt and player impact. Apply it to the stated input and retain a reproducible trace for bounded deterministic time-step policy."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "The simulation should always process every missed update regardless of delay. That claim does not survive the stall clamp · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For stall clamp · changed case, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence",
+      "interaction": "answer",
+      "instruction": "lab case — A lab Asteroids team handles case 1830 during a controller-remapping accessibility review. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.\n\nWhich action demonstrates Time Evidence without dropping earlier contracts?\n\nEvidence target: Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence.",
+      "why": "The decision supplies observable evidence for replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances. For Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence, keep Time Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 1830 during a controller-remapping accessibility review. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Time Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Time Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 1830 during a controller-remapping accessibility review. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+        "For Asteroids, pygame-ce, and Python Time Evidence · changed case · Lab Time Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Average frames per second proves timing correctness."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Average frames per second proves timing correctness. That claim does not survive the time evidence · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For time evidence · changed case, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances. Apply it to the stated input and retain a reproducible trace for bounded deterministic time-step policy."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence",
+      "interaction": "inspect",
+      "instruction": "lab case — A lab Asteroids team handles case 3449 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.\n\nInspect the Time Evidence trace for this lab case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence.",
+      "why": "The decision supplies observable evidence for replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances. For Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence, keep Time Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Time Evidence, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Time Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 3449 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+        "For Asteroids, pygame-ce, and Python Audit the proposed evidence packet · Lab Time Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Average frames per second proves timing correctness."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Time Evidence case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A lab Asteroids team handles case 3449 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; keep every critical cue available through more than color or sound and every action remappable without timing precision; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "Average frames per second proves timing correctness.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances. Artifact under review: bounded deterministic time-step policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Time Evidence, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence",
+      "interaction": "code",
+      "instruction": "Append a runnable pure-Python function headed \"# Evidence: asteroids-time-evidence-15qql2\" that uses case 3339 to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard. Keep its defaults runnable, assert an invariant, and return observable changed-case evidence. Browser code must not claim native pygame-ce, SDL, window, controller, mixer, filesystem, package, GPU, installer, or production behavior; verify those boundaries later with Python 3.14.6, released pygame-ce 2.5.7, fixed and headless SDL fixtures, real devices, licensed assets, accessibility playtests, profiling, clean installations, rollback, recovery, and release gates.\n\nEvidence target: Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Time Evidence into observable performance evidence. For Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence, keep Time Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "# Evidence: asteroids-time-evidence-15qql2\n# Competency: asteroids-time-evidence.\n# Case 3339: an offline cross-platform release rehearsal.\n# Operating constraint: keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects.\n# Changed case: run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save.\ndef evidence_asteroids_time_evidence_15qql2(frame_seconds: float = 0.016, max_frame_seconds: float = 0.1, fixed_step: float = 1 / 120, accumulator: float = 0.0, max_updates: int = 8) -> tuple[bool, int | float, str]:\n    evidence_variant_15qql2 = \"15qql2-2lqq51-3339\"\n    assert evidence_variant_15qql2\n    evidence_axes_15qql2 = (\n        \"player15qql2\",\n        \"seed3339\",\n        \"input2lqq51\",\n        \"frame15qql23339\",\n        \"state333915qql2\",\n        \"playtest2lqq513339\",\n    )\n    assert len(set(evidence_axes_15qql2)) == 6\n    if frame_seconds < 0.0 or fixed_step <= 0.0:\n        return False, frame_seconds, \"time-domain\"\n    clamped = min(frame_seconds, max_frame_seconds)\n    updates = int((accumulator + clamped) / fixed_step)\n    if updates > max_updates:\n        return False, updates, \"spiral-guard\"\n    if clamped > max_frame_seconds:\n        return False, clamped, \"clamp-failure\"\n    assert 0 <= updates <= max_updates\n    return True, updates, \"bounded-time-step\"\n",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Time Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 7592 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+        "For Asteroids, pygame-ce, and Python Extend the cumulative artifact · Lab Time Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Average frames per second proves timing correctness."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence",
+      "interaction": "debug",
+      "instruction": "lab case — A lab Asteroids team handles case 9211 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence.",
+      "why": "The decision supplies observable evidence for replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances. For Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence, keep Time Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A lab Asteroids team handles case 9211 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Time Evidence symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Time and Clock — Milliseconds, timers, Clock tick behavior, frame limits, raw time, and accuracy limitations."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Time Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 9211 during a headless continuous-integration replay. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+        "For Asteroids, pygame-ce, and Python Test an acceptance boundary · Lab Time Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Average frames per second proves timing correctness."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Time Evidence failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Average frames per second proves timing correctness.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Time Evidence condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Time Evidence: explain the governing condition, one failure, and how this concrete case was verified — A lab Asteroids team handles case 4354 during a keyboard-only community arcade night. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.\n\nEvidence target: Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence, keep Time Evidence connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Time Evidence precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A lab Asteroids team handles case 4354 during a keyboard-only community arcade night. Build deterministic Python evidence to bound delta time, fixed simulation updates, interpolation debt, and the spiral-of-death guard; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Replay identical inputs across 30, 60, 144, jittered, paused, and stalled presentation traces and compare state tolerances.",
+        "For Asteroids, pygame-ce, and Python Defend the transferred model · Lab Time Evidence, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Average frames per second proves timing correctness."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Clock Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Clock Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-clock-contract"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Clock Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Clock Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-clock-contract"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Variable Step to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Variable Step.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-variable-step"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Fixed Step to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Fixed Step.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-fixed-step"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Stall Clamp to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Stall Clamp.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-stall-clamp"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: asteroids-time-evidence-15qql2.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "file": "python",
+      "expected": "# Evidence: asteroids-time-evidence-15qql2"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "# Evidence: asteroids-time-evidence-15qql2(?:(?!# Evidence:)[\\s\\S])*?def\\s+evidence_asteroids_time_evidence_15qql2\\s*\\((?:(?!# Evidence:)[\\s\\S])*?\\)\\s*(?:->[^:]+)?\\s*:(?=(?:(?!# Evidence:)[\\s\\S])*?frame_seconds < 0.0)(?=(?:(?!# Evidence:)[\\s\\S])*?min\\(frame_seconds)(?=(?:(?!# Evidence:)[\\s\\S])*?updates > max_updates)(?=(?:(?!# Evidence:)[\\s\\S])*?0 <= updates)(?=(?:(?!# Evidence:)[\\s\\S])*?assert)(?=(?:(?!# Evidence:)[\\s\\S])*?return)(?:(?!# Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Evidence.",
+      "hidden": true,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using replay and identical plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-time-evidence"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "replay",
+        "identical"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

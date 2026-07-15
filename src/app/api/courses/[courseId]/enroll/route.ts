@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { dbHelpers } from '@/lib/db';
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
@@ -22,9 +22,6 @@ export async function POST(
     return NextResponse.json(enrollment);
   } catch (error) {
     console.error('Failed to enroll in course:', error);
-    return NextResponse.json(
-      { error: 'Failed to enroll in course' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to enroll in course' }, { status: 500 });
   }
 }

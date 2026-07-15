@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-scheduling-placement-eviction-guided-workshop",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-scheduling-placement-eviction",
+  "kind": "workshop",
+  "title": "Scheduling, Affinity, Taints, Topology, Priority, Preemption, and Eviction · Kubernetes Operations Room",
+  "summary": "A platform pairing session predicts each API transition before producing the first working placement and disruption decision record for scheduling, affinity, taints, topology, priority, preemption, and eviction. Planned artifact: Build a complete first version of placement and disruption decision record while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics.",
+    "Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences.",
+    "Trace NoSchedule, PreferNoSchedule, and NoExecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-node-selector-affinity",
+      "k8s-pod-affinity-anti-affinity",
+      "k8s-taints-tolerations-conditions",
+      "k8s-topology-spread-skew",
+      "k8s-priority-preemption-eviction"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-scheduling-placement-eviction-k8s-priority-preemption-eviction-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop K8s Node Selector Affinity",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop K8s Node Selector Affinity.",
+      "why": "The decision supplies observable evidence for use trusted node labels, nodeselector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics. For Commit to the mission model · Workshop K8s Node Selector Affinity, keep K8s Node Selector Affinity connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Node Selector Affinity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "k8s-node-selector-affinity"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop K8s Node Selector Affinity, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Node Selector Affinity precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop K8s Node Selector Affinity, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics.",
+        "For Commit to the mission model · Workshop K8s Node Selector Affinity, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Preferred node affinity is a hard requirement that remains enforced after scheduling."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the K8s Node Selector Affinity preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Preferred node affinity is a hard requirement that remains enforced after scheduling. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics.\n\nWhich action demonstrates K8s Node Selector Affinity without dropping earlier contracts?\n\nEvidence target: K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity.",
+      "why": "The decision supplies observable evidence for use trusted node labels, nodeselector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics. For K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity, keep K8s Node Selector Affinity connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Node Selector Affinity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "k8s-node-selector-affinity"
+      ],
+      "hints": [
+        "For K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Node Selector Affinity precondition, or invariant that must hold.",
+        "At K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics.",
+        "For K8s Node Selector Affinity · changed case · Workshop K8s Node Selector Affinity, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Preferred node affinity is a hard requirement that remains enforced after scheduling."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Preferred node affinity is a hard requirement that remains enforced after scheduling. That claim does not survive the k8s node selector affinity · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For k8s node selector affinity · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Use trusted node labels, nodeSelector, required and preferred node affinity, operators, weights, and ignored-during-execution semantics. Apply it to the stated input and retain a reproducible trace for placement and disruption decision record."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 5. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences.\n\nWhich action demonstrates K8s Pod Affinity Anti Affinity without dropping earlier contracts?\n\nEvidence target: K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity.",
+      "why": "The decision supplies observable evidence for design inter-pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences. For K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity, keep K8s Pod Affinity Anti Affinity connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 5. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Pod Affinity Anti Affinity result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "k8s-pod-affinity-anti-affinity"
+      ],
+      "hints": [
+        "For K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Pod Affinity Anti Affinity precondition, or invariant that must hold.",
+        "At K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 5. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences.",
+        "For K8s Pod Affinity Anti Affinity · changed case · Workshop K8s Pod Affinity Anti Affinity, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Hard Pod anti-affinity automatically spreads replicas evenly across every zone."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Pod Affinity Anti Affinity case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Hard Pod anti-affinity automatically spreads replicas evenly across every zone.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For k8s pod affinity anti affinity · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Design inter-Pod affinity and anti-affinity with selectors, namespaces, topology keys, scheduler cost, and failure-domain consequences. Apply it to the stated input and retain a reproducible trace for placement and disruption decision record."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Hard Pod anti-affinity automatically spreads replicas evenly across every zone. That claim does not survive the k8s pod affinity anti affinity · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Trace NoSchedule, PreferNoSchedule, and NoExecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior.\n\nWhich action demonstrates K8s Taints Tolerations Conditions without dropping earlier contracts?\n\nEvidence target: K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions.",
+      "why": "The decision supplies observable evidence for trace noschedule, prefernoschedule, and noexecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior. For K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions, keep K8s Taints Tolerations Conditions connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Trace NoSchedule, PreferNoSchedule, and NoExecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Taints Tolerations Conditions condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "k8s-taints-tolerations-conditions"
+      ],
+      "hints": [
+        "For K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Taints Tolerations Conditions precondition, or invariant that must hold.",
+        "At K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Trace NoSchedule, PreferNoSchedule, and NoExecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior.",
+        "For K8s Taints Tolerations Conditions · changed case · Workshop K8s Taints Tolerations Conditions, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A toleration attracts a Pod to the tainted node and guarantees placement there."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Trace NoSchedule, PreferNoSchedule, and NoExecute taints, matching tolerations, toleration time, node conditions, and admission-added behavior. Apply it to the stated input and retain a reproducible trace for placement and disruption decision record."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A toleration attracts a Pod to the tainted node and guarantees placement there. That claim does not survive the k8s taints tolerations conditions · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For k8s taints tolerations conditions · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 2. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Calculate eligible domains, global minimum, maxSkew, minDomains, selectors, node inclusion policies, and DoNotSchedule or ScheduleAnyway behavior.\n\nWhich action demonstrates K8s Topology Spread Skew without dropping earlier contracts?\n\nEvidence target: K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew.",
+      "why": "The decision supplies observable evidence for calculate eligible domains, global minimum, maxskew, mindomains, selectors, node inclusion policies, and donotschedule or scheduleanyway behavior. For K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew, keep K8s Topology Spread Skew connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 2. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Calculate eligible domains, global minimum, maxSkew, minDomains, selectors, node inclusion policies, and DoNotSchedule or ScheduleAnyway behavior."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Topology Spread Skew result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "k8s-topology-spread-skew"
+      ],
+      "hints": [
+        "For K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Topology Spread Skew precondition, or invariant that must hold.",
+        "At K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 2. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Calculate eligible domains, global minimum, maxSkew, minDomains, selectors, node inclusion policies, and DoNotSchedule or ScheduleAnyway behavior.",
+        "For K8s Topology Spread Skew · changed case · Workshop K8s Topology Spread Skew, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Topology spread constraints continuously rebalance already running Pods after scale-down."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Topology Spread Skew case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Topology spread constraints continuously rebalance already running Pods after scale-down.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Calculate eligible domains, global minimum, maxSkew, minDomains, selectors, node inclusion policies, and DoNotSchedule or ScheduleAnyway behavior.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Topology spread constraints continuously rebalance already running Pods after scale-down. That claim does not survive the k8s topology spread skew · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For k8s topology spread skew · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Calculate eligible domains, global minimum, maxSkew, minDomains, selectors, node inclusion policies, and DoNotSchedule or ScheduleAnyway behavior. Apply it to the stated input and retain a reproducible trace for placement and disruption decision record."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.\n\nWhich action demonstrates K8s Priority Preemption Eviction without dropping earlier contracts?\n\nEvidence target: K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction.",
+      "why": "The decision supplies observable evidence for separate scheduling priority, preemption, nomination, poddisruptionbudget interaction, node-pressure eviction, api eviction, graceful termination, and fairness. For K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction, keep K8s Priority Preemption Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Priority Preemption Eviction condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "hints": [
+        "For K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Priority Preemption Eviction precondition, or invariant that must hold.",
+        "At K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 3. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+        "For K8s Priority Preemption Eviction · changed case · Workshop K8s Priority Preemption Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A higher priority Pod immediately and safely evicts any lower priority Pod until it runs."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For k8s priority preemption eviction · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness. Apply it to the stated input and retain a reproducible trace for placement and disruption decision record."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A higher priority Pod immediately and safely evicts any lower priority Pod until it runs. That claim does not survive the k8s priority preemption eviction · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.\n\nInspect the K8s Priority Preemption Eviction trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction.",
+      "why": "The decision supplies observable evidence for separate scheduling priority, preemption, nomination, poddisruptionbudget interaction, node-pressure eviction, api eviction, graceful termination, and fairness. For Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction, keep K8s Priority Preemption Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Priority Preemption Eviction, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Priority Preemption Eviction precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+        "For Audit the proposed evidence packet · Workshop K8s Priority Preemption Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A higher priority Pod immediately and safely evicts any lower priority Pod until it runs."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Priority Preemption Eviction case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 4. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A higher priority Pod immediately and safely evicts any lower priority Pod until it runs.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness. Artifact under review: placement and disruption decision record.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies K8s Priority Preemption Eviction, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-priority-preemption-eviction-1lsgym\". Tailor its placement-policy.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Priority Preemption Eviction into observable performance evidence. For Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction, keep K8s Priority Preemption Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-priority-preemption-eviction-1lsgym\n  - competency: k8s-priority-preemption-eviction\n    artifact: placement-policy.yaml\n    decision: priority preemption eviction\n    environment: rootless development cluster with an empty namespace\n    fault-injection: restore a claim in a different topology and numeric identity\n    retained-proof: object UID generation observedGeneration and status conditions\n    case-key: 1lsgym\n    change: |\n      node-affinity: trusted-workload-class\n      toleration: dedicated=intake:NoSchedule\n      topologySpread: zones-maxSkew-1\n      priorityClass: intake-critical\n      preemption-policy: evidence-gated\n      eviction: graceful-and-budgeted\n    verify: kubectl get pod status-api -o wide && kubectl get events --field-selector involvedObject.name=status-api\n    failure: Reject toleration-as-attraction, preferred-as-required, replica count as spread proof, or priority as permission for unbounded disruption.\n    repair: Derive eligible nodes and domains, calculate skew, inspect unschedulable reasons, separate preemption from eviction, and preserve graceful recovery.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Priority Preemption Eviction precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 5. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+        "For Extend the cumulative artifact · Workshop K8s Priority Preemption Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A higher priority Pod immediately and safely evicts any lower priority Pod until it runs."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop K8s Priority Preemption Eviction",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop K8s Priority Preemption Eviction.",
+      "why": "The decision supplies observable evidence for separate scheduling priority, preemption, nomination, poddisruptionbudget interaction, node-pressure eviction, api eviction, graceful termination, and fairness. For Test an acceptance boundary · Workshop K8s Priority Preemption Eviction, keep K8s Priority Preemption Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Priority Preemption Eviction symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Scheduling, Preemption, Eviction, and Topology — Controls node and Pod affinity, taints, tolerations, topology spread, priority, preemption, disruption, eviction, resource placement, and emerging feature boundaries."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop K8s Priority Preemption Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Priority Preemption Eviction precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop K8s Priority Preemption Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 6. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+        "For Test an acceptance boundary · Workshop K8s Priority Preemption Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A higher priority Pod immediately and safely evicts any lower priority Pod until it runs."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Priority Preemption Eviction failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A higher priority Pod immediately and safely evicts any lower priority Pod until it runs.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated K8s Priority Preemption Eviction condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop K8s Priority Preemption Eviction",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for K8s Priority Preemption Eviction: explain the governing condition, one failure, and how this concrete case was verified — A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 2. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.\n\nEvidence target: Defend the transferred model · Workshop K8s Priority Preemption Eviction.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop K8s Priority Preemption Eviction, keep K8s Priority Preemption Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop K8s Priority Preemption Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Priority Preemption Eviction precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop K8s Priority Preemption Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod is Pending with an untolerated taint, required anti-affinity, insufficient memory, and topology spread skew 2. Reconstruct filtering, scoring, requests, selectors, affinity, taints, preemption, and eviction without forcing nodeName. Competency probe: Separate scheduling priority, preemption, nomination, PodDisruptionBudget interaction, node-pressure eviction, API eviction, graceful termination, and fairness.",
+        "For Defend the transferred model · Workshop K8s Priority Preemption Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A higher priority Pod immediately and safely evicts any lower priority Pod until it runs."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Node Selector Affinity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Node Selector Affinity.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-node-selector-affinity"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Node Selector Affinity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Node Selector Affinity.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-node-selector-affinity"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Pod Affinity Anti Affinity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Pod Affinity Anti Affinity.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-pod-affinity-anti-affinity"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Taints Tolerations Conditions to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Taints Tolerations Conditions.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-taints-tolerations-conditions"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Topology Spread Skew to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Topology Spread Skew.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-topology-spread-skew"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Priority Preemption Eviction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Priority Preemption Eviction.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Priority Preemption Eviction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Priority Preemption Eviction.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-priority-preemption-eviction-1lsgym.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-priority-preemption-eviction-1lsgym"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-priority-preemption-eviction-1lsgym(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-priority-preemption-eviction(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*placement-policy\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:dedicated=intake:NoSchedule|zones-maxSkew-1|priorityClass)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Priority Preemption Eviction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Priority Preemption Eviction.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using separate and scheduling plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-priority-preemption-eviction"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "separate",
+        "scheduling"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

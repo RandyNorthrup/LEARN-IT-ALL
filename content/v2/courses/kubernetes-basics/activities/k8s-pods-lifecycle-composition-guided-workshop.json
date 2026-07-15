@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-pods-lifecycle-composition-guided-workshop",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-pods-lifecycle-composition",
+  "kind": "workshop",
+  "title": "Pods, Multi-Container Composition, Lifecycle, Termination, and Debug Containers · Kubernetes Operations Room",
+  "summary": "A platform pairing session predicts each API transition before producing the first working bounded Pod composition and lifecycle manifest for pods, multi-container composition, lifecycle, termination, and debug containers. Planned artifact: Build a complete first version of bounded Pod composition and lifecycle manifest while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement.",
+    "Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts.",
+    "Trace waiting, running, terminated, reasons, exit codes, restartPolicy, backoff, previous state, and Pod phase without equating them.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-pod-shared-boundaries",
+      "k8s-init-app-sidecar-contracts",
+      "k8s-container-states-restart-backoff",
+      "k8s-hooks-signals-termination",
+      "k8s-ephemeral-debug-container-limits"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-pods-lifecycle-composition-k8s-ephemeral-debug-container-limits-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop K8s Pod Shared Boundaries",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop K8s Pod Shared Boundaries.",
+      "why": "The decision supplies observable evidence for explain pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement. For Commit to the mission model · Workshop K8s Pod Shared Boundaries, keep K8s Pod Shared Boundaries connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Pod Shared Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "k8s-pod-shared-boundaries"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop K8s Pod Shared Boundaries, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Pod Shared Boundaries precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop K8s Pod Shared Boundaries, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement.",
+        "For Commit to the mission model · Workshop K8s Pod Shared Boundaries, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Pod is a durable virtual machine and its IP, local data, and identity survive replacement."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the K8s Pod Shared Boundaries preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A Pod is a durable virtual machine and its IP, local data, and identity survive replacement. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement.\n\nWhich action demonstrates K8s Pod Shared Boundaries without dropping earlier contracts?\n\nEvidence target: K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries.",
+      "why": "The decision supplies observable evidence for explain pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement. For K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries, keep K8s Pod Shared Boundaries connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Pod Shared Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "k8s-pod-shared-boundaries"
+      ],
+      "hints": [
+        "For K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Pod Shared Boundaries precondition, or invariant that must hold.",
+        "At K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement.",
+        "For K8s Pod Shared Boundaries · changed case · Workshop K8s Pod Shared Boundaries, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Pod is a durable virtual machine and its IP, local data, and identity survive replacement."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A Pod is a durable virtual machine and its IP, local data, and identity survive replacement. That claim does not survive the k8s pod shared boundaries · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For k8s pod shared boundaries · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Explain Pod identity, scheduling unit, shared network and volumes, isolated process and filesystem boundaries, and ephemeral replacement. Apply it to the stated input and retain a reproducible trace for bounded Pod composition and lifecycle manifest."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 3, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts.\n\nWhich action demonstrates K8s Init App Sidecar Contracts without dropping earlier contracts?\n\nEvidence target: K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts.",
+      "why": "The decision supplies observable evidence for choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts. For K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts, keep K8s Init App Sidecar Contracts connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 3, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Init App Sidecar Contracts result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "k8s-init-app-sidecar-contracts"
+      ],
+      "hints": [
+        "For K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Init App Sidecar Contracts precondition, or invariant that must hold.",
+        "At K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 3, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts.",
+        "For K8s Init App Sidecar Contracts · changed case · Workshop K8s Init App Sidecar Contracts, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Every cooperating process belongs in a sidecar inside the same Pod."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Init App Sidecar Contracts case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Every cooperating process belongs in a sidecar inside the same Pod.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For k8s init app sidecar contracts · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Choose init, app, native sidecar, adapter, ambassador, and helper containers from startup, restart, ownership, shutdown, and resource contracts. Apply it to the stated input and retain a reproducible trace for bounded Pod composition and lifecycle manifest."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Every cooperating process belongs in a sidecar inside the same Pod. That claim does not survive the k8s init app sidecar contracts · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Trace waiting, running, terminated, reasons, exit codes, restartPolicy, backoff, previous state, and Pod phase without equating them.\n\nWhich action demonstrates K8s Container States Restart Backoff without dropping earlier contracts?\n\nEvidence target: K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff.",
+      "why": "The decision supplies observable evidence for trace waiting, running, terminated, reasons, exit codes, restartpolicy, backoff, previous state, and pod phase without equating them. For K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff, keep K8s Container States Restart Backoff connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Trace waiting, running, terminated, reasons, exit codes, restartPolicy, backoff, previous state, and Pod phase without equating them."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Container States Restart Backoff condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "k8s-container-states-restart-backoff"
+      ],
+      "hints": [
+        "For K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Container States Restart Backoff precondition, or invariant that must hold.",
+        "At K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Trace waiting, running, terminated, reasons, exit codes, restartPolicy, backoff, previous state, and Pod phase without equating them.",
+        "For K8s Container States Restart Backoff · changed case · Workshop K8s Container States Restart Backoff, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: CrashLoopBackOff is a permanent Pod phase and identifies the application root cause."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Trace waiting, running, terminated, reasons, exit codes, restartPolicy, backoff, previous state, and Pod phase without equating them. Apply it to the stated input and retain a reproducible trace for bounded Pod composition and lifecycle manifest."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "CrashLoopBackOff is a permanent Pod phase and identifies the application root cause. That claim does not survive the k8s container states restart backoff · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For k8s container states restart backoff · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 5, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Design preStop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence.\n\nWhich action demonstrates K8s Hooks Signals Termination without dropping earlier contracts?\n\nEvidence target: K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination.",
+      "why": "The decision supplies observable evidence for design prestop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence. For K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination, keep K8s Hooks Signals Termination connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 5, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Design preStop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed K8s Hooks Signals Termination result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "k8s-hooks-signals-termination"
+      ],
+      "hints": [
+        "For K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Hooks Signals Termination precondition, or invariant that must hold.",
+        "At K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 5, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Design preStop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence.",
+        "For K8s Hooks Signals Termination · changed case · Workshop K8s Hooks Signals Termination, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A preStop hook replaces application signal handling and always runs before every termination."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Hooks Signals Termination case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A preStop hook replaces application signal handling and always runs before every termination.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design preStop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "A preStop hook replaces application signal handling and always runs before every termination. That claim does not survive the k8s hooks signals termination · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For k8s hooks signals termination · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Design preStop, stop signals, termination grace, endpoint removal, application draining, child cleanup, and forced termination evidence. Apply it to the stated input and retain a reproducible trace for bounded Pod composition and lifecycle manifest."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.\n\nWhich action demonstrates K8s Ephemeral Debug Container Limits without dropping earlier contracts?\n\nEvidence target: K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits.",
+      "why": "The decision supplies observable evidence for use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits. For K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits, keep K8s Ephemeral Debug Container Limits connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Ephemeral Debug Container Limits condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "hints": [
+        "For K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ephemeral Debug Container Limits precondition, or invariant that must hold.",
+        "At K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 6, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+        "For K8s Ephemeral Debug Container Limits · changed case · Workshop K8s Ephemeral Debug Container Limits, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: An ephemeral debug container can modify the original image and proves the clean replacement will work."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For k8s ephemeral debug container limits · changed case, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits. Apply it to the stated input and retain a reproducible trace for bounded Pod composition and lifecycle manifest."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "An ephemeral debug container can modify the original image and proves the clean replacement will work. That claim does not survive the k8s ephemeral debug container limits · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.\n\nInspect the K8s Ephemeral Debug Container Limits trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits.",
+      "why": "The decision supplies observable evidence for use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits. For Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits, keep K8s Ephemeral Debug Container Limits connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Ephemeral Debug Container Limits, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ephemeral Debug Container Limits precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+        "For Audit the proposed evidence packet · Workshop K8s Ephemeral Debug Container Limits, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: An ephemeral debug container can modify the original image and proves the clean replacement will work."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Ephemeral Debug Container Limits case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 2, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "An ephemeral debug container can modify the original image and proves the clean replacement will work.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits. Artifact under review: bounded Pod composition and lifecycle manifest.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies K8s Ephemeral Debug Container Limits, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-ephemeral-debug-container-limits-p8dy69\". Tailor its pod.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Ephemeral Debug Container Limits into observable performance evidence. For Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits, keep K8s Ephemeral Debug Container Limits connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-ephemeral-debug-container-limits-p8dy69\n  - competency: k8s-ephemeral-debug-container-limits\n    artifact: pod.yaml\n    decision: ephemeral debug container limits\n    environment: managed canary cluster with provider-specific load balancing\n    fault-injection: withdraw the selected image digest after one node pulls it\n    retained-proof: object UID generation observedGeneration and status conditions\n    case-key: p8dy69\n    change: |\n      apiVersion: v1\n      kind: Pod\n      metadata:\n      name: status-api\n      spec:\n      initContainers: [schema-check]\n      containers: [api, telemetry-sidecar]\n      terminationGracePeriodSeconds: 30\n    verify: kubectl get pod status-api -o json && kubectl logs status-api --previous -c api\n    failure: Reject durable-Pod assumptions, unbounded sidecars, swallowed signals, missing previous logs, or debug mutation presented as image repair.\n    repair: Assign container ownership, bound startup and shutdown, capture states and exit causes, and prove a clean replacement preserves required behavior.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ephemeral Debug Container Limits precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 3, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+        "For Extend the cumulative artifact · Workshop K8s Ephemeral Debug Container Limits, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: An ephemeral debug container can modify the original image and proves the clean replacement will work."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits.",
+      "why": "The decision supplies observable evidence for use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits. For Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits, keep K8s Ephemeral Debug Container Limits connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Ephemeral Debug Container Limits symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ephemeral Debug Container Limits precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 4, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+        "For Test an acceptance boundary · Workshop K8s Ephemeral Debug Container Limits, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: An ephemeral debug container can modify the original image and proves the clean replacement will work."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Ephemeral Debug Container Limits failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "An ephemeral debug container can modify the original image and proves the clean replacement will work.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated K8s Ephemeral Debug Container Limits condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for K8s Ephemeral Debug Container Limits: explain the governing condition, one failure, and how this concrete case was verified — A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 5, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.\n\nEvidence target: Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits, keep K8s Ephemeral Debug Container Limits connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Ephemeral Debug Container Limits precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A workshop Pod has an init container that never completes, a sidecar that outlives the app, an ephemeral debug container, restart count 5, and an emptyDir holding the only diagnosis. Explain phase, container state, restart, sharing, and replacement boundaries. Competency probe: Use ephemeral containers and shared process evidence for bounded debugging while preserving image immutability and naming remaining node-level limits.",
+        "For Defend the transferred model · Workshop K8s Ephemeral Debug Container Limits, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: An ephemeral debug container can modify the original image and proves the clean replacement will work."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Pod Shared Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Pod Shared Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-pod-shared-boundaries"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Pod Shared Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Pod Shared Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-pod-shared-boundaries"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Init App Sidecar Contracts to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Init App Sidecar Contracts.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-init-app-sidecar-contracts"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Container States Restart Backoff to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Container States Restart Backoff.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-container-states-restart-backoff"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Hooks Signals Termination to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Hooks Signals Termination.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-hooks-signals-termination"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Ephemeral Debug Container Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Ephemeral Debug Container Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Ephemeral Debug Container Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Ephemeral Debug Container Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-ephemeral-debug-container-limits-p8dy69.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-ephemeral-debug-container-limits-p8dy69"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-ephemeral-debug-container-limits-p8dy69(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-ephemeral-debug-container-limits(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*pod\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:kind:\\s*Pod|initContainers|terminationGracePeriodSeconds)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Ephemeral Debug Container Limits to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Ephemeral Debug Container Limits.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using ephemeral and containers plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-ephemeral-debug-container-limits"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "ephemeral",
+        "containers"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

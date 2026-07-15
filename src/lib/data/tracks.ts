@@ -16,10 +16,20 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'backend-python-typescript',
     title: 'Back-End Developer: Python & TypeScript',
-    description: 'Master back-end development from start to finish in Python, TypeScript and SQL. Build scalable and secure back-end systems.',
+    description:
+      'Master back-end development from start to finish in Python, TypeScript and SQL. Build scalable and secure back-end systems.',
     difficulty: 'beginner',
     estimatedHours: 500,
-    technologies: ['Python', 'TypeScript', 'JavaScript', 'SQL', 'Docker', 'AWS S3', 'CloudFront', 'RabbitMQ'],
+    technologies: [
+      'Python',
+      'TypeScript',
+      'JavaScript',
+      'SQL',
+      'Docker',
+      'AWS S3',
+      'CloudFront',
+      'RabbitMQ',
+    ],
     courses: [
       'python-basics',
       'linux-basics',
@@ -51,10 +61,21 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'backend-python-go',
     title: 'Back-End Developer: Python & Go',
-    description: 'Master back-end development from start to finish in Python, Golang and SQL. Build scalable and secure back-end systems using Go.',
+    description:
+      'Master back-end development from start to finish in Python, Golang and SQL. Build scalable and secure back-end systems using Go.',
     difficulty: 'beginner',
     estimatedHours: 480,
-    technologies: ['Python', 'Go', 'Golang', 'SQL', 'Docker', 'AWS S3', 'CloudFront', 'RabbitMQ', 'Concurrency'],
+    technologies: [
+      'Python',
+      'Go',
+      'Golang',
+      'SQL',
+      'Docker',
+      'AWS S3',
+      'CloudFront',
+      'RabbitMQ',
+      'Concurrency',
+    ],
     courses: [
       'python-basics',
       'linux-basics',
@@ -85,10 +106,21 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'devops-infrastructure',
     title: 'DevOps & Infrastructure Engineer',
-    description: 'Learn to deploy, scale, and maintain production systems. Master Docker, Kubernetes, CI/CD, and cloud infrastructure.',
+    description:
+      'Learn to deploy, scale, and maintain production systems. Master Docker, Kubernetes, CI/CD, and cloud infrastructure.',
     difficulty: 'intermediate',
     estimatedHours: 320,
-    technologies: ['Docker', 'Kubernetes', 'GitHub Actions', 'Linux', 'Git', 'PostgreSQL', 'CI/CD', 'GCP', 'AWS'],
+    technologies: [
+      'Docker',
+      'Kubernetes',
+      'GitHub Actions',
+      'Linux',
+      'Git',
+      'PostgreSQL',
+      'CI/CD',
+      'GCP',
+      'AWS',
+    ],
     courses: [
       'linux-basics',
       'git-basics',
@@ -106,10 +138,20 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'security-cryptography',
     title: 'Security & Cryptography Specialist',
-    description: 'Deep dive into cryptography, security best practices, and building secure systems from the ground up.',
+    description:
+      'Deep dive into cryptography, security best practices, and building secure systems from the ground up.',
     difficulty: 'advanced',
     estimatedHours: 280,
-    technologies: ['Go', 'Cryptography', 'Security', 'Symmetric Encryption', 'Asymmetric Encryption', 'RSA', 'AES', 'Hash Functions'],
+    technologies: [
+      'Go',
+      'Cryptography',
+      'Security',
+      'Symmetric Encryption',
+      'Asymmetric Encryption',
+      'RSA',
+      'AES',
+      'Hash Functions',
+    ],
     courses: [
       'python-basics',
       'go-basics',
@@ -123,10 +165,19 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'ai-ml-engineer',
     title: 'AI/ML Engineer Track',
-    description: 'Build AI-powered applications using LLMs, RAG, and modern machine learning techniques.',
+    description:
+      'Build AI-powered applications using LLMs, RAG, and modern machine learning techniques.',
     difficulty: 'advanced',
     estimatedHours: 260,
-    technologies: ['Python', 'LLMs', 'RAG', 'Vector Databases', 'Embeddings', 'Machine Learning', 'AI Agents'],
+    technologies: [
+      'Python',
+      'LLMs',
+      'RAG',
+      'Vector Databases',
+      'Embeddings',
+      'Machine Learning',
+      'AI Agents',
+    ],
     courses: [
       'python-basics',
       'python-oop',
@@ -140,10 +191,18 @@ export const LEARNING_TRACKS: LearningTrack[] = [
   {
     id: 'algorithms-specialist',
     title: 'Algorithms & Data Structures Specialist',
-    description: 'Master algorithms, data structures, and computational thinking. Perfect for technical interviews and competitive programming.',
+    description:
+      'Master algorithms, data structures, and computational thinking. Perfect for technical interviews and competitive programming.',
     difficulty: 'intermediate',
     estimatedHours: 180,
-    technologies: ['Python', 'Algorithms', 'Data Structures', 'Big-O', 'Graph Theory', 'Dynamic Programming'],
+    technologies: [
+      'Python',
+      'Algorithms',
+      'Data Structures',
+      'Big-O',
+      'Graph Theory',
+      'Dynamic Programming',
+    ],
     courses: [
       'python-basics',
       'python-oop',

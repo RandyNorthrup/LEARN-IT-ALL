@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ArrowLeft, BookOpen, Clock, Code2 } from 'lucide-react';
 import Link from 'next/link';
-import { ArrowLeft, Clock, BookOpen, Code2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface LearningTrack {
   id: string;
@@ -82,7 +82,7 @@ export default function TracksPage() {
                   <div className="flex-1">
                     <h2 className="text-3xl font-bold mb-3">{track.title}</h2>
                     <p className="text-lg opacity-90 mb-4">{track.description}</p>
-                    
+
                     {/* Track Stats */}
                     <div className="flex flex-wrap gap-6 text-sm">
                       <div className="flex items-center">
@@ -129,8 +129,10 @@ export default function TracksPage() {
                     Course Sequence
                   </h3>
                   <p className="text-gray-600">
-                    This track includes <span className="font-bold text-gray-900">{track.courses.length} courses</span> designed to take you from beginner to job-ready developer.
-                    Complete them in order for the best learning experience.
+                    This track includes{' '}
+                    <span className="font-bold text-gray-900">{track.courses.length} courses</span>{' '}
+                    designed to take you from beginner to job-ready developer. Complete them in
+                    order for the best learning experience.
                   </p>
                 </div>
 
@@ -141,6 +143,7 @@ export default function TracksPage() {
                 >
                   View Track Details
                   <svg
+                    aria-hidden="true"
                     className="ml-2 h-5 w-5"
                     fill="none"
                     stroke="currentColor"
@@ -163,12 +166,14 @@ export default function TracksPage() {
         <div className="mt-12 rounded-2xl bg-white p-8 shadow-lg">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">What are Learning Tracks?</h3>
           <p className="text-gray-600 mb-4">
-            Learning tracks are carefully curated sequences of courses designed to take you from beginner to professional developer. 
-            Each track focuses on a specific career path and includes all the courses, projects, and skills you need to succeed.
+            Learning tracks are carefully curated sequences of courses designed to take you from
+            beginner to professional developer. Each track focuses on a specific career path and
+            includes all the courses, projects, and skills you need to succeed.
           </p>
           <p className="text-gray-600">
-            <strong className="text-gray-900">Pro tip:</strong> Complete courses in the order they&apos;re presented for the best learning experience. 
-            Each course builds upon the knowledge from previous courses in the track.
+            <strong className="text-gray-900">Pro tip:</strong> Complete courses in the order
+            they&apos;re presented for the best learning experience. Each course builds upon the
+            knowledge from previous courses in the track.
           </p>
         </div>
       </main>

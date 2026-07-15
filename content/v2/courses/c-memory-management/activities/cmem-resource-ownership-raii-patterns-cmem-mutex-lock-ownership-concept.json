@@ -1,0 +1,542 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-resource-ownership-raii-patterns-cmem-mutex-lock-ownership-concept",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-resource-ownership-raii-patterns",
+  "kind": "theory",
+  "title": "Files, Descriptors, Locks, and RAII-Like C Patterns · C Contract Brief: Mutex Lock Ownership",
+  "summary": "A service reload path owns heap buffers, FILE streams, descriptors, sockets, and mutexes across cancellation and errors. Planned artifact: Add and verify the cmem mutex lock ownership increment in uniform resource-lifetime wrapper. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+    "Use compiler cleanup attributes only behind a documented extension boundary with equivalent standard-C control flow.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "cmem-mutex-lock-ownership"
+    ],
+    "reinforces": [
+      "cmem-cleanup-attribute-portability"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-resource-ownership-raii-patterns-cmem-cleanup-attribute-portability-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Mutex Lock Ownership · Theory Mutex Lock Ownership",
+      "interaction": "predict",
+      "instruction": "theory case — A theory native-systems team handles memory case 6404. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nBefore reading, predict which action preserves the Mutex Lock Ownership contract for the supplied data.\n\nEvidence target: Predict Mutex Lock Ownership · Theory Mutex Lock Ownership.",
+      "why": "The decision supplies observable evidence for record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. For Predict Mutex Lock Ownership · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory native-systems team handles memory case 6404. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Mutex Lock Ownership condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Predict Mutex Lock Ownership · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Predict Mutex Lock Ownership · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 6404. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Predict Mutex Lock Ownership · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "Freeing an object containing a locked mutex releases the lock safely. That claim does not survive the predict mutex lock ownership evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict mutex lock ownership, run one convenient Mutex Lock Ownership case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Mutex Lock Ownership · Theory Mutex Lock Ownership",
+      "interaction": "read",
+      "instruction": "theory case — A theory native-systems team handles memory case 2261. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nAfter tracing the worked code, choose the Mutex Lock Ownership application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Mutex Lock Ownership · Theory Mutex Lock Ownership.",
+      "why": "The decision supplies observable evidence for record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. For Bound Mutex Lock Ownership · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example native-systems team handles memory case 6404. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. A defensible solution applies Mutex Lock Ownership, preserves the governing invariant or value contract, and connects the observed result to uniform resource-lifetime wrapper."
+        },
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-worked-cmem-resource-ownership-raii-patterns-4 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 9976; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct resources { int buffer; int stream; int lock; int release_trace; };\n\nstatic int worked_cmem_resource_ownership_raii_patterns_4(struct resources *state) {\n  if (state == NULL) return 0;\n  if (state->lock) { state->release_trace = state->release_trace * 10 + 3; state->lock = 0; }\n  if (state->stream) { state->release_trace = state->release_trace * 10 + 2; state->stream = 0; }\n  if (state->buffer) { state->release_trace = state->release_trace * 10 + 1; state->buffer = 0; }\n  return 1;\n}\n\nint main(void) {\n  struct resources state = { 1, 1, 1, 0 };\n  int first = worked_cmem_resource_ownership_raii_patterns_4(&state);\n  int second = worked_cmem_resource_ownership_raii_patterns_4(&state);\n  int invariant = first && second && state.release_trace == 321 && 6 > 0;\n  printf(\"resources trace=%d invariant=%d\\n\", state.release_trace, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Runnable C size, lifetime, ownership, cleanup, or memory invariant example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Freeing an object containing a locked mutex releases the lock safely. This fails the Mutex Lock Ownership contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "SEI CERT C Coding Standard (current wiki reviewed 2026-07-14) — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Bound Mutex Lock Ownership · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Bound Mutex Lock Ownership · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 2261. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Bound Mutex Lock Ownership · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "Freeing an object containing a locked mutex releases the lock safely. That claim does not survive the bound mutex lock ownership evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound mutex lock ownership, run one convenient Mutex Lock Ownership case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Mutex Lock Ownership after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory native-systems team handles memory case 9642. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nInspect the Mutex Lock Ownership trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership.",
+      "why": "The decision supplies observable evidence for record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. For Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Mutex Lock Ownership, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 9642. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Inspect Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Mutex Lock Ownership case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory native-systems team handles memory case 9642. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "Freeing an object containing a locked mutex releases the lock safely.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. Artifact under review: uniform resource-lifetime wrapper.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect mutex lock ownership evidence, run one convenient Mutex Lock Ownership case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Mutex Lock Ownership, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect mutex lock ownership evidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership",
+      "interaction": "code",
+      "instruction": "For this theory demonstration of cmem-mutex-lock-ownership, write the complete compile-ready C program headed \"/* Evidence: cmem-mutex-lock-ownership-uqx0vc */\" for changed case 7948. It must release nested resources once in reverse acquisition order, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Mutex Lock Ownership into observable performance evidence. For Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-mutex-lock-ownership-uqx0vc */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 7948; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstruct resources { int buffer; int stream; int lock; int release_trace; };\n\nstatic int evidence_cmem_mutex_lock_ownership_uqx0vc(struct resources *state) {\n  if (state == NULL) return 0;\n  if (state->lock) { state->release_trace = state->release_trace * 10 + 3; state->lock = 0; }\n  if (state->stream) { state->release_trace = state->release_trace * 10 + 2; state->stream = 0; }\n  if (state->buffer) { state->release_trace = state->release_trace * 10 + 1; state->buffer = 0; }\n  return 1;\n}\n\nint main(void) {\n  struct resources state = { 1, 1, 1, 0 };\n  int first = evidence_cmem_mutex_lock_ownership_uqx0vc(&state);\n  int second = evidence_cmem_mutex_lock_ownership_uqx0vc(&state);\n  int invariant = first && second && state.release_trace == 321 && 6 > 0;\n  printf(\"resources trace=%d invariant=%d\\n\", state.release_trace, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 1547. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Build Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership",
+      "interaction": "debug",
+      "instruction": "theory case — A theory native-systems team handles memory case 8928. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nA teammate acts on this belief: “Freeing an object containing a locked mutex releases the lock safely.” Which repair addresses the cause?\n\nEvidence target: Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership.",
+      "why": "The decision supplies observable evidence for record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths. For Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory native-systems team handles memory case 8928. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Mutex Lock Ownership symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 8928. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Repair the Mutex Lock Ownership defect · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Mutex Lock Ownership failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "Freeing an object containing a locked mutex releases the lock safely.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the mutex lock ownership defect evidence boundary."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the mutex lock ownership defect, run one convenient Mutex Lock Ownership case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Mutex Lock Ownership, gather a counterexample, repair the artifact, and add a regression case."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership",
+      "interaction": "arrange",
+      "instruction": "Order the Mutex Lock Ownership evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership.",
+      "why": "Correct order keeps Mutex Lock Ownership assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory native-systems team handles memory case 4785. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Mutex Lock Ownership has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 4785. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Sequence Mutex Lock Ownership evidence · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the theory Mutex Lock Ownership case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Choose and document the smallest defensible model or procedure for the theory Mutex Lock Ownership case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the theory Mutex Lock Ownership case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the theory Mutex Lock Ownership case"
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Mutex Lock Ownership: explain the governing condition, one failure, and how this concrete case was verified — A theory native-systems team handles memory case 3166. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.\n\nEvidence target: Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership, keep Mutex Lock Ownership connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "hints": [
+        "For Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Mutex Lock Ownership precondition, or invariant that must hold.",
+        "At Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A theory native-systems team handles memory case 3166. Produce bounded C evidence to release nested resources once in reverse acquisition order; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Record which thread owns each lock and guarantee unlock on normal, error, cancellation, and early-return paths.",
+        "For Defend the Mutex Lock Ownership model · Theory Mutex Lock Ownership, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Freeing an object containing a locked mutex releases the lock safely."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutex Lock Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutex Lock Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutex Lock Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutex Lock Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutex Lock Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutex Lock Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-mutex-lock-ownership-uqx0vc */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-mutex-lock-ownership-uqx0vc */"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-mutex-lock-ownership-uqx0vc \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_mutex_lock_ownership_uqx0vc\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mutex Lock Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mutex Lock Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using record and thread plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-mutex-lock-ownership"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "record",
+        "thread"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

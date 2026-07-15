@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "http-ts-body-streams-limits-guided-workshop",
+  "courseId": "http-clients-typescript",
+  "moduleId": "http-ts-body-streams-limits",
+  "kind": "workshop",
+  "title": "One-Shot Bodies, Streaming, Uploads, Decompression, and Resource Limits · Browser and Node Client Systems · Narrowing Workshop",
+  "summary": "An accessibility product team integrating a staging browser API must build a first protocol model from narrated fixtures and explain each policy boundary for one-shot bodies, streaming, uploads, decompression, and resource limits, producing bounded streaming body pipeline. Planned artifact: Build a complete first version of a TypeScript 7 standards-based Fetch bounded streaming body pipeline while every earlier competency remains active. Learners progress through prediction, explicit theory, ch…",
+  "objectives": [
+    "Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "http-ts-one-shot-body-ownership",
+      "http-ts-bounded-response-reads",
+      "http-ts-streaming-uploads",
+      "http-ts-message-delimitation-trailers",
+      "http-ts-decompression-expansion"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-ts-body-streams-limits-http-ts-decompression-expansion-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "http-clients-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// http-clients-typescript cumulative strict Fetch client portfolio.\n// This workspace performs strict diagnostics and deterministic contract modeling only.\ntype RequestEvidence = Readonly<{ method: string; target: string; attempt: number }>;\ntype ResponseEvidence = Readonly<{ status: number; bodyBytes: number; valid: boolean }>;\n\nconst baselineRequest: RequestEvidence = {\n  method: \"GET\",\n  target: \"https://api.example.test/status\",\n  attempt: 1,\n};\nconsole.assert(baselineRequest.attempt === 1);\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership",
+      "interaction": "predict",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhat must be established before implementation?\n\nEvidence target: Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership.",
+      "why": "The decision supplies observable evidence for treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership, keep One Shot Body Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which One Shot Body Ownership condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership, name the method, authority, body, byte, time, and credential boundary, One Shot Body Ownership precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Commit to the mission model · Workshop One Shot Body Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A body can always be reread after parsing without buffering or reconstruction. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient One Shot Body Ownership happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the One Shot Body Ownership preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A body can always be reread after parsing without buffering or reconstruction. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership",
+      "interaction": "arrange",
+      "instruction": "Order the One Shot Body Ownership Fetch and TypeScript HTTP evidence cycle for this workshop task before implementing it.\n\nEvidence target: Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership.",
+      "why": "Correct order keeps One Shot Body Ownership assumptions visible before execution and verifies its result against a boundary case afterward. For Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership, keep One Shot Body Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so One Shot Body Ownership has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership, name the method, authority, body, byte, time, and credential boundary, One Shot Body Ownership precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Plan the evidence sequence · Workshop One Shot Body Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A body can always be reread after parsing without buffering or reconstruction. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare Fetch and TypeScript method semantics, target authority, credentials, body ownership, and byte and time budgets for the workshop One Shot Body Ownership case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict Fetch and TypeScript resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the workshop One Shot Body Ownership case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic Fetch and TypeScript request or response model and retain inspectable evidence for the workshop One Shot Body Ownership case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed Fetch and TypeScript failure, verify bounded cleanup, and state live-network transfer limits for the workshop One Shot Body Ownership case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates One Shot Body Ownership without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership.",
+      "why": "The decision supplies observable evidence for treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership, keep One Shot Body Ownership connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which One Shot Body Ownership condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "hints": [
+        "For Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership, name the method, authority, body, byte, time, and credential boundary, One Shot Body Ownership precondition, or invariant that must hold.",
+        "At Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript One Shot Body Ownership · changed case · Workshop One Shot Body Ownership, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A body can always be reread after parsing without buffering or reconstruction. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "A body can always be reread after parsing without buffering or reconstruction. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the one shot body ownership · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For one shot body ownership · changed case, run one convenient One Shot Body Ownership happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Treat request and response bodies as owned one-shot streams with explicit read, close, replay, and cleanup rules. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch bounded streaming body pipeline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads",
+      "interaction": "inspect",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Bounded Response Reads without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads.",
+      "why": "The decision supplies observable evidence for limit compressed and decoded response reads before allocation, parsing, logging, or persistence. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads, keep Bounded Response Reads connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Bounded Response Reads result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "http-ts-bounded-response-reads"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads, name the method, authority, body, byte, time, and credential boundary, Bounded Response Reads precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Bounded Response Reads · changed case · Workshop Bounded Response Reads, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A Content-Length check alone bounds every response body. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Bounded Response Reads case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "A Content-Length check alone bounds every response body. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For bounded response reads · changed case, run one convenient Bounded Response Reads happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Limit compressed and decoded response reads before allocation, parsing, logging, or persistence. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch bounded streaming body pipeline."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A Content-Length check alone bounds every response body. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the bounded response reads · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Streaming Uploads without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads.",
+      "why": "The decision supplies observable evidence for stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads, keep Streaming Uploads connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Streaming Uploads condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "http-ts-streaming-uploads"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads, name the method, authority, body, byte, time, and credential boundary, Streaming Uploads precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Streaming Uploads · changed case · Workshop Streaming Uploads, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Streaming an upload automatically makes it resumable and safe to retry. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Stream large uploads with known ownership, backpressure, progress, cancellation, and retryability. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch bounded streaming body pipeline."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Streaming an upload automatically makes it resumable and safe to retry. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the streaming uploads · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For streaming uploads · changed case, run one convenient Streaming Uploads happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T…",
+      "interaction": "inspect",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Message Delimitation Trailers without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T….",
+      "why": "The decision supplies observable evidence for reason about known lengths, http/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T…, keep Message Delimitation Trailers connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Message Delimitation Trailers result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "http-ts-message-delimitation-trailers"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T…, name the method, authority, body, byte, time, and credential boundary, Message Delimitation Trailers precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T…, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 20 MiB upload and receives a 40 KiB compressed body that expands past 50 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Message Delimitation Trailers · changed case · Workshop Message Delimitation T…, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Chunked transfer encoding is an application-level compression format. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Message Delimitation Trailers case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Chunked transfer encoding is an application-level compression format. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Chunked transfer encoding is an application-level compression format. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the message delimitation trailers · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For message delimitation trailers · changed case, run one convenient Message Delimitation Trailers happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Reason about known lengths, HTTP/1.1 chunked delimitation, end of stream, and trailers without exposing framing details as semantics. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch bounded streaming body pipeline."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion",
+      "interaction": "answer",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nWhich action demonstrates Decompression Expansion without dropping earlier contracts?\n\nEvidence target: Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion.",
+      "why": "The decision supplies observable evidence for defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Decompression Expansion condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 24 MiB upload and receives a 40 KiB compressed body that expands past 60 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Decompression Expansion · changed case · Workshop Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For decompression expansion · changed case, run one convenient Decompression Expansion happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts. Apply it to the stated input and retain a reproducible trace for a TypeScript 7 standards-based Fetch bounded streaming body pipeline."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch. That claim does not survive the decompression expansion · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion",
+      "interaction": "code",
+      "instruction": "Add a typed evidence_http_ts_decompression_expansion_ylclg6 function that uses deterministic TypeScript evidence to bound decoded bytes and compression expansion rather than trusting Content-Length alone.\n\nEvidence target: Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Decompression Expansion into observable performance evidence. For Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "function evidence_http_ts_decompression_expansion_ylclg6(compressedBytes: number, decodedBytes: number, maximumDecodedBytes: number): { accepted: boolean; expansionRatio: number } {\n  if (compressedBytes <= 0 || decodedBytes < 0 || maximumDecodedBytes <= 0) {\n    return { accepted: false, expansionRatio: Number.POSITIVE_INFINITY };\n  }\n  const expansionRatio = decodedBytes / compressedBytes;\n  return { accepted: decodedBytes <= maximumDecodedBytes && expansionRatio <= 100, expansionRatio };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 8 MiB upload and receives a 40 KiB compressed body that expands past 20 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Extend the cumulative artifact · Workshop Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion",
+      "interaction": "debug",
+      "instruction": "workshop case — accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion.",
+      "why": "The decision supplies observable evidence for defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. demonstrate the result through typescript 7 strict types plus whatwg fetch request, response, headers, url, streams, and abortsignal contracts. For Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Decompression Expansion symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "WHATWG Fetch Living Standard — Controls Request, Response, Headers, bodies, fetch, redirects, credentials, CORS, cache modes, origins, streams, timing, and browser security behavior."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 12 MiB upload and receives a 40 KiB compressed body that expands past 30 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Test an acceptance boundary · Workshop Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Decompression Expansion failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Decompression Expansion happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Decompression Expansion condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Decompression Expansion: explain the governing condition, one failure, and how this concrete case was verified — accessible staging dashboard SDK streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.\n\nEvidence target: Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion, keep Decompression Expansion connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "hints": [
+        "For Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion, name the method, authority, body, byte, time, and credential boundary, Decompression Expansion precondition, or invariant that must hold.",
+        "At Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: accessible staging dashboard SDK streams a 16 MiB upload and receives a 40 KiB compressed body that expands past 40 MiB. Define one-shot ownership, replay, compressed and decoded limits, cancellation, trailers, and cleanup. Competency probe: Defend against decompression bombs, oversized structured values, deep nesting, and unbounded field counts. Demonstrate the result through TypeScript 7 strict types plus WHATWG Fetch Request, Response, Headers, URL, streams, and AbortSignal contracts.",
+        "For Fetch and TypeScript Defend the transferred model · Workshop Decompression Expansion, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A small compressed response is necessarily cheap and safe to decode. This remains false for TypeScript 7 standards-based Fetch."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies One Shot Body Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about One Shot Body Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies One Shot Body Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about One Shot Body Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-one-shot-body-ownership"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bounded Response Reads to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bounded Response Reads.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-bounded-response-reads"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Streaming Uploads to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Streaming Uploads.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-streaming-uploads"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Message Delimitation Trailers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Message Delimitation Trailers.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-message-delimitation-trailers"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Decompression Expansion to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Decompression Expansion.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_http_ts_decompression_expansion_ylclg6.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "file": "typescript",
+      "expected": "evidence_http_ts_decompression_expansion_ylclg6"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "function\\s+evidence_http_ts_decompression_expansion_ylclg6\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=[\\s\\S]*?decodedBytes\\s*\\/\\s*compressedBytes)(?=[\\s\\S]*?maximumDecodedBytes)(?=[\\s\\S]*?return)[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Decompression Expansion to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Decompression Expansion.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using defend and decompression plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-ts-decompression-expansion"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "defend",
+        "decompression"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

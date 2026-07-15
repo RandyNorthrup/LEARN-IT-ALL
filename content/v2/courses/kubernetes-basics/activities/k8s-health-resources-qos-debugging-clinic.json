@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-health-resources-qos-debugging-clinic",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-health-resources-qos",
+  "kind": "debug",
+  "title": "Requests, Limits, QoS, Probes, Startup, Readiness, and Resource Failure · Object and Event Forensics",
+  "summary": "An incident responder inherits a plausible but defective health and resource behavior policy; preserve status and events, isolate the first causal fault in requests, limits, qos, probes, startup, readiness, and resource failure, and retain a regression check. Planned artifact: Repair a changed failure in health and resource behavior policy and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal d…",
+  "objectives": [
+    "Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.",
+    "Derive Guaranteed, Burstable, and BestEffort QoS, container OOM, Pod eviction, node pressure, and restart evidence from effective resources.",
+    "Separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "k8s-requests-limits-scheduling-runtime",
+      "k8s-qos-oom-eviction",
+      "k8s-startup-readiness-liveness",
+      "k8s-probe-design-budgets",
+      "k8s-resource-probe-fault-tests"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-health-resources-qos-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.\n\nInspect the K8s Requests Limits Scheduling Runtime trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime.",
+      "why": "The decision supplies observable evidence for relate cpu and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity. For Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime, keep K8s Requests Limits Scheduling Runtime connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s Requests Limits Scheduling Runtime, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "k8s-requests-limits-scheduling-runtime"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Requests Limits Scheduling Runtime precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.",
+        "For Inspect the failure record · Debug K8s Requests Limits Scheduling Runtime, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Requests reserve dedicated physical resources while limits determine scheduler placement."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Requests Limits Scheduling Runtime case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Requests reserve dedicated physical resources while limits determine scheduler placement.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity. Artifact under review: health and resource behavior policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies K8s Requests Limits Scheduling Runtime, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run…",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.\n\nWhich observation would disprove this suspected cause: “Requests reserve dedicated physical resources while limits determine scheduler placement.”?\n\nEvidence target: K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run….",
+      "why": "The decision supplies observable evidence for relate cpu and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity. For K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run…, keep K8s Requests Limits Scheduling Runtime connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Requests Limits Scheduling Runtime symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "k8s-requests-limits-scheduling-runtime"
+      ],
+      "hints": [
+        "For K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run…, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Requests Limits Scheduling Runtime precondition, or invariant that must hold.",
+        "At K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run…, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.",
+        "For K8s Requests Limits Scheduling Runtime · fault isolation · Debug K8s Requests Limits Scheduling Run…, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Requests reserve dedicated physical resources while limits determine scheduler placement."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Requests Limits Scheduling Runtime failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Requests reserve dedicated physical resources while limits determine scheduler placement.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Relate CPU and memory requests to scheduling and accounting, limits to runtime enforcement, and application concurrency to measured capacity.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For k8s requests limits scheduling runtime · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Requests Limits Scheduling Runtime."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s requests limits scheduling runtime · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction",
+      "interaction": "predict",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Derive Guaranteed, Burstable, and BestEffort QoS, container OOM, Pod eviction, node pressure, and restart evidence from effective resources.\n\nWhich observation would disprove this suspected cause: “A memory limit prevents node pressure and guarantees that the Pod is never evicted.”?\n\nEvidence target: K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction.",
+      "why": "The decision supplies observable evidence for derive guaranteed, burstable, and besteffort qos, container oom, pod eviction, node pressure, and restart evidence from effective resources. For K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction, keep K8s Qos Oom Eviction connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Derive Guaranteed, Burstable, and BestEffort QoS, container OOM, Pod eviction, node pressure, and restart evidence from effective resources."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Qos Oom Eviction condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "k8s-qos-oom-eviction"
+      ],
+      "hints": [
+        "For K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Qos Oom Eviction precondition, or invariant that must hold.",
+        "At K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Derive Guaranteed, Burstable, and BestEffort QoS, container OOM, Pod eviction, node pressure, and restart evidence from effective resources.",
+        "For K8s Qos Oom Eviction · fault isolation · Debug K8s Qos Oom Eviction, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A memory limit prevents node pressure and guarantees that the Pod is never evicted."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Qos Oom Eviction."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s qos oom eviction · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For k8s qos oom eviction · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 750m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health.\n\nWhich observation would disprove this suspected cause: “Liveness should fail whenever any external dependency is temporarily unavailable.”?\n\nEvidence target: K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness.",
+      "why": "The decision supplies observable evidence for separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health. For K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness, keep K8s Startup Readiness Liveness connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 750m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Startup Readiness Liveness symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "k8s-startup-readiness-liveness"
+      ],
+      "hints": [
+        "For K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Startup Readiness Liveness precondition, or invariant that must hold.",
+        "At K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 750m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health.",
+        "For K8s Startup Readiness Liveness · fault isolation · Debug K8s Startup Readiness Liveness, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Liveness should fail whenever any external dependency is temporarily unavailable."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Startup Readiness Liveness failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Liveness should fail whenever any external dependency is temporarily unavailable.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate startup gating, traffic readiness, process liveness, container restart, endpoint conditions, and dependency health.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s startup readiness liveness · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For k8s startup readiness liveness · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Startup Readiness Liveness."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets",
+      "interaction": "predict",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1000m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Design HTTP, TCP, gRPC, or exec probes with correct target, timeout, period, thresholds, resource cost, failure budget, and diagnostic output.\n\nWhich observation would disprove this suspected cause: “Fast probe intervals and tiny timeouts always improve recovery.”?\n\nEvidence target: K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets.",
+      "why": "The decision supplies observable evidence for design http, tcp, grpc, or exec probes with correct target, timeout, period, thresholds, resource cost, failure budget, and diagnostic output. For K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets, keep K8s Probe Design Budgets connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1000m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Design HTTP, TCP, gRPC, or exec probes with correct target, timeout, period, thresholds, resource cost, failure budget, and diagnostic output."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s Probe Design Budgets condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "k8s-probe-design-budgets"
+      ],
+      "hints": [
+        "For K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Probe Design Budgets precondition, or invariant that must hold.",
+        "At K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1000m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Design HTTP, TCP, gRPC, or exec probes with correct target, timeout, period, thresholds, resource cost, failure budget, and diagnostic output.",
+        "For K8s Probe Design Budgets · fault isolation · Debug K8s Probe Design Budgets, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: Fast probe intervals and tiny timeouts always improve recovery."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For k8s probe design budgets · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Probe Design Budgets."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s probe design budgets · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests",
+      "interaction": "debug",
+      "instruction": "debug case — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.\n\nWhich observation would disprove this suspected cause: “A green readiness check under one idle run proves production capacity and resilience.”?\n\nEvidence target: K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests.",
+      "why": "The decision supplies observable evidence for test cold start, overload, dependency loss, memory pressure, cpu throttling, termination, and recovery without turning probes into cascading failure. For K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests, keep K8s Resource Probe Fault Tests connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s Resource Probe Fault Tests symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Workloads, Configuration, Probes, and Autoscaling — Controls Pods, init and sidecar containers, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, configuration, lifecycle, probes, resources, QoS, disruption, and HPA."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "hints": [
+        "For K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Resource Probe Fault Tests precondition, or invariant that must hold.",
+        "At K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1250m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.",
+        "For K8s Resource Probe Fault Tests · fault isolation · Debug K8s Resource Probe Fault Tests, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A green readiness check under one idle run proves production capacity and resilience."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s Resource Probe Fault Tests failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "A green readiness check under one idle run proves production capacity and resilience.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies K8s Resource Probe Fault Tests."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the k8s resource probe fault tests · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For k8s resource probe fault tests · fault isolation, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug K8s Resource Probe Fault Tests",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-resource-probe-fault-tests-go7mse\". Tailor its health-resource-policy.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Implement the cause-level repair · Debug K8s Resource Probe Fault Tests.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s Resource Probe Fault Tests into observable performance evidence. For Implement the cause-level repair · Debug K8s Resource Probe Fault Tests, keep K8s Resource Probe Fault Tests connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-resource-probe-fault-tests-go7mse\n  - competency: k8s-resource-probe-fault-tests\n    artifact: health-resource-policy.yaml\n    decision: resource probe fault tests\n    environment: kubeadm recovery cluster restored onto replacement nodes\n    fault-injection: delete one ready Pod during a configuration rollout\n    retained-proof: Pod state previous exit endpoint readiness and request result\n    case-key: go7mse\n    change: |\n      requests: {cpu: 200m, memory: 256Mi}\n      limits: {memory: 512Mi}\n      startupProbe: bounded-cold-start\n      readinessProbe: traffic-contract\n      livenessProbe: process-deadlock-only\n      fault-test: throttling-and-oom\n    verify: kubectl get pod status-api -o json && kubectl top pod status-api --containers\n    failure: Reject dependency-based liveness, requests as runtime caps, green idle probes as capacity proof, or unexplained OOM and eviction.\n    repair: Measure workload demand, separate probe purposes, calculate QoS, inject startup and pressure faults, and correlate container and node evidence.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug K8s Resource Probe Fault Tests, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Resource Probe Fault Tests precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug K8s Resource Probe Fault Tests, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 1500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.",
+        "For Implement the cause-level repair · Debug K8s Resource Probe Fault Tests, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A green readiness check under one idle run proves production capacity and resilience."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug K8s Resource Probe Fault Tests",
+      "interaction": "arrange",
+      "instruction": "Order the K8s Resource Probe Fault Tests orchestration evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug K8s Resource Probe Fault Tests.",
+      "why": "Correct order keeps K8s Resource Probe Fault Tests assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug K8s Resource Probe Fault Tests, keep K8s Resource Probe Fault Tests connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so K8s Resource Probe Fault Tests has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug K8s Resource Probe Fault Tests, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Resource Probe Fault Tests precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug K8s Resource Probe Fault Tests, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 500m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.",
+        "For Order the regression proof · Debug K8s Resource Probe Fault Tests, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A green readiness check under one idle run proves production capacity and resilience."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Capture client and server versions, context, namespace, API discovery, current object state, ownership, and immutable release identity for the debug K8s Resource Probe Fault Tests case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, security, disruption, and cleanup effects for the debug K8s Resource Probe Fault Tests case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Review the smallest manifest, Kustomize, Helm, policy, or runbook increment in the deterministic browser simulator for the debug K8s Resource Probe Fault Tests case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Reject one failure, record repair and rollback, then name authorized disposable-cluster transfer evidence for the debug K8s Resource Probe Fault Tests case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug K8s Resource Probe Fault Tests",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for K8s Resource Probe Fault Tests: explain the governing condition, one failure, and how this concrete case was verified — A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 750m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.\n\nEvidence target: Publish the incident record · Debug K8s Resource Probe Fault Tests.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug K8s Resource Probe Fault Tests, keep K8s Resource Probe Fault Tests connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug K8s Resource Probe Fault Tests, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s Resource Probe Fault Tests precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug K8s Resource Probe Fault Tests, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A debug service passes liveness while serving stale data, has no startup probe, requests 100m but uses 750m CPU, and is OOMKilled under pressure. Redesign probes, requests, limits, QoS, graceful termination, and changed-load checks. Competency probe: Test cold start, overload, dependency loss, memory pressure, CPU throttling, termination, and recovery without turning probes into cascading failure.",
+        "For Publish the incident record · Debug K8s Resource Probe Fault Tests, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A green readiness check under one idle run proves production capacity and resilience."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Requests Limits Scheduling Runtime to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Requests Limits Scheduling Runtime.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-requests-limits-scheduling-runtime"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Requests Limits Scheduling Runtime to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Requests Limits Scheduling Runtime.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-requests-limits-scheduling-runtime"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Qos Oom Eviction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Qos Oom Eviction.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-qos-oom-eviction"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Startup Readiness Liveness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Startup Readiness Liveness.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-startup-readiness-liveness"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Probe Design Budgets to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Probe Design Budgets.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-probe-design-budgets"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s Resource Probe Fault Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s Resource Probe Fault Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-resource-probe-fault-tests-go7mse.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-resource-probe-fault-tests-go7mse"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-resource-probe-fault-tests-go7mse(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-resource-probe-fault-tests(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*health-resource-policy\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:startupProbe|readinessProbe|livenessProbe|requests:\\s*\\{cpu)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and cold plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-resource-probe-fault-tests"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "test",
+        "cold"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

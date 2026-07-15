@@ -1,0 +1,685 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa-testing-benchmarking-debugging-clinic",
+  "courseId": "python-dsa",
+  "moduleId": "dsa-testing-benchmarking",
+  "kind": "debug",
+  "title": "Invariant Testing, Fuzzing, and Reproducible Benchmarks · Complexity Forensics",
+  "summary": "Audit custom structures whose happy paths pass but long random operation sequences corrupt state. Learners isolate plausible failures, compare competing hypotheses, and record cause-level repair evidence. Planned artifact: Repair a changed failure in a model-based test and benchmark harness and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Write executable representation invariants that fail near the corrupting operation.",
+    "Compare custom operations against a simpler trusted reference model.",
+    "Generate reproducible operation sequences and retain seeds for failures.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "dsa-invariant-checkers",
+      "dsa-model-based-tests",
+      "dsa-random-sequences",
+      "dsa-benchmark-design",
+      "dsa-optimization-proof"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "dsa-testing-benchmarking-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "python-dsa-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record",
+      "interaction": "inspect",
+      "instruction": "debug case — Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nInspect the Invariant Checkers trace for this debug case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for write executable representation invariants that fail near the corrupting operation.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Invariant Checkers, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "hints": [
+        "Name the Invariant Checkers precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Invariant checks belong only in final tests."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Invariant Checkers case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Invariant checks belong only in final tests.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Write executable representation invariants that fail near the corrupting operation. Artifact under review: a model-based test and benchmark harness.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Invariant Checkers."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Invariant Checkers, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Invariant Checkers · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Solve a bounded debug instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich observation would disprove this suspected cause: “Invariant checks belong only in final tests.”?",
+      "why": "The decision supplies observable evidence for write executable representation invariants that fail near the corrupting operation.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Invariant Checkers symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "hints": [
+        "Name the Invariant Checkers precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Invariant checks belong only in final tests."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Invariant Checkers failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Invariant checks belong only in final tests.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Write executable representation invariants that fail near the corrupting operation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Invariant Checkers."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Invariant Checkers."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Model Based Tests · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Solve a bounded debug instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich observation would disprove this suspected cause: “Using a library oracle makes the custom implementation pointless.”?",
+      "why": "The decision supplies observable evidence for compare custom operations against a simpler trusted reference model.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Model Based Tests condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "dsa-model-based-tests"
+      ],
+      "hints": [
+        "Name the Model Based Tests precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Using a library oracle makes the custom implementation pointless."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Model Based Tests."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Model Based Tests."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Random Sequences · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Solve a bounded debug instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich observation would disprove this suspected cause: “Randomized tests cannot be debugged.”?",
+      "why": "The decision supplies observable evidence for generate reproducible operation sequences and retain seeds for failures.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Random Sequences symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "dsa-random-sequences"
+      ],
+      "hints": [
+        "Name the Random Sequences precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Randomized tests cannot be debugged."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Random Sequences failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Randomized tests cannot be debugged.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Generate reproducible operation sequences and retain seeds for failures.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Random Sequences."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Random Sequences."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Benchmark Design · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Solve a bounded debug instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich observation would disprove this suspected cause: “Timing an entire script isolates algorithm cost.”?",
+      "why": "The decision supplies observable evidence for control setup, warmup, repetition, input distribution, and measured operation.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Benchmark Design condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "dsa-benchmark-design"
+      ],
+      "hints": [
+        "Name the Benchmark Design precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 9 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Timing an entire script isolates algorithm cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Benchmark Design."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Benchmark Design."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Optimization Proof · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.\n\nWhich observation would disprove this suspected cause: “Lower Big O guarantees faster production behavior.”?",
+      "why": "The decision supplies observable evidence for require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Optimization Proof symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "MIT 6.006 Introduction to Algorithms — University sequence for analysis, structures, sorting, searching, graphs, and dynamic programming."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 5 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Optimization Proof failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Lower Big O guarantees faster production behavior.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Require correctness equivalence and measured stakeholder benefit before keeping an optimization.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Optimization Proof."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Optimization Proof."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa_optimization_proof_12rut5 function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Optimization Proof into observable performance evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa_optimization_proof_12rut5(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 6 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof",
+      "interaction": "arrange",
+      "instruction": "Order the Optimization Proof correctness-and-cost proof for this debug task before implementing it.",
+      "why": "Correct order keeps Optimization Proof assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Solve a bounded debug instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Optimization Proof has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 7 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Define input, output, preconditions, size, and the operation being counted"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Choose a correct baseline and state its loop or representation invariant"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Trace the candidate on a minimal instance and derive time and space cost"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Attack it with boundary and adversarial cases, then justify any optimization"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Optimization Proof: explain the governing condition, one failure, and how this concrete case was verified — Solve a bounded debug instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Require correctness equivalence and measured stakeholder benefit before keeping an optimization."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "hints": [
+        "Name the Optimization Proof precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Solve a bounded debug instance with 8 inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.",
+        "Use the documented misconception as a counterexample target: Lower Big O guarantees faster production behavior."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Invariant Checkers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Invariant Checkers.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Invariant Checkers to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Invariant Checkers.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-invariant-checkers"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Model Based Tests to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Model Based Tests.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-model-based-tests"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Random Sequences to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Random Sequences.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-random-sequences"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Benchmark Design to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Benchmark Design.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-benchmark-design"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Optimization Proof to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Optimization Proof.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa_optimization_proof_12rut5.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa_optimization_proof_12rut5"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa_optimization_proof_12rut5\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using require and correctness plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa-optimization-proof"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "require",
+        "correctness"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

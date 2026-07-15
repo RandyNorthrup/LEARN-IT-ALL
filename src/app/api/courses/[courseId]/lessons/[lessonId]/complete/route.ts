@@ -1,10 +1,10 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { NextResponse } from 'next/server';
 import { dbHelpers } from '@/lib/db';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) {
   try {
@@ -39,9 +39,6 @@ export async function POST(
     return NextResponse.json({ success: true, completionPercentage });
   } catch (error) {
     console.error('Failed to complete lesson:', error);
-    return NextResponse.json(
-      { error: 'Failed to complete lesson' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to complete lesson' }, { status: 500 });
   }
 }

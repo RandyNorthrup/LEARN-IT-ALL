@@ -1,9 +1,8 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { BookOpen, Gamepad2, Map as MapIcon, TrendingUp, Trophy } from 'lucide-react';
 import Link from 'next/link';
-import { Map, BookOpen, TrendingUp, Gamepad2, Trophy } from 'lucide-react';
 import { dbHelpers } from '@/lib/db';
-import { getCourseData } from '@/lib/courseLoader';
-import fs from 'fs';
-import path from 'path';
 
 async function getSettings() {
   try {
@@ -17,12 +16,14 @@ async function getSettings() {
 
 async function getStats() {
   try {
-    const stats = dbHelpers.getProgressStats() as {
-      coursesStarted?: number;
-      lessonsCompleted?: number;
-      exercisesPassed?: number;
-      quizzesPassed?: number;
-    } | undefined;
+    const stats = dbHelpers.getProgressStats() as
+      | {
+          coursesStarted?: number;
+          lessonsCompleted?: number;
+          exercisesPassed?: number;
+          quizzesPassed?: number;
+        }
+      | undefined;
     return {
       coursesStarted: stats?.coursesStarted || 0,
       lessonsCompleted: stats?.lessonsCompleted || 0,
@@ -45,7 +46,7 @@ async function getCourseCount() {
     const coursesDir = path.join(process.cwd(), 'content', 'courses');
     if (!fs.existsSync(coursesDir)) return 0;
     const dirs = fs.readdirSync(coursesDir, { withFileTypes: true });
-    return dirs.filter(d => d.isDirectory()).length;
+    return dirs.filter((d) => d.isDirectory()).length;
   } catch (error) {
     console.error('Failed to fetch course count:', error);
   }
@@ -67,10 +68,7 @@ export default async function DashboardPage() {
               <h1 className="text-4xl font-bold text-gray-900">LEARN-IT-ALL</h1>
               <p className="mt-1 text-gray-600">Welcome back, {settings.displayName}!</p>
             </div>
-            <Link
-              href="/settings"
-              className="text-blue-600 hover:text-blue-700 font-semibold"
-            >
+            <Link href="/settings" className="text-blue-600 hover:text-blue-700 font-semibold">
               Settings
             </Link>
           </div>
@@ -94,7 +92,7 @@ export default async function DashboardPage() {
             className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-8 text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <div className="relative z-10">
-              <Map className="mb-4 h-12 w-12" />
+              <MapIcon className="mb-4 h-12 w-12" />
               <h3 className="mb-2 text-2xl font-bold">Learning Tracks</h3>
               <p className="mb-4 text-blue-100">
                 Follow structured paths to master full-stack development
@@ -102,6 +100,7 @@ export default async function DashboardPage() {
               <div className="flex items-center text-sm font-semibold">
                 Explore Tracks
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
@@ -132,6 +131,7 @@ export default async function DashboardPage() {
               <div className="flex items-center text-sm font-semibold">
                 View Courses
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
@@ -162,6 +162,7 @@ export default async function DashboardPage() {
               <div className="flex items-center text-sm font-semibold">
                 View Progress
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
@@ -192,6 +193,7 @@ export default async function DashboardPage() {
               <div className="flex items-center text-sm font-semibold">
                 Play Games
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
@@ -222,6 +224,7 @@ export default async function DashboardPage() {
               <div className="flex items-center text-sm font-semibold">
                 Take Challenge
                 <svg
+                  aria-hidden="true"
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"

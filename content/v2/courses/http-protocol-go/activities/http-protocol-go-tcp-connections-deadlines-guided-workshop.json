@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-tcp-connections-deadlines-guided-workshop",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-tcp-connections-deadlines",
+  "kind": "workshop",
+  "title": "TCP Connections, Accept Loops, Half-Closes, Deadlines, and Failure · Concurrent Code Workshop",
+  "summary": "A protocol pairing room predicts byte, parser, state, ownership, and cleanup transitions before assembling the first bounded TCP connection lifecycle state machine for tcp connections, accept loops, half-closes, deadlines, and failure. Planned artifact: Build a complete first version of bounded TCP connection lifecycle state machine while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.",
+    "Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling.",
+    "Set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpproto-tcp-reliable-stream-model",
+      "httpproto-listener-accept-ownership",
+      "httpproto-read-write-deadlines",
+      "httpproto-half-close-reset-eof",
+      "httpproto-write-ambiguity-retry"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-tcp-connections-deadlines-httpproto-write-ambiguity-retry-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Tcp Reliable Stream Model",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop protocol team handles case 1656 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Tcp Reliable Stream Model.",
+      "why": "The decision supplies observable evidence for explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries. For Commit to the mission model · Workshop Tcp Reliable Stream Model, keep Tcp Reliable Stream Model connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1656 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Tcp Reliable Stream Model condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Tcp Reliable Stream Model, name the types, ownership, and stop path, Tcp Reliable Stream Model precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Tcp Reliable Stream Model, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1656 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.",
+        "For Commit to the mission model · Workshop Tcp Reliable Stream Model, challenge the documented misconception with runtime, failure, race, or toolchain evidence: TCP preserves application write boundaries and delivers each Write through one matching Read."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Tcp Reliable Stream Model happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Tcp Reliable Stream Model preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "TCP preserves application write boundaries and delivers each Write through one matching Read. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Workshop Tcp Reliable Stream Model",
+      "interaction": "arrange",
+      "instruction": "Order the Tcp Reliable Stream Model evidence cycle for this workshop task before implementing it.\n\nEvidence target: Plan the evidence sequence · Workshop Tcp Reliable Stream Model.",
+      "why": "Correct order keeps Tcp Reliable Stream Model assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Workshop Tcp Reliable Stream Model, keep Tcp Reliable Stream Model connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1657 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Tcp Reliable Stream Model has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Workshop Tcp Reliable Stream Model, name the types, ownership, and stop path, Tcp Reliable Stream Model precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Workshop Tcp Reliable Stream Model, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1657 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then saturate one stream window while another remains independently serviceable. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.",
+        "For Plan the evidence sequence · Workshop Tcp Reliable Stream Model, challenge the documented misconception with runtime, failure, race, or toolchain evidence: TCP preserves application write boundaries and delivers each Write through one matching Read."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the workshop Tcp Reliable Stream Model case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the workshop Tcp Reliable Stream Model case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the workshop Tcp Reliable Stream Model case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the workshop Tcp Reliable Stream Model case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop protocol team handles case 1658 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.\n\nWhich action demonstrates Tcp Reliable Stream Model without dropping earlier contracts?\n\nEvidence target: Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model.",
+      "why": "The decision supplies observable evidence for explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries. For Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model, keep Tcp Reliable Stream Model connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1658 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Tcp Reliable Stream Model condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "hints": [
+        "For Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model, name the types, ownership, and stop path, Tcp Reliable Stream Model precondition, or invariant that must hold.",
+        "At Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1658 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries.",
+        "For Tcp Reliable Stream Model · changed case · Workshop Tcp Reliable Stream Model, challenge the documented misconception with runtime, failure, race, or toolchain evidence: TCP preserves application write boundaries and delivers each Write through one matching Read."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "TCP preserves application write boundaries and delivers each Write through one matching Read. That claim does not survive the tcp reliable stream model · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For tcp reliable stream model · changed case, run one convenient Tcp Reliable Stream Model happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Explain ordered reliable byte-stream delivery while accounting for segmentation, retransmission, flow control, congestion, and missing message boundaries. Apply it to the stated input and retain a reproducible trace for bounded TCP connection lifecycle state machine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Listener Accept Ownership · changed case · Workshop Listener Accept Ownership",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop protocol team handles case 1659 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling.\n\nWhich action demonstrates Listener Accept Ownership without dropping earlier contracts?\n\nEvidence target: Listener Accept Ownership · changed case · Workshop Listener Accept Ownership.",
+      "why": "The decision supplies observable evidence for assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling. For Listener Accept Ownership · changed case · Workshop Listener Accept Ownership, keep Listener Accept Ownership connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1659 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Listener Accept Ownership result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpproto-listener-accept-ownership"
+      ],
+      "hints": [
+        "For Listener Accept Ownership · changed case · Workshop Listener Accept Ownership, name the types, ownership, and stop path, Listener Accept Ownership precondition, or invariant that must hold.",
+        "At Listener Accept Ownership · changed case · Workshop Listener Accept Ownership, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1659 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling.",
+        "For Listener Accept Ownership · changed case · Workshop Listener Accept Ownership, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Closing the listener automatically closes every accepted connection and handler goroutine."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Listener Accept Ownership case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Closing the listener automatically closes every accepted connection and handler goroutine.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "For listener accept ownership · changed case, run one convenient Listener Accept Ownership happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Assign listener, accepted connection, goroutine, buffer, deadline, and close ownership with bounded accept-error handling. Apply it to the stated input and retain a reproducible trace for bounded TCP connection lifecycle state machine."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Closing the listener automatically closes every accepted connection and handler goroutine. That claim does not survive the listener accept ownership · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Read Write Deadlines · changed case · Workshop Read Write Deadlines",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop protocol team handles case 1660 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation.\n\nWhich action demonstrates Read Write Deadlines without dropping earlier contracts?\n\nEvidence target: Read Write Deadlines · changed case · Workshop Read Write Deadlines.",
+      "why": "The decision supplies observable evidence for set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation. For Read Write Deadlines · changed case · Workshop Read Write Deadlines, keep Read Write Deadlines connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1660 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Read Write Deadlines condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpproto-read-write-deadlines"
+      ],
+      "hints": [
+        "For Read Write Deadlines · changed case · Workshop Read Write Deadlines, name the types, ownership, and stop path, Read Write Deadlines precondition, or invariant that must hold.",
+        "At Read Write Deadlines · changed case · Workshop Read Write Deadlines, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1660 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation.",
+        "For Read Write Deadlines · changed case · Workshop Read Write Deadlines, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A connection deadline is a relative duration that automatically refreshes after progress."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Set and refresh absolute read and write deadlines by protocol phase and classify timeout evidence without assuming cancellation. Apply it to the stated input and retain a reproducible trace for bounded TCP connection lifecycle state machine."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "A connection deadline is a relative duration that automatically refreshes after progress. That claim does not survive the read write deadlines · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For read write deadlines · changed case, run one convenient Read Write Deadlines happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Half Close Reset Eof · changed case · Workshop Half Close Reset Eof",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop protocol team handles case 1661 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish orderly EOF, CloseRead, CloseWrite, full close, reset, timeout, and local shutdown effects on protocol completeness.\n\nWhich action demonstrates Half Close Reset Eof without dropping earlier contracts?\n\nEvidence target: Half Close Reset Eof · changed case · Workshop Half Close Reset Eof.",
+      "why": "The decision supplies observable evidence for distinguish orderly eof, closeread, closewrite, full close, reset, timeout, and local shutdown effects on protocol completeness. For Half Close Reset Eof · changed case · Workshop Half Close Reset Eof, keep Half Close Reset Eof connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1661 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish orderly EOF, CloseRead, CloseWrite, full close, reset, timeout, and local shutdown effects on protocol completeness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Half Close Reset Eof result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpproto-half-close-reset-eof"
+      ],
+      "hints": [
+        "For Half Close Reset Eof · changed case · Workshop Half Close Reset Eof, name the types, ownership, and stop path, Half Close Reset Eof precondition, or invariant that must hold.",
+        "At Half Close Reset Eof · changed case · Workshop Half Close Reset Eof, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1661 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Distinguish orderly EOF, CloseRead, CloseWrite, full close, reset, timeout, and local shutdown effects on protocol completeness.",
+        "For Half Close Reset Eof · changed case · Workshop Half Close Reset Eof, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Receiving EOF always means the current HTTP message completed successfully."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Half Close Reset Eof case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Receiving EOF always means the current HTTP message completed successfully.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish orderly EOF, CloseRead, CloseWrite, full close, reset, timeout, and local shutdown effects on protocol completeness.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Receiving EOF always means the current HTTP message completed successfully. That claim does not survive the half close reset eof · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For half close reset eof · changed case, run one convenient Half Close Reset Eof happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Distinguish orderly EOF, CloseRead, CloseWrite, full close, reset, timeout, and local shutdown effects on protocol completeness. Apply it to the stated input and retain a reproducible trace for bounded TCP connection lifecycle state machine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop protocol team handles case 1662 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.\n\nWhich action demonstrates Write Ambiguity Retry without dropping earlier contracts?\n\nEvidence target: Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry.",
+      "why": "The decision supplies observable evidence for treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects. For Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry, keep Write Ambiguity Retry connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1662 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Write Ambiguity Retry condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "hints": [
+        "For Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry, name the types, ownership, and stop path, Write Ambiguity Retry precondition, or invariant that must hold.",
+        "At Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1662 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+        "For Write Ambiguity Retry · changed case · Workshop Write Ambiguity Retry, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A failed socket write proves the peer received none of the bytes."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "For write ambiguity retry · changed case, run one convenient Write Ambiguity Retry happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects. Apply it to the stated input and retain a reproducible trace for bounded TCP connection lifecycle state machine."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A failed socket write proves the peer received none of the bytes. That claim does not survive the write ambiguity retry · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Write Ambiguity Retry",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-write-ambiguity-retry-1o30tm\" that uses case 1994 to classify connection, deadline, completion, and close state without inventing message boundaries. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Extend the cumulative artifact · Workshop Write Ambiguity Retry.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Write Ambiguity Retry into observable performance evidence. For Extend the cumulative artifact · Workshop Write Ambiguity Retry, keep Write Ambiguity Retry connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-write-ambiguity-retry-1o30tm\n// Competency: httpproto-write-ambiguity-retry.\n// Case 1994: field-normalizing cache with an independent origin parser.\n// Operating constraint: one connection has exactly one read owner and one terminal close owner.\n// Changed case: change certificate identity while ALPN stays valid and reject the connection.\nfunc evidence_httpproto_write_ambiguity_retry_1o30tm(accepted bool, readComplete bool, deadlineExpired bool, peerClosed bool) (string, bool) {\n\tstate, reusable := \"accept\", false\n\tif accepted { state = \"reading\" }\n\tif accepted && readComplete { state, reusable = \"message-complete\", true }\n\tif deadlineExpired { state, reusable = \"timeout\", false }\n\tif peerClosed && !readComplete { state, reusable = \"incomplete-eof\", false }\n\treturn state, reusable\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Write Ambiguity Retry, name the types, ownership, and stop path, Write Ambiguity Retry precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Write Ambiguity Retry, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1663 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+        "For Extend the cumulative artifact · Workshop Write Ambiguity Retry, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A failed socket write proves the peer received none of the bytes."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Write Ambiguity Retry",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop protocol team handles case 1664 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Write Ambiguity Retry.",
+      "why": "The decision supplies observable evidence for treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects. For Test an acceptance boundary · Workshop Write Ambiguity Retry, keep Write Ambiguity Retry connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop protocol team handles case 1664 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Write Ambiguity Retry symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Transmission Control Protocol — Controls TCP reliable byte streams, states, sequencing, flow control, resets, closes, robustness, and application-facing transport assumptions."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Write Ambiguity Retry, name the types, ownership, and stop path, Write Ambiguity Retry precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Write Ambiguity Retry, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1664 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+        "For Test an acceptance boundary · Workshop Write Ambiguity Retry, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A failed socket write proves the peer received none of the bytes."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Write Ambiguity Retry failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A failed socket write proves the peer received none of the bytes.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Write Ambiguity Retry happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Write Ambiguity Retry condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Write Ambiguity Retry",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Write Ambiguity Retry: explain the governing condition, one failure, and how this concrete case was verified — A workshop protocol team handles case 1665 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then minimize a fuzz failure and add it to the deterministic regression corpus. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.\n\nEvidence target: Defend the transferred model · Workshop Write Ambiguity Retry.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Write Ambiguity Retry, keep Write Ambiguity Retry connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Write Ambiguity Retry, name the types, ownership, and stop path, Write Ambiguity Retry precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Write Ambiguity Retry, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop protocol team handles case 1665 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to classify connection, deadline, completion, and close state without inventing message boundaries; preserve this operating constraint: the browser model cannot open a socket or claim packet-level proof; then minimize a fuzz failure and add it to the deterministic regression corpus. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+        "For Defend the transferred model · Workshop Write Ambiguity Retry, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A failed socket write proves the peer received none of the bytes."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Tcp Reliable Stream Model to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Tcp Reliable Stream Model.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Tcp Reliable Stream Model to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Tcp Reliable Stream Model.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-tcp-reliable-stream-model"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Listener Accept Ownership to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Listener Accept Ownership.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-listener-accept-ownership"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Read Write Deadlines to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Read Write Deadlines.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-read-write-deadlines"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Half Close Reset Eof to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Half Close Reset Eof.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-half-close-reset-eof"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Write Ambiguity Retry to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Write Ambiguity Retry.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-write-ambiguity-retry-1o30tm.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-write-ambiguity-retry-1o30tm"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-write-ambiguity-retry-1o30tm(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_write_ambiguity_retry_1o30tm\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?accepted\\s*&&\\s*readComplete)(?=(?:(?!// Evidence:)[\\s\\S])*?peerClosed\\s*&&\\s*!readComplete)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Write Ambiguity Retry to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Write Ambiguity Retry.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using treat and failed plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-write-ambiguity-retry"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "treat",
+        "failed"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

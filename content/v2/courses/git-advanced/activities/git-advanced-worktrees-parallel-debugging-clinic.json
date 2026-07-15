@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "git-advanced-worktrees-parallel-debugging-clinic",
+  "courseId": "git-advanced",
+  "moduleId": "git-advanced-worktrees-parallel",
+  "kind": "debug",
+  "title": "Linked Worktrees and Parallel Branch Operations · Graph Forensics",
+  "summary": "A responder inherits a plausible but defective multi-worktree ownership and cleanup map; preserve reachable history, isolate the first causal Git-state mismatch, and retain a regression probe. Planned artifact: Repair a changed failure in multi-worktree ownership and cleanup map and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Distinguish common repository data from per-worktree HEAD, index, refs, operation state, config, and administrative links.",
+    "Add branch, detached, orphan, and relative-path worktrees; then lock, unlock, repair, and move them with path and device constraints.",
+    "Reason about checked-out branch exclusivity, shared refs, concurrent fetch or maintenance, and safe cross-worktree branch deletion and rewrite.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "gita-worktree-common-perworktree",
+      "gita-worktree-add-lock-move",
+      "gita-worktree-branch-exclusivity",
+      "gita-worktree-prune-repair",
+      "gita-parallel-operation-policy"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "git-advanced-worktrees-parallel-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "git-advanced-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "# git-advanced cumulative repository evidence notebook\n# Git operations change only disposable simulated repository state.\n# Inspect status, diffs, graph, refs, and recovery before every mutation.\n",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record",
+      "interaction": "inspect",
+      "instruction": "debug case — Case G41 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nInspect the Gita Worktree Common Perworktree trace for this debug case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for distinguish common repository data from per-worktree head, index, refs, operation state, config, and administrative links.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Gita Worktree Common Perworktree, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "gita-worktree-common-perworktree"
+      ],
+      "hints": [
+        "Name the Gita Worktree Common Perworktree precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G41 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Each linked worktree contains an independent clone and object database."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Gita Worktree Common Perworktree case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Case G41 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Each linked worktree contains an independent clone and object database.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish common repository data from per-worktree HEAD, index, refs, operation state, config, and administrative links. Artifact under review: multi-worktree ownership and cleanup map.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Gita Worktree Common Perworktree, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Gita Worktree Common Perworktree · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Case G42 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nWhich observation would disprove this suspected cause: “Each linked worktree contains an independent clone and object database.”?",
+      "why": "The decision supplies observable evidence for distinguish common repository data from per-worktree head, index, refs, operation state, config, and administrative links.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G42 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Gita Worktree Common Perworktree symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Git Rebase, Cherry-Pick, Replay, and Range-Diff Manuals — Controls sequencer replay, onto selection, interactive actions, topology preservation, backports, and equivalence review."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "gita-worktree-common-perworktree"
+      ],
+      "hints": [
+        "Name the Gita Worktree Common Perworktree precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G42 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Each linked worktree contains an independent clone and object database."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Gita Worktree Common Perworktree failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Each linked worktree contains an independent clone and object database.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Distinguish common repository data from per-worktree HEAD, index, refs, operation state, config, and administrative links.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Gita Worktree Common Perworktree."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Gita Worktree Add Lock Move · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Case G43 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nWhich observation would disprove this suspected cause: “Moving a linked worktree directory manually updates its administrative link automatically.”?",
+      "why": "The decision supplies observable evidence for add branch, detached, orphan, and relative-path worktrees; then lock, unlock, repair, and move them with path and device constraints.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G43 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Gita Worktree Add Lock Move condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Git Rebase, Cherry-Pick, Replay, and Range-Diff Manuals — Controls sequencer replay, onto selection, interactive actions, topology preservation, backports, and equivalence review."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "gita-worktree-add-lock-move"
+      ],
+      "hints": [
+        "Name the Gita Worktree Add Lock Move precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G43 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Moving a linked worktree directory manually updates its administrative link automatically."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Gita Worktree Add Lock Move."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Gita Worktree Branch Exclusivity · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Case G44 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nWhich observation would disprove this suspected cause: “Linked worktrees isolate branch refs, so rewriting main in one cannot affect another.”?",
+      "why": "The decision supplies observable evidence for reason about checked-out branch exclusivity, shared refs, concurrent fetch or maintenance, and safe cross-worktree branch deletion and rewrite.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G44 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Gita Worktree Branch Exclusivity symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Git Rebase, Cherry-Pick, Replay, and Range-Diff Manuals — Controls sequencer replay, onto selection, interactive actions, topology preservation, backports, and equivalence review."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "gita-worktree-branch-exclusivity"
+      ],
+      "hints": [
+        "Name the Gita Worktree Branch Exclusivity precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G44 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Linked worktrees isolate branch refs, so rewriting main in one cannot affect another."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Gita Worktree Branch Exclusivity failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Linked worktrees isolate branch refs, so rewriting main in one cannot affect another.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reason about checked-out branch exclusivity, shared refs, concurrent fetch or maintenance, and safe cross-worktree branch deletion and rewrite.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Gita Worktree Branch Exclusivity."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Gita Worktree Prune Repair · fault isolation",
+      "interaction": "predict",
+      "instruction": "debug case — Case G45 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nWhich observation would disprove this suspected cause: “Every missing worktree directory is abandoned and safe to prune immediately.”?",
+      "why": "The decision supplies observable evidence for identify stale administrative entries, missing paths, moved repositories, expiration, and prunable worktrees before repair or cleanup.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G45 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Gita Worktree Prune Repair condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Git Rebase, Cherry-Pick, Replay, and Range-Diff Manuals — Controls sequencer replay, onto selection, interactive actions, topology preservation, backports, and equivalence review."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "gita-worktree-prune-repair"
+      ],
+      "hints": [
+        "Name the Gita Worktree Prune Repair precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G45 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Every missing worktree directory is abandoned and safe to prune immediately."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Gita Worktree Prune Repair."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Gita Parallel Operation Policy · fault isolation",
+      "interaction": "debug",
+      "instruction": "debug case — Case G46 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.\n\nWhich observation would disprove this suspected cause: “Worktrees isolate hooks, config, ignored build outputs, and secrets by default.”?",
+      "why": "The decision supplies observable evidence for design named purpose, directory, branch, owner, lock, tool-cache, secret, cleanup, and handoff rules for parallel work.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G46 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Gita Parallel Operation Policy symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Git Rebase, Cherry-Pick, Replay, and Range-Diff Manuals — Controls sequencer replay, onto selection, interactive actions, topology preservation, backports, and equivalence review."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "hints": [
+        "Name the Gita Parallel Operation Policy precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G46 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Worktrees isolate hooks, config, ignored build outputs, and secrets by default."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Gita Parallel Operation Policy failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Worktrees isolate hooks, config, ignored build outputs, and secrets by default.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design named purpose, directory, branch, owner, lock, tool-cache, secret, cleanup, and handoff rules for parallel work.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Gita Parallel Operation Policy."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof",
+      "interaction": "arrange",
+      "instruction": "Order the Gita Parallel Operation Policy evidence cycle for this debug task before implementing it.",
+      "why": "Correct order keeps Gita Parallel Operation Policy assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Case G47 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Gita Parallel Operation Policy has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "hints": [
+        "Name the Gita Parallel Operation Policy precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G47 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Worktrees isolate hooks, config, ignored build outputs, and secrets by default."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Inspect repository boundary, config origin, current operation, worktree, index, refs, and graph"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Preserve uncommitted work and a recovery ref, then state intended tree and topology"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Preview and perform the least destructive simulated Git operation"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Verify status, staged and range diffs, graph, tests, remote target, and recovery path"
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair",
+      "interaction": "code",
+      "instruction": "Append an Advanced Git evidence block headed \"# Evidence: gita-parallel-operation-policy-196wgs\" with exact before and after refs; a falsifiable prediction; the bounded simulator command; expected, observed, tree, behavior, changed-case, and recovery evidence; and one honest real-repository transfer limit.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Gita Parallel Operation Policy into observable performance evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "# Evidence: gita-parallel-operation-policy-196wgs\n# scenario-key: trace-196wgs probe-sgw691 boundary-6wgs19 owner-196wgsx fault-196wgsz\n# before-ref: main=a11ce19 candidate=b00b1gs\n# hypothesis: a stale administrative entry is locking the release branch after its directory moved\ngit worktree list --porcelain\n# expected: porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state\n# observation: the release worktree points to a missing path and is locked with a documented owner reason\n# changed-case: move the main repository path and require worktree repair before any prune decision\n# after-ref: main=a11ce19 candidate=c0ffees\n# tree-proof: the affected tree and path set match the predicted repository transition\n# behavior-proof: a changed input preserves the named product or release invariant\n# recovery: lock valuable external worktrees and back up untracked outputs before administrative repair\n# transfer-limit: worktrees share refs and objects, so concurrent real maintenance and rewrites need coordination",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "hints": [
+        "Name the Gita Parallel Operation Policy precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G48 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Worktrees isolate hooks, config, ignored build outputs, and secrets by default."
+      ],
+      "xp": 10,
+      "targetFile": "shell"
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Gita Parallel Operation Policy: explain the governing condition, one failure, and how this concrete case was verified — Case G49 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Design named purpose, directory, branch, owner, lock, tool-cache, secret, cleanup, and handoff rules for parallel work."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "hints": [
+        "Name the Gita Parallel Operation Policy precondition or invariant that the debug case must preserve.",
+        "Trace this concrete case before choosing: Case G49 is a debug in a disposable repository. a stale administrative entry is locking the release branch after its directory moved. The learner must predict porcelain output separates paths, HEAD IDs, branches, lock reasons, and prunable state, run git worktree list --porcelain, explain the release worktree points to a missing path and is locked with a documented owner reason, test this changed condition: move the main repository path and require worktree repair before any prune decision, and preserve this recovery boundary: lock valuable external worktrees and back up untracked outputs before administrative repair.",
+        "Use the documented misconception as a counterexample target: Worktrees isolate hooks, config, ignored build outputs, and secrets by default."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Worktree Common Perworktree to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Worktree Common Perworktree.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-worktree-common-perworktree"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Worktree Common Perworktree to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Worktree Common Perworktree.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-worktree-common-perworktree"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Worktree Add Lock Move to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Worktree Add Lock Move.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-worktree-add-lock-move"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Worktree Branch Exclusivity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Worktree Branch Exclusivity.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-worktree-branch-exclusivity"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Worktree Prune Repair to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Worktree Prune Repair.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-worktree-prune-repair"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Gita Parallel Operation Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Gita Parallel Operation Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative shell portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: gita-parallel-operation-policy-196wgs.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "file": "shell",
+      "expected": "# Evidence: gita-parallel-operation-policy-196wgs"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "shell",
+      "pattern": "# Evidence: gita-parallel-operation-policy-196wgs(?:(?!# Evidence:)[\\s\\S])*?#\\s*before-ref:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*hypothesis:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?git\\s+(?:rev-list|rev-parse|fsck|reflog|reset|merge-base|ls-files|range-diff|cherry|stash|bisect|worktree|push|verify-tag|submodule|sparse-checkout|check-attr|config|maintenance)[^\\n]*(?:(?!# Evidence:)[\\s\\S])*?#\\s*expected:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*observation:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*changed-case:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*after-ref:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*tree-proof:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*behavior-proof:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*recovery:\\s*[^\\n]{12,}(?:(?!# Evidence:)[\\s\\S])*?#\\s*transfer-limit:\\s*[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using design and named plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "gita-parallel-operation-policy"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "design",
+        "named"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

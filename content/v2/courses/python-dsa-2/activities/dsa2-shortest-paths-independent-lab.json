@@ -1,0 +1,735 @@
+{
+  "schemaVersion": 2,
+  "id": "dsa2-shortest-paths-independent-lab",
+  "courseId": "python-dsa-2",
+  "moduleId": "dsa2-shortest-paths",
+  "kind": "lab",
+  "title": "Weighted Shortest Paths and Relaxation · Scale Transfer",
+  "summary": "Choose safe routes across positive, negative, and unreachable weighted networks. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a multi-algorithm route engine with path proofs with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "State and apply edge relaxation while preserving predecessor evidence.",
+    "Run Dijkstra only under compatible nonnegative weights and stale-entry handling.",
+    "Use repeated relaxation to find shortest paths and reachable negative-cycle evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "dsa2-relaxation",
+      "dsa2-dijkstra",
+      "dsa2-bellman-ford",
+      "dsa2-dag-shortest",
+      "dsa2-path-correctness"
+    ]
+  },
+  "prerequisites": [
+    "dsa2-shortest-paths-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "python-dsa-2-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-dsa-2 algorithm evidence portfolio.\"\"\"\n\nfrom collections import deque\nfrom dataclasses import dataclass\nfrom heapq import heappop, heappush\nfrom typing import TypeVar\n\nT = TypeVar('T')\n\n# Add implementation, invariant, counterexample, and measured cost evidence per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model",
+      "interaction": "predict",
+      "instruction": "lab case — Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhat must be established before implementation?",
+      "why": "The decision supplies observable evidence for state and apply edge relaxation while preserving predecessor evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Relaxation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "hints": [
+        "Name the Relaxation precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Relaxing an edge permanently finalizes its endpoint."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Relaxation."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Relaxation preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Relaxing an edge permanently finalizes its endpoint."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence",
+      "interaction": "arrange",
+      "instruction": "Order the Relaxation correctness-and-cost proof for this lab task before implementing it.",
+      "why": "Correct order keeps Relaxation assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:5, A→C:8, B→C:-1, C→D:5. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Relaxation has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "hints": [
+        "Name the Relaxation precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:5, A→C:8, B→C:-1, C→D:5. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Relaxing an edge permanently finalizes its endpoint."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define input, output, preconditions, size, and the operation being counted"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose a correct baseline and state its loop or representation invariant"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Trace the candidate on a minimal instance and derive time and space cost"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Attack it with boundary and adversarial cases, then justify any optimization"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Relaxation · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Route edges A→B:6, A→C:9, B→C:-1, C→D:6. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhich action demonstrates Relaxation without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for state and apply edge relaxation while preserving predecessor evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:6, A→C:9, B→C:-1, C→D:6. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Relaxation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "hints": [
+        "Name the Relaxation precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:6, A→C:9, B→C:-1, C→D:6. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Relaxing an edge permanently finalizes its endpoint."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-misread",
+          "text": "Relaxing an edge permanently finalizes its endpoint."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Relaxation."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "State and apply edge relaxation while preserving predecessor evidence. Apply it to the stated input and retain a reproducible trace for a multi-algorithm route engine with path proofs."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Dijkstra · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhich action demonstrates Dijkstra without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for run dijkstra only under compatible nonnegative weights and stale-entry handling.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Dijkstra result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "dsa2-dijkstra"
+      ],
+      "hints": [
+        "Name the Dijkstra precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Dijkstra works with negative edges if no negative cycle exists."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Dijkstra case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Dijkstra works with negative edges if no negative cycle exists.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Run Dijkstra only under compatible nonnegative weights and stale-entry handling.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Dijkstra."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Run Dijkstra only under compatible nonnegative weights and stale-entry handling. Apply it to the stated input and retain a reproducible trace for a multi-algorithm route engine with path proofs."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Dijkstra works with negative edges if no negative cycle exists."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Bellman Ford · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Route edges A→B:3, A→C:6, B→C:-1, C→D:3. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhich action demonstrates Bellman Ford without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for use repeated relaxation to find shortest paths and reachable negative-cycle evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:3, A→C:6, B→C:-1, C→D:3. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Bellman Ford condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "dsa2-bellman-ford"
+      ],
+      "hints": [
+        "Name the Bellman Ford precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:3, A→C:6, B→C:-1, C→D:3. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Bellman-Ford reports every negative cycle in the graph."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-sound",
+          "text": "Use repeated relaxation to find shortest paths and reachable negative-cycle evidence. Apply it to the stated input and retain a reproducible trace for a multi-algorithm route engine with path proofs."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Bellman-Ford reports every negative cycle in the graph."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Bellman Ford."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Dag Shortest · changed case",
+      "interaction": "inspect",
+      "instruction": "lab case — Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhich action demonstrates Dag Shortest without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for exploit topological order for weighted dag shortest paths including negative edges.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Dag Shortest result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "dsa2-dag-shortest"
+      ],
+      "hints": [
+        "Name the Dag Shortest precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:4, A→C:7, B→C:-1, C→D:4. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Negative weights always require Bellman-Ford."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Dag Shortest case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Negative weights always require Bellman-Ford.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Exploit topological order for weighted DAG shortest paths including negative edges.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-misread",
+          "text": "Negative weights always require Bellman-Ford."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Dag Shortest."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Exploit topological order for weighted DAG shortest paths including negative edges. Apply it to the stated input and retain a reproducible trace for a multi-algorithm route engine with path proofs."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Path Correctness · changed case",
+      "interaction": "answer",
+      "instruction": "lab case — Route edges A→B:5, A→C:8, B→C:-1, C→D:5. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nWhich action demonstrates Path Correctness without dropping earlier contracts?",
+      "why": "The decision supplies observable evidence for validate reported cost, edge sequence, reachability, and algorithm preconditions.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:5, A→C:8, B→C:-1, C→D:5. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Path Correctness condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "hints": [
+        "Name the Path Correctness precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:5, A→C:8, B→C:-1, C→D:5. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Matching a distance value proves the reconstructed path."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Correctness."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Validate reported cost, edge sequence, reachability, and algorithm preconditions. Apply it to the stated input and retain a reproducible trace for a multi-algorithm route engine with path proofs."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Matching a distance value proves the reconstructed path."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact",
+      "interaction": "code",
+      "instruction": "Add a evidence_dsa2_path_correctness_1pbf0w function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Path Correctness into observable performance evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_dsa2_path_correctness_1pbf0w(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "hints": [
+        "Name the Path Correctness precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:6, A→C:9, B→C:-1, C→D:6. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Matching a distance value proves the reconstructed path."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary",
+      "interaction": "debug",
+      "instruction": "lab case — Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.\n\nOne precondition fails while output still looks plausible. What is the correct response?",
+      "why": "The decision supplies observable evidence for validate reported cost, edge sequence, reachability, and algorithm preconditions.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Path Correctness symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Heap Queue Algorithms — Heap invariants, priority queues, merging, selection, and max-heap operations."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "hints": [
+        "Name the Path Correctness precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:2, A→C:5, B→C:-1, C→D:2. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Matching a distance value proves the reconstructed path."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Path Correctness failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Matching a distance value proves the reconstructed path.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Validate reported cost, edge sequence, reachability, and algorithm preconditions.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "Optimize from one happy-path timing, without defining input size, invariant, or an adversarial case for Path Correctness."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Path Correctness condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Path Correctness: explain the governing condition, one failure, and how this concrete case was verified — Route edges A→B:3, A→C:6, B→C:-1, C→D:3. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Validate reported cost, edge sequence, reachability, and algorithm preconditions."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "hints": [
+        "Name the Path Correctness precondition or invariant that the lab case must preserve.",
+        "Trace this concrete case before choosing: Route edges A→B:3, A→C:6, B→C:-1, C→D:3. Select an algorithm from weight preconditions, return a concrete path, and report any reachable negative-cycle witness.",
+        "Use the documented misconception as a counterexample target: Matching a distance value proves the reconstructed path."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Relaxation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Relaxation.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Relaxation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Relaxation.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-relaxation"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dijkstra to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dijkstra.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-dijkstra"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Bellman Ford to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Bellman Ford.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-bellman-ford"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dag Shortest to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dag Shortest.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-dag-shortest"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Correctness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Correctness.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_dsa2_path_correctness_1pbf0w.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "file": "python",
+      "expected": "evidence_dsa2_path_correctness_1pbf0w"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_dsa2_path_correctness_1pbf0w\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Path Correctness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Path Correctness.",
+      "hidden": true,
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using validate and reported plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "dsa2-path-correctness"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "validate",
+        "reported"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

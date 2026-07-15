@@ -6,9 +6,6 @@ export async function GET() {
     return NextResponse.json(ALL_COURSES);
   } catch (error) {
     console.error('Failed to fetch courses:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch courses' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch courses' }, { status: 500 });
   }
 }

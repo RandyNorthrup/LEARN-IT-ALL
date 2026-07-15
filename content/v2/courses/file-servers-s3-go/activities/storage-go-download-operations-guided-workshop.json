@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 2,
+  "id": "storage-go-download-operations-guided-workshop",
+  "courseId": "file-servers-s3-go",
+  "moduleId": "storage-go-download-operations",
+  "kind": "workshop",
+  "title": "HeadObject, GetObject, Conditions, Ranges, and Cleanup · Go Build Room",
+  "summary": "A delivery team incrementally builds bounded S3 download decision and cleanup flow, changes one file or failure, and keeps earlier HTTP, Go, accessibility, security, and resource-budget invariants active. Planned artifact: Build a complete first version of bounded S3 download decision and cleanup flow while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.",
+    "Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes.",
+    "Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "storage-go-head-vs-get",
+      "storage-go-get-body-lifecycle",
+      "storage-go-conditional-download",
+      "storage-go-range-download",
+      "storage-go-download-error-boundary"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "storage-go-download-operations-storage-go-download-error-boundary-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "file-servers-s3-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// file-servers-s3-go cumulative file-delivery decision portfolio.\n// Browser execution uses deterministic pure-Go identity, range, integrity, policy, lifecycle, cache, cost, and recovery models only.\n// AWS SDK packages, S3, CloudFront, KMS, IAM, WAF, networks, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production changes require explicit authorized transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype FileEvidence struct {\n\tFileID      string\n\tObjectKey   string\n\tVersionID   string\n\tBytes       int\n\tChecksum    string\n}\n\ntype DeliveryEvidence struct {\n\tAuthorized bool\n\tState      string\n\tRangeStart int\n\tRangeEnd   int\n}\n\nfunc main() { fmt.Println(\"Go file-delivery portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 5321 during a private media release. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; retain stable tenant and file identity without exposing it in metric labels; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.\n\nWhat must be established before implementation?\n\nEvidence target: S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get.",
+      "why": "The decision supplies observable evidence for choose head, get, conditional get, or a metadata database lookup without doubling requests or trusting stale authority. For S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get, keep Head Vs Get connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 5321 during a private media release. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; retain stable tenant and file identity without exposing it in metric labels; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Head Vs Get condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Head Vs Get precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 5321 during a private media release. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; retain stable tenant and file identity without exposing it in metric labels; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.",
+        "For S3, CloudFront, and Go Commit to the mission model · Workshop Head Vs Get, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Every download should call HeadObject immediately before GetObject."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Head Vs Get preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "Every download should call HeadObject immediately before GetObject. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Head Vs Get happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get",
+      "interaction": "arrange",
+      "instruction": "Order the Head Vs Get S3, CloudFront, and Go storage-delivery evidence cycle for this workshop task before implementing it.\n\nEvidence target: S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get.",
+      "why": "Correct order keeps Head Vs Get assumptions visible before execution and verifies its result against a boundary case afterward. For S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get, keep Head Vs Get connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 3702 during a regional dependency incident. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Head Vs Get has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Head Vs Get precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 3702 during a regional dependency incident. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then change cache and retrieval cost assumptions and defend the new budget result. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.",
+        "For S3, CloudFront, and Go Plan the evidence sequence · Workshop Head Vs Get, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Every download should call HeadObject immediately before GetObject."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Declare S3, CloudFront, and Go stakeholder outcome, file and object identity, owner, state, and byte, time, concurrency, cache, and cost budgets for the workshop Head Vs Get case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Predict S3, CloudFront, and Go authorization, custody, transfer, integrity, cache, failure, cancellation, cleanup, rollback, and recovery outcomes for the workshop Head Vs Get case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Run the smallest deterministic S3, CloudFront, and Go storage decision model and retain inspectable changed-case evidence for the workshop Head Vs Get case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Inject one changed S3, CloudFront, and Go failure, verify bounded cleanup and recovery, and state controlled AWS transfer limits for the workshop Head Vs Get case"
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 2083 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.\n\nWhich action demonstrates Head Vs Get without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get.",
+      "why": "The decision supplies observable evidence for choose head, get, conditional get, or a metadata database lookup without doubling requests or trusting stale authority. For S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get, keep Head Vs Get connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 2083 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Head Vs Get condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Head Vs Get precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 2083 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then change the object version and prove stale authority is rejected. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority.",
+        "For S3, CloudFront, and Go Head Vs Get · changed case · Workshop Head Vs Get, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Every download should call HeadObject immediately before GetObject."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For head vs get · changed case, run one convenient Head Vs Get happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Choose HEAD, GET, conditional GET, or a metadata database lookup without doubling requests or trusting stale authority. Apply it to the stated input and retain a reproducible trace for bounded S3 download decision and cleanup flow."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Every download should call HeadObject immediately before GetObject. That claim does not survive the head vs get · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 9464 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes.\n\nWhich action demonstrates Get Body Lifecycle without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle.",
+      "why": "The decision supplies observable evidence for check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes. For S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle, keep Get Body Lifecycle connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 9464 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Get Body Lifecycle result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "storage-go-get-body-lifecycle"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Get Body Lifecycle precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9464 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; cap bytes, time, attempts, concurrency, and spend before starting work; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes.",
+        "For S3, CloudFront, and Go Get Body Lifecycle · changed case · Workshop Get Body Lifecycle, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Garbage collection promptly closes every unread S3 response body."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Get Body Lifecycle case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Garbage collection promptly closes every unread S3 response body.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Check response and metadata, own and close the body, propagate cancellation, handle partial reads, and distinguish transport from caller writes. Apply it to the stated input and retain a reproducible trace for bounded S3 download decision and cleanup flow."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Garbage collection promptly closes every unread S3 response body. That claim does not survive the get body lifecycle · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For get body lifecycle · changed case, run one convenient Get Body Lifecycle happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 2797 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning.\n\nWhich action demonstrates Conditional Download without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download.",
+      "why": "The decision supplies observable evidence for map application validators and preconditions to s3 requests and preserve 304, 412, not-found, and version-specific meaning. For S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download, keep Conditional Download connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 2797 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Conditional Download condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "storage-go-conditional-download"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Conditional Download precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 2797 during a compliance restore drill. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; do not treat an ETag, CORS result, emulator, or successful SDK call as stronger proof than it is; then double concurrent transfers and keep process resource limits intact. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning.",
+        "For S3, CloudFront, and Go Conditional Download · changed case · Workshop Conditional Download, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A conditional S3 failure should always become a generic 500 response."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "A conditional S3 failure should always become a generic 500 response. That claim does not survive the conditional download · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For conditional download · changed case, run one convenient Conditional Download happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Map application validators and preconditions to S3 requests and preserve 304, 412, not-found, and version-specific meaning. Apply it to the stated input and retain a reproducible trace for bounded S3 download decision and cleanup flow."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "S3, CloudFront, and Go Range Download · changed case · Workshop Range Download",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 1178 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests.\n\nWhich action demonstrates Range Download without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Range Download · changed case · Workshop Range Download.",
+      "why": "The decision supplies observable evidence for validate one bounded range, map inclusive offsets, cap response bytes, preserve content-range, and reject unsatisfiable or abusive requests. For S3, CloudFront, and Go Range Download · changed case · Workshop Range Download, keep Range Download connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 1178 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Range Download result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "storage-go-range-download"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Range Download · changed case · Workshop Range Download, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Range Download precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Range Download · changed case · Workshop Range Download, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 1178 during a cost-anomaly investigation. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests.",
+        "For S3, CloudFront, and Go Range Download · changed case · Workshop Range Download, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Forwarding an arbitrary Range header to S3 is a complete range policy."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Range Download case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Forwarding an arbitrary Range header to S3 is a complete range policy.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For range download · changed case, run one convenient Range Download happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Validate one bounded range, map inclusive offsets, cap response bytes, preserve Content-Range, and reject unsatisfiable or abusive requests. Apply it to the stated input and retain a reproducible trace for bounded S3 download decision and cleanup flow."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Forwarding an arbitrary Range header to S3 is a complete range policy. That claim does not survive the range download · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 8559 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.\n\nWhich action demonstrates Download Error Boundary without dropping earlier contracts?\n\nEvidence target: S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary.",
+      "why": "The decision supplies observable evidence for classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response. For S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary, keep Download Error Boundary connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 8559 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Download Error Boundary condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Error Boundary precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 8559 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; record cleanup, rollback, restoration, and residual-risk ownership; then cancel halfway through and prove every body, part, and goroutine reaches a terminal state. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+        "For S3, CloudFront, and Go Download Error Boundary · changed case · Workshop Download Error Boundary, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Returning 404 for every S3 failure prevents information disclosure without operational cost."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response. Apply it to the stated input and retain a reproducible trace for bounded S3 download decision and cleanup flow."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Returning 404 for every S3 failure prevents information disclosure without operational cost. That claim does not survive the download error boundary · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For download error boundary · changed case, run one convenient Download Error Boundary happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: storage-go-download-error-boundary-uzgp1m\" that uses case 9543 to validate a versioned conditional range and prove S3 response-body cleanup. Return observable changed-case evidence. Browser code must not import AWS SDK packages, open sockets, contact S3, CloudFront, KMS, IAM, WAF, networks, databases, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with Go 1.26.5 compile, vet, fuzz, race, leak, controlled AWS, load, fault, security, cost, restore, and production gates.\n\nEvidence target: S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Download Error Boundary into observable performance evidence. For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary, keep Download Error Boundary connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: storage-go-download-error-boundary-uzgp1m\n// Competency: storage-go-download-error-boundary.\n// Case 9543: an SDK and infrastructure canary.\n// Operating constraint: preserve accessible progress, cancellation, status, and recovery evidence.\n// Changed case: double concurrent transfers and keep process resource limits intact.\nfunc evidence_storage_go_download_error_boundary_uzgp1m(start, end, size int, versionFound, conditionMatches, bodyClosed bool) (bool, int, string) {\n\tevidenceVariantuzgp1m := \"uzgp1m-m1pgzu-9543\"\n\t_ = evidenceVariantuzgp1m\n\tif !versionFound { return false, 0, \"missing-version\" }\n\tif !conditionMatches { return false, 0, \"precondition\" }\n\tif size < 0 || start < 0 || end < start || start >= size { return false, 0, \"range\" }\n\tif end >= size { end = size - 1 }\n\tlength := end - start + 1\n\tif !bodyClosed { return false, length, \"body-leak\" }\n\treturn true, length, \"bounded-download\"\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Error Boundary precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 6940 during a high-traffic evidence intake window. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; retain stable tenant and file identity without exposing it in metric labels; then change region, range, or signed header and explain the exact failure boundary. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+        "For S3, CloudFront, and Go Extend the cumulative artifact · Workshop Download Error Boundary, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Returning 404 for every S3 failure prevents information disclosure without operational cost."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go file-delivery team handles case 9273 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary.",
+      "why": "The decision supplies observable evidence for classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response. For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary, keep Download Error Boundary connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go file-delivery team handles case 9273 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Download Error Boundary symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK for Go v2 S3 API — S3 client, inputs, outputs, paginators, waiters, presigning, checksums, multipart, and errors."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Error Boundary precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 9273 during an SDK and infrastructure canary. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+        "For S3, CloudFront, and Go Test an acceptance boundary · Workshop Download Error Boundary, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Returning 404 for every S3 failure prevents information disclosure without operational cost."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Download Error Boundary failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "Returning 404 for every S3 failure prevents information disclosure without operational cost.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Download Error Boundary happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Download Error Boundary condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Download Error Boundary: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go file-delivery team handles case 7654 during a high-traffic evidence intake window. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.\n\nEvidence target: S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary, keep Download Error Boundary connected to executable Go storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "hints": [
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary, name the stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary, Download Error Boundary precondition, or invariant that must hold.",
+        "At S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary, trace this concrete input and predict authorization, custody, integrity, range, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A workshop Go file-delivery team handles case 7654 during a high-traffic evidence intake window. Build deterministic Go evidence to validate a versioned conditional range and prove S3 response-body cleanup; preserve accessible progress, cancellation, status, and recovery evidence; then introduce a duplicate event or ambiguous response and reconcile without duplicate effect. Browser code uses pure values and state transitions only. AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, databases, credentials, host state, race and leak checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Classify missing key, missing version, delete marker, denied access, archive restore state, throttling, cancellation, and partial downstream response.",
+        "For S3, CloudFront, and Go Defend the transferred model · Workshop Download Error Boundary, challenge the documented misconception with file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: Returning 404 for every S3 failure prevents information disclosure without operational cost."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Head Vs Get to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Head Vs Get.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Head Vs Get to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Head Vs Get.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-head-vs-get"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Get Body Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Get Body Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-get-body-lifecycle"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Conditional Download to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Conditional Download.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-conditional-download"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Range Download to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Range Download.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-range-download"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Download Error Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Download Error Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: storage-go-download-error-boundary-uzgp1m.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "file": "go",
+      "expected": "// Evidence: storage-go-download-error-boundary-uzgp1m"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: storage-go-download-error-boundary-uzgp1m(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_storage_go_download_error_boundary_uzgp1m\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?!versionFound)(?=(?:(?!// Evidence:)[\\s\\S])*?!conditionMatches)(?=(?:(?!// Evidence:)[\\s\\S])*?length\\s*:=\\s*end\\s*-\\s*start\\s*\\+\\s*1)(?=(?:(?!// Evidence:)[\\s\\S])*?!bodyClosed)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Download Error Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Download Error Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using classify and missing plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-go-download-error-boundary"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "classify",
+        "missing"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

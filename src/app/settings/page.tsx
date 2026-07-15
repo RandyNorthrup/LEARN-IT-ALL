@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -12,7 +12,14 @@ interface ConfirmModalProps {
   isLoading?: boolean;
 }
 
-function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, isLoading }: ConfirmModalProps) {
+function ConfirmModal({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  isLoading,
+}: ConfirmModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -22,6 +29,7 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, isLoading }
         <p className="text-gray-600 mb-6">{message}</p>
         <div className="flex gap-3 justify-end">
           <button
+            type="button"
             onClick={onCancel}
             disabled={isLoading}
             className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
@@ -29,6 +37,7 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, isLoading }
             Cancel
           </button>
           <button
+            type="button"
             onClick={onConfirm}
             disabled={isLoading}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
@@ -45,7 +54,7 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
-  
+
   // Modal state
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -59,7 +68,7 @@ export default function SettingsPage() {
     title: '',
     message: '',
   });
-  
+
   const [isClearing, setIsClearing] = useState(false);
   const [courseId, setCourseId] = useState('python-basics');
   const [chapterId, setChapterId] = useState('');
@@ -67,18 +76,19 @@ export default function SettingsPage() {
   const [quizId, setQuizId] = useState('');
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  async function fetchSettings() {
-    try {
-      const response = await fetch('/api/settings');
-      const data = await response.json();
-      setDisplayName(data.displayName);
-    } catch (error) {
-      console.error('Failed to fetch settings:', error);
+    const controller = new AbortController();
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/settings', { signal: controller.signal });
+        const data = await response.json();
+        setDisplayName(data.displayName);
+      } catch (error) {
+        if (!controller.signal.aborted) console.error('Failed to fetch settings:', error);
+      }
     }
-  }
+    void loadSettings();
+    return () => controller.abort();
+  }, []);
 
   async function handleSaveUsername() {
     if (displayName.trim().length < 3) {
@@ -112,14 +122,12 @@ export default function SettingsPage() {
     }
   }
 
-  function openModal(
-    type: 'all' | 'course' | 'chapter' | 'lesson' | 'quiz',
-    targetId?: string
-  ) {
+  function openModal(type: 'all' | 'course' | 'chapter' | 'lesson' | 'quiz', targetId?: string) {
     const modalConfigs = {
       all: {
         title: 'Clear All Progress?',
-        message: 'This will permanently delete all your progress across all courses, lessons, quizzes, and exercises. This action cannot be undone.',
+        message:
+          'This will permanently delete all your progress across all courses, lessons, quizzes, and exercises. This action cannot be undone.',
       },
       course: {
         title: 'Clear Course Progress?',
@@ -179,7 +187,7 @@ export default function SettingsPage() {
       if (response.ok) {
         setMessage('Progress cleared successfully!');
         setTimeout(() => setMessage(''), 3000);
-        
+
         // Reset input fields
         if (modalState.type === 'chapter') setChapterId('');
         if (modalState.type === 'lesson') setLessonId('');
@@ -208,11 +216,13 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
 
         {message && (
-          <div className={`mb-6 p-4 rounded-lg ${
-            message.includes('successfully') || message.includes('updated')
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-lg ${
+              message.includes('successfully') || message.includes('updated')
+                ? 'bg-green-50 text-green-800 border border-green-200'
+                : 'bg-red-50 text-red-800 border border-red-200'
+            }`}
+          >
             {message}
           </div>
         )}
@@ -235,6 +245,7 @@ export default function SettingsPage() {
               />
             </div>
             <button
+              type="button"
               onClick={handleSaveUsername}
               disabled={isSaving}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
@@ -249,7 +260,10 @@ export default function SettingsPage() {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Progress Management</h2>
           <p className="text-gray-600 mb-6">
             Clear your learning progress for specific courses, chapters, lessons, or quizzes.
-            <span className="text-red-600 font-semibold"> Warning: These actions cannot be undone.</span>
+            <span className="text-red-600 font-semibold">
+              {' '}
+              Warning: These actions cannot be undone.
+            </span>
           </p>
 
           {/* Clear All Progress */}
@@ -259,6 +273,7 @@ export default function SettingsPage() {
               Delete all your progress across all courses, lessons, quizzes, and exercises.
             </p>
             <button
+              type="button"
               onClick={() => openModal('all')}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
@@ -269,9 +284,7 @@ export default function SettingsPage() {
           {/* Clear Course Progress */}
           <div className="mb-6 p-4 border border-gray-200 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Clear Course Progress</h3>
-            <p className="text-gray-600 mb-4">
-              Delete all progress for a specific course.
-            </p>
+            <p className="text-gray-600 mb-4">Delete all progress for a specific course.</p>
             <div className="flex gap-3">
               <input
                 type="text"
@@ -281,6 +294,7 @@ export default function SettingsPage() {
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <button
+                type="button"
                 onClick={() => openModal('course')}
                 disabled={!courseId.trim()}
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
@@ -313,6 +327,7 @@ export default function SettingsPage() {
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
                 <button
+                  type="button"
                   onClick={() => openModal('chapter')}
                   disabled={!courseId.trim() || !chapterId.trim()}
                   className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
@@ -326,9 +341,7 @@ export default function SettingsPage() {
           {/* Clear Lesson Progress */}
           <div className="mb-6 p-4 border border-gray-200 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Clear Lesson Progress</h3>
-            <p className="text-gray-600 mb-4">
-              Delete progress for a specific lesson.
-            </p>
+            <p className="text-gray-600 mb-4">Delete progress for a specific lesson.</p>
             <div className="flex gap-3">
               <input
                 type="text"
@@ -338,6 +351,7 @@ export default function SettingsPage() {
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <button
+                type="button"
                 onClick={() => openModal('lesson')}
                 disabled={!lessonId.trim()}
                 className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50"
@@ -350,9 +364,7 @@ export default function SettingsPage() {
           {/* Clear Quiz Progress */}
           <div className="mb-6 p-4 border border-gray-200 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Clear Quiz Progress</h3>
-            <p className="text-gray-600 mb-4">
-              Delete all attempts for a specific quiz.
-            </p>
+            <p className="text-gray-600 mb-4">Delete all attempts for a specific quiz.</p>
             <div className="flex gap-3">
               <input
                 type="text"
@@ -362,6 +374,7 @@ export default function SettingsPage() {
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <button
+                type="button"
                 onClick={() => openModal('quiz')}
                 disabled={!quizId.trim()}
                 className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50"

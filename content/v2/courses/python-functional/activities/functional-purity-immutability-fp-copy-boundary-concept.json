@@ -1,0 +1,539 @@
+{
+  "schemaVersion": 2,
+  "id": "functional-purity-immutability-fp-copy-boundary-concept",
+  "courseId": "python-functional",
+  "moduleId": "functional-purity-immutability",
+  "kind": "theory",
+  "title": "Pure Functions, Immutability, and Data Copies · Pipeline Brief: Copy Boundary",
+  "summary": "Repair a pricing pipeline where aliases mutate shared orders during validation. Planned artifact: Add and verify the fp copy boundary increment in a pure price transformation with alias-safety tests. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+    "Return updated immutable records while preserving unchanged data and input values.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "fp-copy-boundary"
+    ],
+    "reinforces": [
+      "fp-immutable-update"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "functional-purity-immutability-fp-immutable-update-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "python-functional-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"python-functional immutable transformation portfolio.\"\"\"\n\nfrom collections.abc import Callable, Iterable, Iterator\nfrom functools import partial, reduce\nfrom itertools import chain, islice\nfrom typing import TypeVar\n\nT = TypeVar('T')\nU = TypeVar('U')\n\n# Extend one pure, lazy, tested pipeline increment per activity.\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Copy Boundary",
+      "interaction": "predict",
+      "instruction": "theory case — An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nBefore reading, predict which action preserves the Copy Boundary contract for the supplied data.",
+      "why": "The decision supplies observable evidence for select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Copy Boundary condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming Modules — itertools, functools, and operator behavior used by production transformation pipelines."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "Deep copying is always safest and cheapest."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Copy Boundary."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Copy Boundary",
+      "interaction": "read",
+      "instruction": "theory case — An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nAfter tracing the worked code, choose the Copy Boundary application whose preconditions and limits still match the supplied case.",
+      "why": "The decision supplies observable evidence for select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Mark values and effects, snapshot owned inputs, compose one transformation at a time, run the same case twice, then test a changed stream or failure."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged. A defensible solution applies Copy Boundary, preserves the governing invariant or value contract, and connects the observed result to a pure price transformation with alias-safety tests."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def discounted(order: dict, rate: float) -> dict:\n    before = repr(order)\n    result = {**order, \"total\": round(order[\"subtotal\"] * (1 - rate), 2)}\n    assert repr(order) == before\n    return result\n\norder = {\"subtotal\": 24, \"tags\": (\"member\",)}\nassert discounted(order, 0.1) == discounted(order, 0.1)",
+          "caption": "Runnable transformation example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "Deep copying is always safest and cheapest. This fails the Copy Boundary contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Python 3.14 Functional Programming Modules (Python 3.14.6) — itertools, functools, and operator behavior used by production transformation pipelines."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "Deep copying is always safest and cheapest."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Copy Boundary."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Copy Boundary after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Copy Boundary evidence",
+      "interaction": "inspect",
+      "instruction": "theory case — An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nInspect the Copy Boundary trace for this theory case. Which record connects a precondition, observed state change, and boundary result?",
+      "why": "The decision supplies observable evidence for select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Copy Boundary, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Copy Boundary case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "An order starts as {id: \"A-6\", subtotal: 30, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "Deep copying is always safest and cheapest.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately. Artifact under review: a pure price transformation with alias-safety tests.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Copy Boundary."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Copy Boundary, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Copy Boundary evidence",
+      "interaction": "code",
+      "instruction": "Add a evidence_fp_copy_boundary_dnvbrt function that computes or traces the changed case, asserts one meaningful invariant, and returns inspectable evidence.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Copy Boundary into observable performance evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def evidence_fp_copy_boundary_dnvbrt(case):\n    # Compute or trace the current changed case.\n    raise NotImplementedError(\"replace with a model, meaningful invariant, and evidence return\")",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-2\", subtotal: 26, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Copy Boundary defect",
+      "interaction": "debug",
+      "instruction": "theory case — An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.\n\nA teammate acts on this belief: “Deep copying is always safest and cheapest.” Which repair addresses the cause?",
+      "why": "The decision supplies observable evidence for select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Copy Boundary symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Python 3.14 Functional Programming Modules — itertools, functools, and operator behavior used by production transformation pipelines."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-3\", subtotal: 27, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Copy Boundary failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "Deep copying is always safest and cheapest.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Hide effects inside the transformation, mutate its input, and accept one plausible return value as proof of Copy Boundary."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Copy Boundary, gather a counterexample, repair the artifact, and add a regression case."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Copy Boundary evidence",
+      "interaction": "arrange",
+      "instruction": "Order the Copy Boundary value-and-effect pipeline for this theory task before implementing it.",
+      "why": "Correct order keeps Copy Boundary assumptions visible before execution and verifies its result against a boundary case afterward.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Copy Boundary has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-4\", subtotal: 28, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Separate immutable values from observable effects and ownership boundaries"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Specify a total transformation contract and explicit failure representation"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Compose and run the smallest pipeline while retaining an inspectable trace"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Repeat with changed input, verify input preservation, and move effects to the shell"
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Copy Boundary model",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Copy Boundary: explain the governing condition, one failure, and how this concrete case was verified — An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Select shallow copy, deep copy, immutable representation, or ownership transfer deliberately."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "hints": [
+        "Name the Copy Boundary precondition or invariant that the theory case must preserve.",
+        "Trace this concrete case before choosing: An order starts as {id: \"A-5\", subtotal: 29, tags: [\"member\"]}. Two reruns must return the same discounted record while the original order and nested tags remain unchanged.",
+        "Use the documented misconception as a counterexample target: Deep copying is always safest and cheapest."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Copy Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Copy Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Copy Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Copy Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Copy Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Copy Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker evidence_fp_copy_boundary_dnvbrt.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "file": "python",
+      "expected": "evidence_fp_copy_boundary_dnvbrt"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "def\\s+evidence_fp_copy_boundary_dnvbrt\\s*\\([^)]*\\)[\\s\\S]*?assert[\\s\\S]*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Copy Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Copy Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using select and shallow plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "fp-copy-boundary"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "select",
+        "shallow"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

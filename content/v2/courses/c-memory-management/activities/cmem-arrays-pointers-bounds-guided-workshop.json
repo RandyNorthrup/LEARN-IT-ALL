@@ -1,0 +1,738 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-arrays-pointers-bounds-guided-workshop",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-arrays-pointers-bounds",
+  "kind": "workshop",
+  "title": "Arrays, Pointers, Arithmetic, and Bounds · Guided Pointer Studio",
+  "summary": "A guided implementation pair receives a clean input trace and acceptance examples, then builds the first working bounded image-slice library while narrating each size, lifetime, ownership, and cleanup decision. Planned artifact: Build a complete first version of bounded image-slice library while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.",
+    "Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers.",
+    "State and check lower and upper index invariants before access, including zero-length and changed-shape cases.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-array-pointer-distinction",
+      "cmem-pointer-arithmetic-domain",
+      "cmem-index-bound-invariant",
+      "cmem-slice-pointer-length",
+      "cmem-multidimensional-stride"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-arrays-pointers-bounds-cmem-multidimensional-stride-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Workshop Array Pointer Distinction",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6473. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Workshop Array Pointer Distinction.",
+      "why": "The decision supplies observable evidence for preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters. For Commit to the mission model · Workshop Array Pointer Distinction, keep Array Pointer Distinction connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6473. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Array Pointer Distinction condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "hints": [
+        "For Commit to the mission model · Workshop Array Pointer Distinction, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Array Pointer Distinction precondition, or invariant that must hold.",
+        "At Commit to the mission model · Workshop Array Pointer Distinction, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6473. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.",
+        "For Commit to the mission model · Workshop Array Pointer Distinction, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An array parameter carries its declared bound into the called function."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "An array parameter carries its declared bound into the called function. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Array Pointer Distinction case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Array Pointer Distinction preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Array Pointer Distinction · changed case · Workshop Array Pointer Distinction",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 1616. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.\n\nWhich action demonstrates Array Pointer Distinction without dropping earlier contracts?\n\nEvidence target: Array Pointer Distinction · changed case · Workshop Array Pointer Distinction.",
+      "why": "The decision supplies observable evidence for preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters. For Array Pointer Distinction · changed case · Workshop Array Pointer Distinction, keep Array Pointer Distinction connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 1616. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Array Pointer Distinction condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "hints": [
+        "For Array Pointer Distinction · changed case · Workshop Array Pointer Distinction, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Array Pointer Distinction precondition, or invariant that must hold.",
+        "At Array Pointer Distinction · changed case · Workshop Array Pointer Distinction, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 1616. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.",
+        "For Array Pointer Distinction · changed case · Workshop Array Pointer Distinction, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An array parameter carries its declared bound into the called function."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For array pointer distinction · changed case, run one convenient Array Pointer Distinction case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters. Apply it to the stated input and retain a reproducible trace for bounded image-slice library."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "An array parameter carries its declared bound into the called function. That claim does not survive the array pointer distinction · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 3235. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers.\n\nWhich action demonstrates Pointer Arithmetic Domain without dropping earlier contracts?\n\nEvidence target: Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain.",
+      "why": "The decision supplies observable evidence for perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers. For Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain, keep Pointer Arithmetic Domain connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 3235. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Pointer Arithmetic Domain result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-pointer-arithmetic-domain"
+      ],
+      "hints": [
+        "For Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Pointer Arithmetic Domain precondition, or invariant that must hold.",
+        "At Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 3235. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers.",
+        "For Pointer Arithmetic Domain · changed case · Workshop Pointer Arithmetic Domain, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Numerically adjacent allocations form one legal pointer-arithmetic range."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Pointer Arithmetic Domain case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Numerically adjacent allocations form one legal pointer-arithmetic range.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Perform pointer arithmetic only within one array object or one-past it and avoid dereferencing one-past pointers. Apply it to the stated input and retain a reproducible trace for bounded image-slice library."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "Numerically adjacent allocations form one legal pointer-arithmetic range. That claim does not survive the pointer arithmetic domain · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For pointer arithmetic domain · changed case, run one convenient Pointer Arithmetic Domain case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Index Bound Invariant · changed case · Workshop Index Bound Invariant",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 5186. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: State and check lower and upper index invariants before access, including zero-length and changed-shape cases.\n\nWhich action demonstrates Index Bound Invariant without dropping earlier contracts?\n\nEvidence target: Index Bound Invariant · changed case · Workshop Index Bound Invariant.",
+      "why": "The decision supplies observable evidence for state and check lower and upper index invariants before access, including zero-length and changed-shape cases. For Index Bound Invariant · changed case · Workshop Index Bound Invariant, keep Index Bound Invariant connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 5186. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: State and check lower and upper index invariants before access, including zero-length and changed-shape cases."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Index Bound Invariant condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-index-bound-invariant"
+      ],
+      "hints": [
+        "For Index Bound Invariant · changed case · Workshop Index Bound Invariant, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Index Bound Invariant precondition, or invariant that must hold.",
+        "At Index Bound Invariant · changed case · Workshop Index Bound Invariant, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 5186. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: State and check lower and upper index invariants before access, including zero-length and changed-shape cases.",
+        "For Index Bound Invariant · changed case · Workshop Index Bound Invariant, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Checking only index < length is sufficient when index may be signed."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "Checking only index < length is sufficient when index may be signed. That claim does not survive the index bound invariant · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For index bound invariant · changed case, run one convenient Index Bound Invariant case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "State and check lower and upper index invariants before access, including zero-length and changed-shape cases. Apply it to the stated input and retain a reproducible trace for bounded image-slice library."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Slice Pointer Length · changed case · Workshop Slice Pointer Length",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 6805. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together.\n\nWhich action demonstrates Slice Pointer Length without dropping earlier contracts?\n\nEvidence target: Slice Pointer Length · changed case · Workshop Slice Pointer Length.",
+      "why": "The decision supplies observable evidence for represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together. For Slice Pointer Length · changed case · Workshop Slice Pointer Length, keep Slice Pointer Length connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 6805. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Slice Pointer Length result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-slice-pointer-length"
+      ],
+      "hints": [
+        "For Slice Pointer Length · changed case · Workshop Slice Pointer Length, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Slice Pointer Length precondition, or invariant that must hold.",
+        "At Slice Pointer Length · changed case · Workshop Slice Pointer Length, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 6805. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together.",
+        "For Slice Pointer Length · changed case · Workshop Slice Pointer Length, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A non-null pointer reveals how many elements may be read or written."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Slice Pointer Length case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A non-null pointer reveals how many elements may be read or written.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For slice pointer length · changed case, run one convenient Slice Pointer Length case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Represent a borrowed slice with pointer, length, mutability, lifetime, and aliasing contracts that travel together. Apply it to the stated input and retain a reproducible trace for bounded image-slice library."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "A non-null pointer reveals how many elements may be read or written. That claim does not survive the slice pointer length · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Multidimensional Stride · changed case · Workshop Multidimensional Stride",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 1948. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.\n\nWhich action demonstrates Multidimensional Stride without dropping earlier contracts?\n\nEvidence target: Multidimensional Stride · changed case · Workshop Multidimensional Stride.",
+      "why": "The decision supplies observable evidence for calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence. For Multidimensional Stride · changed case · Workshop Multidimensional Stride, keep Multidimensional Stride connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 1948. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Multidimensional Stride condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "hints": [
+        "For Multidimensional Stride · changed case · Workshop Multidimensional Stride, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Multidimensional Stride precondition, or invariant that must hold.",
+        "At Multidimensional Stride · changed case · Workshop Multidimensional Stride, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 1948. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.",
+        "For Multidimensional Stride · changed case · Workshop Multidimensional Stride, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer-to-pointer is interchangeable with a contiguous two-dimensional array."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence. Apply it to the stated input and retain a reproducible trace for bounded image-slice library."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A pointer-to-pointer is interchangeable with a contiguous two-dimensional array. That claim does not survive the multidimensional stride · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For multidimensional stride · changed case, run one convenient Multidimensional Stride case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "mission-plan",
+      "title": "Plan the evidence sequence · Workshop Array Pointer Distinction",
+      "interaction": "arrange",
+      "instruction": "Order the Array Pointer Distinction evidence cycle for this workshop task before implementing it.\n\nEvidence target: Plan the evidence sequence · Workshop Array Pointer Distinction.",
+      "why": "Correct order keeps Array Pointer Distinction assumptions visible before execution and verifies its result against a boundary case afterward. For Plan the evidence sequence · Workshop Array Pointer Distinction, keep Array Pointer Distinction connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 3567. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Array Pointer Distinction has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "mission-plan-check"
+      ],
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "hints": [
+        "For Plan the evidence sequence · Workshop Array Pointer Distinction, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Array Pointer Distinction precondition, or invariant that must hold.",
+        "At Plan the evidence sequence · Workshop Array Pointer Distinction, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 3567. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Preserve array extent where possible and predict array-to-pointer conversion at expressions and parameters.",
+        "For Plan the evidence sequence · Workshop Array Pointer Distinction, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: An array parameter carries its declared bound into the called function."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-plan-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the workshop Array Pointer Distinction case"
+        },
+        {
+          "id": "mission-plan-model",
+          "text": "Choose and document the smallest defensible model or procedure for the workshop Array Pointer Distinction case"
+        },
+        {
+          "id": "mission-plan-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the workshop Array Pointer Distinction case"
+        },
+        {
+          "id": "mission-plan-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the workshop Array Pointer Distinction case"
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Workshop Multidimensional Stride",
+      "interaction": "code",
+      "instruction": "For this workshop demonstration of cmem-multidimensional-stride, write the complete compile-ready C program headed \"/* Evidence: cmem-multidimensional-stride-10ewa6 */\" for changed case 7211. It must validate a half-open array slice before access, reject one changed boundary, print an observable result and invariant, and return nonzero when the invariant fails. Keep instant code within the PicoC 3.2.2 practice subset; do not claim C23, optimizing compiler, sanitizer, ABI, thread, operating-system, FFI, load, or production evidence until its explicit controlled transfer gate passes.\n\nEvidence target: Extend the cumulative artifact · Workshop Multidimensional Stride.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Multidimensional Stride into observable performance evidence. For Extend the cumulative artifact · Workshop Multidimensional Stride, keep Multidimensional Stride connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mission-plan"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "c",
+          "code": "/* Evidence: cmem-multidimensional-stride-10ewa6 */\n/* Browser practice: PicoC 3.2.2 C89/C90 plus selected C99. */\n/* Changed case 7211; native C23 claims require explicit transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n\nstatic int evidence_cmem_multidimensional_stride_10ewa6(const int *values, size_t length, size_t start, size_t count, int *sum) {\n  size_t index;\n  int total = 0;\n  if (values == NULL || sum == NULL || start > length || count > length - start) return 0;\n  for (index = start; index < start + count; ++index) total += values[index];\n  *sum = total;\n  return 1;\n}\n\nint main(void) {\n  int values[5] = { 4, 5, 6, 7, 8 };\n  int sum = 0;\n  int rejected = evidence_cmem_multidimensional_stride_10ewa6(values, 5, 4, 2, &sum);\n  int accepted = evidence_cmem_multidimensional_stride_10ewa6(values, 5, 1, 3, &sum);\n  int invariant = !rejected && accepted && sum == 18;\n  printf(\"slice sum=%d invariant=%d\\n\", sum, invariant);\n  return invariant ? 0 : 1;\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Workshop Multidimensional Stride, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Multidimensional Stride precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Workshop Multidimensional Stride, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 7710. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.",
+        "For Extend the cumulative artifact · Workshop Multidimensional Stride, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer-to-pointer is interchangeable with a contiguous two-dimensional array."
+      ],
+      "xp": 10,
+      "targetFile": "c"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Workshop Multidimensional Stride",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop native-systems team handles memory case 9329. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Workshop Multidimensional Stride.",
+      "why": "The decision supplies observable evidence for calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence. For Test an acceptance boundary · Workshop Multidimensional Stride, keep Multidimensional Stride connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop native-systems team handles memory case 9329. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Multidimensional Stride symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SEI CERT C Coding Standard — Memory, arrays, strings, integers, expressions, concurrency, resources, APIs, and secure coding rules."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Workshop Multidimensional Stride, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Multidimensional Stride precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Workshop Multidimensional Stride, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 9329. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.",
+        "For Test an acceptance boundary · Workshop Multidimensional Stride, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer-to-pointer is interchangeable with a contiguous two-dimensional array."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Multidimensional Stride failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A pointer-to-pointer is interchangeable with a contiguous two-dimensional array.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Multidimensional Stride condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Multidimensional Stride case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Workshop Multidimensional Stride",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Multidimensional Stride: explain the governing condition, one failure, and how this concrete case was verified — A workshop native-systems team handles memory case 4472. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.\n\nEvidence target: Defend the transferred model · Workshop Multidimensional Stride.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Workshop Multidimensional Stride, keep Multidimensional Stride connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "hints": [
+        "For Defend the transferred model · Workshop Multidimensional Stride, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Multidimensional Stride precondition, or invariant that must hold.",
+        "At Defend the transferred model · Workshop Multidimensional Stride, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A workshop native-systems team handles memory case 4472. Produce bounded C evidence to validate a half-open array slice before access; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Calculate multidimensional offsets with checked dimensions, row stride, element size, and layout evidence.",
+        "For Defend the transferred model · Workshop Multidimensional Stride, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: A pointer-to-pointer is interchangeable with a contiguous two-dimensional array."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Array Pointer Distinction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Array Pointer Distinction.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Array Pointer Distinction to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Array Pointer Distinction.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pointer Arithmetic Domain to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pointer Arithmetic Domain.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-pointer-arithmetic-domain"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Index Bound Invariant to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Index Bound Invariant.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-index-bound-invariant"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Slice Pointer Length to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Slice Pointer Length.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-slice-pointer-length"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multidimensional Stride to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multidimensional Stride.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-plan-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-array-pointer-distinction"
+      ],
+      "expectedOptionIds": [
+        "mission-plan-frame",
+        "mission-plan-model",
+        "mission-plan-execute",
+        "mission-plan-verify"
+      ]
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative c portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker /* Evidence: cmem-multidimensional-stride-10ewa6 */.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "file": "c",
+      "expected": "/* Evidence: cmem-multidimensional-stride-10ewa6 */"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "c",
+      "pattern": "/\\* Evidence: cmem-multidimensional-stride-10ewa6 \\*/(?:(?!/\\* Evidence:)[\\s\\S])*?static\\s+(?:int|unsigned)\\s+evidence_cmem_multidimensional_stride_10ewa6\\s*\\([^)]*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?\\{(?:(?!/\\* Evidence:)[\\s\\S])*?if\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?return(?:(?!/\\* Evidence:)[\\s\\S])*?int\\s+main\\s*\\(\\s*void\\s*\\)(?:(?!/\\* Evidence:)[\\s\\S])*?printf\\s*\\((?:(?!/\\* Evidence:)[\\s\\S])*?invariant",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Multidimensional Stride to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Multidimensional Stride.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using calculate and multidimensional plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-multidimensional-stride"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "calculate",
+        "multidimensional"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

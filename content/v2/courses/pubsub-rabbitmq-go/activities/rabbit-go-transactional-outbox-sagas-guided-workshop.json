@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "rabbit-go-transactional-outbox-sagas-guided-workshop",
+  "courseId": "pubsub-rabbitmq-go",
+  "moduleId": "rabbit-go-transactional-outbox-sagas",
+  "kind": "workshop",
+  "title": "Transactional Outbox, Inbox, and Sagas · Guided Systems Studio",
+  "summary": "A Go pairing room incrementally implements a Go outbox relay and saga recovery model, first with deterministic values and then with a changed failure, while keeping prior messaging invariants active. Planned artifact: Build a complete first version of a Go outbox relay and saga recovery model while every earlier competency remains active. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence.",
+    "Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence.",
+    "Claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in Go, retain ownership, stop-path, and changed-case evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "rabbit-go-dual-write-failure-matrix",
+      "rabbit-go-transactional-outbox-record",
+      "rabbit-go-outbox-relay-confirm",
+      "rabbit-go-inbox-outbox-composition",
+      "rabbit-go-saga-compensation"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "rabbit-go-transactional-outbox-sagas-rabbit-go-saga-compensation-concept"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 120,
+  "artifactId": "pubsub-rabbitmq-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// pubsub-rabbitmq-go cumulative reliable-messaging decision portfolio.\n// Browser execution uses deterministic pure-Go topology, routing, ownership, acknowledgement, retry, concurrency, and recovery models only.\n// amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, external effects, load, upgrades, credentials, host state, and production changes require explicit authorized transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype MessageEvidence struct {\n\tID            string\n\tType          string\n\tSchemaVersion int\n\tBodyBytes     int\n}\n\ntype DeliveryEvidence struct {\n\tRoute            string\n\tOwner            string\n\tTerminalDecision string\n\tAttempt          int\n}\n\nfunc main() { fmt.Println(\"Go messaging portfolio ready\") }\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix",
+      "interaction": "predict",
+      "instruction": "workshop case — A workshop Go messaging team handles case 3147 during outbox relay recovery after a database commit. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; separate deterministic browser proof from race-enabled and live-broker evidence; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhat must be established before implementation?\n\nEvidence target: RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix.",
+      "why": "The decision supplies observable evidence for enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix, keep Dual Write Failure Matrix connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 3147 during outbox relay recovery after a database commit. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; separate deterministic browser proof from race-enabled and live-broker evidence; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Dual Write Failure Matrix condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-dual-write-failure-matrix"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix, name the types, ownership, and stop path, Dual Write Failure Matrix precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 3147 during outbox relay recovery after a database commit. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; separate deterministic browser proof from race-enabled and live-broker evidence; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Commit to the mission model · Workshop Dual Write Failure Matrix, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Publishing immediately after a database commit makes the two operations atomic enough. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-misread",
+          "text": "Publishing immediately after a database commit makes the two operations atomic enough. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the commit to the mission model evidence boundary."
+        },
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Dual Write Failure Matrix happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Dual Write Failure Matrix preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 6194 during quorum failover exercise during a rolling broker restart. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Dual Write Failure Matrix without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix.",
+      "why": "The decision supplies observable evidence for enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix, keep Dual Write Failure Matrix connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 6194 during quorum failover exercise during a rolling broker restart. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Dual Write Failure Matrix condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-dual-write-failure-matrix"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix, name the types, ownership, and stop path, Dual Write Failure Matrix precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 6194 during quorum failover exercise during a rolling broker restart. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Dual Write Failure Matrix · changed case · Workshop Dual Write Failure Matrix, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Publishing immediately after a database commit makes the two operations atomic enough. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For dual write failure matrix · changed case, run one convenient Dual Write Failure Matrix happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Enumerate database-first, publish-first, timeout, crash, confirm-loss, rollback, and duplicate failure windows for a dual write; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a Go outbox relay and saga recovery model."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Publishing immediately after a database commit makes the two operations atomic enough. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the dual write failure matrix · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go messaging team handles case 7813 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Transactional Outbox Record without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record.",
+      "why": "The decision supplies observable evidence for store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record, keep Transactional Outbox Record connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 7813 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Transactional Outbox Record result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-transactional-outbox-record"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record, name the types, ownership, and stop path, Transactional Outbox Record precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 7813 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Transactional Outbox Record · changed case · Workshop Transactional Outbox Record, challenge the documented misconception with runtime, failure, race, or toolchain evidence: An outbox row written in a separate transaction closes the dual-write gap. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Transactional Outbox Record case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "An outbox row written in a separate transaction closes the dual-write gap. In Go, a goroutine that publishes after commit closes the dual-write failure window.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Store domain mutation and immutable outbox message identity, type, payload, destination intent, and availability atomically; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a Go outbox relay and saga recovery model."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "An outbox row written in a separate transaction closes the dual-write gap. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the transactional outbox record · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For transactional outbox record · changed case, run one convenient Transactional Outbox Record happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 9573 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Outbox Relay Confirm without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm.",
+      "why": "The decision supplies observable evidence for claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm, keep Outbox Relay Confirm connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 9573 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Outbox Relay Confirm condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-outbox-relay-confirm"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm, name the types, ownership, and stop path, Outbox Relay Confirm precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 9573 during consumer shutdown drill with one blocked handler goroutine. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Outbox Relay Confirm · changed case · Workshop Outbox Relay Confirm, challenge the documented misconception with runtime, failure, race, or toolchain evidence: The relay can delete a row as soon as publish returns true. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "The relay can delete a row as soon as publish returns true. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the outbox relay confirm · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For outbox relay confirm · changed case, run one convenient Outbox Relay Confirm happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Claim bounded outbox rows, publish with backpressure and confirms, mark completion safely, and recover ambiguous attempts through stable identity; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a Go outbox relay and saga recovery model."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go messaging team handles case 4716 during confirm-window load test with broker flow control. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; allow exactly one terminal acknowledgement owner; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Inbox Outbox Composition without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition.",
+      "why": "The decision supplies observable evidence for combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition, keep Inbox Outbox Composition connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 4716 during confirm-window load test with broker flow control. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; allow exactly one terminal acknowledgement owner; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Inbox Outbox Composition result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-inbox-outbox-composition"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition, name the types, ownership, and stop path, Inbox Outbox Composition precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 4716 during confirm-window load test with broker flow control. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; allow exactly one terminal acknowledgement owner; then introduce a keyed sequence gap during single-active failover. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Inbox Outbox Composition · changed case · Workshop Inbox Outbox Composition, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Inbox plus outbox provides exactly-once transport and removes all duplicates. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Inbox Outbox Composition case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "Inbox plus outbox provides exactly-once transport and removes all duplicates. In Go, a goroutine that publishes after commit closes the dual-write failure window.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For inbox outbox composition · changed case, run one convenient Inbox Outbox Composition happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Combine consumer inbox deduplication, local domain effect, and outgoing outbox writes in one transaction to propagate effectively-once effects; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a Go outbox relay and saga recovery model."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "Inbox plus outbox provides exactly-once transport and removes all duplicates. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the inbox outbox composition · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation",
+      "interaction": "answer",
+      "instruction": "workshop case — A workshop Go messaging team handles case 6335 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; retain screen-reader-readable topology and delivery evidence; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.\n\nWhich action demonstrates Saga Compensation without dropping earlier contracts?\n\nEvidence target: RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation.",
+      "why": "The decision supplies observable evidence for design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation, keep Saga Compensation connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 6335 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; retain screen-reader-readable topology and delivery evidence; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Saga Compensation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation, name the types, ownership, and stop path, Saga Compensation precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 6335 during canary Go consumer decoding old and new envelopes. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; retain screen-reader-readable topology and delivery evidence; then close the owning channel before one delivery decision. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Saga Compensation · changed case · Workshop Saga Compensation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence. Apply it to the stated input and retain a reproducible trace for a Go outbox relay and saga recovery model."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window. That claim does not survive the saga compensation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For saga compensation · changed case, run one convenient Saga Compensation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation",
+      "interaction": "inspect",
+      "instruction": "workshop case — A workshop Go messaging team handles case 1478 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; prove cleanup under a single deadline and cancellation cause; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.\n\nInspect the Saga Compensation trace for this workshop case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation.",
+      "why": "The decision supplies observable evidence for design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation, keep Saga Compensation connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Saga Compensation, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation, name the types, ownership, and stop path, Saga Compensation precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 1478 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; prove cleanup under a single deadline and cancellation cause; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Audit the proposed evidence packet · Workshop Saga Compensation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Saga Compensation case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "A workshop Go messaging team handles case 1478 during race-enabled integration test with duplicate delivery. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; prove cleanup under a single deadline and cancellation cause; then exhaust retry age before attempts reach their maximum. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence. Artifact under review: a Go outbox relay and saga recovery model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        },
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Saga Compensation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Saga Compensation, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: rabbit-go-saga-compensation-1cmipx\" that uses case 1347 to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery. Return observable changed-case evidence. Browser code must not import amqp091-go, open sockets, contact RabbitMQ, Docker, networks, databases, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with Go 1.26.5 compile, vet, race, fuzz, leak, amqp091-go 1.12.0, RabbitMQ 4.3, TLS, partition, restart, load, upgrade, and production gates.\n\nEvidence target: RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Saga Compensation into observable performance evidence. For RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation, keep Saga Compensation connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: rabbit-go-saga-compensation-1cmipx\n// Competency: rabbit-go-saga-compensation.\n// Case 1347: outbox relay recovery after a database commit.\n// Operating constraint: keep credentials and connection URLs out of output.\n// Changed case: fail the canary and prove older Go consumers remain compatible.\nfunc evidence_rabbit_go_saga_compensation_1cmipx(domainCommitted, outboxStored, confirmed, effectAmbiguous bool) (bool, string) {\n\tevidenceVariant1cmipx := \"1cmipx-xpimc1-1347\"\n\t_ = evidenceVariant1cmipx\n\tif domainCommitted != outboxStored { return false, \"dual-write-gap\" }\n\tif !domainCommitted { return false, \"nothing-committed\" }\n\tif effectAmbiguous { return false, \"reconcile\" }\n\tif confirmed { return false, \"published\" }\n\treturn true, \"outbox-pending\"\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation, name the types, ownership, and stop path, Saga Compensation precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 3097 during outbox relay recovery after a database commit. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep credentials and connection URLs out of output; then add a subscriber responsibility without changing publisher intent. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Extend the cumulative artifact · Workshop Saga Compensation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation",
+      "interaction": "debug",
+      "instruction": "workshop case — A workshop Go messaging team handles case 7240 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation.",
+      "why": "The decision supplies observable evidence for design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in go, retain ownership, stop-path, and changed-case evidence. For RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation, keep Saga Compensation connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A workshop Go messaging team handles case 7240 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Saga Compensation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "RabbitMQ Reliability Guide — Controls failure ownership, reconnect, retransmission ambiguity, acknowledgements, confirms, replication, and reliable-delivery limits."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation, name the types, ownership, and stop path, Saga Compensation precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 7240 during Go publisher supervisor losing one state notification. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; keep message identity out of metric labels while preserving causal traces; then cancel the parent context while a result is still ambiguous. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Test an acceptance boundary · Workshop Saga Compensation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Saga Compensation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Saga Compensation condition, repair the responsible layer, and rerun the boundary trace."
+        },
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Saga Compensation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation",
+      "interaction": "reflect",
+      "instruction": "Write the workshop evidence note for Saga Compensation: explain the governing condition, one failure, and how this concrete case was verified — A workshop Go messaging team handles case 8859 during stream-versus-queue architecture board. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; retain screen-reader-readable topology and delivery evidence; then reuse a message identity with a different payload fingerprint. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.\n\nEvidence target: RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation, keep Saga Compensation connected to executable Go messaging decision evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "hints": [
+        "For RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation, name the types, ownership, and stop path, Saga Compensation precondition, or invariant that must hold.",
+        "At RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A workshop Go messaging team handles case 8859 during stream-versus-queue architecture board. Build deterministic Go evidence to compose domain mutation, outbox record, confirmation, and ambiguous-effect recovery; retain screen-reader-readable topology and delivery evidence; then reuse a message identity with a different payload fingerprint. Browser code uses pure values and state transitions only. amqp091-go, AMQP sockets, RabbitMQ, TLS, partitions, restarts, Docker, databases, race and leak checks, load, upgrades, and production behavior require explicit authorized transfer gates. Competency probe: Design saga state, commands, events, timeouts, idempotent steps, compensations, irreversibility, operator intervention, and audit evidence; in Go, retain ownership, stop-path, and changed-case evidence.",
+        "For RabbitMQ and Go Defend the transferred model · Workshop Saga Compensation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A compensation always restores the world to its exact state before the original action. In Go, a goroutine that publishes after commit closes the dual-write failure window."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dual Write Failure Matrix to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dual Write Failure Matrix.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-dual-write-failure-matrix"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Dual Write Failure Matrix to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Dual Write Failure Matrix.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-dual-write-failure-matrix"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Transactional Outbox Record to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Transactional Outbox Record.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-transactional-outbox-record"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Outbox Relay Confirm to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Outbox Relay Confirm.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-outbox-relay-confirm"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Inbox Outbox Composition to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Inbox Outbox Composition.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-inbox-outbox-composition"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Saga Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Saga Compensation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Saga Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Saga Compensation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: rabbit-go-saga-compensation-1cmipx.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "file": "go",
+      "expected": "// Evidence: rabbit-go-saga-compensation-1cmipx"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: rabbit-go-saga-compensation-1cmipx(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_rabbit_go_saga_compensation_1cmipx\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?domainCommitted\\s*!=\\s*outboxStored)(?=(?:(?!// Evidence:)[\\s\\S])*?!domainCommitted)(?=(?:(?!// Evidence:)[\\s\\S])*?effectAmbiguous)(?=(?:(?!// Evidence:)[\\s\\S])*?if\\s+confirmed)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Saga Compensation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Saga Compensation.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using design and saga plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "rabbit-go-saga-compensation"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "design",
+        "saga"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-semantics-wire-model-httpproto-semantics-syntax-separation-concept",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-semantics-wire-model",
+  "kind": "theory",
+  "title": "HTTP Semantics, Messages, Versions, and the Wire Model · Execution Trace: Semantics Syntax Separation",
+  "summary": "A raw implementation copies endpoint behavior into its parser, confuses resources with representations, infers message bodies from method names, and treats HTTP/1.1 syntax as universal HTTP semantics. Planned artifact: Add and verify the semantics syntax separation increment in version-neutral message and semantics model. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+    "Treat failed or timed-out writes as potentially partially observed and avoid blind replay of non-idempotent protocol effects.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "httpproto-semantics-syntax-separation"
+    ],
+    "reinforces": [
+      "httpproto-write-ambiguity-retry"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-tcp-connections-deadlines-mastery-quiz"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Semantics Syntax Separation · Theory Semantics Syntax Separation",
+      "interaction": "predict",
+      "instruction": "theory case — A theory protocol team handles case 3056 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.\n\nBefore reading, predict which action preserves the Semantics Syntax Separation contract for the supplied data.\n\nEvidence target: Predict Semantics Syntax Separation · Theory Semantics Syntax Separation.",
+      "why": "The decision supplies observable evidence for separate version-neutral method, status, field, content, and resource semantics from http/1.1 textual serialization. For Predict Semantics Syntax Separation · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 3056 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Semantics Syntax Separation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls version-neutral HTTP architecture, resources, messages, fields, methods, status, content, routing, intermediaries, and Upgrade and CONNECT semantics."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Predict Semantics Syntax Separation · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Predict Semantics Syntax Separation · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3056 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Predict Semantics Syntax Separation · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-misread",
+          "text": "HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1. That claim does not survive the predict semantics syntax separation evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict semantics syntax separation, run one convenient Semantics Syntax Separation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization. Apply it to the concrete input and state the observable result."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Semantics Syntax Separation · Theory Semantics Syntax Separation",
+      "interaction": "read",
+      "instruction": "theory case — A theory protocol team handles case 3057 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.\n\nAfter tracing the worked code, choose the Semantics Syntax Separation application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Semantics Syntax Separation · Theory Semantics Syntax Separation.",
+      "why": "The decision supplies observable evidence for separate version-neutral method, status, field, content, and resource semantics from http/1.1 textual serialization. For Bound Semantics Syntax Separation · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare types, ownership, goroutine lifetime, failure contract, and observable result; trace value copies, aliases, blocking, and happens-before edges; run the smallest isolated program; then change one boundary input and retain a regression invariant."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example protocol team handles case 3056 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization. A defensible solution applies Semantics Syntax Separation, preserves the governing invariant or value contract, and connects the observed result to version-neutral message and semantics model."
+        },
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-worked-http-protocol-go-semantics-wire-model-2\n// Competency: httpproto-worked-http-protocol-go-semantics-wire-model-2.\n// Case 7590: regional status service with slow assistive and low-bandwidth clients.\n// Operating constraint: one connection has exactly one read owner and one terminal close owner.\n// Changed case: split every structural delimiter across a different read and retain the same result.\nfunc worked_http_protocol_go_semantics_wire_model_2(method string, status int, contentLength int, headRequest bool) (bool, string) {\n\thasContent, meaning := contentLength > 0, \"representation\"\n\tif headRequest || status == 204 || status < 200 { hasContent = false }\n\tif method == \"CONNECT\" && status >= 200 && status < 300 { hasContent, meaning = false, \"tunnel\" }\n\treturn hasContent, meaning\n}",
+          "caption": "Runnable Go value, failure, or concurrency contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1. This fails the Semantics Syntax Separation contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "HTTP Semantics (RFC 9110 STD 97) — Controls version-neutral HTTP architecture, resources, messages, fields, methods, status, content, routing, intermediaries, and Upgrade and CONNECT semantics."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Bound Semantics Syntax Separation · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Bound Semantics Syntax Separation · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3057 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Bound Semantics Syntax Separation · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound semantics syntax separation, run one convenient Semantics Syntax Separation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Semantics Syntax Separation after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1. That claim does not survive the bound semantics syntax separation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory protocol team handles case 3058 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.\n\nInspect the Semantics Syntax Separation trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation.",
+      "why": "The decision supplies observable evidence for separate version-neutral method, status, field, content, and resource semantics from http/1.1 textual serialization. For Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Semantics Syntax Separation, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3058 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Inspect Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Semantics Syntax Separation case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory protocol team handles case 3058 in a multi-tenant intake service near its connection and memory ceilings. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then split every structural delimiter across a different read and retain the same result. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization. Artifact under review: version-neutral message and semantics model.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Semantics Syntax Separation, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect semantics syntax separation evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect semantics syntax separation evidence, run one convenient Semantics Syntax Separation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation",
+      "interaction": "arrange",
+      "instruction": "Order the Semantics Syntax Separation evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation.",
+      "why": "Correct order keeps Semantics Syntax Separation assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 3059 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Semantics Syntax Separation has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3059 in a signed webhook receiver behind an HTTP/2 to HTTP/1.1 gateway. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Sequence Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the theory Semantics Syntax Separation case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the theory Semantics Syntax Separation case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the theory Semantics Syntax Separation case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the theory Semantics Syntax Separation case"
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-Go function headed \"// Evidence: httpproto-semantics-syntax-separation-pf7yv6\" that uses case 3418 to derive message content from method and status semantics before wire framing. Return observable changed-case evidence. Browser code must not open sockets or listeners, negotiate TLS, contact networks or proxies, capture packets, read host state, or use credentials; verify those boundaries later with the named Go 1.26 protocol transfer gates.\n\nEvidence target: Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Semantics Syntax Separation into observable performance evidence. For Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: httpproto-semantics-syntax-separation-pf7yv6\n// Competency: httpproto-semantics-syntax-separation.\n// Case 3418: multi-tenant intake service near its connection and memory ceilings.\n// Operating constraint: no malformed framing may be normalized and forwarded to another recipient.\n// Changed case: split every structural delimiter across a different read and retain the same result.\nfunc evidence_httpproto_semantics_syntax_separation_pf7yv6(method string, status int, contentLength int, headRequest bool) (bool, string) {\n\thasContent, meaning := contentLength > 0, \"representation\"\n\tif headRequest || status == 204 || status < 200 { hasContent = false }\n\tif method == \"CONNECT\" && status >= 200 && status < 300 { hasContent, meaning = false, \"tunnel\" }\n\treturn hasContent, meaning\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3060 in a archival client parsing incomplete close-delimited responses. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Build Semantics Syntax Separation evidence · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation",
+      "interaction": "debug",
+      "instruction": "theory case — A theory protocol team handles case 3061 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.\n\nA teammate acts on this belief: “HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1.” Which repair addresses the cause?\n\nEvidence target: Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation.",
+      "why": "The decision supplies observable evidence for separate version-neutral method, status, field, content, and resource semantics from http/1.1 textual serialization. For Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory protocol team handles case 3061 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Semantics Syntax Separation symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP Semantics — Controls version-neutral HTTP architecture, resources, messages, fields, methods, status, content, routing, intermediaries, and Upgrade and CONNECT semantics."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3061 in a protocol upgrade gateway transferring buffered tunnel bytes. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Repair the Semantics Syntax Separation defect · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Semantics Syntax Separation failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Semantics Syntax Separation, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the semantics syntax separation defect evidence boundary."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the semantics syntax separation defect, run one convenient Semantics Syntax Separation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Semantics Syntax Separation: explain the governing condition, one failure, and how this concrete case was verified — A theory protocol team handles case 3062 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.\n\nEvidence target: Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation, keep Semantics Syntax Separation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "hints": [
+        "For Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation, name the types, ownership, and stop path, Semantics Syntax Separation precondition, or invariant that must hold.",
+        "At Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A theory protocol team handles case 3062 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to derive message content from method and status semantics before wire framing; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then lower one byte or time budget and prove rejection occurs before allocation or dispatch. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Separate version-neutral method, status, field, content, and resource semantics from HTTP/1.1 textual serialization.",
+        "For Defend the Semantics Syntax Separation model · Theory Semantics Syntax Separation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP semantics are defined by the exact capitalization and line layout of HTTP/1.1."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Semantics Syntax Separation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Semantics Syntax Separation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Semantics Syntax Separation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Semantics Syntax Separation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Semantics Syntax Separation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Semantics Syntax Separation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: httpproto-semantics-syntax-separation-pf7yv6.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "file": "go",
+      "expected": "// Evidence: httpproto-semantics-syntax-separation-pf7yv6"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: httpproto-semantics-syntax-separation-pf7yv6(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_httpproto_semantics_syntax_separation_pf7yv6\\s*\\([^)]*\\)\\s*(?:\\([^)]*\\)|[A-Za-z][A-Za-z0-9]*)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?status\\s*==\\s*204)(?=(?:(?!// Evidence:)[\\s\\S])*?method\\s*==\\s*\"CONNECT\")(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Semantics Syntax Separation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Semantics Syntax Separation.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using separate and version plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-semantics-syntax-separation"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "separate",
+        "version"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

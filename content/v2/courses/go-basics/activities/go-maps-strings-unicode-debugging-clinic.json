@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "go-maps-strings-unicode-debugging-clinic",
+  "courseId": "go-basics",
+  "moduleId": "go-maps-strings-unicode",
+  "kind": "debug",
+  "title": "Maps, Strings, Bytes, Runes, Unicode, and Deterministic Results · Goroutine Forensics",
+  "summary": "An incident summarizer must count labels, normalize text, preserve UTF-8, and publish stable output despite unordered maps. Learners isolate plausible failures, compare competing hypotheses, and record cause-level repair evidence. Planned artifact: Repair a changed failure in a Unicode-safe deterministic incident summarizer and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and ev…",
+  "objectives": [
+    "Create, update, delete, clear, and query maps while distinguishing missing keys from stored zero values.",
+    "Choose comparable key types and explain map reference behavior, iteration instability, mutation rules, and concurrency limits.",
+    "Treat strings as immutable byte sequences and convert to or from byte slices with explicit allocation and encoding intent.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "go-map-create-access",
+      "go-map-key-alias-concurrency",
+      "go-string-bytes-immutability",
+      "go-runes-utf8-range",
+      "go-deterministic-map-output"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "go-maps-strings-unicode-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "go-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// go-basics cumulative Go systems portfolio.\n// Each increment names ownership, failure, boundary, and observable behavior.\n// Browser execution uses an isolated Yaegi subset; transfer evidence names full Go 1.26 toolchain gates.\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Go systems portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Map Create Access",
+      "interaction": "inspect",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nInspect the Map Create Access trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Map Create Access.",
+      "why": "The decision supplies observable evidence for create, update, delete, clear, and query maps while distinguishing missing keys from stored zero values. For Inspect the failure record · Debug Map Create Access, keep Map Create Access connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Map Create Access, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "go-map-create-access"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Map Create Access, name the types, ownership, and stop path, Map Create Access precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Map Create Access, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Inspect the failure record · Debug Map Create Access, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A map lookup alone always reveals whether the key existed."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Map Create Access case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A map lookup alone always reveals whether the key existed.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Create, update, delete, clear, and query maps while distinguishing missing keys from stored zero values. Artifact under review: a Unicode-safe deterministic incident summarizer.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Map Create Access happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Map Create Access, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Map Create Access · fault isolation · Debug Map Create Access",
+      "interaction": "debug",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 2 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nWhich observation would disprove this suspected cause: “A map lookup alone always reveals whether the key existed.”?\n\nEvidence target: Map Create Access · fault isolation · Debug Map Create Access.",
+      "why": "The decision supplies observable evidence for create, update, delete, clear, and query maps while distinguishing missing keys from stored zero values. For Map Create Access · fault isolation · Debug Map Create Access, keep Map Create Access connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 2 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Map Create Access symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "The Go Programming Language Specification — Controls lexical, type, declaration, expression, statement, function, method, interface, generic, initialization, and program semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "go-map-create-access"
+      ],
+      "hints": [
+        "For Map Create Access · fault isolation · Debug Map Create Access, name the types, ownership, and stop path, Map Create Access precondition, or invariant that must hold.",
+        "At Map Create Access · fault isolation · Debug Map Create Access, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 2 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Map Create Access · fault isolation · Debug Map Create Access, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A map lookup alone always reveals whether the key existed."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Map Create Access failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A map lookup alone always reveals whether the key existed.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Create, update, delete, clear, and query maps while distinguishing missing keys from stored zero values.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For map create access · fault isolation, run one convenient Map Create Access happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Map Create Access."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the map create access · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency",
+      "interaction": "predict",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 3 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nWhich observation would disprove this suspected cause: “Maps are safe for simultaneous reads and writes because they are reference-like.”?\n\nEvidence target: Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency.",
+      "why": "The decision supplies observable evidence for choose comparable key types and explain map reference behavior, iteration instability, mutation rules, and concurrency limits. For Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency, keep Map Key Alias Concurrency connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 3 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Map Key Alias Concurrency condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "The Go Programming Language Specification — Controls lexical, type, declaration, expression, statement, function, method, interface, generic, initialization, and program semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "go-map-key-alias-concurrency"
+      ],
+      "hints": [
+        "For Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency, name the types, ownership, and stop path, Map Key Alias Concurrency precondition, or invariant that must hold.",
+        "At Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 3 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Map Key Alias Concurrency · fault isolation · Debug Map Key Alias Concurrency, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Maps are safe for simultaneous reads and writes because they are reference-like."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Map Key Alias Concurrency."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the map key alias concurrency · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For map key alias concurrency · fault isolation, run one convenient Map Key Alias Concurrency happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "String Bytes Immutability · fault isolation · Debug String Bytes Immutability",
+      "interaction": "debug",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 4 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nWhich observation would disprove this suspected cause: “String length reports the number of user-perceived characters.”?\n\nEvidence target: String Bytes Immutability · fault isolation · Debug String Bytes Immutability.",
+      "why": "The decision supplies observable evidence for treat strings as immutable byte sequences and convert to or from byte slices with explicit allocation and encoding intent. For String Bytes Immutability · fault isolation · Debug String Bytes Immutability, keep String Bytes Immutability connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 4 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the String Bytes Immutability symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "The Go Programming Language Specification — Controls lexical, type, declaration, expression, statement, function, method, interface, generic, initialization, and program semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "go-string-bytes-immutability"
+      ],
+      "hints": [
+        "For String Bytes Immutability · fault isolation · Debug String Bytes Immutability, name the types, ownership, and stop path, String Bytes Immutability precondition, or invariant that must hold.",
+        "At String Bytes Immutability · fault isolation · Debug String Bytes Immutability, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 4 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For String Bytes Immutability · fault isolation · Debug String Bytes Immutability, challenge the documented misconception with runtime, failure, race, or toolchain evidence: String length reports the number of user-perceived characters."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "String Bytes Immutability failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "String length reports the number of user-perceived characters.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Treat strings as immutable byte sequences and convert to or from byte slices with explicit allocation and encoding intent.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the string bytes immutability · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For string bytes immutability · fault isolation, run one convenient String Bytes Immutability happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies String Bytes Immutability."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range",
+      "interaction": "predict",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 5 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nWhich observation would disprove this suspected cause: “One rune always equals one visible character.”?\n\nEvidence target: Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range.",
+      "why": "The decision supplies observable evidence for decode utf-8 with range and unicode/utf8 while handling byte indexes, replacement runes, invalid input, and grapheme limits. For Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range, keep Runes Utf8 Range connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 5 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Runes Utf8 Range condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "The Go Programming Language Specification — Controls lexical, type, declaration, expression, statement, function, method, interface, generic, initialization, and program semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "go-runes-utf8-range"
+      ],
+      "hints": [
+        "For Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range, name the types, ownership, and stop path, Runes Utf8 Range precondition, or invariant that must hold.",
+        "At Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 5 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Runes Utf8 Range · fault isolation · Debug Runes Utf8 Range, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One rune always equals one visible character."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For runes utf8 range · fault isolation, run one convenient Runes Utf8 Range happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Runes Utf8 Range."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the runes utf8 range · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Deterministic Map Output · fault isolation · Debug Deterministic Map Output",
+      "interaction": "debug",
+      "instruction": "debug case — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nWhich observation would disprove this suspected cause: “Repeated map iteration in one process guarantees the same order.”?\n\nEvidence target: Deterministic Map Output · fault isolation · Debug Deterministic Map Output.",
+      "why": "The decision supplies observable evidence for produce stable map-derived output by extracting and sorting keys under a documented comparison rule. For Deterministic Map Output · fault isolation · Debug Deterministic Map Output, keep Deterministic Map Output connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Deterministic Map Output symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "The Go Programming Language Specification — Controls lexical, type, declaration, expression, statement, function, method, interface, generic, initialization, and program semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "hints": [
+        "For Deterministic Map Output · fault isolation · Debug Deterministic Map Output, name the types, ownership, and stop path, Deterministic Map Output precondition, or invariant that must hold.",
+        "At Deterministic Map Output · fault isolation · Debug Deterministic Map Output, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 6 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Deterministic Map Output · fault isolation · Debug Deterministic Map Output, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Repeated map iteration in one process guarantees the same order."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Deterministic Map Output failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Repeated map iteration in one process guarantees the same order.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Produce stable map-derived output by extracting and sorting keys under a documented comparison rule.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Deterministic Map Output."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the deterministic map output · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For deterministic map output · fault isolation, run one convenient Deterministic Map Output happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Deterministic Map Output",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: go-deterministic-map-output-1r4s6v\" that handles a concrete collection or text boundary, makes copy or iteration behavior observable, checks one invariant, and returns evidence.\n\nEvidence target: Implement the cause-level repair · Debug Deterministic Map Output.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Deterministic Map Output into observable performance evidence. For Implement the cause-level repair · Debug Deterministic Map Output, keep Deterministic Map Output connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: go-deterministic-map-output-1r4s6v\nfunc evidence_go_deterministic_map_output_1r4s6v(input int) (int, bool) {\n\tvalues := []int{input, input + 1, input + 2}\n\tif input < 0 { return 0, false }\n\ttotal := 0\n\tfor _, value := range values { total += value }\n\treturn total, len(values) == 3\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Deterministic Map Output, name the types, ownership, and stop path, Deterministic Map Output precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Deterministic Map Output, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 2 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Implement the cause-level repair · Debug Deterministic Map Output, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Repeated map iteration in one process guarantees the same order."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Deterministic Map Output",
+      "interaction": "arrange",
+      "instruction": "Order the Deterministic Map Output evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Deterministic Map Output.",
+      "why": "Correct order keeps Deterministic Map Output assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Deterministic Map Output, keep Deterministic Map Output connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 3 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Deterministic Map Output has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Deterministic Map Output, name the types, ownership, and stop path, Deterministic Map Output precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Deterministic Map Output, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 3 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Order the regression proof · Debug Deterministic Map Output, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Repeated map iteration in one process guarantees the same order."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the debug Deterministic Map Output case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the debug Deterministic Map Output case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the debug Deterministic Map Output case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the debug Deterministic Map Output case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Deterministic Map Output",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Deterministic Map Output: explain the governing condition, one failure, and how this concrete case was verified — Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 4 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.\n\nEvidence target: Publish the incident record · Debug Deterministic Map Output.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Deterministic Map Output, keep Deterministic Map Output connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Produce stable map-derived output by extracting and sorting keys under a documented comparison rule."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Deterministic Map Output, name the types, ownership, and stop path, Deterministic Map Output precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Deterministic Map Output, trace this concrete input and predict values, errors, blocking, and output before running it: Incident labels include \"café\", \"café\", \"東京\", invalid UTF-8, and 4 repeated ASCII keys. Count without confusing missing and zero, report byte and rune evidence, then sort keys for deterministic output.",
+        "For Publish the incident record · Debug Deterministic Map Output, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Repeated map iteration in one process guarantees the same order."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Map Create Access to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Map Create Access.",
+      "hidden": false,
+      "competencyIds": [
+        "go-map-create-access"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Map Create Access to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Map Create Access.",
+      "hidden": false,
+      "competencyIds": [
+        "go-map-create-access"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Map Key Alias Concurrency to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Map Key Alias Concurrency.",
+      "hidden": false,
+      "competencyIds": [
+        "go-map-key-alias-concurrency"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies String Bytes Immutability to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about String Bytes Immutability.",
+      "hidden": false,
+      "competencyIds": [
+        "go-string-bytes-immutability"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Runes Utf8 Range to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Runes Utf8 Range.",
+      "hidden": false,
+      "competencyIds": [
+        "go-runes-utf8-range"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Deterministic Map Output to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Deterministic Map Output.",
+      "hidden": false,
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: go-deterministic-map-output-1r4s6v.",
+      "hidden": false,
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "file": "go",
+      "expected": "// Evidence: go-deterministic-map-output-1r4s6v"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: go-deterministic-map-output-1r4s6v(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_go_deterministic_map_output_1r4s6v\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?:(?!// Evidence:)[\\s\\S])*?(?:map\\[|\\[\\]|append\\s*\\(|range\\s+)(?:(?!// Evidence:)[\\s\\S])*?if\\s+(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using produce and stable plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "go-deterministic-map-output"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "produce",
+        "stable"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

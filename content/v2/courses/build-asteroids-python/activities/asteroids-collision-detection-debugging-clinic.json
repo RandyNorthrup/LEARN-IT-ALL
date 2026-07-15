@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "asteroids-collision-detection-debugging-clinic",
+  "courseId": "build-asteroids-python",
+  "moduleId": "asteroids-collision-detection",
+  "kind": "debug",
+  "title": "Broad Phase, Circle, Rect, Mask, Seam, and Swept Collision Detection · Program Forensics",
+  "summary": "A preserved game trace contains one plausible state, timing, input, vector, rendering, collision, ownership, audio, accessibility, packaging, or release defect; locate the first failed invariant before editing. Planned artifact: Repair a changed failure in layered collision detection pipeline and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.",
+    "Use groups, spatial partitioning, sweep, or bounded pair sets to reduce candidates without dropping possible overlaps.",
+    "Compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "asteroids-collision-shapes",
+      "asteroids-broad-phase",
+      "asteroids-circle-distance",
+      "asteroids-mask-contract",
+      "asteroids-swept-seam-cases"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "asteroids-collision-detection-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "build-asteroids-python-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"build-asteroids-python cumulative accessible real-time game portfolio.\n\nBrowser execution uses deterministic pure-Python simulation models and fixed fixtures only.\nNative pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers,\nGPU behavior, frame pacing, accessibility playtests, packaging, and production effects require controlled transfer gates.\n\"\"\"\n\nfrom dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass SimulationPolicy:\n    fixed_step_seconds: float = 1 / 120\n    max_frame_seconds: float = 0.1\n    max_updates_per_frame: int = 8\n    logical_width: int = 960\n    logical_height: int = 540\n\n\n@dataclass(frozen=True)\nclass RunEvidence:\n    revision: str\n    seed: int\n    input_trace_id: str\n    runtime_id: str\n    accessibility_profile: str\n\n\ndef portfolio_ready() -> str:\n    return \"Python Asteroids portfolio ready\"\n",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug Asteroids team handles case 4179 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.\n\nInspect the Collision Shapes trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes.",
+      "why": "The decision supplies observable evidence for choose circle, aabb, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation. For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes, keep Collision Shapes connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Collision Shapes, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "asteroids-collision-shapes"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Collision Shapes precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 4179 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.",
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Collision Shapes, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Pixel-perfect collision is always the fairest and best choice."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Collision Shapes case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug Asteroids team handles case 4179 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Pixel-perfect collision is always the fairest and best choice.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation. Artifact under review: layered collision detection pipeline.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Collision Shapes, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases",
+      "interaction": "code",
+      "instruction": "Append a runnable pure-Python function headed \"# Evidence: asteroids-swept-seam-cases-1gyjmj\" that uses case 7705 to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling. Keep its defaults runnable, assert an invariant, and return observable changed-case evidence. Browser code must not claim native pygame-ce, SDL, window, controller, mixer, filesystem, package, GPU, installer, or production behavior; verify those boundaries later with Python 3.14.6, released pygame-ce 2.5.7, fixed and headless SDL fixtures, real devices, licensed assets, accessibility playtests, profiling, clean installations, rollback, recovery, and release gates.\n\nEvidence target: Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Swept Seam Cases into observable performance evidence. For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases, keep Swept Seam Cases connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "# Evidence: asteroids-swept-seam-cases-1gyjmj\n# Competency: asteroids-swept-seam-cases.\n# Case 7705: a headless continuous-integration replay.\n# Operating constraint: record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner.\n# Changed case: lose window focus while thrust and fire are held, then prove both actions release safely.\ndef evidence_asteroids_swept_seam_cases_1gyjmj(distance_squared: float = 400.0, radius_sum: float = 24.0, broad_phase_pairs: int = 18, narrow_phase_pairs: int = 3, swept_tested: bool = True) -> tuple[bool, int | float, str]:\n    evidence_variant_1gyjmj = \"1gyjmj-jmjyg1-7705\"\n    assert evidence_variant_1gyjmj\n    evidence_axes_1gyjmj = (\n        \"player1gyjmj\",\n        \"seed7705\",\n        \"inputjmjyg1\",\n        \"frame1gyjmj7705\",\n        \"state77051gyjmj\",\n        \"playtestjmjyg17705\",\n    )\n    assert len(set(evidence_axes_1gyjmj)) == 6\n    if distance_squared < 0.0 or radius_sum < 0.0:\n        return False, distance_squared, \"collision-domain\"\n    if narrow_phase_pairs > broad_phase_pairs:\n        return False, narrow_phase_pairs, \"phase-inversion\"\n    overlaps = distance_squared <= radius_sum * radius_sum\n    if not swept_tested:\n        return False, narrow_phase_pairs, \"tunneling-gap\"\n    if broad_phase_pairs < 1:\n        return False, broad_phase_pairs, \"missing-broad-phase\"\n    assert narrow_phase_pairs <= broad_phase_pairs\n    return True, int(overlaps), \"layered-collision\"\n",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Swept Seam Cases precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 5798 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.",
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Swept Seam Cases, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Increasing the display frame rate reliably prevents tunneling."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "fault-1",
+      "title": "Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 7417 during a headless continuous-integration replay. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.\n\nWhich observation would disprove this suspected cause: “Pixel-perfect collision is always the fairest and best choice.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes.",
+      "why": "The decision supplies observable evidence for choose circle, aabb, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation. For Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes, keep Collision Shapes connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 7417 during a headless continuous-integration replay. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Collision Shapes symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Rect and FRect — Integer and floating rectangles, coordinates, collision helpers, clipping, bounds, and mutation semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "asteroids-collision-shapes"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Collision Shapes precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 7417 during a headless continuous-integration replay. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.",
+        "For Asteroids, pygame-ce, and Python Collision Shapes · fault isolation · Debug Collision Shapes, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Pixel-perfect collision is always the fairest and best choice."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Collision Shapes failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Pixel-perfect collision is always the fairest and best choice.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose circle, AABB, rotated bound, polygon, or mask from acceptable false positives, cost, and player expectation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Collision Shapes."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the collision shapes · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For collision shapes · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 9036 during a controller-remapping accessibility review. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use groups, spatial partitioning, sweep, or bounded pair sets to reduce candidates without dropping possible overlaps.\n\nWhich observation would disprove this suspected cause: “With a small prototype, quadratic collision work never needs a budget.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase.",
+      "why": "The decision supplies observable evidence for use groups, spatial partitioning, sweep, or bounded pair sets to reduce candidates without dropping possible overlaps. For Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase, keep Broad Phase connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 9036 during a controller-remapping accessibility review. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use groups, spatial partitioning, sweep, or bounded pair sets to reduce candidates without dropping possible overlaps."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Broad Phase condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Rect and FRect — Integer and floating rectangles, coordinates, collision helpers, clipping, bounds, and mutation semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "asteroids-broad-phase"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Broad Phase precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 9036 during a controller-remapping accessibility review. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; keep browser work pure, deterministic, bounded, and free of native display, device, audio, file, package, and operating-system effects; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Use groups, spatial partitioning, sweep, or bounded pair sets to reduce candidates without dropping possible overlaps.",
+        "For Asteroids, pygame-ce, and Python Broad Phase · fault isolation · Debug Broad Phase, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: With a small prototype, quadratic collision work never needs a budget."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the broad phase · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For broad phase · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Broad Phase."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 1655 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance.\n\nWhich observation would disprove this suspected cause: “Distance must always take a square root to be correct.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance.",
+      "why": "The decision supplies observable evidence for compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance. For Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance, keep Circle Distance connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 1655 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Circle Distance symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Rect and FRect — Integer and floating rectangles, coordinates, collision helpers, clipping, bounds, and mutation semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "asteroids-circle-distance"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Circle Distance precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 1655 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance.",
+        "For Asteroids, pygame-ce, and Python Circle Distance · fault isolation · Debug Circle Distance, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Distance must always take a square root to be correct."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Circle Distance failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Distance must always take a square root to be correct.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare squared center distance with squared radius sum and test tangent, overlap, separation, zero radius, and float tolerance.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For circle distance · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Circle Distance."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the circle distance · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 3274 during a keyboard-only community arcade night. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Build masks only from current transformed surfaces when needed and align offsets to matching coordinate systems.\n\nWhich observation would disprove this suspected cause: “spritecollide with a mask automatically understands world centers and rotation.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract.",
+      "why": "The decision supplies observable evidence for build masks only from current transformed surfaces when needed and align offsets to matching coordinate systems. For Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract, keep Mask Contract connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 3274 during a keyboard-only community arcade night. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Build masks only from current transformed surfaces when needed and align offsets to matching coordinate systems."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Mask Contract condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Rect and FRect — Integer and floating rectangles, coordinates, collision helpers, clipping, bounds, and mutation semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "asteroids-mask-contract"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Mask Contract precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 3274 during a keyboard-only community arcade night. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Build masks only from current transformed surfaces when needed and align offsets to matching coordinate systems.",
+        "For Asteroids, pygame-ce, and Python Mask Contract · fault isolation · Debug Mask Contract, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: spritecollide with a mask automatically understands world centers and rotation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Mask Contract."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the mask contract · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For mask contract · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 4893 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.\n\nWhich observation would disprove this suspected cause: “Increasing the display frame rate reliably prevents tunneling.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases.",
+      "why": "The decision supplies observable evidence for test segment or swept motion and toroidal images for fast movement and edge crossings. For Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases, keep Swept Seam Cases connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 4893 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Swept Seam Cases symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Rect and FRect — Integer and floating rectangles, coordinates, collision helpers, clipping, bounds, and mutation semantics."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Swept Seam Cases precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 4893 during an offline cross-platform release rehearsal. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.",
+        "For Asteroids, pygame-ce, and Python Swept Seam Cases · fault isolation · Debug Swept Seam Cases, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Increasing the display frame rate reliably prevents tunneling."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Swept Seam Cases failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Increasing the display frame rate reliably prevents tunneling.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Test segment or swept motion and toroidal images for fast movement and edge crossings.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the swept seam cases · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For swept seam cases · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Swept Seam Cases."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases",
+      "interaction": "arrange",
+      "instruction": "Order the Swept Seam Cases Asteroids, pygame-ce, and Python player-input-to-release evidence cycle for this debug task before implementing it.\n\nEvidence target: Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases.",
+      "why": "Correct order keeps Swept Seam Cases assumptions visible before execution and verifies its result against a boundary case afterward. For Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases, keep Swept Seam Cases connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 7608 during a controller-remapping accessibility review. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Swept Seam Cases has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Swept Seam Cases precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 7608 during a controller-remapping accessibility review. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.",
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Swept Seam Cases, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Increasing the display frame rate reliably prevents tunneling."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Asteroids, pygame-ce, and Python player outcome, revision, runtime, seed, input trace, accessibility profile, and frame, entity, collision, audio, and memory budgets for the debug Swept Seam Cases case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Asteroids, pygame-ce, and Python event, intent, simulation, collision, cleanup, rendering, cue, failure, pause, rollback, and recovery outcomes for the debug Swept Seam Cases case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Asteroids, pygame-ce, and Python simulation model and retain exact intermediate and changed-case results for the debug Swept Seam Cases case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Change one Asteroids, pygame-ce, and Python frame rate, stall, seam, device, collision, cue, save, package, or release condition, verify bounded rejection or repair, and state desktop transfer limits for the debug Swept Seam Cases case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Swept Seam Cases: explain the governing condition, one failure, and how this concrete case was verified — A debug Asteroids team handles case 9227 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.\n\nEvidence target: Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases, keep Swept Seam Cases connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Test segment or swept motion and toroidal images for fast movement and edge crossings."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Swept Seam Cases precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 9227 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to layer broad-phase pruning, circle or rectangle checks, masks where justified, seam cases, and swept tests for tunneling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Test segment or swept motion and toroidal images for fast movement and edge crossings.",
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Swept Seam Cases, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Increasing the display frame rate reliably prevents tunneling."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Collision Shapes to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Collision Shapes.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-collision-shapes"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: asteroids-swept-seam-cases-1gyjmj.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "file": "python",
+      "expected": "# Evidence: asteroids-swept-seam-cases-1gyjmj"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "# Evidence: asteroids-swept-seam-cases-1gyjmj(?:(?!# Evidence:)[\\s\\S])*?def\\s+evidence_asteroids_swept_seam_cases_1gyjmj\\s*\\((?:(?!# Evidence:)[\\s\\S])*?\\)\\s*(?:->[^:]+)?\\s*:(?=(?:(?!# Evidence:)[\\s\\S])*?narrow_phase_pairs > broad_phase_pairs)(?=(?:(?!# Evidence:)[\\s\\S])*?radius_sum \\* radius_sum)(?=(?:(?!# Evidence:)[\\s\\S])*?not swept_tested)(?=(?:(?!# Evidence:)[\\s\\S])*?narrow_phase_pairs <= broad_phase_pairs)(?=(?:(?!# Evidence:)[\\s\\S])*?assert)(?=(?:(?!# Evidence:)[\\s\\S])*?return)(?:(?!# Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ]
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Collision Shapes to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Collision Shapes.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-collision-shapes"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Broad Phase to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Broad Phase.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-broad-phase"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Circle Distance to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Circle Distance.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-circle-distance"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Mask Contract to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Mask Contract.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-mask-contract"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Swept Seam Cases to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Swept Seam Cases.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using test and segment plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-swept-seam-cases"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "test",
+        "segment"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

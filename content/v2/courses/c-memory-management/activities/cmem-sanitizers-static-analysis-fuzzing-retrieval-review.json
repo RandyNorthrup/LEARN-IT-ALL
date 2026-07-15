@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 2,
+  "id": "cmem-sanitizers-static-analysis-fuzzing-retrieval-review",
+  "courseId": "c-memory-management",
+  "moduleId": "cmem-sanitizers-static-analysis-fuzzing",
+  "kind": "review",
+  "title": "Sanitizers, Static Analysis, and Fuzzing · Spiral Systems Review",
+  "summary": "After a delay, a release reviewer reconstructs the layered memory-defect test matrix contract from partial traces, compares two near-miss implementations, and retrieves prior bounds and lifetime rules before feedback. Planned artifact: Extend the evidence record for layered memory-defect test matrix after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes.",
+    "Use UndefinedBehaviorSanitizer and fully instrumented MemorySanitizer environments for their distinct defect classes.",
+    "Run Clang and GCC static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "cmem-asan-lsan-evidence",
+      "cmem-ubsan-msan-evidence",
+      "cmem-static-analyzer-triage",
+      "cmem-coverage-guided-fuzzing",
+      "cmem-tool-limit-matrix"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "cmem-sanitizers-static-analysis-fuzzing-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "c-memory-management-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": "/* c-memory-management cumulative memory-safety decision portfolio. */\n/* Instant code runs only in PicoC 3.2.2: C89/C90 plus selected C99. */\n/* C23, GCC, Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, OS resources, FFI, load, and production claims require explicit controlled transfer gates. */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct cmem_evidence {\n  size_t bytes;\n  unsigned generation;\n  int live;\n  int invariant;\n};\n"
+  },
+  "steps": [
+    {
+      "id": "mixed-evidence",
+      "title": "Separate evidence from confidence · Review Tool Limit Matrix",
+      "interaction": "inspect",
+      "instruction": "review case — A review native-systems team handles memory case 8744. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.\n\nInspect the Tool Limit Matrix trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Separate evidence from confidence · Review Tool Limit Matrix.",
+      "why": "The decision supplies observable evidence for maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit. For Separate evidence from confidence · Review Tool Limit Matrix, keep Tool Limit Matrix connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Tool Limit Matrix, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "hints": [
+        "For Separate evidence from confidence · Review Tool Limit Matrix, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Tool Limit Matrix precondition, or invariant that must hold.",
+        "At Separate evidence from confidence · Review Tool Limit Matrix, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 8744. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.",
+        "For Separate evidence from confidence · Review Tool Limit Matrix, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Running every tool once is better than selecting compatible complementary gates."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Tool Limit Matrix case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review native-systems team handles memory case 8744. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "Running every tool once is better than selecting compatible complementary gates.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit. Artifact under review: layered memory-defect test matrix.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Tool Limit Matrix case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Tool Limit Matrix, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Asan Lsan Evidence · changed case · Review Asan Lsan Evidence",
+      "interaction": "predict",
+      "instruction": "review case — A review native-systems team handles memory case 4601. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes.\n\nWhich action demonstrates Asan Lsan Evidence without dropping earlier contracts?\n\nEvidence target: Asan Lsan Evidence · changed case · Review Asan Lsan Evidence.",
+      "why": "The decision supplies observable evidence for build and run representative tests with addresssanitizer and leaksanitizer, symbols, fatal findings, and supported-target notes. For Asan Lsan Evidence · changed case · Review Asan Lsan Evidence, keep Asan Lsan Evidence connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 4601. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Asan Lsan Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC Static Analyzer Options — Path-sensitive diagnostics, memory defect coverage, analyzer assumptions, and limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "cmem-asan-lsan-evidence"
+      ],
+      "hints": [
+        "For Asan Lsan Evidence · changed case · Review Asan Lsan Evidence, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Asan Lsan Evidence precondition, or invariant that must hold.",
+        "At Asan Lsan Evidence · changed case · Review Asan Lsan Evidence, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 4601. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes.",
+        "For Asan Lsan Evidence · changed case · Review Asan Lsan Evidence, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: ASan detects uninitialized reads, every leak, and every temporal defect."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes. Apply it to the stated input and retain a reproducible trace for layered memory-defect test matrix."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "ASan detects uninitialized reads, every leak, and every temporal defect. That claim does not survive the asan lsan evidence · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For asan lsan evidence · changed case, run one convenient Asan Lsan Evidence case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 2982. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use UndefinedBehaviorSanitizer and fully instrumented MemorySanitizer environments for their distinct defect classes.\n\nWhich action demonstrates Ubsan Msan Evidence without dropping earlier contracts?\n\nEvidence target: Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence.",
+      "why": "The decision supplies observable evidence for use undefinedbehaviorsanitizer and fully instrumented memorysanitizer environments for their distinct defect classes. For Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence, keep Ubsan Msan Evidence connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 2982. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use UndefinedBehaviorSanitizer and fully instrumented MemorySanitizer environments for their distinct defect classes."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Ubsan Msan Evidence condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC Static Analyzer Options — Path-sensitive diagnostics, memory defect coverage, analyzer assumptions, and limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "cmem-ubsan-msan-evidence"
+      ],
+      "hints": [
+        "For Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Ubsan Msan Evidence precondition, or invariant that must hold.",
+        "At Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 2982. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Use UndefinedBehaviorSanitizer and fully instrumented MemorySanitizer environments for their distinct defect classes.",
+        "For Ubsan Msan Evidence · changed case · Review Ubsan Msan Evidence, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: UBSan and MSan are interchangeable memory-error modes."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "UBSan and MSan are interchangeable memory-error modes. That claim does not survive the ubsan msan evidence · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For ubsan msan evidence · changed case, run one convenient Ubsan Msan Evidence case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Use UndefinedBehaviorSanitizer and fully instrumented MemorySanitizer environments for their distinct defect classes. Apply it to the stated input and retain a reproducible trace for layered memory-defect test matrix."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Static Analyzer Triage · changed case · Review Static Analyzer Triage",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 7839. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Run Clang and GCC static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs.\n\nWhich action demonstrates Static Analyzer Triage without dropping earlier contracts?\n\nEvidence target: Static Analyzer Triage · changed case · Review Static Analyzer Triage.",
+      "why": "The decision supplies observable evidence for run clang and gcc static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs. For Static Analyzer Triage · changed case · Review Static Analyzer Triage, keep Static Analyzer Triage connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 7839. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Run Clang and GCC static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Static Analyzer Triage condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC Static Analyzer Options — Path-sensitive diagnostics, memory defect coverage, analyzer assumptions, and limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "cmem-static-analyzer-triage"
+      ],
+      "hints": [
+        "For Static Analyzer Triage · changed case · Review Static Analyzer Triage, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Static Analyzer Triage precondition, or invariant that must hold.",
+        "At Static Analyzer Triage · changed case · Review Static Analyzer Triage, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 7839. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Run Clang and GCC static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs.",
+        "For Static Analyzer Triage · changed case · Review Static Analyzer Triage, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Static analyzer warnings are either proofs or ignorable false positives."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For static analyzer triage · changed case, run one convenient Static Analyzer Triage case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Run Clang and GCC static analyzers, preserve paths and assumptions, classify findings, and regression-test repairs. Apply it to the stated input and retain a reproducible trace for layered memory-defect test matrix."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Static analyzer warnings are either proofs or ignorable false positives. That claim does not survive the static analyzer triage · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing",
+      "interaction": "predict",
+      "instruction": "review case — A review native-systems team handles memory case 6220. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build a deterministic libFuzzer target with bounded input, sanitizer instrumentation, corpus, dictionary, timeout, and minimized regressions.\n\nWhich action demonstrates Coverage Guided Fuzzing without dropping earlier contracts?\n\nEvidence target: Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing.",
+      "why": "The decision supplies observable evidence for build a deterministic libfuzzer target with bounded input, sanitizer instrumentation, corpus, dictionary, timeout, and minimized regressions. For Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing, keep Coverage Guided Fuzzing connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 6220. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build a deterministic libFuzzer target with bounded input, sanitizer instrumentation, corpus, dictionary, timeout, and minimized regressions."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Coverage Guided Fuzzing condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC Static Analyzer Options — Path-sensitive diagnostics, memory defect coverage, analyzer assumptions, and limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "cmem-coverage-guided-fuzzing"
+      ],
+      "hints": [
+        "For Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Coverage Guided Fuzzing precondition, or invariant that must hold.",
+        "At Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 6220. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build a deterministic libFuzzer target with bounded input, sanitizer instrumentation, corpus, dictionary, timeout, and minimized regressions.",
+        "For Coverage Guided Fuzzing · changed case · Review Coverage Guided Fuzzing, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: High line coverage means a parser has been fuzzed thoroughly."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Build a deterministic libFuzzer target with bounded input, sanitizer instrumentation, corpus, dictionary, timeout, and minimized regressions. Apply it to the stated input and retain a reproducible trace for layered memory-defect test matrix."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "High line coverage means a parser has been fuzzed thoroughly. That claim does not survive the coverage guided fuzzing · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For coverage guided fuzzing · changed case, run one convenient Coverage Guided Fuzzing case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Tool Limit Matrix · changed case · Review Tool Limit Matrix",
+      "interaction": "answer",
+      "instruction": "review case — A review native-systems team handles memory case 2077. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.\n\nWhich action demonstrates Tool Limit Matrix without dropping earlier contracts?\n\nEvidence target: Tool Limit Matrix · changed case · Review Tool Limit Matrix.",
+      "why": "The decision supplies observable evidence for maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit. For Tool Limit Matrix · changed case · Review Tool Limit Matrix, keep Tool Limit Matrix connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 2077. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Tool Limit Matrix condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "GCC Static Analyzer Options — Path-sensitive diagnostics, memory defect coverage, analyzer assumptions, and limitations."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "hints": [
+        "For Tool Limit Matrix · changed case · Review Tool Limit Matrix, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Tool Limit Matrix precondition, or invariant that must hold.",
+        "At Tool Limit Matrix · changed case · Review Tool Limit Matrix, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 2077. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.",
+        "For Tool Limit Matrix · changed case · Review Tool Limit Matrix, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Running every tool once is better than selecting compatible complementary gates."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "Running every tool once is better than selecting compatible complementary gates. That claim does not survive the tool limit matrix · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For tool limit matrix · changed case, run one convenient Tool Limit Matrix case, omit size, bounds, lifetime, owner, allocation failure, cleanup, invariant output, and native transfer gates, then call the browser result production-safe."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit. Apply it to the stated input and retain a reproducible trace for layered memory-defect test matrix."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Retrieve the complete evidence cycle · Review Asan Lsan Evidence",
+      "interaction": "arrange",
+      "instruction": "Order the Asan Lsan Evidence evidence cycle for this review task before implementing it.\n\nEvidence target: Retrieve the complete evidence cycle · Review Asan Lsan Evidence.",
+      "why": "Correct order keeps Asan Lsan Evidence assumptions visible before execution and verifies its result against a boundary case afterward. For Retrieve the complete evidence cycle · Review Asan Lsan Evidence, keep Asan Lsan Evidence connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review native-systems team handles memory case 9458. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Asan Lsan Evidence has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "cmem-asan-lsan-evidence"
+      ],
+      "hints": [
+        "For Retrieve the complete evidence cycle · Review Asan Lsan Evidence, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Asan Lsan Evidence precondition, or invariant that must hold.",
+        "At Retrieve the complete evidence cycle · Review Asan Lsan Evidence, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 9458. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Build and run representative tests with AddressSanitizer and LeakSanitizer, symbols, fatal findings, and supported-target notes.",
+        "For Retrieve the complete evidence cycle · Review Asan Lsan Evidence, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: ASan detects uninitialized reads, every leak, and every temporal defect."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Define the stakeholder decision, quantities, authority, and constraints for the review Asan Lsan Evidence case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Choose and document the smallest defensible model or procedure for the review Asan Lsan Evidence case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Execute the model while preserving inspectable intermediate evidence for the review Asan Lsan Evidence case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Test boundaries and changed cases, communicate limits, and revise for the review Asan Lsan Evidence case"
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Record what required effort · Review Tool Limit Matrix",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Tool Limit Matrix: explain the governing condition, one failure, and how this concrete case was verified — A review native-systems team handles memory case 5315. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.\n\nEvidence target: Record what required effort · Review Tool Limit Matrix.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Record what required effort · Review Tool Limit Matrix, keep Tool Limit Matrix connected to executable C memory invariant and explicit native transfer evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "hints": [
+        "For Record what required effort · Review Tool Limit Matrix, name the size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary, Tool Limit Matrix precondition, or invariant that must hold.",
+        "At Record what required effort · Review Tool Limit Matrix, trace this concrete input and predict size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing before reviewing it: A review native-systems team handles memory case 5315. Produce bounded C evidence to classify a defect against complementary native tools; change the size, lifetime, failure, or ownership condition; print the observed result and invariant. Instant code stays inside the PicoC practice subset. C23 syntax, current GCC and Clang, optimization, ABI, threads, sanitizers, analyzers, fuzzers, operating-system resources, foreign runtimes, load, and production behavior require named controlled transfer gates. Competency probe: Maintain a defect-by-tool and platform matrix so unsupported configurations and blind spots remain explicit.",
+        "For Record what required effort · Review Tool Limit Matrix, challenge the documented misconception with changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer evidence: Running every tool once is better than selecting compatible complementary gates."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Tool Limit Matrix to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Tool Limit Matrix.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Asan Lsan Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Asan Lsan Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-asan-lsan-evidence"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Ubsan Msan Evidence to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Ubsan Msan Evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-ubsan-msan-evidence"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Static Analyzer Triage to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Static Analyzer Triage.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-static-analyzer-triage"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Coverage Guided Fuzzing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Coverage Guided Fuzzing.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-coverage-guided-fuzzing"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Tool Limit Matrix to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Tool Limit Matrix.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-asan-lsan-evidence"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using maintain and defect plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "cmem-tool-limit-matrix"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "maintain",
+        "defect"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

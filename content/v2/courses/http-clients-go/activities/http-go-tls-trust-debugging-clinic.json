@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "http-go-tls-trust-debugging-clinic",
+  "courseId": "http-clients-go",
+  "moduleId": "http-go-tls-trust",
+  "kind": "debug",
+  "title": "HTTPS, TLS Identity, Certificate Trust, Proxies, and Downgrade Boundaries · Go Client Systems · Contract Triage",
+  "summary": "An on-call reliability engineer tracing a production client incident must isolate a plausible but incorrect result from conflicting traces, repair its cause, and retain a regression witness for https, tls identity, certificate trust, proxies, and downgrade boundaries, producing transport trust and certificate evidence record. Planned artifact: Repair a changed failure in a Go 1.26 net/http transport trust and certificate evidence record and publish the reproduction, evidence, repair, and regres…",
+  "objectives": [
+    "Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Preserve hostname, chain, validity, algorithm, and revocation-policy checks without disabling verification. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Add an intended private trust root or test certificate without replacing or weakening unrelated trust. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "http-go-https-identity",
+      "http-go-certificate-validation",
+      "http-go-trust-roots-private-ca",
+      "http-go-proxy-mtls-boundaries",
+      "http-go-downgrade-mixed-content"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-go-tls-trust-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "http-clients-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-clients-go cumulative protocol-correct client portfolio.\n// Browser execution uses deterministic request and response models only.\n// Live DNS, TLS, sockets, net/http, races, and load require full Go 1.26 transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype RequestEvidence struct { Method, Target string; Attempt int }\ntype ResponseEvidence struct { Status, BodyBytes int; Valid bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP client portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Go Inspect the failure record · Debug Https Identity",
+      "interaction": "inspect",
+      "instruction": "debug case — Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nInspect the Https Identity trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Go Inspect the failure record · Debug Https Identity.",
+      "why": "The decision supplies observable evidence for bind https authority to the requested host, certificate identity, authenticated transport, and application expectation. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Inspect the failure record · Debug Https Identity, keep Https Identity connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Https Identity, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "http-go-https-identity"
+      ],
+      "hints": [
+        "For Go Inspect the failure record · Debug Https Identity, name the method, authority, body, byte, time, and credential boundary, Https Identity precondition, or invariant that must hold.",
+        "At Go Inspect the failure record · Debug Https Identity, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Inspect the failure record · Debug Https Identity, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Encryption without authenticated identity is sufficient HTTPS trust. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Https Identity case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Encryption without authenticated identity is sufficient HTTPS trust. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence. Artifact under review: a Go 1.26 net/http transport trust and certificate evidence record.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Https Identity happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Https Identity, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Go Https Identity · fault isolation · Debug Https Identity",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent connects to api4.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “Encryption without authenticated identity is sufficient HTTPS trust. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Https Identity · fault isolation · Debug Https Identity.",
+      "why": "The decision supplies observable evidence for bind https authority to the requested host, certificate identity, authenticated transport, and application expectation. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Https Identity · fault isolation · Debug Https Identity, keep Https Identity connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api4.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Https Identity symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "OWASP SSRF Prevention and REST Security Cheat Sheets — Controls outbound destination allow-lists, redirect policy, DNS rebinding, network segmentation, response handling, secrets, TLS, validation, logging, and least authority."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "http-go-https-identity"
+      ],
+      "hints": [
+        "For Go Https Identity · fault isolation · Debug Https Identity, name the method, authority, body, byte, time, and credential boundary, Https Identity precondition, or invariant that must hold.",
+        "At Go Https Identity · fault isolation · Debug Https Identity, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api4.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Https Identity · fault isolation · Debug Https Identity, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Encryption without authenticated identity is sufficient HTTPS trust. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Https Identity failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Encryption without authenticated identity is sufficient HTTPS trust. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bind HTTPS authority to the requested host, certificate identity, authenticated transport, and application expectation. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Https Identity."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the https identity · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For https identity · fault isolation, run one convenient Https Identity happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Go Certificate Validation · fault isolation · Debug Certificate Validation",
+      "interaction": "predict",
+      "instruction": "debug case — Go incident collection agent connects to api5.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Preserve hostname, chain, validity, algorithm, and revocation-policy checks without disabling verification. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “Skipping certificate verification is acceptable when payloads are not secret. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Certificate Validation · fault isolation · Debug Certificate Validation.",
+      "why": "The decision supplies observable evidence for preserve hostname, chain, validity, algorithm, and revocation-policy checks without disabling verification. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Certificate Validation · fault isolation · Debug Certificate Validation, keep Certificate Validation connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api5.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Preserve hostname, chain, validity, algorithm, and revocation-policy checks without disabling verification. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Certificate Validation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "OWASP SSRF Prevention and REST Security Cheat Sheets — Controls outbound destination allow-lists, redirect policy, DNS rebinding, network segmentation, response handling, secrets, TLS, validation, logging, and least authority."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "http-go-certificate-validation"
+      ],
+      "hints": [
+        "For Go Certificate Validation · fault isolation · Debug Certificate Validation, name the method, authority, body, byte, time, and credential boundary, Certificate Validation precondition, or invariant that must hold.",
+        "At Go Certificate Validation · fault isolation · Debug Certificate Validation, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api5.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Preserve hostname, chain, validity, algorithm, and revocation-policy checks without disabling verification. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Certificate Validation · fault isolation · Debug Certificate Validation, challenge the documented misconception with request, response, fault, policy, and transfer evidence: Skipping certificate verification is acceptable when payloads are not secret. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the certificate validation · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For certificate validation · fault isolation, run one convenient Certificate Validation happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Certificate Validation."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent connects to api6.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Add an intended private trust root or test certificate without replacing or weakening unrelated trust. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A self-signed certificate must be accepted globally to reach an internal service. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca.",
+      "why": "The decision supplies observable evidence for add an intended private trust root or test certificate without replacing or weakening unrelated trust. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca, keep Trust Roots Private Ca connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api6.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Add an intended private trust root or test certificate without replacing or weakening unrelated trust. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Trust Roots Private Ca symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "OWASP SSRF Prevention and REST Security Cheat Sheets — Controls outbound destination allow-lists, redirect policy, DNS rebinding, network segmentation, response handling, secrets, TLS, validation, logging, and least authority."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "http-go-trust-roots-private-ca"
+      ],
+      "hints": [
+        "For Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca, name the method, authority, body, byte, time, and credential boundary, Trust Roots Private Ca precondition, or invariant that must hold.",
+        "At Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api6.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Add an intended private trust root or test certificate without replacing or weakening unrelated trust. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Trust Roots Private Ca · fault isolation · Debug Trust Roots Private Ca, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A self-signed certificate must be accepted globally to reach an internal service. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Trust Roots Private Ca failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "A self-signed certificate must be accepted globally to reach an internal service. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Add an intended private trust root or test certificate without replacing or weakening unrelated trust. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For trust roots private ca · fault isolation, run one convenient Trust Roots Private Ca happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Trust Roots Private Ca."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the trust roots private ca · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries",
+      "interaction": "predict",
+      "instruction": "debug case — Go incident collection agent connects to api2.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Model forward proxies, CONNECT tunnels, TLS interception, and mutual TLS credentials as separate authority boundaries. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A proxy URL and a client certificate grant equivalent authority. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries.",
+      "why": "The decision supplies observable evidence for model forward proxies, connect tunnels, tls interception, and mutual tls credentials as separate authority boundaries. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries, keep Proxy Mtls Boundaries connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api2.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Model forward proxies, CONNECT tunnels, TLS interception, and mutual TLS credentials as separate authority boundaries. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Proxy Mtls Boundaries condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "OWASP SSRF Prevention and REST Security Cheat Sheets — Controls outbound destination allow-lists, redirect policy, DNS rebinding, network segmentation, response handling, secrets, TLS, validation, logging, and least authority."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "http-go-proxy-mtls-boundaries"
+      ],
+      "hints": [
+        "For Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries, name the method, authority, body, byte, time, and credential boundary, Proxy Mtls Boundaries precondition, or invariant that must hold.",
+        "At Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api2.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Model forward proxies, CONNECT tunnels, TLS interception, and mutual TLS credentials as separate authority boundaries. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Proxy Mtls Boundaries · fault isolation · Debug Proxy Mtls Boundaries, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A proxy URL and a client certificate grant equivalent authority. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Proxy Mtls Boundaries."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the proxy mtls boundaries · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For proxy mtls boundaries · fault isolation, run one convenient Proxy Mtls Boundaries happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content",
+      "interaction": "debug",
+      "instruction": "debug case — Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nWhich observation would disprove this suspected cause: “A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http.”?\n\nEvidence target: Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content.",
+      "why": "The decision supplies observable evidence for reject unintended http downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. demonstrate the result through go 1.26 net/http, net/url, context, io, crypto/tls, roundtripper, and httptest evidence. For Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content, keep Downgrade Mixed Content connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Downgrade Mixed Content symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "OWASP SSRF Prevention and REST Security Cheat Sheets — Controls outbound destination allow-lists, redirect policy, DNS rebinding, network segmentation, response handling, secrets, TLS, validation, logging, and least authority."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "hints": [
+        "For Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content, name the method, authority, body, byte, time, and credential boundary, Downgrade Mixed Content precondition, or invariant that must hold.",
+        "At Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api3.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Downgrade Mixed Content · fault isolation · Debug Downgrade Mixed Content, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Downgrade Mixed Content failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the downgrade mixed content · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For downgrade mixed content · fault isolation, run one convenient Downgrade Mixed Content happy path, omit method, authority, credential, byte, time, redirect, retry, and cleanup boundaries, then accept plausible output."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Downgrade Mixed Content."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Go Order the regression proof · Debug Downgrade Mixed Content",
+      "interaction": "arrange",
+      "instruction": "Order the Downgrade Mixed Content Go HTTP evidence cycle for this debug task before implementing it.\n\nEvidence target: Go Order the regression proof · Debug Downgrade Mixed Content.",
+      "why": "Correct order keeps Downgrade Mixed Content assumptions visible before execution and verifies its result against a boundary case afterward. For Go Order the regression proof · Debug Downgrade Mixed Content, keep Downgrade Mixed Content connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Go incident collection agent connects to api4.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Downgrade Mixed Content has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "hints": [
+        "For Go Order the regression proof · Debug Downgrade Mixed Content, name the method, authority, body, byte, time, and credential boundary, Downgrade Mixed Content precondition, or invariant that must hold.",
+        "At Go Order the regression proof · Debug Downgrade Mixed Content, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api4.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Order the regression proof · Debug Downgrade Mixed Content, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Go method semantics, target authority, credentials, body ownership, and byte and time budgets for the debug Downgrade Mixed Content case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Go resolution, transport, redirect, status, representation, retry, and cleanup outcomes for the debug Downgrade Mixed Content case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Go request or response model and retain inspectable evidence for the debug Downgrade Mixed Content case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed Go failure, verify bounded cleanup, and state live-network transfer limits for the debug Downgrade Mixed Content case"
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Go Implement the cause-level repair · Debug Downgrade Mixed Content",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: http-go-downgrade-mixed-content-17kxil\" that uses deterministic value evidence to require HTTPS, hostname identity, and chain trust separately.\n\nEvidence target: Go Implement the cause-level repair · Debug Downgrade Mixed Content.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Downgrade Mixed Content into observable performance evidence. For Go Implement the cause-level repair · Debug Downgrade Mixed Content, keep Downgrade Mixed Content connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: http-go-downgrade-mixed-content-17kxil\nfunc evidence_http_go_downgrade_mixed_content_17kxil(scheme string, hostnameMatches bool, chainTrusted bool) (string, bool) {\n\tif scheme != \"https\" { return \"downgrade\", false }\n\tif !hostnameMatches { return \"hostname\", false }\n\tif !chainTrusted { return \"trust chain\", false }\n\treturn \"authenticated transport\", true\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "hints": [
+        "For Go Implement the cause-level repair · Debug Downgrade Mixed Content, name the method, authority, body, byte, time, and credential boundary, Downgrade Mixed Content precondition, or invariant that must hold.",
+        "At Go Implement the cause-level repair · Debug Downgrade Mixed Content, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api5.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Implement the cause-level repair · Debug Downgrade Mixed Content, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "incident-report",
+      "title": "Go Publish the incident record · Debug Downgrade Mixed Content",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Downgrade Mixed Content: explain the governing condition, one failure, and how this concrete case was verified — Go incident collection agent connects to api6.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.\n\nEvidence target: Go Publish the incident record · Debug Downgrade Mixed Content.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Go Publish the incident record · Debug Downgrade Mixed Content, keep Downgrade Mixed Content connected to executable HTTP client decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "hints": [
+        "For Go Publish the incident record · Debug Downgrade Mixed Content, name the method, authority, body, byte, time, and credential boundary, Downgrade Mixed Content precondition, or invariant that must hold.",
+        "At Go Publish the incident record · Debug Downgrade Mixed Content, trace this concrete input and predict resolution, redirect, status, representation, retry, and cleanup evidence before running it: Go incident collection agent connects to api6.internal.test through proxy.example.test using a private CA and optional client certificate. Verify requested identity, connected endpoint, roots, proxy authority, downgrade policy, and what evidence the browser lab cannot supply. Competency probe: Reject unintended HTTP downgrades, insecure redirects, mixed content, and credential forwarding across weaker channels. Demonstrate the result through Go 1.26 net/http, net/url, context, io, crypto/tls, RoundTripper, and httptest evidence.",
+        "For Go Publish the incident record · Debug Downgrade Mixed Content, challenge the documented misconception with request, response, fault, policy, and transfer evidence: A final HTTPS URL makes an earlier plaintext hop harmless. This remains false for Go 1.26 net/http."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Https Identity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Https Identity.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-https-identity"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Https Identity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Https Identity.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-https-identity"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Certificate Validation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Certificate Validation.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-certificate-validation"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Trust Roots Private Ca to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Trust Roots Private Ca.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-trust-roots-private-ca"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Proxy Mtls Boundaries to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Proxy Mtls Boundaries.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-proxy-mtls-boundaries"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Downgrade Mixed Content to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Downgrade Mixed Content.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: http-go-downgrade-mixed-content-17kxil.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "file": "go",
+      "expected": "// Evidence: http-go-downgrade-mixed-content-17kxil"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: http-go-downgrade-mixed-content-17kxil(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_http_go_downgrade_mixed_content_17kxil\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?hostnameMatches)(?=(?:(?!// Evidence:)[\\s\\S])*?chainTrusted)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using reject and unintended plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "http-go-downgrade-mixed-content"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "reject",
+        "unintended"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

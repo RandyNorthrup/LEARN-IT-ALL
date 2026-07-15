@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getExerciseData } from '@/lib/lessonLoader';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) {
   try {

@@ -13,7 +13,7 @@ export default function UsernameModal({ onComplete }: UsernameModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (username.trim().length < 3) {
       setError('Username must be at least 3 characters');
       return;
@@ -47,7 +47,7 @@ export default function UsernameModal({ onComplete }: UsernameModalProps) {
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
         <h2 className="mb-2 text-3xl font-bold text-gray-900">Welcome to LEARN-IT-ALL</h2>
         <p className="mb-6 text-gray-600">Choose a username to get started</p>
-        
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -57,11 +57,10 @@ export default function UsernameModal({ onComplete }: UsernameModalProps) {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter username"
             className="mb-4 w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg focus:border-blue-500 focus:outline-none"
-            autoFocus
           />
-          
+
           {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-          
+
           <button
             type="submit"
             disabled={loading}

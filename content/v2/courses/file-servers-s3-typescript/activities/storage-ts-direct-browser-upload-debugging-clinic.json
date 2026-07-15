@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "storage-ts-direct-browser-upload-debugging-clinic",
+  "courseId": "file-servers-s3-typescript",
+  "moduleId": "storage-ts-direct-browser-upload",
+  "kind": "debug",
+  "title": "Browser Presigning, POST Policy, and CORS · Boundary Failure Triage",
+  "summary": "A Node incident packet contains a plausible least-privilege browser upload session with one unsafe assertion, stale object identity, unbounded stream, lost rejection, abort leak, cache defect, policy gap, or recovery overclaim; preserve the symptom and isolate first cause. Planned artifact: Repair a changed failure in least-privilege browser upload session and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case p…",
+  "objectives": [
+    "In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+    "Use @aws-sdk/s3-request-presigner 3.1087.0 getSignedUrl with an exact PutObjectCommand region, expiry, key, checksum, content type, encryption choice, and required browser-header parity.",
+    "In a strict Node 24 and TypeScript 7 service, use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "storage-ts-upload-session-intent",
+      "storage-ts-presigned-put-header-parity",
+      "storage-ts-presigned-post-policy",
+      "storage-ts-cors-not-authentication",
+      "storage-ts-direct-upload-finalization"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "storage-ts-direct-browser-upload-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "file-servers-s3-typescript-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "// file-servers-s3-typescript cumulative file-delivery decision portfolio.\n// Browser execution uses deterministic pure-TypeScript runtime validation, identity, range, integrity, policy, lifecycle, cache, cost, and recovery models only.\n// Node and AWS SDK packages, S3, CloudFront, KMS, IAM, WAF, networks, PostgreSQL, credentials, host state, stream and handle checks, load, faults, restore, billing, and production changes require explicit authorized transfer gates.\n\ntype FileEvidence = Readonly<{\n  fileId: string;\n  objectKey: string;\n  versionId: string;\n  bytes: number;\n  checksum: string;\n}>;\n\ntype DeliveryEvidence = Readonly<{\n  authorized: boolean;\n  state: \"intent\" | \"quarantined\" | \"published\" | \"failed\";\n  range?: readonly [start: number, end: number];\n}>;\n\nconst portfolioReady = (file: FileEvidence, delivery: DeliveryEvidence): boolean =>\n  file.fileId.length > 0 && file.bytes >= 0 && delivery.authorized;\n\nvoid portfolioReady;\n",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "regression-sequence",
+      "title": "S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization",
+      "interaction": "arrange",
+      "instruction": "Order the Direct Upload Finalization S3, CloudFront, and TypeScript storage-delivery evidence cycle for this debug task before implementing it.\n\nEvidence target: S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization.",
+      "why": "Correct order keeps Direct Upload Finalization assumptions visible before execution and verifies its result against a boundary case afterward. For S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization, keep Direct Upload Finalization connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 2824 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; separate deterministic browser evidence from controlled Node and AWS transfer gates; then deliver a duplicate or reordered event and prevent duplicate stakeholder effect. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Direct Upload Finalization has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Direct Upload Finalization precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 2824 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; separate deterministic browser evidence from controlled Node and AWS transfer gates; then deliver a duplicate or reordered event and prevent duplicate stakeholder effect. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+        "For S3, CloudFront, and TypeScript Order the regression proof · Debug Direct Upload Finalization, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare S3, CloudFront, and TypeScript stakeholder outcome, file and object identity, owner, state, and byte, time, concurrency, cache, and cost budgets for the debug Direct Upload Finalization case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict S3, CloudFront, and TypeScript authorization, custody, transfer, integrity, cache, failure, cancellation, cleanup, rollback, and recovery outcomes for the debug Direct Upload Finalization case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic S3, CloudFront, and TypeScript storage decision model and retain inspectable changed-case evidence for the debug Direct Upload Finalization case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Inject one changed S3, CloudFront, and TypeScript failure, verify bounded cleanup and recovery, and state controlled AWS transfer limits for the debug Direct Upload Finalization case"
+        }
+      ]
+    },
+    {
+      "id": "incident-record",
+      "title": "S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 4443 during a regional recovery and budget exercise. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; separate deterministic browser evidence from controlled Node and AWS transfer gates; then double concurrent Upload instances and preserve aggregate memory and worker budgets. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.\n\nInspect the Upload Session Intent trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent.",
+      "why": "The decision supplies observable evidence for in a strict node 24 and typescript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing. For S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent, keep Upload Session Intent connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Upload Session Intent, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "storage-ts-upload-session-intent"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Upload Session Intent precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 4443 during a regional recovery and budget exercise. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; separate deterministic browser evidence from controlled Node and AWS transfer gates; then double concurrent Upload instances and preserve aggregate memory and worker budgets. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+        "For S3, CloudFront, and TypeScript Inspect the failure record · Debug Upload Session Intent, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A presigned URL can safely authorize any file that the browser chooses later. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Upload Session Intent case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug TypeScript file-delivery team handles case 4443 during a regional recovery and budget exercise. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; separate deterministic browser evidence from controlled Node and AWS transfer gates; then double concurrent Upload instances and preserve aggregate memory and worker budgets. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A presigned URL can safely authorize any file that the browser chooses later. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing. Artifact under review: least-privilege browser upload session.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Upload Session Intent, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent",
+      "interaction": "debug",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 6062 during a AWS SDK v3 dependency canary. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.\n\nWhich observation would disprove this suspected cause: “A presigned URL can safely authorize any file that the browser chooses later. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.”?\n\nEvidence target: S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent.",
+      "why": "The decision supplies observable evidence for in a strict node 24 and typescript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing. For S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent, keep Upload Session Intent connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 6062 during a AWS SDK v3 dependency canary. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Upload Session Intent symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK v3 S3 Request Presigner — getSignedUrl and low-level presigning, exact command and header parity, expiry, region, checksums, and browser upload boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "storage-ts-upload-session-intent"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Upload Session Intent precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 6062 during a AWS SDK v3 dependency canary. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+        "For S3, CloudFront, and TypeScript Upload Session Intent · fault isolation · Debug Upload Session Intent, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A presigned URL can safely authorize any file that the browser chooses later. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Upload Session Intent failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A presigned URL can safely authorize any file that the browser chooses later. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: In a strict Node 24 and TypeScript 7 service, create a one-object upload intent with tenant, generated key, expected size, type, checksum, expiry, status, and replay policy before signing.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the upload session intent · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Upload Session Intent."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put…",
+      "interaction": "predict",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 7681 during a multi-tenant authorization audit. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Use @aws-sdk/s3-request-presigner 3.1087.0 getSignedUrl with an exact PutObjectCommand region, expiry, key, checksum, content type, encryption choice, and required browser-header parity.\n\nWhich observation would disprove this suspected cause: “A browser may add, remove, or change headers signed into a presigned PUT without invalidating the URL or changing its admitted representation.”?\n\nEvidence target: S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put….",
+      "why": "The decision supplies observable evidence for use @aws-sdk/s3-request-presigner 3.1087.0 getsignedurl with an exact putobjectcommand region, expiry, key, checksum, content type, encryption choice, and required browser-header parity. For S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put…, keep Presigned Put Header Parity connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 7681 during a multi-tenant authorization audit. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Use @aws-sdk/s3-request-presigner 3.1087.0 getSignedUrl with an exact PutObjectCommand region, expiry, key, checksum, content type, encryption choice, and required browser-header parity."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Presigned Put Header Parity condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK v3 S3 Request Presigner — getSignedUrl and low-level presigning, exact command and header parity, expiry, region, checksums, and browser upload boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "storage-ts-presigned-put-header-parity"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put…, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Presigned Put Header Parity precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put…, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 7681 during a multi-tenant authorization audit. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is; then change object version, signed header, or cache dimension and reject stale authority. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: Use @aws-sdk/s3-request-presigner 3.1087.0 getSignedUrl with an exact PutObjectCommand region, expiry, key, checksum, content type, encryption choice, and required browser-header parity.",
+        "For S3, CloudFront, and TypeScript Presigned Put Header Parity · fault isolation · Debug Presigned Put…, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A browser may add, remove, or change headers signed into a presigned PUT without invalidating the URL or changing its admitted representation."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Presigned Put Header Parity."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the presigned put header parity · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy",
+      "interaction": "debug",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 9300 during a private media entitlement change. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then abort during a stream or multipart promise and prove every task and part reaches a terminal state. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently.\n\nWhich observation would disprove this suspected cause: “A POST policy reports the application-level validity of uploaded content. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.”?\n\nEvidence target: S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy.",
+      "why": "The decision supplies observable evidence for in a strict node 24 and typescript 7 service, use a post policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently. For S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy, keep Presigned Post Policy connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 9300 during a private media entitlement change. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then abort during a stream or multipart promise and prove every task and part reaches a terminal state. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Presigned Post Policy symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK v3 S3 Request Presigner — getSignedUrl and low-level presigning, exact command and header parity, expiry, region, checksums, and browser upload boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "storage-ts-presigned-post-policy"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Presigned Post Policy precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 9300 during a private media entitlement change. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then abort during a stream or multipart promise and prove every task and part reaches a terminal state. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently.",
+        "For S3, CloudFront, and TypeScript Presigned Post Policy · fault isolation · Debug Presigned Post Policy, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: A POST policy reports the application-level validity of uploaded content. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Presigned Post Policy failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "A POST policy reports the application-level validity of uploaded content. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: In a strict Node 24 and TypeScript 7 service, use a POST policy when browser-enforced key, size, metadata, and field conditions are required and validate the completed object independently.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Presigned Post Policy."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the presigned post policy · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic…",
+      "interaction": "predict",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 1919 during a Node stream backpressure incident. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then replace one typed fixture with unknown runtime input and prove rejection before AWS use. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, configure the smallest origin, method, header, exposure, and age CORS rules while keeping IAM and bucket policy as authorization.\n\nWhich observation would disprove this suspected cause: “If a browser passes CORS, an S3 request is authorized and safe. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.”?\n\nEvidence target: S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic….",
+      "why": "The decision supplies observable evidence for in a strict node 24 and typescript 7 service, configure the smallest origin, method, header, exposure, and age cors rules while keeping iam and bucket policy as authorization. For S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic…, keep Cors Not Authentication connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 1919 during a Node stream backpressure incident. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then replace one typed fixture with unknown runtime input and prove rejection before AWS use. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, configure the smallest origin, method, header, exposure, and age CORS rules while keeping IAM and bucket policy as authorization."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Cors Not Authentication condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK v3 S3 Request Presigner — getSignedUrl and low-level presigning, exact command and header parity, expiry, region, checksums, and browser upload boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "storage-ts-cors-not-authentication"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic…, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Cors Not Authentication precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic…, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 1919 during a Node stream backpressure incident. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then replace one typed fixture with unknown runtime input and prove rejection before AWS use. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, configure the smallest origin, method, header, exposure, and age CORS rules while keeping IAM and bucket policy as authorization.",
+        "For S3, CloudFront, and TypeScript Cors Not Authentication · fault isolation · Debug Cors Not Authentic…, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: If a browser passes CORS, an S3 request is authorized and safe. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the cors not authentication · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Cors Not Authentication."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F…",
+      "interaction": "debug",
+      "instruction": "debug case — A debug TypeScript file-delivery team handles case 3538 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; bound bytes, time, attempts, promises, streams, concurrency, cache, and spend; then change region, retrieval, or transfer cost and defend the revised budget action. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.\n\nWhich observation would disprove this suspected cause: “The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.”?\n\nEvidence target: S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F….",
+      "why": "The decision supplies observable evidence for in a strict node 24 and typescript 7 service, finalize by matching intent to head or event evidence, checksum, version, size, owner, scan result, and idempotent state transition. For S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F…, keep Direct Upload Finalization connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug TypeScript file-delivery team handles case 3538 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; bound bytes, time, attempts, promises, streams, concurrency, cache, and spend; then change region, retrieval, or transfer cost and defend the revised budget action. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Direct Upload Finalization symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "AWS SDK v3 S3 Request Presigner — getSignedUrl and low-level presigning, exact command and header parity, expiry, region, checksums, and browser upload boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F…, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Direct Upload Finalization precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F…, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 3538 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; bound bytes, time, attempts, promises, streams, concurrency, cache, and spend; then change region, retrieval, or transfer cost and defend the revised budget action. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+        "For S3, CloudFront, and TypeScript Direct Upload Finalization · fault isolation · Debug Direct Upload F…, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Direct Upload Finalization failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-overreach",
+          "text": "Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Direct Upload Finalization."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the direct upload finalization · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization",
+      "interaction": "code",
+      "instruction": "Append a compile-ready pure-TypeScript function headed \"// Evidence: storage-ts-direct-upload-finalization-6wy5yw\" that uses case 4128 to finalize a browser upload intent while separating CORS from IAM and promise completion. Incident diagnosis: preserve the symptom, isolate first cause, and prove a regression case before repair. Return observable changed-case evidence. Browser code must not import Node or AWS SDK packages, open sockets, contact S3, CloudFront, KMS, IAM, WAF, PostgreSQL, networks, or external effects, read host state, execute host commands, or use credentials; verify those boundaries later with the TypeScript 7.0.2 native compiler and the @typescript/typescript6 package 6.0.2 compiler that reports 6.0.3, Node 24.18.0, AWS SDK v3.1087.0, controlled AWS, stream and handle, load, fault, security, cost, restore, and production gates.\n\nEvidence target: S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Direct Upload Finalization into observable performance evidence. For S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization, keep Direct Upload Finalization connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "typescript",
+          "code": "// Evidence: storage-ts-direct-upload-finalization-6wy5yw\n// Competency: storage-ts-direct-upload-finalization.\n// Case 4128: private media entitlement change.\n// Incident diagnosis: preserve the symptom, isolate first cause, and prove a regression case before repair.\n// Operating constraint: do not treat TypeScript types, a resolved promise, CORS, ETag, or an emulator as stronger proof than it is.\n// Changed case: change region, retrieval, or transfer cost and defend the revised budget action.\nfunction evidence_storage_ts_direct_upload_finalization_6wy5yw(input: Readonly<{ expectedBytes: number; observedBytes: number; expectedType: string; observedType: string; expectedChecksum: string; observedChecksum: string; corsPassed: boolean; iamAllowed: boolean }>): { finalized: boolean; reason: string } {\n  const evidenceVariant_6wy5yw = \"6wy5yw-wy5yw6-4128\";\n  void evidenceVariant_6wy5yw;\n  if (input.expectedBytes < 0 || input.observedBytes !== input.expectedBytes) return { finalized: false, reason: \"size\" };\n  if (input.expectedType.length === 0 || input.observedType !== input.expectedType) return { finalized: false, reason: \"content-type\" };\n  if (input.expectedChecksum.length === 0 || input.observedChecksum !== input.expectedChecksum) return { finalized: false, reason: \"checksum\" };\n  if (input.corsPassed && !input.iamAllowed) return { finalized: false, reason: \"cors-not-auth\" };\n  return { finalized: input.iamAllowed, reason: input.iamAllowed ? \"intent-complete\" : \"authorization\" };\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Direct Upload Finalization precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 5157 during a regional recovery and budget exercise. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; bound bytes, time, attempts, promises, streams, concurrency, cache, and spend; then deliver a duplicate or reordered event and prevent duplicate stakeholder effect. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+        "For S3, CloudFront, and TypeScript Implement the cause-level repair · Debug Direct Upload Finalization, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10,
+      "targetFile": "typescript"
+    },
+    {
+      "id": "incident-report",
+      "title": "S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Direct Upload Finalization: explain the governing condition, one failure, and how this concrete case was verified — A debug TypeScript file-delivery team handles case 8968 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then replace one typed fixture with unknown runtime input and prove rejection before AWS use. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.\n\nEvidence target: S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization, keep Direct Upload Finalization connected to executable TypeScript storage and delivery decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "hints": [
+        "For S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization, name the stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary, Direct Upload Finalization precondition, or invariant that must hold.",
+        "At S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization, trace this concrete input and predict runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence before reviewing it: A debug TypeScript file-delivery team handles case 8968 during a browser upload compatibility rollout. Build deterministic TypeScript evidence to finalize a browser upload intent while separating CORS from IAM and promise completion; keep AbortSignal and stream cleanup under one named owner; then replace one typed fixture with unknown runtime input and prove rejection before AWS use. Browser code uses pure values and state transitions only. Node and AWS SDK packages, networks, S3, CloudFront, KMS, IAM, WAF, PostgreSQL, credentials, host state, handle and stream checks, load, faults, restore, billing, and production behavior require explicit authorized transfer gates. Competency probe: In a strict Node 24 and TypeScript 7 service, finalize by matching intent to HEAD or event evidence, checksum, version, size, owner, scan result, and idempotent state transition.",
+        "For S3, CloudFront, and TypeScript Publish the incident record · Debug Direct Upload Finalization, challenge the documented misconception with runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer evidence: The browser success event alone proves the expected object is complete and belongs to the session. Type annotations, generated SDK shapes, and resolved promises do not strengthen that runtime claim."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Upload Session Intent to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Upload Session Intent.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-upload-session-intent"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Upload Session Intent to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Upload Session Intent.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-upload-session-intent"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Presigned Put Header Parity to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Presigned Put Header Parity.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-presigned-put-header-parity"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Presigned Post Policy to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Presigned Post Policy.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-presigned-post-policy"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cors Not Authentication to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cors Not Authentication.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-cors-not-authentication"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Direct Upload Finalization to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Direct Upload Finalization.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative typescript portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: storage-ts-direct-upload-finalization-6wy5yw.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "file": "typescript",
+      "expected": "// Evidence: storage-ts-direct-upload-finalization-6wy5yw"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "typescript",
+      "pattern": "// Evidence: storage-ts-direct-upload-finalization-6wy5yw(?:(?!// Evidence:)[\\s\\S])*?function\\s+evidence_storage_ts_direct_upload_finalization_6wy5yw\\s*\\([^)]*\\)\\s*:\\s*\\{[^}]+\\}\\s*\\{(?=(?:(?!// Evidence:)[\\s\\S])*?input\\.observedBytes\\s*!==\\s*input\\.expectedBytes)(?=(?:(?!// Evidence:)[\\s\\S])*?input\\.observedType\\s*!==\\s*input\\.expectedType)(?=(?:(?!// Evidence:)[\\s\\S])*?input\\.observedChecksum\\s*!==\\s*input\\.expectedChecksum)(?=(?:(?!// Evidence:)[\\s\\S])*?input\\.corsPassed\\s*&&\\s*!input\\.iamAllowed)(?=(?:(?!// Evidence:)[\\s\\S])*?return)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using strict and node plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "storage-ts-direct-upload-finalization"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "strict",
+        "node"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

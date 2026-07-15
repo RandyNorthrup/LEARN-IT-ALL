@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Brain, RotateCcw, Trophy } from 'lucide-react';
 import Link from 'next/link';
-import { Brain, Trophy, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
 
 const GRID_SIZE = 6;
 const START_POS = { x: 0, y: 0 };
@@ -14,11 +14,20 @@ interface Position {
 }
 
 const OBSTACLES = [
-  { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 },
-  { x: 3, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 2 },
-  { x: 2, y: 2 }, { x: 4, y: 2 }, { x: 2, y: 3 },
-  { x: 4, y: 3 }, { x: 1, y: 4 }, { x: 2, y: 4 },
-  { x: 3, y: 5 }, { x: 4, y: 5 },
+  { x: 1, y: 0 },
+  { x: 2, y: 0 },
+  { x: 3, y: 0 },
+  { x: 3, y: 1 },
+  { x: 0, y: 2 },
+  { x: 1, y: 2 },
+  { x: 2, y: 2 },
+  { x: 4, y: 2 },
+  { x: 2, y: 3 },
+  { x: 4, y: 3 },
+  { x: 1, y: 4 },
+  { x: 2, y: 4 },
+  { x: 3, y: 5 },
+  { x: 4, y: 5 },
 ];
 
 export default function LogicMazeGame() {
@@ -37,7 +46,7 @@ export default function LogicMazeGame() {
   }
 
   function isObstacle(x: number, y: number): boolean {
-    return OBSTACLES.some(obs => obs.x === x && obs.y === y);
+    return OBSTACLES.some((obs) => obs.x === x && obs.y === y);
   }
 
   function isValidMove(x: number, y: number): boolean {
@@ -53,10 +62,10 @@ export default function LogicMazeGame() {
     try {
       for (const line of lines) {
         const trimmed = line.trim().toLowerCase();
-        
+
         if (trimmed.startsWith('move_right')) {
           const match = trimmed.match(/move_right\((\d+)\)/);
-          const steps = match ? parseInt(match[1]) : 1;
+          const steps = match ? parseInt(match[1], 10) : 1;
           for (let i = 0; i < steps; i++) {
             if (isValidMove(currentPos.x + 1, currentPos.y)) {
               currentPos.x++;
@@ -68,10 +77,9 @@ export default function LogicMazeGame() {
             }
           }
           newOutput.push(`✅ Moved right ${steps} step(s) to (${currentPos.x}, ${currentPos.y})`);
-        }
-        else if (trimmed.startsWith('move_down')) {
+        } else if (trimmed.startsWith('move_down')) {
           const match = trimmed.match(/move_down\((\d+)\)/);
-          const steps = match ? parseInt(match[1]) : 1;
+          const steps = match ? parseInt(match[1], 10) : 1;
           for (let i = 0; i < steps; i++) {
             if (isValidMove(currentPos.x, currentPos.y + 1)) {
               currentPos.y++;
@@ -83,10 +91,9 @@ export default function LogicMazeGame() {
             }
           }
           newOutput.push(`✅ Moved down ${steps} step(s) to (${currentPos.x}, ${currentPos.y})`);
-        }
-        else if (trimmed.startsWith('move_left')) {
+        } else if (trimmed.startsWith('move_left')) {
           const match = trimmed.match(/move_left\((\d+)\)/);
-          const steps = match ? parseInt(match[1]) : 1;
+          const steps = match ? parseInt(match[1], 10) : 1;
           for (let i = 0; i < steps; i++) {
             if (isValidMove(currentPos.x - 1, currentPos.y)) {
               currentPos.x--;
@@ -98,10 +105,9 @@ export default function LogicMazeGame() {
             }
           }
           newOutput.push(`✅ Moved left ${steps} step(s) to (${currentPos.x}, ${currentPos.y})`);
-        }
-        else if (trimmed.startsWith('move_up')) {
+        } else if (trimmed.startsWith('move_up')) {
           const match = trimmed.match(/move_up\((\d+)\)/);
-          const steps = match ? parseInt(match[1]) : 1;
+          const steps = match ? parseInt(match[1], 10) : 1;
           for (let i = 0; i < steps; i++) {
             if (isValidMove(currentPos.x, currentPos.y - 1)) {
               currentPos.y--;
@@ -113,8 +119,7 @@ export default function LogicMazeGame() {
             }
           }
           newOutput.push(`✅ Moved up ${steps} step(s) to (${currentPos.x}, ${currentPos.y})`);
-        }
-        else if (trimmed.length > 0 && !trimmed.startsWith('#')) {
+        } else if (trimmed.length > 0 && !trimmed.startsWith('#')) {
           newOutput.push(`⚠️ Unknown command: ${trimmed}`);
         }
       }
@@ -165,6 +170,7 @@ export default function LogicMazeGame() {
             <div className="grid grid-cols-6 gap-2 mb-4">
               {Array.from({ length: GRID_SIZE }, (_, rowIndex) =>
                 Array.from({ length: GRID_SIZE }, (__, colIndex) => {
+                  const cellId = `maze-cell-${rowIndex}-${colIndex}`;
                   const isPlayer = playerPos.x === colIndex && playerPos.y === rowIndex;
                   const isStart = START_POS.x === colIndex && START_POS.y === rowIndex;
                   const isEnd = END_POS.x === colIndex && END_POS.y === rowIndex;
@@ -172,7 +178,7 @@ export default function LogicMazeGame() {
 
                   let bgColor = 'bg-gray-100';
                   let content = '';
-                  
+
                   if (isPlayer) {
                     bgColor = 'bg-blue-500 text-white';
                     content = '🤖';
@@ -188,7 +194,7 @@ export default function LogicMazeGame() {
 
                   return (
                     <div
-                      key={`${colIndex}-${rowIndex}`}
+                      key={cellId}
                       className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-all ${bgColor}`}
                     >
                       {content}
@@ -229,7 +235,7 @@ export default function LogicMazeGame() {
           {/* Code Editor */}
           <div className="rounded-2xl bg-white p-6 shadow-xl">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Your Code</h3>
-            
+
             <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-lg text-sm">
               <p className="font-semibold text-purple-900 mb-2">Available Commands:</p>
               <ul className="space-y-1 text-purple-800 font-mono">
@@ -251,12 +257,14 @@ export default function LogicMazeGame() {
 
             <div className="flex gap-3 mb-4">
               <button
+                type="button"
                 onClick={executeCode}
                 className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
               >
                 Run Code
               </button>
               <button
+                type="button"
                 onClick={resetGame}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2"
               >

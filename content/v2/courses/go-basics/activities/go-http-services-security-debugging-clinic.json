@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 2,
+  "id": "go-http-services-security-debugging-clinic",
+  "courseId": "go-basics",
+  "moduleId": "go-http-services-security",
+  "kind": "debug",
+  "title": "HTTP Services, Clients, Boundaries, Security, and Graceful Shutdown · Failure Repair Bay",
+  "summary": "A small service accepts hostile input, calls a slow dependency, serves concurrent requests, and must shut down without losing work. Learners isolate plausible failures, compare competing hypotheses, and record cause-level repair evidence. Planned artifact: Repair a changed failure in a resilient secure HTTP service design and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evid…",
+  "objectives": [
+    "Design Handler and ServeMux boundaries, method and path semantics, request limits, response status, headers, and streaming order.",
+    "Reuse configured clients and transports, set request contexts and timeouts, close bodies, bound reads, and classify status separately from transport errors.",
+    "Validate untrusted input, escape output for its sink, minimize authority and data, protect secrets, and set explicit server resource limits.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "go-http-handler-routing",
+      "go-http-client-lifecycle",
+      "go-service-validation-security",
+      "go-service-errors-observability",
+      "go-graceful-shutdown-readiness"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "go-http-services-security-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "go-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// go-basics cumulative Go systems portfolio.\n// Each increment names ownership, failure, boundary, and observable behavior.\n// Browser execution uses an isolated Yaegi subset; transfer evidence names full Go 1.26 toolchain gates.\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Go systems portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Inspect the failure record · Debug Http Handler Routing",
+      "interaction": "inspect",
+      "instruction": "debug case — Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nInspect the Http Handler Routing trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect the failure record · Debug Http Handler Routing.",
+      "why": "The decision supplies observable evidence for design handler and servemux boundaries, method and path semantics, request limits, response status, headers, and streaming order. For Inspect the failure record · Debug Http Handler Routing, keep Http Handler Routing connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Http Handler Routing, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "go-http-handler-routing"
+      ],
+      "hints": [
+        "For Inspect the failure record · Debug Http Handler Routing, name the types, ownership, and stop path, Http Handler Routing precondition, or invariant that must hold.",
+        "At Inspect the failure record · Debug Http Handler Routing, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Inspect the failure record · Debug Http Handler Routing, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Writing a response body before WriteHeader still allows any later status code."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Http Handler Routing case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "Writing a response body before WriteHeader still allows any later status code.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Design Handler and ServeMux boundaries, method and path semantics, request limits, response status, headers, and streaming order. Artifact under review: a resilient secure HTTP service design.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Http Handler Routing, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        },
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient Http Handler Routing happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Implement the cause-level repair · Debug Graceful Shutdown Readiness",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: go-graceful-shutdown-readiness-1ch46v\" that bounds the changed case, uses explicit goroutine or synchronization ownership, proves a stop path or invariant, and returns inspectable evidence.\n\nEvidence target: Implement the cause-level repair · Debug Graceful Shutdown Readiness.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Graceful Shutdown Readiness into observable performance evidence. For Implement the cause-level repair · Debug Graceful Shutdown Readiness, keep Graceful Shutdown Readiness connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: go-graceful-shutdown-readiness-1ch46v\nfunc evidence_go_graceful_shutdown_readiness_1ch46v(input int) (int, bool) {\n\tif input < 0 { return 0, false }\n\tresult := make(chan int, 1)\n\tgo func() { result <- input * 4 }()\n\tobserved := <-result\n\treturn observed, observed >= input\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "hints": [
+        "For Implement the cause-level repair · Debug Graceful Shutdown Readiness, name the types, ownership, and stop path, Graceful Shutdown Readiness precondition, or invariant that must hold.",
+        "At Implement the cause-level repair · Debug Graceful Shutdown Readiness, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 5 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Implement the cause-level repair · Debug Graceful Shutdown Readiness, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling Server.Close immediately is equivalent to graceful Shutdown."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "fault-1",
+      "title": "Http Handler Routing · fault isolation · Debug Http Handler Routing",
+      "interaction": "debug",
+      "instruction": "debug case — Service request 6 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nWhich observation would disprove this suspected cause: “Writing a response body before WriteHeader still allows any later status code.”?\n\nEvidence target: Http Handler Routing · fault isolation · Debug Http Handler Routing.",
+      "why": "The decision supplies observable evidence for design handler and servemux boundaries, method and path semantics, request limits, response status, headers, and streaming order. For Http Handler Routing · fault isolation · Debug Http Handler Routing, keep Http Handler Routing connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 6 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Http Handler Routing symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Best Practices for Go Developers — Controls patched toolchains, dependency review, govulncheck, fuzzing, race checks, input limits, secrets, and secure release practice."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "go-http-handler-routing"
+      ],
+      "hints": [
+        "For Http Handler Routing · fault isolation · Debug Http Handler Routing, name the types, ownership, and stop path, Http Handler Routing precondition, or invariant that must hold.",
+        "At Http Handler Routing · fault isolation · Debug Http Handler Routing, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 6 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Http Handler Routing · fault isolation · Debug Http Handler Routing, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Writing a response body before WriteHeader still allows any later status code."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Http Handler Routing failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "Writing a response body before WriteHeader still allows any later status code.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Design Handler and ServeMux boundaries, method and path semantics, request limits, response status, headers, and streaming order.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-overreach",
+          "text": "For http handler routing · fault isolation, run one convenient Http Handler Routing happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Http Handler Routing."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the http handler routing · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle",
+      "interaction": "predict",
+      "instruction": "debug case — Service request 2 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nWhich observation would disprove this suspected cause: “http.Client.Get returns an error for every non-2xx response.”?\n\nEvidence target: Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle.",
+      "why": "The decision supplies observable evidence for reuse configured clients and transports, set request contexts and timeouts, close bodies, bound reads, and classify status separately from transport errors. For Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle, keep Http Client Lifecycle connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 2 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Http Client Lifecycle condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Best Practices for Go Developers — Controls patched toolchains, dependency review, govulncheck, fuzzing, race checks, input limits, secrets, and secure release practice."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "go-http-client-lifecycle"
+      ],
+      "hints": [
+        "For Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle, name the types, ownership, and stop path, Http Client Lifecycle precondition, or invariant that must hold.",
+        "At Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 2 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Http Client Lifecycle · fault isolation · Debug Http Client Lifecycle, challenge the documented misconception with runtime, failure, race, or toolchain evidence: http.Client.Get returns an error for every non-2xx response."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Http Client Lifecycle."
+        },
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the http client lifecycle · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For http client lifecycle · fault isolation, run one convenient Http Client Lifecycle happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Service Validation Security · fault isolation · Debug Service Validation Security",
+      "interaction": "debug",
+      "instruction": "debug case — Service request 3 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nWhich observation would disprove this suspected cause: “Using a memory-safe language removes injection, authorization, resource-exhaustion, and logic risks.”?\n\nEvidence target: Service Validation Security · fault isolation · Debug Service Validation Security.",
+      "why": "The decision supplies observable evidence for validate untrusted input, escape output for its sink, minimize authority and data, protect secrets, and set explicit server resource limits. For Service Validation Security · fault isolation · Debug Service Validation Security, keep Service Validation Security connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 3 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Service Validation Security symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Best Practices for Go Developers — Controls patched toolchains, dependency review, govulncheck, fuzzing, race checks, input limits, secrets, and secure release practice."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "go-service-validation-security"
+      ],
+      "hints": [
+        "For Service Validation Security · fault isolation · Debug Service Validation Security, name the types, ownership, and stop path, Service Validation Security precondition, or invariant that must hold.",
+        "At Service Validation Security · fault isolation · Debug Service Validation Security, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 3 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Service Validation Security · fault isolation · Debug Service Validation Security, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Using a memory-safe language removes injection, authorization, resource-exhaustion, and logic risks."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Service Validation Security failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Using a memory-safe language removes injection, authorization, resource-exhaustion, and logic risks.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Validate untrusted input, escape output for its sink, minimize authority and data, protect secrets, and set explicit server resource limits.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the service validation security · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-3-overreach",
+          "text": "For service validation security · fault isolation, run one convenient Service Validation Security happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Service Validation Security."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Service Errors Observability · fault isolation · Debug Service Errors Observability",
+      "interaction": "predict",
+      "instruction": "debug case — Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nWhich observation would disprove this suspected cause: “Returning the full internal error text gives clients the most useful and secure diagnosis.”?\n\nEvidence target: Service Errors Observability · fault isolation · Debug Service Errors Observability.",
+      "why": "The decision supplies observable evidence for map internal failures to stable external responses while retaining structured correlation, cause, latency, and privacy-safe logs. For Service Errors Observability · fault isolation · Debug Service Errors Observability, keep Service Errors Observability connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Service Errors Observability condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Best Practices for Go Developers — Controls patched toolchains, dependency review, govulncheck, fuzzing, race checks, input limits, secrets, and secure release practice."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "go-service-errors-observability"
+      ],
+      "hints": [
+        "For Service Errors Observability · fault isolation · Debug Service Errors Observability, name the types, ownership, and stop path, Service Errors Observability precondition, or invariant that must hold.",
+        "At Service Errors Observability · fault isolation · Debug Service Errors Observability, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 4 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Service Errors Observability · fault isolation · Debug Service Errors Observability, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Returning the full internal error text gives clients the most useful and secure diagnosis."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-overreach",
+          "text": "For service errors observability · fault isolation, run one convenient Service Errors Observability happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Service Errors Observability."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the service errors observability · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness",
+      "interaction": "debug",
+      "instruction": "debug case — Service request 5 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nWhich observation would disprove this suspected cause: “Calling Server.Close immediately is equivalent to graceful Shutdown.”?\n\nEvidence target: Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness.",
+      "why": "The decision supplies observable evidence for coordinate signal handling, readiness withdrawal, server shutdown, in-flight deadlines, background-worker completion, and forced-exit evidence. For Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness, keep Graceful Shutdown Readiness connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 5 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Graceful Shutdown Readiness symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Security Best Practices for Go Developers — Controls patched toolchains, dependency review, govulncheck, fuzzing, race checks, input limits, secrets, and secure release practice."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "hints": [
+        "For Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness, name the types, ownership, and stop path, Graceful Shutdown Readiness precondition, or invariant that must hold.",
+        "At Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 5 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Graceful Shutdown Readiness · fault isolation · Debug Graceful Shutdown Readiness, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling Server.Close immediately is equivalent to graceful Shutdown."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Graceful Shutdown Readiness failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Calling Server.Close immediately is equivalent to graceful Shutdown.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Coordinate signal handling, readiness withdrawal, server shutdown, in-flight deadlines, background-worker completion, and forced-exit evidence.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Graceful Shutdown Readiness."
+        },
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the graceful shutdown readiness · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For graceful shutdown readiness · fault isolation, run one convenient Graceful Shutdown Readiness happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Order the regression proof · Debug Graceful Shutdown Readiness",
+      "interaction": "arrange",
+      "instruction": "Order the Graceful Shutdown Readiness evidence cycle for this debug task before implementing it.\n\nEvidence target: Order the regression proof · Debug Graceful Shutdown Readiness.",
+      "why": "Correct order keeps Graceful Shutdown Readiness assumptions visible before execution and verifies its result against a boundary case afterward. For Order the regression proof · Debug Graceful Shutdown Readiness, keep Graceful Shutdown Readiness connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Service request 6 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Graceful Shutdown Readiness has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "hints": [
+        "For Order the regression proof · Debug Graceful Shutdown Readiness, name the types, ownership, and stop path, Graceful Shutdown Readiness precondition, or invariant that must hold.",
+        "At Order the regression proof · Debug Graceful Shutdown Readiness, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 6 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Order the regression proof · Debug Graceful Shutdown Readiness, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling Server.Close immediately is equivalent to graceful Shutdown."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the debug Graceful Shutdown Readiness case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the debug Graceful Shutdown Readiness case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the debug Graceful Shutdown Readiness case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the debug Graceful Shutdown Readiness case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Publish the incident record · Debug Graceful Shutdown Readiness",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Graceful Shutdown Readiness: explain the governing condition, one failure, and how this concrete case was verified — Service request 2 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.\n\nEvidence target: Publish the incident record · Debug Graceful Shutdown Readiness.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Publish the incident record · Debug Graceful Shutdown Readiness, keep Graceful Shutdown Readiness connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Coordinate signal handling, readiness withdrawal, server shutdown, in-flight deadlines, background-worker completion, and forced-exit evidence."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "hints": [
+        "For Publish the incident record · Debug Graceful Shutdown Readiness, name the types, ownership, and stop path, Graceful Shutdown Readiness precondition, or invariant that must hold.",
+        "At Publish the incident record · Debug Graceful Shutdown Readiness, trace this concrete input and predict values, errors, blocking, and output before running it: Service request 2 has a hostile label, oversized body, slow dependency, duplicate header, and client cancellation during shutdown. Bound resources, validate and encode by sink, preserve stable responses, and drain owned work without leaking internals.",
+        "For Publish the incident record · Debug Graceful Shutdown Readiness, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Calling Server.Close immediately is equivalent to graceful Shutdown."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http Handler Routing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http Handler Routing.",
+      "hidden": false,
+      "competencyIds": [
+        "go-http-handler-routing"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: go-graceful-shutdown-readiness-1ch46v.",
+      "hidden": false,
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "file": "go",
+      "expected": "// Evidence: go-graceful-shutdown-readiness-1ch46v"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: go-graceful-shutdown-readiness-1ch46v(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_go_graceful_shutdown_readiness_1ch46v\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?:(?!// Evidence:)[\\s\\S])*?(?:go\\s+func|make\\s*\\(\\s*chan|select\\s*\\{|sync\\.)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ]
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http Handler Routing to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http Handler Routing.",
+      "hidden": false,
+      "competencyIds": [
+        "go-http-handler-routing"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Http Client Lifecycle to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Http Client Lifecycle.",
+      "hidden": false,
+      "competencyIds": [
+        "go-http-client-lifecycle"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Service Validation Security to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Service Validation Security.",
+      "hidden": false,
+      "competencyIds": [
+        "go-service-validation-security"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Service Errors Observability to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Service Errors Observability.",
+      "hidden": false,
+      "competencyIds": [
+        "go-service-errors-observability"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Graceful Shutdown Readiness to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Graceful Shutdown Readiness.",
+      "hidden": false,
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using coordinate and signal plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "go-graceful-shutdown-readiness"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "coordinate",
+        "signal"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

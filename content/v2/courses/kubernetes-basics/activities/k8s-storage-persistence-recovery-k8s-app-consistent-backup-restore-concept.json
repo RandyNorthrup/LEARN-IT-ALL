@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 2,
+  "id": "k8s-storage-persistence-recovery-k8s-app-consistent-backup-restore-concept",
+  "courseId": "kubernetes-basics",
+  "moduleId": "k8s-storage-persistence-recovery",
+  "kind": "theory",
+  "title": "Volumes, PersistentVolumes, Claims, StorageClasses, CSI, Snapshots, and Recovery · Reconciliation Brief: K8s App Consistent Backup Restore",
+  "summary": "A stateful intake service binds storage in the wrong zone, deletes data through a reclaim policy, and treats a crash-consistent snapshot as a proven application restore. Planned artifact: Add and verify the k8s app consistent backup restore increment in stateful storage and recovery contract. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+    "Explain CSI controller and node roles, drivers, snapshots, clones, expansion, topology, credentials, feature support, and deprecated in-tree migration boundaries.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "k8s-app-consistent-backup-restore"
+    ],
+    "reinforces": [
+      "k8s-csi-snapshot-migration"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "k8s-storage-persistence-recovery-k8s-csi-snapshot-migration-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "kubernetes-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "# kubernetes-basics cumulative orchestration portfolio\n# Browser labs perform deterministic manifest and evidence review only.\n# They never invoke kubectl, read kubeconfig, contact a cluster API, or execute host commands.\nworkspace: kubernetes\nversion-baseline:\n  kubernetes: 1.36.2\n  minikube: 1.38.1\n  gateway-api: 1.5.1\n  helm: 4.2.2\ntransfer-boundary: authorized-disposable-cluster\nevidence:\n"
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore",
+      "interaction": "predict",
+      "instruction": "theory case — A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.\n\nBefore reading, predict which action preserves the K8s App Consistent Backup Restore contract for the supplied data.\n\nEvidence target: Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore.",
+      "why": "The decision supplies observable evidence for define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. For Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which K8s App Consistent Backup Restore condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Storage and CSI Documentation — Controls volumes, PVs, PVCs, StorageClasses, dynamic provisioning, topology, reclaim, expansion, CSI, snapshots, ownership, backup, and restore boundaries."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Predict K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-sound",
+          "text": "Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. Apply it to the concrete input and state the observable result."
+        },
+        {
+          "id": "commit-prediction-misread",
+          "text": "A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives. That claim does not survive the predict k8s app consistent backup restore evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "For predict k8s app consistent backup restore, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore",
+      "interaction": "read",
+      "instruction": "theory case — A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.\n\nAfter tracing the worked code, choose the K8s App Consistent Backup Restore application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore.",
+      "why": "The decision supplies observable evidence for define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. For Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Name context, namespace, API identity, desired spec, observed status, controller authority, workload, network, storage, identity, policy, and failure-domain boundaries; predict reconciliation; review the smallest deterministic manifest change; then verify a failure, repair, rollback, and disposable-cluster transfer limit."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "A worked example StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. A defensible solution applies K8s App Consistent Backup Restore, preserves the governing invariant or value contract, and connects the observed result to stateful storage and recovery contract."
+        },
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-worked-k8s-storage-persistence-recovery-4\n  - competency: k8s-worked-k8s-storage-persistence-recovery-4\n    artifact: storage-recovery.yaml\n    decision: worked k8s storage persistence recovery 4\n    environment: air-gapped release cluster using an internal registry mirror\n    fault-injection: drop one metrics series during an autoscaling surge\n    retained-proof: accessible incident timeline with causal regression evidence\n    case-key: worked4\n    change: |\n      claim: intake-data\n      storageClass: retained-zonal\n      volumeBindingMode: WaitForFirstConsumer\n      reclaimPolicy: Retain\n      snapshot: application-quiesced\n      restore: fresh-namespace-and-claim\n      checksum: verified\n    verify: kubectl get pv,pvc,storageclass,volumesnapshot -A -o json\n    failure: Reject Bound as durability proof, Delete reclaim surprises, arbitrary-zone binding, snapshot-as-backup claims, or restore without application validation.\n    repair: Trace claim and volume lifecycle, align topology and access, quiesce the application, protect metadata and keys, and rehearse clean restore.",
+          "caption": "Runnable Kubernetes object and transfer-evidence contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives. This fails the K8s App Consistent Backup Restore contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "Kubernetes Storage and CSI Documentation (Kubernetes 1.36 storage guidance, current 2026-07-14) — Controls volumes, PVs, PVCs, StorageClasses, dynamic provisioning, topology, reclaim, expansion, CSI, snapshots, ownership, backup, and restore boundaries."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Bound K8s App Consistent Backup Restore · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-misread",
+          "text": "A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives. That claim does not survive the bound k8s app consistent backup restore evidence boundary."
+        },
+        {
+          "id": "test-concept-overreach",
+          "text": "For bound k8s app consistent backup restore, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use K8s App Consistent Backup Restore after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore",
+      "interaction": "inspect",
+      "instruction": "theory case — A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.\n\nInspect the K8s App Consistent Backup Restore trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore.",
+      "why": "The decision supplies observable evidence for define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. For Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For K8s App Consistent Backup Restore, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Inspect K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s App Consistent Backup Restore case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. Artifact under review: stateful storage and recovery contract.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-overreach",
+          "text": "For inspect k8s app consistent backup restore evidence, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies K8s App Consistent Backup Restore, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect k8s app consistent backup restore evidence evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore",
+      "interaction": "code",
+      "instruction": "Append the Kubernetes evidence item headed \"  # Evidence: k8s-app-consistent-backup-restore-jvqtvu\". Tailor its storage-recovery.yaml change to the current stakeholder case, retain a deterministic API or manifest review command, reject one concrete failure, and record a repair. The browser analyzes text only; run kubectl, Helm, kubeadm, and cluster commands later in an authorized disposable transfer environment.\n\nEvidence target: Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore.",
+      "why": "Building a runnable or mechanically reviewable artifact turns K8s App Consistent Backup Restore into observable performance evidence. For Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "yaml",
+          "code": "  # Evidence: k8s-app-consistent-backup-restore-jvqtvu\n  - competency: k8s-app-consistent-backup-restore\n    artifact: storage-recovery.yaml\n    decision: app consistent backup restore\n    environment: kubeadm recovery cluster restored onto replacement nodes\n    fault-injection: withdraw the selected image digest after one node pulls it\n    retained-proof: server-side diff managed fields and admission decision\n    case-key: jvqtvu\n    change: |\n      claim: intake-data\n      storageClass: retained-zonal\n      volumeBindingMode: WaitForFirstConsumer\n      reclaimPolicy: Retain\n      snapshot: application-quiesced\n      restore: fresh-namespace-and-claim\n      checksum: verified\n    verify: kubectl get pv,pvc,storageclass,volumesnapshot -A -o json\n    failure: Reject Bound as durability proof, Delete reclaim surprises, arbitrary-zone binding, snapshot-as-backup claims, or restore without application validation.\n    repair: Trace claim and volume lifecycle, align topology and access, quiesce the application, protect metadata and keys, and rehearse clean restore.",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Build K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "targetFile": "config"
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore",
+      "interaction": "debug",
+      "instruction": "theory case — A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.\n\nA teammate acts on this belief: “A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives.” Which repair addresses the cause?\n\nEvidence target: Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore.",
+      "why": "The decision supplies observable evidence for define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation. For Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the K8s App Consistent Backup Restore symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Kubernetes Storage and CSI Documentation — Controls volumes, PVs, PVCs, StorageClasses, dynamic provisioning, topology, reclaim, expansion, CSI, snapshots, ownership, backup, and restore boundaries."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Repair the K8s App Consistent Backup Restore defect · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "K8s App Consistent Backup Restore failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the k8s app consistent backup restore defect evidence boundary."
+        },
+        {
+          "id": "repair-misconception-overreach",
+          "text": "For repair the k8s app consistent backup restore defect, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for K8s App Consistent Backup Restore, gather a counterexample, repair the artifact, and add a regression case."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore",
+      "interaction": "arrange",
+      "instruction": "Order the K8s App Consistent Backup Restore orchestration evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore.",
+      "why": "Correct order keeps K8s App Consistent Backup Restore assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so K8s App Consistent Backup Restore has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Sequence K8s App Consistent Backup Restore evidence · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Capture client and server versions, context, namespace, API discovery, current object state, ownership, and immutable release identity for the theory K8s App Consistent Backup Restore case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, security, disruption, and cleanup effects for the theory K8s App Consistent Backup Restore case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Review the smallest manifest, Kustomize, Helm, policy, or runbook increment in the deterministic browser simulator for the theory K8s App Consistent Backup Restore case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Reject one failure, record repair and rollback, then name authorized disposable-cluster transfer evidence for the theory K8s App Consistent Backup Restore case"
+        }
+      ]
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for K8s App Consistent Backup Restore: explain the governing condition, one failure, and how this concrete case was verified — A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.\n\nEvidence target: Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore, keep K8s App Consistent Backup Restore connected to mechanically reviewable Kubernetes object, status, and transfer evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "hints": [
+        "For Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore, name the context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary, K8s App Consistent Backup Restore precondition, or invariant that must hold.",
+        "At Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore, trace this concrete input and predict admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence before reviewing it: A theory StatefulSet loses a node while its PVC is bound in another zone, reclaim policy is Delete, expansion is pending, and the backup has never restored. Defend StorageClass, binding, access mode, topology, snapshot, restore, and application consistency. Competency probe: Define application quiescence, snapshot or logical backup, metadata, encryption, checksums, retention, cross-cluster restore, and changed-case validation.",
+        "For Defend the K8s App Consistent Backup Restore model · Theory K8s App Consistent Backup Restore, challenge the documented misconception with object, condition, event, policy, failure, repair, rollback, and transfer evidence: A Bound PVC and successful VolumeSnapshot prove the application can recover within its objectives."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s App Consistent Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s App Consistent Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s App Consistent Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s App Consistent Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s App Consistent Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s App Consistent Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative config portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker   # Evidence: k8s-app-consistent-backup-restore-jvqtvu.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "file": "config",
+      "expected": "  # Evidence: k8s-app-consistent-backup-restore-jvqtvu"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "config",
+      "pattern": "  # Evidence: k8s-app-consistent-backup-restore-jvqtvu(?:(?!  # Evidence:)[\\s\\S])*?competency:\\s*k8s-app-consistent-backup-restore(?:(?!  # Evidence:)[\\s\\S])*?artifact:\\s*storage-recovery\\.yaml(?:(?!  # Evidence:)[\\s\\S])*?change:\\s*\\|(?:(?!  # Evidence:)[\\s\\S])*?(?:WaitForFirstConsumer|reclaimPolicy:\\s*Retain|restore:\\s*fresh-namespace)(?:(?!  # Evidence:)[\\s\\S])*?verify:\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!  # Evidence:)[\\s\\S])*?failure:\\s*(?!\\[|todo)[^\\n]{20,}(?:(?!  # Evidence:)[\\s\\S])*?repair:\\s*(?!\\[|todo)[^\\n]{20,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ]
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies K8s App Consistent Backup Restore to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about K8s App Consistent Backup Restore.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using application and quiescence plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "k8s-app-consistent-backup-restore"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "application",
+        "quiescence"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

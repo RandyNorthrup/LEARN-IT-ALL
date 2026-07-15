@@ -1,0 +1,688 @@
+{
+  "schemaVersion": 2,
+  "id": "asteroids-wrap-viewport-resize-debugging-clinic",
+  "courseId": "build-asteroids-python",
+  "moduleId": "asteroids-wrap-viewport-resize",
+  "kind": "debug",
+  "title": "Toroidal Wrapping, Object Bounds, Viewports, Resize, and Scaling · Failure Triage",
+  "summary": "A preserved game trace contains one plausible state, timing, input, vector, rendering, collision, ownership, audio, accessibility, packaging, or release defect; locate the first failed invariant before editing. Planned artifact: Repair a changed failure in seam-safe logical viewport and resize policy and publish the reproduction, evidence, repair, and regression record. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.",
+    "Wrap complete object bounds with modular arithmetic and test overshoot across corners and large time steps.",
+    "Compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "asteroids-center-vs-bounds",
+      "asteroids-toroidal-wrap",
+      "asteroids-seam-collision",
+      "asteroids-logical-scaling",
+      "asteroids-resize-dpi"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "asteroids-wrap-viewport-resize-guided-workshop"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 90,
+  "artifactId": "build-asteroids-python-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "\"\"\"build-asteroids-python cumulative accessible real-time game portfolio.\n\nBrowser execution uses deterministic pure-Python simulation models and fixed fixtures only.\nNative pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers,\nGPU behavior, frame pacing, accessibility playtests, packaging, and production effects require controlled transfer gates.\n\"\"\"\n\nfrom dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass SimulationPolicy:\n    fixed_step_seconds: float = 1 / 120\n    max_frame_seconds: float = 0.1\n    max_updates_per_frame: int = 8\n    logical_width: int = 960\n    logical_height: int = 540\n\n\n@dataclass(frozen=True)\nclass RunEvidence:\n    revision: str\n    seed: int\n    input_trace_id: str\n    runtime_id: str\n    accessibility_profile: str\n\n\ndef portfolio_ready() -> str:\n    return \"Python Asteroids portfolio ready\"\n",
+    "go": "",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": "",
+    "c": ""
+  },
+  "steps": [
+    {
+      "id": "incident-record",
+      "title": "Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds",
+      "interaction": "inspect",
+      "instruction": "debug case — A debug Asteroids team handles case 6379 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.\n\nInspect the Center Vs Bounds trace for this debug case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds.",
+      "why": "The decision supplies observable evidence for choose center, radius, rect, frect, and visual bounds deliberately and keep float world state separate from raster bounds. For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds, keep Center Vs Bounds connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Center Vs Bounds, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "incident-record-check"
+      ],
+      "competencyIds": [
+        "asteroids-center-vs-bounds"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Center Vs Bounds precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 6379 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.",
+        "For Asteroids, pygame-ce, and Python Inspect the failure record · Debug Center Vs Bounds, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: A Rect center can preserve arbitrary subpixel world motion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Center Vs Bounds case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "incident-record-line-assumption",
+            "label": "assumption",
+            "text": "A debug Asteroids team handles case 6379 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.",
+            "tone": "focus"
+          },
+          {
+            "id": "incident-record-line-risk",
+            "label": "risk",
+            "text": "A Rect center can preserve arbitrary subpixel world motion.",
+            "tone": "problem"
+          },
+          {
+            "id": "incident-record-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds. Artifact under review: seam-safe logical viewport and resize policy.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "incident-record-overreach",
+          "text": "For inspect the failure record, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "incident-record-sound",
+          "text": "The record names the assumption, applies Center Vs Bounds, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "incident-record-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect the failure record evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-1",
+      "title": "Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 4760 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.\n\nWhich observation would disprove this suspected cause: “A Rect center can preserve arbitrary subpixel world motion.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds.",
+      "why": "The decision supplies observable evidence for choose center, radius, rect, frect, and visual bounds deliberately and keep float world state separate from raster bounds. For Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds, keep Center Vs Bounds connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "incident-record"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 4760 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Center Vs Bounds symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Display and Window — Display initialization, modes, resize, scaling, fullscreen, vsync caveats, presentation, and desktop boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-1-check"
+      ],
+      "competencyIds": [
+        "asteroids-center-vs-bounds"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Center Vs Bounds precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 4760 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.",
+        "For Asteroids, pygame-ce, and Python Center Vs Bounds · fault isolation · Debug Center Vs Bounds, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: A Rect center can preserve arbitrary subpixel world motion."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Center Vs Bounds failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-1-observed",
+            "label": "observed",
+            "text": "A Rect center can preserve arbitrary subpixel world motion.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-1-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Choose center, radius, Rect, FRect, and visual bounds deliberately and keep float world state separate from raster bounds.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-1-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Center Vs Bounds."
+        },
+        {
+          "id": "fault-1-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the center vs bounds · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-1-overreach",
+          "text": "For center vs bounds · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-2",
+      "title": "Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 3000 during a controller-remapping accessibility review. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Wrap complete object bounds with modular arithmetic and test overshoot across corners and large time steps.\n\nWhich observation would disprove this suspected cause: “Setting x to zero at width creates seamless wrapping.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap.",
+      "why": "The decision supplies observable evidence for wrap complete object bounds with modular arithmetic and test overshoot across corners and large time steps. For Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap, keep Toroidal Wrap connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 3000 during a controller-remapping accessibility review. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Wrap complete object bounds with modular arithmetic and test overshoot across corners and large time steps."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Toroidal Wrap condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Display and Window — Display initialization, modes, resize, scaling, fullscreen, vsync caveats, presentation, and desktop boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-2-check"
+      ],
+      "competencyIds": [
+        "asteroids-toroidal-wrap"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Toroidal Wrap precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 3000 during a controller-remapping accessibility review. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; record the first failed invariant, repair, regression evidence, playtest observation, rollback, recovery, and residual-risk owner; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Wrap complete object bounds with modular arithmetic and test overshoot across corners and large time steps.",
+        "For Asteroids, pygame-ce, and Python Toroidal Wrap · fault isolation · Debug Toroidal Wrap, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Setting x to zero at width creates seamless wrapping."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-2-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the toroidal wrap · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-2-overreach",
+          "text": "For toroidal wrap · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-2-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Toroidal Wrap."
+        }
+      ]
+    },
+    {
+      "id": "fault-3",
+      "title": "Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 7857 during an offline cross-platform release rehearsal. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams.\n\nWhich observation would disprove this suspected cause: “Rendering a duplicate at the edge automatically fixes collision detection.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision.",
+      "why": "The decision supplies observable evidence for compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams. For Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision, keep Seam Collision connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 7857 during an offline cross-platform release rehearsal. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Seam Collision symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Display and Window — Display initialization, modes, resize, scaling, fullscreen, vsync caveats, presentation, and desktop boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-3-check"
+      ],
+      "competencyIds": [
+        "asteroids-seam-collision"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Seam Collision precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 7857 during an offline cross-platform release rehearsal. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams.",
+        "For Asteroids, pygame-ce, and Python Seam Collision · fault isolation · Debug Seam Collision, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Rendering a duplicate at the edge automatically fixes collision detection."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Seam Collision failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-3-observed",
+            "label": "observed",
+            "text": "Rendering a duplicate at the edge automatically fixes collision detection.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-3-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Compare shortest toroidal displacement or ghost proxies so collisions remain continuous across seams.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-3-overreach",
+          "text": "For seam collision · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-3-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Seam Collision."
+        },
+        {
+          "id": "fault-3-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the seam collision · fault isolation evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "fault-4",
+      "title": "Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling",
+      "interaction": "predict",
+      "instruction": "debug case — A debug Asteroids team handles case 6238 during a keyboard-only community arcade night. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Separate logical resolution from window pixels and map rendering and input through one letterbox or scaling transform.\n\nWhich observation would disprove this suspected cause: “Resizable display flags automatically preserve game coordinates and aspect ratio.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling.",
+      "why": "The decision supplies observable evidence for separate logical resolution from window pixels and map rendering and input through one letterbox or scaling transform. For Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling, keep Logical Scaling connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 6238 during a keyboard-only community arcade night. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Separate logical resolution from window pixels and map rendering and input through one letterbox or scaling transform."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Logical Scaling condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Display and Window — Display initialization, modes, resize, scaling, fullscreen, vsync caveats, presentation, and desktop boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-4-check"
+      ],
+      "competencyIds": [
+        "asteroids-logical-scaling"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Logical Scaling precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 6238 during a keyboard-only community arcade night. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; test empty, zero-vector, seam, low-frame-rate, focus-loss, device-loss, missing-asset, corrupted-save, and rejected cases; then inject a 400 millisecond frame stall and prove the update budget prevents a spiral of death. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Separate logical resolution from window pixels and map rendering and input through one letterbox or scaling transform.",
+        "For Asteroids, pygame-ce, and Python Logical Scaling · fault isolation · Debug Logical Scaling, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Resizable display flags automatically preserve game coordinates and aspect ratio."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "fault-4-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Logical Scaling."
+        },
+        {
+          "id": "fault-4-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the logical scaling · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-4-overreach",
+          "text": "For logical scaling · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        }
+      ]
+    },
+    {
+      "id": "fault-5",
+      "title": "Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi",
+      "interaction": "debug",
+      "instruction": "debug case — A debug Asteroids team handles case 2095 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; keep every critical cue available through more than color or sound and every action remappable without timing precision; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.\n\nWhich observation would disprove this suspected cause: “Window size and drawable pixel size are always identical.”?\n\nEvidence target: Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi.",
+      "why": "The decision supplies observable evidence for handle resize, minimize, restore, high-dpi, fullscreen, and zero extents without corrupting world state. For Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi, keep Resize Dpi connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 2095 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; keep every critical cue available through more than color or sound and every action remappable without timing precision; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Resize Dpi symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "pygame-ce Display and Window — Display initialization, modes, resize, scaling, fullscreen, vsync caveats, presentation, and desktop boundaries."
+        }
+      ],
+      "checkIds": [
+        "fault-5-check"
+      ],
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Resize Dpi precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 2095 during a headless continuous-integration replay. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; keep every critical cue available through more than color or sound and every action remappable without timing precision; then lose window focus while thrust and fire are held, then prove both actions release safely. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.",
+        "For Asteroids, pygame-ce, and Python Resize Dpi · fault isolation · Debug Resize Dpi, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Window size and drawable pixel size are always identical."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Resize Dpi failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "fault-5-observed",
+            "label": "observed",
+            "text": "Window size and drawable pixel size are always identical.",
+            "tone": "problem"
+          },
+          {
+            "id": "fault-5-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "fault-5-misread",
+          "text": "Another successful run of the same happy-path example. That claim does not survive the resize dpi · fault isolation evidence boundary."
+        },
+        {
+          "id": "fault-5-overreach",
+          "text": "For resize dpi · fault isolation, run one convenient high-frame-rate happy path, omit revision, seed, input and time trace, units, seams, device changes, entity reconciliation, multichannel cues, accessibility settings, failures, recovery, and desktop transfer, then accept a playable animation as Asteroids proof."
+        },
+        {
+          "id": "fault-5-sound",
+          "text": "A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies Resize Dpi."
+        }
+      ]
+    },
+    {
+      "id": "repair-artifact",
+      "title": "Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi",
+      "interaction": "code",
+      "instruction": "Append a runnable pure-Python function headed \"# Evidence: asteroids-resize-dpi-d383sb\" that uses case 2100 to wrap full object bounds across seams while preserving logical world state through resize and display scaling. Keep its defaults runnable, assert an invariant, and return observable changed-case evidence. Browser code must not claim native pygame-ce, SDL, window, controller, mixer, filesystem, package, GPU, installer, or production behavior; verify those boundaries later with Python 3.14.6, released pygame-ce 2.5.7, fixed and headless SDL fixtures, real devices, licensed assets, accessibility playtests, profiling, clean installations, rollback, recovery, and release gates.\n\nEvidence target: Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Resize Dpi into observable performance evidence. For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi, keep Resize Dpi connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "fault-5"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "python",
+          "code": "# Evidence: asteroids-resize-dpi-d383sb\n# Competency: asteroids-resize-dpi.\n# Case 2100: a controller-remapping accessibility review.\n# Operating constraint: retain player goal, revision, Python, pygame-ce, SDL, fixture, seed, input trace, viewport, and result identity.\n# Changed case: run the packaged build with dummy video and audio drivers, missing optional sound, and a corrupted save.\ndef evidence_asteroids_resize_dpi_d383sb(x: float = -4.0, y: float = 605.0, width: float = 800.0, height: float = 600.0, radius: float = 12.0, resize_preserves_world: bool = True) -> tuple[bool, int | float, str]:\n    evidence_variant_d383sb = \"d383sb-bs383d-2100\"\n    assert evidence_variant_d383sb\n    evidence_axes_d383sb = (\n        \"playerd383sb\",\n        \"seed2100\",\n        \"inputbs383d\",\n        \"framed383sb2100\",\n        \"state2100d383sb\",\n        \"playtestbs383d2100\",\n    )\n    assert len(set(evidence_axes_d383sb)) == 6\n    if width <= 0.0 or height <= 0.0 or radius < 0.0:\n        return False, width, \"viewport-domain\"\n    wrapped_x = ((x + radius) % (width + 2 * radius)) - radius\n    wrapped_y = ((y + radius) % (height + 2 * radius)) - radius\n    if not resize_preserves_world:\n        return False, wrapped_x, \"resize-teleport\"\n    if not (-radius <= wrapped_x < width + radius):\n        return False, wrapped_x, \"wrap-x\"\n    assert -radius <= wrapped_y < height + radius\n    return True, round(wrapped_x, 3), \"seam-safe-wrap\"\n",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "repair-artifact-marker",
+        "repair-artifact-structure"
+      ],
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Resize Dpi precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 9476 during a low-power integrated-GPU frame-budget trial. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; keep every critical cue available through more than color or sound and every action remappable without timing precision; then replace an audio-only collision cue with synchronized text, shape, and optional sound evidence. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.",
+        "For Asteroids, pygame-ce, and Python Implement the cause-level repair · Debug Resize Dpi, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Window size and drawable pixel size are always identical."
+      ],
+      "xp": 10,
+      "targetFile": "python"
+    },
+    {
+      "id": "regression-sequence",
+      "title": "Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi",
+      "interaction": "arrange",
+      "instruction": "Order the Resize Dpi Asteroids, pygame-ce, and Python player-input-to-release evidence cycle for this debug task before implementing it.\n\nEvidence target: Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi.",
+      "why": "Correct order keeps Resize Dpi assumptions visible before execution and verifies its result against a boundary case afterward. For Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi, keep Resize Dpi connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "repair-artifact"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A debug Asteroids team handles case 5333 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Resize Dpi has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "regression-sequence-check"
+      ],
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Resize Dpi precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 5333 during a low-vision laptop playtest at 125 percent scaling. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then replay the same input trace at 30, 60, and 144 presentation frames per second and compare simulation state. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.",
+        "For Asteroids, pygame-ce, and Python Order the regression proof · Debug Resize Dpi, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Window size and drawable pixel size are always identical."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "regression-sequence-frame",
+          "text": "Declare Asteroids, pygame-ce, and Python player outcome, revision, runtime, seed, input trace, accessibility profile, and frame, entity, collision, audio, and memory budgets for the debug Resize Dpi case"
+        },
+        {
+          "id": "regression-sequence-model",
+          "text": "Predict Asteroids, pygame-ce, and Python event, intent, simulation, collision, cleanup, rendering, cue, failure, pause, rollback, and recovery outcomes for the debug Resize Dpi case"
+        },
+        {
+          "id": "regression-sequence-execute",
+          "text": "Run the smallest deterministic Asteroids, pygame-ce, and Python simulation model and retain exact intermediate and changed-case results for the debug Resize Dpi case"
+        },
+        {
+          "id": "regression-sequence-verify",
+          "text": "Change one Asteroids, pygame-ce, and Python frame rate, stall, seam, device, collision, cue, save, package, or release condition, verify bounded rejection or repair, and state desktop transfer limits for the debug Resize Dpi case"
+        }
+      ]
+    },
+    {
+      "id": "incident-report",
+      "title": "Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi",
+      "interaction": "reflect",
+      "instruction": "Write the debug evidence note for Resize Dpi: explain the governing condition, one failure, and how this concrete case was verified — A debug Asteroids team handles case 3714 during a controller-remapping accessibility review. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.\n\nEvidence target: Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi, keep Resize Dpi connected to executable Python game-state, timing, input, collision, accessibility, test, package, and release decision evidence.",
+      "buildsOnStepIds": [
+        "regression-sequence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state."
+        }
+      ],
+      "checkIds": [
+        "incident-report-check"
+      ],
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "hints": [
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi, name the player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary, Resize Dpi precondition, or invariant that must hold.",
+        "At Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi, trace this concrete input and predict event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence before reviewing it: A debug Asteroids team handles case 3714 during a controller-remapping accessibility review. Build deterministic Python evidence to wrap full object bounds across seams while preserving logical world state through resize and display scaling; preserve explicit pixels, seconds, radians or degrees, frames, entity counts, collision units, and budgets; then cross both screen seams in one update and retain collision and rendering continuity. Browser code uses pure bounded models and original fixed fixtures only. Real pygame-ce, SDL, windows, controllers, audio devices, assets, files, installers, frame timing, GPUs, packaging, and production behavior require explicit controlled desktop transfer gates. Competency probe: Handle resize, minimize, restore, high-DPI, fullscreen, and zero extents without corrupting world state.",
+        "For Asteroids, pygame-ce, and Python Publish the incident record · Debug Resize Dpi, challenge the documented misconception with changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer evidence: Window size and drawable pixel size are always identical."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "incident-record-check",
+      "type": "choice-equals",
+      "description": "The decision applies Center Vs Bounds to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Center Vs Bounds.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-center-vs-bounds"
+      ],
+      "expectedOptionId": "incident-record-sound"
+    },
+    {
+      "id": "fault-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Center Vs Bounds to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Center Vs Bounds.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-center-vs-bounds"
+      ],
+      "expectedOptionId": "fault-1-sound"
+    },
+    {
+      "id": "fault-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Toroidal Wrap to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Toroidal Wrap.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-toroidal-wrap"
+      ],
+      "expectedOptionId": "fault-2-sound"
+    },
+    {
+      "id": "fault-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Seam Collision to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Seam Collision.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-seam-collision"
+      ],
+      "expectedOptionId": "fault-3-sound"
+    },
+    {
+      "id": "fault-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Logical Scaling to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Logical Scaling.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-logical-scaling"
+      ],
+      "expectedOptionId": "fault-4-sound"
+    },
+    {
+      "id": "fault-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Resize Dpi to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Resize Dpi.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "expectedOptionId": "fault-5-sound"
+    },
+    {
+      "id": "repair-artifact-marker",
+      "type": "source-includes",
+      "description": "The cumulative python portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker # Evidence: asteroids-resize-dpi-d383sb.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "file": "python",
+      "expected": "# Evidence: asteroids-resize-dpi-d383sb"
+    },
+    {
+      "id": "repair-artifact-structure",
+      "type": "source-matches",
+      "file": "python",
+      "pattern": "# Evidence: asteroids-resize-dpi-d383sb(?:(?!# Evidence:)[\\s\\S])*?def\\s+evidence_asteroids_resize_dpi_d383sb\\s*\\((?:(?!# Evidence:)[\\s\\S])*?\\)\\s*(?:->[^:]+)?\\s*:(?=(?:(?!# Evidence:)[\\s\\S])*?width <= 0.0)(?=(?:(?!# Evidence:)[\\s\\S])*?% \\(width \\+ 2 \\* radius\\))(?=(?:(?!# Evidence:)[\\s\\S])*?not resize_preserves_world)(?=(?:(?!# Evidence:)[\\s\\S])*?-radius <= wrapped_x)(?=(?:(?!# Evidence:)[\\s\\S])*?assert)(?=(?:(?!# Evidence:)[\\s\\S])*?return)(?:(?!# Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ]
+    },
+    {
+      "id": "regression-sequence-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "expectedOptionIds": [
+        "regression-sequence-frame",
+        "regression-sequence-model",
+        "regression-sequence-execute",
+        "regression-sequence-verify"
+      ]
+    },
+    {
+      "id": "incident-report-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using handle and resize plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "asteroids-resize-dpi"
+      ],
+      "minimumCharacters": 130,
+      "requiredTerms": [
+        "handle",
+        "resize"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

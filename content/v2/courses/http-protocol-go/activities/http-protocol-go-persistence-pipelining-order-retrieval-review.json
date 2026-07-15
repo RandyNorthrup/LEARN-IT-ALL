@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "id": "http-protocol-go-persistence-pipelining-order-retrieval-review",
+  "courseId": "http-protocol-go",
+  "moduleId": "http-protocol-go-persistence-pipelining-order",
+  "kind": "review",
+  "title": "Persistent Connections, Pipelining, Ordering, Reuse, and Closure · Runtime Recall",
+  "summary": "A delayed handoff reconstructs persistent connections, pipelining, ordering, reuse, and closure from bounded byte and state evidence, challenges one misconception, and revises the persistent-connection request and response state machine. Planned artifact: Extend the evidence record for persistent-connection request and response state machine after a delayed changed case. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy.",
+    "Consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request.",
+    "Preserve request-response ordering across pipelined HTTP/1.1 messages even when application work finishes out of order.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [
+      "httpproto-persistence-defaults",
+      "httpproto-request-body-before-next",
+      "httpproto-pipeline-response-order",
+      "httpproto-idle-timeout-reuse-budget",
+      "httpproto-desynchronization-close"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "http-protocol-go-persistence-pipelining-order-independent-lab"
+  ],
+  "difficulty": "practice",
+  "estimatedMinutes": 70,
+  "artifactId": "http-protocol-go-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// http-protocol-go cumulative protocol-engineering decision portfolio.\n// Browser execution uses deterministic pure-Go octet, framing, parser-state, and protocol-decision models only.\n// Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, credentials, host state, and production changes require explicit authorized Go 1.26 protocol transfer gates.\npackage main\n\nimport \"fmt\"\n\ntype ByteEvidence struct { Consumed, Remaining int; Complete bool; State string }\ntype ProtocolEvidence struct { Version, Framing, TerminalReason string; Reusable bool }\n\nfunc main() {\n\tfmt.Println(\"Go HTTP protocol decision portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mixed-evidence",
+      "title": "Separate evidence from confidence · Review Desynchronization Close",
+      "interaction": "inspect",
+      "instruction": "review case — A review protocol team handles case 3926 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.\n\nInspect the Desynchronization Close trace for this review case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Separate evidence from confidence · Review Desynchronization Close.",
+      "why": "The decision supplies observable evidence for close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement. For Separate evidence from confidence · Review Desynchronization Close, keep Desynchronization Close connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Desynchronization Close, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mixed-evidence-check"
+      ],
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "hints": [
+        "For Separate evidence from confidence · Review Desynchronization Close, name the types, ownership, and stop path, Desynchronization Close precondition, or invariant that must hold.",
+        "At Separate evidence from confidence · Review Desynchronization Close, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3926 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.",
+        "For Separate evidence from confidence · Review Desynchronization Close, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Returning 400 is enough to resynchronize a persistent connection after malformed framing."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Desynchronization Close case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mixed-evidence-line-assumption",
+            "label": "assumption",
+            "text": "A review protocol team handles case 3926 in a field-normalizing cache with an independent origin parser. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.",
+            "tone": "focus"
+          },
+          {
+            "id": "mixed-evidence-line-risk",
+            "label": "risk",
+            "text": "Returning 400 is enough to resynchronize a persistent connection after malformed framing.",
+            "tone": "problem"
+          },
+          {
+            "id": "mixed-evidence-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement. Artifact under review: persistent-connection request and response state machine.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mixed-evidence-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the separate evidence from confidence evidence boundary."
+        },
+        {
+          "id": "mixed-evidence-overreach",
+          "text": "For separate evidence from confidence, run one convenient Desynchronization Close happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mixed-evidence-sound",
+          "text": "The record names the assumption, applies Desynchronization Close, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Persistence Defaults · changed case · Review Persistence Defaults",
+      "interaction": "predict",
+      "instruction": "review case — A review protocol team handles case 3927 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy.\n\nWhich action demonstrates Persistence Defaults without dropping earlier contracts?\n\nEvidence target: Persistence Defaults · changed case · Review Persistence Defaults.",
+      "why": "The decision supplies observable evidence for determine http/1.0 and http/1.1 persistence from version, connection options, framing completeness, errors, and local policy. For Persistence Defaults · changed case · Review Persistence Defaults, keep Persistence Defaults connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mixed-evidence"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3927 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Persistence Defaults condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "httpproto-persistence-defaults"
+      ],
+      "hints": [
+        "For Persistence Defaults · changed case · Review Persistence Defaults, name the types, ownership, and stop path, Persistence Defaults precondition, or invariant that must hold.",
+        "At Persistence Defaults · changed case · Review Persistence Defaults, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3927 in a fuzzing harness varying every legal input segmentation. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy.",
+        "For Persistence Defaults · changed case · Review Persistence Defaults, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every HTTP/1.1 connection remains reusable until the peer closes it."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-overreach",
+          "text": "For persistence defaults · changed case, run one convenient Persistence Defaults happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-1-sound",
+          "text": "Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy. Apply it to the stated input and retain a reproducible trace for persistent-connection request and response state machine."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "Every HTTP/1.1 connection remains reusable until the peer closes it. That claim does not survive the persistence defaults · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Request Body Before Next · changed case · Review Request Body Before Next",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 3928 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request.\n\nWhich action demonstrates Request Body Before Next without dropping earlier contracts?\n\nEvidence target: Request Body Before Next · changed case · Review Request Body Before Next.",
+      "why": "The decision supplies observable evidence for consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request. For Request Body Before Next · changed case · Review Request Body Before Next, keep Request Body Before Next connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3928 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Request Body Before Next condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "httpproto-request-body-before-next"
+      ],
+      "hints": [
+        "For Request Body Before Next · changed case · Review Request Body Before Next, name the types, ownership, and stop path, Request Body Before Next precondition, or invariant that must hold.",
+        "At Request Body Before Next · changed case · Review Request Body Before Next, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3928 in a municipal gateway receiving one-byte TCP fragments. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request.",
+        "For Request Body Before Next · changed case · Review Request Body Before Next, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A server can ignore an unread request body and immediately parse the next start line safely."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-2-sound",
+          "text": "Consume, reject-and-close, or deliberately drain the current framed request before parsing a subsequent request. Apply it to the stated input and retain a reproducible trace for persistent-connection request and response state machine."
+        },
+        {
+          "id": "scenario-2-misread",
+          "text": "A server can ignore an unread request body and immediately parse the next start line safely. That claim does not survive the request body before next · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For request body before next · changed case, run one convenient Request Body Before Next happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Pipeline Response Order · changed case · Review Pipeline Response Order",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 3929 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Preserve request-response ordering across pipelined HTTP/1.1 messages even when application work finishes out of order.\n\nWhich action demonstrates Pipeline Response Order without dropping earlier contracts?\n\nEvidence target: Pipeline Response Order · changed case · Review Pipeline Response Order.",
+      "why": "The decision supplies observable evidence for preserve request-response ordering across pipelined http/1.1 messages even when application work finishes out of order. For Pipeline Response Order · changed case · Review Pipeline Response Order, keep Pipeline Response Order connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3929 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Preserve request-response ordering across pipelined HTTP/1.1 messages even when application work finishes out of order."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Pipeline Response Order condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "httpproto-pipeline-response-order"
+      ],
+      "hints": [
+        "For Pipeline Response Order · changed case · Review Pipeline Response Order, name the types, ownership, and stop path, Pipeline Response Order precondition, or invariant that must hold.",
+        "At Pipeline Response Order · changed case · Review Pipeline Response Order, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3929 in a privacy-sensitive proxy translating between two parser implementations. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Preserve request-response ordering across pipelined HTTP/1.1 messages even when application work finishes out of order.",
+        "For Pipeline Response Order · changed case · Review Pipeline Response Order, challenge the documented misconception with runtime, failure, race, or toolchain evidence: HTTP/1.1 response order may follow handler completion because each response carries an identifier."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-misread",
+          "text": "HTTP/1.1 response order may follow handler completion because each response carries an identifier. That claim does not survive the pipeline response order · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-3-overreach",
+          "text": "For pipeline response order · changed case, run one convenient Pipeline Response Order happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Preserve request-response ordering across pipelined HTTP/1.1 messages even when application work finishes out of order. Apply it to the stated input and retain a reproducible trace for persistent-connection request and response state machine."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget",
+      "interaction": "predict",
+      "instruction": "review case — A review protocol team handles case 3930 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Bound requests per connection, idle time, lifetime, buffered residual data, and closure reasons without truncating active messages.\n\nWhich action demonstrates Idle Timeout Reuse Budget without dropping earlier contracts?\n\nEvidence target: Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget.",
+      "why": "The decision supplies observable evidence for bound requests per connection, idle time, lifetime, buffered residual data, and closure reasons without truncating active messages. For Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget, keep Idle Timeout Reuse Budget connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3930 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Bound requests per connection, idle time, lifetime, buffered residual data, and closure reasons without truncating active messages."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Idle Timeout Reuse Budget condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "httpproto-idle-timeout-reuse-budget"
+      ],
+      "hints": [
+        "For Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget, name the types, ownership, and stop path, Idle Timeout Reuse Budget precondition, or invariant that must hold.",
+        "At Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3930 in a regional status service with slow assistive and low-bandwidth clients. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Bound requests per connection, idle time, lifetime, buffered residual data, and closure reasons without truncating active messages.",
+        "For Idle Timeout Reuse Budget · changed case · Review Idle Timeout Reuse Budget, challenge the documented misconception with runtime, failure, race, or toolchain evidence: One generous idle timeout protects equally against slow clients and resource retention."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-4-overreach",
+          "text": "For idle timeout reuse budget · changed case, run one convenient Idle Timeout Reuse Budget happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-4-sound",
+          "text": "Bound requests per connection, idle time, lifetime, buffered residual data, and closure reasons without truncating active messages. Apply it to the stated input and retain a reproducible trace for persistent-connection request and response state machine."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "One generous idle timeout protects equally against slow clients and resource retention. That claim does not survive the idle timeout reuse budget · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Desynchronization Close · changed case · Review Desynchronization Close",
+      "interaction": "answer",
+      "instruction": "review case — A review protocol team handles case 3931 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.\n\nWhich action demonstrates Desynchronization Close without dropping earlier contracts?\n\nEvidence target: Desynchronization Close · changed case · Review Desynchronization Close.",
+      "why": "The decision supplies observable evidence for close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement. For Desynchronization Close · changed case · Review Desynchronization Close, keep Desynchronization Close connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3931 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Desynchronization Close condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "HTTP/1.1 — Controls textual message grammar, parsing, request targets, fields, body length precedence, chunked coding, persistence, connection management, smuggling, and splitting defense."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "hints": [
+        "For Desynchronization Close · changed case · Review Desynchronization Close, name the types, ownership, and stop path, Desynchronization Close precondition, or invariant that must hold.",
+        "At Desynchronization Close · changed case · Review Desynchronization Close, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3931 in a partner TLS endpoint negotiating HTTP/1.1 and HTTP/2 through ALPN. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.",
+        "For Desynchronization Close · changed case · Review Desynchronization Close, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Returning 400 is enough to resynchronize a persistent connection after malformed framing."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-sound",
+          "text": "Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement. Apply it to the stated input and retain a reproducible trace for persistent-connection request and response state machine."
+        },
+        {
+          "id": "scenario-5-misread",
+          "text": "Returning 400 is enough to resynchronize a persistent connection after malformed framing. That claim does not survive the desynchronization close · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For desynchronization close · changed case, run one convenient Desynchronization Close happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "retrieval-order",
+      "title": "Retrieve the complete evidence cycle · Review Persistence Defaults",
+      "interaction": "arrange",
+      "instruction": "Order the Persistence Defaults evidence cycle for this review task before implementing it.\n\nEvidence target: Retrieve the complete evidence cycle · Review Persistence Defaults.",
+      "why": "Correct order keeps Persistence Defaults assumptions visible before execution and verifies its result against a boundary case afterward. For Retrieve the complete evidence cycle · Review Persistence Defaults, keep Persistence Defaults connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "A review protocol team handles case 3932 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Persistence Defaults has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "retrieval-order-check"
+      ],
+      "competencyIds": [
+        "httpproto-persistence-defaults"
+      ],
+      "hints": [
+        "For Retrieve the complete evidence cycle · Review Persistence Defaults, name the types, ownership, and stop path, Persistence Defaults precondition, or invariant that must hold.",
+        "At Retrieve the complete evidence cycle · Review Persistence Defaults, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3932 in a incident replay lab retaining minimized request-smuggling corpora. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then block extra QPACK streams and fall back without removing HTTP/2 availability. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Determine HTTP/1.0 and HTTP/1.1 persistence from version, Connection options, framing completeness, errors, and local policy.",
+        "For Retrieve the complete evidence cycle · Review Persistence Defaults, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Every HTTP/1.1 connection remains reusable until the peer closes it."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "retrieval-order-frame",
+          "text": "Declare inputs, result and error contracts, ownership, and every goroutine stop condition for the review Persistence Defaults case"
+        },
+        {
+          "id": "retrieval-order-model",
+          "text": "Trace types, copies, aliases, deferred work, blocking points, and synchronization before editing for the review Persistence Defaults case"
+        },
+        {
+          "id": "retrieval-order-execute",
+          "text": "Run the smallest isolated Go program and retain output or invariant evidence for the review Persistence Defaults case"
+        },
+        {
+          "id": "retrieval-order-verify",
+          "text": "Change a boundary input or schedule, verify cleanup and races, then state toolchain limits for the review Persistence Defaults case"
+        }
+      ]
+    },
+    {
+      "id": "retrieval-note",
+      "title": "Record what required effort · Review Desynchronization Close",
+      "interaction": "reflect",
+      "instruction": "Write the review evidence note for Desynchronization Close: explain the governing condition, one failure, and how this concrete case was verified — A review protocol team handles case 3933 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then minimize a fuzz failure and add it to the deterministic regression corpus. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.\n\nEvidence target: Record what required effort · Review Desynchronization Close.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Record what required effort · Review Desynchronization Close, keep Desynchronization Close connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "retrieval-order"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement."
+        }
+      ],
+      "checkIds": [
+        "retrieval-note-check"
+      ],
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "hints": [
+        "For Record what required effort · Review Desynchronization Close, name the types, ownership, and stop path, Desynchronization Close precondition, or invariant that must hold.",
+        "At Record what required effort · Review Desynchronization Close, trace this concrete input and predict values, errors, blocking, and output before reviewing it: A review protocol team handles case 3933 in a canary edge service advertising HTTP/3 with bounded fallback. Build deterministic Go evidence to preserve HTTP/1.1 response order and reject reuse after incomplete or ambiguous input; preserve this operating constraint: one connection has exactly one read owner and one terminal close owner; then minimize a fuzz failure and add it to the deterministic regression corpus. Browser code models bounded byte and state decisions only. Sockets, listeners, live TLS, proxies, packet capture, fuzz campaigns, races, load, HTTP/2, HTTP/3, and production behavior require explicit authorized transfer gates. Competency probe: Close and discard connection state after ambiguous framing, parse failure, incomplete output, unexpected residual bytes, or state disagreement.",
+        "For Record what required effort · Review Desynchronization Close, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Returning 400 is enough to resynchronize a persistent connection after malformed framing."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mixed-evidence-check",
+      "type": "choice-equals",
+      "description": "The decision applies Desynchronization Close to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Desynchronization Close.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "expectedOptionId": "mixed-evidence-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Persistence Defaults to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Persistence Defaults.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-persistence-defaults"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Request Body Before Next to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Request Body Before Next.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-request-body-before-next"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Pipeline Response Order to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Pipeline Response Order.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-pipeline-response-order"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Idle Timeout Reuse Budget to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Idle Timeout Reuse Budget.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-idle-timeout-reuse-budget"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Desynchronization Close to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Desynchronization Close.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "retrieval-order-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-persistence-defaults"
+      ],
+      "expectedOptionIds": [
+        "retrieval-order-frame",
+        "retrieval-order-model",
+        "retrieval-order-execute",
+        "retrieval-order-verify"
+      ]
+    },
+    {
+      "id": "retrieval-note-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using close and discard plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "httpproto-desynchronization-close"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "close",
+        "discard"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

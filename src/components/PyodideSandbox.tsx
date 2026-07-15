@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { Play, Loader2, RotateCcw, Terminal, CheckCircle2, XCircle } from 'lucide-react';
 import Editor from '@monaco-editor/react';
+import { CheckCircle2, Loader2, Play, RotateCcw, Terminal, XCircle } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // Pyodide type declarations
 interface PyodideInterface {
@@ -40,15 +40,20 @@ interface PyodideSandboxProps {
 
 // Cache Pyodide across component instances
 let pyodidePromise: Promise<PyodideInterface> | null = null;
+const PYODIDE_VERSION = '314.0.2';
+const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 
 async function loadPyodideRuntime(): Promise<PyodideInterface> {
   if (pyodidePromise) return pyodidePromise;
 
   pyodidePromise = (async () => {
     // Load Pyodide from CDN
-    if (typeof window !== 'undefined' && !(window as unknown as Record<string, unknown>).loadPyodide) {
+    if (
+      typeof window !== 'undefined' &&
+      !(window as unknown as Record<string, unknown>).loadPyodide
+    ) {
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js';
+      script.src = `${PYODIDE_CDN}pyodide.js`;
       script.async = true;
       await new Promise<void>((resolve, reject) => {
         script.onload = () => resolve();
@@ -57,9 +62,13 @@ async function loadPyodideRuntime(): Promise<PyodideInterface> {
       });
     }
 
-    const loadPyodide = (window as unknown as { loadPyodide: (config: { indexURL: string }) => Promise<PyodideInterface> }).loadPyodide;
+    const loadPyodide = (
+      window as unknown as {
+        loadPyodide: (config: { indexURL: string }) => Promise<PyodideInterface>;
+      }
+    ).loadPyodide;
     const pyodide = await loadPyodide({
-      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/',
+      indexURL: PYODIDE_CDN,
     });
 
     return pyodide;
@@ -111,7 +120,9 @@ export default function PyodideSandbox({
         setError(`Failed to load Python runtime: ${err.message}`);
         setIsLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [preloadModules]);
 
   const runCode = useCallback(async () => {
@@ -127,7 +138,7 @@ export default function PyodideSandbox({
     // Capture stdout/stderr
     pyodide.setStdout({
       batched: (msg: string) => {
-        capturedOutput += msg + '\n';
+        capturedOutput += `${msg}\n`;
       },
     });
     pyodide.setStderr({
@@ -174,7 +185,7 @@ export default function PyodideSandbox({
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
-      setOutput(capturedOutput + `\n❌ Error:\n${errorMsg}`);
+      setOutput(`${capturedOutput}\n❌ Error:\n${errorMsg}`);
       setError(errorMsg);
     } finally {
       setIsRunning(false);
@@ -193,13 +204,15 @@ export default function PyodideSandbox({
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [output]);
+  }, []);
 
   const passedCount = testResults.filter((r) => r.passed).length;
   const totalTests = testResults.length;
 
   return (
-    <div className={`rounded-xl border border-gray-300 bg-white shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`rounded-xl border border-gray-300 bg-white shadow-lg overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="bg-gray-800 text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -211,12 +224,11 @@ export default function PyodideSandbox({
               Loading Python runtime...
             </span>
           )}
-          {pyodide && !isLoading && (
-            <span className="text-xs text-green-400">● Ready</span>
-          )}
+          {pyodide && !isLoading && <span className="text-xs text-green-400">● Ready</span>}
         </div>
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={resetCode}
             className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded transition-colors"
             title="Reset to starter code"
@@ -225,6 +237,7 @@ export default function PyodideSandbox({
             Reset
           </button>
           <button
+            type="button"
             onClick={runCode}
             disabled={!pyodide || isRunning}
             className="flex items-center gap-1 px-3 py-1 text-xs bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-semibold transition-colors"
@@ -304,7 +317,9 @@ export default function PyodideSandbox({
               <div
                 key={result.id}
                 className={`flex items-start gap-2 text-xs p-2 rounded ${
-                  result.passed ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                  result.passed
+                    ? 'bg-green-50 border border-green-200'
+                    : 'bg-red-50 border border-red-200'
                 }`}
               >
                 {result.passed ? (

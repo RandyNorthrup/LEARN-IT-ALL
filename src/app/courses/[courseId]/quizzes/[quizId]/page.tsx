@@ -1,30 +1,23 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import Editor from '@monaco-editor/react';
+import { ArrowLeft, CheckCircle2, Clock, HelpCircle, Loader2, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  ArrowLeft,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Loader2,
-  HelpCircle,
-} from 'lucide-react';
-import Editor from '@monaco-editor/react';
-import {
-  Quiz,
-  QuizQuestion,
-  UserAnswer,
-  QuizResult,
-  MultipleChoiceQuestion,
-  MultipleSelectQuestion,
-  TrueFalseQuestion,
+import { useCallback, useEffect, useState } from 'react';
+import type {
   CodeCompletionQuestion,
   CodingExerciseQuestion,
-  MultiPartQuestion,
-  EssayQuestion,
   DesignQuestion,
+  EssayQuestion,
+  MultiPartQuestion,
+  MultipleChoiceQuestion,
+  MultipleSelectQuestion,
+  Quiz,
+  QuizQuestion,
+  QuizResult,
+  TrueFalseQuestion,
+  UserAnswer,
 } from '@/types/quiz';
 
 export default function QuizPage() {
@@ -63,24 +56,6 @@ export default function QuizPage() {
 
     fetchQuiz();
   }, [courseId, quizId]);
-
-  // Timer countdown
-  useEffect(() => {
-    if (timeRemaining === null || timeRemaining <= 0 || result) return;
-
-    const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev === null || prev <= 1) {
-          handleSubmit();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRemaining, result]);
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -122,6 +97,23 @@ export default function QuizPage() {
     }
   }, [quiz, courseId, quizId, answers, startTime, router]);
 
+  // Timer countdown
+  useEffect(() => {
+    if (timeRemaining === null || timeRemaining <= 0 || result) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((previous) => {
+        if (previous === null || previous <= 1) {
+          handleSubmit();
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining, result, handleSubmit]);
+
   const updateAnswer = (questionId: string, answer: UserAnswer) => {
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
   };
@@ -143,7 +135,10 @@ export default function QuizPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Quiz Not Found</h1>
-          <Link href={`/courses/${courseId}`} className="text-blue-600 hover:text-blue-700 font-semibold">
+          <Link
+            href={`/courses/${courseId}`}
+            className="text-blue-600 hover:text-blue-700 font-semibold"
+          >
             ← Back to Course
           </Link>
         </div>
@@ -217,6 +212,7 @@ export default function QuizPage() {
             {/* Submit Button */}
             <div className="rounded-2xl bg-white shadow-xl p-6">
               <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={submitting || Object.keys(answers).length === 0}
                 className="w-full inline-flex items-center justify-center px-6 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg transition-all hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
@@ -227,7 +223,9 @@ export default function QuizPage() {
                     Submitting...
                   </>
                 ) : (
-                  <>Submit Quiz ({Object.keys(answers).length} / {quiz.questions.length} answered)</>
+                  <>
+                    Submit Quiz ({Object.keys(answers).length} / {quiz.questions.length} answered)
+                  </>
                 )}
               </button>
             </div>
@@ -504,14 +502,16 @@ function CodingExerciseInput({
       <div className="border-t border-gray-200 pt-4">
         <h4 className="text-sm font-bold text-gray-900 mb-2">Test Cases</h4>
         <div className="space-y-2">
-          {question.testCases.filter((tc) => !tc.isHidden).map((tc) => (
-            <div key={tc.id} className="p-2 bg-gray-50 rounded text-sm">
-              <p className="font-semibold text-gray-900">{tc.description}</p>
-              {tc.expectedOutput && (
-                <p className="text-gray-600 text-xs mt-1">Expected: {tc.expectedOutput}</p>
-              )}
-            </div>
-          ))}
+          {question.testCases
+            .filter((tc) => !tc.isHidden)
+            .map((tc) => (
+              <div key={tc.id} className="p-2 bg-gray-50 rounded text-sm">
+                <p className="font-semibold text-gray-900">{tc.description}</p>
+                {tc.expectedOutput && (
+                  <p className="text-gray-600 text-xs mt-1">Expected: {tc.expectedOutput}</p>
+                )}
+              </div>
+            ))}
           {question.testCases.some((tc) => tc.isHidden) && (
             <p className="text-xs text-gray-500 italic">
               + {question.testCases.filter((tc) => tc.isHidden).length} hidden test(s)
@@ -524,6 +524,7 @@ function CodingExerciseInput({
       {question.hints && question.hints.length > 0 && (
         <div className="border-t border-gray-200 pt-4">
           <button
+            type="button"
             onClick={onToggleHints}
             className="flex items-center text-blue-600 hover:text-blue-700 font-semibold text-sm mb-2"
           >
@@ -640,32 +641,37 @@ function EssayDesignInput({
       )}
       <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
         <p className="text-sm text-indigo-800">
-          <strong>{isDesign ? '🏗️ Design Question' : '📝 Essay Question'}</strong> — This is a self-assessed question. After submission, you&apos;ll see a rubric and model answer to evaluate your response.
+          <strong>{isDesign ? '🏗️ Design Question' : '📝 Essay Question'}</strong> — This is a
+          self-assessed question. After submission, you&apos;ll see a rubric and model answer to
+          evaluate your response.
         </p>
       </div>
       <textarea
         value={text}
-        onChange={(e) =>
-          onChange({ type: question.type, text: e.target.value } as UserAnswer)
-        }
-        placeholder={isDesign
-          ? 'Describe your design here. Include topology, equipment, addressing scheme, security considerations, and justifications...'
-          : 'Write your essay here. Be thorough and reference specific protocols, standards, or concepts...'
+        onChange={(e) => onChange({ type: question.type, text: e.target.value } as UserAnswer)}
+        placeholder={
+          isDesign
+            ? 'Describe your design here. Include topology, equipment, addressing scheme, security considerations, and justifications...'
+            : 'Write your essay here. Be thorough and reference specific protocols, standards, or concepts...'
         }
         className="w-full min-h-[200px] p-4 border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-y font-mono text-sm"
         rows={10}
       />
       <div className="flex justify-between text-sm">
         <span className={`${wordCount >= minWords ? 'text-green-600' : 'text-gray-500'}`}>
-          {wordCount} word{wordCount !== 1 ? 's' : ''} {wordCount < minWords && `(minimum ${minWords} recommended)`}
+          {wordCount} word{wordCount !== 1 ? 's' : ''}{' '}
+          {wordCount < minWords && `(minimum ${minWords} recommended)`}
         </span>
         <span className="text-gray-400">Self-assessed • {question.points} points</span>
       </div>
       <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
         <p className="text-sm font-semibold text-gray-700 mb-2">Rubric Criteria:</p>
         <ul className="space-y-1">
-          {question.rubric.map((r, i) => (
-            <li key={i} className="text-sm text-gray-600 flex justify-between">
+          {question.rubric.map((r) => (
+            <li
+              key={`${r.criterion}-${r.points}`}
+              className="text-sm text-gray-600 flex justify-between"
+            >
               <span>• {r.criterion}</span>
               <span className="text-gray-400 ml-2">{r.points} pts</span>
             </li>
@@ -681,9 +687,7 @@ function QuizResults({ result, quiz }: { result: QuizResult; quiz: Quiz }) {
   return (
     <div className="space-y-6">
       {/* Overall Result */}
-      <div
-        className={`rounded-2xl shadow-xl p-8 ${result.passed ? 'bg-green-50' : 'bg-red-50'}`}
-      >
+      <div className={`rounded-2xl shadow-xl p-8 ${result.passed ? 'bg-green-50' : 'bg-red-50'}`}>
         <div className="flex items-start mb-4">
           {result.passed ? (
             <CheckCircle2 className="h-8 w-8 text-green-600 mr-4 flex-shrink-0 mt-1" />
@@ -757,15 +761,22 @@ function QuizResults({ result, quiz }: { result: QuizResult; quiz: Quiz }) {
                       {qr.userAnswer && 'text' in qr.userAnswer && qr.userAnswer.text && (
                         <div className="p-3 bg-white border border-gray-200 rounded-lg">
                           <p className="text-sm font-semibold text-gray-700 mb-1">Your Answer:</p>
-                          <p className="text-sm text-gray-600 whitespace-pre-wrap">{qr.userAnswer.text}</p>
+                          <p className="text-sm text-gray-600 whitespace-pre-wrap">
+                            {qr.userAnswer.text}
+                          </p>
                         </div>
                       )}
                       {/* Rubric */}
                       <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-                        <p className="text-sm font-semibold text-indigo-800 mb-2">📋 Self-Assessment Rubric:</p>
+                        <p className="text-sm font-semibold text-indigo-800 mb-2">
+                          📋 Self-Assessment Rubric:
+                        </p>
                         <ul className="space-y-1">
-                          {(question as EssayQuestion | DesignQuestion).rubric.map((r, i) => (
-                            <li key={i} className="text-sm text-indigo-700 flex justify-between">
+                          {(question as EssayQuestion | DesignQuestion).rubric.map((r) => (
+                            <li
+                              key={`${r.criterion}-${r.points}`}
+                              className="text-sm text-indigo-700 flex justify-between"
+                            >
                               <span>☐ {r.criterion}</span>
                               <span className="text-indigo-500 ml-2">{r.points} pts</span>
                             </li>

@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 2,
+  "id": "sql-window-analytics-time-sql-time-semantics-concept",
+  "courseId": "sql-basics",
+  "moduleId": "sql-window-analytics-time",
+  "kind": "theory",
+  "title": "Window Functions, Analytical Grain, and Time-Aware SQL · Relational Lens: Time Semantics",
+  "summary": "Service leaders need rankings, running effort, previous-event comparisons, and rolling metrics without collapsing detail rows. Planned artifact: Add and verify the sql time semantics increment in a time-aware service-level analytics report. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows.",
+    "Build running and rolling aggregates with explicit ROWS or RANGE frames and edge-case checks.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [
+      "sql-time-semantics"
+    ],
+    "reinforces": [
+      "sql-running-rolling-metrics"
+    ],
+    "assesses": []
+  },
+  "prerequisites": [
+    "sql-window-analytics-time-sql-running-rolling-metrics-concept"
+  ],
+  "difficulty": "foundation",
+  "estimatedMinutes": 56,
+  "artifactId": "sql-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "sql": "-- sql-basics cumulative relational data portfolio.\n-- Each increment declares grain, predicts cardinality or changed rows, runs in fresh browser SQLite,\n-- reconciles results, tests changed data, and records PostgreSQL or standard-SQL boundaries.\n\nSELECT sqlite_version() AS browser_sqlite_version;\n",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "commit-prediction",
+      "title": "Predict Time Semantics · Theory Time Semantics",
+      "interaction": "predict",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total.\n\nBefore reading, predict which action preserves the Time Semantics contract for the supplied data.\n\nEvidence target: Predict Time Semantics · Theory Time Semantics.",
+      "why": "The decision supplies observable evidence for separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. For Predict Time Semantics · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Time Semantics condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite Query Planning and Window Function Documentation — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "commit-prediction-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Predict Time Semantics · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Predict Time Semantics · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total.",
+        "For Predict Time Semantics · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "commit-prediction-misread",
+          "text": "A timestamp string without zone context identifies one universal instant. That claim does not survive the predict time semantics evidence boundary."
+        },
+        {
+          "id": "commit-prediction-overreach",
+          "text": "Run a convenient Time Semantics query for predict time semantics, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "commit-prediction-sound",
+          "text": "Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. Apply it to the concrete input and state the observable result."
+        }
+      ]
+    },
+    {
+      "id": "test-concept",
+      "title": "Bound Time Semantics · Theory Time Semantics",
+      "interaction": "read",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 4 rows, and a reconciliation total.\n\nAfter tracing the worked code, choose the Time Semantics application whose preconditions and limits still match the supplied case.\n\nEvidence target: Bound Time Semantics · Theory Time Semantics.",
+      "why": "The decision supplies observable evidence for separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. For Bound Time Semantics · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "commit-prediction"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. Use this as an observable contract: name its preconditions, trace the state or value change, and state what evidence would disprove the result."
+        },
+        {
+          "type": "callout",
+          "tone": "note",
+          "title": "Reasoning move",
+          "text": "Declare result or mutation grain, keys, NULL meaning, and transaction boundary; predict cardinality and invariants; run the smallest query; reconcile counts and plans; then test changed data and dialect limits."
+        },
+        {
+          "type": "callout",
+          "tone": "success",
+          "title": "Worked case pattern",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total. A defensible solution applies Time Semantics, preserves the governing invariant or value contract, and connects the observed result to a time-aware service-level analytics report."
+        },
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "SELECT team_id, ticket_id, severity,\n       ROW_NUMBER() OVER (PARTITION BY team_id ORDER BY opened_at, ticket_id) AS arrival,\n       LAG(opened_at) OVER (PARTITION BY team_id ORDER BY opened_at, ticket_id) AS previous_opened,\n       COUNT(*) OVER (PARTITION BY team_id) AS team_ticket_count\nFROM tickets\nORDER BY team_id, arrival;",
+          "caption": "Runnable relational query or data-system contract example; predict its result before running, then change one boundary input."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Non-worked case",
+          "text": "A timestamp string without zone context identifies one universal instant. This fails the Time Semantics contract because it omits a precondition, invariant, ownership rule, or counterexample needed by this exact case."
+        },
+        {
+          "type": "evidence",
+          "label": "Research anchor",
+          "value": "SQLite Query Planning and Window Function Documentation (Current 2026-07-14) — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        },
+        {
+          "type": "evidence",
+          "label": "Mastery evidence",
+          "value": "A changed authentic task independently demonstrates this outcome: Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows."
+        }
+      ],
+      "checkIds": [
+        "test-concept-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Bound Time Semantics · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Bound Time Semantics · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 4 rows, and a reconciliation total.",
+        "For Bound Time Semantics · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "test-concept-overreach",
+          "text": "Run a convenient Time Semantics query for bound time semantics, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "test-concept-sound",
+          "text": "Use Time Semantics after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary."
+        },
+        {
+          "id": "test-concept-misread",
+          "text": "A timestamp string without zone context identifies one universal instant. That claim does not survive the bound time semantics evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "rebuild-process",
+      "title": "Sequence Time Semantics evidence · Theory Time Semantics",
+      "interaction": "arrange",
+      "instruction": "Order the Time Semantics evidence cycle for this theory task before implementing it.\n\nEvidence target: Sequence Time Semantics evidence · Theory Time Semantics.",
+      "why": "Correct order keeps Time Semantics assumptions visible before execution and verifies its result against a boundary case afterward. For Sequence Time Semantics evidence · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "test-concept"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 5 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Ordering constraint",
+          "text": "Order work so Time Semantics has a declared contract before execution and a boundary or counterexample after it."
+        }
+      ],
+      "checkIds": [
+        "rebuild-process-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Sequence Time Semantics evidence · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Sequence Time Semantics evidence · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 5 rows, and a reconciliation total.",
+        "For Sequence Time Semantics evidence · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "rebuild-process-frame",
+          "text": "Declare stakeholder question, input relations, row grain, keys, NULL meaning, and expected cardinality for the theory Time Semantics case"
+        },
+        {
+          "id": "rebuild-process-model",
+          "text": "Predict relational transformations, constraint or transaction effects, and dialect boundary before execution for the theory Time Semantics case"
+        },
+        {
+          "id": "rebuild-process-execute",
+          "text": "Run the smallest browser SQL statement and retain result rows, changed count, error, or query plan for the theory Time Semantics case"
+        },
+        {
+          "id": "rebuild-process-verify",
+          "text": "Reconcile totals and invariants, test changed data, and document security, recovery, and portability limits for the theory Time Semantics case"
+        }
+      ]
+    },
+    {
+      "id": "inspect-case",
+      "title": "Inspect Time Semantics evidence · Theory Time Semantics",
+      "interaction": "inspect",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.\n\nInspect the Time Semantics trace for this theory case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Inspect Time Semantics evidence · Theory Time Semantics.",
+      "why": "The decision supplies observable evidence for separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. For Inspect Time Semantics evidence · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "rebuild-process"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Time Semantics, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "inspect-case-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Inspect Time Semantics evidence · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Inspect Time Semantics evidence · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.",
+        "For Inspect Time Semantics evidence · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Time Semantics case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "inspect-case-line-assumption",
+            "label": "assumption",
+            "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 6 rows, and a reconciliation total.",
+            "tone": "focus"
+          },
+          {
+            "id": "inspect-case-line-risk",
+            "label": "risk",
+            "text": "A timestamp string without zone context identifies one universal instant.",
+            "tone": "problem"
+          },
+          {
+            "id": "inspect-case-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. Artifact under review: a time-aware service-level analytics report.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "inspect-case-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the inspect time semantics evidence evidence boundary."
+        },
+        {
+          "id": "inspect-case-overreach",
+          "text": "Run a convenient Time Semantics query for inspect time semantics evidence, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "inspect-case-sound",
+          "text": "The record names the assumption, applies Time Semantics, and reports a changed-case check tied to the stakeholder decision."
+        }
+      ]
+    },
+    {
+      "id": "repair-misconception",
+      "title": "Repair the Time Semantics defect · Theory Time Semantics",
+      "interaction": "debug",
+      "instruction": "theory case — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.\n\nA teammate acts on this belief: “A timestamp string without zone context identifies one universal instant.” Which repair addresses the cause?\n\nEvidence target: Repair the Time Semantics defect · Theory Time Semantics.",
+      "why": "The decision supplies observable evidence for separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows. For Repair the Time Semantics defect · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "inspect-case"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Time Semantics symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "SQLite Query Planning and Window Function Documentation — Controls browser-lab plan evidence, index reasoning, sorting, covering indexes, windows, and frame behavior."
+        }
+      ],
+      "checkIds": [
+        "repair-misconception-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Repair the Time Semantics defect · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Repair the Time Semantics defect · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 2 rows, and a reconciliation total.",
+        "For Repair the Time Semantics defect · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Time Semantics failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "repair-misconception-observed",
+            "label": "observed",
+            "text": "A timestamp string without zone context identifies one universal instant.",
+            "tone": "problem"
+          },
+          {
+            "id": "repair-misconception-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "repair-misconception-overreach",
+          "text": "Run a convenient Time Semantics query for repair the time semantics defect, omit grain, NULL, cardinality, and dialect checks, then accept one plausible result grid."
+        },
+        {
+          "id": "repair-misconception-sound",
+          "text": "Reconstruct the conditions for Time Semantics, gather a counterexample, repair the artifact, and add a regression case."
+        },
+        {
+          "id": "repair-misconception-misread",
+          "text": "Keep the artifact unchanged and rewrite the explanation so the current output appears intentional. That claim does not survive the repair the time semantics defect evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "build-evidence",
+      "title": "Build Time Semantics evidence · Theory Time Semantics",
+      "interaction": "code",
+      "instruction": "Append a runnable SQLite increment headed \"-- Evidence: sql-time-semantics-w8yyh3\" with a concrete grain, hypothesis, or prediction; window partition, ordering, frame, rank, or time evidence; and an observation, reconciliation, or verification tied to returned rows, changed rows, an error, or a plan.\n\nEvidence target: Build Time Semantics evidence · Theory Time Semantics.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Time Semantics into observable performance evidence. For Build Time Semantics evidence · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "repair-misconception"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "-- Evidence: sql-time-semantics-w8yyh3\n-- grain: declare the exact row or mutation grain before running\nSELECT event_id, ticket_id, minutes_spent,\n       SUM(minutes_spent) OVER (PARTITION BY ticket_id ORDER BY occurred_at, event_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_minutes\nFROM ticket_events ORDER BY ticket_id, occurred_at, event_id;\n-- observation: reconcile the returned rows, changed count, error, or plan with the prediction",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "build-evidence-marker",
+        "build-evidence-structure"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Build Time Semantics evidence · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Build Time Semantics evidence · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 3 rows, and a reconciliation total.",
+        "For Build Time Semantics evidence · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10,
+      "targetFile": "sql"
+    },
+    {
+      "id": "defend-model",
+      "title": "Defend the Time Semantics model · Theory Time Semantics",
+      "interaction": "reflect",
+      "instruction": "Write the theory evidence note for Time Semantics: explain the governing condition, one failure, and how this concrete case was verified — Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 4 rows, and a reconciliation total.\n\nEvidence target: Defend the Time Semantics model · Theory Time Semantics.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the Time Semantics model · Theory Time Semantics, keep Time Semantics connected to executable relational evidence.",
+      "buildsOnStepIds": [
+        "build-evidence"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Separate instants, local civil time, duration, calendar boundaries, and incomplete reporting windows."
+        }
+      ],
+      "checkIds": [
+        "defend-model-check"
+      ],
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "hints": [
+        "For Defend the Time Semantics model · Theory Time Semantics, name the row grain, Time Semantics precondition, or invariant that must hold.",
+        "At Defend the Time Semantics model · Theory Time Semantics, trace this concrete input and predict rows or changes before running it: Compare each ticket with its team's effort and severity peers, retain teams with no resolved work, and rank ties deliberately. Build named query stages, one changed window of 4 rows, and a reconciliation total.",
+        "For Defend the Time Semantics model · Theory Time Semantics, challenge the documented misconception with result, constraint, or plan evidence: A timestamp string without zone context identifies one universal instant."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "commit-prediction-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "expectedOptionId": "commit-prediction-sound"
+    },
+    {
+      "id": "test-concept-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "expectedOptionId": "test-concept-sound"
+    },
+    {
+      "id": "rebuild-process-check",
+      "type": "order-equals",
+      "description": "The evidence cycle runs from problem framing through changed-case validation.",
+      "failureMessage": "Frame the decision before modeling, and validate after obtaining a result.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "expectedOptionIds": [
+        "rebuild-process-frame",
+        "rebuild-process-model",
+        "rebuild-process-execute",
+        "rebuild-process-verify"
+      ]
+    },
+    {
+      "id": "inspect-case-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "expectedOptionId": "inspect-case-sound"
+    },
+    {
+      "id": "repair-misconception-check",
+      "type": "choice-equals",
+      "description": "The decision applies Time Semantics to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Time Semantics.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "expectedOptionId": "repair-misconception-sound"
+    },
+    {
+      "id": "build-evidence-marker",
+      "type": "source-includes",
+      "description": "The cumulative sql portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker -- Evidence: sql-time-semantics-w8yyh3.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "file": "sql",
+      "expected": "-- Evidence: sql-time-semantics-w8yyh3"
+    },
+    {
+      "id": "build-evidence-structure",
+      "type": "source-matches",
+      "file": "sql",
+      "pattern": "-- Evidence: sql-time-semantics-w8yyh3(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:grain|hypothesis|prediction):\\s*(?!\\[|todo)[^\\n]{12,}(?:(?!-- Evidence:)[\\s\\S])*?(?:OVER\\s*\\(|ROW_NUMBER|RANK|LAG|ROWS\\s+BETWEEN)(?:(?!-- Evidence:)[\\s\\S])*?;(?:(?!-- Evidence:)[\\s\\S])*?--\\s*(?:observation|reconciliation|verify):\\s*(?!\\[|todo)[^\\n]{12,}",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "sql-time-semantics"
+      ]
+    },
+    {
+      "id": "defend-model-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using separate and instants plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "sql-time-semantics"
+      ],
+      "minimumCharacters": 100,
+      "requiredTerms": [
+        "separate",
+        "instants"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 6,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}

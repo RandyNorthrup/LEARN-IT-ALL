@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "id": "go-context-cancellation-backpressure-independent-lab",
+  "courseId": "go-basics",
+  "moduleId": "go-context-cancellation-backpressure",
+  "kind": "lab",
+  "title": "Context, Cancellation, Backpressure, Structured Concurrency, and Leaks · Systems Transfer",
+  "summary": "A request launches several operations; one fails, one blocks, one outlives the caller, and overload grows without bound. The scenario, data, constraints, and failure modes differ from the workshop. Planned artifact: Produce an independent changed-context version of a cancelable bounded worker group with automated and judgment evidence. Learners progress through prediction, explicit theory, changed-case practice, causal debugging, and evidence defense.",
+  "objectives": [
+    "Pass context as the first operation parameter across call boundaries and avoid storing it as durable domain state.",
+    "Derive, propagate, call, and observe cancellation, deadlines, timeouts, and causes while releasing timer resources.",
+    "Use context values only for request-scoped cross-boundary metadata with collision-safe keys, not optional parameters.",
+    "Preserve previously learned constraints and attach observable changed-case evidence."
+  ],
+  "competencyCoverage": {
+    "introduces": [],
+    "reinforces": [],
+    "assesses": [
+      "go-context-propagation",
+      "go-cancel-deadline-cause",
+      "go-context-values-boundary",
+      "go-backpressure-bounded-work",
+      "go-goroutine-leak-diagnosis"
+    ]
+  },
+  "prerequisites": [
+    "go-context-cancellation-backpressure-debugging-clinic"
+  ],
+  "difficulty": "challenge",
+  "estimatedMinutes": 150,
+  "artifactId": "go-basics-cumulative-portfolio",
+  "starterFiles": {
+    "html": "",
+    "css": "",
+    "javascript": "",
+    "typescript": "",
+    "python": "",
+    "go": "// go-basics cumulative Go systems portfolio.\n// Each increment names ownership, failure, boundary, and observable behavior.\n// Browser execution uses an isolated Yaegi subset; transfer evidence names full Go 1.26 toolchain gates.\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Go systems portfolio ready\")\n}\n",
+    "sql": "",
+    "shell": "",
+    "prompt": "",
+    "config": ""
+  },
+  "steps": [
+    {
+      "id": "mission-brief",
+      "title": "Commit to the mission model · Lab Context Propagation",
+      "interaction": "predict",
+      "instruction": "lab case — Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhat must be established before implementation?\n\nEvidence target: Commit to the mission model · Lab Context Propagation.",
+      "why": "The decision supplies observable evidence for pass context as the first operation parameter across call boundaries and avoid storing it as durable domain state. For Commit to the mission model · Lab Context Propagation, keep Context Propagation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Context Propagation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "mission-brief-check"
+      ],
+      "competencyIds": [
+        "go-context-propagation"
+      ],
+      "hints": [
+        "For Commit to the mission model · Lab Context Propagation, name the types, ownership, and stop path, Context Propagation precondition, or invariant that must hold.",
+        "At Commit to the mission model · Lab Context Propagation, trace this concrete input and predict values, errors, blocking, and output before running it: Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Commit to the mission model · Lab Context Propagation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A Context belongs in every struct so future methods can reuse it."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "mission-brief-overreach",
+          "text": "For commit to the mission model, run one convenient Context Propagation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-brief-sound",
+          "text": "State the Context Propagation preconditions, preserve earlier contracts, and name the trace or changed-input result that will decide success."
+        },
+        {
+          "id": "mission-brief-misread",
+          "text": "A Context belongs in every struct so future methods can reuse it. That claim does not survive the commit to the mission model evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-1",
+      "title": "Context Propagation · changed case · Lab Context Propagation",
+      "interaction": "answer",
+      "instruction": "lab case — Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhich action demonstrates Context Propagation without dropping earlier contracts?\n\nEvidence target: Context Propagation · changed case · Lab Context Propagation.",
+      "why": "The decision supplies observable evidence for pass context as the first operation parameter across call boundaries and avoid storing it as durable domain state. For Context Propagation · changed case · Lab Context Propagation, keep Context Propagation connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-brief"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Context Propagation condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "scenario-1-check"
+      ],
+      "competencyIds": [
+        "go-context-propagation"
+      ],
+      "hints": [
+        "For Context Propagation · changed case · Lab Context Propagation, name the types, ownership, and stop path, Context Propagation precondition, or invariant that must hold.",
+        "At Context Propagation · changed case · Lab Context Propagation, trace this concrete input and predict values, errors, blocking, and output before running it: Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Context Propagation · changed case · Lab Context Propagation, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A Context belongs in every struct so future methods can reuse it."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-1-sound",
+          "text": "Pass context as the first operation parameter across call boundaries and avoid storing it as durable domain state. Apply it to the stated input and retain a reproducible trace for a cancelable bounded worker group."
+        },
+        {
+          "id": "scenario-1-misread",
+          "text": "A Context belongs in every struct so future methods can reuse it. That claim does not survive the context propagation · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-1-overreach",
+          "text": "For context propagation · changed case, run one convenient Context Propagation happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-2",
+      "title": "Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause",
+      "interaction": "inspect",
+      "instruction": "lab case — Request 4 launches validation, lookup, and audit work under a 80ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhich action demonstrates Cancel Deadline Cause without dropping earlier contracts?\n\nEvidence target: Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause.",
+      "why": "The decision supplies observable evidence for derive, propagate, call, and observe cancellation, deadlines, timeouts, and causes while releasing timer resources. For Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause, keep Cancel Deadline Cause connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-1"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 4 launches validation, lookup, and audit work under a 80ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Cancel Deadline Cause result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "scenario-2-check"
+      ],
+      "competencyIds": [
+        "go-cancel-deadline-cause"
+      ],
+      "hints": [
+        "For Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause, name the types, ownership, and stop path, Cancel Deadline Cause precondition, or invariant that must hold.",
+        "At Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause, trace this concrete input and predict values, errors, blocking, and output before running it: Request 4 launches validation, lookup, and audit work under a 80ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Cancel Deadline Cause · changed case · Lab Cancel Deadline Cause, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Discarding a CancelFunc is harmless because timeout cleanup is immediate."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Cancel Deadline Cause case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-2-observed",
+            "label": "observed",
+            "text": "Discarding a CancelFunc is harmless because timeout cleanup is immediate.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-2-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Derive, propagate, call, and observe cancellation, deadlines, timeouts, and causes while releasing timer resources.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-2-misread",
+          "text": "Discarding a CancelFunc is harmless because timeout cleanup is immediate. That claim does not survive the cancel deadline cause · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-2-overreach",
+          "text": "For cancel deadline cause · changed case, run one convenient Cancel Deadline Cause happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-2-sound",
+          "text": "Derive, propagate, call, and observe cancellation, deadlines, timeouts, and causes while releasing timer resources. Apply it to the stated input and retain a reproducible trace for a cancelable bounded worker group."
+        }
+      ]
+    },
+    {
+      "id": "scenario-3",
+      "title": "Context Values Boundary · changed case · Lab Context Values Boundary",
+      "interaction": "answer",
+      "instruction": "lab case — Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhich action demonstrates Context Values Boundary without dropping earlier contracts?\n\nEvidence target: Context Values Boundary · changed case · Lab Context Values Boundary.",
+      "why": "The decision supplies observable evidence for use context values only for request-scoped cross-boundary metadata with collision-safe keys, not optional parameters. For Context Values Boundary · changed case · Lab Context Values Boundary, keep Context Values Boundary connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-2"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Context Values Boundary condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "scenario-3-check"
+      ],
+      "competencyIds": [
+        "go-context-values-boundary"
+      ],
+      "hints": [
+        "For Context Values Boundary · changed case · Lab Context Values Boundary, name the types, ownership, and stop path, Context Values Boundary precondition, or invariant that must hold.",
+        "At Context Values Boundary · changed case · Lab Context Values Boundary, trace this concrete input and predict values, errors, blocking, and output before running it: Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Context Values Boundary · changed case · Lab Context Values Boundary, challenge the documented misconception with runtime, failure, race, or toolchain evidence: Context values are a type-safe replacement for all function parameters."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-3-overreach",
+          "text": "For context values boundary · changed case, run one convenient Context Values Boundary happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-3-sound",
+          "text": "Use context values only for request-scoped cross-boundary metadata with collision-safe keys, not optional parameters. Apply it to the stated input and retain a reproducible trace for a cancelable bounded worker group."
+        },
+        {
+          "id": "scenario-3-misread",
+          "text": "Context values are a type-safe replacement for all function parameters. That claim does not survive the context values boundary · changed case evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "scenario-4",
+      "title": "Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work",
+      "interaction": "inspect",
+      "instruction": "lab case — Request 6 launches validation, lookup, and audit work under a 120ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhich action demonstrates Backpressure Bounded Work without dropping earlier contracts?\n\nEvidence target: Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work.",
+      "why": "The decision supplies observable evidence for bound queues and concurrency, choose block, reject, shed, or degrade behavior, and measure saturation. For Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work, keep Backpressure Bounded Work connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-3"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 6 launches validation, lookup, and audit work under a 120ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence inspection",
+          "text": "Use the supplied trace to distinguish an observed Backpressure Bounded Work result from an unsupported claim."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "scenario-4-check"
+      ],
+      "competencyIds": [
+        "go-backpressure-bounded-work"
+      ],
+      "hints": [
+        "For Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work, name the types, ownership, and stop path, Backpressure Bounded Work precondition, or invariant that must hold.",
+        "At Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work, trace this concrete input and predict values, errors, blocking, and output before running it: Request 6 launches validation, lookup, and audit work under a 120ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Backpressure Bounded Work · changed case · Lab Backpressure Bounded Work, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A larger buffered channel permanently fixes overload."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Backpressure Bounded Work case evidence",
+        "caption": "Inspect the observation, governing requirement, and mastery evidence before deciding.",
+        "lines": [
+          {
+            "id": "scenario-4-observed",
+            "label": "observed",
+            "text": "A larger buffered channel permanently fixes overload.",
+            "tone": "problem"
+          },
+          {
+            "id": "scenario-4-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Bound queues and concurrency, choose block, reject, shed, or degrade behavior, and measure saturation.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "scenario-4-sound",
+          "text": "Bound queues and concurrency, choose block, reject, shed, or degrade behavior, and measure saturation. Apply it to the stated input and retain a reproducible trace for a cancelable bounded worker group."
+        },
+        {
+          "id": "scenario-4-misread",
+          "text": "A larger buffered channel permanently fixes overload. That claim does not survive the backpressure bounded work · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-4-overreach",
+          "text": "For backpressure bounded work · changed case, run one convenient Backpressure Bounded Work happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        }
+      ]
+    },
+    {
+      "id": "scenario-5",
+      "title": "Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis",
+      "interaction": "answer",
+      "instruction": "lab case — Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nWhich action demonstrates Goroutine Leak Diagnosis without dropping earlier contracts?\n\nEvidence target: Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis.",
+      "why": "The decision supplies observable evidence for detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases. For Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis, keep Goroutine Leak Diagnosis connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-4"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Commit before feedback",
+          "text": "Choose from the stated data before opening the worked model. Record which Goroutine Leak Diagnosis condition decided your prediction."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "scenario-5-check"
+      ],
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "hints": [
+        "For Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis, name the types, ownership, and stop path, Goroutine Leak Diagnosis precondition, or invariant that must hold.",
+        "At Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis, trace this concrete input and predict values, errors, blocking, and output before running it: Request 2 launches validation, lookup, and audit work under a 40ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Goroutine Leak Diagnosis · changed case · Lab Goroutine Leak Diagnosis, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A stable process response proves no goroutines are leaking."
+      ],
+      "xp": 10,
+      "options": [
+        {
+          "id": "scenario-5-misread",
+          "text": "A stable process response proves no goroutines are leaking. That claim does not survive the goroutine leak diagnosis · changed case evidence boundary."
+        },
+        {
+          "id": "scenario-5-overreach",
+          "text": "For goroutine leak diagnosis · changed case, run one convenient Goroutine Leak Diagnosis happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "scenario-5-sound",
+          "text": "Detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases. Apply it to the stated input and retain a reproducible trace for a cancelable bounded worker group."
+        }
+      ]
+    },
+    {
+      "id": "mission-audit",
+      "title": "Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis",
+      "interaction": "inspect",
+      "instruction": "lab case — Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nInspect the Goroutine Leak Diagnosis trace for this lab case. Which record connects a precondition, observed state change, and boundary result?\n\nEvidence target: Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis.",
+      "why": "The decision supplies observable evidence for detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases. For Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis, keep Goroutine Leak Diagnosis connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "scenario-5"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "For Goroutine Leak Diagnosis, distinguish a claim from evidence by locating the relevant precondition, trace or invariant, and changed input result."
+        }
+      ],
+      "checkIds": [
+        "mission-audit-check"
+      ],
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "hints": [
+        "For Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis, name the types, ownership, and stop path, Goroutine Leak Diagnosis precondition, or invariant that must hold.",
+        "At Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis, trace this concrete input and predict values, errors, blocking, and output before running it: Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Audit the proposed evidence packet · Lab Goroutine Leak Diagnosis, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A stable process response proves no goroutines are leaking."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Goroutine Leak Diagnosis case record",
+        "caption": "Three excerpts from a learner evidence packet; only one connects a claim to a reproducible check.",
+        "lines": [
+          {
+            "id": "mission-audit-line-assumption",
+            "label": "assumption",
+            "text": "Request 3 launches validation, lookup, and audit work under a 60ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+            "tone": "focus"
+          },
+          {
+            "id": "mission-audit-line-risk",
+            "label": "risk",
+            "text": "A stable process response proves no goroutines are leaking.",
+            "tone": "problem"
+          },
+          {
+            "id": "mission-audit-line-evidence",
+            "label": "evidence",
+            "text": "A changed authentic task independently demonstrates this outcome: Detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases. Artifact under review: a cancelable bounded worker group.",
+            "tone": "good"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "mission-audit-overreach",
+          "text": "For audit the proposed evidence packet, run one convenient Goroutine Leak Diagnosis happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "mission-audit-sound",
+          "text": "The record names the assumption, applies Goroutine Leak Diagnosis, and reports a changed-case check tied to the stakeholder decision."
+        },
+        {
+          "id": "mission-audit-misread",
+          "text": "The record says the result looks right but supplies no quantity, trace, condition, or counterexample. That claim does not survive the audit the proposed evidence packet evidence boundary."
+        }
+      ]
+    },
+    {
+      "id": "artifact-build",
+      "title": "Extend the cumulative artifact · Lab Goroutine Leak Diagnosis",
+      "interaction": "code",
+      "instruction": "Append a runnable Go function headed \"// Evidence: go-goroutine-leak-diagnosis-1r115x\" that bounds the changed case, uses explicit goroutine or synchronization ownership, proves a stop path or invariant, and returns inspectable evidence.\n\nEvidence target: Extend the cumulative artifact · Lab Goroutine Leak Diagnosis.",
+      "why": "Building a runnable or mechanically reviewable artifact turns Goroutine Leak Diagnosis into observable performance evidence. For Extend the cumulative artifact · Lab Goroutine Leak Diagnosis, keep Goroutine Leak Diagnosis connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "mission-audit"
+      ],
+      "content": [
+        {
+          "type": "code",
+          "language": "go",
+          "code": "// Evidence: go-goroutine-leak-diagnosis-1r115x\nfunc evidence_go_goroutine_leak_diagnosis_1r115x(input int) (int, bool) {\n\tif input < 0 { return 0, false }\n\tresult := make(chan int, 1)\n\tgo func() { result <- input * 5 }()\n\tobserved := <-result\n\treturn observed, observed >= input\n}",
+          "caption": "Shape of the required increment; replace generic language with the current stakeholder case."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Evidence is more than syntax",
+          "text": "The structural check is only one gate. The following changed-case decision and explanation must also hold."
+        }
+      ],
+      "checkIds": [
+        "artifact-build-marker",
+        "artifact-build-structure"
+      ],
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "hints": [
+        "For Extend the cumulative artifact · Lab Goroutine Leak Diagnosis, name the types, ownership, and stop path, Goroutine Leak Diagnosis precondition, or invariant that must hold.",
+        "At Extend the cumulative artifact · Lab Goroutine Leak Diagnosis, trace this concrete input and predict values, errors, blocking, and output before running it: Request 4 launches validation, lookup, and audit work under a 80ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Extend the cumulative artifact · Lab Goroutine Leak Diagnosis, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A stable process response proves no goroutines are leaking."
+      ],
+      "xp": 10,
+      "targetFile": "go"
+    },
+    {
+      "id": "acceptance-test",
+      "title": "Test an acceptance boundary · Lab Goroutine Leak Diagnosis",
+      "interaction": "debug",
+      "instruction": "lab case — Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nOne precondition fails while output still looks plausible. What is the correct response?\n\nEvidence target: Test an acceptance boundary · Lab Goroutine Leak Diagnosis.",
+      "why": "The decision supplies observable evidence for detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases. For Test an acceptance boundary · Lab Goroutine Leak Diagnosis, keep Goroutine Leak Diagnosis connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "artifact-build"
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains."
+        },
+        {
+          "type": "callout",
+          "tone": "warning",
+          "title": "Fault-isolation decision",
+          "text": "Select evidence that identifies a cause, not a patch that only hides the Goroutine Leak Diagnosis symptom."
+        },
+        {
+          "type": "evidence",
+          "label": "Authority to consult after committing",
+          "value": "Go Concurrency Patterns: Context, Pipelines, and Cancellation — Controls pipeline ownership, explicit cancellation, context propagation, deadlines, goroutine termination, fan-out, fan-in, and leak prevention."
+        }
+      ],
+      "checkIds": [
+        "acceptance-test-check"
+      ],
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "hints": [
+        "For Test an acceptance boundary · Lab Goroutine Leak Diagnosis, name the types, ownership, and stop path, Goroutine Leak Diagnosis precondition, or invariant that must hold.",
+        "At Test an acceptance boundary · Lab Goroutine Leak Diagnosis, trace this concrete input and predict values, errors, blocking, and output before running it: Request 5 launches validation, lookup, and audit work under a 100ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Test an acceptance boundary · Lab Goroutine Leak Diagnosis, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A stable process response proves no goroutines are leaking."
+      ],
+      "xp": 10,
+      "stimulus": {
+        "kind": "code-diff",
+        "title": "Goroutine Leak Diagnosis failure evidence",
+        "caption": "A plausible visible result conflicts with the governing contract and requires a cause-level repair.",
+        "lines": [
+          {
+            "id": "acceptance-test-observed",
+            "label": "observed",
+            "text": "A stable process response proves no goroutines are leaking.",
+            "tone": "problem"
+          },
+          {
+            "id": "acceptance-test-required",
+            "label": "required",
+            "text": "A changed authentic task independently demonstrates this outcome: Detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases.",
+            "tone": "focus"
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "acceptance-test-misread",
+          "text": "Keep the plausible output and hide the assumption to avoid confusing the stakeholder. That claim does not survive the test an acceptance boundary evidence boundary."
+        },
+        {
+          "id": "acceptance-test-overreach",
+          "text": "For test an acceptance boundary, run one convenient Goroutine Leak Diagnosis happy path, omit ownership, error, changed input, goroutine stop, and full-toolchain checks, then accept plausible output."
+        },
+        {
+          "id": "acceptance-test-sound",
+          "text": "Reject the unsupported conclusion, name the violated Goroutine Leak Diagnosis condition, repair the responsible layer, and rerun the boundary trace."
+        }
+      ]
+    },
+    {
+      "id": "mission-defense",
+      "title": "Defend the transferred model · Lab Goroutine Leak Diagnosis",
+      "interaction": "reflect",
+      "instruction": "Write the lab evidence note for Goroutine Leak Diagnosis: explain the governing condition, one failure, and how this concrete case was verified — Request 6 launches validation, lookup, and audit work under a 120ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.\n\nEvidence target: Defend the transferred model · Lab Goroutine Leak Diagnosis.",
+      "why": "Retrieval and explanation expose gaps that recognition questions can hide. For Defend the transferred model · Lab Goroutine Leak Diagnosis, keep Goroutine Leak Diagnosis connected to executable Go behavior evidence.",
+      "buildsOnStepIds": [
+        "acceptance-test"
+      ],
+      "content": [
+        {
+          "type": "callout",
+          "tone": "question",
+          "title": "Evidence defense",
+          "text": "Use the case, one assumption, one observable result, and one limitation. Do not copy the competency statement: Detect leaked goroutines with ownership traces, cancellation tests, profiles, and changed failure cases."
+        }
+      ],
+      "checkIds": [
+        "mission-defense-check"
+      ],
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "hints": [
+        "For Defend the transferred model · Lab Goroutine Leak Diagnosis, name the types, ownership, and stop path, Goroutine Leak Diagnosis precondition, or invariant that must hold.",
+        "At Defend the transferred model · Lab Goroutine Leak Diagnosis, trace this concrete input and predict values, errors, blocking, and output before running it: Request 6 launches validation, lookup, and audit work under a 120ms deadline. One stage blocks after cancellation and the input queue grows. Bound concurrency, propagate cause, choose overload behavior, and prove no goroutine remains.",
+        "For Defend the transferred model · Lab Goroutine Leak Diagnosis, challenge the documented misconception with runtime, failure, race, or toolchain evidence: A stable process response proves no goroutines are leaking."
+      ],
+      "xp": 10
+    }
+  ],
+  "checks": [
+    {
+      "id": "mission-brief-check",
+      "type": "choice-equals",
+      "description": "The decision applies Context Propagation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Context Propagation.",
+      "hidden": false,
+      "competencyIds": [
+        "go-context-propagation"
+      ],
+      "expectedOptionId": "mission-brief-sound"
+    },
+    {
+      "id": "scenario-1-check",
+      "type": "choice-equals",
+      "description": "The decision applies Context Propagation to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Context Propagation.",
+      "hidden": false,
+      "competencyIds": [
+        "go-context-propagation"
+      ],
+      "expectedOptionId": "scenario-1-sound"
+    },
+    {
+      "id": "scenario-2-check",
+      "type": "choice-equals",
+      "description": "The decision applies Cancel Deadline Cause to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Cancel Deadline Cause.",
+      "hidden": false,
+      "competencyIds": [
+        "go-cancel-deadline-cause"
+      ],
+      "expectedOptionId": "scenario-2-sound"
+    },
+    {
+      "id": "scenario-3-check",
+      "type": "choice-equals",
+      "description": "The decision applies Context Values Boundary to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Context Values Boundary.",
+      "hidden": false,
+      "competencyIds": [
+        "go-context-values-boundary"
+      ],
+      "expectedOptionId": "scenario-3-sound"
+    },
+    {
+      "id": "scenario-4-check",
+      "type": "choice-equals",
+      "description": "The decision applies Backpressure Bounded Work to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Backpressure Bounded Work.",
+      "hidden": false,
+      "competencyIds": [
+        "go-backpressure-bounded-work"
+      ],
+      "expectedOptionId": "scenario-4-sound"
+    },
+    {
+      "id": "scenario-5-check",
+      "type": "choice-equals",
+      "description": "The decision applies Goroutine Leak Diagnosis to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Goroutine Leak Diagnosis.",
+      "hidden": false,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "expectedOptionId": "scenario-5-sound"
+    },
+    {
+      "id": "mission-audit-check",
+      "type": "choice-equals",
+      "description": "The decision applies Goroutine Leak Diagnosis to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Goroutine Leak Diagnosis.",
+      "hidden": false,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "expectedOptionId": "mission-audit-sound"
+    },
+    {
+      "id": "artifact-build-marker",
+      "type": "source-includes",
+      "description": "The cumulative go portfolio contains this competency’s named evidence increment.",
+      "failureMessage": "Add the exact evidence marker // Evidence: go-goroutine-leak-diagnosis-1r115x.",
+      "hidden": false,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "file": "go",
+      "expected": "// Evidence: go-goroutine-leak-diagnosis-1r115x"
+    },
+    {
+      "id": "artifact-build-structure",
+      "type": "source-matches",
+      "file": "go",
+      "pattern": "// Evidence: go-goroutine-leak-diagnosis-1r115x(?:(?!// Evidence:)[\\s\\S])*?func\\s+evidence_go_goroutine_leak_diagnosis_1r115x\\s*\\([^)]*\\)\\s*\\([^)]*\\)\\s*\\{(?:(?!// Evidence:)[\\s\\S])*?(?:go\\s+func|make\\s*\\(\\s*chan|select\\s*\\{|sync\\.)(?:(?!// Evidence:)[\\s\\S])*?return",
+      "flags": "i",
+      "description": "The increment includes the required executable or reviewable evidence structure.",
+      "failureMessage": "Complete the full function, prompt contract, or gate record shown in the brief.",
+      "hidden": true,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ]
+    },
+    {
+      "id": "acceptance-test-check",
+      "type": "choice-equals",
+      "description": "The decision applies Goroutine Leak Diagnosis to the changed stakeholder case.",
+      "failureMessage": "Recheck the conditions and reject the documented misconception about Goroutine Leak Diagnosis.",
+      "hidden": true,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "expectedOptionId": "acceptance-test-sound"
+    },
+    {
+      "id": "mission-defense-check",
+      "type": "text-response",
+      "description": "The evidence note explains the model, failure risk, and verification in the learner’s own words.",
+      "failureMessage": "Add a causal explanation using detect and leaked plus specific case evidence.",
+      "hidden": false,
+      "competencyIds": [
+        "go-goroutine-leak-diagnosis"
+      ],
+      "minimumCharacters": 120,
+      "requiredTerms": [
+        "detect",
+        "leaked"
+      ]
+    }
+  ],
+  "mastery": {
+    "passingPercent": 85,
+    "maxHintsForMastery": 2,
+    "spacedReviewDays": [
+      1,
+      7,
+      21,
+      60
+    ]
+  }
+}
