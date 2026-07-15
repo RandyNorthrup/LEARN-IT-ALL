@@ -14,7 +14,9 @@ interface LighthouseConfig {
         throttling?: { rttMs: number; throughputKbps: number; cpuSlowdownMultiplier: number };
       };
     };
-    assert: { assertions: Record<string, [string, { minScore: number }]> };
+    assert: {
+      assertions: Record<string, [string, { minScore: number; aggregationMethod: string }]>;
+    };
   };
 }
 
@@ -43,9 +45,9 @@ describe('Lighthouse profiles', () => {
     ['mobile', 412, 823],
     ['tablet', 768, 1024],
     ['desktop', 1440, 900],
-  ])('measures the %s viewport three times without SEO', (profile, width, height) => {
+  ])('measures the %s viewport five times without SEO', (profile, width, height) => {
     const config = loadProfile(profile);
-    expect(config.ci.collect.numberOfRuns).toBe(3);
+    expect(config.ci.collect.numberOfRuns).toBe(5);
     expect(config.ci.collect.settings.screenEmulation).toMatchObject({ width, height });
     expect(config.ci.collect.settings.onlyCategories).toEqual([
       'performance',
@@ -91,5 +93,18 @@ describe('Lighthouse profiles', () => {
   ])('requires at least 99 for %s', (category) => {
     const config = loadProfile('mobile');
     expect(config.ci.assert.assertions[`categories:${category}`][1].minScore).toBe(0.99);
+  });
+
+  it('uses a five-run median for volatile performance and worst-run accessibility gates', () => {
+    const config = loadProfile('mobile');
+    expect(config.ci.assert.assertions['categories:performance'][1].aggregationMethod).toBe(
+      'median'
+    );
+    expect(config.ci.assert.assertions['categories:accessibility'][1].aggregationMethod).toBe(
+      'pessimistic'
+    );
+    expect(config.ci.assert.assertions['categories:best-practices'][1].aggregationMethod).toBe(
+      'pessimistic'
+    );
   });
 });

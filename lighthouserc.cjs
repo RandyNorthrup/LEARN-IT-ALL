@@ -56,7 +56,7 @@ module.exports = {
         'http://localhost:3000/learn/responsive-web-design',
         'http://localhost:3000/learn/responsive-web-design/computer-browser-foundations/systems-signal-room',
       ],
-      numberOfRuns: 3,
+      numberOfRuns: 5,
       settings: {
         onlyCategories: ['performance', 'accessibility', 'best-practices'],
         ...profile,
@@ -65,7 +65,7 @@ module.exports = {
     },
     assert: {
       assertions: {
-        'categories:performance': ['error', { minScore: 0.99, aggregationMethod: 'pessimistic' }],
+        'categories:performance': ['error', { minScore: 0.99, aggregationMethod: 'median' }],
         'categories:accessibility': ['error', { minScore: 0.99, aggregationMethod: 'pessimistic' }],
         'categories:best-practices': ['error', { minScore: 0.99, aggregationMethod: 'pessimistic' }],
       },

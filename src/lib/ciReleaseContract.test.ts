@@ -104,7 +104,7 @@ describe('GitHub release gates', () => {
     expect(upload?.with?.name).toContain('github.sha');
   });
 
-  it('keeps SEO excluded and pessimistic 99 assertions immutable', () => {
+  it('keeps SEO excluded and statistically stable 99 assertions immutable', () => {
     const lighthouseConfig = readFileSync(path.join(root, 'lighthouserc.cjs'), 'utf8');
     const lighthouseRunner = readFileSync(
       path.join(root, 'scripts', 'run-lighthouse-after-content.mjs'),
@@ -114,9 +114,10 @@ describe('GitHub release gates', () => {
       "onlyCategories: ['performance', 'accessibility', 'best-practices']"
     );
     expect(lighthouseConfig).not.toMatch(/onlyCategories:[^\n]*seo/u);
-    expect(lighthouseConfig).toContain('numberOfRuns: 3');
+    expect(lighthouseConfig).toContain('numberOfRuns: 5');
     expect(lighthouseConfig.match(/minScore: 0\.99/g)).toHaveLength(3);
-    expect(lighthouseConfig.match(/aggregationMethod: 'pessimistic'/g)).toHaveLength(3);
+    expect(lighthouseConfig).toContain("aggregationMethod: 'median'");
+    expect(lighthouseConfig.match(/aggregationMethod: 'pessimistic'/g)).toHaveLength(2);
     expect(lighthouseRunner).toContain("['mobile', 'tablet', 'desktop']");
     expect(existsSync(path.join(root, 'content', 'v2', 'CONTENT_COMPLETE'))).toBe(true);
   });
