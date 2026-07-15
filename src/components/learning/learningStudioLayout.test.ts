@@ -41,4 +41,13 @@ describe('learning studio responsive runtime layout', () => {
     );
     expect(styles).toMatch(/\.inlineEvidence dd\s*\{[^}]*overflow-wrap: anywhere;/);
   });
+
+  it('keeps long prose evidence readable inside the narrow desktop comparison pane', () => {
+    expect(styles).toMatch(
+      /\.workspace\[data-layout="evidence"\] \.stimulusLine\s*\{[^}]*grid-template-columns: 1fr;[^}]*gap: 0\.2rem;/
+    );
+    expect(styles).toMatch(
+      /\.stimulusLine code\s*\{[^}]*overflow-wrap: break-word;[^}]*word-break: normal;/
+    );
+  });
 });

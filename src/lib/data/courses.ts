@@ -70,6 +70,7 @@ export const V2_COURSE_IDS = new Set([
   'personal-project-1',
   'personal-project-2',
   'capstone-project',
+  'job-search',
 ]);
 
 export function isV2Course(courseId: string): boolean {
@@ -985,17 +986,17 @@ export const ALL_COURSES: CourseMetadata[] = [
   // ========== CAREER & PORTFOLIO PROJECTS ==========
   {
     id: 'job-search',
-    title: 'Learn How to Find a Programming Job',
+    title: 'Evidence-Driven Programming Career Launch',
     description:
-      'Learn job search strategy, polish portfolio projects, optimize GitHub profile, write a great resume, improve LinkedIn, apply effectively, network, ace interviews, and understand relocation tradeoffs.',
-    difficulty: 'beginner',
-    estimatedHours: 12,
+      'Build a truthful career evidence system, research roles and employers, publish safe accessible proof, run sustainable applications, practice interviews, evaluate offers, negotiate, and transition responsibly.',
+    difficulty: 'advanced',
+    estimatedHours: 303,
     language: undefined,
-    tags: ['career', 'job-search', 'resume', 'interview', 'networking'],
-    prerequisites: [],
-    status: COURSE_STATUS.COMING_SOON,
-    lessonCount: 52,
-    chapterCount: 9,
+    tags: ['career', 'job-search', 'evidence', 'accessibility', 'privacy', 'interview'],
+    prerequisites: ['capstone-project'],
+    status: COURSE_STATUS.AVAILABLE,
+    lessonCount: 206,
+    chapterCount: 20,
     type: 'course',
   },
   {

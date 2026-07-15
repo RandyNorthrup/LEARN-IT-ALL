@@ -331,6 +331,16 @@ const ACTIVITY_LABELS = {
     project: ['Stakeholder Product Defense'],
     exam: ['Independent Product Review Board'],
   },
+  career: {
+    theory: ['Hiring Decision Lens', 'Career Evidence Case', 'Opportunity Brief', 'Claim Audit'],
+    workshop: ['Career Campaign Studio', 'Guided Evidence Sprint', 'Hiring Practice Room'],
+    debug: ['Application Repair Board', 'Hiring Signal Forensics', 'Career Evidence Triage'],
+    lab: ['Changed-Candidate Lab', 'Independent Career Trial', 'Opportunity Transfer Studio'],
+    review: ['Career Decision Retrieval', 'Evidence Recall', 'Cumulative Campaign Review'],
+    quiz: ['Hiring Scenario Checkpoint', 'Career Claim Defense', 'Decision Mastery Review'],
+    project: ['Career Campaign Defense'],
+    exam: ['Independent Career Launch Board'],
+  },
   docker: {
     theory: [
       'Container Boundary Trace',
@@ -374,6 +384,7 @@ const ACTIVITY_LABELS = {
 };
 
 function familyFor(courseId) {
+  if (courseId === 'job-search') return 'career';
   if (['personal-project-1', 'personal-project-2', 'capstone-project'].includes(courseId))
     return 'portfolio';
   if (courseId === 'build-web-scraper-go') return 'go';
@@ -522,6 +533,49 @@ const PORTFOLIO_CASES = {
     'A polished final story hides failed hypotheses, assistance, affected-user evidence, accessibility, threat decisions, incident recovery, and remaining non-claims.',
 };
 
+const CAREER_CASES = {
+  'career-agency-constraints':
+    'A candidate with limited runway, caregiving duties, an access need, location limits, and two acceptable work arrangements is pressured to maximize application volume.',
+  'career-competency-evidence':
+    'A course-rich skills list cannot identify one independently reproduced behavior, changed case, personal contribution, current artifact, or honest limitation.',
+  'career-labor-market':
+    'A viral salary post combines national medians, remote listings, senior titles, old data, and one technology trend into a guaranteed entry-level forecast.',
+  'career-role-decomposition':
+    'A listing mixes essential outcomes, preferences, recruiter keywords, copied requirements, legal text, and unknown team constraints behind a familiar title.',
+  'career-gap-plan':
+    'Three genuine evidence gaps trigger a six-month general course plan even though only one may block the candidate’s target work.',
+  'career-public-identity':
+    'A public profile leaks private email, precise location, commit identity, client screenshots, API history, availability, and a protected personal detail.',
+  'career-github-proof':
+    'A dense contribution graph and ten pinned tutorials hide the three relevant projects, setup path, tests, current status, contribution boundary, and limitations.',
+  'career-case-studies':
+    'A polished project story lists features and tools but invents user impact, hides failures, and links no accessibility, security, changed-case, or operations evidence.',
+  'career-resume':
+    'A two-column resume contains vague adjectives, hidden text, inconsistent dates, unsupported percentages, broken links, and a PDF with scrambled extraction order.',
+  'career-application-package':
+    'A generic packet mechanically mirrors a listing, exposes a private work sample, and supplies reference contact details without permission.',
+  'career-search-system':
+    'A search lives in tabs and memory, duplicates applications, loses artifact revisions, stores excessive contact notes, and reacts to each rejection as a trend.',
+  'career-opportunity-trust':
+    'An urgent remote offer uses a personal address, text-only interview, early identity request, equipment check, and no independently confirmed role or recruiter.',
+  'career-relationships':
+    'Automated messages ask strangers for referrals, ignore community norms and stop signals, and measure every relationship by immediate hiring access.',
+  'career-informational-interviews':
+    'A nominal learning conversation hides a referral request, asks generic questions, records without consent, and generalizes one practitioner view to a whole market.',
+  'career-screening':
+    'A rushed screen mixes role evidence, pay, location, authorization, access, sensitive history, unclear process, and an implied but unconfirmed next step.',
+  'career-technical-interviews':
+    'A timed task begins without contract or tool rules, optimizes before correctness, tests only the sample, and quietly resembles unpaid production work.',
+  'career-collaborative-defense':
+    'A candidate dominates a pair task, guesses at a bug, draws fashionable architecture, and claims a team project without separating personal work.',
+  'career-behavioral-equity':
+    'Memorized heroic stories erase collaborators, blame a former team, treat culture fit as objective, and presume every assessment is equally accessible.',
+  'career-offers-negotiation':
+    'A verbal offer creates urgency while level, manager, total compensation, contingencies, schedule, intellectual property terms, and decision time remain unclear.',
+  'career-transition-resilience':
+    'A candidate interprets sparse rejection as a skill verdict, retains confidential work, closes relationships poorly, and enters a new role without an onboarding evidence plan.',
+};
+
 function words(value) {
   return value
     .toLowerCase()
@@ -534,7 +588,7 @@ function words(value) {
 function humanize(value) {
   return value
     .replace(
-      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|pp1|pp2|capstone|fp|dsa2?|js|ts|go|sql|linux|git)-/,
+      /^(math-(?:beg|int|adv)|storage-(?:go|ts)|rabbit-(?:go|ts)|http-server-(?:go|ts)|httpsgo|httpsts|httpproto|http-(?:go|ts|py)|static-site|ssg|agentpy|crawler-(?:go|ts)|scraper|maze|asteroids|bookbot|cmem|prompt|loops|agent-ext|gates|pp1|pp2|capstone|career|fp|dsa2?|js|ts|go|sql|linux|git)-/,
       ''
     )
     .split('-')
@@ -808,6 +862,11 @@ function domainCase(family, moduleId, seed, activityKind = 'practice', competenc
     const base =
       PORTFOLIO_CASES[moduleId] ?? `A product review changes ${moduleId.replaceAll('-', ' ')}.`;
     return `${base} The ${activityKind} variation ${n} changes the stakeholder, access need, evidence source, constraint, failure, and operating environment. Competency probe: ${competency?.statement ?? 'defend one bounded product claim'}`;
+  }
+  if (family === 'career') {
+    const base =
+      CAREER_CASES[moduleId] ?? `A career review changes ${moduleId.replaceAll('-', ' ')}.`;
+    return `${base} The ${activityKind} variation ${n} changes the candidate background, target role, jurisdiction, access need, source date, process state, and decision constraint. Competency probe: ${competency?.statement ?? 'defend one bounded career decision'}`;
   }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
@@ -1181,6 +1240,9 @@ function domainReasoningMove(family, moduleId) {
   if (family === 'portfolio') {
     return 'Name the stakeholder decision, affected people, authority, assumption, revision, artifact, observable behavior, changed case, rejected failure, accessibility, security, privacy, operation, recovery, contribution, residual risk, and transfer limit; then calibrate the public claim to that exact evidence.';
   }
+  if (family === 'career') {
+    return 'Name learner goal, target role, jurisdiction, audience, claim, contribution, source date, evidence revision, accessibility, privacy, consent, process state, changed candidate, rejected failure, causal repair, decision owner, non-claim, and transfer limit; then calibrate the application or career decision to that exact evidence.';
+  }
   if (family === 'linux') {
     return 'Capture identity, path, process, file, and service state; predict parsing and scope; run one safe simulated observation; interpret exit status; then change one bounded layer and verify rollback.';
   }
@@ -1498,6 +1560,24 @@ failure: reject plausible output without causal, human, recovery, or ownership e
 repair: isolate the first unsupported transition, correct it, and add a regression
 owner: named learner and stakeholder reviewer
 transfer-boundary: authorized controlled research and release environment`;
+  }
+  if (family === 'career') {
+    return `workspace: career
+candidate-id: fictional-candidate-${n}
+target-role: accessible software quality engineer
+jurisdiction: example location requiring current official review
+audience: technical reviewer with ten minutes and keyboard-only access
+claim: one bounded role behavior is supported by a revision-linked changed case
+evidence: repository case study, exact test result, contribution note, and limitation
+process-state: investigate before applying
+accessibility: structured text, reflow, visible focus, plain-language status, and equivalent format
+privacy-consent: publish no sensitive person or third-party data; contact only with explicit consent
+decision: proceed only after identity, role, evidence, access, and risk checks pass
+verify: inspect links, extraction order, revision, changed case, disclosure, and source date
+failure: reject invented impact, hidden assistance, exposed data, or unverified recruiter identity
+repair: correct the first unsupported claim and add a changed-candidate regression
+owner: learner controls every external action
+transfer-boundary: manual learner-approved profile, application, conversation, interview, and offer decisions`;
   }
   if (family === 'linux') {
     if (/terminal-evidence|paths-hierarchy/.test(moduleId)) {
@@ -1977,6 +2057,7 @@ function targetFor(family, moduleId) {
   if (family === 'network') return 'shell';
   if (family === 'prompt') return 'prompt';
   if (family === 'portfolio') return 'config';
+  if (family === 'career') return 'config';
   if (family === 'gates') return 'config';
   if (family === 'docker') return 'config';
   if (family === 'kubernetes') return 'config';
@@ -2019,6 +2100,24 @@ recovery: [replace with backup, clean restore, reconciliation, communication, an
 portfolio-proof: [replace with contribution, limitations, counterexample, and unseen defense]
 transfer-boundary: authorized controlled research, toolchain, deployment, and review environments
 evidence:
+`;
+  } else if (family === 'career') {
+    files.config = `# ${courseId} cumulative learner-controlled career campaign
+# Browser labs review fictional evidence contracts only. They never contact people,
+# submit applications, access accounts, expose personal data, negotiate, or accept offers.
+workspace: career
+candidate-id: fictional-learner
+target-role: [replace with role family, work outcomes, and bounded level]
+jurisdiction: [replace with location and current official guidance boundary]
+audience: [replace with reviewer need, time, format, and access context]
+claim: [replace with one truthful role-relevant behavior claim]
+evidence: [replace with revision, artifact, observation, changed case, contribution, and limit]
+process-state: [replace with discover, investigate, apply, interview, offer, close, or archive]
+accessibility: [replace with keyboard, structure, reflow, status, alternatives, and human review]
+privacy-consent: [replace with purpose, minimization, permission, retention, deletion, and safe contact]
+decision: [replace with learner-owned next decision and stop rule]
+transfer-boundary: learner-approved external actions only
+review:
 `;
   } else if (courseId === 'build-web-scraper-go') {
     files.go = `// ${courseId} cumulative owner-approved accessible site-audit portfolio.
@@ -3645,6 +3744,7 @@ function createBuilder({
   const storageEvidence = storageGoEvidence || storageTypescriptEvidence;
   const httpEvidence = /^(?:http-(?:go|ts|py)|http-server-(?:go|ts))-/u.test(moduleId);
   const portfolioEvidence = family === 'portfolio';
+  const careerEvidence = family === 'career';
   const httpTrack = crawlerGoEvidence
     ? 'Authorized site auditing and Go'
     : crawlerTypescriptEvidence
@@ -3694,6 +3794,7 @@ function createBuilder({
                                                 : null;
   const usesExecutableEvidence =
     portfolioEvidence ||
+    careerEvidence ||
     family === 'sql' ||
     family === 'go' ||
     family === 'c' ||
@@ -3734,7 +3835,7 @@ function createBuilder({
         ? `${instruction}\n\nEvidence target: ${contextualTitle}.`
         : instruction,
       why: usesExecutableEvidence
-        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : portfolioEvidence ? 'mechanically reviewable stakeholder, affected-user, artifact, changed-case, failure, repair, release, recovery, and transfer decision' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
+        ? `${why} For ${contextualTitle}, keep ${concept} connected to ${crawlerGoEvidence ? 'executable Go authorization, URL, robots, response, tree, frontier, goroutine, report, deployment, and recovery decision' : crawlerTypescriptEvidence ? 'executable TypeScript authorization, URL, runtime admission, Fetch, Promise, browser, accessibility, report, package, and recovery decision' : feedGoEvidence ? 'executable Go feed, XML, HTTP, PostgreSQL, schedule, API, reader, deployment, and recovery decision' : feedTypescriptEvidence ? 'executable TypeScript unknown-validation, async, PostgreSQL, Express, reader, package, deployment, and recovery decision' : aiAgentPythonEvidence ? 'executable Python model, interaction, tool, policy, state, approval, evaluation, security, deployment, and recovery decision' : webScraperPythonEvidence ? 'executable Python authorization, URL, response, parse, provenance, frontier, report, and recovery decision' : mazePythonEvidence ? 'executable Python grid, topology, search, event, state, accessibility, package, and recovery decision' : staticSitePythonEvidence ? 'executable Python source, parse, route, render, accessibility, artifact, deployment, and recovery decision' : asteroidsPythonEvidence ? 'executable Python game-state, timing, input, collision, accessibility, test, package, and release decision' : bookbotPythonEvidence ? 'executable Python text-analysis, command, test, package, and release decision' : ragPythonEvidence ? 'executable Python retrieval, grounding, evaluation, and evidence decision' : portfolioEvidence ? 'mechanically reviewable stakeholder, affected-user, artifact, changed-case, failure, repair, release, recovery, and transfer decision' : careerEvidence ? 'mechanically reviewable target-role, truthful-claim, contribution, accessibility, privacy, consent, process-state, changed-candidate, failure, repair, decision, and transfer' : family === 'sql' ? 'executable relational' : family === 'c' ? 'executable C memory invariant and explicit native transfer' : storageTypescriptEvidence ? 'executable TypeScript storage and delivery decision' : storageGoEvidence ? 'executable Go storage and delivery decision' : rabbitGoEvidence ? 'executable Go messaging decision' : rabbitTypescriptEvidence ? 'executable TypeScript messaging decision' : httpEvidence ? 'executable HTTP client decision' : family === 'docker' ? 'mechanically reviewable Docker artifact and transfer' : family === 'kubernetes' ? 'mechanically reviewable Kubernetes object, status, and transfer' : family === 'cicd' ? 'mechanically reviewable workflow, trust, artifact, deployment, and recovery' : 'executable Go behavior'} evidence.`
         : why,
       buildsOnStepIds: previous ? [previous] : [],
       content: extra.content ?? [],
@@ -3744,9 +3845,9 @@ function createBuilder({
         extra.hints ??
         (usesExecutableEvidence
           ? [
-              `For ${contextualTitle}, name the ${crawlerGoEvidence ? 'owner, permission, revision, Go, seed, URL, scope, robots, response, body, tree, record, frontier, goroutine, accessibility, report, cleanup, recovery, and native-transfer boundary' : crawlerTypescriptEvidence ? 'owner, authorization, source and emitted revision, Node, TypeScript, URL, robots, unknown value, Fetch, Promise, AbortSignal, browser, accessibility, report, handle, recovery, and native-transfer boundary' : feedGoEvidence ? 'reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary' : feedTypescriptEvidence ? 'reader, publisher, source and emitted revision, Node, TypeScript, tenant, URL, unknown XML, runtime validation, Fetch, Promise, AbortSignal, PostgreSQL, Express, handle, accessibility, recovery, and native-transfer boundary' : aiAgentPythonEvidence ? 'stakeholder, risk, revision, Python, SDK, API, model, interaction, call, tool, authority, state, budget, approval, memory, evaluation, trace, privacy, security, accessibility, recovery, and provider-transfer boundary' : webScraperPythonEvidence ? 'owner, authorization, stakeholder, revision, runtime, dependency, seed, URL, origin, robots, response, parser, selector, record, frontier, privacy, report, stop, recovery, and transfer boundary' : mazePythonEvidence ? 'player, revision, Python, Tcl and Tk versions, grid, coordinate, seed, topology, frontier, path, event, state, render, accessibility, package, recovery, and native-transfer boundary' : staticSitePythonEvidence ? 'reader, content authority, revision, source, span, parser, trust, route, render, asset, accessibility, artifact, deployment, and recovery boundary' : asteroidsPythonEvidence ? 'player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary' : bookbotPythonEvidence ? 'stakeholder, corpus authority, revision, path, bytes, encoding, Unicode, token, count, rank, report, command, test, package, release, and transfer boundary' : ragPythonEvidence ? 'stakeholder, corpus, source, document, chunk, model, index, query, relevance, tenant, context, citation, evaluation, and transfer boundary' : family === 'sql' ? 'row grain' : family === 'c' ? 'size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary' : storageTypescriptEvidence ? 'stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary' : storageGoEvidence ? 'stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary' : httpEvidence ? 'method, authority, body, byte, time, and credential boundary' : family === 'docker' ? 'daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary' : family === 'kubernetes' ? 'context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary' : family === 'cicd' ? 'event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary' : 'types, ownership, and stop path'}, ${concept} precondition, or invariant that must hold.`,
-              `At ${contextualTitle}, trace this concrete input and predict ${aiAgentPythonEvidence ? 'model request, interaction step, schema validation, tool choice, authorization, approval, result, state transition, memory, evaluation, trace, rejection, stop, rollback, recovery, and controlled-provider evidence' : webScraperPythonEvidence ? 'authorization, URL admission, robots, fetch, redirect, decode, parse, extract, provenance, schedule, report, rejection, stop, rollback, recovery, and native evidence' : mazePythonEvidence ? 'coordinate, wall, topology, frontier, route, callback, transition, render, accessibility, failure, rollback, recovery, and native evidence' : staticSitePythonEvidence ? 'admission, decoding, tokenization, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery evidence' : asteroidsPythonEvidence ? 'event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence' : bookbotPythonEvidence ? 'admission, decoding, normalization, tokenization, counting, ranking, formatting, stdout, stderr, status, test, package, failure, and recovery evidence' : ragPythonEvidence ? 'ingestion, normalization, retrieval, filter, fusion, reranking, context, claim, citation, abstention, latency, cost, failure, and recovery evidence' : family === 'sql' ? 'rows or changes' : family === 'c' ? 'size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing' : storageEvidence ? 'runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence' : httpEvidence ? 'resolution, redirect, status, representation, retry, and cleanup evidence' : family === 'docker' ? 'build, image, container, mount, network, Compose, policy, and teardown evidence' : family === 'kubernetes' ? 'admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence' : family === 'cicd' ? 'evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence' : 'values, errors, blocking, and output'} before reviewing it: ${changedCase}`,
-              `For ${contextualTitle}, challenge the documented misconception with ${aiAgentPythonEvidence ? 'changed-model, API, schema, tool, authority, result, state, loop, approval, context, memory, retry, injection, evaluation, telemetry, rate, cost, framework, sandbox, deployment, recovery, and controlled provider-transfer' : webScraperPythonEvidence ? 'changed-authorization, URL, robots rule, response, encoding, markup, selector, frontier, timing, session, browser, privacy, security, export, failure, recovery, and controlled owner transfer' : mazePythonEvidence ? 'changed-grid, seed, wall, generator, solver, weight, heuristic, callback, state, focus, scale, save, package, recovery, and controlled native-transfer' : staticSitePythonEvidence ? 'changed-source, delimiter, Unicode, nesting, route, URL, asset, viewport, cache, security, deployment, recovery, and controlled production-transfer' : asteroidsPythonEvidence ? 'changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer' : bookbotPythonEvidence ? 'changed-file, changed-encoding, Unicode, token, ranking, stream, CLI, test, package, security, accessibility, failure, recovery, and controlled native-transfer' : ragPythonEvidence ? 'changed-query, changed-corpus, relevance, retrieval, grounding, citation, adversarial, accessibility, failure, recovery, and controlled native or production-transfer' : family === 'sql' ? 'result, constraint, or plan' : family === 'c' ? 'changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer' : storageEvidence ? 'runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer' : httpEvidence ? 'request, response, fault, policy, and transfer' : family === 'docker' ? 'manifest, inspect, lifecycle, failure, repair, and transfer' : family === 'kubernetes' ? 'object, condition, event, policy, failure, repair, rollback, and transfer' : family === 'cicd' ? 'workflow, run, artifact, policy, fault, repair, rollback, and transfer' : 'runtime, failure, race, or toolchain'} evidence: ${competency?.misconceptions[0] ?? 'find the first violated contract'}`,
+              `For ${contextualTitle}, name the ${crawlerGoEvidence ? 'owner, permission, revision, Go, seed, URL, scope, robots, response, body, tree, record, frontier, goroutine, accessibility, report, cleanup, recovery, and native-transfer boundary' : crawlerTypescriptEvidence ? 'owner, authorization, source and emitted revision, Node, TypeScript, URL, robots, unknown value, Fetch, Promise, AbortSignal, browser, accessibility, report, handle, recovery, and native-transfer boundary' : feedGoEvidence ? 'reader, publisher, revision, Go, source, tenant, URL, feed format, XML, HTTP, PostgreSQL, transaction, lease, goroutine, API, accessibility, recovery, and native-transfer boundary' : feedTypescriptEvidence ? 'reader, publisher, source and emitted revision, Node, TypeScript, tenant, URL, unknown XML, runtime validation, Fetch, Promise, AbortSignal, PostgreSQL, Express, handle, accessibility, recovery, and native-transfer boundary' : aiAgentPythonEvidence ? 'stakeholder, risk, revision, Python, SDK, API, model, interaction, call, tool, authority, state, budget, approval, memory, evaluation, trace, privacy, security, accessibility, recovery, and provider-transfer boundary' : webScraperPythonEvidence ? 'owner, authorization, stakeholder, revision, runtime, dependency, seed, URL, origin, robots, response, parser, selector, record, frontier, privacy, report, stop, recovery, and transfer boundary' : mazePythonEvidence ? 'player, revision, Python, Tcl and Tk versions, grid, coordinate, seed, topology, frontier, path, event, state, render, accessibility, package, recovery, and native-transfer boundary' : staticSitePythonEvidence ? 'reader, content authority, revision, source, span, parser, trust, route, render, asset, accessibility, artifact, deployment, and recovery boundary' : asteroidsPythonEvidence ? 'player, revision, runtime, seed, input, time, coordinate, state, entity, collision, render, cue, accessibility, package, release, and desktop-transfer boundary' : bookbotPythonEvidence ? 'stakeholder, corpus authority, revision, path, bytes, encoding, Unicode, token, count, rank, report, command, test, package, release, and transfer boundary' : ragPythonEvidence ? 'stakeholder, corpus, source, document, chunk, model, index, query, relevance, tenant, context, citation, evaluation, and transfer boundary' : careerEvidence ? 'learner goal, target role, jurisdiction, audience, truthful claim, contribution, source date, evidence revision, accessibility, privacy, consent, process state, decision owner, non-claim, and transfer boundary' : family === 'sql' ? 'row grain' : family === 'c' ? 'size, bounds, object, lifetime, owner, borrow, allocation, cleanup, representation, ABI, thread, and transfer boundary' : storageTypescriptEvidence ? 'stakeholder, unknown schema, file, object version, authorization, byte, time, promise, stream, cache, cost, abort, cleanup, and recovery boundary' : storageGoEvidence ? 'stakeholder, file, object version, authorization, byte, time, concurrency, cache, cost, cleanup, and recovery boundary' : httpEvidence ? 'method, authority, body, byte, time, and credential boundary' : family === 'docker' ? 'daemon authority, immutable identity, process, storage, network, secret, and cleanup boundary' : family === 'kubernetes' ? 'context, namespace, API identity, desired state, observed status, controller, policy, and failure-domain boundary' : family === 'cicd' ? 'event, revision, actor, permission, runner, dependency, artifact, environment, deployment, and recovery boundary' : 'types, ownership, and stop path'}, ${concept} precondition, or invariant that must hold.`,
+              `At ${contextualTitle}, trace this concrete input and predict ${aiAgentPythonEvidence ? 'model request, interaction step, schema validation, tool choice, authorization, approval, result, state transition, memory, evaluation, trace, rejection, stop, rollback, recovery, and controlled-provider evidence' : webScraperPythonEvidence ? 'authorization, URL admission, robots, fetch, redirect, decode, parse, extract, provenance, schedule, report, rejection, stop, rollback, recovery, and native evidence' : mazePythonEvidence ? 'coordinate, wall, topology, frontier, route, callback, transition, render, accessibility, failure, rollback, recovery, and native evidence' : staticSitePythonEvidence ? 'admission, decoding, tokenization, parsing, transformation, routing, rendering, validation, publication, failure, rollback, and recovery evidence' : asteroidsPythonEvidence ? 'event, intent, simulation, collision, cleanup, rendering, cue, accessibility, failure, pause, rollback, recovery, and desktop evidence' : bookbotPythonEvidence ? 'admission, decoding, normalization, tokenization, counting, ranking, formatting, stdout, stderr, status, test, package, failure, and recovery evidence' : ragPythonEvidence ? 'ingestion, normalization, retrieval, filter, fusion, reranking, context, claim, citation, abstention, latency, cost, failure, and recovery evidence' : careerEvidence ? 'targeting, source, evidence, contribution, access, privacy, consent, process, decision, rejection, repair, follow-up, and learner-controlled transfer evidence' : family === 'sql' ? 'rows or changes' : family === 'c' ? 'size arithmetic, pointer range, lifetime transition, allocation result, cleanup order, printed output, and native evidence still missing' : storageEvidence ? 'runtime validation, authorization, custody, integrity, range, stream, cache, retry, cost, cleanup, and recovery evidence' : httpEvidence ? 'resolution, redirect, status, representation, retry, and cleanup evidence' : family === 'docker' ? 'build, image, container, mount, network, Compose, policy, and teardown evidence' : family === 'kubernetes' ? 'admission, defaulting, scheduling, reconciliation, status, traffic, storage, policy, disruption, and cleanup evidence' : family === 'cicd' ? 'evaluation, shell, job graph, cache, artifact, trust, deployment, signal, rollback, and cleanup evidence' : 'values, errors, blocking, and output'} before reviewing it: ${changedCase}`,
+              `For ${contextualTitle}, challenge the documented misconception with ${aiAgentPythonEvidence ? 'changed-model, API, schema, tool, authority, result, state, loop, approval, context, memory, retry, injection, evaluation, telemetry, rate, cost, framework, sandbox, deployment, recovery, and controlled provider-transfer' : webScraperPythonEvidence ? 'changed-authorization, URL, robots rule, response, encoding, markup, selector, frontier, timing, session, browser, privacy, security, export, failure, recovery, and controlled owner transfer' : mazePythonEvidence ? 'changed-grid, seed, wall, generator, solver, weight, heuristic, callback, state, focus, scale, save, package, recovery, and controlled native-transfer' : staticSitePythonEvidence ? 'changed-source, delimiter, Unicode, nesting, route, URL, asset, viewport, cache, security, deployment, recovery, and controlled production-transfer' : asteroidsPythonEvidence ? 'changed-frame-rate, stall, seam, input, device, collision, cue, accessibility, save, package, failure, recovery, and controlled desktop-transfer' : bookbotPythonEvidence ? 'changed-file, changed-encoding, Unicode, token, ranking, stream, CLI, test, package, security, accessibility, failure, recovery, and controlled native-transfer' : ragPythonEvidence ? 'changed-query, changed-corpus, relevance, retrieval, grounding, citation, adversarial, accessibility, failure, recovery, and controlled native or production-transfer' : careerEvidence ? 'changed-candidate, target-role, source-date, jurisdiction, audience, access, privacy, consent, process-state, interview, offer, rejection, repair, and learner-controlled transfer' : family === 'sql' ? 'result, constraint, or plan' : family === 'c' ? 'changed-size, failure-injection, printed invariant, compiler, sanitizer, analyzer, fuzz, ABI, concurrency, or production-transfer' : storageEvidence ? 'runtime, file, object, policy, transfer, integrity, cache, fault, cost, restore, and controlled AWS transfer' : httpEvidence ? 'request, response, fault, policy, and transfer' : family === 'docker' ? 'manifest, inspect, lifecycle, failure, repair, and transfer' : family === 'kubernetes' ? 'object, condition, event, policy, failure, repair, rollback, and transfer' : family === 'cicd' ? 'workflow, run, artifact, policy, fault, repair, rollback, and transfer' : 'runtime, failure, race, or toolchain'} evidence: ${competency?.misconceptions[0] ?? 'find the first violated contract'}`,
             ]
           : [
               `Name the ${concept} precondition or invariant that the ${activityKind} case must preserve.`,
@@ -3771,7 +3872,7 @@ function createBuilder({
       {
         id: `${id}-misread`,
         text: usesExecutableEvidence
-          ? `${wrong ?? competency.misconceptions[0]} That claim does not survive the ${title.toLowerCase()} evidence boundary.`
+          ? `${wrong ?? competency.misconceptions[0]} That claim fails the evidence boundary for ${humanize(competencyId)}.`
           : (wrong ?? competency.misconceptions[0]),
       },
       {

@@ -159,7 +159,7 @@ const DOCKER_CRITERIA: ConfigCriterion[] = [
   {
     id: 'verification',
     label: 'Deterministic verification',
-    patterns: [/^\s*verify\s*:\s*\S/im],
+    patterns: [/^\s*verify\s*:\s*\S[^\n]*/im],
     remediation:
       'Add a deterministic inspection, render, policy, or changed-case verification command.',
   },
@@ -270,7 +270,7 @@ const KUBERNETES_CRITERIA: ConfigCriterion[] = [
   {
     id: 'verification',
     label: 'Deterministic verification',
-    patterns: [/^\s*verify\s*:\s*\S/im],
+    patterns: [/^\s*verify\s*:\s*\S[^\n]*/im],
     remediation:
       'Add a deterministic schema, render, diff, policy, status, or changed-case review.',
   },
@@ -467,7 +467,7 @@ const PORTFOLIO_CRITERIA: ConfigCriterion[] = [
   {
     id: 'failure-repair',
     label: 'Rejected failure and causal repair',
-    patterns: [/^\s*failure\s*:\s*\S/im, /^\s*repair\s*:\s*\S/im],
+    patterns: [/^\s*failure\s*:\s*\S[^\n]*[\s\S]*?^\s*repair\s*:\s*\S[^\n]*/im],
     remediation:
       'Name the unsupported claim or failure and its cause-level repair and regression evidence.',
   },
@@ -477,6 +477,93 @@ const PORTFOLIO_CRITERIA: ConfigCriterion[] = [
     patterns: [/^\s*transfer-boundary\s*:\s*\S/im],
     remediation:
       'Name the authorized research, toolchain, deployment, review, and production transfer gates.',
+  },
+];
+
+const CAREER_CRITERIA: ConfigCriterion[] = [
+  {
+    id: 'target-role',
+    label: 'Target role and work outcomes',
+    patterns: [/^\s*target-role\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Name a bounded role family, level, work outcomes, and material constraints.',
+  },
+  {
+    id: 'jurisdiction',
+    label: 'Jurisdiction and current authority',
+    patterns: [/^\s*jurisdiction\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Name the location, source date, governing official guidance, and qualified-review boundary.',
+  },
+  {
+    id: 'audience',
+    label: 'Audience and review context',
+    patterns: [/^\s*audience\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation: 'Define the reviewer need, available time, format, and access context.',
+  },
+  {
+    id: 'claim',
+    label: 'Truthful bounded claim',
+    patterns: [/^\s*claim\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'State one role-relevant behavior claim without invented impact, hidden assistance, or inflated mastery.',
+  },
+  {
+    id: 'evidence',
+    label: 'Revision-linked evidence',
+    patterns: [/^\s*evidence\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Link revision, artifact, observation, changed case, personal contribution, and explicit limit.',
+  },
+  {
+    id: 'process-state',
+    label: 'Hiring process state',
+    patterns: [
+      /^\s*process-state\s*:\s*(?:discover|investigate|apply|interview|offer|close|archive)\b/im,
+    ],
+    remediation:
+      'Name the current discover, investigate, apply, interview, offer, close, or archive state.',
+  },
+  {
+    id: 'accessibility',
+    label: 'Accessible artifact and process',
+    patterns: [/^\s*accessibility\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define keyboard, structure, reflow, focus, status, alternative format, and human review.',
+  },
+  {
+    id: 'privacy-consent',
+    label: 'Privacy and consent boundary',
+    patterns: [/^\s*privacy-consent\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Define purpose, minimization, permission, contact choice, retention, deletion, and third-party protection.',
+  },
+  {
+    id: 'decision',
+    label: 'Learner-owned decision and stop rule',
+    patterns: [/^\s*decision\s*:(?![ \t]*(?:\[|todo\b))[ \t]*.{12,}/im],
+    remediation:
+      'Name the learner-controlled next decision, accountable evidence, uncertainty, and stop rule.',
+  },
+  {
+    id: 'verification',
+    label: 'Deterministic verification',
+    patterns: [/^\s*verify\s*:\s*\S[^\n]*/im],
+    remediation:
+      'Add deterministic link, extraction, revision, changed-case, disclosure, permission, and source-date checks.',
+  },
+  {
+    id: 'failure-repair',
+    label: 'Rejected failure and causal repair',
+    patterns: [/^\s*failure\s*:\s*\S[^\n]*[\s\S]*?^\s*repair\s*:\s*\S[^\n]*/im],
+    remediation:
+      'Name the deceptive, unsafe, inaccessible, or unsupported case and its cause-level repair.',
+  },
+  {
+    id: 'transfer',
+    label: 'Learner-controlled transfer boundary',
+    patterns: [/^\s*transfer-boundary\s*:\s*\S[^\n]*/im],
+    remediation:
+      'Keep profiles, applications, contact, interviews, negotiation, and offer decisions learner approved.',
   },
 ];
 
@@ -501,9 +588,11 @@ export type ConfigWorkspaceKind =
   | 'docker'
   | 'kubernetes'
   | 'cicd'
-  | 'portfolio';
+  | 'portfolio'
+  | 'career';
 
 export function detectConfigWorkspace(source: string): ConfigWorkspaceKind {
+  if (/^workspace\s*:\s*career\b/im.test(source)) return 'career';
   if (/^workspace\s*:\s*portfolio\b/im.test(source)) return 'portfolio';
   if (/^workspace\s*:\s*cicd\b/im.test(source)) return 'cicd';
   if (/^workspace\s*:\s*kubernetes\b/im.test(source)) return 'kubernetes';
@@ -518,6 +607,7 @@ export function evaluateConfigContract(source: string, kind: ConfigWorkspaceKind
   if (kind === 'docker') return evaluateCriteria(source, DOCKER_CRITERIA);
   if (kind === 'kubernetes') return evaluateCriteria(source, KUBERNETES_CRITERIA);
   if (kind === 'cicd') return evaluateCriteria(source, CICD_CRITERIA);
+  if (kind === 'career') return evaluateCriteria(source, CAREER_CRITERIA);
   if (kind === 'portfolio') return evaluateCriteria(source, PORTFOLIO_CRITERIA);
   return evaluateCriteria(source, kind === 'mcp' ? MCP_CRITERIA : SKILL_CRITERIA);
 }
@@ -536,6 +626,7 @@ export function formatConfigLabReport(source: string): string {
     kubernetes: 'KUBERNETES CONTRACT REVIEW',
     cicd: 'CI/CD CONTRACT REVIEW',
     portfolio: 'PRODUCT EVIDENCE REVIEW',
+    career: 'CAREER EVIDENCE REVIEW',
   };
   return [
     `${labels[kind]}: ${passed}/${results.length}`,

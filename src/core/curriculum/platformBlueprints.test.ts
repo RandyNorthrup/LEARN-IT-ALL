@@ -258,6 +258,7 @@ const expectations = {
   'personal-project-1': { competencies: 60, modules: 12, activities: 126, projects: 5 },
   'personal-project-2': { competencies: 70, modules: 14, activities: 146, projects: 5 },
   'capstone-project': { competencies: 80, modules: 16, activities: 166, projects: 5 },
+  'job-search': { competencies: 100, modules: 20, activities: 206, projects: 5 },
 } as const;
 
 const expectedPrerequisites: Record<string, string[]> = {
@@ -366,6 +367,7 @@ const expectedPrerequisites: Record<string, string[]> = {
   'personal-project-1': ['python-dsa', 'c-memory-management'],
   'personal-project-2': ['personal-project-1'],
   'capstone-project': ['personal-project-2'],
+  'job-search': ['capstone-project'],
 };
 
 function normalized(value: string) {
@@ -444,6 +446,7 @@ describe('platform course blueprints', () => {
           'personal-project-1',
           'personal-project-2',
           'capstone-project',
+          'job-search',
         ].includes(courseId)
       ) {
         const requiredModuleKinds = [

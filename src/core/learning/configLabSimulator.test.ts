@@ -50,6 +50,7 @@ repair: Pin the digest, remove authority, rotate the secret, test restore, and v
 `;
     expect(detectConfigWorkspace(source)).toBe('docker');
     expect(formatConfigLabReport(source)).toContain('DOCKER CONTRACT REVIEW: 11/11');
+    expect(formatConfigLabReport(source)).toContain('verify: docker buildx build --check .');
     expect(formatConfigLabReport(source)).toContain('never executes learner commands');
   });
 
@@ -78,6 +79,9 @@ repair: Pin the digest, restore least privilege, rehearse rollback, and verify r
 `;
     expect(detectConfigWorkspace(source)).toBe('kubernetes');
     expect(formatConfigLabReport(source)).toContain('KUBERNETES CONTRACT REVIEW: 12/12');
+    expect(formatConfigLabReport(source)).toContain(
+      'verify: kubectl diff --server-side -f release.yaml'
+    );
     expect(formatConfigLabReport(source)).toContain('never executes learner commands');
   });
 
@@ -126,6 +130,59 @@ transfer-boundary: authorized controlled research, toolchain, deployment, and re
 `;
     expect(detectConfigWorkspace(source)).toBe('portfolio');
     expect(formatConfigLabReport(source)).toContain('PRODUCT EVIDENCE REVIEW: 12/12');
+    expect(
+      formatConfigLabReport(
+        source.replace(
+          'repair: Isolate the first unsupported transition and add a changed-case regression.',
+          ''
+        )
+      )
+    ).toContain('PRODUCT EVIDENCE REVIEW: 11/12');
     expect(formatConfigLabReport(source)).toContain('never executes learner commands');
+  });
+
+  it('reviews career evidence without contacting employers or making learner decisions', () => {
+    const source = `
+workspace: career
+target-role: accessibility-minded software quality engineer
+jurisdiction: example location with official current guidance and qualified review
+audience: technical reviewer with ten minutes and keyboard-only access
+claim: one bounded role behavior survives a changed requirement independently
+evidence: revision, artifact, observation, changed case, contribution, and explicit limit
+process-state: investigate before applying
+accessibility: keyboard, structure, reflow, focus, status, alternative format, and human review
+privacy-consent: purpose, minimization, permission, contact choice, retention, and deletion
+decision: learner proceeds only after identity and evidence checks pass; otherwise stop
+verify: inspect links, extraction, revision, changed case, disclosures, permissions, and dates
+failure: Reject invented impact, hidden assistance, exposed data, and false recruiter identity.
+repair: Correct the first unsupported claim and add a changed-candidate regression.
+transfer-boundary: learner-approved profile, application, contact, interview, and offer actions only
+`;
+    expect(detectConfigWorkspace(source)).toBe('career');
+    expect(formatConfigLabReport(source)).toContain('CAREER EVIDENCE REVIEW: 12/12');
+    expect(formatConfigLabReport(source)).toContain(
+      'transfer-boundary: learner-approved profile, application, contact, interview, and offer actions only'
+    );
+    expect(formatConfigLabReport(source)).toContain('never executes learner commands');
+  });
+
+  it('requires both a rejected career failure and its causal repair', () => {
+    const source = `
+workspace: career
+target-role: accessibility-minded software quality engineer
+jurisdiction: example location with official current guidance and qualified review
+audience: technical reviewer with ten minutes and keyboard-only access
+claim: one bounded role behavior survives a changed requirement independently
+evidence: revision, artifact, observation, changed case, contribution, and explicit limit
+process-state: investigate before applying
+accessibility: keyboard, structure, reflow, focus, status, alternative format, and human review
+privacy-consent: purpose, minimization, permission, contact choice, retention, and deletion
+decision: learner proceeds only after identity and evidence checks pass; otherwise stop
+verify: inspect links, extraction, revision, changed case, disclosures, permissions, and dates
+failure: Reject invented impact, hidden assistance, exposed data, and false recruiter identity.
+transfer-boundary: learner-approved profile, application, contact, interview, and offer actions only
+`;
+    expect(formatConfigLabReport(source)).toContain('CAREER EVIDENCE REVIEW: 11/12');
+    expect(formatConfigLabReport(source)).toContain('MISS  Rejected failure and causal repair');
   });
 });
