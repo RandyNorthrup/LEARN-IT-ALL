@@ -1,7 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { filterCourseCatalog } from './courseCatalog';
+import {
+  COURSE_CATALOG_PAGE_SIZE,
+  filterCourseCatalog,
+  paginateCourseCatalog,
+} from './courseCatalog';
 import { ALL_COURSES, type CourseMetadata, isV2Course } from './data/courses';
 
 const courses: CourseMetadata[] = [
@@ -52,6 +56,40 @@ describe('filterCourseCatalog', () => {
     });
 
     expect(visibleCourses.map((course) => course.id)).toEqual(['planned-advanced']);
+  });
+
+  it('paginates the catalog without duplicating or skipping courses', () => {
+    const catalog = Array.from({ length: COURSE_CATALOG_PAGE_SIZE + 2 }, (_, index) => ({
+      ...courses[0],
+      id: `course-${index + 1}`,
+    }));
+
+    const firstPage = paginateCourseCatalog(catalog, undefined);
+    const secondPage = paginateCourseCatalog(catalog, '2');
+
+    expect(firstPage).toMatchObject({
+      currentPage: 1,
+      totalPages: 2,
+      firstResult: 1,
+      lastResult: COURSE_CATALOG_PAGE_SIZE,
+    });
+    expect(firstPage.courses).toHaveLength(COURSE_CATALOG_PAGE_SIZE);
+    expect(secondPage).toMatchObject({
+      currentPage: 2,
+      totalPages: 2,
+      firstResult: COURSE_CATALOG_PAGE_SIZE + 1,
+      lastResult: COURSE_CATALOG_PAGE_SIZE + 2,
+    });
+    expect([...firstPage.courses, ...secondPage.courses].map((course) => course.id)).toEqual(
+      catalog.map((course) => course.id)
+    );
+  });
+
+  it('normalizes invalid and out-of-range page requests', () => {
+    expect(paginateCourseCatalog([...courses], 'not-a-page').currentPage).toBe(1);
+    expect(paginateCourseCatalog([...courses], '-2').currentPage).toBe(1);
+    expect(paginateCourseCatalog([...courses], '99', 1).currentPage).toBe(2);
+    expect(() => paginateCourseCatalog([...courses], '1', 0)).toThrow(RangeError);
   });
 
   it('publishes every rebuilt course through the v2 learning studio', () => {

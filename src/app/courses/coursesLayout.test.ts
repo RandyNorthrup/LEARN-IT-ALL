@@ -16,4 +16,14 @@ describe('course catalog accessibility contract', () => {
     expect(page).toContain('<Clock3 aria-hidden="true" />');
     expect(page).toContain('<Layers3 aria-hidden="true" />');
   });
+
+  it('provides responsive, touch-sized catalog pagination', () => {
+    expect(page).toContain('aria-label="Course catalog pages"');
+    expect(page).toContain('rel="prev"');
+    expect(page).toContain('rel="next"');
+    expect(styles).toMatch(/\.pagination a,[\s\S]*?min-height:\s*44px;/);
+    expect(styles).toMatch(
+      /@media \(max-width:\s*600px\)[\s\S]*?\.pagination\s*\{[\s\S]*?grid-template-columns:\s*1fr 1fr;/
+    );
+  });
 });

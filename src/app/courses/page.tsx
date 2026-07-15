@@ -1,11 +1,33 @@
 import { ArrowLeft, ArrowRight, Clock3, Filter, Layers3 } from 'lucide-react';
 import Link from 'next/link';
-import { filterCourseCatalog } from '@/lib/courseCatalog';
+import { filterCourseCatalog, paginateCourseCatalog } from '@/lib/courseCatalog';
 import { ALL_COURSES } from '@/lib/data/courses';
 import styles from './Courses.module.css';
 
 interface CoursesPageProps {
-  searchParams: Promise<{ difficulty?: string; type?: string; planned?: string }>;
+  searchParams: Promise<{
+    difficulty?: string;
+    type?: string;
+    planned?: string;
+    page?: string;
+  }>;
+}
+
+interface CatalogHrefOptions {
+  difficulty: string;
+  type: string;
+  showPlanned: boolean;
+  page: number;
+}
+
+function buildCatalogHref({ difficulty, type, showPlanned, page }: CatalogHrefOptions): string {
+  const params = new URLSearchParams();
+  if (difficulty !== 'all') params.set('difficulty', difficulty);
+  if (type !== 'all') params.set('type', type);
+  if (showPlanned) params.set('planned', 'yes');
+  if (page > 1) params.set('page', String(page));
+  const query = params.toString();
+  return query ? `/courses?${query}` : '/courses';
 }
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
@@ -13,7 +35,12 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const difficulty = query.difficulty ?? 'all';
   const type = query.type ?? 'all';
   const showPlanned = query.planned === 'yes';
-  const visibleCourses = filterCourseCatalog(ALL_COURSES, { difficulty, type, showPlanned });
+  const visibleCourses = filterCourseCatalog(ALL_COURSES, {
+    difficulty,
+    type,
+    showPlanned,
+  });
+  const catalogPage = paginateCourseCatalog(visibleCourses, query.page);
   const plannedCount = ALL_COURSES.filter((course) => course.status === 'coming-soon').length;
 
   return (
@@ -80,17 +107,21 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
             <span className={styles.eyebrow}>Current catalog</span>
             <h2 id="catalog-title">{showPlanned ? 'All mapped paths' : 'Ready to enter'}</h2>
           </div>
-          <strong>{visibleCourses.length} results</strong>
+          <strong>
+            {catalogPage.firstResult}–{catalogPage.lastResult} of {visibleCourses.length} results
+          </strong>
         </header>
 
         <ol className={styles.courseList}>
-          {visibleCourses.map((course, index) => {
+          {catalogPage.courses.map((course, index) => {
             const isPlanned = course.status === 'coming-soon';
             const href = `/learn/${course.id}`;
             return (
               <li key={course.id}>
                 <article className={styles.courseCard}>
-                  <div className={styles.courseIndex}>{String(index + 1).padStart(2, '0')}</div>
+                  <div className={styles.courseIndex}>
+                    {String(catalogPage.firstResult + index).padStart(2, '0')}
+                  </div>
                   <div className={styles.courseBody}>
                     <div className={styles.courseMeta}>
                       <span>{isPlanned ? 'rebuild queue' : 'interactive studio'}</span>
@@ -130,6 +161,50 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
             );
           })}
         </ol>
+
+        {visibleCourses.length > 0 && catalogPage.totalPages > 1 && (
+          <nav className={styles.pagination} aria-label="Course catalog pages">
+            {catalogPage.currentPage > 1 ? (
+              <Link
+                href={buildCatalogHref({
+                  difficulty,
+                  type,
+                  showPlanned,
+                  page: catalogPage.currentPage - 1,
+                })}
+                prefetch={false}
+                rel="prev"
+              >
+                <ArrowLeft aria-hidden="true" /> Previous
+              </Link>
+            ) : (
+              <span aria-disabled="true">
+                <ArrowLeft aria-hidden="true" /> Previous
+              </span>
+            )}
+            <strong className={styles.pageCount}>
+              Page {catalogPage.currentPage} of {catalogPage.totalPages}
+            </strong>
+            {catalogPage.currentPage < catalogPage.totalPages ? (
+              <Link
+                href={buildCatalogHref({
+                  difficulty,
+                  type,
+                  showPlanned,
+                  page: catalogPage.currentPage + 1,
+                })}
+                prefetch={false}
+                rel="next"
+              >
+                Next <ArrowRight aria-hidden="true" />
+              </Link>
+            ) : (
+              <span aria-disabled="true">
+                Next <ArrowRight aria-hidden="true" />
+              </span>
+            )}
+          </nav>
+        )}
 
         {visibleCourses.length === 0 && (
           <p className={styles.empty}>No path matches those filters. Try a broader combination.</p>
