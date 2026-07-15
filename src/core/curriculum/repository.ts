@@ -1,5 +1,7 @@
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { gunzipSync } from 'node:zlib';
+import Database from 'better-sqlite3';
 import { z } from 'zod';
 import {
   ActivityKindSchema,
@@ -12,37 +14,70 @@ import {
   IdentifierSchema,
 } from './schema';
 
-const DEFAULT_CONTENT_ROOT = path.join(process.cwd(), 'content', 'v2', 'courses');
+const RUNTIME_INDEX_PATH = path.join(
+  process.cwd(),
+  'content',
+  'v2',
+  '.runtime',
+  'curriculum.sqlite'
+);
 
-function readJson(filePath: string): unknown {
-  return JSON.parse(readFileSync(filePath, 'utf8'));
+type CurriculumDocumentKind = 'course' | 'module' | 'activity' | 'outline';
+
+interface CurriculumDocumentRow {
+  compressed_json: Buffer;
+  raw_bytes: number;
+  sha256: string;
 }
 
-export function loadCurriculumCourse(
-  courseId: string,
-  contentRoot = DEFAULT_CONTENT_ROOT
-): CurriculumCourse {
-  return CurriculumCourseSchema.parse(readJson(path.join(contentRoot, courseId, 'course.json')));
-}
+let runtimeIndex: Database.Database | null = null;
+let documentQuery: Database.Statement<[string], CurriculumDocumentRow> | null = null;
 
-export function loadCurriculumModule(
-  courseId: string,
-  moduleId: string,
-  contentRoot = DEFAULT_CONTENT_ROOT
-): CurriculumModule {
-  return CurriculumModuleSchema.parse(
-    readJson(path.join(contentRoot, courseId, 'modules', `${moduleId}.json`))
+function getDocumentQuery(): Database.Statement<[string], CurriculumDocumentRow> {
+  if (!runtimeIndex) {
+    runtimeIndex = new Database(RUNTIME_INDEX_PATH, { readonly: true, fileMustExist: true });
+    runtimeIndex.pragma('query_only = ON');
+  }
+  documentQuery ??= runtimeIndex.prepare(
+    'SELECT compressed_json, raw_bytes, sha256 FROM curriculum_documents WHERE document_key = ?'
   );
+  return documentQuery;
 }
 
-export function loadCurriculumActivity(
+function documentKey(kind: CurriculumDocumentKind, courseId: string, documentId?: string): string {
+  IdentifierSchema.parse(courseId);
+  if (kind === 'course' || kind === 'outline') return `${kind}:${courseId}`;
+  const parsedDocumentId = IdentifierSchema.parse(documentId);
+  return `${kind}:${courseId}:${parsedDocumentId}`;
+}
+
+function readRuntimeJson(
+  kind: CurriculumDocumentKind,
   courseId: string,
-  activityId: string,
-  contentRoot = DEFAULT_CONTENT_ROOT
-): CurriculumActivity {
-  return CurriculumActivitySchema.parse(
-    readJson(path.join(contentRoot, courseId, 'activities', `${activityId}.json`))
-  );
+  documentId?: string
+): unknown {
+  const key = documentKey(kind, courseId, documentId);
+  const row = getDocumentQuery().get(key);
+  if (!row) throw new Error(`Missing curriculum document: ${key}`);
+  const source = gunzipSync(row.compressed_json);
+  if (source.byteLength !== row.raw_bytes) {
+    throw new Error(`Curriculum document length mismatch: ${key}`);
+  }
+  const digest = createHash('sha256').update(source).digest('hex');
+  if (digest !== row.sha256) throw new Error(`Curriculum document digest mismatch: ${key}`);
+  return JSON.parse(source.toString('utf8'));
+}
+
+export function loadCurriculumCourse(courseId: string): CurriculumCourse {
+  return CurriculumCourseSchema.parse(readRuntimeJson('course', courseId));
+}
+
+export function loadCurriculumModule(courseId: string, moduleId: string): CurriculumModule {
+  return CurriculumModuleSchema.parse(readRuntimeJson('module', courseId, moduleId));
+}
+
+export function loadCurriculumActivity(courseId: string, activityId: string): CurriculumActivity {
+  return CurriculumActivitySchema.parse(readRuntimeJson('activity', courseId, activityId));
 }
 
 export interface CurriculumGraph {
@@ -73,13 +108,8 @@ const CurriculumOutlineSchema = z.object({
 export type CurriculumOutlineActivity = z.infer<typeof CurriculumOutlineActivitySchema>;
 export type CurriculumOutline = z.infer<typeof CurriculumOutlineSchema>;
 
-export function loadCurriculumOutline(
-  courseId: string,
-  contentRoot = DEFAULT_CONTENT_ROOT
-): CurriculumOutline {
-  const outline = CurriculumOutlineSchema.parse(
-    readJson(path.join(contentRoot, courseId, 'outline.json'))
-  );
+export function loadCurriculumOutline(courseId: string): CurriculumOutline {
+  const outline = CurriculumOutlineSchema.parse(readRuntimeJson('outline', courseId));
   if (outline.course.id !== courseId) {
     throw new Error(`Curriculum outline ${outline.course.id} does not match ${courseId}`);
   }
@@ -221,18 +251,11 @@ export function validateCurriculumGraph(graph: CurriculumGraph): string[] {
   return [...new Set(errors)];
 }
 
-export function loadCurriculumGraph(
-  courseId: string,
-  contentRoot = DEFAULT_CONTENT_ROOT
-): CurriculumGraph {
-  const course = loadCurriculumCourse(courseId, contentRoot);
-  const modules = course.moduleIds.map((moduleId) =>
-    loadCurriculumModule(courseId, moduleId, contentRoot)
-  );
+export function loadCurriculumGraph(courseId: string): CurriculumGraph {
+  const course = loadCurriculumCourse(courseId);
+  const modules = course.moduleIds.map((moduleId) => loadCurriculumModule(courseId, moduleId));
   const activities = modules.flatMap((module) =>
-    module.activityIds.map((activityId) =>
-      loadCurriculumActivity(courseId, activityId, contentRoot)
-    )
+    module.activityIds.map((activityId) => loadCurriculumActivity(courseId, activityId))
   );
   const graph = { course, modules, activities };
   const errors = validateCurriculumGraph(graph);

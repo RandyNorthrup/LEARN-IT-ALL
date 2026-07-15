@@ -26,6 +26,7 @@ describe('production JavaScript toolchain pins', () => {
     readFileSync(path.join(root, 'package.json'), 'utf8')
   ) as PackageManifest;
   const dockerfile = readFileSync(path.join(root, 'Dockerfile'), 'utf8');
+  const dockerignore = readFileSync(path.join(root, '.dockerignore'), 'utf8');
   const nextConfig = readFileSync(path.join(root, 'next.config.ts'), 'utf8');
   const npmrc = readFileSync(path.join(root, '.npmrc'), 'utf8');
   const lock = JSON.parse(
@@ -52,12 +53,22 @@ describe('production JavaScript toolchain pins', () => {
     expect(dockerfile).toContain('ARG NPM_VERSION=12.0.1');
     expect(dockerfile).toMatch(/npm install --global "npm@\$\{NPM_VERSION\}"/u);
     expect(dockerfile).toContain('COPY package.json package-lock.json .npmrc ./');
+    expect(dockerfile).not.toContain('COPY --from=builder /app/content ./content');
+    expect(dockerignore).toContain('content/v2/.runtime');
+    expect(dockerignore).toContain('!scripts/generate-curriculum-runtime-index.mjs');
     expect(dockerfile).not.toContain('FROM node:20');
   });
 
   it('ships TypeScript standard-library declarations in standalone runtime traces', () => {
     expect(nextConfig).toContain("'/api/v2/runtime/typescript'");
     expect(nextConfig).toContain("'./node_modules/@typescript/old/lib/*.d.ts'");
+  });
+
+  it('uses route-scoped curriculum traces instead of a global content wildcard', () => {
+    expect(nextConfig).toContain("'/learn/*/*/*'");
+    expect(nextConfig).toContain("'/api/v2/courses/*/activities/*/*'");
+    expect(nextConfig).toContain("'./content/v2/.runtime/curriculum.sqlite'");
+    expect(nextConfig).not.toMatch(/content\/v2\/courses\/.*\*/u);
   });
 
   it('inlines production CSS to remove the first-load render-blocking waterfall', () => {

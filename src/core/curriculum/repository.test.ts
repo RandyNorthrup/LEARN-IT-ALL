@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { CurriculumGraph } from './repository';
-import { validateCurriculumGraph } from './repository';
+import {
+  loadCurriculumActivity,
+  loadCurriculumCourse,
+  loadCurriculumModule,
+  loadCurriculumOutline,
+  validateCurriculumGraph,
+} from './repository';
 import { CurriculumActivitySchema, CurriculumCourseSchema, CurriculumModuleSchema } from './schema';
 
 function graph(): CurriculumGraph {
@@ -193,5 +199,14 @@ describe('validateCurriculumGraph', () => {
     expect(validateCurriculumGraph(invalid)).toContain(
       'Activity repeated-document-introduction introduces semantic-document more than once'
     );
+  });
+});
+
+describe('curriculum file boundaries', () => {
+  it('rejects path traversal before course content reaches filesystem access', () => {
+    expect(() => loadCurriculumCourse('../outside')).toThrow();
+    expect(() => loadCurriculumModule('responsive-web-design', '../outside')).toThrow();
+    expect(() => loadCurriculumActivity('responsive-web-design', '../outside')).toThrow();
+    expect(() => loadCurriculumOutline('../outside')).toThrow();
   });
 });

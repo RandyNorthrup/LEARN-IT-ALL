@@ -1,0 +1,109 @@
+name: Quality and Lighthouse
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 1
+
+jobs:
+  quality:
+    name: Code and curriculum gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.18.0
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install pinned npm
+        run: npm install --global npm@12.0.1 --ignore-scripts
+
+      - name: Verify toolchain
+        run: |
+          test "$(node --version)" = "v24.18.0"
+          test "$(npm --version)" = "12.0.1"
+
+      - name: Install reviewed dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Check types
+        run: npm run type-check
+
+      - name: Check lint
+        run: npm run lint
+
+      - name: Check strict lint
+        run: npm run lint:strict
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build production application
+        run: npm run build
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
+
+  lighthouse:
+    name: Lighthouse ${{ matrix.profile }}
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [mobile, tablet, desktop]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.18.0
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install pinned npm
+        run: npm install --global npm@12.0.1 --ignore-scripts
+
+      - name: Install reviewed dependencies
+        run: npm ci
+
+      - name: Run Lighthouse profile
+        run: npm run "lighthouse:${{ matrix.profile }}"
+
+      - name: Retain Lighthouse reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lighthouse-${{ matrix.profile }}-${{ github.sha }}
+          path: .lighthouseci/${{ matrix.profile }}/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
+          compression-level: 9

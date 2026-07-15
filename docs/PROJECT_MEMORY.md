@@ -388,20 +388,23 @@ The Go audit parses and type-checks 852 starter and lesson sources across Go Bas
 
 ## Latest full verification checkpoint
 
-After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, generated runtime-outline optimization, and final three-viewport verification on 2026-07-14:
+After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, generated runtime-outline optimization, runtime-index hardening, CI release-gate setup, and final three-viewport verification on 2026-07-15:
 
-- `npm test`: 93 test files and 594 tests passed under Node.js 24.18.0 and npm 12.0.1.
+- `npm test`: 96 test files and 605 tests passed under Node.js 24.18.0 and npm 12.0.1.
 - `npm run type-check`: passed.
-- `npm run lint`: passed across 329 source and script files.
-- `npm run lint:strict`: passed across 329 files with warnings treated as failures.
-- `npm run format:check`: passed across 329 files.
-- `npm run build`: passed with Next.js 16.2.10.
-- `npm audit --audit-level=moderate`: zero vulnerabilities across 536 audited packages.
+- `npm run lint`: passed across 333 source and script files.
+- `npm run lint:strict`: passed across 333 files with warnings treated as failures.
+- `npm run format:check`: passed across 333 files.
+- `npm run build`: passed with Next.js 16.2.10 and no Turbopack warnings.
+- `npm audit --audit-level=moderate`: zero vulnerabilities across 537 audited packages.
 - Lighthouse 13.4.0 through LHCI 0.15.1 passed four representative routes three times per profile with pessimistic `>= 0.99` assertions and no SEO category. Phone and tablet performance were 99-100, and accessibility/best practices were 100 on all 24 runs. Desktop performance, accessibility, and best practices were 100 on all 12 runs.
 - The phone profile uses a 412x823 mobile-form-factor viewport, DPR 2.625, constrained 150 ms/1638.4 Kbps network, and 3x CPU slowdown. The tablet profile uses a 768x1024 mobile-form-factor viewport, DPR 2, the same constrained network, and 2x CPU slowdown. Desktop remains the 1440x900 Dense 4G profile at 1x CPU.
-- Final browser verification passed the responsive-web-design journey and first studio activity at 412x823, 768x1024, and 1440x900 with one H1, no horizontal overflow, working radio selection, visible rail and learning material, open-module competency scoping, and no console or page errors.
+- Final standalone browser verification passed the home page, responsive-web-design journey, and first studio activity at 412x823, 768x1024, and 1440x900 with one H1, no horizontal overflow, working prediction grading, visible rail and learning material, open-module competency scoping, and no console or page errors. Browser verification found three undersized mobile home links at 19, 42, and 24 pixels; all now have a tested 44-pixel minimum and the rebuilt standalone route has no undersized visible controls.
 - Every one of the 54 courses now has a generated `outline.json` containing exact ordered course, module, activity, prerequisite, estimate, and step-ID metadata. An exhaustive parity test checks every outline against source content. Course maps use outlines instead of parsing full lesson bodies; the Responsive Web Design route no longer validates a 16 MB graph just to render navigation.
 - First-paint learner payloads strip private competency IDs and hints, code runtimes lazy-load only for code steps, unchanged drafts do not autosave, initial task theory stays server-rendered, and navigation prefetch is disabled on large catalog and journey surfaces.
+- A generated read-only curriculum runtime index now stores all 12,985 course, outline, module, and activity JSON documents as individually compressed, SHA-256-verified records. Its source fingerprint skips unchanged rebuilds; generation is atomic and runs before development, tests, and production builds. The source payload is 602,570,890 bytes, compressed records are 75,680,248 bytes, and the current SQLite index is about 98 MiB. Standalone tracing contains the index and no raw course JSON files, reducing the traced curriculum directory from roughly 602 MiB to roughly 104 MiB while removing the former 12,985-file and 11,742-file Turbopack warnings.
+- `.github/workflows/quality.yml` now runs the complete non-Lighthouse gate before three parallel mobile, tablet, and desktop Lighthouse jobs. It uses read-only repository permission, disabled checkout credential persistence, Node.js 24.18.0, npm 12.0.1, SHA-pinned official `actions/checkout` 6.0.2, `actions/setup-node` 6.4.0, and `actions/upload-artifact` 7.0.1. Each profile retains hidden LHCI HTML and JSON reports for 30 days even when the audit fails. Contract tests parse the workflow and prevent profile, assertion, event, permission, version, or artifact-policy drift. Official action releases and GitHub artifact-retention guidance were reviewed 2026-07-15.
+- The production Docker image builds successfully from a clean generated index, runs as UID 1001, returns the health contract, and renders the first Responsive Web Design activity without a raw `content/v2/courses` tree. The verified local image is 159,962,860 bytes. Docker context excludes local runtime-index output so the builder derives the packaged index from source every time.
 
 The Go Basics content gate parses and type-checks all 426 learner starters and lesson sources with the official Go toolchain, while the runtime tests verify local-only assets, import isolation, deterministic execution, output limits, and worker cleanup. Go research is reviewed 2026-07-14 against the Go 1.26 specification and release notes, modules reference, memory model, testing/fuzzing, race detector, context and pipelines, security, diagnostics, performance/PGO, code review guidance, and ACM/IEEE/AAAI CS2023. Current versions are Go 1.26.5 and Yaegi 0.16.1; the course explicitly distinguishes the browser subset from full-toolchain transfer gates.
 
@@ -411,13 +414,13 @@ Run focused tests after each new change, then repeat the full non-Lighthouse gat
 
 ## Active next work
 
-1. Preserve the final Lighthouse profile definitions and `>= 0.99` pessimistic assertions in CI; retain or publish the filesystem artifacts when a deployment workflow is added.
-2. Narrow Turbopack curriculum file tracing through a generated manifest or explicit trace includes to remove the two non-failing broad-pattern build warnings.
-3. Conduct observed learner studies across representative beginner, intermediate, and advanced courses; use completion, retry, hint, transfer, and abandonment evidence to prioritize the next pedagogical revisions.
-4. Regenerate and parity-test runtime outlines whenever course, module, activity, prerequisite, estimate, or step ordering changes.
+1. Conduct observed learner studies across representative beginner, intermediate, and advanced courses; use completion, retry, hint, transfer, and abandonment evidence to prioritize the next pedagogical revisions.
+2. Monitor the first GitHub Actions quality run after publication and keep its three profile artifacts as the remote baseline.
+3. Regenerate and parity-test runtime outlines whenever course, module, activity, prerequisite, estimate, or step ordering changes; the predev, pretest, and prebuild hooks regenerate the compressed runtime index when source metadata changes.
+4. Add the proven container-image health and packaged-activity smoke to CI if its additional build time and 1.17 GB source context fit the repository's runner budget.
 
 ## Known caution
 
 Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. New or regenerated content must repeat the same gates before publication.
 
-There is no external release blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The production build also passes with Turbopack warnings that the curriculum content-root trace matches 12,985 files and the dynamic activity path matches 11,742 files; narrowing those traces is a scalability hardening task, not a release blocker. The content hold and final three-profile Lighthouse gate are complete.
+There is no external release blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The former broad Turbopack curriculum warnings are eliminated through the compressed runtime index and route-scoped trace includes. The content hold and final three-profile Lighthouse gate are complete.

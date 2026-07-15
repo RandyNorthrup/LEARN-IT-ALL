@@ -52,7 +52,6 @@ RUN mkdir -p ./database && chown -R nextjs:nodejs ./database
 
 # Copy necessary files
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/content ./content
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
