@@ -62,6 +62,19 @@ describe('Responsive Web Design v2 curriculum', () => {
       );
       if (authored?.kind === 'lab') expect(authored.steps.length).toBeGreaterThanOrEqual(8);
     }
+    const profileRepair = htmlActivities.find(
+      (entry) => entry.id === 'mapped-lab-debug-camperbots-profile-page'
+    );
+    const directoryRepair = htmlActivities.find(
+      (entry) => entry.id === 'mapped-lab-debug-pet-adoption-page'
+    );
+    expect(profileRepair?.steps.map((step) => step.interaction)).not.toEqual(
+      directoryRepair?.steps.map((step) => step.interaction)
+    );
+    expect(profileRepair?.steps.some((step) => step.instruction.includes('parsed DOM'))).toBe(true);
+    expect(directoryRepair?.steps.some((step) => step.instruction.includes('changed animal'))).toBe(
+      true
+    );
   });
 
   it('delivers semantic HTML as varied relationship practice rather than cloned lessons', () => {
@@ -719,6 +732,15 @@ describe('Responsive Web Design v2 curriculum', () => {
     expect(
       activities.find((entry) => entry.id === 'mapped-lab-personal-portfolio')?.steps
     ).toHaveLength(20);
+    const orbitLab = activities.find((entry) => entry.id === 'mapped-lab-moon-orbit');
+    const portfolioLab = activities.find((entry) => entry.id === 'mapped-lab-personal-portfolio');
+    expect(orbitLab?.steps.map((step) => step.interaction)).not.toEqual(
+      portfolioLab?.steps.map((step) => step.interaction)
+    );
+    expect(orbitLab?.steps.some((step) => step.instruction.includes('animation-frame'))).toBe(true);
+    expect(
+      portfolioLab?.steps.some((step) => step.instruction.includes('keyboard focus continuity'))
+    ).toBe(true);
     expect(
       activities.find((entry) => entry.id === 'mapped-quiz-css-animations')?.steps
     ).toHaveLength(30);

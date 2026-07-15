@@ -1186,21 +1186,164 @@ function competencyId(profile, commonId) {
   return `http-${profile.code}-${aliases[commonId]}`;
 }
 
+const httpProjectEvidence = {
+  'go-incident-client': {
+    userNeed:
+      'On-call operators need a Go client that preserves redirect hops and separates transport, HTTP status, problem-detail, decode, and uncertain-write failures in one incident timeline.',
+    constraints: [
+      'Record method, authority, redirect decision, status class, and cleanup outcome without exposing credentials.',
+      'Do not retry an uncertain state-changing request unless replay safety or an idempotency control is proven.',
+      'Reproduce one gateway redirect and one malformed problem response with an httptest incident fixture.',
+    ],
+  },
+  'go-artifact-fetcher': {
+    userNeed:
+      'Release engineers need a Go artifact fetcher that admits only approved destinations, bounds compressed and decoded bytes, validates metadata, and proves the downloaded digest before promotion.',
+    constraints: [
+      'Pin the canonical origin policy across DNS results and every redirect before reading artifact bytes.',
+      'Stream to a quarantined destination with byte, time, media-type, and decompression limits.',
+      'Reject digest, validator, truncation, and content-type changes while preserving cleanup evidence.',
+    ],
+  },
+  'go-retry-orchestrator': {
+    userNeed:
+      'Deployment controllers need a Go retry coordinator that divides one caller deadline across attempts without replaying unsafe bodies or multiplying nested retries during overload.',
+    constraints: [
+      'Model attempt cost, backoff, Retry-After, remaining budget, and the maximum downstream amplification.',
+      'Distinguish replayable reads, idempotency-controlled writes, and writes with unknown remote effect.',
+      'Verify cancellation during backoff and during body streaming with no leaked goroutine or response body.',
+    ],
+  },
+  'go-sdk-harness': {
+    userNeed:
+      'Go SDK maintainers need a reusable client and fault harness that tests transport seams, middleware order, typed operations, privacy-safe telemetry, and rotating configuration.',
+    constraints: [
+      'Use narrow RoundTripper fakes for unit boundaries and httptest servers for observable protocol behavior.',
+      'Inject timeout, truncation, redirect, TLS, and malformed-payload failures with deterministic clocks and fixtures.',
+      'Keep metrics low-cardinality and prove that tokens, cookies, bodies, and tenant identifiers are redacted.',
+    ],
+  },
+  'go-client-defense': {
+    userNeed:
+      'A reliability release board needs a production Go client defense covering latency, memory, concurrency, dependency provenance, rollback, and behavior at doubled traffic.',
+    constraints: [
+      'Defend connection-pool, stream, queue, memory, and retry limits with measured load evidence.',
+      'Inventory module and toolchain provenance and connect each critical update to a verified compatibility decision.',
+      'Demonstrate staged rollout, rollback trigger, recovery verification, and named residual operational risk.',
+    ],
+  },
+  'ts-status-sdk': {
+    userNeed:
+      'Keyboard and screen-reader users need a typed status SDK that validates unknown responses, preserves distinct failure states, and announces meaningful progress across browser and Node consumers.',
+    constraints: [
+      'Represent network, CORS, status, problem-detail, decode, schema, abort, and stale-result outcomes explicitly.',
+      'Keep focus stable and announce status changes without duplicate, color-only, or continuously noisy updates.',
+      'Test the same injected Fetch contract in browser-like and Node runtimes with changed payload fixtures.',
+    ],
+  },
+  'ts-offline-dashboard': {
+    userNeed:
+      'Field coordinators need an offline-first dashboard that distinguishes fresh, validated, stale, private, and unavailable data while reconnecting without overwriting newer work.',
+    constraints: [
+      'Partition browser and service-worker cache entries by every representation-selecting and authorization boundary.',
+      'Expose freshness, sync, conflict, and offline states through text, focus-safe updates, and keyboard operation.',
+      'Verify ETag, Vary, 304 metadata, reconnection, and changed-user cases with deterministic fixtures.',
+    ],
+  },
+  'ts-resumable-upload': {
+    userNeed:
+      'Media contributors need an abortable upload coordinator that streams bounded chunks, resumes from verified offsets, and never reports completion before server state is reconciled.',
+    constraints: [
+      'Own each ReadableStream, AbortSignal, request body generation, offset, checksum, and cleanup transition explicitly.',
+      'Resume only after querying authoritative server progress; never infer accepted bytes from a dropped connection.',
+      'Test cancellation, tab replacement, expired credentials, changed file content, and inaccessible progress feedback.',
+    ],
+  },
+  'ts-contract-harness': {
+    userNeed:
+      'Cross-runtime SDK maintainers need a Fetch contract harness that reveals browser and Node differences while injecting redirects, aborts, truncation, malformed data, and timing faults.',
+    constraints: [
+      'Exercise an injected fetch function and validate every unknown body before exposing typed operations.',
+      'Model opaque browser failures separately from inspectable Node transport and TLS failures.',
+      'Prove stream, Promise, timer, listener, and AbortSignal cleanup with privacy-safe low-cardinality traces.',
+    ],
+  },
+  'ts-client-defense': {
+    userNeed:
+      'A product release board needs a TypeScript client defense covering accessible task completion, Core Web responsiveness, bundle cost, memory, provider faults, dependency gates, and rollback.',
+    constraints: [
+      'Measure task and announcement latency alongside p95 request time, memory, connection, and bundle budgets.',
+      'Verify browser, Node, service-worker, offline, slow-network, and doubled-traffic behavior with immutable fixtures.',
+      'Tie dependency provenance, staged rollout, rollback, recovery, and residual UX risk to named owners.',
+    ],
+  },
+  'py-dataset-harvester': {
+    userNeed:
+      'Research analysts need a Python harvester that preserves source provenance while bounding downloads and rejecting incompatible encoding, media type, schema, and record changes.',
+    constraints: [
+      'Record canonical source, retrieval time, validators, media type, byte count, encoding decision, and schema revision.',
+      'Quarantine malformed or changed records instead of silently coercing them into analysis tables.',
+      'Reproduce truncation, mislabeled UTF-8, duplicate records, and a changed source URL with local fixtures.',
+    ],
+  },
+  'py-cache-mirror': {
+    userNeed:
+      'Archive curators need a conditional Python mirror that reconciles validators and representation metadata without leaking private responses across accounts or replacing a valid file partially.',
+    constraints: [
+      'Key metadata by canonical source, authorization partition, and every relevant Vary dimension.',
+      'Treat 304 as metadata reconciliation, stream replacements atomically, and retain the prior valid object on failure.',
+      'Test validator rotation, stale policy, changed credentials, interrupted replacement, and recovery from corrupt metadata.',
+    ],
+  },
+  'py-rate-ingestor': {
+    userNeed:
+      'Data operations staff need a rate-limited Python ingestor that checkpoints cursor progress, deduplicates changed pages, and finishes within a fixed run window without retry storms.',
+    constraints: [
+      'Budget pagination, Retry-After, jittered backoff, parsing, persistence, and cleanup under one run deadline.',
+      'Commit a cursor only with the corresponding durable records and an explicit source-version boundary.',
+      'Verify crash resume, repeated pages, deleted records, quota exhaustion, and concurrent scheduler exclusion.',
+    ],
+  },
+  'py-transport-harness': {
+    userNeed:
+      'Python client maintainers need a transport contract harness with injected openers, clocks, and local servers for deterministic exception, streaming, redirect, and telemetry tests.',
+    constraints: [
+      'Separate pure request-policy tests from local HTTP behavior and optional controlled TLS integration evidence.',
+      'Inject partial bodies, malformed headers, redirect loops, deadline expiry, cancellation, and decode failures.',
+      'Assert response, temporary-file, timer, task, and secret-safe logging cleanup after every rejected case.',
+    ],
+  },
+  'py-client-defense': {
+    userNeed:
+      'A research governance board needs a production Python automation defense covering dataset integrity, duration, memory, package provenance, privacy, restart checkpoints, rollback, and doubled volume.',
+    constraints: [
+      'Measure record throughput, peak memory, open resources, retry volume, and end-to-end completion under changed load.',
+      'Connect package and interpreter provenance to compatibility, vulnerability, and reproducible-build evidence.',
+      'Demonstrate checkpoint restore, release rollback, data reconciliation, privacy review, and named residual research risk.',
+    ],
+  },
+};
+
 function courseProjects(profile) {
-  return profile.projects.map(([id, title, afterModuleNumber, ...competencies]) =>
-    project(
-      id,
-      title,
-      `http-${profile.code}-${definitions[afterModuleNumber - 1].id}`,
-      profile.code === 'go'
-        ? 'A platform reliability team'
-        : profile.code === 'ts'
-          ? 'A product accessibility and SDK team'
-          : 'A research data operations team',
-      `The team needs ${title.toLowerCase()} with protocol-correct behavior, bounded authority, changed-case tests, and an operational defense.`,
-      competencies.map((competency) => competencyId(profile, competency))
-    )
-  );
+  return profile.projects.map(([id, title, afterModuleNumber, ...competencies]) => {
+    const evidence = httpProjectEvidence[id];
+    if (!evidence) throw new Error(`Missing project evidence for ${id}`);
+    return {
+      ...project(
+        id,
+        title,
+        `http-${profile.code}-${definitions[afterModuleNumber - 1].id}`,
+        profile.code === 'go'
+          ? 'A platform reliability team'
+          : profile.code === 'ts'
+            ? 'A product accessibility and SDK team'
+            : 'A research data operations team',
+        evidence.userNeed,
+        competencies.map((competency) => competencyId(profile, competency))
+      ),
+      constraints: evidence.constraints,
+    };
+  });
 }
 
 function makeCourse(profile) {

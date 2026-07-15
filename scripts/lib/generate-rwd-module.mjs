@@ -12,6 +12,15 @@ const defaultPatterns = [
   ['predict', 'answer', 'inspect', 'arrange', 'debug', 'read', 'reflect', 'code'],
 ];
 
+function stableHash(value) {
+  let result = 2166136261;
+  for (const character of value) {
+    result ^= character.charCodeAt(0);
+    result = Math.imul(result, 16777619);
+  }
+  return result >>> 0;
+}
+
 function builderFor(meta) {
   const steps = [];
   const checks = [];
@@ -67,7 +76,7 @@ function builderFor(meta) {
               type: 'callout',
               tone: interaction === 'predict' ? 'question' : 'note',
               title: `${meta.context} evidence`,
-              text: 'Choose the claim that preserves purpose, native behavior, and understandable relationships when presentation changes.',
+              text: `For ${meta.title}, choose the ${competencyId.replaceAll('-', ' ')} claim that preserves the ${meta.context} purpose, native behavior, and understandable relationships when presentation changes.`,
             },
       ];
       if (stimulus) step.stimulus = stimulus;
@@ -116,7 +125,7 @@ function builderFor(meta) {
           type: 'callout',
           tone: 'question',
           title: `${meta.context} case note`,
-          text: 'Connect the user task to source evidence, native behavior, failure behavior, and the final retest.',
+          text: `Defend ${competencyId.replaceAll('-', ' ')} in ${meta.context}: connect this user task to source evidence, native behavior, failure behavior, and the final retest.`,
         },
       ];
       checks.push({
@@ -489,9 +498,77 @@ function labActivity(config, meta, plan, modelById, targetSteps = 8) {
   const builder = builderFor(meta);
   const nextMilestone = milestonePicker(plan, config.milestones);
   const first = modelById.get(plan.focus[0]);
+  if (plan.labPattern) {
+    for (let index = 0; index < targetSteps; index += 1) {
+      const model = modelById.get(plan.focus[index % plan.focus.length]);
+      const interaction = plan.labPattern[index % plan.labPattern.length];
+      const checkpoint = index + 1;
+      if (interaction === 'code') {
+        const [task, expected, competencyId, checkType, file] = nextMilestone(model.id);
+        builder.code({
+          title: `${plan.evidenceLens} build ${checkpoint} · ${task}`,
+          prompt: `${task}. ${plan.labBrief} Preserve accumulated evidence and test ${plan.acceptanceEvidence}.`,
+          competencyId,
+          requirements: [[`independent-${checkpoint}`, expected, checkType, file]],
+        });
+      } else if (interaction === 'arrange') {
+        builder.order({
+          title: `${plan.evidenceLens} sequence ${checkpoint}`,
+          prompt: `${plan.labBrief} Order the work so each observation justifies the next decision.`,
+          options: model.sequence,
+          competencyId: model.id,
+        });
+      } else if (interaction === 'reflect') {
+        builder.reflect({
+          title: `${plan.evidenceLens} defense ${checkpoint}`,
+          prompt: `${plan.labBrief} Defend the result with ${plan.acceptanceEvidence}.`,
+          competencyId: model.id,
+          terms: model.terms,
+        });
+      } else {
+        builder.choice({
+          title: `${plan.evidenceLens} ${interaction} ${checkpoint}`,
+          interaction,
+          prompt: `${plan.labBrief} Which conclusion is justified by ${plan.acceptanceEvidence}?`,
+          correct: `${model.correct} Apply that contract to ${plan.evidenceLens} and retain changed-case evidence.`,
+          distractors: [
+            `${model.misconception} Treat the ${plan.evidenceLens} appearance as sufficient proof.`,
+            `${model.distractors[1]} Skip ${plan.acceptanceEvidence}.`,
+          ],
+          competencyId: model.id,
+          ...(interaction === 'inspect'
+            ? {
+                stimulus: {
+                  kind: model.stimulusKind ?? 'browser',
+                  title: `${plan.evidenceLens} trace ${checkpoint}`,
+                  caption: `Evidence from ${plan.labBrief}`,
+                  lines: [
+                    {
+                      id: `${meta.id}-trace-${checkpoint}-risk`,
+                      label: 'observed risk',
+                      text: model.misconception,
+                      tone: 'problem',
+                    },
+                    {
+                      id: `${meta.id}-trace-${checkpoint}-acceptance`,
+                      label: 'acceptance evidence',
+                      text: plan.acceptanceEvidence,
+                      tone: 'focus',
+                    },
+                  ],
+                },
+              }
+            : {}),
+        });
+      }
+    }
+    return finalize(meta, builder, config.courseId, config.moduleId);
+  }
+  const layoutSeed = stableHash(`${meta.id}:lab-layout`);
+  const caseInteractions = ['predict', 'inspect', 'answer', 'debug'];
   builder.choice({
     title: `Triage ${meta.context}`,
-    interaction: 'predict',
+    interaction: caseInteractions[layoutSeed % caseInteractions.length],
     prompt: 'Which relationship should be tested first?',
     correct: first.correct,
     distractors: first.distractors,
@@ -510,7 +587,10 @@ function labActivity(config, meta, plan, modelById, targetSteps = 8) {
       const model = modelById.get(plan.focus[(index + 1) % plan.focus.length]);
       builder.choice({
         title: `Inspect ${meta.context} retest ${index + 1}`,
-        interaction: index === 0 ? 'inspect' : 'debug',
+        interaction:
+          caseInteractions[
+            ((layoutSeed >>> ((index + 1) * 3)) + index + 1) % caseInteractions.length
+          ],
         prompt: 'Which conclusion reaches the remaining cause?',
         correct: model.correct,
         distractors: [model.misconception, model.distractors[1]],
@@ -572,16 +652,21 @@ function labActivity(config, meta, plan, modelById, targetSteps = 8) {
 
 function assessmentActivity(config, meta, targetSteps, plan, modelById) {
   const builder = builderFor(meta);
+  const layoutSeed = stableHash(`${meta.id}:assessment-layout`);
+  const caseInteractions = ['predict', 'inspect', 'answer', 'debug'];
+  const orderPosition = layoutSeed % 5;
+  let reflectionPosition = (layoutSeed >>> 5) % 5;
+  if (reflectionPosition === orderPosition) reflectionPosition = (reflectionPosition + 2) % 5;
   for (let index = 0; index < targetSteps; index += 1) {
     const model = modelById.get(plan.focus[index % plan.focus.length]);
-    if (index % 5 === 1) {
+    if (index % 5 === orderPosition) {
       builder.order({
         title: `Sequence ${index + 1}: ${model.context}`,
         prompt: 'Reconstruct the verification workflow.',
         options: model.sequence,
         competencyId: model.id,
       });
-    } else if (index % 5 === 3 && meta.kind === 'review') {
+    } else if (index % 5 === reflectionPosition && meta.kind === 'review') {
       builder.reflect({
         title: `Case note ${index + 1}: ${model.context}`,
         prompt: 'Explain task, failed relationship, consequence, and retest.',
@@ -589,7 +674,8 @@ function assessmentActivity(config, meta, targetSteps, plan, modelById) {
         terms: model.terms,
       });
     } else {
-      const interaction = index % 5 === 0 ? 'predict' : index % 5 === 2 ? 'inspect' : 'answer';
+      const interaction =
+        caseInteractions[((layoutSeed >>> ((index % 8) * 3)) + index) % caseInteractions.length];
       builder.choice({
         title: `${interaction} ${index + 1}: ${model.context}`,
         interaction,

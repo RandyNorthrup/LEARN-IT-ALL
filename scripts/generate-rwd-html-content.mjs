@@ -751,6 +751,12 @@ const mappedPlans = {
     context: 'volunteer profile incident',
     focus: ['html-elements-nesting', 'html-attributes'],
     artifactId: 'volunteer-profile-repair',
+    labPattern: ['inspect', 'arrange', 'debug', 'code', 'inspect', 'code', 'reflect', 'answer'],
+    labBrief:
+      'Repair a volunteer profile whose malformed nesting, duplicate identifiers, and misplaced contact link create different source, DOM, and announced relationships.',
+    evidenceLens: 'source-to-DOM forensic comparison',
+    acceptanceEvidence:
+      'validator output, parsed DOM relationships, unique identifiers, keyboard order, and the announced name-photo-contact structure',
   },
   'mapped-lecture-understanding-html-attributes': {
     title: 'Field Briefing: Attributes that Change Real Behavior',
@@ -762,6 +768,12 @@ const mappedPlans = {
     context: 'animal support directory incident',
     focus: ['html-elements-nesting', 'html-attributes'],
     artifactId: 'animal-support-repair',
+    labPattern: ['predict', 'code', 'answer', 'inspect', 'code', 'debug', 'arrange', 'reflect'],
+    labBrief:
+      'Restore an animal-support directory whose image paths, link destinations, alternative text, and card headings fail for changed records and input methods.',
+    evidenceLens: 'directory user-journey acceptance test',
+    acceptanceEvidence:
+      'a changed animal record, missing-image behavior, meaningful link destinations, keyboard navigation, and a useful assistive outline',
   },
   'mapped-lecture-understanding-the-html-boilerplate': {
     title: 'Field Briefing: What Every Deployable Document Declares',
@@ -1053,6 +1065,50 @@ function makeLab(meta, plan) {
   const builder = activityBuilder(meta);
   const milestones = workshopMilestones(plan).slice(0, 4);
   const focusModel = modelById.get(plan.focus[0]);
+  if (plan.labPattern) {
+    let milestoneIndex = 0;
+    for (const [index, interaction] of plan.labPattern.entries()) {
+      const model = modelById.get(plan.focus[index % plan.focus.length]);
+      const checkpoint = index + 1;
+      if (interaction === 'code') {
+        const [task, expected, competencyId] = milestones[milestoneIndex % milestones.length];
+        milestoneIndex += 1;
+        builder.addCode({
+          title: `${plan.evidenceLens} repair ${checkpoint} · ${task}`,
+          prompt: `${plan.labBrief} Apply ${task.toLowerCase()}, preserve earlier checks, and verify ${plan.acceptanceEvidence}.`,
+          competencyId,
+          requirements: [[`independent-${checkpoint}`, expected]],
+        });
+      } else if (interaction === 'arrange') {
+        builder.addOrder({
+          title: `${plan.evidenceLens} sequence ${checkpoint}`,
+          prompt: `${plan.labBrief} Order the evidence so each observation justifies the next decision.`,
+          options: model.sequence,
+          competencyId: model.id,
+        });
+      } else if (interaction === 'reflect') {
+        builder.addReflect({
+          title: `${plan.evidenceLens} defense ${checkpoint}`,
+          prompt: `${plan.labBrief} Defend the repair using ${plan.acceptanceEvidence}.`,
+          competencyId: model.id,
+          terms: model.terms,
+        });
+      } else {
+        builder.addChoice({
+          title: `${plan.evidenceLens} ${interaction} ${checkpoint}`,
+          interaction,
+          prompt: `${plan.labBrief} Which conclusion is supported by ${plan.acceptanceEvidence}?`,
+          correct: `${model.correct} Apply it to the ${plan.evidenceLens} changed case.`,
+          distractors: [
+            `${model.misconception} Accept the visible ${plan.evidenceLens} result as proof.`,
+            `${model.distractors[1]} Skip ${plan.acceptanceEvidence}.`,
+          ],
+          competencyId: model.id,
+        });
+      }
+    }
+    return finalizeActivity(meta, builder);
+  }
   builder.addChoice({
     title: `Triage the ${meta.context}`,
     interaction: 'predict',

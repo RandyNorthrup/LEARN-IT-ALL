@@ -457,6 +457,17 @@ function unique(values) {
   return [...new Set(values)];
 }
 
+function seededPermutation(values, seed) {
+  const result = [...values];
+  let state = seed >>> 0;
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    state = (Math.imul(state ^ (state >>> 15), 2246822519) + index) >>> 0;
+    const swapIndex = state % (index + 1);
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
 const PORTFOLIO_CASES = {
   'pp1-readiness-evidence':
     'A learner claims independent mastery from guided exercises, but a changed environment breaks the artifact and the evidence ledger has no dated reproduction.',
@@ -1275,7 +1286,13 @@ function domainCase(family, moduleId, seed, activityKind = 'practice', competenc
     return `Solve a bounded ${activityKind} instance with ${n + 3} inputs. State the invariant, trace each state change, count the chosen operation, and retain the smallest counterexample.`;
   }
 
-  return `Use a changed ${activityKind} case derived from this module: ${moduleId.replaceAll('-', ' ')}. Preserve inputs, constraints, an observable trace, and a boundary result.`;
+  return `Use a changed ${activityKind} case for ${moduleId.replaceAll('-', ' ')} that tests this competency: ${competency?.statement ?? 'defend the module contract'}. Preserve inputs, constraints, an observable trace, and a boundary result.`;
+}
+
+function caseForCompetency(family, moduleId, seed, activityKind, competency) {
+  const scenario = domainCase(family, moduleId, seed, activityKind, competency);
+  if (!competency || scenario.includes(competency.statement)) return scenario;
+  return `${scenario} Competency probe: ${competency.statement}`;
 }
 
 function domainReasoningMove(family, moduleId) {
@@ -1583,7 +1600,7 @@ function httpDomainExample(family, moduleId, n) {
   return contract.example;
 }
 
-function domainExample(family, moduleId, seed) {
+function domainExample(family, moduleId, seed, competency) {
   const n = (seed % 4) + 2;
   if (moduleId.startsWith('crawler-go-')) {
     return webScraperGoWorkedExample(moduleId, n);
@@ -1659,6 +1676,8 @@ function domainExample(family, moduleId, seed) {
   if (family === 'portfolio') {
     return `workspace: portfolio
 project-id: changed-product-${n}
+focus: ${competency.id}
+decision-evidence: ${competency.statement}
 stakeholder: affected-user review panel
 decision: continue only if the changed task meets its outcome and guardrails
 artifact: revision-bound evidence packet
@@ -1673,6 +1692,8 @@ transfer-boundary: authorized controlled research and release environment`;
   if (family === 'career') {
     return `workspace: career
 candidate-id: fictional-candidate-${n}
+focus: ${competency.id}
+decision-evidence: ${competency.statement}
 target-role: accessible software quality engineer
 jurisdiction: example location requiring current official review
 audience: technical reviewer with ten minutes and keyboard-only access
@@ -1691,6 +1712,8 @@ transfer-boundary: manual learner-approved profile, application, conversation, i
   if (family === 'support') {
     return `workspace: support
 ticket-id: fictional-ticket-${n}
+focus: ${competency.id}
+decision-evidence: ${competency.statement}
 user-impact: one user cannot complete the scheduled accessible service task
 environment: fictional managed device, version, configuration, owner, dependency, and evidence time
 safety-authority: consented text simulation only with hazard, privacy, access, and escalation stop rules
@@ -3761,21 +3784,27 @@ function mathCalculation(moduleId, seed) {
 }
 
 function contentBlocks({ competency, moduleProfile, source, family, moduleId, seed }) {
+  const concept = humanize(competency.id);
   const typeGuidance = {
-    conceptual:
-      'Name the boundaries of the idea, compare a valid case with a near miss, and trace the causal difference.',
-    procedural:
-      'Check preconditions, perform the operation in an inspectable order, then verify the result and a boundary case.',
-    strategic:
-      'Compare plausible approaches against the decision, constraints, evidence quality, and cost of being wrong.',
-    metacognitive:
-      'State the current model, seek disconfirming evidence, and record what would make the conclusion change.',
-    professional:
-      'Preserve authority, safety, accessibility, traceability, and stakeholder consequences alongside technical correctness.',
+    conceptual: `Bound ${concept}, compare a valid ${moduleProfile.artifact} decision with a near miss, and trace the causal difference.`,
+    procedural: `Check the ${concept} preconditions, operate on ${moduleProfile.artifact} in an inspectable order, then verify its result and boundary case.`,
+    strategic: `Compare plausible ${concept} approaches against the decision, constraints, evidence quality, and cost of being wrong for ${moduleProfile.artifact}.`,
+    metacognitive: `State the current ${concept} model, seek disconfirming evidence, and record what would change the ${moduleProfile.artifact} conclusion.`,
+    professional: `For ${concept}, preserve authority, safety, accessibility, traceability, and stakeholder consequences alongside the technical ${moduleProfile.artifact} result.`,
   }[competency.knowledgeType];
-  const changedCase = domainCase(family, moduleId, seed, 'worked example', competency);
-  const reasoningMove = domainReasoningMove(family, moduleId) ?? typeGuidance;
-  const example = domainExample(family, moduleId, seed);
+  const changedCase = caseForCompetency(family, moduleId, seed, 'worked example', competency);
+  const domainMove = domainReasoningMove(family, moduleId);
+  const reasoningMove = domainMove
+    ? `${domainMove} Apply that move specifically to ${concept} while producing ${moduleProfile.artifact}.`
+    : typeGuidance;
+  const rawExample = domainExample(family, moduleId, seed, competency);
+  const exampleComment =
+    family === 'sql' ? '--' : ['c', 'go', 'typescript', 'javascript'].includes(family) ? '//' : '#';
+  const example = rawExample
+    ? family === 'go'
+      ? `${rawExample}\n// Worked focus: ${competency.id} — ${competency.statement}`
+      : `${exampleComment} Worked focus: ${competency.id} — ${competency.statement}\n${rawExample}`
+    : null;
   return [
     {
       type: 'paragraph',
@@ -3812,7 +3841,9 @@ function contentBlocks({ competency, moduleProfile, source, family, moduleId, se
                           ? 'sql'
                           : family === 'docker' || family === 'kubernetes' || family === 'cicd'
                             ? 'yaml'
-                            : 'python',
+                            : ['support', 'portfolio', 'career', 'gates'].includes(family)
+                              ? 'yaml'
+                              : 'python',
             code: example,
             caption: moduleId.startsWith('crawler-go-')
               ? 'Compile-ready deterministic pure-Go crawler decision model; trace one accepted and one rejected authorization, URL, robots, HTTP, tree, record, frontier, goroutine, Colly, accessibility, report, deployment, or recovery case, then state which Go compiler, network, DNS, x/net/html, goquery, Colly, race, process, browser, accessibility, load, legal, restore, or production claim still needs controlled transfer evidence.'
@@ -3993,7 +4024,13 @@ function createBuilder({
           100
         )
       : title;
-    const changedCase = domainCase(family, moduleId, seed + steps.length, activityKind, competency);
+    const changedCase = caseForCompetency(
+      family,
+      moduleId,
+      seed + steps.length,
+      activityKind,
+      interaction === 'predict' ? undefined : competency
+    );
     const step = {
       id,
       title: contextualTitle,
@@ -4032,15 +4069,24 @@ function createBuilder({
 
   function addChoice(id, title, interaction, competencyId, prompt, correct, wrong, extra = {}) {
     const competency = competencyById.get(competencyId);
-    const changedCase = domainCase(family, moduleId, seed + steps.length, activityKind, competency);
+    const changedCase = caseForCompetency(
+      family,
+      moduleId,
+      seed + steps.length,
+      activityKind,
+      interaction === 'predict' ? undefined : competency
+    );
     const correctId = `${id}-sound`;
+    const decisionEvidence = /\bevidence$/iu.test(title)
+      ? title.toLowerCase()
+      : `${title.toLowerCase()} evidence`;
     const options = [
       { id: correctId, text: correct },
       {
         id: `${id}-misread`,
         text: usesExecutableEvidence
-          ? `${wrong ?? competency.misconceptions[0]} That claim fails the evidence boundary for ${humanize(competencyId)}.`
-          : (wrong ?? competency.misconceptions[0]),
+          ? `${wrong ?? competency.misconceptions[0]} That claim fails the ${decisionEvidence} boundary for ${humanize(competencyId)}.`
+          : `${wrong ?? competency.misconceptions[0]} This does not resolve ${title.toLowerCase()}.`,
       },
       {
         id: `${id}-overreach`,
@@ -4088,9 +4134,10 @@ function createBuilder({
                                                   ? `For ${title.toLowerCase()}, copy one familiar manifest or kubectl command, omit context, API discovery, desired-versus-observed status, failure, rollback, and disposable-cluster transfer checks, then accept an Applied response as production proof.`
                                                   : family === 'cicd'
                                                     ? `For ${title.toLowerCase()}, copy one familiar workflow, omit event and revision identity, permissions, runner, immutable artifact, failure, rollback, and disposable delivery-environment transfer checks, then accept a green run as production proof.`
-                                                    : 'Apply the visible technique immediately, omit assumptions, and treat one successful output as complete proof.',
+                                                    : `For ${title.toLowerCase()}, apply ${humanize(competencyId)} without its stated preconditions, omit the ${moduleProfile.artifact} trace and counterexample, and treat one plausible output as complete proof.`,
       },
     ];
+    options[2].text = `${options[2].text} This does not satisfy ${humanize(competencyId)} for ${moduleProfile.artifact}.`;
     const rotation = (seed + steps.length) % options.length;
     const rotated = [...options.slice(rotation), ...options.slice(0, rotation)];
     const defaultContent =
@@ -4119,7 +4166,7 @@ function createBuilder({
                     : 'Commit before feedback',
               text:
                 interaction === 'debug'
-                  ? `Select evidence that identifies a cause, not a patch that only hides the ${humanize(competencyId)} symptom.`
+                  ? `Select evidence that identifies a cause, not a patch that only hides the ${humanize(competencyId)} symptom in ${moduleProfile.artifact} during this ${activityKind} case.`
                   : interaction === 'inspect'
                     ? `Use the supplied trace to distinguish an observed ${humanize(competencyId)} result from an unsupported claim.`
                     : `Choose from the stated data before opening the worked model. Record which ${humanize(competencyId)} condition decided your prediction.`,
@@ -4189,13 +4236,15 @@ function createBuilder({
   }
 
   function addOrder(id, title, competencyId, extra = {}) {
+    const competencyLabel = humanize(competencyId);
+    const defaultCycle = /\bevidence$/iu.test(competencyLabel) ? 'cycle' : 'evidence cycle';
     const options = domainOrderOptions(
       family,
       id,
-      usesExecutableEvidence ? `${activityKind} ${humanize(competencyId)}` : undefined,
+      `${activityKind} ${humanize(competencyId)}`,
       httpTrack
     );
-    const changedCase = domainCase(
+    const changedCase = caseForCompetency(
       family,
       moduleId,
       seed + steps.length,
@@ -4207,7 +4256,7 @@ function createBuilder({
       title,
       'arrange',
       extra.instruction ??
-        `Order the ${humanize(competencyId)} ${family === 'algorithms' ? 'correctness-and-cost proof' : family === 'functional' ? 'value-and-effect pipeline' : httpTrack?.startsWith('Feed aggregation') ? `${httpTrack} source-to-reader-and-recovery evidence cycle` : httpTrack?.startsWith('Safe AI agents') ? `${httpTrack} task-to-recovery evidence cycle` : httpTrack?.startsWith('Authorized crawling') ? `${httpTrack} authorization-to-recovery evidence cycle` : httpTrack?.startsWith('Maze') ? `${httpTrack} player-to-native-release evidence cycle` : httpTrack?.startsWith('Static-site') ? `${httpTrack} source-to-publication evidence cycle` : httpTrack?.startsWith('Asteroids') ? `${httpTrack} player-input-to-release evidence cycle` : httpTrack?.startsWith('Bookbot') ? `${httpTrack} corpus-to-release evidence cycle` : httpTrack?.startsWith('RAG') ? `${httpTrack} source-to-claim evidence cycle` : httpTrack?.startsWith('Cryptography') ? `${httpTrack} threat-to-evidence cycle` : httpTrack?.startsWith('S3') ? `${httpTrack} storage-delivery evidence cycle` : httpTrack?.startsWith('RabbitMQ') ? `${httpTrack} messaging evidence cycle` : httpTrack ? `${httpTrack} HTTP evidence cycle` : family === 'docker' ? 'container delivery evidence cycle' : family === 'kubernetes' ? 'orchestration evidence cycle' : family === 'cicd' ? 'delivery-system evidence cycle' : 'evidence cycle'} for this ${activityKind} task before implementing it.`,
+        `Order the ${competencyLabel} ${family === 'algorithms' ? 'correctness-and-cost proof' : family === 'functional' ? 'value-and-effect pipeline' : httpTrack?.startsWith('Feed aggregation') ? `${httpTrack} source-to-reader-and-recovery evidence cycle` : httpTrack?.startsWith('Safe AI agents') ? `${httpTrack} task-to-recovery evidence cycle` : httpTrack?.startsWith('Authorized crawling') ? `${httpTrack} authorization-to-recovery evidence cycle` : httpTrack?.startsWith('Maze') ? `${httpTrack} player-to-native-release evidence cycle` : httpTrack?.startsWith('Static-site') ? `${httpTrack} source-to-publication evidence cycle` : httpTrack?.startsWith('Asteroids') ? `${httpTrack} player-input-to-release evidence cycle` : httpTrack?.startsWith('Bookbot') ? `${httpTrack} corpus-to-release evidence cycle` : httpTrack?.startsWith('RAG') ? `${httpTrack} source-to-claim evidence cycle` : httpTrack?.startsWith('Cryptography') ? `${httpTrack} threat-to-evidence cycle` : httpTrack?.startsWith('S3') ? `${httpTrack} storage-delivery evidence cycle` : httpTrack?.startsWith('RabbitMQ') ? `${httpTrack} messaging evidence cycle` : httpTrack ? `${httpTrack} HTTP evidence cycle` : family === 'docker' ? 'container delivery evidence cycle' : family === 'kubernetes' ? 'orchestration evidence cycle' : family === 'cicd' ? 'delivery-system evidence cycle' : defaultCycle} for this ${activityKind} task before implementing it.`,
       `Correct order keeps ${humanize(competencyId)} assumptions visible before execution and verifies its result against a boundary case afterward.`,
       [competencyId],
       {
@@ -4246,7 +4295,7 @@ function createBuilder({
       competencyId,
       `Inspect the ${humanize(competencyId)} trace for this ${activityKind} case. Which record connects a precondition, observed state change, and boundary result?`,
       `The record names the assumption, applies ${humanize(competencyId)}, and reports a changed-case check tied to the stakeholder decision.`,
-      'The record says the result looks right but supplies no quantity, trace, condition, or counterexample.',
+      `The ${humanize(competencyId)} record says ${moduleProfile.artifact} looks right but supplies no governing condition, observation, changed case, or counterexample.`,
       {
         ...extra,
         stimulus: {
@@ -4258,7 +4307,13 @@ function createBuilder({
             {
               id: `${id}-line-assumption`,
               label: 'assumption',
-              text: domainCase(family, moduleId, seed + steps.length, activityKind, competency),
+              text: caseForCompetency(
+                family,
+                moduleId,
+                seed + steps.length,
+                activityKind,
+                competency
+              ),
               tone: 'focus',
             },
             {
@@ -4288,14 +4343,20 @@ function createBuilder({
   function addReflection(id, title, competencyId, extra = {}) {
     const competency = competencyById.get(competencyId);
     const requiredTerms = unique(words(competency.statement)).slice(0, 2);
-    const changedCase = domainCase(family, moduleId, seed + steps.length, activityKind, competency);
+    const changedCase = caseForCompetency(
+      family,
+      moduleId,
+      seed + steps.length,
+      activityKind,
+      competency
+    );
     const step = baseStep(
       id,
       title,
       'reflect',
       extra.instruction ??
         `Write the ${activityKind} evidence note for ${humanize(competencyId)}: explain the governing condition, one failure, and how this concrete case was verified — ${changedCase}`,
-      'Retrieval and explanation expose gaps that recognition questions can hide.',
+      `Retrieving ${humanize(competencyId)} through the concrete ${moduleProfile.artifact} case exposes causal gaps that recognition alone can hide.`,
       [competencyId],
       {
         ...extra,
@@ -4325,23 +4386,27 @@ function createBuilder({
   }
 
   function addCalculation(id, title, competencyId, moduleId, extra = {}) {
+    const competency = competencyById.get(competencyId);
     const calculation = mathCalculation(moduleId, seed + steps.length);
     const step = baseStep(
       id,
       title,
       'calculate',
-      calculation.prompt,
-      'A numerical result is not complete until its unit, assumptions, scale, and tolerance survive a reasonableness check.',
+      `${calculation.prompt} Use the result to decide ${humanize(competencyId)} for ${moduleProfile.artifact}.`,
+      `The ${humanize(competencyId)} result for ${moduleProfile.artifact} is incomplete until its unit, assumptions, scale, and tolerance survive a reasonableness check.`,
       [competencyId],
       {
         ...extra,
         content: [
-          { type: 'paragraph', text: calculation.method },
+          {
+            type: 'paragraph',
+            text: `${calculation.method} Reconcile the result with this competency evidence: ${competency.masteryEvidence[0]}`,
+          },
           {
             type: 'callout',
             tone: 'question',
             title: 'Before calculating',
-            text: 'Predict the sign and approximate magnitude. Enter the requested quantity with a unit, then compare it with that prediction.',
+            text: `Before calculating ${humanize(competencyId)}, predict the sign and approximate magnitude for ${moduleProfile.artifact}. Enter the requested quantity with a unit, then reconcile it with that prediction and ${competency.masteryEvidence[0]}`,
           },
         ],
         hints: [
@@ -4418,7 +4483,7 @@ function createBuilder({
             type: 'callout',
             tone: 'warning',
             title: 'Evidence is more than syntax',
-            text: 'The structural check is only one gate. The following changed-case decision and explanation must also hold.',
+            text: `The ${humanize(competencyId)} structural check is only one gate. ${moduleProfile.artifact} must also survive the stated changed case and causal explanation.`,
           },
         ],
       }
@@ -4476,8 +4541,9 @@ function createBuilder({
 }
 
 function buildTheory(builder, context) {
-  const { primary, moduleId, variant, family } = context;
+  const { primary, moduleId, family, layoutSeed } = context;
   const concept = humanize(primary.id);
+  const conceptEvidence = /\bevidence$/iu.test(concept) ? concept : `${concept} evidence`;
   const actions = {
     predict: () =>
       builder.addChoice(
@@ -4499,17 +4565,17 @@ function buildTheory(builder, context) {
         `Use ${concept} after naming its inputs, invariant or ownership condition, observable evidence, and failure boundary.`,
         primary.misconceptions[0]
       ),
-    inspect: () => builder.addInspect('inspect-case', `Inspect ${concept} evidence`, primary.id),
-    order: () => builder.addOrder('rebuild-process', `Sequence ${concept} evidence`, primary.id),
+    inspect: () => builder.addInspect('inspect-case', `Inspect ${conceptEvidence}`, primary.id),
+    order: () => builder.addOrder('rebuild-process', `Sequence ${conceptEvidence}`, primary.id),
     apply: () =>
       family === 'math'
         ? builder.addCalculation(
             'solve-changed-case',
-            `Calculate ${concept} evidence`,
+            `Calculate ${conceptEvidence}`,
             primary.id,
             moduleId
           )
-        : builder.addCode('build-evidence', `Build ${concept} evidence`, primary.id, moduleId),
+        : builder.addCode('build-evidence', `Build ${conceptEvidence}`, primary.id, moduleId),
     debug: () =>
       builder.addChoice(
         'repair-misconception',
@@ -4518,26 +4584,31 @@ function buildTheory(builder, context) {
         primary.id,
         `A teammate acts on this belief: “${primary.misconceptions[0]}” Which repair addresses the cause?`,
         `Reconstruct the conditions for ${humanize(primary.id)}, gather a counterexample, repair the artifact, and add a regression case.`,
-        'Keep the artifact unchanged and rewrite the explanation so the current output appears intentional.'
+        `Keep the ${concept} artifact unchanged and rewrite its explanation so the unsupported output appears intentional.`
       ),
     reflect: () => builder.addReflection('defend-model', `Defend the ${concept} model`, primary.id),
   };
-  const sequences = [
-    ['predict', 'brief', 'inspect', 'order', 'apply', 'debug', 'reflect'],
-    ['predict', 'brief', 'order', 'inspect', 'debug', 'apply', 'reflect'],
-    ['predict', 'brief', 'inspect', 'apply', 'debug', 'order', 'reflect'],
-    ['predict', 'brief', 'order', 'apply', 'inspect', 'debug', 'reflect'],
+  const sequence = [
+    'predict',
+    'brief',
+    ...seededPermutation(['inspect', 'order', 'apply', 'debug'], layoutSeed),
+    'reflect',
   ];
-  sequences[variant % sequences.length].forEach((action) => {
+  sequence.forEach((action) => {
     actions[action]();
   });
 }
 
 function buildPractice(builder, context) {
-  const { kind, competencies, moduleId, moduleProfile, family, variant } = context;
+  const { kind, competencies, moduleId, moduleProfile, family, variant, layoutSeed } = context;
   const primary = competencies[0];
   const last = competencies.at(-1);
-  const addScenario = (competency, index, interaction = index % 2 ? 'predict' : 'answer') => {
+  const scenarioInteractions = ['predict', 'answer', 'inspect', 'debug'];
+  const interactionFor = (index, offset = 0) =>
+    scenarioInteractions[
+      ((layoutSeed >>> ((index % 8) * 2)) + offset) % scenarioInteractions.length
+    ];
+  const addScenario = (competency, index, interaction = interactionFor(index)) => {
     builder.addChoice(
       `scenario-${index + 1}`,
       `${humanize(competency.id)} · changed case`,
@@ -4553,11 +4624,7 @@ function buildPractice(builder, context) {
   if (kind === 'exam') {
     builder.addOrder('exam-plan', 'Plan the cumulative evidence run', primary.id, { hidden: true });
     competencies.forEach((competency, index) => {
-      addScenario(
-        competency,
-        index,
-        index % 3 === 0 ? 'inspect' : index % 2 ? 'predict' : 'answer'
-      );
+      addScenario(competency, index, interactionFor(index, 1));
     });
     builder.addInspect('exam-forensics', 'Audit a conflicting evidence packet', last.id, {
       hidden: true,
@@ -4576,8 +4643,8 @@ function buildPractice(builder, context) {
       'debug',
       last.id,
       'A polished result passes one familiar case but fails a boundary case. What is the defensible release decision?',
-      'Stop release, localize the cause, repair the smallest responsible layer, and rerun the full changed-case set.',
-      'Ignore the boundary result because the primary demonstration passed.',
+      `Stop release, localize the ${humanize(last.id)} cause in ${moduleProfile.artifact}, repair the smallest responsible layer, and rerun the full changed-case set.`,
+      `Ignore the ${humanize(last.id)} boundary result because the familiar ${moduleProfile.artifact} demonstration passed.`,
       { hidden: true }
     );
     builder.addReflection('exam-defense', 'Submit the certification defense', last.id, {
@@ -4592,11 +4659,11 @@ function buildPractice(builder, context) {
         builder.addChoice(
           `fault-${index + 1}`,
           `${humanize(competency.id)} · fault isolation`,
-          index % 2 ? 'predict' : 'debug',
+          interactionFor(index, 2),
           competency.id,
           `Which observation would disprove this suspected cause: “${competency.misconceptions[0]}”?`,
           `A minimal trace that preserves the preconditions, contradicts the misconception, and satisfies ${humanize(competency.id)}.`,
-          'Another successful run of the same happy-path example.'
+          `Another successful ${humanize(competency.id)} run of the same ${moduleProfile.artifact} happy path.`
         );
       });
     };
@@ -4631,7 +4698,7 @@ function buildPractice(builder, context) {
     if (variant === 2)
       builder.addInspect('mixed-evidence', 'Separate evidence from confidence', last.id);
     competencies.forEach((competency, index) => {
-      addScenario(competency, index, index % 3 === 0 ? 'predict' : 'answer');
+      addScenario(competency, index, interactionFor(index, 3));
     });
     if (variant !== 1)
       builder.addOrder('retrieval-order', 'Retrieve the complete evidence cycle', primary.id);
@@ -4657,8 +4724,8 @@ function buildPractice(builder, context) {
             'debug',
             last.id,
             'The visible result looks correct, but its invariant or value contract is unverified. What must happen next?',
-            `Run the boundary case, inspect the ${family === 'algorithms' ? 'state invariant and operation count' : family === 'functional' ? 'input snapshot, returned value, and effect boundary' : 'actual mechanism'}, then accept or repair the claim.`,
-            'Accept the result because visible output is the highest authority.',
+            `Run the ${humanize(last.id)} boundary case for ${moduleProfile.artifact}, inspect the ${family === 'algorithms' ? 'state invariant and operation count' : family === 'functional' ? 'input snapshot, returned value, and effect boundary' : 'actual mechanism'}, then accept or repair the claim.`,
+            `Accept the ${humanize(last.id)} result because visible ${moduleProfile.artifact} output is the highest authority.`,
             { hidden: true }
           );
     if (variant === 1)
@@ -4667,7 +4734,7 @@ function buildPractice(builder, context) {
       });
     if (variant === 3) addPerformance();
     competencies.forEach((competency, index) => {
-      addScenario(competency, index, index % 2 ? 'predict' : 'inspect');
+      addScenario(competency, index, interactionFor(index, 1));
     });
     if (variant === 2)
       builder.addOrder('quiz-process', 'Reconstruct the defensible process', primary.id, {
@@ -4695,7 +4762,7 @@ function buildPractice(builder, context) {
   if (variant === 1)
     builder.addInspect('mission-audit', 'Audit the initial evidence packet', last.id);
   competencies.forEach((competency, index) => {
-    addScenario(competency, index, index % 2 ? 'inspect' : 'answer');
+    addScenario(competency, index, interactionFor(index));
   });
   if (variant === 2) builder.addOrder('mission-plan', 'Plan the evidence sequence', primary.id);
   if (variant === 3)
@@ -4719,7 +4786,7 @@ function buildPractice(builder, context) {
     last.id,
     'One precondition fails while output still looks plausible. What is the correct response?',
     `Reject the unsupported conclusion, name the violated ${humanize(last.id)} condition, repair the responsible layer, and rerun the boundary trace.`,
-    'Keep the plausible output and hide the assumption to avoid confusing the stakeholder.',
+    `Keep the plausible ${humanize(last.id)} output and hide the violated ${moduleProfile.artifact} assumption instead of explaining the failure.`,
     { hidden: kind === 'lab' || kind === 'project' }
   );
   builder.addReflection(
@@ -5827,6 +5894,7 @@ function plannedActivityToContent({
     moduleProfile,
     family,
     variant,
+    layoutSeed: hash(`${plan.id}:pedagogy-layout`),
   };
 
   if (plan.kind === 'theory') buildTheory(builder, context);

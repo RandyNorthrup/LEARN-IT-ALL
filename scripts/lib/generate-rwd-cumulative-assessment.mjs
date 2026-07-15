@@ -101,7 +101,7 @@ export async function generateRwdCumulativeAssessment(config) {
             type: 'callout',
             tone: 'question',
             title: `${model.title} decision defense`,
-            text: 'Connect the repair to implementation evidence, user impact, a failed state, and a named regression retest.',
+            text: `Defend ${model.competencyId.replaceAll('-', ' ')} in ${model.context}: connect the repair to implementation evidence, user impact, a failed state, and a named regression retest.`,
           },
         ];
         checks.push({
@@ -135,7 +135,7 @@ export async function generateRwdCumulativeAssessment(config) {
                   type: 'callout',
                   tone: interaction === 'debug' ? 'warning' : 'question',
                   title: `${model.title} evidence`,
-                  text: 'Choose the conclusion supported by source, behavior, changed-state, and user-task evidence.',
+                  text: `For ${model.title}, choose the ${model.competencyId.replaceAll('-', ' ')} conclusion supported by source, behavior, changed-state, and user-task evidence from ${model.context}.`,
                 },
               ];
         if (interaction === 'inspect' || interaction === 'debug') {

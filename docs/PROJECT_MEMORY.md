@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-14 after the CompTIA A+ V15 release and malformed-autosave hardening
+Last verified full gate: 2026-07-14 after the catalog-wide duplication repair and locked-route accessibility verification
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -31,6 +31,7 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Learner-facing version 2 content: `content/v2/courses/<course-id>`.
 - Course blueprints: `blueprints/<course-id>.json`.
 - Shared content generators: `scripts/lib/generate-course-blueprint.mjs` and `scripts/lib/generate-expanded-course-content.mjs`.
+- Permanent catalog duplication gate: `scripts/audit-v2-duplication.ts`, backed by `src/core/curriculum/duplicationAudit.ts` and regression tests.
 - Shared interactive targets include sandboxed web output, JavaScript, Pyodide Python, isolated Go WebAssembly, fresh in-memory SQLite, deterministic network/shell simulation, prompt evaluation, repository/config quality gates, and numeric calculation.
 - Legacy content is migration input. Do not extend old repeated Markdown/JSON layouts as the target model.
 
@@ -81,7 +82,17 @@ At the last full gate, all 54 catalog courses were wired into the version 2 lear
 
 Verified platform total at this checkpoint: 1,135 modules, 11,742 activities, 98,870 learner steps, and 108,370 checks across 54 version 2 courses.
 
-The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair and equivalent-flow legacy migration remain active, so publication count does not release the Lighthouse hold.
+The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair is complete; equivalent-flow legacy migration and retirement remain active, so publication count does not release the Lighthouse hold.
+
+## Catalog-wide duplication repair evidence
+
+The initial 2026-07-14 catalog audit found 56,142 repeated normalized scaffold-text groups, with one generic phrase appearing 21,497 times. Most courses produced by the shared generator had only four structural activity layouts; CompTIA A+ theory had four layouts across 200 activities; and Responsive Web Design contained a phrase repeated 1,852 times while its quizzes used only four layouts. These were structural defects, not harmless repeated terminology.
+
+The shared generators were rebuilt so theory, practice, prediction, worked examples, misconceptions, evidence prompts, checks, layouts, and projects are deterministically tied to each competency and scenario. Prediction steps no longer expose their answers. Go examples keep comments after the required `package` declaration. Career, SQL, Go, support, portfolio, mathematics, and HTTP-client content received domain-specific wording and checks. All 15 HTTP-client projects now have distinct stakeholder needs and constraints. Responsive Web Design labs now use genuinely different learner flows: its moon-orbit lab measures animation frames and motion behavior, its portfolio lab audits attention and keyboard continuity, its profile lab traces source to DOM, and its animal-directory lab uses user-journey acceptance evidence.
+
+The permanent duplication gate normalizes scaffold text, checks layout diversity per course and activity kind, uses trigram similarity to find near-duplicate activities, and uses project-term Jaccard similarity to reject renamed project copies. The final 2026-07-14 run audited 11,742 activities, 746,338 learner-facing fragments, 432 course-and-kind layout groups, 162,493 near-activity candidate pairs, and 253 projects. It reported zero excessive generic repetitions, zero insufficient-layout groups, zero near-duplicate activities, and zero near-duplicate projects. Official source citations are deliberately excluded from scaffold-text repetition because repeated primary authority is valid provenance.
+
+The full non-Lighthouse gate then passed 79 test files and 542 tests, type-check, normal and strict lint across 307 files, and the Next.js 16.2.10 production build. Production browser verification passed changed learner flows at 390x844 mobile, 768x1024 tablet, and 1440x900 desktop with correct headings, no horizontal overflow, reduced-motion behavior, visible keyboard focus, announced feedback, and no console or page errors. Browser review found that the locked-activity brand link was only 17 pixels tall on mobile; it now has a verified 44-pixel target and a regression test. Lighthouse remains intentionally paused because equivalent-flow legacy migration and retirement are still planned.
 
 ## CompTIA A+ V15 release evidence
 

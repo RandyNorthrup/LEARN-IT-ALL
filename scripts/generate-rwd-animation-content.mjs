@@ -267,6 +267,12 @@ const mappedPlans = {
     focus: allFocus,
     artifactId: cumulativeArtifactId,
     targetSteps: 20,
+    labPattern: ['predict', 'code', 'inspect', 'code', 'debug', 'code', 'reflect', 'arrange'],
+    labBrief:
+      'Build an orbiting service-status indicator for a transit display where the static label remains authoritative and motion only explains update cadence.',
+    evidenceLens: 'timeline and rendering measurement',
+    acceptanceEvidence:
+      'a computed-style trace, animation-frame measurement, paused and interrupted states, and an equivalent reduced-motion status',
   },
   'mapped-workshop-flappy-penguin': {
     title: 'Workshop: Build an Accessible Practice-Guide Character',
@@ -281,6 +287,12 @@ const mappedPlans = {
     focus: allFocus,
     artifactId: cumulativeArtifactId,
     targetSteps: 20,
+    labPattern: ['inspect', 'arrange', 'answer', 'debug', 'code', 'reflect', 'predict', 'code'],
+    labBrief:
+      'Audit a professional portfolio whose navigation underline, project-card reveal, and submission confirmation compete for attention across keyboard and touch use.',
+    evidenceLens: 'portfolio task and attention audit',
+    acceptanceEvidence:
+      'keyboard focus continuity, rapid reversal behavior, a no-motion task path, touch-target feedback, and stakeholder task timing',
   },
   'mapped-review-css-animations': {
     title: 'Retrieval Review: CSS Motion Systems',
