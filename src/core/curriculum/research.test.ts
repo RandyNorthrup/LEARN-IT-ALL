@@ -449,7 +449,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 53 source blocks');
+    expect(content).toContain('The remaining 46 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -614,7 +614,7 @@ describe('research contracts', () => {
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
     expect(content).toContain('The complete 180-concept');
-    expect(content).toContain('The remaining 53 source blocks');
+    expect(content).toContain('The remaining 46 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -710,7 +710,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 53 blocks');
+    expect(content).toContain('The remaining 46 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -883,7 +883,7 @@ describe('research contracts', () => {
     expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
     expect(content).toContain('creates a CSS generated image value and no DOM element');
     expect(content).toContain('Class order in an HTML `class` attribute does not decide');
-    expect(content).toContain('remaining 53 source blocks');
+    expect(content).toContain('remaining 46 source blocks');
     expect(content).toContain('Keyword presence, a notation-matching regular expression');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
@@ -1003,7 +1003,7 @@ describe('research contracts', () => {
     expect(content).toContain('seven blocks, 84 challenges, 19 question prompts');
     expect(content).toContain("The benchmark's claim that `required` does not work");
     expect(content).toContain('This is direct instructional duplication');
-    expect(content).toContain('remaining 53 source blocks');
+    expect(content).toContain('remaining 46 source blocks');
     expect(content).toContain('`appearance: none` suppresses the native appearance');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toContain('rwd-css-ui-four');
@@ -1204,7 +1204,7 @@ describe('research contracts', () => {
     expect(content).toContain('A blurred secret is exposed data, not redaction');
     expect(content).toContain('false for mixed or all-negative margins');
     expect(content).toContain('`hidden` and `clip` are absent as distinct behavior models');
-    expect(content).toContain('remaining 53 source blocks');
+    expect(content).toContain('remaining 46 source blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toEqual(
       expect.arrayContaining([
@@ -1346,6 +1346,178 @@ describe('research contracts', () => {
     });
   });
 
+  it('records the complete Flexbox inspection and constraint-evidence decision', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-flexbox-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+
+    expect(content).toContain('seven pinned source blocks');
+    expect(content).toContain('high action count with low decision density');
+    expect(content).toContain('The pricing lab is the sharpest defect');
+    expect(content).toContain('46 total source blocks still require challenge-level inspection');
+    expect(content.length).toBeGreaterThan(25_000);
+    expect(graph.sourceIds).toEqual(
+      expect.arrayContaining(['rwd-css-flexbox-one', 'rwd-css-align-three'])
+    );
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-flex-basis-grow-shrink')
+    ).toMatchObject({
+      sourceAnchors: [{ sourceId: 'rwd-css-flexbox-one' }],
+    });
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-flex-alignment-distribution')
+    ).toMatchObject({
+      sourceAnchors: [{ sourceId: 'rwd-css-align-three' }],
+    });
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-flexbox-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-15',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-flex-layout-evidence')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-css-flexbox-one',
+        'rwd-css-align-three',
+        'rwd-css-sizing-three',
+        'rwd-wcag-two-two',
+        'rwd-fcc-flexbox-inspection',
+      ],
+    });
+  });
+
+  it('keeps all seven Flexbox and playing-cards blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const flexAlignments = matrix.alignments.filter(
+      (alignment) =>
+        alignment.sourceModuleId === 'css-flexbox' ||
+        alignment.sourceModuleId === 'lab-page-of-playing-cards'
+    );
+
+    expect(flexAlignments).toHaveLength(7);
+    expect(
+      flexAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(71);
+    expect(
+      flexAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(46);
+    expect(
+      flexAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.hintCheckCount,
+        0
+      )
+    ).toBe(194);
+    expect(
+      flexAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        flexAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-working-with-css-flexbox': [
+        'css-normal-flow',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'css-flex-order-accessibility',
+      ],
+      'workshop-flexbox-photo-gallery': [
+        'html-images-purpose-alt',
+        'html-replaced-content-boundaries',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-pseudo-elements',
+        'css-box-model-areas',
+        'css-box-sizing-models',
+        'css-intrinsic-extrinsic-sizing',
+        'css-percentages-containing-blocks',
+        'css-backgrounds-borders-shadows',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'css-flex-gap-spacing',
+      ],
+      'workshop-colorful-boxes': [
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-type-scale-line-height',
+        'css-color-spaces-alpha',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-basis-grow-shrink',
+        'css-flex-alignment-distribution',
+        'css-flex-order-accessibility',
+      ],
+      'lab-pricing-plans-layout': [
+        'html-heading-hierarchy',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-box-model-areas',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-basis-grow-shrink',
+        'css-flex-alignment-distribution',
+        'css-flex-order-accessibility',
+        'css-flex-component-transfer',
+      ],
+      'review-css-flexbox': [
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'css-flex-gap-spacing',
+      ],
+      'quiz-css-flexbox': [
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'css-flex-component-transfer',
+      ],
+      'lab-page-of-playing-cards': [
+        'html-landmarks',
+        'css-type-class-id-selectors',
+        'css-box-model-areas',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'css-flex-gap-spacing',
+        'css-flex-component-transfer',
+      ],
+    });
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -1401,7 +1573,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 97]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(105);
+    ).toHaveLength(112);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -2169,10 +2341,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(115);
+    ).toHaveLength(121);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(42);
+    ).toHaveLength(36);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -2330,8 +2502,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(180);
-    expect(architecture.sourceObjectiveIds).toHaveLength(115);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(43);
+    expect(architecture.sourceObjectiveIds).toHaveLength(121);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(37);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

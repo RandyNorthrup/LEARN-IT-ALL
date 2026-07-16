@@ -572,7 +572,7 @@ Filters and large painted effects need measured performance evidence. The target
 
 ## Remaining blockers
 
-- The remaining 53 source blocks still require complete challenge-level inspection with zero guessed mappings.
+- The remaining 46 source blocks still require complete challenge-level inspection with zero guessed mappings.
 - Independent subject reviewers must verify the five candidate maps and every technical correction against current specifications, Web Platform Tests, and supported-browser behavior.
 - Instructional and assessment reviewers must approve the complete concept-to-activity matrix, fading plan, retrieval schedule, misconception treatment, item blueprint, corrective routes, and anti-duplication evidence.
 - Accessibility review must approve reflow, scrolling, keyboard and touch operation, visible focus, reading and focus order, target geometry, contrast, motion, forced colors, print, and representative assistive-technology tasks.
