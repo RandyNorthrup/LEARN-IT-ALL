@@ -1640,11 +1640,39 @@ concept(
 );
 
 concept(
+  'html-accessibility-user-barriers-tools',
+  'People, barriers, and access strategies',
+  'Connect varied visual, auditory, physical, speech, cognitive, language, neurological, situational, and temporary access needs to user tasks, barriers, assistive technologies, adaptive strategies, and the POUR outcomes that web decisions must preserve.',
+  'html-accessibility-and-debugging',
+  ['html-landmarks', 'html-form-labels-instructions', 'html-table-header-associations'],
+  [
+    anchor(
+      'rwd-wai-people-use-web',
+      'How people with disabilities use the web and Tools and Techniques',
+      'WAI describes varied disabilities, user settings, input and output methods, assistive technologies, and adaptive strategies that interact with web barriers in different ways.'
+    ),
+    anchor(
+      'rwd-wcag-two-two',
+      'Introduction and the four principles',
+      'WCAG organizes testable accessibility requirements under perceivable, operable, understandable, and robust outcomes.'
+    ),
+  ],
+  [
+    'One disability maps to one tool, one interaction method, and one fixed design accommodation.',
+    'Passing a named WCAG criterion proves the complete task is usable for every person and technology.',
+  ],
+  [
+    'Learner must connect changed user-task evidence to barriers, access strategies, and relevant POUR requirements without diagnosing or stereotyping a person.',
+    'Design justification must distinguish standards evidence, observed task evidence, assumptions, and remaining uncertainty.',
+  ]
+);
+
+concept(
   'html-native-accessibility-tree',
   'Native semantics and accessibility information',
   'Trace HTML element, attribute, content, and relationship choices into role, accessible name, description, state, property, and structure evidence.',
   'html-accessibility-and-debugging',
-  ['html-landmarks', 'html-form-labels-instructions', 'html-table-header-associations'],
+  ['html-accessibility-user-barriers-tools'],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -1660,11 +1688,67 @@ concept(
 );
 
 concept(
+  'html-accessible-name-description',
+  'Accessible names and descriptions',
+  'Give controls, regions, links, images, and custom interfaces concise task-specific names and separate supplementary descriptions, preferring visible text and native HTML while applying ARIA naming precedence deliberately.',
+  'html-accessibility-and-debugging',
+  ['html-native-accessibility-tree', 'html-native-controls-first'],
+  [
+    anchor(
+      'rwd-aria-apg',
+      'Providing Accessible Names and Descriptions',
+      'Accessible names identify an element, descriptions provide supplementary information, visible labels are preferred, and naming mechanisms have context-dependent precedence and side effects.'
+    ),
+    anchor(
+      'rwd-wai-aria-one-two',
+      'Accessible name and description properties',
+      'WAI-ARIA defines author-provided label, labelled-by, and described-by relationships that accessibility APIs expose according to host-language and naming rules.'
+    ),
+  ],
+  [
+    'aria-label is harmless extra metadata that can be added to any element without replacing or hiding useful descendant text.',
+    'Instructions, constraints, and error recovery belong in the accessible name because a longer name is always more informative.',
+  ],
+  [
+    'Changed visible-label, duplicate-label, icon-only, help-text, validation, and translated-content cases must expose the intended name and separate description.',
+    'Learner must inspect computed names and descriptions, explain the controlling source, and repair conflicts without hiding useful visible information.',
+  ]
+);
+
+concept(
+  'html-accessibility-tree-inclusion',
+  'Accessibility-tree inclusion and hidden content',
+  'Predict which rendered and hidden content enters the accessibility tree, use native hidden states or aria-hidden only for the intended boundary, and never hide focusable or uniquely meaningful content.',
+  'html-accessibility-and-debugging',
+  ['html-native-accessibility-tree', 'html-images-purpose-alt'],
+  [
+    anchor(
+      'rwd-wai-aria-one-two',
+      'aria-hidden state',
+      'aria-hidden excludes an element and descendants from the accessibility tree without changing visual rendering and must not conceal focusable or required content.'
+    ),
+    anchor(
+      'rwd-aria-apg',
+      'Providing Accessible Names and Descriptions',
+      'Naming and hiding choices can remove descendant semantic content from accessibility APIs, so visible and computed information must be inspected together.'
+    ),
+  ],
+  [
+    'aria-hidden only hides visual decoration and cannot affect descendants, names, descriptions, focus, or task meaning.',
+    'Visually hidden, display-none, hidden, inert, and aria-hidden content all have identical rendering, focus, form, and accessibility behavior.',
+  ],
+  [
+    'Changed decorative-icon, duplicate-text, collapsed-region, validation-message, focusable-descendant, and CSS-hidden cases must preserve one complete task path and the intended accessibility information.',
+    'Learner must inspect rendering, DOM, focus order, and accessibility-tree inclusion separately and explain any mismatch.',
+  ]
+);
+
+concept(
   'html-source-order-keyboard',
   'Source order and keyboard path',
   'Keep reading, focus, and interaction order logical from source structure without positive tabindex or visual reordering dependence.',
   'html-accessibility-and-debugging',
-  ['html-native-controls-first', 'html-native-accessibility-tree'],
+  ['html-native-controls-first', 'html-accessibility-tree-inclusion'],
   [
     anchor(
       'rwd-wcag-two-two',
@@ -1684,7 +1768,11 @@ concept(
   'ARIA role, state, and property boundary',
   'Use ARIA only when native semantics cannot express a required relationship or state, and supply the complete interaction contract.',
   'html-accessibility-and-debugging',
-  ['html-native-controls-first', 'html-native-accessibility-tree'],
+  [
+    'html-native-controls-first',
+    'html-accessible-name-description',
+    'html-accessibility-tree-inclusion',
+  ],
   [
     anchor(
       'rwd-aria-apg',
@@ -1702,11 +1790,43 @@ concept(
 );
 
 concept(
+  'html-accessibility-evaluation-evidence',
+  'Accessibility evaluation evidence and limits',
+  'Plan and interpret complementary standards review, automated checks, conformance inspection, keyboard and zoom tasks, accessibility-tree and assistive-technology checks, and observed use without treating any one tool as proof.',
+  'html-accessibility-and-debugging',
+  ['html-source-order-keyboard', 'html-aria-boundary'],
+  [
+    anchor(
+      'rwd-wai-evaluation-tools',
+      'Selecting Web Accessibility Evaluation Tools',
+      'WAI states that tools can assist evaluation but cannot automatically check every accessibility aspect, so tool results require knowledgeable interpretation and complementary evaluation.'
+    ),
+    anchor(
+      'rwd-wai-people-use-web',
+      'Stories and Tools and Techniques',
+      'Real access combines user settings, software, hardware, assistive technologies, adaptive strategies, content, and context rather than one canonical test configuration.'
+    ),
+  ],
+  [
+    'Zero automated violations proves WCAG conformance, usability, assistive-technology compatibility, and task completion.',
+    'One screen reader, browser, zoom level, keyboard path, or disabled participant represents every user and context.',
+  ],
+  [
+    'Learner must choose evidence capable of falsifying each accessibility claim and label what automation, inspection, simulation, and observed use can and cannot establish.',
+    'Evaluation record must preserve reproducible setup, changed cases, task outcomes, tool limits, user-reported barriers, repairs, re-tests, and unresolved risk.',
+  ]
+);
+
+concept(
   'html-validation-inspection',
   'Validation, source, DOM, and accessibility inspection',
   'Use conformance validation, source, DOM, accessibility, network, and console evidence to locate root cause rather than guess from appearance.',
   'html-accessibility-and-debugging',
-  ['html-parser-recovery', 'html-document-root-head-body', 'html-native-accessibility-tree'],
+  [
+    'html-parser-recovery',
+    'html-document-root-head-body',
+    'html-accessibility-evaluation-evidence',
+  ],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -1801,6 +1921,9 @@ const graph = {
     'rwd-cisa-phishing-resistant-mfa',
     'rwd-wai-tutorials',
     'rwd-aria-apg',
+    'rwd-wai-people-use-web',
+    'rwd-wai-evaluation-tools',
+    'rwd-wai-aria-one-two',
     'rwd-mdn-html-images',
     'rwd-us-copyright-fair-use',
     'rwd-creative-commons-licenses',

@@ -261,7 +261,7 @@ describe('research contracts', () => {
     const conceptIds = graph.concepts.map((concept) => concept.id);
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(79);
+    expect(graph.concepts).toHaveLength(83);
     expect(conceptIds).toEqual(
       expect.arrayContaining([
         'html-replaced-content-boundaries',
@@ -275,6 +275,10 @@ describe('research contracts', () => {
         'html-ruby-annotations',
         'html-form-control-states',
         'html-table-cell-spans',
+        'html-accessibility-user-barriers-tools',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-accessibility-evaluation-evidence',
       ])
     );
     expect(conceptIds).not.toContain('html-machine-readable-text');
@@ -291,6 +295,16 @@ describe('research contracts', () => {
         'rwd-creative-commons-licenses',
       ],
     });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-accessibility-cumulative')
+        ?.sourceIds
+    ).toEqual(
+      expect.arrayContaining([
+        'rwd-wai-people-use-web',
+        'rwd-wai-evaluation-tools',
+        'rwd-wai-aria-one-two',
+      ])
+    );
     expect(
       graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
     ).toBe(true);
@@ -393,10 +407,10 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([79, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(41);
+    ).toHaveLength(55);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -641,9 +655,192 @@ describe('research contracts', () => {
         'html-validation-inspection',
       ],
     });
+    const surveyAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'lab-survey-form'
+    );
+    expect(surveyAlignments).toHaveLength(1);
+    expect(surveyAlignments[0]).toMatchObject({
+      sourceChallengeCount: 1,
+      sourceEvidence: { quizQuestionCount: 0 },
+      inspectionState: 'agent-inspected',
+      mappingBasis: 'block-specific-source',
+      conceptIds: [
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-attribute-syntax',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-native-validation',
+      ],
+    });
+    const accessibilityAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'html-and-accessibility'
+    );
+    expect(accessibilityAlignments).toHaveLength(13);
+    expect(
+      accessibilityAlignments.reduce(
+        (total, alignment) => total + alignment.sourceChallengeCount,
+        0
+      )
+    ).toBe(55);
+    expect(
+      accessibilityAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(77);
+    expect(
+      accessibilityAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        accessibilityAlignments.map((alignment) => [
+          alignment.sourceBlockSlug,
+          alignment.conceptIds,
+        ])
+      )
+    ).toEqual({
+      'lecture-importance-of-accessibility-and-good-html-structure': [
+        'html-accessibility-user-barriers-tools',
+        'html-native-accessibility-tree',
+        'html-landmarks',
+        'html-heading-hierarchy',
+        'html-images-purpose-alt',
+        'html-source-order-keyboard',
+        'html-accessibility-evaluation-evidence',
+        'css-zoom-reflow-text-spacing',
+        'css-contrast-noncolor-meaning',
+      ],
+      'workshop-debug-coding-journey-blog-page': [
+        'html-heading-hierarchy',
+        'html-link-purpose-fragments',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-contact-address-links',
+        'html-native-accessibility-tree',
+        'html-validation-inspection',
+      ],
+      'lecture-accessible-tables-forms': [
+        'html-form-labels-instructions',
+        'html-accessible-name-description',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-table-header-associations',
+      ],
+      'workshop-tech-conference-schedule': [
+        'html-heading-hierarchy',
+        'html-tables-purpose',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-table-header-associations',
+        'html-native-accessibility-tree',
+      ],
+      'lab-debug-donation-form': [
+        'html-void-elements',
+        'html-parser-recovery',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-native-validation',
+        'html-accessible-name-description',
+        'html-validation-inspection',
+      ],
+      'lecture-introduction-to-aria': [
+        'html-native-controls-first',
+        'html-native-accessibility-tree',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-aria-boundary',
+      ],
+      'workshop-accessible-audio-controller': [
+        'html-native-controls-first',
+        'html-input-types-autocomplete',
+        'html-form-control-states',
+        'html-accessible-name-description',
+        'html-native-accessibility-tree',
+        'html-aria-boundary',
+      ],
+      'lecture-accessible-media-elements': [
+        'html-images-purpose-alt',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-audio-video',
+        'html-captions-transcripts',
+        'html-source-order-keyboard',
+        'html-accessibility-tree-inclusion',
+        'html-accessible-name-description',
+        'css-focus-visible-indicators',
+      ],
+      'lab-checkout-page': [
+        'html-heading-hierarchy',
+        'html-sectioning-articles',
+        'html-images-purpose-alt',
+        'html-form-labels-instructions',
+        'html-native-validation',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+      ],
+      'lab-movie-review-page': [
+        'html-landmarks',
+        'html-heading-hierarchy',
+        'html-images-purpose-alt',
+        'html-paragraphs-breaks',
+        'html-emphasis-importance',
+        'html-lists',
+        'html-accessibility-tree-inclusion',
+      ],
+      'lab-multimedia-player': [
+        'html-heading-hierarchy',
+        'html-sectioning-articles',
+        'html-audio-video',
+        'html-captions-transcripts',
+        'html-accessible-name-description',
+      ],
+      'review-html-accessibility': [
+        'html-accessibility-user-barriers-tools',
+        'html-heading-hierarchy',
+        'html-native-accessibility-tree',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-source-order-keyboard',
+        'html-aria-boundary',
+        'html-accessibility-evaluation-evidence',
+        'html-images-purpose-alt',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-audio-video',
+        'html-captions-transcripts',
+        'html-form-labels-instructions',
+        'html-table-structure',
+        'html-table-header-associations',
+      ],
+      'quiz-html-accessibility': [
+        'html-accessibility-user-barriers-tools',
+        'html-heading-hierarchy',
+        'html-native-accessibility-tree',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-source-order-keyboard',
+        'html-aria-boundary',
+        'html-images-purpose-alt',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-audio-video',
+        'html-captions-transcripts',
+        'html-form-labels-instructions',
+        'html-table-structure',
+        'html-table-header-associations',
+      ],
+    });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
-    ).toHaveLength(87);
+    ).toHaveLength(77);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -794,7 +991,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(165);
+    expect(architecture.conceptIds).toHaveLength(169);
     expect(architecture.sourceObjectiveIds).toHaveLength(158);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
