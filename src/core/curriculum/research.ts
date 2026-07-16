@@ -1290,6 +1290,10 @@ const StepDesignEvidenceKindSchema = z.enum([
   'code-whitespace',
   'editorial-meaning',
   'ruby-relationship',
+  'landmark-exposure',
+  'sectioning-relationship',
+  'disclosure-state',
+  'native-control-behavior',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1350,6 +1354,10 @@ const StepDesignLayoutSchema = z.enum([
   'whitespace-viewer',
   'annotation-inspector',
   'ruby-inspector',
+  'landmark-inspector',
+  'section-relationship-map',
+  'disclosure-state-inspector',
+  'control-parity-matrix',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1626,6 +1634,10 @@ export const ResearchModuleStepDesignSchema = z
             'code-whitespace',
             'editorial-meaning',
             'ruby-relationship',
+            'landmark-exposure',
+            'sectioning-relationship',
+            'disclosure-state',
+            'native-control-behavior',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
