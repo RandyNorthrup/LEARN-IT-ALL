@@ -1278,6 +1278,9 @@ const StepDesignEvidenceKindSchema = z.enum([
   'figure-caption-relationship',
   'media-rights-record',
   'svg-accessibility',
+  'native-media-control',
+  'timed-media-equivalence',
+  'embed-boundary',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1327,6 +1330,10 @@ const StepDesignLayoutSchema = z.enum([
   'figure-relationship-map',
   'rights-ledger',
   'svg-inspector',
+  'media-player-inspector',
+  'track-timeline',
+  'transcript-audit',
+  'embed-permission-inspector',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1591,6 +1598,9 @@ export const ResearchModuleStepDesignSchema = z
             'figure-caption-relationship',
             'media-rights-record',
             'svg-accessibility',
+            'native-media-control',
+            'timed-media-equivalence',
+            'embed-boundary',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
