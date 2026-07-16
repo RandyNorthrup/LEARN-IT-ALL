@@ -1,8 +1,18 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified non-Lighthouse code gate: 2026-07-15 after obsolete implementation, content-generator, parallel-practice, and vanity-metric removal
+Last verified non-Lighthouse code gate: 2026-07-15 after deny-by-default curriculum publication cutover
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
+
+## Verified deny-by-default publication cutover — 2026-07-15
+
+No generated audit-required course is learner-published. `src/lib/data/publishedCourses.ts` is the single deny-by-default publication manifest and currently contains zero course IDs. Catalog, home, learning paths, settings, both learner page boundaries, the tracks API, and all course attempt, draft, and hint APIs use that boundary. Existing generated files no longer become accessible merely because a route knows their ID: `/learn/responsive-web-design` returns 404, all three sampled Responsive Web Design activity APIs return 404, and `/api/tracks` returns an empty array.
+
+Home now explains how to choose, build, verify, and resume without inventing a current mission. Catalog shows no planned/dead cards, fake hours, fake activity counts, or inert filters; it presents a clear empty state and a saved-progress action. Learning paths cannot expose a path until every required course is published. The learner-facing copy explains navigation and learning actions without repository or implementation decisions.
+
+The completed local gate passed 91 test files and 590 tests, type-check, normal lint, strict warning-failing lint across 187 source/script files, and the Next.js 16.2.10 production build. Browser verification passed home at 390×844, catalog at 768×1024, and learning paths at 1440×900 with one H1, zero horizontal overflow, zero undersized visible controls, meaningful empty-state navigation, and no application console errors. Visual review found and removed inert empty-catalog filters and the confusing `0–0 of 0` count. Lighthouse remains paused and workflows remain absent.
+
+This is the publication cut, not physical deletion. The 54 obsolete blueprints and 12,985 generated course/index documents still exist in the working tree but cannot be opened or mutated through learner surfaces. The active next task removes the remaining research-tool dependency on them, deletes them and their obsolete tests, rebuilds an empty runtime index, and leaves Git history as the only archive. No renamed copy or compatibility location is planned.
 
 ## Verified obsolete-implementation removal — 2026-07-15
 
@@ -12,7 +22,7 @@ The local database had one completed earlier lesson and zero rows in the other f
 
 The final local gate passed 90 test files and 608 tests, type-check, normal lint, strict lint across 185 active source/script files, and the Next.js 16.2.10 production build. Production browser verification passed 390×844 public home, 768×1024 catalog/course/studio, and 1440×900 progress/settings with one H1, zero overflow, zero undersized visible controls, reduced motion, real HTTP 200 grading with announced corrective feedback, and no browser errors. Removed route/API samples all return 404. Browser review found and repaired hidden phone navigation, a 19-pixel catalog-brand target, and 40-pixel reorder controls. The review server was restarted cleanly and verified at `http://localhost:3000`; use `localhost`, not `127.0.0.1`, because Next development assets enforce the advertised origin. Lighthouse remains paused. Exact scope and retention rules are in `docs/audits/OBSOLETE_IMPLEMENTATION_REMOVAL_2026-07-15.md`.
 
-The 54 static blueprint inventories and 12,985 indexed `content/v2` source documents remain only because current research, catalog, and learner routes use them. They remain `audit-required` and are not protected for historical consistency. Each is replaced and deleted after its researched vertical slice and exact learner-data/runtime/accessibility/assessment/flow cutover passes. No compatibility alias, guessed mapping, or superseded content generator may return.
+The earlier decision to keep 54 static blueprint inventories and 12,985 indexed `content/v2` documents active during staged replacement is superseded by the deny-by-default publication cut above. Current learner routes no longer use them. They remain only until their last research-tool dependencies are removed and are then deleted without an archive copy.
 
 ## Active learner-review correction — 2026-07-15
 
@@ -503,10 +513,10 @@ The completed milestone passed the reproducibility check, 24 focused research te
 
 ## Active next work
 
-1. Inspect the remaining 76 RWD source blocks challenge by challenge, replace 61 explicit unmapped records and the unavailable assessment container with bounded evidence records, obtain independent subject review for all 158 assignments, then build the full introduce-model-guided-faded-debug-retrieve-assess-delayed-retain-transfer matrix before authoring. No broad, proportional, guessed, or compatibility mapping may return.
-2. Finish platform competitive-task observations, navigation/usability studies, mastery-validity work, privacy/ethics review, stack-compatibility smokes, assistive-technology/device trials, and representative learner research records.
-3. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, authentic tasks, misconception and safety analysis, and freshness triggers.
-4. Audit all 54 learner flows and static live inputs; the obsolete blueprint/content generators are already removed. Classify every remaining input as rewrite, replace, or remove. Counts and schema validity cannot close this audit.
+1. Remove the last research-tool dependency on generated blueprints/course output, delete all 54 obsolete blueprints and 12,985 generated course/index documents plus their obsolete tests, rebuild the empty runtime index, and verify that every public and direct learner boundary remains honest and usable.
+2. Inspect the remaining 76 RWD source blocks challenge by challenge, replace 61 explicit unmapped records and the unavailable assessment container with bounded evidence records, obtain independent subject review for all 158 assignments, then build the full introduce-model-guided-faded-debug-retrieve-assess-delayed-retain-transfer matrix before authoring. No broad, proportional, or guessed mapping may return.
+3. Finish platform competitive-task observations, navigation/usability studies, mastery-validity work, privacy/ethics review, stack-compatibility smokes, assistive-technology/device trials, and representative learner research records.
+4. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, authentic tasks, misconception and safety analysis, and freshness triggers.
 5. Enforce inline workspace/runtime declarations, then build and pilot the accessible Monaco/native tablet-desktop RWD reference slice with phone handoff before scaling.
 6. Refactor navigation, progress, grading, and curriculum around real persisted evidence; keep Lighthouse paused and workflows absent until every release blocker closes.
 

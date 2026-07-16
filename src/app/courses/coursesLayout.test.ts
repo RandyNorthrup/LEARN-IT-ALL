@@ -14,8 +14,15 @@ describe('course catalog accessibility contract', () => {
   it('keeps decorative catalog icons out of the accessibility tree', () => {
     expect(page).toContain('<ArrowLeft aria-hidden="true" />');
     expect(page).toContain('<Filter aria-hidden="true" />');
-    expect(page).toContain('<Clock3 aria-hidden="true" />');
-    expect(page).toContain('<Layers3 aria-hidden="true" />');
+    expect(page).toContain('<ArrowRight aria-hidden="true" />');
+  });
+
+  it('shows a navigable status message instead of planned or dead course cards', () => {
+    expect(page).toContain('PUBLISHED_COURSES');
+    expect(page).toContain('role="status"');
+    expect(page).toContain('No courses are open yet.');
+    expect(page).not.toContain('showPlanned');
+    expect(page).not.toContain('rebuild queue');
   });
 
   it('provides responsive, touch-sized catalog pagination', () => {

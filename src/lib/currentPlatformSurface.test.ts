@@ -59,6 +59,35 @@ describe('current platform surface', () => {
     ).toBe(false);
   });
 
+  it('denies generated curriculum at every learner publication boundary', () => {
+    const publication = readFileSync(
+      path.join(root, 'src', 'lib', 'data', 'publishedCourses.ts'),
+      'utf8'
+    );
+    expect(publication).toContain('PUBLISHED_COURSE_IDS = []');
+
+    for (const relativePath of [
+      'src/app/learn/[courseId]/page.tsx',
+      'src/app/learn/[courseId]/[moduleId]/[activityId]/page.tsx',
+      'src/app/api/v2/courses/[courseId]/activities/[activityId]/attempt/route.ts',
+      'src/app/api/v2/courses/[courseId]/activities/[activityId]/draft/route.ts',
+      'src/app/api/v2/courses/[courseId]/activities/[activityId]/hint/route.ts',
+    ]) {
+      const source = readFileSync(path.join(root, relativePath), 'utf8');
+      expect(source, relativePath).toContain('isPublishedCourse(courseId)');
+    }
+
+    const catalog = readFileSync(path.join(root, 'src', 'app', 'courses', 'page.tsx'), 'utf8');
+    const settings = readFileSync(path.join(root, 'src', 'app', 'settings', 'page.tsx'), 'utf8');
+    const tracksApi = readFileSync(
+      path.join(root, 'src', 'app', 'api', 'tracks', 'route.ts'),
+      'utf8'
+    );
+    expect(catalog).toContain('PUBLISHED_COURSES');
+    expect(settings).toContain('PUBLISHED_COURSES');
+    expect(tracksApi).toContain('PUBLISHED_LEARNING_TRACKS');
+  });
+
   it('keeps historical learner evidence without earlier runtime tables', () => {
     const databaseSource = readFileSync(path.join(root, 'src', 'lib', 'db.ts'), 'utf8');
     expect(databaseSource).toContain('CREATE TABLE IF NOT EXISTS historical_learning_records');

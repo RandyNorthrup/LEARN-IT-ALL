@@ -1,4 +1,4 @@
-import { ALL_COURSES } from '@/lib/data/courses';
+import { PUBLISHED_COURSES } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import SettingsClient from './SettingsClient';
 
@@ -9,7 +9,7 @@ export default function SettingsPage() {
   return (
     <SettingsClient
       initialDisplayName={settings?.displayName ?? 'Learner'}
-      courses={ALL_COURSES.map((course) => ({ id: course.id, title: course.title }))}
+      courses={PUBLISHED_COURSES.map((course) => ({ id: course.id, title: course.title }))}
     />
   );
 }

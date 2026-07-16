@@ -6,16 +6,17 @@ const styles = readFileSync(path.join(process.cwd(), 'src/app/tracks/Tracks.modu
 const source = readFileSync(path.join(process.cwd(), 'src/app/tracks/page.tsx'), 'utf8');
 
 describe('learning tracks surface', () => {
-  it('links every course directly to the V2 learner path', () => {
-    expect(source).toMatch(/href=\{`\/learn\/\$\{course\.id\}`\}/);
-    expect(source).not.toMatch(/\/tracks\/\$\{track\.id\}/);
+  it('does not expose dead course links while no full path is published', () => {
+    expect(source).toContain('No complete learning paths are open yet.');
+    expect(source).toContain('role="status"');
+    expect(source).not.toContain('/learn/');
   });
 
-  it('uses touch-sized actions, visible focus, and one-column mobile sequences', () => {
-    expect(styles).toMatch(/\.courseSequence a\s*\{[^}]*min-height:\s*72px;/);
-    expect(styles).toMatch(/\.courseSequence a:focus-visible\s*\{[^}]*outline:\s*3px/);
+  it('uses touch-sized actions, visible focus, and a one-column narrow layout', () => {
+    expect(styles).toMatch(/\.empty a\s*\{[^}]*min-height:\s*46px;/);
+    expect(styles).toMatch(/\.empty a:focus-visible,[\s\S]*?outline:\s*3px/);
     expect(styles).toMatch(
-      /@media \(max-width:\s*640px\)[\s\S]*?\.courseSequence\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\);/
+      /@media \(max-width:\s*900px\)[\s\S]*?\.empty,[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\);/
     );
   });
 });

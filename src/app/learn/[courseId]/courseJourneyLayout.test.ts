@@ -47,6 +47,7 @@ describe('course journey interaction layout', () => {
     expect(metadataBody).toContain('loadCurriculumCourse(courseId).title');
     expect(metadataBody).not.toContain('loadCourse(courseId)');
     expect(metadataBody).not.toContain('loadCurriculumGraph(courseId)');
+    expect(metadataBody).toContain('isPublishedCourse(courseId)');
   });
 
   it('uses the lightweight outline instead of lesson bodies for the course map', () => {

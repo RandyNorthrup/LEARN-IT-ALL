@@ -7,6 +7,7 @@ import {
   canOpenStep,
   type StepProgressRecord,
 } from '@/core/learning/progress';
+import { isPublishedCourse } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import { readJsonRequestBody } from '@/lib/http/readJsonRequestBody';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
@@ -18,6 +19,9 @@ export async function POST(
   { params }: { params: Promise<{ courseId: string; activityId: string }> }
 ) {
   const { courseId, activityId } = await params;
+  if (!isPublishedCourse(courseId)) {
+    return NextResponse.json({ error: 'Activity not found.' }, { status: 404 });
+  }
   let activity: CurriculumActivity;
   try {
     activity = loadCurriculumActivity(courseId, activityId);

@@ -15,6 +15,7 @@ import {
   learningInputDrafts,
 } from '@/core/learning/draft';
 import { buildActivityProgress, type StepProgressRecord } from '@/core/learning/progress';
+import { isPublishedCourse } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
 
@@ -23,6 +24,7 @@ interface LearningPageProps {
 }
 
 function loadPageData(courseId: string, moduleId: string, activityId: string) {
+  if (!isPublishedCourse(courseId)) return null;
   try {
     const course = loadCurriculumCourse(courseId);
     const module = loadCurriculumModule(courseId, moduleId);

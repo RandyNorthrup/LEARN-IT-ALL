@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { loadCurriculumActivity } from '@/core/curriculum/repository';
 import type { CurriculumActivity } from '@/core/curriculum/schema';
 import { LearningDraftSchema } from '@/core/learning/submissionSchema';
+import { isPublishedCourse } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import { readJsonRequestBody } from '@/lib/http/readJsonRequestBody';
 import { storedActivityAccess } from '@/lib/learningActivityAccess';
@@ -11,6 +12,9 @@ export async function POST(
   { params }: { params: Promise<{ courseId: string; activityId: string }> }
 ) {
   const { courseId, activityId } = await params;
+  if (!isPublishedCourse(courseId)) {
+    return NextResponse.json({ error: 'Activity not found.' }, { status: 404 });
+  }
   let activity: CurriculumActivity;
   try {
     activity = loadCurriculumActivity(courseId, activityId);

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { loadCurriculumCourse, loadCurriculumOutline } from '@/core/curriculum/repository';
 import { activityAccess } from '@/core/learning/activityAccess';
 import { buildActivityProgress, type StepProgressRecord } from '@/core/learning/progress';
+import { isPublishedCourse } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import styles from './CourseJourney.module.css';
 
@@ -19,6 +20,7 @@ interface HistoricalProgressSummary {
 }
 
 function loadCourse(courseId: string) {
+  if (!isPublishedCourse(courseId)) return null;
   try {
     return loadCurriculumOutline(courseId);
   } catch {
@@ -28,6 +30,7 @@ function loadCourse(courseId: string) {
 
 export async function generateMetadata({ params }: CourseJourneyPageProps): Promise<Metadata> {
   const { courseId } = await params;
+  if (!isPublishedCourse(courseId)) return { title: 'Course not found' };
   try {
     return { title: loadCurriculumCourse(courseId).title };
   } catch {

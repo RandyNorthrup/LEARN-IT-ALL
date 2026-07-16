@@ -1,4 +1,5 @@
 import { ALL_COURSES, type CourseMetadata } from './courses';
+import { isPublishedCourse } from './publishedCourses';
 
 export interface LearningTrack {
   id: string;
@@ -247,3 +248,7 @@ export const LEARNING_TRACKS: LearningTrack[] = TRACK_TARGETS.map((track) => {
 
   return { ...track, courses, estimatedHours: Math.round(estimatedHours * 10) / 10 };
 });
+
+export const PUBLISHED_LEARNING_TRACKS = LEARNING_TRACKS.filter((track) =>
+  track.courses.every(isPublishedCourse)
+);

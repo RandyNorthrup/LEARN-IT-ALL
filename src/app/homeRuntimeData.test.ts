@@ -5,10 +5,9 @@ import { describe, expect, it } from 'vitest';
 const home = readFileSync(path.join(process.cwd(), 'src/app/page.tsx'), 'utf8');
 
 describe('home runtime curriculum loading', () => {
-  it('loads only the course and first mission instead of the complete activity graph', () => {
-    expect(home).toContain("loadCurriculumCourse('responsive-web-design')");
-    expect(home).toContain('loadCurriculumModule(course.id, firstModuleId)');
-    expect(home).toContain('loadCurriculumActivity(course.id, firstActivityId)');
-    expect(home).not.toContain('loadCurriculumGraph');
+  it('does not hard-code or load an audit-required course as a mission', () => {
+    expect(home).not.toContain('responsive-web-design');
+    expect(home).not.toContain('loadCurriculum');
+    expect(home).toContain('No courses are open yet.');
   });
 });
