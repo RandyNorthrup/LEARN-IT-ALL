@@ -335,73 +335,40 @@ const projects = [
     currentState: 'planned-not-authored',
   },
   {
-    id: 'museum-object-comparison',
-    title: 'Museum Object Comparison Collection',
-    scenarioDomain: 'museum-collection-access',
+    id: 'neighborhood-history-exhibit',
+    title: 'Neighborhood History Evidence Exhibit',
+    scenarioDomain: 'local-history-interpretation',
     stakeholderNeed:
-      'A small museum needs visitors to compare objects with unpredictable titles, missing images, varied metadata, and touch or keyboard input across a reusable collection component.',
+      'A neighborhood archive needs visitors to understand one consequential local event through sourced records, images, quotations, dates, and uncertainty without turning commemoration into unsupported praise.',
     artifact:
-      'A flexible, accessible object-comparison collection with multiple content states and evidence controls.',
-    placementAfterModuleId: 'css-flexible-layout',
+      'A semantic, sourced, accessible interpretive exhibit with a readable visual system and explicit evidence limits.',
+    placementAfterModuleId: 'css-type-color-and-design',
     conceptIds: [
       'html-images-purpose-alt',
-      'html-source-order-keyboard',
-      'css-box-sizing-models',
+      'html-figures-captions',
+      'html-quotations-citations',
+      'html-time-machine-values',
+      'html-sectioning-articles',
+      'css-readable-measure-alignment',
       'css-contrast-noncolor-meaning',
-      'css-flex-basis-grow-shrink',
-      'css-flex-order-accessibility',
-      'css-flex-component-transfer',
+      'design-user-needs-task-flows',
+      'css-visual-hierarchy-spacing',
     ],
-    sourceObjectiveIds: ['fcc-v9-lab-page-of-playing-cards'],
+    sourceObjectiveIds: ['fcc-v9-lab-tribute-page'],
     requirements: [
-      'Preserve source, reading, and focus order while cards wrap and compare at changed sizes.',
-      'Handle long titles, missing images, optional metadata, one item, and many items without fixed-height clipping.',
-      'Make selection and comparison state perceivable without color alone.',
-      'Use flex sizing and spacing from content constraints instead of copied card dimensions.',
-      'Explain image alternatives, basis, minimum size, wrapping, alignment, and retained semantic choices.',
+      'Build the narrative from supplied primary and secondary records while marking disputed, inferred, and unknown claims.',
+      'Use headings, sections, figures, quotations, citations, and machine-readable dates according to their actual relationships.',
+      'Write image alternatives that distinguish informative evidence from adjacent-caption repetition and decoration.',
+      'Create readable type, measure, spacing, emphasis, and color roles that remain usable without color and under zoom.',
+      'Replace one contradicted record and defend every resulting content, semantic, and visual revision.',
     ],
     evidence: [
-      'Changed item-count and content behavior checks',
-      'Keyboard, focus, and non-color state inspection',
-      'Flex sizing and component-selection defense',
+      'Source-to-claim trace with uncertainty and correction record',
+      'Semantic, image-alternative, reading-order, contrast, and zoom inspection',
+      'Hierarchy, typography, content-selection, and residual-risk defense',
     ],
     starterPolicy:
-      'Supply only structured museum content fixtures and acceptance constraints; learner creates markup and CSS without a card-workshop starter.',
-    currentState: 'planned-not-authored',
-  },
-  {
-    id: 'public-library-availability-explorer',
-    title: 'Public Library Availability Explorer',
-    scenarioDomain: 'public-library-inventory',
-    stakeholderNeed:
-      'A public library needs patrons to scan item availability, format, audience, and branch relationships in dense data without losing context, contrast, or meaning.',
-    artifact:
-      'A semantic inventory and comparison interface with attribute-driven states and a responsive data layout.',
-    placementAfterModuleId: 'css-grid-and-positioning',
-    conceptIds: [
-      'html-table-structure',
-      'html-table-header-associations',
-      'css-attribute-selectors',
-      'css-contrast-noncolor-meaning',
-      'css-grid-explicit-tracks-fr',
-      'css-grid-template-areas',
-      'css-grid-auto-placement-dense',
-    ],
-    sourceObjectiveIds: ['fcc-v9-lab-book-inventory-app'],
-    requirements: [
-      'Represent inventory relationships with table or grid semantics chosen from the actual comparison task.',
-      'Style exact and tokenized data states without substring false positives.',
-      'Keep status, selection, and exceptions distinguishable without color-only evidence.',
-      'Preserve reading and focus order when visual regions or dense details move.',
-      'Diagnose one cascade, placement, overflow, or stacking defect through recorded browser evidence.',
-    ],
-    evidence: [
-      'Attribute changed-case and false-positive tests',
-      'Header-context, source-order, contrast, and zoom review',
-      'Causal CSS defect report and repaired regression case',
-    ],
-    starterPolicy:
-      'Provide only anonymized deterministic inventory records; no balance-sheet or book-inventory markup, styles, selector sequence, or layout recipe is reused.',
+      'Supply a bounded evidence packet and stakeholder constraints only; no tribute-page prose, markup, visual recipe, requirement order, or final solution is provided.',
     currentState: 'planned-not-authored',
   },
   {
@@ -448,7 +415,7 @@ const projects = [
       'A nonprofit energy cooperative needs residents to understand a complex program, compare commitments, enroll confidently, and verify claims across devices, preferences, and failure conditions.',
     artifact:
       'An independently researched, designed, built, tested, and defended multi-page responsive program experience.',
-    placementAfterModuleId: 'css-independent-project',
+    placementAfterModuleId: 'css-interaction-accessibility-and-motion',
     conceptIds: [
       'html-discovery-metadata',
       'html-form-errors-recovery',
@@ -460,7 +427,6 @@ const projects = [
       'responsive-container-query-units',
       'css-reduced-motion-preference',
       'css-changed-case-regression',
-      'css-independent-transfer-defense',
     ],
     sourceObjectiveIds: ['fcc-v9-lab-product-landing-page'],
     requirements: [
@@ -478,6 +444,47 @@ const projects = [
     ],
     starterPolicy:
       'Start from research evidence, content, and acceptance criteria only; no landing-page starter, workshop layout, requirement sequence, styling recipe, or final solution is provided.',
+    currentState: 'planned-not-authored',
+  },
+  {
+    id: 'professional-evidence-portfolio',
+    title: 'Professional Evidence Portfolio',
+    scenarioDomain: 'professional-practice-evidence',
+    stakeholderNeed:
+      "A real prospective collaborator needs to understand the learner's verified capabilities, decisions, work samples, limits, and contact path without invented projects, fake metrics, dead controls, or inaccessible presentation.",
+    artifact:
+      "A truthful multi-page portfolio built from the learner's completed evidence and independently defended across content, design, behavior, accessibility, responsiveness, and performance.",
+    placementAfterModuleId: 'css-independent-project',
+    conceptIds: [
+      'html-discovery-metadata',
+      'html-sectioning-articles',
+      'html-form-errors-recovery',
+      'design-brief-handoff-artifacts',
+      'css-cascade-layers-scope',
+      'css-grid-template-areas',
+      'responsive-navigation-disclosure',
+      'responsive-test-matrix',
+      'css-reduced-motion-preference',
+      'css-rendering-performance-stability',
+      'css-changed-case-regression',
+      'css-independent-transfer-defense',
+    ],
+    sourceObjectiveIds: ['fcc-v9-lab-personal-portfolio'],
+    requirements: [
+      'Use only real completed work, inspectable evidence, truthful capability claims, and explicit limits or in-progress labels.',
+      'Provide meaningful page identity, project narratives, decision evidence, working navigation, and a usable contact or contact-alternative path.',
+      'Build an original visual and layout system that survives changed project counts, long titles, missing media, zoom, and narrow containers.',
+      'Preserve keyboard order, focus visibility, target size, contrast, reduced-motion equivalence, forced colors, and non-screen output.',
+      'Measure and repair rendering stability and performance without deleting essential content or accessibility behavior.',
+      'Defend stakeholder fit, source and layout architecture, tests, rejected alternatives, evidence limits, and residual risks.',
+    ],
+    evidence: [
+      'Real artifact and claim-provenance review with working-link and contact-path checks',
+      'Responsive, keyboard, accessibility, preference, changed-content, and performance evidence suite',
+      'Independent design, implementation, test-limit, and professional-practice defense',
+    ],
+    starterPolicy:
+      "Begin from the learner's own reviewed evidence and a blank project; no fake case study, portfolio shell, workshop source, layout recipe, requirement sequence, or final solution is supplied.",
     currentState: 'planned-not-authored',
   },
 ].map((project) => {
@@ -499,6 +506,26 @@ for (const project of projects) {
       throw new Error(`${project.id} uses unknown concept ${conceptId}.`);
   }
 }
+
+const explicitRetrievalEdges = modules.flatMap((module) =>
+  module.retrievalConceptIds.map((conceptId) => `${conceptId}::${module.id}`)
+);
+const declaredRetentionEdges = concepts.flatMap((concept) =>
+  concept.retainedInModuleIds.map((moduleId) => `${concept.id}::${moduleId}`)
+);
+const explicitRetrievalEdgeSet = new Set(explicitRetrievalEdges);
+const declaredRetentionEdgeSet = new Set(declaredRetentionEdges);
+const disconnectedRetentionEdgeCount = declaredRetentionEdges.filter(
+  (edge) => !explicitRetrievalEdgeSet.has(edge)
+).length;
+const undeclaredRetrievalEdgeCount = explicitRetrievalEdges.filter(
+  (edge) => !declaredRetentionEdgeSet.has(edge)
+).length;
+const conceptsOnlyRetainedAtTerminalCount = concepts.filter(
+  (concept) =>
+    concept.retainedInModuleIds.length === 1 &&
+    ['html-independent-project', 'css-independent-project'].includes(concept.retainedInModuleIds[0])
+).length;
 
 const architecture = {
   schemaVersion: 1,
@@ -526,10 +553,11 @@ const architecture = {
     'The proposed 17-module concept sequence replaces the current 29-module benchmark-shaped order; external block identity remains coverage evidence rather than learner navigation architecture.',
     'The current computer-basics-first module and its thirteen-activity barrier are removed from the target architecture; twelve bounded computer, file, browser, account-safety, search, DevTools, and research competencies enter in a just-in-time module immediately after the first HTML edit.',
     'HTML semantics, accessibility, source order, validation, and changed-case habits remain retrieval and correctness constraints throughout CSS, responsive, interaction, and project work.',
-    'Five certification project benchmarks become distinct original stakeholder transfers with different domains, artifacts, requirements, concepts, evidence, placement, and empty-start policies.',
+    'The five actual certification-project benchmarks are survey form, tribute page, technical documentation, product landing page, and personal portfolio; each now has a distinct original stakeholder transfer with different domains, artifacts, requirements, evidence, placement, and empty-start policy.',
   ],
   gaps: [
-    `${unmappedSourceObjectiveIds.length} source objectives remain outside module coverage until bounded concept inspection replaces their explicit unmapped state.`,
+    `${unmappedSourceObjectiveIds.length} source objective remains non-specific because the external certification exam exposes no reviewable item bank; LEARN-IT-ALL must author and validate its own blueprint, item bank, forms, scoring, correction, security, and standard-setting evidence without guessing external coverage.`,
+    `The concept graphs declare ${declaredRetentionEdges.length} retention edges, but ${disconnectedRetentionEdgeCount} are absent from the target module retrieval declarations; ${undeclaredRetrievalEdgeCount} module retrieval edges are not declared by their concepts, and ${conceptsOnlyRetainedAtTerminalCount} concepts defer all named retention to a terminal project. Replace this disconnected metadata with an activity-level reinforcement schedule before authoring.`,
     'Subject and instructional reviewers must inspect every module boundary, cross-concept prerequisite, retrieval choice, artifact accumulation, and new-complexity limit.',
     'Every concept still needs a complete original I-G-F-R-A-T activity matrix with debugging, correction, delayed retention, and changed-case grading.',
     'All five project briefs need stakeholder, accessibility, assessment, originality, runtime, and representative-learner review before authoring.',

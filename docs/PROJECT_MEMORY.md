@@ -92,6 +92,7 @@ Current research artifacts:
 - `docs/research/courses/responsive-web-design-css-concepts.json`
 - `docs/research/courses/responsive-web-design-concept-alignment.json`
 - `docs/research/courses/responsive-web-design-course-architecture.json`
+- `docs/research/courses/responsive-web-design-architecture-audit.md`
 - block-inspection notes under `docs/research/courses/`
 
 Current candidate graph:
@@ -109,6 +110,8 @@ Current candidate graph:
 - 7 unresolved concepts;
 - 7 explicit modern extensions not credited to the benchmark;
 - candidate architecture of 17 cumulative modules and 5 original project briefs.
+
+The 2026-07-16 internal architecture audit blocks scaled authoring. It corrected the project provenance to the five actual certification benchmarks: Survey Form, Tribute Page, Technical Documentation Page, Product Landing Page, and Personal Portfolio. It also found that the 17-module graph is only a macro-sequence: its beginner opening remains too abstract, several CSS buckets are overloaded, 201 of 217 retention edges are disconnected from module retrieval declarations, 47 retrieval declarations lack matching concept retention, 161 concepts defer all named retention to a terminal project, and 121 concepts have neither explicit later retrieval nor project use. Exact concept-title and objective duplication is zero; learner-content duplication is not yet testable because authored learner content remains zero.
 
 All mappings remain `candidate-review`. All modules and projects remain `planned-not-authored`. Source capture and agent inspection are not independent subject review, authored teaching, assessment validity, accessibility proof, retention evidence, or learner success.
 
@@ -192,6 +195,7 @@ Pushed milestones:
 - 2026-07-16 CSS Animations verification — reproducibility gate passes; focused research contracts pass 1 file / 55 tests; full test suite passes 47 files / 245 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 99 sources and intentionally retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 - 2026-07-16 CSS review and certification-boundary research wave — inspect the 59,198-byte CSS review and 296-byte exam container; record all 59 exposed answer-sheet headings and zero review prompts/checks; correct cascade, unit, margin, design-pattern, typography, Flex, positioning, z-index, device-band, responsive-image, custom-property, and motion shortcuts; replace rereading with retrieve-first interleaved prediction, build, diagnosis, correction, and delay; add IES learning guidance, AERA/APA/NCME testing standards, and ETS evidence-centered design; keep the unavailable external exam item bank at zero concepts with a hard validity blocker. Challenge-level inspection now covers all 158 blocks, 1,553 challenges, 1,365 prompts, and 5,163 checks; 157 blocks have bounded maps, zero remain `unmapped-source`, and the exam remains one inspected `assessment-container`.
 - 2026-07-16 complete source-inspection verification — reproducibility gate passes; focused research contracts pass 1 file / 57 tests; full test suite passes 47 files / 247 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 103 sources and intentionally retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held. Source inspection is complete; independent review, authoring, assessment validation, runtime, accessibility, duplication, pilots, retention, transfer, and publication remain open.
+- 2026-07-16 architecture-audit milestone — correct the five project briefs to the five actual certification-project sources; add the blocking internal order, reinforcement, activity-depth, assessment-boundary, and duplication audit; prove the current 17-module graph remains a macro-sequence rather than learner-ready architecture. Focused research contracts pass 1 file / 58 tests; RWD reproducibility and the 103-source research audit pass; full tests pass 47 files / 248 tests; type-check, normal lint, warning-failing strict lint, and the Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. No learner UI changed, so no browser flow was manufactured. Lighthouse remains held.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -230,9 +234,9 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Independently review the complete RWD concept graph and all 158 bounded source records for subject accuracy, omissions, duplication, prerequisite order, and mapping overclaim.
-2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
-3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
+1. Repair the RWD beginner order and overloaded macro-modules, then replace the disconnected retention/retrieval metadata with one complete activity-level evidence matrix.
+2. Independently review all 158 bounded source records plus the repaired concept, activity, project, and assessment plans for subject accuracy, omissions, duplication, prerequisite order, accessibility, and mapping overclaim.
+3. Author and pilot the independently reviewed true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
 5. Finish cohesive navigation, real mastery/progress, isolated runtimes, persistence, correction, and accessible responsive learner flows; research current C and TypeScript learner runtimes before restoring either file contract.
 6. Run representative learner pilots, repair findings, and repeat all release gates.
@@ -240,4 +244,4 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Blockers
 
-No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 31 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.
+No external execution blocker is currently recorded. Release is blocked by 53 missing course dossiers; the RWD beginner-order, module-load, retention/retrieval, activity-matrix, and assessment-plan findings; seven unresolved RWD concepts; seven unapproved modern extensions; one unavailable external exam item bank; missing independent reviews; zero authored/published courses; an unverified CodeMirror learner flow; missing approved C and TypeScript runtimes; unfinished editor diagnostics, progress, and navigation integration; and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.

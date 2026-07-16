@@ -4347,6 +4347,39 @@ describe('research contracts', () => {
     ).toBe(true);
     expect(new Set(architecture.projects.map((project) => project.scenarioDomain))).toHaveLength(5);
     expect(
+      architecture.projects.map((project) => ({
+        projectId: project.id,
+        sourceObjectiveId: project.sourceObjectiveIds[0],
+        placementAfterModuleId: project.placementAfterModuleId,
+      }))
+    ).toEqual([
+      {
+        projectId: 'community-support-intake',
+        sourceObjectiveId: 'fcc-v9-lab-survey-form',
+        placementAfterModuleId: 'html-independent-project',
+      },
+      {
+        projectId: 'neighborhood-history-exhibit',
+        sourceObjectiveId: 'fcc-v9-lab-tribute-page',
+        placementAfterModuleId: 'css-type-color-and-design',
+      },
+      {
+        projectId: 'emergency-preparedness-field-guide',
+        sourceObjectiveId: 'fcc-v9-lab-technical-documentation-page',
+        placementAfterModuleId: 'responsive-systems',
+      },
+      {
+        projectId: 'community-energy-program-launch',
+        sourceObjectiveId: 'fcc-v9-lab-product-landing-page',
+        placementAfterModuleId: 'css-interaction-accessibility-and-motion',
+      },
+      {
+        projectId: 'professional-evidence-portfolio',
+        sourceObjectiveId: 'fcc-v9-lab-personal-portfolio',
+        placementAfterModuleId: 'css-independent-project',
+      },
+    ]);
+    expect(
       new Set(
         architecture.projects.flatMap((project) => [
           ...project.sourceObjectiveIds,
@@ -4373,6 +4406,84 @@ describe('research contracts', () => {
         }
       }
     }
+  });
+
+  it('records the blocking RWD architecture, reinforcement, and duplication audit honestly', () => {
+    const audit = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-architecture-audit.md'
+      ),
+      'utf8'
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const concepts = [
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(
+            repositoryRoot,
+            'docs/research/courses/responsive-web-design-html-concepts.json'
+          )
+        )
+      ),
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+        )
+      ),
+    ].flatMap((graph) => graph.concepts);
+    const declaredRetentionEdges = concepts.flatMap((concept) =>
+      concept.retainedInModuleIds.map((moduleId) => `${concept.id}::${moduleId}`)
+    );
+    const explicitRetrievalEdges = architecture.modules.flatMap((module) =>
+      module.retrievalConceptIds.map((conceptId) => `${conceptId}::${module.id}`)
+    );
+    const declaredRetentionEdgeSet = new Set(declaredRetentionEdges);
+    const explicitRetrievalEdgeSet = new Set(explicitRetrievalEdges);
+    const projectConceptIds = new Set(
+      architecture.projects.flatMap((project) => project.conceptIds)
+    );
+    const retrievedConceptIds = new Set(
+      architecture.modules.flatMap((module) => module.retrievalConceptIds)
+    );
+
+    expect(audit.length).toBeGreaterThan(12_000);
+    expect(audit).toContain('blocking internal second-pass audit; not independent approval');
+    expect(audit).toContain('the project provenance was wrong and is now repaired');
+    expect(audit).toContain('the beginner opening is still too abstract');
+    expect(audit).toContain('the retention graph is disconnected from the retrieval graph');
+    expect(audit).toContain('the external exam cannot validate LEARN-IT-ALL certification');
+    expect(audit).toContain('content duplication is untestable');
+    expect(audit).toContain('Until then, the correct state is **researching');
+    expect(declaredRetentionEdges).toHaveLength(217);
+    expect(explicitRetrievalEdges).toHaveLength(63);
+    expect(
+      declaredRetentionEdges.filter((edge) => !explicitRetrievalEdgeSet.has(edge))
+    ).toHaveLength(201);
+    expect(
+      explicitRetrievalEdges.filter((edge) => !declaredRetentionEdgeSet.has(edge))
+    ).toHaveLength(47);
+    expect(
+      concepts.filter(
+        (concept) =>
+          concept.retainedInModuleIds.length === 1 &&
+          ['html-independent-project', 'css-independent-project'].includes(
+            concept.retainedInModuleIds[0]
+          )
+      )
+    ).toHaveLength(161);
+    expect(
+      concepts.filter(
+        (concept) => !retrievedConceptIds.has(concept.id) && !projectConceptIds.has(concept.id)
+      )
+    ).toHaveLength(121);
   });
 
   it('rejects a research architecture that assigns project work before instruction', () => {
