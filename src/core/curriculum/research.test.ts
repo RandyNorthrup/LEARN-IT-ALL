@@ -457,7 +457,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 22 source blocks');
+    expect(content).toContain('The remaining 21 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -622,7 +622,7 @@ describe('research contracts', () => {
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
     expect(content).toContain('The complete 180-concept');
-    expect(content).toContain('The remaining 22 source blocks');
+    expect(content).toContain('The remaining 21 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -718,7 +718,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 22 blocks');
+    expect(content).toContain('The remaining 21 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -891,7 +891,7 @@ describe('research contracts', () => {
     expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
     expect(content).toContain('creates a CSS generated image value and no DOM element');
     expect(content).toContain('Class order in an HTML `class` attribute does not decide');
-    expect(content).toContain('remaining 22 source blocks');
+    expect(content).toContain('remaining 21 source blocks');
     expect(content).toContain('Keyword presence, a notation-matching regular expression');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
@@ -1011,7 +1011,7 @@ describe('research contracts', () => {
     expect(content).toContain('seven blocks, 84 challenges, 19 question prompts');
     expect(content).toContain("The benchmark's claim that `required` does not work");
     expect(content).toContain('This is direct instructional duplication');
-    expect(content).toContain('remaining 22 source blocks');
+    expect(content).toContain('remaining 21 source blocks');
     expect(content).toContain('`appearance: none` suppresses the native appearance');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toContain('rwd-css-ui-four');
@@ -1212,7 +1212,7 @@ describe('research contracts', () => {
     expect(content).toContain('A blurred secret is exposed data, not redaction');
     expect(content).toContain('false for mixed or all-negative margins');
     expect(content).toContain('`hidden` and `clip` are absent as distinct behavior models');
-    expect(content).toContain('remaining 22 source blocks');
+    expect(content).toContain('remaining 21 source blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toEqual(
       expect.arrayContaining([
@@ -2439,6 +2439,119 @@ describe('research contracts', () => {
     });
   });
 
+  it('records the complete Technical Documentation lab inspection and current navigation evidence', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-technical-documentation-lab-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+
+    expect(content).toContain('15 user stories, and 22 checks');
+    expect(content).toContain('Complete check audit');
+    expect(content).toContain('Static DOM, text, count, order, and attribute checks | 20');
+    expect(content).toContain('21 total source blocks still requiring challenge-level inspection');
+    expect(content.length).toBeGreaterThan(20_000);
+    expect(dossier.sources.find((source) => source.id === 'rwd-css-scroll-snap-one')).toMatchObject(
+      {
+        authority: 'standard',
+        reviewedAt: '2026-07-16',
+      }
+    );
+    expect(
+      dossier.sources.find(
+        (source) => source.id === 'rwd-fcc-technical-documentation-lab-inspection'
+      )
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    for (const decisionId of [
+      'rwd-content-driven-responsive',
+      'rwd-accessibility-cumulative',
+      'rwd-behavioral-grading',
+    ]) {
+      expect(dossier.decisions.find((decision) => decision.id === decisionId)).toMatchObject({
+        sourceIds: expect.arrayContaining([
+          'rwd-css-scroll-snap-one',
+          'rwd-fcc-technical-documentation-lab-inspection',
+        ]),
+      });
+    }
+  });
+
+  it('keeps the Technical Documentation lab exact and removes unsupported transfer credit', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const alignment = matrix.alignments.find(
+      (candidate) => candidate.sourceBlockSlug === 'lab-technical-documentation-page'
+    );
+
+    expect(alignment).toMatchObject({
+      sourceActivityType: 'lab',
+      sourceChallengeCount: 1,
+      mappingBasis: 'block-specific-source',
+      inspectionState: 'agent-inspected',
+      conceptIds: [
+        'html-document-root-head-body',
+        'html-document-language',
+        'html-character-encoding',
+        'html-title-metadata',
+        'html-files-paths-urls',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-heading-hierarchy',
+        'html-lists',
+        'html-code-preformatted-text',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-source-order-keyboard',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-box-sizing-models',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-overflow-containment-scroll',
+        'css-type-scale-line-height',
+        'css-text-wrap-spacing-decoration',
+        'css-positioning-containing-blocks',
+        'responsive-fluid-default',
+        'responsive-media-query-model',
+      ],
+    });
+    expect(alignment?.sourceEvidence).toMatchObject({
+      hintCheckCount: 22,
+      quizQuestionCount: 0,
+      sourceBytes: 30_275,
+      challengeIds: ['587d78b0367417b2b2512b05'],
+      sourceFileSha256s: ['10ef4c6e95177a0545569cae35582838328e28951cc10567f901cd6c3e283904'],
+    });
+    expect(alignment?.conceptIds).not.toEqual(
+      expect.arrayContaining([
+        'responsive-content-breakpoints',
+        'responsive-mobile-first-enhancement',
+        'responsive-navigation-disclosure',
+        'responsive-test-matrix',
+        'css-zoom-reflow-text-spacing',
+        'css-independent-transfer-defense',
+      ])
+    );
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -2494,7 +2607,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 101]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(136);
+    ).toHaveLength(137);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -3262,10 +3375,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(140);
+    ).toHaveLength(141);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(17);
+    ).toHaveLength(16);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -3423,8 +3536,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(184);
-    expect(architecture.sourceObjectiveIds).toHaveLength(140);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(18);
+    expect(architecture.sourceObjectiveIds).toHaveLength(141);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(17);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
