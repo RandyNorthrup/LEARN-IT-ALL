@@ -1227,6 +1227,308 @@ export const ResearchActivityMatrixSchema = z
     }
   });
 
+const StepDesignRoleSchema = z.enum([
+  'model',
+  'workshop',
+  'faded',
+  'debug',
+  'lab',
+  'review',
+  'assessment',
+]);
+
+const StepDesignEvidenceKindSchema = z.enum([
+  'state-distinction',
+  'responsibility-classification',
+  'source-preview-prediction',
+  'artifact-persistence',
+  'element-anatomy',
+  'rendered-text-prediction',
+  'dom-tree',
+  'dom-relationship',
+  'content-model-decision',
+  'semantic-choice',
+  'dom-behavior',
+  'parser-diagnostic',
+  'changed-case',
+  'causal-explanation',
+  'design-defense',
+]);
+
+const StepDesignLayoutSchema = z.enum([
+  'worked-example',
+  'source-preview',
+  'source-tree-preview',
+  'classification-board',
+  'relationship-map',
+  'debug-console',
+  'independent-studio',
+  'retrieval-board',
+  'assessment-studio',
+]);
+
+const StepDesignSupportSchema = z.enum([
+  'worked-guidance',
+  'guided-hints',
+  'faded-hints',
+  'on-request-hints',
+  'no-assessment-hints',
+]);
+
+const ActivityStepDesignSchema = z.object({
+  id: IdentifierSchema,
+  order: z.number().int().positive(),
+  clusterId: IdentifierSchema,
+  mode: PlannedInteractionModeSchema,
+  title: z.string().min(8),
+  learnerAction: z.string().min(30),
+  conceptIds: z.array(IdentifierSchema).min(1),
+  reinforcesConceptIds: z.array(IdentifierSchema),
+  artifactChange: z.string().min(20),
+  evidence: z.object({
+    kind: StepDesignEvidenceKindSchema,
+    observable: z.string().min(30),
+    changedCase: z.string().min(25).optional(),
+  }),
+  feedbackTarget: z.string().min(25),
+  correctionRoute: z.string().min(25),
+  layout: StepDesignLayoutSchema,
+  support: StepDesignSupportSchema,
+});
+
+export const ResearchModuleStepDesignSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    moduleId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    state: z.literal('planned-not-authored'),
+    sourceArtifacts: z.array(z.string().min(20)).min(3),
+    conceptIds: z.array(IdentifierSchema).min(1),
+    conceptClusters: z
+      .array(
+        z.object({
+          id: IdentifierSchema,
+          title: z.string().min(8),
+          conceptIds: z.array(IdentifierSchema).min(1),
+          prerequisiteClusterIds: z.array(IdentifierSchema),
+          exitEvidence: z.array(z.string().min(30)).min(2),
+        })
+      )
+      .min(2),
+    activityDeliveryOrder: z.tuple([
+      z.literal('model'),
+      z.literal('workshop'),
+      z.literal('faded'),
+      z.literal('debug'),
+      z.literal('lab'),
+      z.literal('review'),
+      z.literal('assessment'),
+    ]),
+    activityDesigns: z
+      .array(
+        z.object({
+          activityId: IdentifierSchema,
+          role: StepDesignRoleSchema,
+          scenarioDomain: IdentifierSchema,
+          plannedInteractions: z.number().int().positive(),
+          cumulativeArtifact: z.string().min(40),
+          startingState: z.string().min(30),
+          completionState: z.string().min(40),
+          feedbackContract: z.string().min(50),
+          hintContract: z.string().min(40),
+          correctionContract: z.string().min(50),
+          interactions: z.array(ActivityStepDesignSchema).min(1),
+        })
+      )
+      .length(7),
+    authorshipBoundary: z.object({
+      learnerFacingCopyAuthored: z.literal(false),
+      starterCodeAuthored: z.literal(false),
+      canonicalAnswersAuthored: z.literal(false),
+      interpretation: z.string().min(60),
+    }),
+    gaps: z.array(z.string().min(30)),
+  })
+  .superRefine((design, context) => {
+    const expectedRoles = [
+      'model',
+      'workshop',
+      'faded',
+      'debug',
+      'lab',
+      'review',
+      'assessment',
+    ] as const;
+    const rejectDuplicates = (values: string[], message: string, path: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+
+    rejectDuplicates(design.conceptIds, 'Step design repeats module concepts', ['conceptIds']);
+    rejectDuplicates(
+      design.conceptClusters.map((cluster) => cluster.id),
+      'Step design repeats concept cluster IDs',
+      ['conceptClusters']
+    );
+    rejectDuplicates(
+      design.conceptClusters.flatMap((cluster) => cluster.conceptIds),
+      'Step design assigns a concept to multiple clusters',
+      ['conceptClusters']
+    );
+    rejectDuplicates(
+      design.activityDesigns.map((activity) => activity.activityId),
+      'Step design repeats activity IDs',
+      ['activityDesigns']
+    );
+    rejectDuplicates(
+      design.activityDesigns.flatMap((activity) =>
+        activity.interactions.map((interaction) => interaction.id)
+      ),
+      'Step design repeats interaction IDs',
+      ['activityDesigns']
+    );
+
+    if (
+      design.conceptClusters.flatMap((cluster) => cluster.conceptIds).join(',') !==
+      design.conceptIds.join(',')
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Step design clusters must cover module concepts once and in module order',
+        path: ['conceptClusters'],
+      });
+    }
+    const actualRoles = design.activityDesigns.map((activity) => activity.role);
+    rejectDuplicates(actualRoles, 'Step design repeats activity roles', ['activityDesigns']);
+    if (!expectedRoles.every((role) => actualRoles.includes(role))) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Step design activity roles must be complete',
+        path: ['activityDesigns'],
+      });
+    }
+
+    const clusterIds = design.conceptClusters.map((cluster) => cluster.id);
+    for (const [clusterIndex, cluster] of design.conceptClusters.entries()) {
+      for (const prerequisiteId of cluster.prerequisiteClusterIds) {
+        const prerequisiteIndex = clusterIds.indexOf(prerequisiteId);
+        if (prerequisiteIndex < 0 || prerequisiteIndex >= clusterIndex) {
+          context.addIssue({
+            code: 'custom',
+            message: `Step design cluster ${cluster.id} has an unknown or non-prior prerequisite`,
+            path: ['conceptClusters', clusterIndex, 'prerequisiteClusterIds'],
+          });
+        }
+      }
+    }
+
+    const evidenceConceptsByRole = new Map<string, Set<string>>();
+    for (const [activityIndex, activity] of design.activityDesigns.entries()) {
+      if (activity.interactions.length !== activity.plannedInteractions) {
+        context.addIssue({
+          code: 'custom',
+          message: `Step design ${activity.activityId} interaction count is not decomposed exactly`,
+          path: ['activityDesigns', activityIndex, 'interactions'],
+        });
+      }
+      evidenceConceptsByRole.set(activity.role, new Set());
+      rejectDuplicates(
+        activity.interactions.map((interaction) => interaction.learnerAction),
+        `Step design ${activity.activityId} repeats learner actions`,
+        ['activityDesigns', activityIndex, 'interactions']
+      );
+      for (const [interactionIndex, interaction] of activity.interactions.entries()) {
+        if (interaction.order !== interactionIndex + 1) {
+          context.addIssue({
+            code: 'custom',
+            message: `Step design ${activity.activityId} interaction order is not contiguous`,
+            path: ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'order'],
+          });
+        }
+        if (!clusterIds.includes(interaction.clusterId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Step design interaction ${interaction.id} references an unknown cluster`,
+            path: ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'clusterId'],
+          });
+        }
+        const interactionConcepts = [
+          ...interaction.conceptIds,
+          ...interaction.reinforcesConceptIds,
+        ];
+        rejectDuplicates(
+          interactionConcepts,
+          `Step design interaction ${interaction.id} repeats concepts`,
+          ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'conceptIds']
+        );
+        for (const conceptId of interactionConcepts) {
+          if (!design.conceptIds.includes(conceptId)) {
+            context.addIssue({
+              code: 'custom',
+              message: `Step design interaction ${interaction.id} references an unknown concept`,
+              path: [
+                'activityDesigns',
+                activityIndex,
+                'interactions',
+                interactionIndex,
+                'conceptIds',
+              ],
+            });
+          }
+        }
+        for (const conceptId of interaction.conceptIds) {
+          evidenceConceptsByRole.get(activity.role)?.add(conceptId);
+        }
+        if (
+          ['dom-behavior', 'parser-diagnostic', 'changed-case', 'artifact-persistence'].includes(
+            interaction.evidence.kind
+          ) &&
+          !interaction.evidence.changedCase
+        ) {
+          context.addIssue({
+            code: 'custom',
+            message: `Step design interaction ${interaction.id} lacks changed-case evidence`,
+            path: ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'evidence'],
+          });
+        }
+        if (activity.role === 'assessment' && interaction.support !== 'no-assessment-hints') {
+          context.addIssue({
+            code: 'custom',
+            message: `Assessment interaction ${interaction.id} exposes instructional hints`,
+            path: ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'support'],
+          });
+        }
+      }
+    }
+
+    for (const role of expectedRoles) {
+      const missingConcepts = design.conceptIds.filter(
+        (conceptId) => !evidenceConceptsByRole.get(role)?.has(conceptId)
+      );
+      if (missingConcepts.length > 0) {
+        const activityIndex = design.activityDesigns.findIndex(
+          (activity) => activity.role === role
+        );
+        context.addIssue({
+          code: 'custom',
+          message: `Step design ${role} role omits module concepts: ${missingConcepts.join(', ')}`,
+          path: ['activityDesigns', activityIndex, 'interactions'],
+        });
+      }
+    }
+
+    if (design.status === 'approved' && design.gaps.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Approved step design cannot retain gaps',
+        path: ['gaps'],
+      });
+    }
+  });
+
 const AssessmentEvidenceModeSchema = z.enum([
   'predict',
   'code-read',
@@ -1710,6 +2012,7 @@ export type ExternalObjectiveConceptAlignment = z.infer<
 >;
 export type ResearchCourseArchitecture = z.infer<typeof ResearchCourseArchitectureSchema>;
 export type ResearchActivityMatrix = z.infer<typeof ResearchActivityMatrixSchema>;
+export type ResearchModuleStepDesign = z.infer<typeof ResearchModuleStepDesignSchema>;
 export type ResearchAssessmentBlueprint = z.infer<typeof ResearchAssessmentBlueprintSchema>;
 export type ResearchCompetencyEvidenceMatrix = z.infer<
   typeof ResearchCompetencyEvidenceMatrixSchema

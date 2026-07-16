@@ -14,6 +14,7 @@ import {
   ResearchAuthoritySchema,
   ResearchCompetencyEvidenceMatrixSchema,
   ResearchCourseArchitectureSchema,
+  ResearchModuleStepDesignSchema,
 } from './research';
 
 const repositoryRoot = process.cwd();
@@ -4571,6 +4572,136 @@ describe('research contracts', () => {
     expect(
       inflatedResult.error?.issues.some((issue) => issue.message.includes('planned workshopSteps'))
     ).toBe(true);
+  });
+
+  it('decomposes the first RWD module into 203 original evidence-bearing interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-first-content-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.state).toBe('planned-not-authored');
+    expect(design.conceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.activityDeliveryOrder).toEqual([
+      'model',
+      'workshop',
+      'faded',
+      'debug',
+      'lab',
+      'review',
+      'assessment',
+    ]);
+    expect(design.authorshipBoundary).toEqual({
+      learnerFacingCopyAuthored: false,
+      starterCodeAuthored: false,
+      canonicalAnswersAuthored: false,
+      interpretation:
+        'This artifact fixes interaction intent and evidence before authoring; it is neither publishable learner content nor a source for automatic prose generation.',
+    });
+
+    const activityRoles = design.activityDeliveryOrder;
+    for (const role of activityRoles) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.plannedInteractions).toBe(planned?.minimumInteractions);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(203);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(203);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBeGreaterThan(7);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(97);
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects undecomposed, duplicated, untested, or hinted RWD step plans', () => {
+    const raw = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-html-first-content-step-design.json'
+      )
+    ) as {
+      activityDesigns: Array<{
+        plannedInteractions: number;
+        interactions: Array<{
+          learnerAction: string;
+          conceptIds: string[];
+          reinforcesConceptIds: string[];
+          evidence: { changedCase?: string };
+          support: string;
+        }>;
+      }>;
+    };
+
+    const undecomposed = structuredClone(raw);
+    undecomposed.activityDesigns[0].plannedInteractions += 1;
+    expect(ResearchModuleStepDesignSchema.safeParse(undecomposed).success).toBe(false);
+
+    const duplicated = structuredClone(raw);
+    duplicated.activityDesigns[0].interactions[1].learnerAction =
+      duplicated.activityDesigns[0].interactions[0].learnerAction;
+    expect(ResearchModuleStepDesignSchema.safeParse(duplicated).success).toBe(false);
+
+    const untested = structuredClone(raw);
+    delete untested.activityDesigns[0].interactions[2].evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(untested).success).toBe(false);
+
+    const uncovered = structuredClone(raw);
+    for (const interaction of uncovered.activityDesigns[0].interactions) {
+      interaction.conceptIds = interaction.conceptIds.filter(
+        (conceptId) => conceptId !== 'html-lists'
+      );
+      interaction.reinforcesConceptIds = interaction.reinforcesConceptIds.filter(
+        (conceptId) => conceptId !== 'html-lists'
+      );
+    }
+    expect(ResearchModuleStepDesignSchema.safeParse(uncovered).success).toBe(false);
+
+    const hinted = structuredClone(raw);
+    const assessment = hinted.activityDesigns.find((activity) =>
+      activity.interactions.some((interaction) => interaction.support === 'no-assessment-hints')
+    );
+    if (!assessment) {
+      throw new Error('Assessment fixture missing');
+    }
+    assessment.interactions[0].support = 'guided-hints';
+    expect(ResearchModuleStepDesignSchema.safeParse(hinted).success).toBe(false);
   });
 
   it('defines an original blocked RWD certification blueprint over every concept', () => {
