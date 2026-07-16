@@ -173,6 +173,177 @@ export const SourceObjectiveCoverageMatrixSchema = z
     }
   });
 
+export const ConceptEvidenceStageSchema = z.enum([
+  'introduce',
+  'model',
+  'guided',
+  'faded',
+  'debug',
+  'retrieve',
+  'assess',
+  'transfer',
+]);
+
+const ConceptResearchSchema = z.object({
+  id: IdentifierSchema,
+  title: z.string().min(5),
+  objective: z.string().min(25),
+  order: z.number().int().positive(),
+  moduleId: IdentifierSchema,
+  prerequisiteIds: z.array(IdentifierSchema),
+  sourceAnchors: z
+    .array(
+      z.object({
+        sourceId: IdentifierSchema,
+        locator: z.string().min(3),
+        claim: z.string().min(20),
+      })
+    )
+    .min(1),
+  misconceptions: z.array(z.string().min(15)).min(1),
+  evidenceRequirements: z.array(z.string().min(20)).min(2),
+  stages: z.array(ConceptEvidenceStageSchema),
+  retainedInModuleIds: z.array(IdentifierSchema).min(1),
+  currentState: z.literal('researched-not-authored'),
+});
+
+export const ConceptResearchGraphSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    scopeId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    sourceIds: z.array(IdentifierSchema).min(3),
+    moduleIds: z.array(IdentifierSchema).min(1),
+    requiredStages: z.array(ConceptEvidenceStageSchema),
+    concepts: z.array(ConceptResearchSchema).min(3),
+    architectureFindings: z.array(z.string().min(30)).min(1),
+    gaps: z.array(z.string().min(20)),
+  })
+  .superRefine((graph, context) => {
+    const expectedStages = new Set(ConceptEvidenceStageSchema.options);
+    const sourceIds = new Set(graph.sourceIds);
+    const moduleIds = new Set(graph.moduleIds);
+    const moduleOrder = new Map(graph.moduleIds.map((moduleId, index) => [moduleId, index]));
+    const conceptById = new Map(graph.concepts.map((concept) => [concept.id, concept]));
+    const conceptIds = graph.concepts.map((concept) => concept.id);
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/gu, ' ')
+        .trim();
+    if (conceptById.size !== conceptIds.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate concept research IDs' });
+    }
+    if (new Set(graph.sourceIds).size !== graph.sourceIds.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate concept graph source IDs' });
+    }
+    if (new Set(graph.moduleIds).size !== graph.moduleIds.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate concept graph module IDs' });
+    }
+    const normalizedObjectives = graph.concepts.map((concept) => normalize(concept.objective));
+    if (new Set(normalizedObjectives).size !== normalizedObjectives.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate concept research objectives' });
+    }
+    const normalizedMisconceptions = graph.concepts.flatMap((concept) =>
+      concept.misconceptions.map(normalize)
+    );
+    if (new Set(normalizedMisconceptions).size !== normalizedMisconceptions.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate concept research misconceptions' });
+    }
+    if (graph.status === 'approved' && graph.gaps.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Approved concept graph cannot retain open gaps',
+      });
+    }
+    if (
+      graph.requiredStages.length !== expectedStages.size ||
+      graph.requiredStages.some((stage) => !expectedStages.has(stage))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Concept graph must require every evidence stage',
+      });
+    }
+
+    for (const [conceptIndex, concept] of graph.concepts.entries()) {
+      if (concept.order !== conceptIndex + 1) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${concept.id} order does not match its sequence position`,
+          path: ['concepts', conceptIndex, 'order'],
+        });
+      }
+      if (!moduleIds.has(concept.moduleId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${concept.id} references unknown module ${concept.moduleId}`,
+          path: ['concepts', conceptIndex, 'moduleId'],
+        });
+      }
+      const stages = new Set(concept.stages);
+      if (
+        stages.size !== expectedStages.size ||
+        [...expectedStages].some((stage) => !stages.has(stage))
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${concept.id} lacks full evidence progression`,
+          path: ['concepts', conceptIndex, 'stages'],
+        });
+      }
+      if (stages.size !== concept.stages.length) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${concept.id} repeats evidence stages`,
+          path: ['concepts', conceptIndex, 'stages'],
+        });
+      }
+      for (const source of concept.sourceAnchors) {
+        if (!sourceIds.has(source.sourceId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${concept.id} references unknown source ${source.sourceId}`,
+            path: ['concepts', conceptIndex, 'sourceAnchors'],
+          });
+        }
+      }
+      for (const moduleId of concept.retainedInModuleIds) {
+        if (!moduleIds.has(moduleId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${concept.id} retains into unknown module ${moduleId}`,
+            path: ['concepts', conceptIndex, 'retainedInModuleIds'],
+          });
+        } else if ((moduleOrder.get(moduleId) ?? -1) < (moduleOrder.get(concept.moduleId) ?? -1)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${concept.id} retains into earlier module ${moduleId}`,
+            path: ['concepts', conceptIndex, 'retainedInModuleIds'],
+          });
+        }
+      }
+      for (const prerequisiteId of concept.prerequisiteIds) {
+        const prerequisite = conceptById.get(prerequisiteId);
+        if (!prerequisite) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${concept.id} references unknown prerequisite ${prerequisiteId}`,
+            path: ['concepts', conceptIndex, 'prerequisiteIds'],
+          });
+        } else if (prerequisite.order >= concept.order) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${concept.id} depends on non-earlier prerequisite ${prerequisiteId}`,
+            path: ['concepts', conceptIndex, 'prerequisiteIds'],
+          });
+        }
+      }
+    }
+  });
+
 function addReferenceIssues(
   value: {
     questions: z.infer<typeof ResearchQuestionSchema>[];
@@ -331,6 +502,7 @@ export const CourseResearchDossierSchema = z
 export type CourseResearchDossier = z.infer<typeof CourseResearchDossierSchema>;
 export type PlatformResearchRegister = z.infer<typeof PlatformResearchRegisterSchema>;
 export type SourceObjectiveCoverageMatrix = z.infer<typeof SourceObjectiveCoverageMatrixSchema>;
+export type ConceptResearchGraph = z.infer<typeof ConceptResearchGraphSchema>;
 
 export interface ResearchAuditFinding {
   severity: 'blocker' | 'warning';

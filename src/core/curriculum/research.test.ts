@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { CourseBlueprintSchema } from './blueprint';
 import {
   auditCourseResearch,
+  ConceptResearchGraphSchema,
   CourseResearchDossierSchema,
   PlatformResearchRegisterSchema,
   SourceObjectiveCoverageMatrixSchema,
@@ -178,6 +179,40 @@ describe('research contracts', () => {
       matrix.objectives.every((objective) => objective.learnerWorkState === 'mapped-only')
     ).toBe(true);
     expect(matrix.gaps.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('keeps the Responsive Web Design HTML concept graph prerequisite-ordered and source-backed', () => {
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-html-concepts.json')
+      )
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const dossierSourceIds = new Set(dossier.sources.map((source) => source.id));
+
+    expect(graph.status).toBe('researching');
+    expect(graph.concepts).toHaveLength(54);
+    expect(
+      graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
+    ).toBe(true);
+    expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
+    expect(graph.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('rejects a concept graph whose prerequisite appears later in the sequence', () => {
+    const graph = readJson(
+      path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-html-concepts.json')
+    ) as { concepts: Array<{ prerequisiteIds: string[] }> };
+    const broken = structuredClone(graph);
+    broken.concepts[0].prerequisiteIds = ['html-independent-transfer-defense'];
+
+    const result = ConceptResearchGraphSchema.safeParse(broken);
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some((issue) => issue.message.includes('non-earlier prerequisite'))
+    ).toBe(true);
   });
 
   it('rejects research claims that cite missing decisions', () => {
