@@ -149,4 +149,10 @@ describe('current platform surface', () => {
     expect(learnerSurface).not.toContain(' XP');
     expect(learnerSurface).not.toMatch(/\bstreak\b/iu);
   });
+
+  it('keeps retired game assets out of the current public surface', () => {
+    for (const retiredAsset of ['landingpad.png', 'rocket.png', 'terrain.png']) {
+      expect(existsSync(path.join(root, 'public', retiredAsset)), retiredAsset).toBe(false);
+    }
+  });
 });
