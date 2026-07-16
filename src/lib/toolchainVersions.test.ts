@@ -91,7 +91,7 @@ describe('production JavaScript toolchain pins', () => {
 
   it('pins every dependency install script that was reviewed for npm 12', () => {
     expect(manifest.allowScripts).toEqual({
-      'agent-browser@0.31.2': true,
+      'agent-browser@0.32.0': true,
       'better-sqlite3@12.11.1': true,
       'esbuild@0.28.1': true,
       'sharp@0.34.5': true,

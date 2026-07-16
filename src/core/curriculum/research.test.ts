@@ -113,6 +113,39 @@ describe('research contracts', () => {
     expect(register.questions).toHaveLength(11);
     expect(new Set(register.questions.map((question) => question.track))).toHaveLength(11);
     expect(register.sources.every((source) => source.claims[0].limitations.length > 0)).toBe(true);
+    expect(register.sources.length).toBeGreaterThanOrEqual(20);
+    expect(register.decisions.length).toBeGreaterThanOrEqual(15);
+    expect(
+      register.questions
+        .filter((question) =>
+          [
+            'competitive-learning-flows',
+            'execution-privacy-ethics',
+            'stack-compatibility-evidence',
+          ].includes(question.id)
+        )
+        .every((question) => question.status === 'decision-recorded')
+    ).toBe(true);
+  });
+
+  it('keeps the required platform research artifacts reviewable in the repository', () => {
+    const requiredArtifacts = [
+      'COMPETITIVE_TASK_AUDIT_2026-07-15.md',
+      'EDITOR_RUNTIME_THREAT_MODEL_2026-07-15.md',
+      'LEARNER_RESEARCH_AND_PILOT_PROTOCOL.md',
+      'PROGRESS_NAVIGATION_EVIDENCE_CONTRACT.md',
+      'STACK_COMPATIBILITY_MATRIX_2026-07-15.md',
+    ];
+
+    for (const artifact of requiredArtifacts) {
+      const content = readFileSync(path.join(repositoryRoot, 'docs/research', artifact), 'utf8');
+      expect(content.length, `${artifact} must contain substantive research`).toBeGreaterThan(
+        2_000
+      );
+      expect(content, `${artifact} must record limitations or unresolved evidence`).toMatch(
+        /limit|unresolved|open item|residual risk|current blocker/i
+      );
+    }
   });
 
   it('rejects research claims that cite missing decisions', () => {

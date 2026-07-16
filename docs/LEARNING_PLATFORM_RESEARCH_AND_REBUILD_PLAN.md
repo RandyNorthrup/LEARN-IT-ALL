@@ -98,6 +98,10 @@ Research now has typed, tested repository contracts rather than only prose. `doc
 
 All 54 blueprints now honestly use `audit-required`; shared and Responsive Web Design generators preserve that state. The first baseline audit found 799 existing source entries but only 39 of 1,135 modules with source-objective IDs. All 54 blueprints lack stable source identity, limitations, research-to-design decision links, review triggers, and complete objective traceability. Responsive Web Design is the first started dossier and remains `researching`; 53 dossiers are missing and zero courses are `researched`. See `docs/audits/RESEARCH_PROGRAM_BASELINE_2026-07-15.md`. These are gap measurements, not research completion claims.
 
+The first platform evidence wave now records 20 bounded sources and 15 traceable decisions. The [competitive task audit](research/COMPETITIVE_TASK_AUDIT_2026-07-15.md) separates official documentation from direct observation and learner validation; the [editor/runtime threat model](research/EDITOR_RUNTIME_THREAT_MODEL_2026-07-15.md) defines assets, trust boundaries, capability policies, adversarial tests, accessibility, recovery, and residual risk; the [stack matrix](research/STACK_COMPATIBILITY_MATRIX_2026-07-15.md) records current versions, the repaired Puppeteer peer conflict, command evidence, and remaining clean-install/browser gates; the [progress and navigation contract](research/PROGRESS_NAVIGATION_EVIDENCE_CONTRACT.md) prevents activity counts or fake metrics from masquerading as mastery; and the [learner pilot protocol](research/LEARNER_RESEARCH_AND_PILOT_PROTOCOL.md) defines consent, participant coverage, tasks, severity, pass rules, repair, and re-test evidence.
+
+These artifacts record decisions, not completion. Competitive hands-on observations, platform comprehension pilots, supported-device and assistive-technology trials, privacy review, clean cross-platform installs, and 53 course dossiers remain open. No course architecture or feature-wide scaling may bypass those gates.
+
 ## Findings translated into product rules
 
 ### Learning science and course quality
@@ -400,6 +404,15 @@ Courses remain hidden or clearly labelled preview until their wave passes. A tec
 - Translate every accepted finding into an explicit requirement, design decision, curriculum mapping, test, or review gate.
 - Track uncertainty, conflicting evidence, rejected options, review ownership, source expiry, and upstream-change triggers.
 - Block course generation, platform feature scaling, dependency upgrades, approval, and publication when required research evidence is absent or stale.
+
+Execution order:
+
+1. finish platform learning-science, institutional-quality, competitive-task, usability, progress-validity, safety/privacy, editor/runtime, stack, and pilot records;
+2. complete all 54 course dossiers and versioned objective coverage maps, starting with Responsive Web Design;
+3. review each dossier with subject, instructional, assessment, accessibility, safety, and observed-learner responsibilities named;
+4. write architecture decisions and alignment matrices only from accepted bounded evidence;
+5. build a vertical slice, run adversarial and learner tasks, repair findings, and then decide whether scaling is warranted;
+6. refresh sources and repeat review before each course wave and before release.
 
 ### Package A: truth and audit infrastructure
 

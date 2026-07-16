@@ -79,14 +79,13 @@ describe('Lighthouse profiles', () => {
     });
   });
 
-  it.each([
-    'performance',
-    'accessibility',
-    'best-practices',
-  ])('requires at least 99 for %s', (category) => {
-    const config = loadProfile('tablet');
-    expect(config.ci.assert.assertions[`categories:${category}`][1].minScore).toBe(0.99);
-  });
+  it.each(['performance', 'accessibility', 'best-practices'])(
+    'requires at least 99 for %s',
+    (category) => {
+      const config = loadProfile('tablet');
+      expect(config.ci.assert.assertions[`categories:${category}`][1].minScore).toBe(0.99);
+    }
+  );
 
   it('uses a five-run median for volatile performance and worst-run accessibility gates', () => {
     const config = loadProfile('tablet');

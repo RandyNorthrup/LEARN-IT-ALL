@@ -1,6 +1,6 @@
 # Research Program Baseline
 
-Generated: 2026-07-16T01:38:11.360Z
+Generated: 2026-07-16T01:56:51.088Z
 
 This report measures research traceability, not course quality or completion. A source count does not make a course researched. Blockers remain expected while the reopened audit is active.
 

@@ -16,13 +16,14 @@ describe('deterministic lander physics', () => {
     );
   });
 
-  it.each(
-    Object.values(LANDER_SCENARIOS)
-  )('ships a verified reference program for $title', (scenario) => {
-    const trace = runLanderProgram(scenario, scenario.referenceProgram);
-    expect(trace.at(-1)?.status).toBe('landed');
-    expect(trace.at(-1)?.impactVelocity).toBeLessThanOrEqual(scenario.safeVelocity);
-  });
+  it.each(Object.values(LANDER_SCENARIOS))(
+    'ships a verified reference program for $title',
+    (scenario) => {
+      const trace = runLanderProgram(scenario, scenario.referenceProgram);
+      expect(trace.at(-1)?.status).toBe('landed');
+      expect(trace.at(-1)?.impactVelocity).toBeLessThanOrEqual(scenario.safeVelocity);
+    }
+  );
 
   it('makes an all-coast program fail from the same initial state', () => {
     const scenario = LANDER_SCENARIOS.lunar;
