@@ -291,7 +291,7 @@ Keyword or selector presence alone cannot pass a substantial activity.
 
 ## Remaining blockers
 
-- The remaining 26 blocks still require complete challenge-level inspection with zero guessed mappings.
+- The remaining 22 blocks still require complete challenge-level inspection with zero guessed mappings.
 - independently review the candidate maps and source corrections for subject accuracy;
 - establish the supported browser and assistive-technology matrix for assessed selectors;
 - approve the cumulative module/activity/step/check matrix before authoring;
