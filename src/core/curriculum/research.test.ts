@@ -201,6 +201,43 @@ describe('research contracts', () => {
     expect(graph.gaps.length).toBeGreaterThan(0);
   });
 
+  it('keeps the Responsive Web Design CSS and responsive graph ordered and source-backed', () => {
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const dossierSourceIds = new Set(dossier.sources.map((source) => source.id));
+    const conceptCounts = Object.fromEntries(
+      graph.moduleIds.map((moduleId) => [
+        moduleId,
+        graph.concepts.filter((concept) => concept.moduleId === moduleId).length,
+      ])
+    );
+
+    expect(graph.status).toBe('researching');
+    expect(graph.concepts).toHaveLength(80);
+    expect(graph.moduleIds).toHaveLength(8);
+    expect(conceptCounts).toMatchObject({
+      'css-language-and-cascade': 14,
+      'css-boxes-and-sizing': 11,
+      'css-type-color-and-design': 11,
+      'css-flexible-layout': 8,
+      'css-grid-and-positioning': 10,
+      'responsive-systems': 13,
+      'css-interaction-accessibility-and-motion': 12,
+      'css-independent-project': 1,
+    });
+    expect(
+      graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
+    ).toBe(true);
+    expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
+    expect(graph.gaps.length).toBeGreaterThan(0);
+  });
+
   it('rejects a concept graph whose prerequisite appears later in the sequence', () => {
     const graph = readJson(
       path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-html-concepts.json')
