@@ -1,6 +1,6 @@
 # Stack Compatibility Matrix
 
-Observed: 2026-07-15 on the current Linux development host
+Observed: 2026-07-16 on the current Linux development host
 
 ## Result
 
@@ -25,7 +25,7 @@ This is a local compatibility checkpoint, not cross-platform release proof. Full
 | UI | React and React DOM 19.2.7 | Matched pair | hydration, server/client boundaries, keyboard and assistive-technology flows |
 | Validation | Zod 4.4.3 | Typed content, request, evidence, and research contracts | schema fixtures, malformed input, migration and runtime parsing tests |
 | Local persistence | better-sqlite3 12.11.1 | Native dependency allowed only at pinned install script identity | clean native install, migration, concurrent request, corruption and recovery tests |
-| Styling | Tailwind CSS and PostCSS adapter 4.3.2 | Matched current pair | production CSS build, reflow, forced colors, reduced motion, no overflow |
+| Styling | Tailwind CSS and PostCSS adapter 4.3.3 | Matched current pair | production CSS build, reflow, forced colors, reduced motion, no overflow |
 | Images | Direct Sharp 0.35.3 plus Next-nested Sharp 0.34.5 | The direct package has no install script in the lock; the Next-nested package is the exact 0.34.5 identity allowed to install | clean install, production optimization, format and failure smokes |
 
 ## Editor and browser runtimes
@@ -35,7 +35,7 @@ This is a local compatibility checkpoint, not cross-platform release proof. Full
 | Code editor | CodeMirror 6.0.2; view 6.43.6; state 6.7.1; language 6.12.4; official HTML 6.4.11, CSS 6.3.1, JavaScript 6.2.5, Python 6.2.1, SQL 6.10.0, and Go 6.0.1 parsers | The one tablet/desktop coding editor; Monaco, the coding textarea, and ported legacy modes are removed. Shell, prompt, and mixed configuration files remain explicitly labelled text until a current reviewed parser passes the editor gates | load/failure, language modes, keyboard escape, screen reader, zoom, touch, composition, forced colors, diagnostics, persistence and recovery |
 | Python | Pyodide npm package 314.0.2 | Pinned package assets are copied to the same origin and loaded in a fresh bounded worker; no CDN runtime or alternate path remains. Do not mistake a worker for full security isolation | package-to-public byte equality, timeout, termination, output/memory pressure, denied capability, state cleanup |
 | SQL | sql.js 1.14.1 | Fresh deterministic in-memory database | dialect disclosure, statement/row/output/time limits, reset and changed-case grading |
-| HTML/CSS analysis | Cheerio 1.2.0 and css-tree 3.2.1 | Server-side structural parsing supports evidence but never replaces real browser behavior | parser limits, malformed input, semantic false positives, browser transfer checks |
+| HTML/CSS analysis | parse5 8.0.1, Cheerio 1.2.0 with its compatible nested parse5 7.3.0, and css-tree 3.2.1 | Direct current parse5 records parser errors; Cheerio supplies bounded DOM queries; css-tree supplies syntax and declaration evidence. None replaces real browser behavior | parser limits, malformed input, semantic false positives, browser transfer checks |
 
 ## TypeScript strategy
 
@@ -49,8 +49,8 @@ The former compatibility alias, dual-compiler path, and host-side learner diagno
 
 | Tool | Selected version | Compatibility evidence |
 | --- | --- | --- |
-| Vitest | 4.1.10 | Full suite passed: 47 files / 211 tests |
-| Biome | 2.5.4 | Normal and warning-failing strict checks passed across 134 source/script files |
+| Vitest | 4.1.10 | Full suite passed: 48 files / 260 tests |
+| Biome | 2.5.4 | Normal and warning-failing strict checks passed across 135 source/script files |
 | tsx | 4.23.1 | Research/content audit runner; full audit and type gates pending |
 | agent-browser | 0.32.0 | Upgraded from 0.31.2; install script identity updated and CLI version smoke passed |
 | Lighthouse | 13.4.0 | Retained but execution remains prohibited until all content, migration, duplication, pilots, and platform blockers close |
@@ -68,6 +68,8 @@ The former compatibility alias, dual-compiler path, and host-side learner diagno
 6. Ported CodeMirror legacy modes were removed; current official Go parsing replaced the old Go mode, while shell remains labelled text until a current parser is independently accepted.
 7. The TypeScript compatibility alias, dual compiler, and host-side learner diagnostics endpoint were removed. TypeScript 6.0.3 is the sole direct compiler because TypeScript 7.0 has no programmatic API and current Next.js tooling did not accept it as a complete TypeScript installation.
 8. The PicoC substitute runtime was removed because it covered only C89/C90 and selected C99 while the planned course requires current C23 and sanitizer evidence. No C course can publish until a current runtime passes the full gate.
+9. Direct parse5 8.0.1 now supplies current server-side HTML parser-error evidence; Cheerio retains its own compatible parse5 7.3.0 subtree. Keyword-required prose checks were removed, and review-required writing cannot grant automated mastery.
+10. Tailwind CSS and its PostCSS adapter moved together from 4.3.2 to 4.3.3; tests, types, strict lint, and production build remain required after this patch upgrade.
 
 ## Current command evidence
 

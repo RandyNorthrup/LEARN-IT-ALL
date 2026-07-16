@@ -25,6 +25,7 @@ See [Project Memory](docs/PROJECT_MEMORY.md) for dated verified evidence and [th
 - TypeScript 6.0.3, the newest single compiler compatible with current Next.js tooling
 - SQLite through `better-sqlite3`
 - Zod 4 research, curriculum, request, and evidence contracts
+- parse5 8 for server-side HTML parser-error evidence; real browser transfer remains required
 - Vitest 4.1 and Biome 2.5
 - Tailwind CSS 4 plus CSS modules
 

@@ -1227,6 +1227,273 @@ export const ResearchActivityMatrixSchema = z
     }
   });
 
+const AssessmentEvidenceModeSchema = z.enum([
+  'predict',
+  'code-read',
+  'build',
+  'debug',
+  'changed-case',
+  'accessibility-evidence',
+  'design-decision',
+  'defense',
+]);
+
+const AssessmentCognitiveDemandSchema = z.enum([
+  'explain',
+  'apply',
+  'analyze-debug',
+  'evaluate',
+  'create-defend',
+]);
+
+export const ResearchAssessmentBlueprintSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    credentialDecision: z.literal('blocked'),
+    externalExamBoundary: z.string().min(100),
+    requiredProjectIds: z.array(IdentifierSchema).length(5),
+    exam: z.object({
+      id: IdentifierSchema,
+      title: z.string().min(10),
+      prerequisiteModuleIds: z.array(IdentifierSchema).min(1),
+      prerequisiteProjectIds: z.array(IdentifierSchema).length(5),
+      maximumMinutes: z.number().int().positive().max(360),
+      delivery: z.literal('server-canonical-isolated-browser'),
+      correctionPolicy: z.string().min(100),
+    }),
+    strands: z
+      .array(
+        z.object({
+          id: IdentifierSchema,
+          title: z.string().min(10),
+          moduleIds: z.array(IdentifierSchema).min(1),
+          conceptIds: z.array(IdentifierSchema).min(1),
+          weightPercent: z.number().int().positive(),
+          itemsPerForm: z.number().int().positive(),
+          evidenceModes: z.array(AssessmentEvidenceModeSchema).min(3),
+          cognitiveDemands: z.array(AssessmentCognitiveDemandSchema).min(2),
+          validityClaim: z.string().min(80),
+        })
+      )
+      .min(3),
+    formDesign: z.object({
+      minimumSecureForms: z.number().int().min(2),
+      operationalItemsPerForm: z.number().int().min(20),
+      itemFamilyCounts: z.record(IdentifierSchema, z.number().int().nonnegative()),
+      cognitiveDemandPercent: z.record(
+        AssessmentCognitiveDemandSchema,
+        z.number().int().nonnegative()
+      ),
+      randomizationBoundaries: z.array(z.string().min(40)).min(3),
+      exposureControls: z.array(z.string().min(40)).min(3),
+    }),
+    scoring: z.object({
+      cutScoreStatus: z.literal('not-set'),
+      provisionalPassingPercentProhibited: z.literal(true),
+      credentialRule: z.string().min(100),
+      standardSettingPlan: z.array(z.string().min(50)).min(4),
+      itemAnalysisPlan: z.array(z.string().min(50)).min(4),
+    }),
+    accessibilityAndSecurity: z.array(z.string().min(50)).min(6),
+    requiredReviewEvidence: z.array(z.string().min(50)).min(6),
+    gaps: z.array(z.string().min(40)).min(1),
+  })
+  .superRefine((blueprint, context) => {
+    const strandIds = blueprint.strands.map((strand) => strand.id);
+    const moduleIds = blueprint.strands.flatMap((strand) => strand.moduleIds);
+    const conceptIds = blueprint.strands.flatMap((strand) => strand.conceptIds);
+    const rejectDuplicates = (values: string[], message: string, path: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+    rejectDuplicates(blueprint.requiredProjectIds, 'Assessment blueprint repeats projects', [
+      'requiredProjectIds',
+    ]);
+    rejectDuplicates(strandIds, 'Assessment blueprint repeats strand IDs', ['strands']);
+    rejectDuplicates(moduleIds, 'Assessment blueprint assigns a module to multiple strands', [
+      'strands',
+    ]);
+    rejectDuplicates(conceptIds, 'Assessment blueprint assigns a concept to multiple strands', [
+      'strands',
+    ]);
+    for (const [strandIndex, strand] of blueprint.strands.entries()) {
+      rejectDuplicates(strand.moduleIds, `Assessment strand ${strand.id} repeats modules`, [
+        'strands',
+        strandIndex,
+        'moduleIds',
+      ]);
+      rejectDuplicates(strand.conceptIds, `Assessment strand ${strand.id} repeats concepts`, [
+        'strands',
+        strandIndex,
+        'conceptIds',
+      ]);
+      rejectDuplicates(
+        strand.evidenceModes,
+        `Assessment strand ${strand.id} repeats evidence modes`,
+        ['strands', strandIndex, 'evidenceModes']
+      );
+      rejectDuplicates(
+        strand.cognitiveDemands,
+        `Assessment strand ${strand.id} repeats cognitive demands`,
+        ['strands', strandIndex, 'cognitiveDemands']
+      );
+    }
+    if (blueprint.strands.reduce((total, strand) => total + strand.weightPercent, 0) !== 100) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Assessment strand weights must total 100 percent',
+        path: ['strands'],
+      });
+    }
+    if (
+      blueprint.strands.reduce((total, strand) => total + strand.itemsPerForm, 0) !==
+      blueprint.formDesign.operationalItemsPerForm
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Assessment strand item counts must match operational form length',
+        path: ['strands'],
+      });
+    }
+    if (
+      Object.values(blueprint.formDesign.itemFamilyCounts).reduce(
+        (total, count) => total + count,
+        0
+      ) !== blueprint.formDesign.operationalItemsPerForm
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Assessment item-family counts must match operational form length',
+        path: ['formDesign', 'itemFamilyCounts'],
+      });
+    }
+    if (
+      Object.values(blueprint.formDesign.cognitiveDemandPercent).reduce(
+        (total, percent) => total + percent,
+        0
+      ) !== 100
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Assessment cognitive-demand percentages must total 100',
+        path: ['formDesign', 'cognitiveDemandPercent'],
+      });
+    }
+  });
+
+const PlannedEvidenceReferenceSchema = z.object({
+  activityId: IdentifierSchema,
+  moduleId: IdentifierSchema.optional(),
+});
+
+export const ResearchCompetencyEvidenceMatrixSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    records: z
+      .array(
+        z.object({
+          conceptId: IdentifierSchema,
+          ownerModuleId: IdentifierSchema,
+          state: z.literal('planned-not-authored'),
+          stageEvidence: z.object({
+            introduceAndModel: PlannedEvidenceReferenceSchema,
+            guided: PlannedEvidenceReferenceSchema,
+            faded: PlannedEvidenceReferenceSchema,
+            debug: PlannedEvidenceReferenceSchema,
+            transfer: PlannedEvidenceReferenceSchema,
+            familiarAssessment: PlannedEvidenceReferenceSchema,
+          }),
+          nextRelevantUse: z.object({
+            activityId: IdentifierSchema,
+            moduleId: IdentifierSchema.optional(),
+            basis: z.enum([
+              'named-module-retrieval',
+              'downstream-prerequisite',
+              'planned-interleaving',
+              'certification-exam',
+            ]),
+          }),
+          delayedRetrieval: z.object({
+            activityId: IdentifierSchema,
+            moduleId: IdentifierSchema.optional(),
+            basis: z.enum([
+              'named-downstream-use',
+              'scheduled-interleaved-review',
+              'certification-exam',
+            ]),
+            interveningModuleCount: z.number().int().nonnegative(),
+            adaptiveDueDays: z.array(z.number().int().positive()).min(3),
+          }),
+          correction: z.object({
+            sourceAssessmentActivityId: IdentifierSchema,
+            remediationActivityIds: z.array(IdentifierSchema).min(2),
+            parallelReassessmentActivityId: IdentifierSchema,
+            canonicalAnswersRemainServerSide: z.literal(true),
+          }),
+          certificationStrandId: IdentifierSchema,
+        })
+      )
+      .min(3),
+    schedulingPolicy: z.array(z.string().min(50)).min(4),
+    architectureFindings: z.array(z.string().min(40)).min(1),
+    gaps: z.array(z.string().min(40)).min(1),
+  })
+  .superRefine((matrix, context) => {
+    const conceptIds = matrix.records.map((record) => record.conceptId);
+    if (new Set(conceptIds).size !== conceptIds.length) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Competency evidence matrix repeats concept IDs',
+        path: ['records'],
+      });
+    }
+    for (const [recordIndex, record] of matrix.records.entries()) {
+      const references = Object.values(record.stageEvidence);
+      if (references.some((reference) => reference.moduleId !== record.ownerModuleId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Competency ${record.conceptId} assigns immediate evidence outside its owner module`,
+          path: ['records', recordIndex, 'stageEvidence'],
+        });
+      }
+      if (
+        new Set(record.delayedRetrieval.adaptiveDueDays).size !==
+        record.delayedRetrieval.adaptiveDueDays.length
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Competency ${record.conceptId} repeats adaptive review intervals`,
+          path: ['records', recordIndex, 'delayedRetrieval', 'adaptiveDueDays'],
+        });
+      }
+      if (
+        [...record.delayedRetrieval.adaptiveDueDays]
+          .sort((left, right) => left - right)
+          .join(',') !== record.delayedRetrieval.adaptiveDueDays.join(',')
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Competency ${record.conceptId} review intervals must increase`,
+          path: ['records', recordIndex, 'delayedRetrieval', 'adaptiveDueDays'],
+        });
+      }
+    }
+    if (matrix.status === 'approved' && matrix.gaps.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Approved competency evidence matrix cannot retain open gaps',
+        path: ['gaps'],
+      });
+    }
+  });
+
 function addReferenceIssues(
   value: {
     questions: z.infer<typeof ResearchQuestionSchema>[];
@@ -1443,3 +1710,7 @@ export type ExternalObjectiveConceptAlignment = z.infer<
 >;
 export type ResearchCourseArchitecture = z.infer<typeof ResearchCourseArchitectureSchema>;
 export type ResearchActivityMatrix = z.infer<typeof ResearchActivityMatrixSchema>;
+export type ResearchAssessmentBlueprint = z.infer<typeof ResearchAssessmentBlueprintSchema>;
+export type ResearchCompetencyEvidenceMatrix = z.infer<
+  typeof ResearchCompetencyEvidenceMatrixSchema
+>;

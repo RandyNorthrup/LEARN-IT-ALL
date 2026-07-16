@@ -7,13 +7,14 @@ describe('validateCurriculumChecks', () => {
     const checks: CurriculumCheck[] = [
       {
         id: 'check-cards',
-        type: 'selector-exists',
+        type: 'dom-selector-count',
         description: 'Three project cards exist.',
         failureMessage: 'Add all three project cards.',
         hidden: false,
         competencyIds: ['responsive-layout'],
         selector: '.project-card',
         minimum: 3,
+        maximum: 3,
       },
       {
         id: 'check-grid',
@@ -89,28 +90,103 @@ describe('validateCurriculumChecks', () => {
     expect(failed.feedback).not.toContain('paint-pixels');
   });
 
-  it('requires a substantive reflection with named evidence', () => {
+  it('records bounded written evidence without keyword grading it as mastery', () => {
     const checks: CurriculumCheck[] = [
       {
         id: 'check-reflection',
-        type: 'text-response',
-        description: 'The explanation names both source and rendered evidence.',
-        failureMessage: 'Explain the difference using both forms of evidence.',
+        type: 'written-evidence',
+        description: 'The learner records an explanation for later rubric review.',
+        failureMessage: 'Record a bounded explanation for review.',
         hidden: false,
         competencyIds: ['browser-rendering-model'],
         minimumCharacters: 40,
-        requiredTerms: ['source', 'DOM'],
+        maximumCharacters: 800,
+        reviewRequired: true,
       },
     ];
 
     const result = validateCurriculumChecks(
       {
         textResponse:
-          'The source is the saved HTML, while the DOM is the browser-built tree inspected after parsing.',
+          'This explanation is long enough to preserve learner reasoning, but length alone is not treated as proof of mastery.',
       },
       checks
     )[0];
     expect(result.passed).toBe(true);
+    expect(result.feedback).toBe('Evidence recorded; review required.');
+  });
+
+  it('grades parsed HTML structure, cardinality, relationships, and attributes', () => {
+    const checks: CurriculumCheck[] = [
+      {
+        id: 'check-parse',
+        type: 'html-parse-errors',
+        description: 'The HTML fragment has no parser-reported syntax errors.',
+        failureMessage: 'Repair the malformed HTML source.',
+        hidden: false,
+        competencyIds: ['html-source-model'],
+        mode: 'fragment',
+        maximumErrors: 0,
+        ignoredErrorCodes: [],
+      },
+      {
+        id: 'check-one-heading',
+        type: 'dom-selector-count',
+        description: 'The notice has exactly one page heading.',
+        failureMessage: 'Keep one page-level heading.',
+        hidden: false,
+        competencyIds: ['html-source-model'],
+        selector: 'main > h1',
+        minimum: 1,
+        maximum: 1,
+      },
+      {
+        id: 'check-paragraph-after-heading',
+        type: 'dom-relationship',
+        description: 'The first paragraph immediately follows the heading.',
+        failureMessage: 'Place the introduction directly after the heading.',
+        hidden: false,
+        competencyIds: ['html-source-model'],
+        subjectSelector: 'main > p:first-of-type',
+        relation: 'immediately-after',
+        targetSelector: 'h1',
+        minimum: 1,
+      },
+      {
+        id: 'check-main-label',
+        type: 'dom-attribute',
+        description: 'The main region retains its notice label token.',
+        failureMessage: 'Restore the notice token on the main element.',
+        hidden: false,
+        competencyIds: ['html-source-model'],
+        selector: 'main',
+        attribute: 'class',
+        comparison: 'token',
+        expected: 'notice',
+      },
+    ];
+    const valid = validateCurriculumChecks(
+      {
+        files: {
+          html: '<main class="notice"><h1>Route change</h1><p>Use stop C.</p></main>',
+        },
+      },
+      checks
+    );
+    expect(valid.every((entry) => entry.passed)).toBe(true);
+
+    const malformed = validateCurriculumChecks(
+      {
+        files: {
+          html: '<main class="notice" class="duplicate"><h1>Route change</h1><section></section><p>Use stop C.</p></main>',
+        },
+      },
+      checks
+    );
+    expect(malformed.every((entry) => entry.passed)).toBe(false);
+    expect(malformed.find((entry) => entry.id === 'check-parse')?.feedback).toContain(
+      'parser error'
+    );
   });
 
   it('grades a calculated quantity with tolerance and a required unit', () => {

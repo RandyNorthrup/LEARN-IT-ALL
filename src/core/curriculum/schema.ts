@@ -51,20 +51,36 @@ const CheckBaseSchema = z.object({
 
 export const CurriculumCheckSchema = z.discriminatedUnion('type', [
   CheckBaseSchema.extend({
-    type: z.literal('selector-exists'),
+    type: z.literal('dom-selector-count'),
     selector: z.string().min(1),
-    minimum: z.number().int().positive().default(1),
+    minimum: z.number().int().nonnegative().default(1),
+    maximum: z.number().int().nonnegative().optional(),
   }),
   CheckBaseSchema.extend({
-    type: z.literal('text-includes'),
+    type: z.literal('dom-text'),
     selector: z.string().min(1),
+    comparison: z.enum(['exact', 'includes']),
     expected: z.string().min(1),
   }),
   CheckBaseSchema.extend({
-    type: z.literal('attribute-equals'),
+    type: z.literal('dom-relationship'),
+    subjectSelector: z.string().min(1),
+    relation: z.enum(['direct-child', 'descendant', 'immediately-after', 'after']),
+    targetSelector: z.string().min(1),
+    minimum: z.number().int().positive().default(1),
+  }),
+  CheckBaseSchema.extend({
+    type: z.literal('dom-attribute'),
     selector: z.string().min(1),
     attribute: z.string().min(1),
-    expected: z.string(),
+    comparison: z.enum(['present', 'absent', 'exact', 'token']),
+    expected: z.string().optional(),
+  }),
+  CheckBaseSchema.extend({
+    type: z.literal('html-parse-errors'),
+    mode: z.enum(['document', 'fragment']),
+    maximumErrors: z.number().int().nonnegative().default(0),
+    ignoredErrorCodes: z.array(z.string().min(3)).default([]),
   }),
   CheckBaseSchema.extend({
     type: z.literal('css-declaration'),
@@ -107,9 +123,10 @@ export const CurriculumCheckSchema = z.discriminatedUnion('type', [
     expectedOptionIds: z.array(IdentifierSchema).min(2),
   }),
   CheckBaseSchema.extend({
-    type: z.literal('text-response'),
+    type: z.literal('written-evidence'),
     minimumCharacters: z.number().int().min(10).max(5000),
-    requiredTerms: z.array(z.string().min(2)).default([]),
+    maximumCharacters: z.number().int().min(10).max(5000),
+    reviewRequired: z.literal(true),
   }),
   CheckBaseSchema.extend({
     type: z.literal('number-equals'),
@@ -298,6 +315,47 @@ export const CurriculumActivitySchema = z
     }
 
     for (const [checkIndex, check] of activity.checks.entries()) {
+      if (
+        check.type === 'dom-selector-count' &&
+        check.maximum !== undefined &&
+        check.maximum < check.minimum
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `DOM selector check ${check.id} has a maximum below its minimum`,
+          path: ['checks', checkIndex, 'maximum'],
+        });
+      }
+      if (check.type === 'written-evidence' && check.maximumCharacters < check.minimumCharacters) {
+        context.addIssue({
+          code: 'custom',
+          message: `Written evidence check ${check.id} has a maximum below its minimum`,
+          path: ['checks', checkIndex, 'maximumCharacters'],
+        });
+      }
+      if (
+        check.type === 'dom-attribute' &&
+        ['exact', 'token'].includes(check.comparison) &&
+        check.expected === undefined
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `DOM attribute check ${check.id} requires an expected value`,
+          path: ['checks', checkIndex, 'expected'],
+        });
+      }
+      if (
+        check.type === 'written-evidence' &&
+        check.competencyIds.some((competencyId) =>
+          activity.competencyCoverage.assesses.includes(competencyId)
+        )
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Written evidence check ${check.id} requires review and cannot establish automated mastery`,
+          path: ['checks', checkIndex],
+        });
+      }
       for (const competencyId of check.competencyIds) {
         if (!activityCompetencyIds.has(competencyId)) {
           context.addIssue({

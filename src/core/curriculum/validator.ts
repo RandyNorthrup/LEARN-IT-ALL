@@ -1,5 +1,10 @@
 import { load } from 'cheerio';
 import * as csstree from 'css-tree';
+import {
+  type ParserError,
+  parse as parseHtmlDocument,
+  parseFragment as parseHtmlFragment,
+} from 'parse5';
 import { evaluateConfigContract } from '../learning/configLabSimulator';
 import { evaluatePrompt } from '../learning/promptHarness';
 import type { CurriculumCheck } from './schema';
@@ -83,20 +88,76 @@ export function validateCurriculumChecks(
 
     try {
       switch (check.type) {
-        case 'selector-exists': {
+        case 'dom-selector-count': {
           const count = $(check.selector).length;
-          passed = count >= check.minimum;
-          observed = `Found ${count}; need ${check.minimum}`;
+          passed =
+            count >= check.minimum && (check.maximum === undefined || count <= check.maximum);
+          observed = `Found ${count}; expected ${check.minimum}${check.maximum === undefined ? ' or more' : check.maximum === check.minimum ? '' : ` to ${check.maximum}`}`;
           break;
         }
-        case 'text-includes': {
+        case 'dom-text': {
           observed = $(check.selector).first().text().trim();
-          passed = normalize(observed).includes(normalize(check.expected));
+          passed =
+            check.comparison === 'exact'
+              ? normalize(observed) === normalize(check.expected)
+              : normalize(observed).includes(normalize(check.expected));
           break;
         }
-        case 'attribute-equals': {
-          observed = $(check.selector).first().attr(check.attribute) ?? 'Attribute missing';
-          passed = normalize(observed) === normalize(check.expected);
+        case 'dom-relationship': {
+          const subjects = $(check.subjectSelector).toArray();
+          const matching = subjects.filter((subject) => {
+            const element = $(subject);
+            switch (check.relation) {
+              case 'direct-child':
+                return element.parent().is(check.targetSelector);
+              case 'descendant':
+                return element.parents(check.targetSelector).length > 0;
+              case 'immediately-after':
+                return element.prev().is(check.targetSelector);
+              case 'after':
+                return element.prevAll(check.targetSelector).length > 0;
+            }
+            return false;
+          }).length;
+          passed = matching >= check.minimum;
+          observed = `${matching} of ${subjects.length} matched ${check.relation} ${check.targetSelector}`;
+          break;
+        }
+        case 'dom-attribute': {
+          const element = $(check.selector).first();
+          const value = element.attr(check.attribute);
+          observed = value ?? 'Attribute missing';
+          switch (check.comparison) {
+            case 'present':
+              passed = value !== undefined;
+              break;
+            case 'absent':
+              passed = value === undefined;
+              break;
+            case 'exact':
+              passed = value !== undefined && normalize(value) === normalize(check.expected ?? '');
+              break;
+            case 'token':
+              passed = Boolean(
+                value
+                  ?.split(/\s+/u)
+                  .some((token) => normalize(token) === normalize(check.expected ?? ''))
+              );
+              break;
+          }
+          break;
+        }
+        case 'html-parse-errors': {
+          const errors: ParserError[] = [];
+          const options = { onParseError: (error: ParserError) => errors.push(error) };
+          if (check.mode === 'document') parseHtmlDocument(html, options);
+          else parseHtmlFragment(html, options);
+          const ignored = new Set(check.ignoredErrorCodes);
+          const relevant = errors.filter((error) => !ignored.has(error.code));
+          passed = relevant.length <= check.maximumErrors;
+          observed = relevant.length
+            ? `${relevant.length} parser error(s): ${[...new Set(relevant.map((error) => error.code))].join(', ')}`
+            : 'No relevant parser errors';
           break;
         }
         case 'css-declaration': {
@@ -160,16 +221,12 @@ export function validateCurriculumChecks(
           includeObservedFeedback = false;
           break;
         }
-        case 'text-response': {
+        case 'written-evidence': {
           const response = submission.textResponse?.trim() ?? '';
-          const normalizedResponse = normalize(response);
-          const missingTerms = check.requiredTerms.filter(
-            (term) => !normalizedResponse.includes(normalize(term))
-          );
-          passed = response.length >= check.minimumCharacters && missingTerms.length === 0;
-          observed = `${response.length} characters${
-            missingTerms.length ? `; missing: ${missingTerms.join(', ')}` : ''
-          }`;
+          passed =
+            response.length >= check.minimumCharacters &&
+            response.length <= check.maximumCharacters;
+          observed = `${response.length} characters; human or rubric review remains required`;
           break;
         }
         case 'number-equals': {
@@ -199,7 +256,9 @@ export function validateCurriculumChecks(
       description: check.description,
       passed,
       feedback: passed
-        ? 'Passed'
+        ? check.type === 'written-evidence'
+          ? 'Evidence recorded; review required.'
+          : 'Passed'
         : `${check.failureMessage}${includeObservedFeedback ? ` Observed: ${observed}` : ''}`,
     };
   });

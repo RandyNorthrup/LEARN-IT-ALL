@@ -10,7 +10,9 @@ import {
   ExternalObjectiveConceptAlignmentSchema,
   PlatformResearchRegisterSchema,
   ResearchActivityMatrixSchema,
+  ResearchAssessmentBlueprintSchema,
   ResearchAuthoritySchema,
+  ResearchCompetencyEvidenceMatrixSchema,
   ResearchCourseArchitectureSchema,
 } from './research';
 
@@ -4568,6 +4570,200 @@ describe('research contracts', () => {
     expect(inflatedResult.success).toBe(false);
     expect(
       inflatedResult.error?.issues.some((issue) => issue.message.includes('planned workshopSteps'))
+    ).toBe(true);
+  });
+
+  it('defines an original blocked RWD certification blueprint over every concept', () => {
+    const blueprint = ResearchAssessmentBlueprintSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-assessment-blueprint.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+
+    expect(blueprint.status).toBe('researching');
+    expect(blueprint.credentialDecision).toBe('blocked');
+    expect(blueprint.externalExamBoundary).toContain('296-byte pointer');
+    expect(blueprint.requiredProjectIds).toEqual(
+      architecture.projects.map((project) => project.id)
+    );
+    expect(blueprint.exam.prerequisiteModuleIds).toEqual(architecture.moduleIds);
+    expect(blueprint.exam.prerequisiteProjectIds).toEqual(blueprint.requiredProjectIds);
+    expect(blueprint.strands).toHaveLength(12);
+    expect(blueprint.strands.flatMap((strand) => strand.moduleIds)).toEqual(architecture.moduleIds);
+    expect(blueprint.strands.flatMap((strand) => strand.conceptIds)).toEqual(
+      architecture.modules.flatMap((module) => module.conceptIds)
+    );
+    expect(blueprint.strands.reduce((total, strand) => total + strand.weightPercent, 0)).toBe(100);
+    expect(blueprint.strands.reduce((total, strand) => total + strand.itemsPerForm, 0)).toBe(50);
+    expect(blueprint.formDesign).toMatchObject({
+      minimumSecureForms: 3,
+      operationalItemsPerForm: 50,
+    });
+    expect(blueprint.scoring).toMatchObject({
+      cutScoreStatus: 'not-set',
+      provisionalPassingPercentProhibited: true,
+    });
+    expect(blueprint.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects RWD assessment overclaim, duplicate coverage, and form-count drift', () => {
+    const blueprint = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-assessment-blueprint.json'
+      )
+    ) as {
+      strands: Array<{ conceptIds: string[]; itemsPerForm: number }>;
+      formDesign: { operationalItemsPerForm: number };
+      credentialDecision: string;
+    };
+    const duplicate = structuredClone(blueprint);
+    duplicate.strands[1].conceptIds.push(duplicate.strands[0].conceptIds[0]);
+    const duplicateResult = ResearchAssessmentBlueprintSchema.safeParse(duplicate);
+    expect(duplicateResult.success).toBe(false);
+    expect(
+      duplicateResult.error?.issues.some((issue) =>
+        issue.message.includes('concept to multiple strands')
+      )
+    ).toBe(true);
+
+    const drifted = structuredClone(blueprint);
+    drifted.strands[0].itemsPerForm += 1;
+    const driftedResult = ResearchAssessmentBlueprintSchema.safeParse(drifted);
+    expect(driftedResult.success).toBe(false);
+    expect(
+      driftedResult.error?.issues.some((issue) => issue.message.includes('operational form length'))
+    ).toBe(true);
+
+    const overclaimed = structuredClone(blueprint);
+    overclaimed.credentialDecision = 'approved';
+    expect(ResearchAssessmentBlueprintSchema.safeParse(overclaimed).success).toBe(false);
+  });
+
+  it('traces every RWD concept through staged, delayed, corrective, and exam evidence', () => {
+    const matrix = ResearchCompetencyEvidenceMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-competency-evidence-matrix.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const activities = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const blueprint = ResearchAssessmentBlueprintSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-assessment-blueprint.json'
+        )
+      )
+    );
+    const conceptIds = architecture.modules.flatMap((module) => module.conceptIds);
+    const moduleOrder = new Map(
+      architecture.modules.map((module, index) => [module.id, index] as const)
+    );
+    const plannedActivityIds = new Set(
+      activities.modules.flatMap((module) =>
+        Object.values(module.activities).map((activity) => activity.id)
+      )
+    );
+    const strandByConcept = new Map(
+      blueprint.strands.flatMap((strand) =>
+        strand.conceptIds.map((conceptId) => [conceptId, strand.id] as const)
+      )
+    );
+
+    expect(matrix.status).toBe('researching');
+    expect(matrix.records).toHaveLength(186);
+    expect(matrix.records.map((record) => record.conceptId)).toEqual(conceptIds);
+    for (const record of matrix.records) {
+      const ownerOrder = moduleOrder.get(record.ownerModuleId);
+      expect(ownerOrder, record.conceptId).toBeDefined();
+      for (const reference of Object.values(record.stageEvidence)) {
+        expect(plannedActivityIds.has(reference.activityId), reference.activityId).toBe(true);
+      }
+      expect(record.certificationStrandId).toBe(strandByConcept.get(record.conceptId));
+      expect(record.correction.canonicalAnswersRemainServerSide).toBe(true);
+      if (record.nextRelevantUse.moduleId) {
+        expect(moduleOrder.get(record.nextRelevantUse.moduleId)).toBeGreaterThan(ownerOrder ?? -1);
+        expect(plannedActivityIds).toContain(record.nextRelevantUse.activityId);
+      } else {
+        expect(record.nextRelevantUse.activityId).toBe(blueprint.exam.id);
+      }
+      if (record.delayedRetrieval.moduleId) {
+        const delayedOrder = moduleOrder.get(record.delayedRetrieval.moduleId);
+        expect(delayedOrder).toBeGreaterThan(ownerOrder ?? -1);
+        expect(record.delayedRetrieval.interveningModuleCount).toBe(
+          (delayedOrder ?? 0) - (ownerOrder ?? 0) - 1
+        );
+        expect(plannedActivityIds).toContain(record.delayedRetrieval.activityId);
+      } else {
+        expect(record.delayedRetrieval.activityId).toBe(blueprint.exam.id);
+      }
+    }
+    expect(
+      matrix.records.filter(
+        (record) => record.delayedRetrieval.basis === 'scheduled-interleaved-review'
+      )
+    ).not.toHaveLength(0);
+    expect(
+      matrix.records.filter((record) => record.delayedRetrieval.basis === 'certification-exam')
+    ).not.toHaveLength(0);
+    expect(matrix.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects duplicate RWD competency traces and non-increasing review seeds', () => {
+    const matrix = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-competency-evidence-matrix.json'
+      )
+    ) as {
+      records: Array<{
+        conceptId: string;
+        delayedRetrieval: { adaptiveDueDays: number[] };
+      }>;
+    };
+    const duplicate = structuredClone(matrix);
+    duplicate.records[1].conceptId = duplicate.records[0].conceptId;
+    const duplicateResult = ResearchCompetencyEvidenceMatrixSchema.safeParse(duplicate);
+    expect(duplicateResult.success).toBe(false);
+    expect(
+      duplicateResult.error?.issues.some((issue) => issue.message.includes('concept IDs'))
+    ).toBe(true);
+
+    const unordered = structuredClone(matrix);
+    unordered.records[0].delayedRetrieval.adaptiveDueDays = [14, 3, 45];
+    const unorderedResult = ResearchCompetencyEvidenceMatrixSchema.safeParse(unordered);
+    expect(unorderedResult.success).toBe(false);
+    expect(
+      unorderedResult.error?.issues.some((issue) => issue.message.includes('must increase'))
     ).toBe(true);
   });
 

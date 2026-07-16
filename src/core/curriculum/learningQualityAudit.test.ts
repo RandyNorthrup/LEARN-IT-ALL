@@ -86,9 +86,10 @@ function activity(overrides: Partial<CurriculumActivity> = {}): CurriculumActivi
     checks: [
       {
         id: 'heading-exists',
-        type: 'selector-exists',
+        type: 'dom-selector-count',
         selector: 'h1',
         minimum: 1,
+        maximum: 1,
         description: 'The page has one main heading.',
         failureMessage: 'Add one h1 element for the page topic.',
         hidden: false,
@@ -96,7 +97,7 @@ function activity(overrides: Partial<CurriculumActivity> = {}): CurriculumActivi
       },
       {
         id: 'paragraph-exists',
-        type: 'selector-exists',
+        type: 'dom-selector-count',
         selector: 'p',
         minimum: 1,
         description: 'The page has an introductory paragraph.',

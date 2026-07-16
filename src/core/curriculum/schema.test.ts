@@ -41,12 +41,13 @@ function validActivity() {
     checks: [
       {
         id: 'check-profile-heading',
-        type: 'text-includes',
+        type: 'dom-text',
         description: 'The main heading names the learner profile.',
         failureMessage: 'Add the expected text to an h1 element.',
         hidden: false,
         competencyIds: ['semantic-document'],
         selector: 'h1',
+        comparison: 'includes',
         expected: 'Learner profile',
       },
     ],
@@ -69,6 +70,33 @@ describe('CurriculumActivitySchema', () => {
     const result = CurriculumActivitySchema.safeParse(withPoints);
     expect(result.success).toBe(false);
     expect(result.error?.issues.some((issue) => issue.message.includes('xp'))).toBe(true);
+  });
+
+  it('does not treat unreviewed written responses as automated mastery evidence', () => {
+    const activity = {
+      ...validActivity(),
+      checks: [
+        {
+          id: 'check-profile-heading',
+          type: 'written-evidence',
+          description: 'The learner records an element-choice defense for review.',
+          failureMessage: 'Record the evidence behind the element choice.',
+          hidden: false,
+          competencyIds: ['semantic-document'],
+          minimumCharacters: 40,
+          maximumCharacters: 800,
+          reviewRequired: true,
+        },
+      ],
+    };
+
+    const result = CurriculumActivitySchema.safeParse(activity);
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some((issue) =>
+        issue.message.includes('cannot establish automated mastery')
+      )
+    ).toBe(true);
   });
 
   it('accepts Python, Go, SQL, and shell workspaces for interactive labs', () => {
