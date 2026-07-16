@@ -647,21 +647,21 @@ add(
 
 add(
   'css-visual-hierarchy-spacing',
-  'Visual hierarchy, proximity, and rhythm',
-  'Use size, weight, spacing, grouping, alignment, and contrast to make semantic hierarchy and task priority perceivable without changing reading order.',
+  'Composition, balance, scale, hierarchy, proximity, and rhythm',
+  'Compose and balance size, weight, spacing, grouping, alignment, imagery, and contrast so semantic hierarchy and task priority remain perceivable without changing reading order.',
   'css-type-color-and-design',
   [
     'design-user-needs-task-flows',
     'css-readable-measure-alignment',
     'css-contrast-noncolor-meaning',
   ],
-  'rwd-mdn-curriculum',
-  'Design for developers and core styling outcomes',
-  'CSS presentation should reinforce content hierarchy, scan paths, grouping, and interaction priorities.',
+  'rwd-w3c-coga-usable',
+  '4.3 clear purpose and 4.6 clear structure and relationships',
+  'Clear visual hierarchy, grouping, labels, structure, and relationships help people locate content, understand context, and recover their place.',
   'The most visually prominent item can appear anywhere in the DOM because CSS establishes the true reading order.',
   [
-    'Heading, group, action, and error hierarchy must remain clear with styles disabled and under zoom.',
-    'Learner must defend each visual cue against the semantic relationship and user task it supports.',
+    'Heading, group, action, image, and error hierarchy must remain clear with styles disabled, changed content, alternate reading direction, and zoom.',
+    'Learner must predict attention order, identify visual weight and proximity relationships, and defend each cue against the semantic relationship and user task it supports.',
   ]
 );
 
@@ -685,17 +685,102 @@ add(
 add(
   'css-design-tokens-theming',
   'Design tokens and theme constraints',
-  'Model semantic color, type, spacing, radius, and elevation decisions as scoped tokens with safe defaults and theme overrides.',
+  'Model semantic color, type, spacing, radius, and elevation decisions as scoped tokens while declaring supported color schemes and preserving user preferences.',
   'css-type-color-and-design',
   ['css-custom-properties-fallbacks', 'css-visual-hierarchy-spacing'],
-  'rwd-webdev-css',
-  'Custom properties and color modules',
-  'Custom properties can encode reusable semantic design decisions while cascade and inheritance control their scope.',
+  'rwd-css-color-adjust-one',
+  'Sections 2.1 through 2.4: supported, preferred, and used color schemes',
+  'Pages must opt into supported color schemes so browser-controlled UI and authored colors resolve coherently without assuming that a user agent can safely recolor arbitrary content.',
   'Tokenizing every literal guarantees a coherent design system even when tokens have no semantic purpose or constraint.',
   [
-    'Default, dark, high-contrast, and partial-theme cases must preserve usable semantic roles and fallbacks.',
-    'Learner must consolidate meaningful decisions without replacing one unexplained literal with another unexplained token.',
+    'Default, light, dark, high-contrast, forced-color, browser-control, embedded-content, and partial-theme cases must preserve usable semantic roles and contrast.',
+    'Learner must consolidate meaningful decisions, expose an understandable preference path, and avoid replacing one unexplained literal with another unexplained token.',
   ]
+);
+
+add(
+  'design-brief-handoff-artifacts',
+  'Evidence-backed design briefs and developer handoff',
+  'Turn researched outcomes, content, accessibility needs, constraints, risks, acceptance evidence, decisions, and open questions into a versioned brief and inspectable developer handoff.',
+  'css-type-color-and-design',
+  ['design-user-needs-task-flows', 'design-prototypes-evaluation-iteration'],
+  'rwd-sketch-developer-handoff',
+  'Developer handoff, inspect, measurements, assets, variables, components, and versions',
+  'Current handoff tools expose inspectable structure, measurements, assets, variables, components, comments, and versions, but those values still require implementation judgment and traceability.',
+  'Stakeholder approval turns every visual coordinate into an immutable implementation requirement and resolves all accessibility, responsive, content, state, and failure questions.',
+  [
+    'Each implemented decision must trace to an outcome, constraint, accepted design-system rule, accessibility requirement, or explicitly recorded assumption rather than pixel imitation.',
+    'A changed stakeholder constraint or ambiguous handoff value must produce a versioned question, decision, acceptance update, and re-review instead of silent invention.',
+  ],
+  ['responsive-systems', finalModule]
+);
+
+add(
+  'design-progressive-enhancement',
+  'Essential baseline and progressive enhancement',
+  'Deliver essential content and task behavior in a broadly usable baseline, then add supported layout and interaction enhancements without making the enhancement the only path.',
+  'css-type-color-and-design',
+  ['css-purpose-and-boundary', 'design-user-needs-task-flows'],
+  'rwd-mdn-progressive-enhancement',
+  'Baseline content and functionality, feature detection, and accessibility alternatives',
+  'Progressive enhancement begins with essential content and functionality for varied user agents and adds richer behavior only where capabilities support it.',
+  'Progressive enhancement means reproducing every modern effect in old browsers or blocking the task until all enhancement code loads.',
+  [
+    'Styles-disabled, script-unavailable, unsupported-feature, slow-resource, preference, and input changes must preserve the bounded essential task and truthful status.',
+    'Learner must identify the essential outcome, enhancement boundary, capability evidence, failure behavior, and testing matrix before adding the enhancement.',
+  ],
+  ['responsive-systems', 'css-interaction-accessibility-and-motion', finalModule]
+);
+
+add(
+  'design-hierarchical-wayfinding',
+  'Hierarchical wayfinding and breadcrumbs',
+  'Choose breadcrumbs only for genuine parent-page hierarchy, expose an ordered path in a labelled navigation landmark, and identify the current page without confusing hierarchy with visit history or task progress.',
+  'css-type-color-and-design',
+  ['design-user-needs-task-flows', 'css-visual-hierarchy-spacing'],
+  'rwd-aria-apg',
+  'Breadcrumb pattern',
+  'An accessible breadcrumb is a labelled navigation landmark containing parent-page links in hierarchical order and an identified current page.',
+  'A breadcrumb should reproduce the exact sequence of pages the visitor opened and can replace primary navigation on every site.',
+  [
+    'Deep-link, short hierarchy, narrow width, zoom, long label, translated label, current-page, and keyboard cases must preserve understandable location and destinations.',
+    'Learner must reject breadcrumbs where the information model has no stable parent hierarchy and choose a task-appropriate navigation aid instead.',
+  ],
+  ['responsive-systems', finalModule]
+);
+
+add(
+  'design-card-content-actions',
+  'Card grouping, content priority, and action boundaries',
+  'Use a card only when a set of related content benefits from repeated grouping, preserve heading and list relationships, bound its primary and secondary actions, and make every action operable without invalid nested interaction.',
+  'css-type-color-and-design',
+  ['css-visual-hierarchy-spacing', 'design-user-needs-task-flows'],
+  'rwd-w3c-coga-usable',
+  '4.3 clear purpose and 4.5 clear controls',
+  'Clear grouping, visible labels, familiar controls, and consistent purpose help people understand repeated content and choose an action without relying on visual inference.',
+  'A shadow, hover effect, and pointer cursor make an entire container an accessible link even when it contains other links or buttons.',
+  [
+    'Long headings, missing media, multiple actions, keyboard, touch, zoom, forced-color, and changed-order cases must retain content relationships and distinct operable targets.',
+    'Learner must justify whether a repeated item needs a list, article, heading, link, button, or no card treatment before applying visual containment.',
+  ],
+  ['responsive-systems', finalModule]
+);
+
+add(
+  'design-progressive-disclosure-registration',
+  'Progressive disclosure and proportionate registration',
+  'Reveal secondary complexity through a clear persistent control while keeping essential information visible, and require identity or account data only when the user task and risk make it necessary.',
+  'css-type-color-and-design',
+  ['design-user-needs-task-flows', 'design-progressive-enhancement'],
+  'rwd-w3c-coga-usable',
+  '4.6 help users focus and 4.5 help users avoid and correct mistakes',
+  'Interfaces should preserve context, expose clear controls, reduce unnecessary cognitive load, and let people recover without losing entered work.',
+  'Hiding most controls or delaying every sign-in automatically reduces cognitive load and is always appropriate regardless of task, privacy, safety, or state continuity.',
+  [
+    'Essential-content, discoverability, expanded-state, keyboard, focus, refresh, privacy, saved-state, and account-required cases must preserve a complete and understandable task path.',
+    'Learner must separate optional detail from required decisions and justify the exact point where registration becomes necessary using user outcome, data, continuity, abuse, and risk evidence.',
+  ],
+  ['responsive-systems', 'css-interaction-accessibility-and-motion', finalModule]
 );
 
 add(
@@ -1195,6 +1280,23 @@ add(
 );
 
 add(
+  'design-long-collection-navigation',
+  'Long collections, pagination, and restored context',
+  'Choose explicit pagination or a bounded user-requested continuation for long collections, expose position and destinations, preserve history and focus, and restore context after detail navigation.',
+  'responsive-systems',
+  ['responsive-navigation-disclosure', 'responsive-fluid-default'],
+  'rwd-govuk-pagination',
+  'When to use, when not to use, and accessible pagination behavior',
+  'Explicit previous, next, and page navigation gives users control and context, while automatic infinite scroll creates keyboard and return-position problems.',
+  'A loading spinner and appended cards make endless automatic scrolling usable because every user can reach the footer, recover position, and understand result boundaries.',
+  [
+    'Keyboard, screen-reader, zoom, slow-response, empty, error, deep-link, browser-back, detail-return, changed-sort, and final-page cases must preserve location and control.',
+    'Learner must justify pagination, load-more, virtualization, or another bounded pattern from task behavior and verify focus placement, status, URL/history, and restored context.',
+  ],
+  [finalModule]
+);
+
+add(
   'responsive-test-matrix',
   'Responsive evidence matrix',
   'Test continuous size ranges and changed content, zoom, input, preferences, orientation, density, media, performance, and browser conditions using recorded evidence.',
@@ -1211,6 +1313,22 @@ add(
   [
     'Learner must derive a risk-based matrix with boundary, between-boundary, and changed-condition cases.',
     'Each failure report must include reproduction, observed behavior, violated invariant, cause evidence, repair, and re-test.',
+  ]
+);
+
+add(
+  'css-zoom-reflow-text-spacing',
+  'Zoom, reflow, and user text spacing',
+  'Preserve content and operation under browser zoom, viewport reflow, enlarged text, and user-overridden line, paragraph, letter, and word spacing.',
+  'css-interaction-accessibility-and-motion',
+  ['responsive-test-matrix', 'css-text-wrap-spacing-decoration'],
+  'rwd-wcag-two-two',
+  '1.4.4, 1.4.10, and 1.4.12',
+  'Text must resize and reflow, and user spacing overrides must not cause loss of content or function.',
+  'A layout passes zoom when the browser technically allows zoom, even if fixed panels cover content afterward.',
+  [
+    'Two-hundred and four-hundred-percent zoom plus the text-spacing test values must retain complete reading and operation.',
+    'Learner must repair fixed dimensions, clipping, overlays, or order issues from cause-level layout evidence.',
   ]
 );
 
@@ -1260,6 +1378,57 @@ add(
     'Small, adjacent, wrapped, zoomed, and touch cases must measure hit regions and reject overlap.',
     'Learner must document any exception and provide the strongest feasible alternative target access.',
   ]
+);
+
+add(
+  'design-modal-dialog-focus',
+  'Modal necessity, semantics, focus, and dismissal',
+  'Use a modal only for a bounded interrupting task, make background content inert, label the dialog, contain and place focus deliberately, provide explicit dismissal, protect entered work, and restore logical focus.',
+  'css-interaction-accessibility-and-motion',
+  ['css-focus-visible-indicators', 'css-target-size-spacing', 'css-stacking-contexts-z-index'],
+  'rwd-aria-apg',
+  'Dialog modal pattern and keyboard interaction',
+  'A conforming modal makes outside content inert, moves focus inside, contains the tab sequence, supports Escape, exposes a visible close action, and returns focus according to workflow.',
+  'Dimming the page and closing on any outside click is a complete modal implementation even when focus escapes, content is mislabelled, or a stray pointer action discards work.',
+  [
+    'Keyboard, screen-reader, long-content, zoom, destructive-action, nested-trigger, validation-error, pointer-dismissal, Escape, and invoker-removal cases must preserve task state and logical focus.',
+    'Learner must first reject a modal when inline content or a normal page better fits the task, then document title, description, initial focus, tab containment, dismissal, error, and return-focus behavior when modal use remains justified.',
+  ],
+  [finalModule]
+);
+
+add(
+  'design-multistep-progress-recovery',
+  'Multi-step progress, persistence, review, and recovery',
+  'Break a genuinely long process into logical steps, communicate current and total progress in text, preserve entered data, support backward correction, and recover after interruption without inventing false certainty for conditional paths.',
+  'css-interaction-accessibility-and-motion',
+  ['css-focus-visible-indicators', 'css-form-control-states', 'css-zoom-reflow-text-spacing'],
+  'rwd-wai-multistep-forms',
+  'Overview and indicating progress through title, heading, progress, and step indicators',
+  'Multi-page forms should use logical stages and provide perceivable progress at every step, including through page titles and main headings.',
+  'A row of colored circles is sufficient progress evidence, and returning to a previous step may safely erase later valid answers.',
+  [
+    'Keyboard, screen-reader, refresh, session-return, conditional-step, validation, back, edit, final-review, timeout, and network-error cases must retain understandable progress and recoverable data.',
+    'Learner must distinguish determinate from conditional progress, expose textual state, and demonstrate correction plus return to the prior place without unnecessary re-entry.',
+  ],
+  [finalModule]
+);
+
+add(
+  'design-cart-review-correction',
+  'Cart state, quantity correction, totals, and confirmation',
+  'Keep selected items and costs inspectable, provide labelled quantity and removal controls, announce material changes, prevent silent loss, and offer a complete review-and-correct step before commitment.',
+  'css-interaction-accessibility-and-motion',
+  ['css-form-control-states', 'design-multistep-progress-recovery'],
+  'rwd-w3c-coga-usable',
+  '4.5.5 allow users to check, change, and confirm important information',
+  'Important transactions need review, correction, return without data loss, clear final confirmation, and understandable cancellation or recovery paths.',
+  'A familiar cart icon, product thumbnails, and prominent checkout color prove the cart is usable even when quantity changes, totals, errors, and confirmation are inaccessible.',
+  [
+    'Zero, maximum, invalid, delayed-price, unavailable-item, discount, tax, shipping, keyboard, screen-reader, refresh, concurrent-change, and final-confirmation cases must expose accurate state and recovery.',
+    'Learner must reconcile visible line items, quantities, totals, announced changes, error ownership, review, edit return, and irreversible commitment against changed cart data.',
+  ],
+  [finalModule]
 );
 
 add(
@@ -1323,22 +1492,6 @@ add(
   [
     'Forced-color, dark, light, increased-contrast, and partial-support cases must preserve controls, focus, states, and content.',
     'Learner must use system colors or selective exceptions and justify every retained author color.',
-  ]
-);
-
-add(
-  'css-zoom-reflow-text-spacing',
-  'Zoom, reflow, and user text spacing',
-  'Preserve content and operation under browser zoom, viewport reflow, enlarged text, and user-overridden line, paragraph, letter, and word spacing.',
-  'css-interaction-accessibility-and-motion',
-  ['responsive-test-matrix', 'css-text-wrap-spacing-decoration'],
-  'rwd-wcag-two-two',
-  '1.4.4, 1.4.10, and 1.4.12',
-  'Text must resize and reflow, and user spacing overrides must not cause loss of content or function.',
-  'A layout passes zoom when the browser technically allows zoom, even if fixed panels cover content afterward.',
-  [
-    'Two-hundred and four-hundred-percent zoom plus the text-spacing test values must retain complete reading and operation.',
-    'Learner must repair fixed dimensions, clipping, overlays, or order issues from cause-level layout evidence.',
   ]
 );
 
@@ -1455,7 +1608,14 @@ const graph = {
     'rwd-webdev-css',
     'rwd-webdev-responsive',
     'rwd-govuk-user-needs',
+    'rwd-mdn-progressive-enhancement',
+    'rwd-css-color-adjust-one',
+    'rwd-w3c-coga-usable',
+    'rwd-govuk-pagination',
+    'rwd-wai-multistep-forms',
+    'rwd-sketch-developer-handoff',
     'rwd-wai-tutorials',
+    'rwd-aria-apg',
     'rwd-fcc-v9',
   ],
   moduleIds: [

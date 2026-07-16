@@ -330,16 +330,16 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(86);
+    expect(graph.concepts).toHaveLength(95);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
       'css-language-and-cascade': 16,
       'css-boxes-and-sizing': 12,
-      'css-type-color-and-design': 14,
+      'css-type-color-and-design': 19,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 10,
-      'responsive-systems': 13,
-      'css-interaction-accessibility-and-motion': 12,
+      'responsive-systems': 14,
+      'css-interaction-accessibility-and-motion': 15,
       'css-independent-project': 1,
     });
     expect(
@@ -353,6 +353,12 @@ describe('research contracts', () => {
         'rwd-css-cascade-six',
         'rwd-css-display-three',
         'rwd-css-backgrounds-three',
+        'rwd-mdn-progressive-enhancement',
+        'rwd-css-color-adjust-one',
+        'rwd-w3c-coga-usable',
+        'rwd-govuk-pagination',
+        'rwd-wai-multistep-forms',
+        'rwd-sketch-developer-handoff',
       ])
     );
     expect(
@@ -414,8 +420,147 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 85 source blocks');
+    expect(content).toContain('The remaining 80 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
+  });
+
+  it('records and bounds the complete Design for Developers inspection', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-design-for-developers-inspection.md'
+      ),
+      'utf8'
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const designConceptIds = [
+      'design-brief-handoff-artifacts',
+      'design-progressive-enhancement',
+      'design-hierarchical-wayfinding',
+      'design-card-content-actions',
+      'design-progressive-disclosure-registration',
+      'design-long-collection-navigation',
+      'design-modal-dialog-focus',
+      'design-multistep-progress-recovery',
+      'design-cart-review-correction',
+    ];
+
+    expect(content).toContain('**23**');
+    expect(content).toContain('**103**');
+    expect(content).toContain('“higher PPI is better”');
+    expect(content).toContain('outside click is not a modal contract');
+    expect(content).toContain('automatic infinite scroll');
+    expect(content).toContain('Adobe XD is maintenance mode');
+    expect(content).toContain('The complete 178-concept');
+    expect(content.length).toBeGreaterThan(15_000);
+    expect(
+      designConceptIds.every((conceptId) =>
+        graph.concepts.some((concept) => concept.id === conceptId)
+      )
+    ).toBe(true);
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-resilient-design-patterns')
+    ).toMatchObject({ status: 'accepted' });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-current-design-tool-capabilities')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-sketch-developer-handoff',
+        'rwd-penpot-dev-tools',
+        'rwd-adobe-xd-status',
+        'rwd-fcc-design-inspection',
+      ],
+    });
+  });
+
+  it('keeps all five Design for Developers source blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const designAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'design-for-developers'
+    );
+    const sharedReviewConceptIds = [
+      'design-user-needs-task-flows',
+      'css-readable-measure-alignment',
+      'css-contrast-noncolor-meaning',
+      'css-visual-hierarchy-spacing',
+      'responsive-fluid-media',
+      'design-prototypes-evaluation-iteration',
+      'css-design-tokens-theming',
+      'design-brief-handoff-artifacts',
+      'design-progressive-enhancement',
+      'design-hierarchical-wayfinding',
+      'design-card-content-actions',
+      'design-progressive-disclosure-registration',
+      'design-long-collection-navigation',
+      'design-modal-dialog-focus',
+      'design-multistep-progress-recovery',
+      'design-cart-review-correction',
+    ];
+
+    expect(designAlignments).toHaveLength(5);
+    expect(
+      designAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(23);
+    expect(
+      designAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(103);
+    expect(
+      designAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        designAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-user-interface-design-fundamentals': [
+        'css-readable-measure-alignment',
+        'css-contrast-noncolor-meaning',
+        'css-visual-hierarchy-spacing',
+        'responsive-fluid-media',
+        'design-progressive-enhancement',
+      ],
+      'lecture-user-centered-design': [
+        'design-user-needs-task-flows',
+        'design-prototypes-evaluation-iteration',
+        'css-design-tokens-theming',
+        'design-hierarchical-wayfinding',
+        'design-card-content-actions',
+        'design-progressive-disclosure-registration',
+        'design-long-collection-navigation',
+        'design-modal-dialog-focus',
+        'design-multistep-progress-recovery',
+        'design-cart-review-correction',
+      ],
+      'lecture-common-design-tools': [
+        'design-user-needs-task-flows',
+        'design-prototypes-evaluation-iteration',
+        'design-brief-handoff-artifacts',
+      ],
+      'review-design-fundamentals': sharedReviewConceptIds,
+      'quiz-design-fundamentals': sharedReviewConceptIds,
+    });
   });
 
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
@@ -476,10 +621,10 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 95]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(73);
+    ).toHaveLength(78);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -1247,10 +1392,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(91);
+    ).toHaveLength(93);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(66);
+    ).toHaveLength(64);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -1409,9 +1554,9 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(169);
-    expect(architecture.sourceObjectiveIds).toHaveLength(91);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(67);
+    expect(architecture.conceptIds).toHaveLength(178);
+    expect(architecture.sourceObjectiveIds).toHaveLength(93);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(65);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
