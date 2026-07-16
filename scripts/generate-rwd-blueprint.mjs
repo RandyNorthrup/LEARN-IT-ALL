@@ -1489,6 +1489,7 @@ for (const [moduleIndex, moduleId] of moduleOrder.entries()) {
     title: spec?.title ?? reuseTitles[moduleId] ?? titleCase(moduleId),
     order: moduleIndex + 1,
     prerequisiteModuleIds: priorModuleId ? [priorModuleId] : [],
+    sourceObjectiveIds: moduleReference.blocks.map((block) => block.objectiveId),
     objectives: authoredPlan?.objectives ?? [
       ownSkillIds.length
         ? `Demonstrate every ${spec.title.toLowerCase()} competency through explanation, guided practice, independent transfer, and retained-skill checks.`
@@ -1655,7 +1656,7 @@ const blueprint = {
       'Operate a keyboard or equivalent input, open a browser, and follow plain-language file instructions.',
     ],
     deviceConstraints: [
-      'Learners may use a mobile, tablet, laptop, or desktop browser with intermittent connectivity.',
+      'Course studios require a supported tablet, laptop, or desktop browser; phones receive an accessible handoff that preserves the resumable route.',
     ],
     accessibilityAssumptions: [
       'Learners may use keyboard-only input, zoom, reduced motion, forced colors, screen readers, or cognitive supports.',
@@ -1692,6 +1693,7 @@ const blueprint = {
   },
   sources: [
     {
+      id: 'rwd-whatwg-html',
       title: 'HTML Living Standard',
       authority: 'standard',
       url: 'https://html.spec.whatwg.org/',
@@ -1699,40 +1701,94 @@ const blueprint = {
       reviewedAt: '2026-07-13',
       scope:
         'HTML syntax, elements, content models, forms, tables, media, and author requirements.',
+      limitations: [
+        'The Living Standard is authoritative technical scope but is not a novice sequence or evidence that a learner can apply its requirements.',
+      ],
+      decisionIds: ['rwd-standards-first-scope', 'rwd-behavioral-grading'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'WHATWG changes syntax, element, content-model, form, media, table, or author requirements taught by the course.',
+        ],
+      },
     },
     {
+      id: 'rwd-css-snapshot',
       title: 'CSS Snapshot 2025',
       authority: 'standard',
       url: 'https://www.w3.org/TR/css-2025/',
       version: '2025',
       reviewedAt: '2026-07-13',
       scope: 'Current stable CSS definition and module status.',
+      limitations: [
+        'Snapshot status does not establish interoperability, beginner sequence, accessibility, or project usefulness for each feature.',
+      ],
+      decisionIds: ['rwd-standards-first-scope'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'W3C publishes a newer CSS Snapshot or changes the status of a feature taught as stable.',
+        ],
+      },
     },
     {
+      id: 'rwd-wcag-two-two',
       title: 'Web Content Accessibility Guidelines 2.2',
       authority: 'standard',
       url: 'https://www.w3.org/TR/WCAG22/',
       version: '2.2',
       reviewedAt: '2026-07-13',
       scope: 'Accessibility success criteria and conformance baseline.',
+      limitations: [
+        'Conformance does not prove overall usability, inclusive content quality, learner understanding, or compatibility with every assistive technology.',
+      ],
+      decisionIds: ['rwd-accessibility-cumulative', 'rwd-behavioral-grading'],
+      nextReview: {
+        triggers: [
+          'W3C publishes a superseding WCAG Recommendation or an applicable normative correction.',
+        ],
+      },
     },
     {
+      id: 'rwd-aria-apg',
       title: 'ARIA Authoring Practices Guide',
       authority: 'official-docs',
       url: 'https://www.w3.org/WAI/ARIA/apg/',
       version: '2026-07',
       reviewedAt: '2026-07-13',
       scope: 'Accessible names, landmarks, roles, states, keyboard behavior, and widget patterns.',
+      limitations: [
+        'Patterns are implementation guidance rather than normative conformance and do not replace native HTML or observed assistive-technology testing.',
+      ],
+      decisionIds: ['rwd-accessibility-cumulative', 'rwd-behavioral-grading'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'WAI changes accessible-name, landmark, keyboard, role, state, property, or widget-pattern guidance used by the course.',
+        ],
+      },
     },
     {
+      id: 'rwd-mdn-curriculum',
       title: 'MDN Curriculum',
       authority: 'curriculum-framework',
       url: 'https://developer.mozilla.org/en-US/curriculum/',
       version: '2025-10',
       reviewedAt: '2026-07-13',
       scope: 'Essential beginner front-end competencies and industry relevance cross-check.',
+      limitations: [
+        "MDN supplies scope and learning resources but not this platform's complete interactive practice, correction, assessment, or credential evidence.",
+      ],
+      decisionIds: ['rwd-standards-first-scope', 'rwd-begin-with-building'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'MDN changes curriculum modules, outcomes, assessment guidance, or Learn Web Development structure.',
+        ],
+      },
     },
     {
+      id: 'rwd-webdev-responsive',
       title: 'Learn Responsive Design',
       authority: 'official-docs',
       url: 'https://web.dev/learn/design/',
@@ -1740,14 +1796,35 @@ const blueprint = {
       reviewedAt: '2026-07-13',
       scope:
         'Modern responsive layout, media, typography, accessibility, and user preference coverage.',
+      limitations: [
+        'Official guidance provides scope and examples but does not validate this course order, projects, grading, browser support, or learner transfer.',
+      ],
+      decisionIds: ['rwd-standards-first-scope', 'rwd-accessibility-cumulative'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'web.dev changes responsive design, layout, media, typography, accessibility, or preference guidance used by the course.',
+        ],
+      },
     },
     {
+      id: 'rwd-fcc-v9',
       title: 'freeCodeCamp Responsive Web Design v9',
       authority: 'curriculum-framework',
       url: 'https://www.freecodecamp.org/learn/responsive-web-design-v9/',
       version: reference.upstreamCommit,
       reviewedAt: '2026-07-13',
       scope: 'Required parity map for 29 modules, 158 blocks, and 1,553 reference challenges.',
+      limitations: [
+        'External names and counts do not prove pedagogical quality and learner-facing explanations, scenarios, code, checks, or solutions cannot be copied.',
+      ],
+      decisionIds: ['rwd-original-v9-depth', 'rwd-begin-with-building'],
+      nextReview: {
+        onOrBefore: '2026-10-15',
+        triggers: [
+          'freeCodeCamp changes v9 modules, blocks, challenges, projects, examination, or reference identifiers.',
+        ],
+      },
     },
   ],
   competencies: allCompetencies,

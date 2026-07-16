@@ -76,6 +76,103 @@ export const ResearchDecisionSchema = z.object({
   validation: z.array(z.string().min(20)).min(1),
 });
 
+export const SourceObjectiveCoverageMatrixSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    snapshot: z.object({
+      sourceId: IdentifierSchema,
+      upstreamCommit: z.string().min(20),
+      capturedAt: z.iso.datetime(),
+      sourceModules: z.number().int().positive(),
+      sourceBlocks: z.number().int().positive(),
+      sourceChallenges: z.number().int().positive(),
+    }),
+    objectives: z
+      .array(
+        z.object({
+          objectiveId: IdentifierSchema,
+          sourceId: IdentifierSchema,
+          sourceModuleId: IdentifierSchema,
+          sourceBlockSlug: IdentifierSchema,
+          sourceActivityType: z.enum(['workshop', 'lab', 'lecture', 'review', 'quiz', 'exam']),
+          sourceChallengeIds: z.array(z.string().min(8)).min(1),
+          sourceChallengeCount: z.number().int().positive(),
+          coverageIntent: z.string().min(30),
+          competencyIds: z.array(IdentifierSchema).min(1),
+          moduleIds: z.array(IdentifierSchema).min(1),
+          stages: z.array(CoverageStageSchema).min(1),
+          learnerWorkState: z.enum([
+            'mapped-only',
+            'research-reviewed',
+            'authored',
+            'schema-valid',
+            'flow-verified',
+            'pilot-validated',
+          ]),
+          originalityBoundary: z.string().min(30),
+          validationNeeded: z.array(z.string().min(20)).min(1),
+        })
+      )
+      .min(1),
+    gaps: z.array(z.string().min(20)),
+  })
+  .superRefine((matrix, context) => {
+    const objectiveIds = matrix.objectives.map((objective) => objective.objectiveId);
+    if (new Set(objectiveIds).size !== objectiveIds.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate external objective IDs' });
+    }
+
+    const sourceBlockSlugs = matrix.objectives.map((objective) => objective.sourceBlockSlug);
+    if (new Set(sourceBlockSlugs).size !== sourceBlockSlugs.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate external source blocks' });
+    }
+
+    const challengeIds = matrix.objectives.flatMap((objective, objectiveIndex) => {
+      if (objective.sourceChallengeIds.length !== objective.sourceChallengeCount) {
+        context.addIssue({
+          code: 'custom',
+          message: `Objective ${objective.objectiveId} challenge count does not match its identities`,
+          path: ['objectives', objectiveIndex, 'sourceChallengeIds'],
+        });
+      }
+      if (objective.sourceId !== matrix.snapshot.sourceId) {
+        context.addIssue({
+          code: 'custom',
+          message: `Objective ${objective.objectiveId} cites a different source snapshot`,
+          path: ['objectives', objectiveIndex, 'sourceId'],
+        });
+      }
+      return objective.sourceChallengeIds;
+    });
+
+    if (matrix.objectives.length !== matrix.snapshot.sourceBlocks) {
+      context.addIssue({
+        code: 'custom',
+        message: 'External objective count does not match source block total',
+        path: ['objectives'],
+      });
+    }
+    if (challengeIds.length !== matrix.snapshot.sourceChallenges) {
+      context.addIssue({
+        code: 'custom',
+        message: 'External challenge count does not match source snapshot total',
+        path: ['objectives'],
+      });
+    }
+    if (new Set(challengeIds).size !== challengeIds.length) {
+      context.addIssue({ code: 'custom', message: 'Duplicate external challenge IDs' });
+    }
+    const moduleIds = new Set(matrix.objectives.flatMap((objective) => objective.moduleIds));
+    if (moduleIds.size !== matrix.snapshot.sourceModules) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Mapped module count does not match source snapshot total',
+        path: ['objectives'],
+      });
+    }
+  });
+
 function addReferenceIssues(
   value: {
     questions: z.infer<typeof ResearchQuestionSchema>[];
@@ -233,6 +330,7 @@ export const CourseResearchDossierSchema = z
 
 export type CourseResearchDossier = z.infer<typeof CourseResearchDossierSchema>;
 export type PlatformResearchRegister = z.infer<typeof PlatformResearchRegisterSchema>;
+export type SourceObjectiveCoverageMatrix = z.infer<typeof SourceObjectiveCoverageMatrixSchema>;
 
 export interface ResearchAuditFinding {
   severity: 'blocker' | 'warning';

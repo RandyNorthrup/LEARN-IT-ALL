@@ -1,6 +1,6 @@
 # Research Program Baseline
 
-Generated: 2026-07-16T01:56:51.088Z
+Generated: 2026-07-16T02:06:20.575Z
 
 This report measures research traceability, not course quality or completion. A source count does not make a course researched. Blockers remain expected while the reopened audit is active.
 
@@ -11,8 +11,8 @@ This report measures research traceability, not course quality or completion. A 
 - Course dossiers started: 1/54
 - Course dossiers at `researched` or later: 0/54
 - Existing source records: 799
-- Modules with source-objective IDs: 39/1135
-- Blocker groups: 323
+- Modules with source-objective IDs: 68/1135
+- Blocker groups: 318
 - Warning groups: 1
 
 ## Finding inventory
@@ -21,11 +21,11 @@ This report measures research traceability, not course quality or completion. A 
 | --- | ---: |
 | `dossier-not-researched` | 1 |
 | `missing-dossier` | 53 |
-| `missing-objective-source-map` | 54 |
-| `missing-source-decisions` | 54 |
-| `missing-source-identity` | 54 |
-| `missing-source-limitations` | 54 |
-| `missing-source-review-trigger` | 54 |
+| `missing-objective-source-map` | 53 |
+| `missing-source-decisions` | 53 |
+| `missing-source-identity` | 53 |
+| `missing-source-limitations` | 53 |
+| `missing-source-review-trigger` | 53 |
 
 ## Course inventory
 
@@ -82,7 +82,7 @@ This report measures research traceability, not course quality or completion. A 
 | `python-oop` | audit-required | 5 | 0/13 | missing | 6 | 0 |
 | `rag-retrieval-augmented-generation` | audit-required | 30 | 0/30 | missing | 6 | 0 |
 | `repository-quality-gates` | audit-required | 5 | 0/15 | missing | 6 | 0 |
-| `responsive-web-design` | audit-required | 7 | 0/29 | researching | 5 | 1 |
+| `responsive-web-design` | audit-required | 7 | 29/29 | researching | 0 | 1 |
 | `sql-basics` | audit-required | 7 | 0/16 | missing | 6 | 0 |
 | `typescript-basics` | audit-required | 4 | 0/15 | missing | 6 | 0 |
 

@@ -10,6 +10,12 @@ const reference = JSON.parse(
   readFileSync(path.join(process.cwd(), 'references', 'freecodecamp-rwd-v9.json'), 'utf8')
 );
 
+interface ReferenceBlock {
+  objectiveId: string;
+  challengeCount: number;
+  challengeOrder: Array<{ id: string; title: string }>;
+}
+
 describe('Responsive Web Design course blueprint', () => {
   it('passes the institution-grade blueprint contract', () => {
     const blueprint = CourseBlueprintSchema.parse(rawBlueprint);
@@ -36,6 +42,56 @@ describe('Responsive Web Design course blueprint', () => {
     expect(mappedBlockIds).toHaveLength(158);
     expect(new Set(mappedBlockIds).size).toBe(158);
     expect(new Set(mappedBlockIds)).toEqual(new Set(referenceBlockIds));
+  });
+
+  it('retains all upstream challenge identities and maps module source objectives', () => {
+    const referenceBlocks = reference.chapters.flatMap(
+      (chapter: {
+        modules: Array<{
+          blocks: ReferenceBlock[];
+        }>;
+      }) => chapter.modules.flatMap((module) => module.blocks)
+    ) as ReferenceBlock[];
+    const challengeIds = referenceBlocks.flatMap((block) =>
+      block.challengeOrder.map((challenge) => challenge.id)
+    );
+
+    expect(referenceBlocks).toHaveLength(158);
+    expect(challengeIds).toHaveLength(1553);
+    expect(new Set(challengeIds)).toHaveLength(1553);
+    expect(
+      referenceBlocks.every(
+        (block) => block.challengeOrder.length === block.challengeCount && block.objectiveId
+      )
+    ).toBe(true);
+
+    for (const module of rawBlueprint.modules as Array<{
+      id: string;
+      sourceObjectiveIds: string[];
+      reference: { upstreamBlocks: number };
+    }>) {
+      expect(module.sourceObjectiveIds, `${module.id} source-objective map`).toHaveLength(
+        module.reference.upstreamBlocks
+      );
+      expect(module.sourceObjectiveIds.every((id) => id.startsWith('fcc-v9-'))).toBe(true);
+    }
+  });
+
+  it('records bounded source decisions and maintenance triggers', () => {
+    expect(
+      rawBlueprint.sources.every(
+        (source: {
+          id?: string;
+          limitations?: string[];
+          decisionIds?: string[];
+          nextReview?: { triggers: string[] };
+        }) =>
+          source.id &&
+          source.limitations?.length &&
+          source.decisionIds?.length &&
+          source.nextReview?.triggers.length
+      )
+    ).toBe(true);
   });
 
   it('starts with computer and browser foundations before HTML and CSS', () => {

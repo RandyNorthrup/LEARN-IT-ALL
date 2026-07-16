@@ -6,6 +6,7 @@ import {
   auditCourseResearch,
   CourseResearchDossierSchema,
   PlatformResearchRegisterSchema,
+  SourceObjectiveCoverageMatrixSchema,
 } from './research';
 
 const repositoryRoot = process.cwd();
@@ -148,6 +149,37 @@ describe('research contracts', () => {
     }
   });
 
+  it('records the inspected Responsive Web Design beginner sequence and its blockers', () => {
+    const content = readFileSync(
+      path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-beginner-sequence.md'),
+      'utf8'
+    );
+
+    expect(content).toContain('covered all 64 units');
+    expect(content).toContain('The first meaningful edit must occur within two learner actions');
+    expect(content).toContain('thirteen-activity barrier before HTML');
+    expect(content).toContain('## Blockers before sequence approval');
+  });
+
+  it('maps every pinned Responsive Web Design source block and challenge identity honestly', () => {
+    const matrix = SourceObjectiveCoverageMatrixSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-coverage.json')
+      )
+    );
+
+    expect(matrix.snapshot).toMatchObject({
+      sourceModules: 29,
+      sourceBlocks: 158,
+      sourceChallenges: 1553,
+    });
+    expect(matrix.objectives).toHaveLength(158);
+    expect(
+      matrix.objectives.every((objective) => objective.learnerWorkState === 'mapped-only')
+    ).toBe(true);
+    expect(matrix.gaps.length).toBeGreaterThanOrEqual(4);
+  });
+
   it('rejects research claims that cite missing decisions', () => {
     const register = readJson(
       path.join(repositoryRoot, 'docs/research/platform-research-register.json')
@@ -194,7 +226,7 @@ describe('research contracts', () => {
     }
   });
 
-  it('reports concrete traceability gaps instead of treating source counts as research', () => {
+  it('keeps Responsive Web Design source traceability complete without claiming approval', () => {
     const blueprint = CourseBlueprintSchema.parse(
       readJson(path.join(repositoryRoot, 'blueprints/responsive-web-design.json'))
     );
@@ -203,15 +235,6 @@ describe('research contracts', () => {
 
     expect(audit.blueprintStatus).toBe('audit-required');
     expect(codes).not.toContain('false-review-state');
-    expect(codes).toEqual(
-      expect.arrayContaining([
-        'missing-dossier',
-        'missing-source-identity',
-        'missing-source-limitations',
-        'missing-source-decisions',
-        'missing-source-review-trigger',
-        'missing-objective-source-map',
-      ])
-    );
+    expect(codes).toEqual(['missing-dossier']);
   });
 });

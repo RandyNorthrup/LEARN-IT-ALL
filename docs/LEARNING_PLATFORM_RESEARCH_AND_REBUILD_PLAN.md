@@ -102,6 +102,8 @@ The first platform evidence wave now records 20 bounded sources and 15 traceable
 
 These artifacts record decisions, not completion. Competitive hands-on observations, platform comprehension pilots, supported-device and assistive-technology trials, privacy review, clean cross-platform installs, and 53 course dossiers remain open. No course architecture or feature-wide scaling may bypass those gates.
 
+Responsive Web Design now has a pinned [158-block and 1,553-challenge identity matrix](research/courses/responsive-web-design-coverage.json) rather than count-only parity. Every block maps to the current blueprint module, competency set, learning stages, originality boundary, learner-work state, and validation still needed. Every entry remains `mapped-only`; this matrix does not approve current content. A direct [beginner entry-sequence inspection](research/courses/responsive-web-design-beginner-sequence.md) reviewed all 64 units in the first seven v9 blocks. It confirmed that meaningful HTML construction belongs at the start and exposed a conflict in the current LEARN-IT-ALL architecture: 13 tooling activities precede the first HTML activity. The rebuild will integrate tooling just in time around the first artifact and prototype the opening flow before scaling.
+
 ## Findings translated into product rules
 
 ### Learning science and course quality

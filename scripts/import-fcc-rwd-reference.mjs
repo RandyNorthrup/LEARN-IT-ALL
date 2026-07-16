@@ -37,7 +37,14 @@ for (const chapter of structure.chapters) {
       const block = JSON.parse(await readFile(path.join(blocksRoot, `${slug}.json`), 'utf8'));
       const type = block.blockLabel ?? 'unknown';
       const challengeCount = block.challengeOrder?.length ?? 0;
-      blocks.push({ slug, type, challengeCount });
+      const challengeOrder = (block.challengeOrder ?? []).map(({ id, title }) => ({ id, title }));
+      blocks.push({
+        objectiveId: `fcc-v9-${slug}`,
+        slug,
+        type,
+        challengeCount,
+        challengeOrder,
+      });
       totals.blocks += 1;
       totals.challenges += challengeCount;
       totals.byType[type] ??= { blocks: 0, challenges: 0 };
@@ -67,6 +74,15 @@ const reference = {
   totals,
   chapters,
 };
+
+const challengeIds = chapters.flatMap((chapter) =>
+  chapter.modules.flatMap((module) =>
+    module.blocks.flatMap((block) => block.challengeOrder.map((challenge) => challenge.id))
+  )
+);
+if (challengeIds.length !== new Set(challengeIds).size) {
+  throw new Error('Responsive Web Design v9 reference contains duplicate challenge IDs.');
+}
 
 const output = path.join(process.cwd(), 'references', 'freecodecamp-rwd-v9.json');
 await mkdir(path.dirname(output), { recursive: true });
