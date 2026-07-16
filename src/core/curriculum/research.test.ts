@@ -1045,6 +1045,7 @@ describe('research contracts', () => {
         'rwd-css-forms-one',
         'rwd-wcag-two-two',
         'rwd-fcc-styling-forms-inspection',
+        'rwd-fcc-product-landing-page-lab-inspection',
       ],
     });
   });
@@ -1410,6 +1411,7 @@ describe('research contracts', () => {
         'rwd-css-sizing-three',
         'rwd-wcag-two-two',
         'rwd-fcc-flexbox-inspection',
+        'rwd-fcc-product-landing-page-lab-inspection',
       ],
     });
   });
@@ -1975,6 +1977,7 @@ describe('research contracts', () => {
         'rwd-css-transforms-one',
         'rwd-wcag-two-two',
         'rwd-fcc-css-positioning-inspection',
+        'rwd-fcc-product-landing-page-lab-inspection',
       ],
     });
   });
@@ -2937,6 +2940,137 @@ describe('research contracts', () => {
     ).not.toContain('css-changed-case-regression');
   });
 
+  it('records the complete Product Landing Page lab inspection and real-behavior replacement', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-product-landing-page-lab-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+
+    expect(content).toContain('Complete 25-check audit');
+    expect(content).toContain('Static DOM, attribute, selector, and URL-string checks | 22');
+    expect(content).toContain('real isolated submission receiver owned by the lab');
+    expect(content).toContain(
+      '9 total source blocks still require challenge-level or item-level inspection'
+    );
+    expect(content.length).toBeGreaterThan(20_000);
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-product-landing-page-lab-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    for (const decisionId of [
+      'rwd-positioning-behavior-evidence',
+      'rwd-flex-layout-evidence',
+      'rwd-native-form-controls-first',
+      'rwd-content-driven-responsive',
+      'rwd-accessibility-cumulative',
+      'rwd-behavioral-grading',
+    ]) {
+      expect(dossier.decisions.find((decision) => decision.id === decisionId)?.sourceIds).toContain(
+        'rwd-fcc-product-landing-page-lab-inspection'
+      );
+    }
+  });
+
+  it('replaces the unrelated Product Landing Page Grid bundle with one exact inspected map', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const alignment = matrix.alignments.find(
+      (record) => record.sourceBlockSlug === 'lab-product-landing-page'
+    );
+
+    expect(alignment).toMatchObject({
+      sourceChallengeCount: 1,
+      sourceEvidence: {
+        challengeIds: ['587d78af367417b2b2512b04'],
+        sourceFileSha256s: ['8c453f451216c4d30cd5414b1dab758f8b21c508eb8d4dc01727d28deacaeb5e'],
+        sourceBytes: 18_457,
+        hintCheckCount: 25,
+        quizQuestionCount: 0,
+      },
+      mappingBasis: 'block-specific-source',
+      inspectionState: 'agent-inspected',
+      conceptIds: [
+        'html-doctype-rendering-mode',
+        'html-document-root-head-body',
+        'html-document-language',
+        'html-character-encoding',
+        'html-title-metadata',
+        'html-files-paths-urls',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-replaced-content-boundaries',
+        'html-images-purpose-alt',
+        'html-audio-video',
+        'html-iframe-title-permissions',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-lists',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-native-controls-first',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-textarea-select-buttons',
+        'html-native-validation',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-pseudo-classes',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-box-sizing-models',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-backgrounds-borders-shadows',
+        'css-color-spaces-alpha',
+        'css-font-stacks-generic-fallbacks',
+        'css-web-font-sources-loading',
+        'css-type-scale-line-height',
+        'css-readable-measure-alignment',
+        'css-text-wrap-spacing-decoration',
+        'css-text-decoration-shadows-emphasis',
+        'css-list-markers-counters',
+        'css-visual-hierarchy-spacing',
+        'css-normal-flow',
+        'css-positioning-containing-blocks',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'responsive-fluid-default',
+        'responsive-fluid-media',
+        'responsive-media-query-model',
+        'css-transitions-state-change',
+      ],
+    });
+    expect(alignment?.conceptIds.some((conceptId) => conceptId.startsWith('css-grid-'))).toBe(
+      false
+    );
+    for (const unsupportedConceptId of [
+      'responsive-content-breakpoints',
+      'responsive-navigation-disclosure',
+      'responsive-test-matrix',
+      'css-independent-transfer-defense',
+    ]) {
+      expect(alignment?.conceptIds).not.toContain(unsupportedConceptId);
+    }
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -2992,7 +3126,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 103]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(148);
+    ).toHaveLength(149);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -3760,10 +3894,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(149);
+    ).toHaveLength(150);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(8);
+    ).toHaveLength(7);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -3921,8 +4055,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(186);
-    expect(architecture.sourceObjectiveIds).toHaveLength(149);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(9);
+    expect(architecture.sourceObjectiveIds).toHaveLength(150);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(8);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
