@@ -301,7 +301,7 @@ const moduleDefinitions = [
       'html-source-order-keyboard',
       'html-validation-inspection',
     ],
-    'The independent HTML service gains a separately loaded stylesheet with inspectable rules, bounded type/class/ID matching, saved state, and a usable unstyled fallback.',
+    'The independent HTML service gains a separately loaded stylesheet with inspectable rules, bounded type/class/ID matching, saved state, and a usable task path when author CSS is unavailable.',
     'CSS purpose, rule anatomy, loading, and basic selectors enter without advanced cascade, layout, or design-system mechanisms.'
   ),
   module(
