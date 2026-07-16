@@ -1032,6 +1032,201 @@ export const ResearchCourseArchitectureSchema = z
     }
   });
 
+const PlannedInteractionModeSchema = z.enum([
+  'read',
+  'predict',
+  'inspect',
+  'explain',
+  'code',
+  'test',
+  'complete',
+  'debug',
+  'build',
+  'defend',
+  'retrieve',
+  'correct',
+  'answer',
+]);
+
+const PlannedActivitySchema = z.object({
+  id: IdentifierSchema,
+  title: z.string().min(8),
+  scenarioDomain: IdentifierSchema,
+  interactionModes: z.array(PlannedInteractionModeSchema).min(2),
+  evidenceStages: z.array(ConceptEvidenceStageSchema).min(1),
+  minimumInteractions: z.number().int().positive(),
+});
+
+const ActivityMatrixTotalsSchema = z.object({
+  theoryInteractions: z.number().int().positive(),
+  workshopSteps: z.number().int().positive(),
+  independentLabs: z.number().int().positive(),
+  reviews: z.number().int().positive(),
+  quizBanks: z.number().int().positive(),
+  preAssessmentInteractions: z.number().int().positive(),
+});
+
+export const ResearchActivityMatrixSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    depthCommitment: z.object({
+      minimums: ActivityMatrixTotalsSchema,
+      plannedMinimums: ActivityMatrixTotalsSchema,
+      interpretation: z.string().min(50),
+    }),
+    modules: z
+      .array(
+        z.object({
+          moduleId: IdentifierSchema,
+          state: z.literal('planned-not-authored'),
+          newConceptIds: z.array(IdentifierSchema).min(1),
+          retrievalConceptIds: z.array(IdentifierSchema),
+          activities: z.object({
+            model: PlannedActivitySchema,
+            workshop: PlannedActivitySchema,
+            faded: PlannedActivitySchema,
+            debug: PlannedActivitySchema,
+            lab: PlannedActivitySchema,
+            review: PlannedActivitySchema,
+            assessment: PlannedActivitySchema.extend({
+              kind: z.enum(['quiz-bank', 'performance-check-bank']),
+            }),
+          }),
+          distinctnessRationale: z.string().min(100),
+          correctionContract: z.array(z.string().min(40)).min(2),
+        })
+      )
+      .min(1),
+    assessmentBoundary: z.object({
+      externalExamEvidence: z.string().min(40),
+      requiredOriginalEvidence: z.array(z.string().min(30)).min(4),
+    }),
+    architectureFindings: z.array(z.string().min(30)).min(1),
+    gaps: z.array(z.string().min(30)).min(1),
+  })
+  .superRefine((matrix, context) => {
+    const activityRoles = [
+      'model',
+      'workshop',
+      'faded',
+      'debug',
+      'lab',
+      'review',
+      'assessment',
+    ] as const;
+    const expectedStages = {
+      model: ['introduce', 'model'],
+      workshop: ['guided'],
+      faded: ['faded'],
+      debug: ['debug'],
+      lab: ['transfer'],
+      review: ['retrieve'],
+      assessment: ['assess'],
+    } as const;
+    const moduleIds = matrix.modules.map((module) => module.moduleId);
+    const newConceptIds = matrix.modules.flatMap((module) => module.newConceptIds);
+    const activityIds = matrix.modules.flatMap((module) =>
+      activityRoles.map((role) => module.activities[role].id)
+    );
+    const scenarioDomains = matrix.modules.flatMap((module) =>
+      activityRoles.map((role) => module.activities[role].scenarioDomain)
+    );
+    const rejectDuplicates = (values: string[], message: string, path: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+
+    rejectDuplicates(moduleIds, 'Activity matrix repeats module IDs', ['modules']);
+    rejectDuplicates(newConceptIds, 'Activity matrix assigns a concept more than once', [
+      'modules',
+    ]);
+    rejectDuplicates(activityIds, 'Activity matrix repeats activity IDs', ['modules']);
+    rejectDuplicates(scenarioDomains, 'Activity matrix repeats scenario domains', ['modules']);
+
+    for (const [moduleIndex, module] of matrix.modules.entries()) {
+      rejectDuplicates(
+        module.newConceptIds,
+        `Activity matrix module ${module.moduleId} repeats new concepts`,
+        ['modules', moduleIndex, 'newConceptIds']
+      );
+      rejectDuplicates(
+        module.retrievalConceptIds,
+        `Activity matrix module ${module.moduleId} repeats retrieval concepts`,
+        ['modules', moduleIndex, 'retrievalConceptIds']
+      );
+      if (
+        module.retrievalConceptIds.some((conceptId) => module.newConceptIds.includes(conceptId))
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Activity matrix module ${module.moduleId} retrieves a newly introduced concept`,
+          path: ['modules', moduleIndex, 'retrievalConceptIds'],
+        });
+      }
+      for (const role of activityRoles) {
+        if (module.activities[role].evidenceStages.join(',') !== expectedStages[role].join(',')) {
+          context.addIssue({
+            code: 'custom',
+            message: `Activity matrix module ${module.moduleId} misassigns ${role} evidence stages`,
+            path: ['modules', moduleIndex, 'activities', role, 'evidenceStages'],
+          });
+        }
+      }
+    }
+
+    const computed = {
+      theoryInteractions: matrix.modules.reduce(
+        (total, module) => total + module.activities.model.minimumInteractions,
+        0
+      ),
+      workshopSteps: matrix.modules.reduce(
+        (total, module) => total + module.activities.workshop.minimumInteractions,
+        0
+      ),
+      independentLabs: matrix.modules.length,
+      reviews: matrix.modules.length,
+      quizBanks: matrix.modules.filter(
+        (module) => module.activities.assessment.kind === 'quiz-bank'
+      ).length,
+      preAssessmentInteractions: matrix.modules.reduce(
+        (total, module) =>
+          total +
+          (['model', 'workshop', 'faded', 'debug', 'lab', 'review'] as const).reduce(
+            (moduleTotal, role) => moduleTotal + module.activities[role].minimumInteractions,
+            0
+          ),
+        0
+      ),
+    };
+    for (const key of Object.keys(computed) as Array<keyof typeof computed>) {
+      if (matrix.depthCommitment.plannedMinimums[key] !== computed[key]) {
+        context.addIssue({
+          code: 'custom',
+          message: `Activity matrix planned ${key} does not match its activity records`,
+          path: ['depthCommitment', 'plannedMinimums', key],
+        });
+      }
+      if (computed[key] < matrix.depthCommitment.minimums[key]) {
+        context.addIssue({
+          code: 'custom',
+          message: `Activity matrix does not meet minimum ${key}`,
+          path: ['depthCommitment', 'plannedMinimums', key],
+        });
+      }
+    }
+    if (matrix.status === 'approved' && matrix.gaps.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Approved activity matrix cannot retain open gaps',
+        path: ['gaps'],
+      });
+    }
+  });
+
 function addReferenceIssues(
   value: {
     questions: z.infer<typeof ResearchQuestionSchema>[];
@@ -1247,3 +1442,4 @@ export type ExternalObjectiveConceptAlignment = z.infer<
   typeof ExternalObjectiveConceptAlignmentSchema
 >;
 export type ResearchCourseArchitecture = z.infer<typeof ResearchCourseArchitectureSchema>;
+export type ResearchActivityMatrix = z.infer<typeof ResearchActivityMatrixSchema>;

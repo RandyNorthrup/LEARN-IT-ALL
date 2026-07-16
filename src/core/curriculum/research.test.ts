@@ -9,6 +9,7 @@ import {
   ExternalCurriculumEvidenceSnapshotSchema,
   ExternalObjectiveConceptAlignmentSchema,
   PlatformResearchRegisterSchema,
+  ResearchActivityMatrixSchema,
   ResearchAuthoritySchema,
   ResearchCourseArchitectureSchema,
 } from './research';
@@ -4481,6 +4482,93 @@ describe('research contracts', () => {
         (concept) => !retrievedConceptIds.has(concept.id) && !projectConceptIds.has(concept.id)
       )
     ).toHaveLength(98);
+  });
+
+  it('plans every repaired RWD module through explicit varied activity evidence', () => {
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+
+    expect(matrix.status).toBe('researching');
+    expect(matrix.modules).toHaveLength(38);
+    expect(matrix.modules.map((module) => module.moduleId)).toEqual(architecture.moduleIds);
+    for (const [index, module] of matrix.modules.entries()) {
+      expect(module.state).toBe('planned-not-authored');
+      expect(module.newConceptIds).toEqual(architecture.modules[index].conceptIds);
+      expect(module.retrievalConceptIds).toEqual(architecture.modules[index].retrievalConceptIds);
+      expect(module.activities.workshop.scenarioDomain).not.toBe(
+        module.activities.debug.scenarioDomain
+      );
+      expect(module.activities.workshop.scenarioDomain).not.toBe(
+        module.activities.lab.scenarioDomain
+      );
+      expect(module.activities.debug.scenarioDomain).not.toBe(module.activities.lab.scenarioDomain);
+    }
+    expect(matrix.depthCommitment).toMatchObject({
+      minimums: {
+        theoryInteractions: 185,
+        workshopSteps: 1287,
+        independentLabs: 34,
+        reviews: 24,
+        quizBanks: 22,
+        preAssessmentInteractions: 2000,
+      },
+      plannedMinimums: {
+        theoryInteractions: 376,
+        workshopSteps: 1488,
+        independentLabs: 38,
+        reviews: 38,
+        quizBanks: 24,
+        preAssessmentInteractions: 3854,
+      },
+    });
+    expect(matrix.modules[0].activities).toMatchObject({
+      workshop: { title: 'Transit interruption notice', minimumInteractions: 72 },
+      debug: { title: 'Misnested storm alert' },
+      lab: { title: 'Farmers market information board' },
+    });
+    expect(matrix.assessmentBoundary.externalExamEvidence).toContain('no reviewable item bank');
+    expect(matrix.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects repeated RWD planning scenarios and inflated activity totals', () => {
+    const matrix = readJson(
+      path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-activity-matrix.json')
+    ) as {
+      modules: Array<{
+        activities: { workshop: { scenarioDomain: string } };
+      }>;
+      depthCommitment: { plannedMinimums: { workshopSteps: number } };
+    };
+    const repeated = structuredClone(matrix);
+    repeated.modules[1].activities.workshop.scenarioDomain =
+      repeated.modules[0].activities.workshop.scenarioDomain;
+    const repeatedResult = ResearchActivityMatrixSchema.safeParse(repeated);
+    expect(repeatedResult.success).toBe(false);
+    expect(
+      repeatedResult.error?.issues.some((issue) => issue.message.includes('scenario domains'))
+    ).toBe(true);
+
+    const inflated = structuredClone(matrix);
+    inflated.depthCommitment.plannedMinimums.workshopSteps += 1;
+    const inflatedResult = ResearchActivityMatrixSchema.safeParse(inflated);
+    expect(inflatedResult.success).toBe(false);
+    expect(
+      inflatedResult.error?.issues.some((issue) => issue.message.includes('planned workshopSteps'))
+    ).toBe(true);
   });
 
   it('rejects a research architecture that assigns project work before instruction', () => {

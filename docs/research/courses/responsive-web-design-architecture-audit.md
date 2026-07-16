@@ -102,11 +102,13 @@ The replacement must be one authoritative activity-level reinforcement schedule.
 
 The schedule must link each event to an activity ID, interaction type, scenario, observable evidence, prerequisite set, feedback/correction path, and delay boundary. Module summaries may be derived from that reviewed schedule, but must not become a second manually maintained truth.
 
-## Finding 5: activity and step depth remains unplanned below the candidate-module level
+## Finding 5: activity depth now has a bounded matrix, but no learner steps are authored
 
 The platform contract requires at least the benchmark depth: 33 original guided builds, at least 1,287 original workshop code steps, at least 185 interactive theory steps, 34 independent labs, 24 active-recall reviews, 22 quiz banks, five original certification projects, one broad randomized exam, and at least 2,000 meaningful learner interactions before quizzes and the exam.
 
-The current graph has zero authored activities and no complete activity matrix. It cannot yet show:
+The machine-checkable `responsive-web-design-activity-matrix.json` now gives every one of the 38 modules a model/prediction set, guided workshop, faded build, debugging clinic, independent lab, retrieval/correction review, and quiz or performance-check bank. Across 266 planned activity families it records 376 theory interactions, 1,488 workshop steps, 38 independent labs, 38 retrieval reviews, 24 quiz banks, and 3,854 pre-assessment interactions. Each module names different model, workshop, faded, debugging, lab, review, and assessment contexts. Exact activity IDs and scenario domains are unique.
+
+These are planning floors, not authored activities. The matrix still cannot show:
 
 - where prediction, inspection, explanation, modification, completion, debugging, making, and transfer occur;
 - how guidance fades within and across workshops;
@@ -116,7 +118,7 @@ The current graph has zero authored activities and no complete activity matrix. 
 - whether active work reaches the required share of course time;
 - whether the source depth is met with meaningful original interactions instead of inflated click or paragraph counts.
 
-The next architecture artifact must be the complete original activity matrix. Counts are minimum inventory guards, not completion evidence. Every planned row must also survive instructional, assessment, duplication, accessibility, runtime, and learner review.
+The next work must decompose each planned activity family into original step-level objectives, interactions, runnable checks, three progressive hints where guided, causal feedback, correction branches, and delayed scheduling. Counts are minimum inventory guards, not completion evidence. Every planned row and authored step must survive instructional, assessment, duplication, accessibility, runtime, and learner review.
 
 ## Finding 6: the external exam cannot validate LEARN-IT-ALL certification
 
@@ -169,12 +171,11 @@ The repair should preserve these decisions unless evidence disproves them:
 
 ## Required repair order
 
-1. Create one authoritative activity-level I-G-F-R-A-T reinforcement matrix for all 186 concepts; derive module retrieval summaries from it.
-2. Design distinct original theory, prediction, worked-example, workshop, faded, debug, lab, review, quiz, project, correction, delayed-retrieval, and transfer events at or above the verified depth floor.
-3. Publish an internal assessment blueprint and author original formative and summative evidence plans without using unavailable external exam items.
-4. Run second-pass subject, instructional, assessment, accessibility, runtime, and semantic-duplication review on the repaired sequence and planned matrix.
-5. Author only the true-beginner HTML/editor vertical slice, verify its real grading, hints, persistence, correction, keyboard, tablet, desktop, and phone-handoff behavior, and observe representative beginners.
-6. Repair pilot findings before scaling the rest of Responsive Web Design.
+1. Decompose every planned activity family into concept clusters, original step objectives, interactions, checks, hints, feedback, correction, and delayed scheduling without inflating the inventory.
+2. Publish an internal assessment blueprint and author original formative and summative evidence plans without using unavailable external exam items.
+3. Run second-pass subject, instructional, assessment, accessibility, runtime, and semantic-duplication review on the repaired sequence and planned matrix.
+4. Author only the true-beginner HTML/editor vertical slice, verify its real grading, hints, persistence, correction, keyboard, tablet, desktop, and phone-handoff behavior, and observe representative beginners.
+5. Repair pilot findings before scaling the rest of Responsive Web Design.
 
 ## Exit conditions for this blocker
 
