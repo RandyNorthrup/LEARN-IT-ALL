@@ -9,6 +9,7 @@ import {
   CourseResearchDossierSchema,
   ExternalObjectiveConceptAlignmentSchema,
   PlatformResearchRegisterSchema,
+  ResearchCourseArchitectureSchema,
   SourceObjectiveCoverageMatrixSchema,
 } from './research';
 
@@ -36,7 +37,9 @@ function researchSource(index: number) {
         decisionIds: ['decision-one'],
       },
     ],
-    nextReview: { triggers: ['The official documentation or relevant behavior changes.'] },
+    nextReview: {
+      triggers: ['The official documentation or relevant behavior changes.'],
+    },
   };
 }
 
@@ -104,7 +107,9 @@ function courseDossier(status: 'researching' | 'approved' = 'researching') {
       safety: 'pending' as const,
       observedLearner: 'pending' as const,
     },
-    maintenance: { triggers: ['A source, requirement, runtime, or learner finding changes.'] },
+    maintenance: {
+      triggers: ['A source, requirement, runtime, or learner finding changes.'],
+    },
   };
 }
 
@@ -318,11 +323,117 @@ describe('research contracts', () => {
     ).toBe(true);
   });
 
-  it('keeps generated RWD concept research and alignment outputs reproducible', () => {
+  it('turns the RWD research into a cumulative beginner-first course architecture', () => {
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const alignment = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const graphs = [
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(
+            repositoryRoot,
+            'docs/research/courses/responsive-web-design-html-concepts.json'
+          )
+        )
+      ),
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+        )
+      ),
+    ];
+    const concepts = graphs.flatMap((graph) => graph.concepts);
+    const moduleOrder = new Map(
+      architecture.modules.map((module, index) => [module.id, index + 1])
+    );
+    const conceptOwner = new Map(
+      architecture.modules.flatMap((module) =>
+        module.conceptIds.map((conceptId) => [conceptId, module.id] as const)
+      )
+    );
+
+    expect(architecture.status).toBe('researching');
+    expect(architecture.modules).toHaveLength(16);
+    expect(architecture.conceptIds).toHaveLength(143);
+    expect(architecture.sourceObjectiveIds).toHaveLength(158);
+    expect(architecture.projects).toHaveLength(5);
+    expect(architecture.entryContract).toMatchObject({
+      openingModuleId: 'html-first-page',
+      firstMeaningfulEditByLearnerAction: 2,
+      delayedToolingBarrierProhibited: true,
+    });
+    expect(architecture.moduleIds).not.toContain('computer-basics');
+    expect(architecture.conceptIds).toEqual(concepts.map((concept) => concept.id));
+    expect(architecture.sourceObjectiveIds).toEqual(
+      alignment.alignments.map((record) => record.objectiveId)
+    );
+    expect(
+      architecture.modules.every((module) => module.currentState === 'planned-not-authored')
+    ).toBe(true);
+    expect(
+      architecture.projects.every((project) => project.currentState === 'planned-not-authored')
+    ).toBe(true);
+    expect(new Set(architecture.projects.map((project) => project.scenarioDomain))).toHaveLength(5);
+    expect(
+      new Set(architecture.projects.flatMap((project) => project.sourceObjectiveIds))
+    ).toHaveLength(5);
+
+    for (const concept of concepts) {
+      const owner = conceptOwner.get(concept.id);
+      expect(owner, concept.id).toBeDefined();
+      const ownerModule = architecture.modules.find((module) => module.id === owner);
+      for (const prerequisiteId of concept.prerequisiteIds) {
+        const prerequisiteOwner = conceptOwner.get(prerequisiteId);
+        expect(prerequisiteOwner, prerequisiteId).toBeDefined();
+        if (prerequisiteOwner !== owner) {
+          expect(
+            ownerModule?.prerequisiteModuleIds,
+            `${concept.id} must inherit ${prerequisiteOwner}`
+          ).toContain(prerequisiteOwner);
+          expect(moduleOrder.get(prerequisiteOwner ?? '')).toBeLessThan(
+            moduleOrder.get(owner ?? '') ?? 0
+          );
+        }
+      }
+    }
+  });
+
+  it('rejects a research architecture that assigns project work before instruction', () => {
+    const architecture = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-course-architecture.json'
+      )
+    ) as { projects: Array<{ conceptIds: string[] }> };
+    const broken = structuredClone(architecture);
+    broken.projects[0].conceptIds.push('css-independent-transfer-defense');
+
+    const result = ResearchCourseArchitectureSchema.safeParse(broken);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.some((issue) => issue.message.includes('before instruction'))).toBe(
+      true
+    );
+  });
+
+  it('keeps generated RWD research outputs reproducible', () => {
     for (const script of [
       'scripts/generate-rwd-html-concept-research.mjs',
       'scripts/generate-rwd-css-concept-research.mjs',
       'scripts/generate-rwd-concept-alignment.mjs',
+      'scripts/generate-rwd-research-architecture.mjs',
     ]) {
       expect(() =>
         execFileSync(process.execPath, [script, '--check'], {

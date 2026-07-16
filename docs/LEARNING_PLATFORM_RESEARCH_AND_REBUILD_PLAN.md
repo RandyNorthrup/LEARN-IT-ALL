@@ -10,6 +10,22 @@ All 54 courses are therefore `audit-required`. Existing content is evidence and 
 
 The objective is not to clone another platform. It is to combine the strongest verified patterns with original instruction, authentic practice, reliable assessment, accessible interaction, safe execution, and transparent evidence of mastery.
 
+## Research-backed goal contract
+
+Research is part of the rebuild goal and its definition of done, not a preliminary reading task. The platform must compete on demonstrated learner outcomes, so implementation proceeds through an evidence chain: frame a falsifiable question; inspect current authoritative and comparative evidence; record bounded claims, limitations, and freshness; translate accepted findings into named scope, sequence, interaction, assessment, accessibility, runtime, data, or maintenance decisions; test those decisions with representative learners; repair the resulting defects; and retain re-test evidence.
+
+The goal therefore includes all of the following blocking research outcomes:
+
+- current learning-science and institutional-course-quality synthesis that controls progression, feedback, practice, assessment, support, and review;
+- a current primary-source subject dossier, objective inventory, prerequisite graph, misconception map, authentic-task analysis, safety boundary, tool/version record, and maintenance trigger for every course;
+- direct task-level research across strong learning platforms, followed by LEARN-IT-ALL usability and accessibility observation instead of feature copying;
+- assessment-validity research for every progress, mastery, retention, project-readiness, credential, feedback, retry, and gamification claim;
+- editor, runtime, isolation, privacy, security, dependency, browser, assistive-technology, and stack-compatibility research before platform choices are accepted;
+- representative novice, intermediate, advanced, disabled, keyboard-only, tablet, and phone-handoff learner studies with severity-rated findings and re-tests;
+- formal subject-matter, instructional-design, assessment, accessibility, safety/privacy, and observed-learner approval before publication.
+
+Research artifacts remain explicitly `researching`, `candidate-review`, or `planned-not-authored` until their own evidence closes. Topic counts, generated steps, links, passing schemas, and one successful walkthrough cannot advance those states.
+
 ## Complete user requirement register
 
 This plan is incomplete if it omits any item below:
@@ -35,7 +51,7 @@ This plan is incomplete if it omits any item below:
 - isolated learner execution: sandboxed web output, bounded workers, deterministic simulators, no learner source executed on the host, and server-held canonical answers;
 - no GitHub Actions workflows or push-triggered runners; verification remains explicit and local;
 - tests updated with every code, schema, generator, content-contract, migration, and behavior change;
-- Lighthouse held until the entire content/platform/migration/pilot program is complete, followed by tablet and desktop profiles only, no SEO, and scores of at least 99 for performance, accessibility, and best practices in both;
+- Lighthouse held until the entire content/platform/migration/pilot program is complete, followed by mobile, tablet, and desktop profiles, no SEO, and scores of at least 99 for performance, accessibility, and best practices in every profile;
 - verified milestone commits and pushes with current project-memory handoffs, next work, and blockers.
 
 ## Research method
@@ -83,7 +99,7 @@ Sources must be primary and current wherever the claim can change. Peer-reviewed
 
 ### Research gates
 
-- No course architecture or bulk generation begins without its reviewed subject dossier and objective coverage map.
+- No candidate course architecture is accepted or used for learner-facing migration or bulk authoring without its reviewed subject dossier, objective coverage map, prerequisite evidence, and required reviewers. Candidate structures may be generated only as explicit `researching` review artifacts that cannot publish content.
 - No learner-facing explanation, example, assessment, or project is approved solely because it matches an external topic list.
 - No interaction or gamification mechanic ships without a named learning purpose, an accessibility path, a failure hypothesis, and learner-observation evidence.
 - No progress value ships unless research and validation support the learner-facing claim it makes.
@@ -109,6 +125,8 @@ The first concept-level [HTML research graph](research/courses/responsive-web-de
 The companion [CSS and responsive-design research graph](research/courses/responsive-web-design-css-concepts.json) adds 86 ordered concepts across CSS language and cascade, boxes and intrinsic sizing, typography/color/design, flex layout, grid/positioning, responsive systems, interaction/accessibility/motion, and independent transfer. It now explicitly includes list markers and counters, link-state sequencing, transforms, filters, evidence-backed user needs, and prototype evaluation. The graph replaces device-name recipes with fluid defaults, content-derived breakpoints, container-aware components, changed-case evidence, and cumulative accessibility constraints.
 
 The generated and tested [v9-to-concept candidate alignment](research/courses/responsive-web-design-concept-alignment.json) now maps all 158 pinned source blocks and all 1,553 challenge identities to 136 of the 143 researched concepts. Seven concepts that lack enough explicit pinned-v9 evidence—cascade layers, margin collapse, logical properties, subgrid, container queries and units, and print output—remain separately identified as modern course extensions backed by current primary sources. Validation rejects missing or duplicate source objectives, challenge-count drift, unknown concepts, uncovered concepts, duplicate extensions, benchmark/extension double claims, and false approval. Every source mapping and extension remains `candidate-review`; this matrix is inventory and a review queue, not authored instruction or subject approval. Full source inspection, original I-G-F-R-A-T activity design, assessment review, runtime evidence, accessibility verification, and observed learner success remain blocking.
+
+The new generated and tested [candidate research architecture](research/courses/responsive-web-design-course-architecture.json) translates those sources into a reviewable 16-module cumulative sequence rather than copying the benchmark's 29-module navigation or the current weak blueprint. It opens with `html-first-page`, requires a meaningful source edit by learner action two, prohibits a delayed standalone tooling barrier, assigns every one of the 143 concepts exactly once, carries all 158 source-objective identities into module review, names prior concepts to retrieve, bounds the new complexity in each module, and defines a continuing learner artifact. Five certification benchmarks become original stakeholder projects in mutual-aid, museum, public-library, emergency-information, and community-energy domains with distinct requirements, evidence, concepts, placements, and empty-start policies. The contract rejects duplicate concepts or project domains, unknown or late prerequisites, non-earlier retrieval, projects placed before instruction, source-objective loss, and false approval. All modules and projects remain `planned-not-authored`, the architecture remains `researching`, and it cannot drive learner-facing migration or bulk authoring until source assignments and subject/instructional reviews close.
 
 ## Findings translated into product rules
 

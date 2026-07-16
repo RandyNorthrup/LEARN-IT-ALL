@@ -120,12 +120,18 @@ export const SourceObjectiveCoverageMatrixSchema = z
   .superRefine((matrix, context) => {
     const objectiveIds = matrix.objectives.map((objective) => objective.objectiveId);
     if (new Set(objectiveIds).size !== objectiveIds.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate external objective IDs' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate external objective IDs',
+      });
     }
 
     const sourceBlockSlugs = matrix.objectives.map((objective) => objective.sourceBlockSlug);
     if (new Set(sourceBlockSlugs).size !== sourceBlockSlugs.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate external source blocks' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate external source blocks',
+      });
     }
 
     const challengeIds = matrix.objectives.flatMap((objective, objectiveIndex) => {
@@ -161,7 +167,10 @@ export const SourceObjectiveCoverageMatrixSchema = z
       });
     }
     if (new Set(challengeIds).size !== challengeIds.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate external challenge IDs' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate external challenge IDs',
+      });
     }
     const moduleIds = new Set(matrix.objectives.flatMap((objective) => objective.moduleIds));
     if (moduleIds.size !== matrix.snapshot.sourceModules) {
@@ -234,23 +243,38 @@ export const ConceptResearchGraphSchema = z
         .replace(/[^a-z0-9]+/gu, ' ')
         .trim();
     if (conceptById.size !== conceptIds.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate concept research IDs' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate concept research IDs',
+      });
     }
     if (new Set(graph.sourceIds).size !== graph.sourceIds.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate concept graph source IDs' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate concept graph source IDs',
+      });
     }
     if (new Set(graph.moduleIds).size !== graph.moduleIds.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate concept graph module IDs' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate concept graph module IDs',
+      });
     }
     const normalizedObjectives = graph.concepts.map((concept) => normalize(concept.objective));
     if (new Set(normalizedObjectives).size !== normalizedObjectives.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate concept research objectives' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate concept research objectives',
+      });
     }
     const normalizedMisconceptions = graph.concepts.flatMap((concept) =>
       concept.misconceptions.map(normalize)
     );
     if (new Set(normalizedMisconceptions).size !== normalizedMisconceptions.length) {
-      context.addIssue({ code: 'custom', message: 'Duplicate concept research misconceptions' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Duplicate concept research misconceptions',
+      });
     }
     if (graph.status === 'approved' && graph.gaps.length > 0) {
       context.addIssue({
@@ -510,7 +534,10 @@ export const ExternalObjectiveConceptAlignmentSchema = z
 
     if (matrix.status === 'approved') {
       if (matrix.gaps.length > 0) {
-        context.addIssue({ code: 'custom', message: 'Approved alignment cannot retain open gaps' });
+        context.addIssue({
+          code: 'custom',
+          message: 'Approved alignment cannot retain open gaps',
+        });
       }
       if (
         matrix.alignments.some((alignment) => alignment.state !== 'approved') ||
@@ -519,6 +546,276 @@ export const ExternalObjectiveConceptAlignmentSchema = z
         context.addIssue({
           code: 'custom',
           message: 'Approved alignment requires every objective and extension approved',
+        });
+      }
+    }
+  });
+
+export const ResearchCourseArchitectureSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    entryContract: z.object({
+      intendedLearner: z.string().min(30),
+      openingModuleId: IdentifierSchema,
+      firstMeaningfulEditByLearnerAction: z.number().int().min(1).max(2),
+      delayedToolingBarrierProhibited: z.literal(true),
+      entryEvidence: z.array(z.string().min(20)).min(2),
+    }),
+    sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+    conceptIds: z.array(IdentifierSchema).min(1),
+    moduleIds: z.array(IdentifierSchema).min(1),
+    modules: z
+      .array(
+        z.object({
+          id: IdentifierSchema,
+          title: z.string().min(8),
+          order: z.number().int().positive(),
+          prerequisiteModuleIds: z.array(IdentifierSchema),
+          conceptIds: z.array(IdentifierSchema).min(1),
+          sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+          retrievalConceptIds: z.array(IdentifierSchema),
+          cumulativeArtifact: z.string().min(30),
+          newComplexityBoundary: z.string().min(30),
+          currentState: z.enum(['planned-not-authored', 'authored', 'reviewed']),
+        })
+      )
+      .min(1),
+    projects: z
+      .array(
+        z.object({
+          id: IdentifierSchema,
+          title: z.string().min(8),
+          scenarioDomain: IdentifierSchema,
+          stakeholderNeed: z.string().min(40),
+          artifact: z.string().min(20),
+          placementAfterModuleId: IdentifierSchema,
+          conceptIds: z.array(IdentifierSchema).min(5),
+          sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+          requirements: z.array(z.string().min(20)).min(5),
+          evidence: z.array(z.string().min(20)).min(3),
+          starterPolicy: z.string().min(30),
+          currentState: z.enum(['planned-not-authored', 'authored', 'reviewed']),
+        })
+      )
+      .length(5),
+    architectureFindings: z.array(z.string().min(30)).min(1),
+    gaps: z.array(z.string().min(20)),
+  })
+  .superRefine((architecture, context) => {
+    const moduleById = new Map(architecture.modules.map((module) => [module.id, module]));
+    const moduleOrder = new Map(
+      architecture.modules.map((module, index) => [module.id, index + 1])
+    );
+    const conceptModule = new Map(
+      architecture.modules.flatMap((module) =>
+        module.conceptIds.map((conceptId) => [conceptId, module.id] as const)
+      )
+    );
+    const moduleConceptIds = architecture.modules.flatMap((module) => module.conceptIds);
+    const moduleSourceObjectiveIds = new Set(
+      architecture.modules.flatMap((module) => module.sourceObjectiveIds)
+    );
+    const projectIds = architecture.projects.map((project) => project.id);
+    const projectDomains = architecture.projects.map((project) => project.scenarioDomain);
+    const projectSourceObjectiveIds = architecture.projects.flatMap(
+      (project) => project.sourceObjectiveIds
+    );
+
+    const duplicateIssue = (values: string[], message: string, path: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+
+    duplicateIssue(architecture.moduleIds, 'Duplicate architecture module IDs', ['moduleIds']);
+    duplicateIssue(
+      architecture.modules.map((module) => module.id),
+      'Duplicate architecture module records',
+      ['modules']
+    );
+    duplicateIssue(architecture.conceptIds, 'Duplicate architecture concept inventory IDs', [
+      'conceptIds',
+    ]);
+    duplicateIssue(moduleConceptIds, 'Concept is assigned to multiple architecture modules', [
+      'modules',
+    ]);
+    duplicateIssue(architecture.sourceObjectiveIds, 'Duplicate architecture source objective IDs', [
+      'sourceObjectiveIds',
+    ]);
+    duplicateIssue(projectIds, 'Duplicate architecture project IDs', ['projects']);
+    duplicateIssue(projectDomains, 'Architecture projects repeat a scenario domain', ['projects']);
+    duplicateIssue(projectSourceObjectiveIds, 'Certification project source objective is reused', [
+      'projects',
+    ]);
+
+    if (
+      architecture.moduleIds.join('\n') !==
+      architecture.modules.map((module) => module.id).join('\n')
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Architecture module inventory does not match module record order',
+        path: ['moduleIds'],
+      });
+    }
+    if (architecture.entryContract.openingModuleId !== architecture.moduleIds[0]) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Entry contract opening module must be first',
+        path: ['entryContract', 'openingModuleId'],
+      });
+    }
+    if (
+      new Set(architecture.conceptIds).size !== conceptModule.size ||
+      architecture.conceptIds.some((conceptId) => !conceptModule.has(conceptId))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Architecture modules must assign every concept exactly once',
+        path: ['modules'],
+      });
+    }
+    if (
+      architecture.sourceObjectiveIds.some(
+        (objectiveId) => !moduleSourceObjectiveIds.has(objectiveId)
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Architecture modules do not cover every source objective',
+        path: ['modules'],
+      });
+    }
+
+    for (const [moduleIndex, module] of architecture.modules.entries()) {
+      if (module.order !== moduleIndex + 1) {
+        context.addIssue({
+          code: 'custom',
+          message: `Architecture module ${module.id} order differs from sequence position`,
+          path: ['modules', moduleIndex, 'order'],
+        });
+      }
+      duplicateIssue(
+        module.prerequisiteModuleIds,
+        `Architecture module ${module.id} repeats prerequisites`,
+        ['modules', moduleIndex, 'prerequisiteModuleIds']
+      );
+      duplicateIssue(module.conceptIds, `Architecture module ${module.id} repeats concepts`, [
+        'modules',
+        moduleIndex,
+        'conceptIds',
+      ]);
+      duplicateIssue(
+        module.sourceObjectiveIds,
+        `Architecture module ${module.id} repeats source objectives`,
+        ['modules', moduleIndex, 'sourceObjectiveIds']
+      );
+      duplicateIssue(
+        module.retrievalConceptIds,
+        `Architecture module ${module.id} repeats retrieval concepts`,
+        ['modules', moduleIndex, 'retrievalConceptIds']
+      );
+      for (const prerequisiteId of module.prerequisiteModuleIds) {
+        if (!moduleById.has(prerequisiteId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture module ${module.id} references unknown prerequisite ${prerequisiteId}`,
+            path: ['modules', moduleIndex, 'prerequisiteModuleIds'],
+          });
+        } else if ((moduleOrder.get(prerequisiteId) ?? 0) >= module.order) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture module ${module.id} depends on non-earlier module ${prerequisiteId}`,
+            path: ['modules', moduleIndex, 'prerequisiteModuleIds'],
+          });
+        }
+      }
+      for (const retrievalConceptId of module.retrievalConceptIds) {
+        const owner = conceptModule.get(retrievalConceptId);
+        if (!owner) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture module ${module.id} retrieves unknown concept ${retrievalConceptId}`,
+            path: ['modules', moduleIndex, 'retrievalConceptIds'],
+          });
+        } else if ((moduleOrder.get(owner) ?? 0) >= module.order) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture module ${module.id} retrieves non-earlier concept ${retrievalConceptId}`,
+            path: ['modules', moduleIndex, 'retrievalConceptIds'],
+          });
+        }
+      }
+      for (const sourceObjectiveId of module.sourceObjectiveIds) {
+        if (!architecture.sourceObjectiveIds.includes(sourceObjectiveId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture module ${module.id} references unknown source objective ${sourceObjectiveId}`,
+            path: ['modules', moduleIndex, 'sourceObjectiveIds'],
+          });
+        }
+      }
+    }
+
+    for (const [projectIndex, project] of architecture.projects.entries()) {
+      const placementOrder = moduleOrder.get(project.placementAfterModuleId);
+      if (!placementOrder) {
+        context.addIssue({
+          code: 'custom',
+          message: `Architecture project ${project.id} has unknown placement module`,
+          path: ['projects', projectIndex, 'placementAfterModuleId'],
+        });
+        continue;
+      }
+      duplicateIssue(project.conceptIds, `Architecture project ${project.id} repeats concepts`, [
+        'projects',
+        projectIndex,
+        'conceptIds',
+      ]);
+      for (const conceptId of project.conceptIds) {
+        const owner = conceptModule.get(conceptId);
+        if (!owner) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture project ${project.id} references unknown concept ${conceptId}`,
+            path: ['projects', projectIndex, 'conceptIds'],
+          });
+        } else if ((moduleOrder.get(owner) ?? 0) > placementOrder) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture project ${project.id} uses concept ${conceptId} before instruction`,
+            path: ['projects', projectIndex, 'conceptIds'],
+          });
+        }
+      }
+      for (const objectiveId of project.sourceObjectiveIds) {
+        if (!architecture.sourceObjectiveIds.includes(objectiveId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture project ${project.id} references unknown source objective ${objectiveId}`,
+            path: ['projects', projectIndex, 'sourceObjectiveIds'],
+          });
+        }
+      }
+    }
+
+    if (architecture.status === 'approved') {
+      if (architecture.gaps.length > 0) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Approved architecture cannot retain gaps',
+        });
+      }
+      if (
+        architecture.modules.some((module) => module.currentState !== 'reviewed') ||
+        architecture.projects.some((project) => project.currentState !== 'reviewed')
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Approved architecture requires every module and project reviewed',
         });
       }
     }
@@ -538,13 +835,22 @@ function addReferenceIssues(
   const duplicateCount = (values: string[]) => values.length - new Set(values).size;
 
   if (duplicateCount(value.questions.map((question) => question.id)) > 0) {
-    context.addIssue({ code: 'custom', message: 'Duplicate research question IDs' });
+    context.addIssue({
+      code: 'custom',
+      message: 'Duplicate research question IDs',
+    });
   }
   if (duplicateCount(value.sources.map((source) => source.id)) > 0) {
-    context.addIssue({ code: 'custom', message: 'Duplicate research source IDs' });
+    context.addIssue({
+      code: 'custom',
+      message: 'Duplicate research source IDs',
+    });
   }
   if (duplicateCount(value.decisions.map((decision) => decision.id)) > 0) {
-    context.addIssue({ code: 'custom', message: 'Duplicate research decision IDs' });
+    context.addIssue({
+      code: 'custom',
+      message: 'Duplicate research decision IDs',
+    });
   }
 
   for (const [sourceIndex, source] of value.sources.entries()) {
@@ -686,6 +992,7 @@ export type ConceptResearchGraph = z.infer<typeof ConceptResearchGraphSchema>;
 export type ExternalObjectiveConceptAlignment = z.infer<
   typeof ExternalObjectiveConceptAlignmentSchema
 >;
+export type ResearchCourseArchitecture = z.infer<typeof ResearchCourseArchitectureSchema>;
 
 export interface ResearchAuditFinding {
   severity: 'blocker' | 'warning';

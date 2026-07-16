@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified non-Lighthouse code gate: 2026-07-15 after exact RWD v9 concept alignment
+Last verified non-Lighthouse code gate: 2026-07-15 after the RWD candidate research architecture
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -38,7 +38,9 @@ The RWD CSS and responsive-design research graph adds 86 prerequisite-ordered co
 
 Together the RWD HTML and CSS graphs contain 143 researched concept records. The reproducible v9 concept-alignment matrix maps all 158 source-block objectives and 1,553 challenge identities to 136 benchmark-supported concepts. Seven concepts without enough explicit pinned-v9 evidence remain honest modern extensions: cascade layers, margin collapse, logical properties, subgrid, container queries, container query units, and print output. All 158 mappings and all seven extensions remain `candidate-review`; none are authored or approved. The alignment contract rejects objective or block duplication, source-count drift, unknown or uncovered concepts, duplicate extensions, benchmark/extension double claims, and false approval. Generator `--check` modes prevent graph and alignment output drift.
 
-Full local verification after the expanded 57-concept HTML graph, 86-concept CSS graph, 158-block alignment, dossier sources and decisions, reproducibility commands, schema, tests, plan, and memory passed 98 test files and 623 tests, type check, normal lint, strict lint across 343 files, and the Next.js 16.2.10 production build. The research audit still reports 318 blocker groups and one warning: 53 course dossiers remain missing and RWD remains `researching`. No learner UI changed, so no browser-flow delta was required. Lighthouse remained paused and workflows remained absent.
+The generated RWD candidate research architecture translates that evidence into 16 cumulative review modules without accepting the current blueprint or copying freeCodeCamp navigation. It begins with `html-first-page`, requires a meaningful HTML edit by the second learner action, removes the standalone thirteen-activity computer/tooling barrier from the target sequence, assigns all 143 concepts exactly once, retains all 158 source-objective identities, names retrieval of earlier concepts, bounds new complexity, and continues a learner artifact in every module. Five original project transfers use distinct mutual-aid, museum, library, emergency-information, and community-energy stakeholder contexts. The architecture schema rejects concept or project-domain duplication, unknown or later prerequisites, non-earlier retrieval, a project placed before its instruction, objective loss, and false approval. This artifact remains `researching`; all 16 modules and five projects remain `planned-not-authored`, and current content remains migration input until source-alignment review, subject/instructional review, full I-G-F-R-A-T design, runtime/accessibility evidence, and beginner pilots pass.
+
+Full local verification after the expanded 57-concept HTML graph, 86-concept CSS graph, 158-block alignment, 16-module candidate architecture, five original project briefs, reproducibility commands, schema, tests, plan, and memory passed 98 test files and 625 tests, type check, normal lint, strict lint across 344 files, and the Next.js 16.2.10 production build. The research audit intentionally exits nonzero because it still reports 318 blocker groups and one warning: 53 course dossiers remain missing and RWD remains `researching`. No learner UI changed, so no browser-flow delta was required. Lighthouse remained paused and workflows remained absent.
 
 The first permanent learner-quality scanner now covers all 11,742 activities. Its 2026-07-15 baseline found at least one issue in all 54 courses and 9,051 activities: 3,599 blocker groups and 8,764 warning groups. Blockers include 3,269 delayed-artifact-practice groups, 207 token-only grading groups, 88 known generic-template-language groups, and 35 missing-code-model groups. The warnings identify 8,764 activities whose artifact evidence is limited to source shape and requires assessment review. Responsive Web Design has 330 blocker groups across 220 of 303 activities. See `docs/audits/LEARNING_QUALITY_BASELINE_2026-07-15.md`; these counts are defect inventory, not a replacement quality score.
 
@@ -62,7 +64,7 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Every course, including preexisting courses, needs theory, workshops, labs, debugging, reviews, quizzes, real-world projects, exams, and repeated build-to-learn practice.
 - Every build-capable course needs an inline, resumable editor or structured artifact workspace with a verified safe runtime or deterministic simulator, feedback, hints, tests, and real evidence.
 - Each lesson must retrieve and correctly reuse earlier skills before adding bounded new complexity. Generated quantity and renamed variants do not establish quality.
-- Lighthouse is paused until all content work is complete. Final Lighthouse runs cover tablet and desktop, exclude SEO, and reach at least 99 in performance, accessibility, and best practices in both profiles. The former mobile learner-studio profile was removed by user decision on 2026-07-15.
+- Lighthouse is paused until all content work is complete. Final Lighthouse runs cover mobile, tablet, and desktop, exclude SEO, and reach at least 99 in performance, accessibility, and best practices in every profile. Full course studios may hand phone users to a supported tablet or desktop editor, but that accessible handoff and all phone-usable public/navigation surfaces still belong to the mobile gate.
 
 ## Current architecture
 
@@ -457,11 +459,11 @@ Run focused tests after each new change, then repeat the full non-Lighthouse gat
 
 ## Active next work
 
-1. Finish platform competitive-task, navigation/usability, mastery-validity, runtime-threat, privacy/ethics, stack-compatibility, and observed-learner research records.
-2. Complete Responsive Web Design's granular source-objective coverage and prerequisite maps, then review the true-beginner HTML vertical slice before any generator expansion.
-3. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, and freshness triggers.
+1. Inspect every RWD objective-to-concept assignment, close subject and instructional architecture reviews, and build the full introduce-model-guided-faded-debug-retrieve-assess-delayed-retain-transfer matrix before authoring.
+2. Finish platform competitive-task observations, navigation/usability studies, mastery-validity work, privacy/ethics review, stack-compatibility smokes, assistive-technology/device trials, and representative learner research records.
+3. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, authentic tasks, misconception and safety analysis, and freshness triggers.
 4. Audit all 54 learner flows and generators; classify each as keep, rewrite, replace, or remove. Counts and schema validity cannot close this audit.
-5. Enforce inline workspace/runtime declarations, then build the accessible Monaco/native tablet-desktop reference flow with phone handoff.
+5. Enforce inline workspace/runtime declarations, then build and pilot the accessible Monaco/native tablet-desktop RWD reference slice with phone handoff before scaling.
 6. Refactor navigation, progress, grading, and curriculum around real persisted evidence; keep Lighthouse paused and workflows absent until every release blocker closes.
 
 ## Known caution
