@@ -457,7 +457,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 41 source blocks');
+    expect(content).toContain('The remaining 36 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -622,7 +622,7 @@ describe('research contracts', () => {
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
     expect(content).toContain('The complete 180-concept');
-    expect(content).toContain('The remaining 41 source blocks');
+    expect(content).toContain('The remaining 36 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -718,7 +718,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 41 blocks');
+    expect(content).toContain('The remaining 36 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -891,7 +891,7 @@ describe('research contracts', () => {
     expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
     expect(content).toContain('creates a CSS generated image value and no DOM element');
     expect(content).toContain('Class order in an HTML `class` attribute does not decide');
-    expect(content).toContain('remaining 41 source blocks');
+    expect(content).toContain('remaining 36 source blocks');
     expect(content).toContain('Keyword presence, a notation-matching regular expression');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
@@ -1011,7 +1011,7 @@ describe('research contracts', () => {
     expect(content).toContain('seven blocks, 84 challenges, 19 question prompts');
     expect(content).toContain("The benchmark's claim that `required` does not work");
     expect(content).toContain('This is direct instructional duplication');
-    expect(content).toContain('remaining 41 source blocks');
+    expect(content).toContain('remaining 36 source blocks');
     expect(content).toContain('`appearance: none` suppresses the native appearance');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toContain('rwd-css-ui-four');
@@ -1212,7 +1212,7 @@ describe('research contracts', () => {
     expect(content).toContain('A blurred secret is exposed data, not redaction');
     expect(content).toContain('false for mixed or all-negative margins');
     expect(content).toContain('`hidden` and `clip` are absent as distinct behavior models');
-    expect(content).toContain('remaining 41 source blocks');
+    expect(content).toContain('remaining 36 source blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toEqual(
       expect.arrayContaining([
@@ -1713,6 +1713,208 @@ describe('research contracts', () => {
     });
   });
 
+  it('records the complete CSS Accessibility inspection and behavior-evidence decision', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-css-accessibility-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const htmlGraph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-html-concepts.json')
+      )
+    );
+    const cssGraph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+
+    expect(content).toContain('five pinned CSS Accessibility blocks');
+    expect(content).toContain('Check volume does not establish accessibility evidence');
+    expect(content).toContain('The visually-hidden pattern is stale and overpromised');
+    expect(content).toContain('36 total source blocks still requiring challenge-level inspection');
+    expect(content.length).toBeGreaterThan(20_000);
+    expect(cssGraph.sourceIds).toContain('rwd-media-queries-five');
+    expect(htmlGraph.sourceIds).toContain('rwd-wai-act-aria-hidden-focus');
+    expect(
+      htmlGraph.concepts.find((concept) => concept.id === 'html-accessibility-tree-inclusion')
+        ?.sourceAnchors
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ sourceId: 'rwd-wai-act-aria-hidden-focus' }),
+      ])
+    );
+    expect(
+      cssGraph.concepts.find((concept) => concept.id === 'css-reduced-motion-preference')
+    ).toMatchObject({
+      sourceAnchors: [{ sourceId: 'rwd-media-queries-five' }],
+    });
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-css-accessibility-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(
+      dossier.decisions.find(
+        (decision) => decision.id === 'rwd-css-accessibility-behavior-evidence'
+      )
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-wcag-two-two',
+        'rwd-whatwg-html',
+        'rwd-wai-aria-one-two',
+        'rwd-wai-act-aria-hidden-focus',
+        'rwd-wai-evaluation-tools',
+        'rwd-media-queries-five',
+        'rwd-css-display-three',
+        'rwd-css-overflow-three',
+        'rwd-css-color-adjust-one',
+        'rwd-fcc-css-accessibility-inspection',
+      ],
+    });
+  });
+
+  it('keeps all five CSS Accessibility blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const accessibilityAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'css-and-accessibility'
+    );
+
+    expect(accessibilityAlignments).toHaveLength(5);
+    expect(
+      accessibilityAlignments.reduce(
+        (total, alignment) => total + alignment.sourceChallengeCount,
+        0
+      )
+    ).toBe(72);
+    expect(
+      accessibilityAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(16);
+    expect(
+      accessibilityAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.hintCheckCount,
+        0
+      )
+    ).toBe(362);
+    expect(
+      accessibilityAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        accessibilityAlignments.map((alignment) => [
+          alignment.sourceBlockSlug,
+          alignment.conceptIds,
+        ])
+      )
+    ).toEqual({
+      'lecture-best-practices-for-accessibility-and-css': [
+        'html-accessibility-tree-inclusion',
+        'html-accessibility-evaluation-evidence',
+        'css-outer-inner-display',
+        'css-overflow-containment-scroll',
+        'css-contrast-noncolor-meaning',
+      ],
+      'workshop-accessibility-quiz': [
+        'html-document-root-head-body',
+        'html-document-language',
+        'html-character-encoding',
+        'html-title-metadata',
+        'html-discovery-metadata',
+        'html-viewport-metadata',
+        'html-images-purpose-alt',
+        'html-heading-hierarchy',
+        'html-lists',
+        'html-contact-address-links',
+        'html-landmarks',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-aria-boundary',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-pseudo-elements',
+        'css-link-state-sequence',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-min-max-clamp-functions',
+        'css-backgrounds-borders-shadows',
+        'css-color-spaces-alpha',
+        'css-contrast-noncolor-meaning',
+        'css-type-scale-line-height',
+        'css-form-control-states',
+        'css-flex-container-items-axes',
+        'css-flex-direction-wrap-lines',
+        'css-flex-alignment-distribution',
+        'responsive-fluid-default',
+        'responsive-viewport-zoom',
+        'responsive-media-query-model',
+        'css-input-capability-adaptation',
+        'css-reduced-motion-preference',
+      ],
+      'lab-tribute-page': [
+        'html-links-destinations',
+        'html-replaced-content-boundaries',
+        'html-figures-captions',
+        'html-heading-hierarchy',
+        'html-landmarks',
+        'css-type-class-id-selectors',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'responsive-fluid-media',
+      ],
+      'review-css-accessibility': [
+        'html-form-labels-instructions',
+        'html-accessibility-tree-inclusion',
+        'html-aria-boundary',
+        'html-accessibility-evaluation-evidence',
+        'css-outer-inner-display',
+        'css-overflow-containment-scroll',
+        'css-min-max-clamp-functions',
+        'css-contrast-noncolor-meaning',
+        'css-reduced-motion-preference',
+      ],
+      'quiz-css-accessibility': [
+        'html-form-labels-instructions',
+        'html-accessibility-tree-inclusion',
+        'html-accessibility-evaluation-evidence',
+        'css-outer-inner-display',
+        'css-min-max-clamp-functions',
+        'css-contrast-noncolor-meaning',
+        'css-reduced-motion-preference',
+      ],
+    });
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -1768,7 +1970,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 100]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(117);
+    ).toHaveLength(122);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -2536,10 +2738,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(125);
+    ).toHaveLength(129);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(32);
+    ).toHaveLength(28);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -2697,8 +2899,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(183);
-    expect(architecture.sourceObjectiveIds).toHaveLength(125);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(33);
+    expect(architecture.sourceObjectiveIds).toHaveLength(129);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(29);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

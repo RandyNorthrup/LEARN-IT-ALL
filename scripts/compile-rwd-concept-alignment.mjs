@@ -208,16 +208,6 @@ const sourceModuleConcepts = {
     'css-text-wrap-spacing-decoration',
     'css-text-decoration-shadows-emphasis',
   ],
-  'css-and-accessibility': [
-    'css-contrast-noncolor-meaning',
-    'css-focus-visible-indicators',
-    'css-input-capability-adaptation',
-    'css-target-size-spacing',
-    'css-reduced-motion-preference',
-    'css-forced-colors-preferences',
-    'css-zoom-reflow-text-spacing',
-    'css-changed-case-regression',
-  ],
   'css-positioning': [
     'css-normal-flow',
     'css-positioning-containing-blocks',
@@ -1674,7 +1664,88 @@ const blockConcepts = {
     'css-text-decoration-shadows-emphasis',
     'css-visual-hierarchy-spacing',
   ],
-  'lecture-best-practices-for-accessibility-and-css': sourceModuleConcepts['css-and-accessibility'],
+  'lecture-best-practices-for-accessibility-and-css': [
+    'html-accessibility-tree-inclusion',
+    'html-accessibility-evaluation-evidence',
+    'css-outer-inner-display',
+    'css-overflow-containment-scroll',
+    'css-contrast-noncolor-meaning',
+  ],
+  'workshop-accessibility-quiz': [
+    'html-document-root-head-body',
+    'html-document-language',
+    'html-character-encoding',
+    'html-title-metadata',
+    'html-discovery-metadata',
+    'html-viewport-metadata',
+    'html-images-purpose-alt',
+    'html-heading-hierarchy',
+    'html-lists',
+    'html-contact-address-links',
+    'html-landmarks',
+    'html-form-submission-data',
+    'html-form-labels-instructions',
+    'html-input-types-autocomplete',
+    'html-choice-groups',
+    'html-textarea-select-buttons',
+    'html-accessible-name-description',
+    'html-accessibility-tree-inclusion',
+    'html-aria-boundary',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-pseudo-elements',
+    'css-link-state-sequence',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'css-min-max-clamp-functions',
+    'css-backgrounds-borders-shadows',
+    'css-color-spaces-alpha',
+    'css-contrast-noncolor-meaning',
+    'css-type-scale-line-height',
+    'css-form-control-states',
+    'css-flex-container-items-axes',
+    'css-flex-direction-wrap-lines',
+    'css-flex-alignment-distribution',
+    'responsive-fluid-default',
+    'responsive-viewport-zoom',
+    'responsive-media-query-model',
+    'css-input-capability-adaptation',
+    'css-reduced-motion-preference',
+  ],
+  'lab-tribute-page': [
+    'html-links-destinations',
+    'html-replaced-content-boundaries',
+    'html-figures-captions',
+    'html-heading-hierarchy',
+    'html-landmarks',
+    'css-type-class-id-selectors',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'responsive-fluid-media',
+  ],
+  'review-css-accessibility': [
+    'html-form-labels-instructions',
+    'html-accessibility-tree-inclusion',
+    'html-aria-boundary',
+    'html-accessibility-evaluation-evidence',
+    'css-outer-inner-display',
+    'css-overflow-containment-scroll',
+    'css-min-max-clamp-functions',
+    'css-contrast-noncolor-meaning',
+    'css-reduced-motion-preference',
+  ],
+  'quiz-css-accessibility': [
+    'html-form-labels-instructions',
+    'html-accessibility-tree-inclusion',
+    'html-accessibility-evaluation-evidence',
+    'css-outer-inner-display',
+    'css-min-max-clamp-functions',
+    'css-contrast-noncolor-meaning',
+    'css-reduced-motion-preference',
+  ],
   'lecture-understanding-how-to-work-with-floats-and-positioning-in-css':
     sourceModuleConcepts['css-positioning'],
   'lecture-working-with-attribute-selectors': sourceModuleConcepts['attribute-selectors'],
@@ -1814,6 +1885,11 @@ const agentInspectedBlockSlugs = new Set([
   'lab-newspaper-article',
   'review-css-typography',
   'quiz-css-typography',
+  'lecture-best-practices-for-accessibility-and-css',
+  'workshop-accessibility-quiz',
+  'lab-tribute-page',
+  'review-css-accessibility',
+  'quiz-css-accessibility',
 ]);
 
 const evidenceByType = {
@@ -1845,7 +1921,10 @@ const evidenceByType = {
 
 const alignments = reference.chapters.flatMap((chapter) =>
   chapter.modules.flatMap((sourceModule) => {
-    if (!sourceModuleConcepts[sourceModule.id])
+    const hasCompleteBlockRegistry = sourceModule.blocks.every(
+      (block) => block.type === 'exam' || Object.hasOwn(blockConcepts, block.slug)
+    );
+    if (!sourceModuleConcepts[sourceModule.id] && !hasCompleteBlockRegistry)
       throw new Error(`Missing concept map for source module ${sourceModule.id}.`);
     return sourceModule.blocks.map((block) => {
       const explicitConceptIds = blockConcepts[block.slug];

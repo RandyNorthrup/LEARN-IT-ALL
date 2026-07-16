@@ -271,5 +271,5 @@ Keyword presence, a requested unit suffix, a single computed value, screenshot s
 - Assessment reviewers have not mapped cognitive level, misconception, difficulty, discrimination, false-positive, or false-negative risk.
 - Representative learners have not completed the unit sequence or the independent replacement lab.
 - Tablet and desktop inline-editor behavior plus accessible phone handoff remain unverified for this sequence.
-- The remaining 41 source blocks still need challenge-level inspection; 32 blocks and one unavailable assessment container retain exact evidence with zero guessed concept assignments.
+- The remaining 36 source blocks still need challenge-level inspection; 28 blocks and one unavailable assessment container retain exact evidence with zero guessed concept assignments.
 - Lighthouse remains held until all content, migration, duplication, editor, progress, navigation, review, and pilot work is complete.

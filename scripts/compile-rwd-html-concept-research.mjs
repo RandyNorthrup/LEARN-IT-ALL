@@ -1733,6 +1733,11 @@ concept(
       'Providing Accessible Names and Descriptions',
       'Naming and hiding choices can remove descendant semantic content from accessibility APIs, so visible and computed information must be inspected together.'
     ),
+    anchor(
+      'rwd-wai-act-aria-hidden-focus',
+      'Rule 6cfa84 expectation and accessibility-support boundary',
+      'A subtree hidden with aria-hidden must not retain descendants in sequential focus navigation; the rule is informative evidence and not complete conformance proof.'
+    ),
   ],
   [
     'aria-hidden only hides visual decoration and cannot affect descendants, names, descriptions, focus, or task meaning.',
@@ -1925,6 +1930,7 @@ const graph = {
     'rwd-wai-people-use-web',
     'rwd-wai-evaluation-tools',
     'rwd-wai-aria-one-two',
+    'rwd-wai-act-aria-hidden-focus',
     'rwd-mdn-html-images',
     'rwd-us-copyright-fair-use',
     'rwd-creative-commons-licenses',
