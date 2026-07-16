@@ -1269,6 +1269,9 @@ const StepDesignEvidenceKindSchema = z.enum([
   'url-resolution',
   'loading-pipeline',
   'authority-claim-verification',
+  'hyperlink-activation',
+  'link-purpose-audit',
+  'fragment-navigation',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1308,6 +1311,10 @@ const StepDesignLayoutSchema = z.enum([
   'url-resolver',
   'load-pipeline',
   'authority-notebook',
+  'hyperlink-inspector',
+  'destination-map',
+  'link-list-audit',
+  'fragment-navigator',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1563,6 +1570,9 @@ export const ResearchModuleStepDesignSchema = z
             'url-resolution',
             'loading-pipeline',
             'authority-claim-verification',
+            'hyperlink-activation',
+            'link-purpose-audit',
+            'fragment-navigation',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
