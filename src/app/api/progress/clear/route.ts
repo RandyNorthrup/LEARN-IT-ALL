@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCourseById } from '@/lib/data/courses';
+import { isPublishedCourse } from '@/lib/data/publishedCourses';
 import { dbHelpers } from '@/lib/db';
 import { ClearProgressRequestSchema } from '@/lib/progressClear';
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     if (parsed.data.type === 'all') {
       dbHelpers.clearAllProgress();
     } else if (parsed.data.type === 'course') {
-      if (!getCourseById(parsed.data.courseId)) {
+      if (!isPublishedCourse(parsed.data.courseId)) {
         return NextResponse.json({ error: 'Course not found' }, { status: 404 });
       }
       dbHelpers.clearCourseProgress(parsed.data.courseId);

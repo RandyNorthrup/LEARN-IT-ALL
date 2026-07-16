@@ -19,7 +19,7 @@ Rebuild LEARN-IT-ALL as a modern, fun, local-first, accessible, responsive, high
 
 Every course must take its stated learner from verified entry skills to independent mastery. Courses and lessons must follow prerequisites, accumulate skills, retrieve and reinforce earlier material, avoid duplication, and contain substantial original theory, prediction, worked examples, guided workshops, faded practice, debugging, independent labs, retrieval, quizzes, authentic projects, and cumulative exams.
 
-The audit-required course inventory under `content/v2` is temporary live input, not the target design. Do not preserve weak repeated layouts, shallow renamed exercises, or generic generated prose for consistency. Do not add compatibility aliases, retired API tombstones, guessed migrations, fallback curriculum mappings, or generators that can recreate unapproved content. Replace each live input through researched vertical slices, verify equivalent learner data and flows, then delete the superseded input.
+Rejected generated course data and blueprints have been removed. `content/v2/courses` accepts only independently reviewed rebuild source; never repopulate it from inventory templates, old Git revisions, compatibility generators, or broad topic mappings. Do not add compatibility aliases, retired API tombstones, guessed migrations, fallback curriculum mappings, or any path that recreates unapproved instruction. Git history is the only archive for deleted implementation.
 
 ## Curriculum research and quality
 

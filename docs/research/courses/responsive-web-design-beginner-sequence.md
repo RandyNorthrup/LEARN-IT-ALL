@@ -2,7 +2,7 @@
 
 Reviewed: 2026-07-15
 
-Source snapshot: freeCodeCamp Responsive Web Design v9 commit `c115efdd41f868d8850156f6a7a211219c35a847`, WHATWG HTML Living Standard, MDN Curriculum, and the current LEARN-IT-ALL RWD blueprint.
+Source snapshot: freeCodeCamp Responsive Web Design v9 commit `c115efdd41f868d8850156f6a7a211219c35a847`, WHATWG HTML Living Standard, MDN Curriculum, and the rejected LEARN-IT-ALL generated sequence recorded before deletion.
 
 ## Status
 
@@ -16,7 +16,7 @@ The inspection covered all 61 units in the first seven current v9 blocks: the op
 
 The first v9 workshop does not begin with a long platform tour. Its opening unit names HTML and the editor, its second unit introduces an element as opening tag, content, and closing tag, and its third connects the edited source to preview output. Headings and paragraphs follow through immediate edits. This supports the existing `rwd-begin-with-building` decision.
 
-The current LEARN-IT-ALL blueprint instead places 13 computer, file, browser, DevTools, research, review, and transfer activities before the first `basic-html` activity. That architecture conflicts with the accepted decision that meaningful HTML editing begins within two workshop steps. The computer-basics material may be useful, but it must be integrated just in time around the first artifact or moved after the learner has built and inspected a minimal page.
+The deleted generated sequence placed 13 computer, file, browser, DevTools, research, review, and transfer activities before the first `basic-html` activity. That architecture conflicted with the accepted decision that meaningful HTML editing begins within two workshop steps. Required computer-basics material must be integrated just in time around the first artifact or placed after the learner has built and inspected a minimal page.
 
 ### The course must explicitly teach the syntax model
 
@@ -94,11 +94,11 @@ Use a fictional public-service notice, not a renamed external workshop:
 - add a language attribute and explain name, value, quotes, and purpose;
 - build the complete document envelope from empty source;
 - add a section, meaningful link, and informative image with a changed missing-image case;
-- save, reload, switch editor fallback, and resume the exact state;
+- save, reload, and resume the exact editor state;
 - complete a parallel unfamiliar alert card without copied source;
 - explain why the result works, what the browser repaired, and what still needs validation.
 
-The first meaningful edit must occur within two learner actions. The slice must pass source and DOM behavior checks, changed cases, keyboard and screen-reader tasks, native-editor fallback, tablet layout, persistence, and beginner observation before a generator expands it.
+The first meaningful edit must occur within two learner actions. The slice must pass source and DOM behavior checks, changed cases, keyboard and screen-reader tasks, tablet and desktop layout, persistence, and beginner observation before subsequent activities are authored.
 
 ## Blockers before sequence approval
 

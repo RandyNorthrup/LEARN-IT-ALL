@@ -4,20 +4,16 @@ import {
   filterCourseCatalog,
   paginateCourseCatalog,
 } from './courseCatalog';
-import type { CourseMetadata } from './data/courses';
+import type { PublishedCourse } from './data/publishedCourses';
 
-const courses: CourseMetadata[] = [
+const courses: PublishedCourse[] = [
   {
     id: 'beginner-course',
     title: 'Beginner course',
     description: 'A verified beginner course.',
     difficulty: 'beginner',
-    estimatedHours: 1,
     tags: [],
     prerequisites: [],
-    status: 'available',
-    lessonCount: 1,
-    chapterCount: 1,
     type: 'course',
   },
   {
@@ -25,12 +21,8 @@ const courses: CourseMetadata[] = [
     title: 'Advanced project',
     description: 'A verified advanced project.',
     difficulty: 'advanced',
-    estimatedHours: 1,
     tags: [],
     prerequisites: [],
-    status: 'available',
-    lessonCount: 1,
-    chapterCount: 1,
     type: 'portfolio-project',
   },
 ];
@@ -38,14 +30,16 @@ const courses: CourseMetadata[] = [
 describe('course catalog', () => {
   it('filters only the publication-controlled input it receives', () => {
     expect(
-      filterCourseCatalog(courses, { difficulty: 'beginner', type: 'course' }).map(
-        (course) => course.id
-      )
+      filterCourseCatalog(courses, {
+        difficulty: 'beginner',
+        type: 'course',
+      }).map((course) => course.id)
     ).toEqual(['beginner-course']);
     expect(
-      filterCourseCatalog(courses, { difficulty: 'advanced', type: 'portfolio-project' }).map(
-        (course) => course.id
-      )
+      filterCourseCatalog(courses, {
+        difficulty: 'advanced',
+        type: 'portfolio-project',
+      }).map((course) => course.id)
     ).toEqual(['advanced-project']);
   });
 

@@ -1,4 +1,4 @@
-import type { CourseMetadata } from '@/lib/data/courses';
+import type { PublishedCourse } from '@/lib/data/publishedCourses';
 
 export interface CourseFilters {
   difficulty: string;
@@ -8,7 +8,7 @@ export interface CourseFilters {
 export const COURSE_CATALOG_PAGE_SIZE = 12;
 
 export interface CourseCatalogPage {
-  courses: CourseMetadata[];
+  courses: PublishedCourse[];
   currentPage: number;
   totalPages: number;
   firstResult: number;
@@ -16,9 +16,9 @@ export interface CourseCatalogPage {
 }
 
 export function filterCourseCatalog(
-  courses: CourseMetadata[],
+  courses: readonly PublishedCourse[],
   { difficulty, type }: CourseFilters
-): CourseMetadata[] {
+): PublishedCourse[] {
   return courses.filter((course) => {
     const matchesDifficulty = difficulty === 'all' || course.difficulty === difficulty;
     const matchesType = type === 'all' || course.type === type;
@@ -27,7 +27,7 @@ export function filterCourseCatalog(
 }
 
 export function paginateCourseCatalog(
-  courses: CourseMetadata[],
+  courses: readonly PublishedCourse[],
   requestedPage: string | undefined,
   pageSize = COURSE_CATALOG_PAGE_SIZE
 ): CourseCatalogPage {

@@ -31,7 +31,7 @@ Recruit against the course's stated audience, not convenience alone. Across plat
 - screen-reader users on supported browser and operating-system combinations;
 - low-vision users testing zoom, reflow, contrast, and focus visibility;
 - users who prefer or require reduced motion;
-- supported tablet users using touch, hardware keyboard, and the native-editor fallback where applicable;
+- supported tablet users using touch and a hardware keyboard;
 - users with varied language, reading, attention, working-memory, and motor needs where recruitment and consent permit.
 
 A participant may belong to several groups. Demographic collection is limited to information needed to interpret the research question.
@@ -121,12 +121,12 @@ Each observation must include:
 
 ## Severity
 
-| Severity | Definition | Release effect |
-| --- | --- | --- |
-| Critical | Prevents the core outcome, risks safety/privacy, loses work, exposes answers/data, traps an assistive-technology user, or makes a false credential claim | Blocks all affected publication; repair and representative re-test required |
-| Serious | Causes repeated failure, major misunderstanding, invalid evidence, inaccessible alternative, or unrecoverable wrong path | Blocks affected course or feature approval; repair and re-test required |
-| Moderate | Causes material delay, avoidable hint dependence, confusion, or inconsistent recovery but a viable route remains | Must be scheduled and justified before wave approval; re-test when it changes the task |
-| Minor | Low-impact clarity, efficiency, or polish issue that does not alter outcome or evidence | Track with owner and next review; may ship only if no accumulation creates a larger barrier |
+| Severity | Definition                                                                                                                                               | Release effect                                                                              |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Critical | Prevents the core outcome, risks safety/privacy, loses work, exposes answers/data, traps an assistive-technology user, or makes a false credential claim | Blocks all affected publication; repair and representative re-test required                 |
+| Serious  | Causes repeated failure, major misunderstanding, invalid evidence, inaccessible alternative, or unrecoverable wrong path                                 | Blocks affected course or feature approval; repair and re-test required                     |
+| Moderate | Causes material delay, avoidable hint dependence, confusion, or inconsistent recovery but a viable route remains                                         | Must be scheduled and justified before wave approval; re-test when it changes the task      |
+| Minor    | Low-impact clarity, efficiency, or polish issue that does not alter outcome or evidence                                                                  | Track with owner and next review; may ship only if no accumulation creates a larger barrier |
 
 ## Pass rules
 

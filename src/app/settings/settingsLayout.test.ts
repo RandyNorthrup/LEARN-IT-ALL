@@ -20,6 +20,10 @@ describe('V2 settings surface', () => {
     expect(source).toContain('aria-describedby="reset-dialog-description"');
     expect(source).not.toContain("type: 'lesson'");
     expect(source).not.toContain("type: 'quiz'");
+    expect(source).toContain('courses.length > 0');
+    expect(source).toContain('No open course has progress to reset.');
+    expect(source).not.toContain('curriculum files');
+    expect(source).not.toContain('local database');
   });
 
   it('keeps controls large, visibly focused, and single-column on narrow screens', () => {

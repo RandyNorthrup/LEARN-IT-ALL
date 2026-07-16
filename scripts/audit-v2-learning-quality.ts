@@ -38,7 +38,7 @@ const issueCounts: Record<string, number> = {};
 for (const issue of catalogIssues) issueCounts[issue.code] = (issueCounts[issue.code] ?? 0) + 1;
 const result = {
   reviewed: '2026-07-15',
-  passed: catalogIssues.every((issue) => issue.severity !== 'blocker'),
+  passed: courseIds.length > 0 && catalogIssues.every((issue) => issue.severity !== 'blocker'),
   courseCount: courseIds.length,
   activityCount: courses.reduce((total, course) => total + course.activityCount, 0),
   affectedCourseCount: courses.filter((course) => course.blockerCount + course.warningCount > 0)
@@ -48,6 +48,7 @@ const result = {
   warningCount: catalogIssues.filter((issue) => issue.severity === 'warning').length,
   issueCounts,
   courses,
+  ...(courseIds.length === 0 ? { blocker: 'No reviewed curriculum courses exist to audit.' } : {}),
 };
 
 process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

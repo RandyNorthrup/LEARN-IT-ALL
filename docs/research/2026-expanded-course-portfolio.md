@@ -2,19 +2,19 @@
 
 Reviewed: 2026-07-13
 
-This brief controls seven new course blueprints. Course prose, examples, datasets, labs, and assessments must be original. Sources control scope and technical accuracy; they are not copied lesson material.
+This brief controls seven planned course research dossiers and architectures. Course prose, examples, datasets, labs, and assessments must be original. Sources control scope and technical accuracy; they are not copied lesson material.
 
 ## Portfolio
 
-| Course ID | Course | Entry point | Exit evidence |
-| --- | --- | --- | --- |
-| `applied-mathematics-beginner` | Beginner Applied Mathematics | Whole-number arithmetic and basic computer use | Defensible everyday model using units, algebra, geometry, data, probability, and a spreadsheet or Python notebook |
-| `applied-mathematics-intermediate` | Intermediate Applied Mathematics | Foundations credential or placement evidence | Calculus, linear algebra, statistics, ODE, numerical-method, and optimization models with validation |
-| `applied-mathematics-advanced` | Advanced Applied Mathematics | Intermediate credential or equivalent calculus and linear algebra | Reproducible multivariable, dynamical, PDE, optimization, stochastic, inverse-problem, and uncertainty study |
-| `prompt-engineering-claude-codex` | Prompt Engineering with Claude and Codex | Basic terminal and repository use | Cross-agent prompt system with eval set, failure taxonomy, provider adaptations, and regression evidence |
-| `agent-loops-goals` | Agent Loops and Persistent Goals | Prompting fundamentals | Bounded agent harness with explicit state, stop rules, checkpoints, steering, recovery, and evals |
-| `agent-skills-mcp` | Creating Skills and MCP Servers | Prompting plus one programming language | Tested portable skill and least-authority MCP server/client integration |
-| `repository-quality-gates` | Production Repository Quality Gates | Basic Git and programming | Reusable repo templates with local and CI gates across TypeScript, Python, Rust, Go, and C/C++ |
+| Course ID                          | Course                                   | Entry point                                                       | Exit evidence                                                                                                     |
+| ---------------------------------- | ---------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `applied-mathematics-beginner`     | Beginner Applied Mathematics             | Whole-number arithmetic and basic computer use                    | Defensible everyday model using units, algebra, geometry, data, probability, and a spreadsheet or Python notebook |
+| `applied-mathematics-intermediate` | Intermediate Applied Mathematics         | Foundations credential or placement evidence                      | Calculus, linear algebra, statistics, ODE, numerical-method, and optimization models with validation              |
+| `applied-mathematics-advanced`     | Advanced Applied Mathematics             | Intermediate credential or equivalent calculus and linear algebra | Reproducible multivariable, dynamical, PDE, optimization, stochastic, inverse-problem, and uncertainty study      |
+| `prompt-engineering-claude-codex`  | Prompt Engineering with Claude and Codex | Basic terminal and repository use                                 | Cross-agent prompt system with eval set, failure taxonomy, provider adaptations, and regression evidence          |
+| `agent-loops-goals`                | Agent Loops and Persistent Goals         | Prompting fundamentals                                            | Bounded agent harness with explicit state, stop rules, checkpoints, steering, recovery, and evals                 |
+| `agent-skills-mcp`                 | Creating Skills and MCP Servers          | Prompting plus one programming language                           | Tested portable skill and least-authority MCP server/client integration                                           |
+| `repository-quality-gates`         | Production Repository Quality Gates      | Basic Git and programming                                         | Reusable repo templates with local and CI gates across TypeScript, Python, Rust, Go, and C/C++                    |
 
 ## Shared learning design
 
@@ -80,7 +80,7 @@ The quality-gates course distinguishes four layers: editor feedback, determinist
 - [GitHub dependency review](https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review) — pull-request dependency policy enforcement.
 - [OWASP Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html) and [Secrets Management](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html) — boundary validation and secret lifecycle.
 
-## Required blueprint audits
+## Required architecture reviews
 
 - No competency is used before introduction.
 - Every competency has introduction, guided, faded, retrieval, assessment, and transfer evidence.

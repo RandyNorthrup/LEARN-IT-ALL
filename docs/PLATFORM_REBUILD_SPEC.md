@@ -4,26 +4,26 @@
 
 This is a replacement architecture. Audit-required course files remain temporary live input until a researched replacement passes equivalent learner-data and flow tests. Obsolete routes, API tombstones, guessed mappings, parallel practice surfaces, and content generators are not retained. Exact historical evidence is preserved without keeping the earlier runtime schema.
 
-The 2026-07-15 learner review invalidated the earlier content-complete checkpoint. Generated activity counts, topic mappings, schemas, and duplication scores did not prove that the material actually taught a beginner. Every course is audit-required until its learner-facing explanations, practice progression, editor/runtime path, feedback, assessment validity, and transfer evidence pass the contracts in [the research-backed rebuild plan](./LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md).
+The 2026-07-15 learner review invalidated the earlier content-complete checkpoint. Generated activity counts, topic mappings, schemas, and duplication scores did not prove that the material actually taught a beginner. The rejected course data and blueprint system are deleted. Every planned course remains unpublished until its learner-facing explanations, practice progression, editor/runtime path, feedback, assessment validity, and transfer evidence pass the contracts in [the research-backed rebuild plan](./LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md).
 
 ## Verified Responsive Web Design baseline
 
 Reference snapshot: freeCodeCamp `responsive-web-design-v9` at commit `c115efdd41f868d8850156f6a7a211219c35a847` (2026-07-13).
 
-| Unit | Upstream count | LEARN-IT-ALL target |
-| --- | ---: | ---: |
-| Chapters | 4 | 4 or more |
-| Modules | 29 | 29 mapped modules |
-| Blocks | 158 | 158 mapped activities |
-| Workshop blocks | 33 | 33 original guided builds |
-| Workshop steps | 1,287 | At least 1,287 original code steps |
-| Lecture challenges | 185 | At least 185 interactive theory steps |
-| Independent labs | 34 | 34 original labs with multiple requirements |
-| Reviews | 24 | 24 active-recall reviews |
-| Module quizzes | 22 | 22 question banks with randomized attempts |
-| Certification projects | 5 | 5 original, independently built projects |
-| Certification exam | 1 | 1 broad, randomized exam |
-| Total upstream challenges | 1,553 | At least 2,000 learner interactions before quizzes and exam |
+| Unit                      | Upstream count |                                         LEARN-IT-ALL target |
+| ------------------------- | -------------: | ----------------------------------------------------------: |
+| Chapters                  |              4 |                                                   4 or more |
+| Modules                   |             29 |                                           29 mapped modules |
+| Blocks                    |            158 |                                       158 mapped activities |
+| Workshop blocks           |             33 |                                   33 original guided builds |
+| Workshop steps            |          1,287 |                          At least 1,287 original code steps |
+| Lecture challenges        |            185 |                       At least 185 interactive theory steps |
+| Independent labs          |             34 |                 34 original labs with multiple requirements |
+| Reviews                   |             24 |                                    24 active-recall reviews |
+| Module quizzes            |             22 |                  22 question banks with randomized attempts |
+| Certification projects    |              5 |                    5 original, independently built projects |
+| Certification exam        |              1 |                                    1 broad, randomized exam |
+| Total upstream challenges |          1,553 | At least 2,000 learner interactions before quizzes and exam |
 
 The first 28-lesson RWD prototype covered topic headings but did not approach this depth. It is replaced by the mapped activity graph above.
 

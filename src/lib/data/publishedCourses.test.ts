@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { isPublishedCourse, PUBLISHED_COURSE_IDS, PUBLISHED_COURSES } from './publishedCourses';
-import { PUBLISHED_LEARNING_TRACKS } from './tracks';
+import { PUBLISHED_LEARNING_TRACKS } from './publishedTracks';
 
 describe('curriculum publication gate', () => {
-  it('publishes no audit-required generated course or dependent path', () => {
+  it('publishes no rejected generated course or dependent path', () => {
     expect(PUBLISHED_COURSE_IDS).toEqual([]);
     expect(PUBLISHED_COURSES).toEqual([]);
     expect(PUBLISHED_LEARNING_TRACKS).toEqual([]);

@@ -99,26 +99,25 @@ Technical authorities: [Pyodide worker guidance](https://pyodide.org/en/stable/u
 - keep a focusable diagnostic list in addition to visual markers;
 - never move focus to preview or output after running unless the learner requests it;
 - announce concise status politely and leave full output available for review;
-- keep a native-editor fallback with the same save, run, reset, evidence, and recovery contract;
-- retain drafts across Monaco load failure, worker crash, timeout, route change, refresh, browser restart, supported tablet-to-desktop handoff, and fallback switch;
+- retain drafts across editor load failure, worker crash, timeout, route change, refresh, browser restart, and supported tablet-to-desktop handoff;
 - verify screen reader, keyboard-only, zoom/reflow, high contrast, reduced motion, touch, and error recovery with people and supported assistive technology.
 
 Accessibility authorities: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [Monaco accessibility guidance](https://github.com/microsoft/monaco-editor/wiki/Accessibility-Guide-for-Integrators).
 
 ## Domain policy matrix
 
-| Domain | Allowed local capability | Explicitly denied | Required transfer evidence |
-| --- | --- | --- | --- |
-| HTML/CSS/JavaScript | Opaque preview, bounded DOM and behavior inspection, fixed local assets | Same-origin authority, credentials, unrestricted network, top navigation, downloads | Real-browser accessibility, responsive, performance, and compatibility review on an owned artifact |
-| TypeScript | Bounded compiler and allowlisted deterministic runtime | Host files/processes, arbitrary packages, open network | Native Node/package build, test, packaging, and supported-environment evidence |
-| Python | Fresh Pyodide worker and allowlisted packages | Host access, subprocesses, arbitrary network/package install | Native Python environment, dependency, test, packaging, and platform evidence |
-| Go | Browser-safe interpreter subset and deterministic imports | Sockets, host processes/files, arbitrary modules | Current Go toolchain, race/fuzz/sanitizer-equivalent and production dependency evidence |
-| C | Browser interpreter and memory-model visualizations | Native execution, host memory, processes, arbitrary libraries | Current compiler warnings, sanitizers, debugger, architecture, and toolchain evidence |
-| SQL | Fresh deterministic in-memory database | Host or shared database, extensions, files, network | Authorized PostgreSQL or named dialect behavior, plan, transaction, and migration evidence |
-| Shell/Git/network | Deterministic state simulator | Host shell, credentials, devices, production repositories, network targets | Authorized disposable environment with rollback, capture, and cleanup evidence |
-| Docker/Kubernetes/cloud | Configuration parser and deterministic state/failure simulator | Daemon, kubeconfig, cloud credentials, registries, external mutation | Authorized disposable infrastructure, policy, cost, recovery, and cleanup evidence |
-| AI/agents/MCP | Fixed fixtures, bounded evaluators, trace and state simulator | Undeclared provider calls, credentials, external actions, unbounded spend | Authorized budgeted provider/tool run with privacy, safety, evaluation, and rollback evidence |
-| Applied mathematics | Deterministic expression/data/visualization engine | Silent precision claims, inaccessible chart-only results, arbitrary code execution | Independent derivation, changed data, units, interpretation, and real-tool verification |
+| Domain                  | Allowed local capability                                                | Explicitly denied                                                                   | Required transfer evidence                                                                         |
+| ----------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| HTML/CSS/JavaScript     | Opaque preview, bounded DOM and behavior inspection, fixed local assets | Same-origin authority, credentials, unrestricted network, top navigation, downloads | Real-browser accessibility, responsive, performance, and compatibility review on an owned artifact |
+| TypeScript              | Bounded compiler and allowlisted deterministic runtime                  | Host files/processes, arbitrary packages, open network                              | Native Node/package build, test, packaging, and supported-environment evidence                     |
+| Python                  | Fresh Pyodide worker and allowlisted packages                           | Host access, subprocesses, arbitrary network/package install                        | Native Python environment, dependency, test, packaging, and platform evidence                      |
+| Go                      | Browser-safe interpreter subset and deterministic imports               | Sockets, host processes/files, arbitrary modules                                    | Current Go toolchain, race/fuzz/sanitizer-equivalent and production dependency evidence            |
+| C                       | Browser interpreter and memory-model visualizations                     | Native execution, host memory, processes, arbitrary libraries                       | Current compiler warnings, sanitizers, debugger, architecture, and toolchain evidence              |
+| SQL                     | Fresh deterministic in-memory database                                  | Host or shared database, extensions, files, network                                 | Authorized PostgreSQL or named dialect behavior, plan, transaction, and migration evidence         |
+| Shell/Git/network       | Deterministic state simulator                                           | Host shell, credentials, devices, production repositories, network targets          | Authorized disposable environment with rollback, capture, and cleanup evidence                     |
+| Docker/Kubernetes/cloud | Configuration parser and deterministic state/failure simulator          | Daemon, kubeconfig, cloud credentials, registries, external mutation                | Authorized disposable infrastructure, policy, cost, recovery, and cleanup evidence                 |
+| AI/agents/MCP           | Fixed fixtures, bounded evaluators, trace and state simulator           | Undeclared provider calls, credentials, external actions, unbounded spend           | Authorized budgeted provider/tool run with privacy, safety, evaluation, and rollback evidence      |
+| Applied mathematics     | Deterministic expression/data/visualization engine                      | Silent precision claims, inaccessible chart-only results, arbitrary code execution  | Independent derivation, changed data, units, interpretation, and real-tool verification            |
 
 ## Release-blocking adversarial suite
 

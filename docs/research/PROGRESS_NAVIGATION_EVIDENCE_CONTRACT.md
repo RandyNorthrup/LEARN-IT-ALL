@@ -25,18 +25,18 @@ If a dashboard, map, module, activity, assessment, or credential surface cannot 
 
 ## Evidence types
 
-| Learner-facing state | Minimum persisted evidence | Forbidden inference |
-| --- | --- | --- |
-| Not started | No qualifying attempt exists | Do not infer disinterest, inability, or recommended difficulty |
-| Draft saved | Artifact or response draft with version and save time | A draft is not an attempt or competence claim |
-| Attempted | Submitted response plus check version, observed result, and feedback | Time, clicks, or source tokens do not prove effort quality or understanding |
-| Completed | Required activity evidence passed under the named contract | Completion is not mastery, retention, transfer, or project readiness |
-| Corrected | A prior failure was repaired and a parallel changed case passed | Repeating the exact answer does not prove correction |
-| Demonstrated | Independent changed-case performance for a named competency | One guided example does not prove broad mastery |
-| Retained | Delayed mixed evidence meets the competency threshold | Initial completion or a streak does not prove retention |
-| Transferred | Unfamiliar authentic task uses the competency under changed constraints | A renamed workshop or near-identical starter is not transfer |
-| Project-ready | Required competencies, independent builds, delayed evidence, and project prerequisites are current | Course percentage or activity count is not readiness |
-| Credential-ready | All terminal tasks, projects, exam, delayed work, review, and defense requirements have auditable evidence | Generated content, schema validity, or automated tests alone cannot confer a credential |
+| Learner-facing state | Minimum persisted evidence                                                                                 | Forbidden inference                                                                     |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Not started          | No qualifying attempt exists                                                                               | Do not infer disinterest, inability, or recommended difficulty                          |
+| Draft saved          | Artifact or response draft with version and save time                                                      | A draft is not an attempt or competence claim                                           |
+| Attempted            | Submitted response plus check version, observed result, and feedback                                       | Time, clicks, or source tokens do not prove effort quality or understanding             |
+| Completed            | Required activity evidence passed under the named contract                                                 | Completion is not mastery, retention, transfer, or project readiness                    |
+| Corrected            | A prior failure was repaired and a parallel changed case passed                                            | Repeating the exact answer does not prove correction                                    |
+| Demonstrated         | Independent changed-case performance for a named competency                                                | One guided example does not prove broad mastery                                         |
+| Retained             | Delayed mixed evidence meets the competency threshold                                                      | Initial completion or a streak does not prove retention                                 |
+| Transferred          | Unfamiliar authentic task uses the competency under changed constraints                                    | A renamed workshop or near-identical starter is not transfer                            |
+| Project-ready        | Required competencies, independent builds, delayed evidence, and project prerequisites are current         | Course percentage or activity count is not readiness                                    |
+| Credential-ready     | All terminal tasks, projects, exam, delayed work, review, and defense requirements have auditable evidence | Generated content, schema validity, or automated tests alone cannot confer a credential |
 
 ## Progress rules
 
@@ -74,7 +74,7 @@ Representative learners must be able to:
 5. find due review and explain why it is due;
 6. recover after a failed check without receiving the answer;
 7. find the current project, its prerequisites, and the skill the current activity contributes;
-8. navigate the full task with keyboard, screen reader, zoom/reflow, touch, and the native-editor fallback where applicable;
+8. navigate the full task with keyboard, screen reader, zoom/reflow, and touch where supported;
 9. use the phone handoff without losing work or assuming the course is broken;
 10. identify when evidence is supported, assisted, stale, failed, or awaiting transfer.
 

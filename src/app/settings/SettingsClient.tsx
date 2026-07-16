@@ -115,12 +115,12 @@ export default function SettingsClient({ initialDisplayName, courses }: Settings
 
       <section className={styles.hero}>
         <div>
-          <span className={styles.eyebrow}>Local learning controls</span>
-          <h1>Settings with clear boundaries.</h1>
+          <span className={styles.eyebrow}>Your learning controls</span>
+          <h1>Manage your learning settings.</h1>
         </div>
         <p>
-          Change how the platform addresses you or deliberately reset local evidence. Destructive
-          actions always require confirmation.
+          Change how the platform addresses you or reset saved learning history. Destructive actions
+          always require confirmation.
         </p>
       </section>
 
@@ -135,7 +135,7 @@ export default function SettingsClient({ initialDisplayName, courses }: Settings
           </header>
           <form onSubmit={saveProfile}>
             <label htmlFor="display-name">Display name</label>
-            <p id="display-name-help">Use 3 to 80 characters. Stored only in the local database.</p>
+            <p id="display-name-help">Use 3 to 80 characters. Saved only on this device.</p>
             <input
               id="display-name"
               name="displayName"
@@ -157,34 +157,42 @@ export default function SettingsClient({ initialDisplayName, courses }: Settings
             <HardDrive aria-hidden="true" />
             <div>
               <span className={styles.eyebrow}>Local data</span>
-              <h2 id="data-heading">Reset evidence intentionally</h2>
+              <h2 id="data-heading">Reset saved progress</h2>
             </div>
           </header>
-          <p>
-            Resets delete drafts, attempts, and review scheduling. They never change curriculum
-            files.
-          </p>
-          <label htmlFor="reset-course">Course to reset</label>
-          <select
-            id="reset-course"
-            value={courseId}
-            onChange={(event) => setCourseId(event.target.value)}
-          >
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.title}
-              </option>
-            ))}
-          </select>
+          <p>Resets delete saved drafts, attempts, completion, and scheduled review.</p>
+          {courses.length > 0 ? (
+            <>
+              <label htmlFor="reset-course">Course to reset</label>
+              <select
+                id="reset-course"
+                value={courseId}
+                onChange={(event) => setCourseId(event.target.value)}
+              >
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.title}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <p role="status">
+              No open course has progress to reset. Reset everything remains available for older
+              saved learning history.
+            </p>
+          )}
           <div className={styles.resetActions}>
-            <button
-              type="button"
-              className={styles.warningButton}
-              disabled={!courseId}
-              onClick={() => setResetRequest({ type: 'course', courseId })}
-            >
-              <Eraser aria-hidden="true" /> Reset selected course
-            </button>
+            {courses.length > 0 && (
+              <button
+                type="button"
+                className={styles.warningButton}
+                disabled={!courseId}
+                onClick={() => setResetRequest({ type: 'course', courseId })}
+              >
+                <Eraser aria-hidden="true" /> Reset selected course
+              </button>
+            )}
             <button
               type="button"
               className={styles.dangerButton}

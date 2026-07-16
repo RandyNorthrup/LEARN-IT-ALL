@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PUBLISHED_LEARNING_TRACKS } from '@/lib/data/tracks';
+import { PUBLISHED_LEARNING_TRACKS } from '@/lib/data/publishedTracks';
 
 export async function GET() {
   try {
