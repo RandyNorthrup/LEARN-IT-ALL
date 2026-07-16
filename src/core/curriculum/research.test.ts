@@ -4604,7 +4604,8 @@ describe('research contracts', () => {
 
     expect(design.status).toBe('researching');
     expect(design.state).toBe('planned-not-authored');
-    expect(design.conceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
     expect(design.activityDeliveryOrder).toEqual([
       'model',
       'workshop',
@@ -4642,6 +4643,69 @@ describe('research contracts', () => {
     expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(203);
     expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBeGreaterThan(7);
     expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(97);
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('decomposes RWD source syntax into 140 interactions with explicit prerequisite retrieval', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-source-syntax-and-repair-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'html-element-anatomy',
+      'html-nesting-tree',
+      'html-content-models',
+    ]);
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(140);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(140);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(8);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(92);
     expect(
       design.activityDesigns
         .find((activity) => activity.role === 'assessment')

@@ -1243,6 +1243,10 @@ const StepDesignEvidenceKindSchema = z.enum([
   'source-preview-prediction',
   'artifact-persistence',
   'element-anatomy',
+  'source-dom-mapping',
+  'void-syntax',
+  'attribute-contract',
+  'comment-safety',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1305,7 +1309,8 @@ export const ResearchModuleStepDesignSchema = z
     reviewedAt: z.iso.date(),
     state: z.literal('planned-not-authored'),
     sourceArtifacts: z.array(z.string().min(20)).min(3),
-    conceptIds: z.array(IdentifierSchema).min(1),
+    newConceptIds: z.array(IdentifierSchema).min(1),
+    retrievalConceptIds: z.array(IdentifierSchema),
     conceptClusters: z
       .array(
         z.object({
@@ -1367,7 +1372,16 @@ export const ResearchModuleStepDesignSchema = z
       }
     };
 
-    rejectDuplicates(design.conceptIds, 'Step design repeats module concepts', ['conceptIds']);
+    rejectDuplicates(design.newConceptIds, 'Step design repeats new module concepts', [
+      'newConceptIds',
+    ]);
+    rejectDuplicates(design.retrievalConceptIds, 'Step design repeats retrieval concepts', [
+      'retrievalConceptIds',
+    ]);
+    const allConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds];
+    rejectDuplicates(allConceptIds, 'Step design overlaps new and retrieval concepts', [
+      'newConceptIds',
+    ]);
     rejectDuplicates(
       design.conceptClusters.map((cluster) => cluster.id),
       'Step design repeats concept cluster IDs',
@@ -1391,13 +1405,14 @@ export const ResearchModuleStepDesignSchema = z
       ['activityDesigns']
     );
 
+    const clusteredConceptIds = design.conceptClusters.flatMap((cluster) => cluster.conceptIds);
     if (
-      design.conceptClusters.flatMap((cluster) => cluster.conceptIds).join(',') !==
-      design.conceptIds.join(',')
+      clusteredConceptIds.length !== allConceptIds.length ||
+      !allConceptIds.every((conceptId) => clusteredConceptIds.includes(conceptId))
     ) {
       context.addIssue({
         code: 'custom',
-        message: 'Step design clusters must cover module concepts once and in module order',
+        message: 'Step design clusters must cover new and retrieval concepts exactly once',
         path: ['conceptClusters'],
       });
     }
@@ -1465,7 +1480,7 @@ export const ResearchModuleStepDesignSchema = z
           ['activityDesigns', activityIndex, 'interactions', interactionIndex, 'conceptIds']
         );
         for (const conceptId of interactionConcepts) {
-          if (!design.conceptIds.includes(conceptId)) {
+          if (!allConceptIds.includes(conceptId)) {
             context.addIssue({
               code: 'custom',
               message: `Step design interaction ${interaction.id} references an unknown concept`,
@@ -1483,9 +1498,14 @@ export const ResearchModuleStepDesignSchema = z
           evidenceConceptsByRole.get(activity.role)?.add(conceptId);
         }
         if (
-          ['dom-behavior', 'parser-diagnostic', 'changed-case', 'artifact-persistence'].includes(
-            interaction.evidence.kind
-          ) &&
+          [
+            'dom-behavior',
+            'void-syntax',
+            'attribute-contract',
+            'parser-diagnostic',
+            'changed-case',
+            'artifact-persistence',
+          ].includes(interaction.evidence.kind) &&
           !interaction.evidence.changedCase
         ) {
           context.addIssue({
@@ -1505,7 +1525,7 @@ export const ResearchModuleStepDesignSchema = z
     }
 
     for (const role of expectedRoles) {
-      const missingConcepts = design.conceptIds.filter(
+      const missingConcepts = allConceptIds.filter(
         (conceptId) => !evidenceConceptsByRole.get(role)?.has(conceptId)
       );
       if (missingConcepts.length > 0) {
