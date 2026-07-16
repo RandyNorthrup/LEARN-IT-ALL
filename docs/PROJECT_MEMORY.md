@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-15 after runtime, CI, catalog, and Lighthouse hardening
+Last verified full gate: 2026-07-15 after local-only automation policy verification
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
 
@@ -16,6 +16,7 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Make all UI/UX accessible and responsive.
 - Suggest next steps and explain blockers at each session handoff.
 - Preserve unrelated work in the intentionally dirty worktree.
+- Keep repository free of GitHub Actions workflows and push-triggered runners. Pushes carry code only; all verification runs explicitly and locally unless the user reverses this policy.
 - Report `planned`, `generated`, `schema-valid`, `flow-verified`, and `published` as different states.
 - Upgrade stack to latest mutually compatible working releases, then repair fallout.
 - Responsive Web Design must cover the depth and topics of freeCodeCamp Responsive Web Design v9 with original LEARN-IT-ALL material.
@@ -388,15 +389,15 @@ The Go audit parses and type-checks 852 starter and lesson sources across Go Bas
 
 ## Latest full verification checkpoint
 
-After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, generated runtime-outline optimization, runtime-index hardening, CI release-gate setup, and final three-viewport verification on 2026-07-15:
+After catalog-wide duplication repair, version 1 retirement, deterministic gamified-practice modernization, generated runtime-outline optimization, runtime-index hardening, local-only automation policy verification, and final three-viewport verification on 2026-07-15:
 
-- `npm test`: 96 test files and 609 tests passed under Node.js 24.18.0 and npm 12.0.1.
+- `npm test`: 96 test files and 606 tests passed under Node.js 24.18.0 and npm 12.0.1.
 - `npm run type-check`: passed.
 - `npm run lint`: passed across 333 source and script files.
 - `npm run lint:strict`: passed across 333 files with warnings treated as failures.
 - `npm run format:check`: passed across 333 files.
 - `npm run build`: passed with Next.js 16.2.10 and no Turbopack warnings.
-- `npm audit --audit-level=moderate`: zero vulnerabilities across 537 audited packages.
+- `npm audit --audit-level=moderate`: zero vulnerabilities across 536 audited packages.
 - Lighthouse 13.4.0 through LHCI 0.15.1 passed four representative routes five times per profile with no SEO category. The performance gate requires a five-run median of at least 0.99, while accessibility and best practices require the pessimistic worst run to remain at least 0.99. This follows Lighthouse's guidance for volatile free CI runners without lowering the required category score. Remote GitHub Actions run `29425416139` passed the quality job plus all three profiles on commit `bbaa5ce7`; all 60 raw HTML and JSON reports are retained through 2026-08-14. Desktop scored 1.00 throughout. Mobile medians were 0.99-1.00 and tablet medians were 0.99 despite isolated cold-run performance samples of 0.84 and 0.69; accessibility and best practices were 1.00 in every raw run.
 - The phone profile uses a 412x823 mobile-form-factor viewport, DPR 2.625, constrained 150 ms/1638.4 Kbps network, and 3x CPU slowdown. The tablet profile uses a 768x1024 mobile-form-factor viewport, DPR 2, the same constrained network, and 2x CPU slowdown. Desktop remains the 1440x900 Dense 4G profile at 1x CPU.
 - Final standalone browser verification passed the home page, responsive-web-design journey, and first studio activity at 412x823, 768x1024, and 1440x900 with one H1, no horizontal overflow, working prediction grading, visible rail and learning material, open-module competency scoping, and no console or page errors. Browser verification found three undersized mobile home links at 19, 42, and 24 pixels; all now have a tested 44-pixel minimum and the rebuilt standalone route has no undersized visible controls.
@@ -404,7 +405,7 @@ After catalog-wide duplication repair, version 1 retirement, deterministic gamif
 - Every one of the 54 courses now has a generated `outline.json` containing exact ordered course, module, activity, prerequisite, estimate, and step-ID metadata. An exhaustive parity test checks every outline against source content. Course maps use outlines instead of parsing full lesson bodies; the Responsive Web Design route no longer validates a 16 MB graph just to render navigation.
 - First-paint learner payloads strip private competency IDs and hints, code runtimes lazy-load only for code steps, unchanged drafts do not autosave, initial task theory stays server-rendered, and navigation prefetch is disabled on large catalog and journey surfaces.
 - A generated read-only curriculum runtime index now stores all 12,985 course, outline, module, and activity JSON documents as individually compressed, SHA-256-verified records. Its source fingerprint skips unchanged rebuilds; generation is atomic and runs before development, tests, and production builds. The source payload is 602,570,890 bytes, compressed records are 75,680,248 bytes, and the current SQLite index is about 98 MiB. Standalone tracing contains the index and no raw course JSON files, reducing the traced curriculum directory from roughly 602 MiB to roughly 104 MiB while removing the former 12,985-file and 11,742-file Turbopack warnings.
-- `.github/workflows/quality.yml` now runs the complete non-Lighthouse gate before three parallel mobile, tablet, and desktop Lighthouse jobs. It uses read-only repository permission, disabled checkout credential persistence, Node.js 24.18.0, npm 12.0.1, SHA-pinned official `actions/checkout` 6.0.2, `actions/setup-node` 6.4.0, and `actions/upload-artifact` 7.0.1. Each profile collects five runs per route and retains hidden LHCI HTML and JSON reports for 30 days even when the audit fails. Contract tests parse the workflow and prevent profile, assertion, event, permission, version, sampling, or artifact-policy drift. Official action releases, GitHub artifact-retention guidance, LHCI aggregation documentation, and Lighthouse variability guidance were reviewed 2026-07-15.
+- GitHub Actions automation was removed on 2026-07-15 by direct user instruction. `.github/workflows` contains no workflow files, no repository-defined runner can start on push, and the YAML-only dependency was removed. `src/lib/automationPolicy.test.ts` enforces the no-workflow policy while proving tests, type checks, normal and strict lint, builds, and all three Lighthouse profiles remain available as explicit local commands. Remote run `29425416139` remains historical baseline evidence only; it does not describe current automation behavior.
 - The production Docker image builds successfully from a clean generated index, runs as UID 1001, returns the health contract, and renders the first Responsive Web Design activity without a raw `content/v2/courses` tree. The verified local image is 159,962,860 bytes. Docker context excludes local runtime-index output so the builder derives the packaged index from source every time.
 
 The Go Basics content gate parses and type-checks all 426 learner starters and lesson sources with the official Go toolchain, while the runtime tests verify local-only assets, import isolation, deterministic execution, output limits, and worker cleanup. Go research is reviewed 2026-07-14 against the Go 1.26 specification and release notes, modules reference, memory model, testing/fuzzing, race detector, context and pipelines, security, diagnostics, performance/PGO, code review guidance, and ACM/IEEE/AAAI CS2023. Current versions are Go 1.26.5 and Yaegi 0.16.1; the course explicitly distinguishes the browser subset from full-toolchain transfer gates.
@@ -417,7 +418,7 @@ Run focused tests after each new change, then repeat the full non-Lighthouse gat
 
 1. Conduct observed learner studies across representative beginner, intermediate, and advanced courses; use completion, retry, hint, transfer, and abandonment evidence to prioritize the next pedagogical revisions.
 2. Regenerate and parity-test runtime outlines whenever course, module, activity, prerequisite, estimate, or step ordering changes; the predev, pretest, and prebuild hooks regenerate the compressed runtime index when source metadata changes.
-3. Add the proven container-image health and packaged-activity smoke to CI if its additional build time and 1.17 GB source context fit the repository's runner budget.
+3. Keep the proven container-image health and packaged-activity smoke as an explicit local release check. Do not add GitHub Actions or push-triggered automation unless the user explicitly reverses the no-workflow policy.
 
 ## Known caution
 
