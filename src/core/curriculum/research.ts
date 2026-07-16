@@ -1313,6 +1313,8 @@ const StepDesignEvidenceKindSchema = z.enum([
   'source-focus-order',
   'aria-behavior-contract',
   'accessibility-evaluation-record',
+  'validation-diagnostic-trace',
+  'changed-case-invariant',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1398,6 +1400,9 @@ const StepDesignLayoutSchema = z.enum([
   'aria-contract-inspector',
   'evaluation-evidence-board',
   'correction-board',
+  'validator-diagnostic-board',
+  'hypothesis-evidence-trace',
+  'regression-mutation-board',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1697,6 +1702,8 @@ export const ResearchModuleStepDesignSchema = z
             'source-focus-order',
             'aria-behavior-contract',
             'accessibility-evaluation-record',
+            'validation-diagnostic-trace',
+            'changed-case-invariant',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
