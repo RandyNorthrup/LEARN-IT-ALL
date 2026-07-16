@@ -108,7 +108,7 @@ The curriculum audit fails CI when it finds:
 - client-supplied answers used as canonical grading data;
 - inaccessible interaction controls or layouts that fail supported viewports.
 
-Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on tablet and desktop; every score must be at least 99. SEO is intentionally excluded.
+Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on mobile, tablet, and desktop; every score must be at least 99. SEO is intentionally excluded. Mobile validates public information, navigation, and the accessible phone handoff rather than an unsupported full course studio.
 
 ## Product experience
 

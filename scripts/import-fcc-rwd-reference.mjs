@@ -50,13 +50,16 @@ const sourceEvidence = async (blockSlug, challenge) => {
   const source = await readFile(path.join(upstreamRoot, relativePath), 'utf8');
   const hints = section(source, 'hints');
   const questions = section(source, 'questions');
+  const quizzes = section(source, 'quizzes');
   return {
     relativePath,
     sha256: sha256(source),
     bytes: Buffer.byteLength(source),
     topLevelSections: topLevelSections(source),
     hintCheckCount: [...hints.matchAll(/```(?:js|javascript)\s*\n/g)].length,
-    quizQuestionCount: [...questions.matchAll(/^## --text--\s*$/gm)].length,
+    quizQuestionCount:
+      [...questions.matchAll(/^## --text--\s*$/gm)].length +
+      [...quizzes.matchAll(/^### --question--\s*$/gm)].length,
     codeLanguages: [
       ...new Set(
         [...source.matchAll(/^```([^\s`]*)\s*$/gm)]

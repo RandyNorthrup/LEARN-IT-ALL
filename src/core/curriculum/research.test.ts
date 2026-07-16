@@ -199,7 +199,7 @@ describe('research contracts', () => {
     ).toBe(true);
     expect(
       challenges.reduce((total, challenge) => total + challenge.sourceEvidence.quizQuestionCount, 0)
-    ).toBeGreaterThan(0);
+    ).toBe(1_365);
   });
 
   it('rejects corrupted pinned-v9 source evidence', () => {
@@ -261,10 +261,21 @@ describe('research contracts', () => {
     const conceptIds = graph.concepts.map((concept) => concept.id);
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(71);
+    expect(graph.concepts).toHaveLength(77);
     expect(conceptIds).toEqual(
-      expect.arrayContaining(['html-replaced-content-boundaries', 'html-media-rights-licensing'])
+      expect.arrayContaining([
+        'html-replaced-content-boundaries',
+        'html-media-rights-licensing',
+        'html-abbreviations-expansions',
+        'html-contact-address-links',
+        'html-time-machine-values',
+        'html-subscript-superscript',
+        'html-code-preformatted-text',
+        'html-editorial-annotations',
+        'html-ruby-annotations',
+      ])
     );
+    expect(conceptIds).not.toContain('html-machine-readable-text');
     expect(
       graph.concepts.find((concept) => concept.id === 'html-media-rights-licensing')?.sourceAnchors
     ).toHaveLength(3);
@@ -380,10 +391,10 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([71, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([77, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(23);
+    ).toHaveLength(33);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -412,9 +423,135 @@ describe('research contracts', () => {
           alignment.inspectionState === 'agent-inspected'
       )
     ).toBe(true);
+    const semanticHtmlAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'semantic-html'
+    );
+    expect(semanticHtmlAlignments).toHaveLength(10);
+    expect(
+      semanticHtmlAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(55);
+    expect(
+      semanticHtmlAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    const expectedSemanticConcepts: Record<string, string[]> = {
+      'lecture-importance-of-semantic-html': [
+        'html-purpose-structure',
+        'html-heading-hierarchy',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-native-accessibility-tree',
+      ],
+      'lecture-understanding-nuanced-semantic-elements': [
+        'html-content-models',
+        'html-document-language',
+        'html-lists',
+        'html-emphasis-importance',
+      ],
+      'workshop-major-browsers-list': [
+        'html-nesting-tree',
+        'html-content-models',
+        'html-heading-hierarchy',
+        'html-lists',
+      ],
+      'lecture-working-with-text-and-time-semantic-elements': [
+        'html-quotations-citations',
+        'html-abbreviations-expansions',
+        'html-contact-address-links',
+        'html-time-machine-values',
+      ],
+      'workshop-quincys-job-tips': [
+        'html-nesting-tree',
+        'html-content-models',
+        'html-comments-character-references',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-quotations-citations',
+        'html-landmarks',
+        'html-sectioning-articles',
+      ],
+      'lecture-working-with-specialized-semantic-elements': [
+        'html-subscript-superscript',
+        'html-code-preformatted-text',
+        'html-editorial-annotations',
+        'html-ruby-annotations',
+      ],
+      'workshop-blog-page': [
+        'html-nesting-tree',
+        'html-content-models',
+        'html-attribute-syntax',
+        'html-link-purpose-fragments',
+        'html-images-purpose-alt',
+        'html-figures-captions',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-lists',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-contact-address-links',
+      ],
+      'lab-event-hub': [
+        'html-nesting-tree',
+        'html-content-models',
+        'html-attribute-syntax',
+        'html-link-purpose-fragments',
+        'html-images-purpose-alt',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-lists',
+        'html-landmarks',
+        'html-sectioning-articles',
+      ],
+      'review-semantic-html': [
+        'html-purpose-structure',
+        'html-heading-hierarchy',
+        'html-link-purpose-fragments',
+        'html-figures-captions',
+        'html-lists',
+        'html-emphasis-importance',
+        'html-quotations-citations',
+        'html-abbreviations-expansions',
+        'html-contact-address-links',
+        'html-time-machine-values',
+        'html-subscript-superscript',
+        'html-code-preformatted-text',
+        'html-editorial-annotations',
+        'html-ruby-annotations',
+        'html-landmarks',
+        'html-sectioning-articles',
+      ],
+      'quiz-semantic-html': [
+        'html-purpose-structure',
+        'html-heading-hierarchy',
+        'html-figures-captions',
+        'html-lists',
+        'html-emphasis-importance',
+        'html-quotations-citations',
+        'html-abbreviations-expansions',
+        'html-contact-address-links',
+        'html-time-machine-values',
+        'html-subscript-superscript',
+        'html-code-preformatted-text',
+        'html-editorial-annotations',
+        'html-ruby-annotations',
+        'html-landmarks',
+      ],
+    };
+    expect(
+      Object.fromEntries(
+        semanticHtmlAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual(expectedSemanticConcepts);
+    expect(
+      semanticHtmlAlignments.find((alignment) => alignment.sourceBlockSlug === 'quiz-semantic-html')
+        ?.sourceEvidence.quizQuestionCount
+    ).toBe(60);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
-    ).toHaveLength(98);
+    ).toHaveLength(92);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -565,7 +702,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(157);
+    expect(architecture.conceptIds).toHaveLength(163);
     expect(architecture.sourceObjectiveIds).toHaveLength(158);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({

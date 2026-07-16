@@ -1117,7 +1117,7 @@ concept(
 concept(
   'html-emphasis-importance',
   'Emphasis and importance',
-  'Use emphasis, strong importance, and presentationally neutral text according to linguistic meaning rather than desired font style.',
+  'Distinguish stress emphasis, strong importance or urgency, alternate voice, and utilitarian attention with em, strong, i, and b, using CSS when only presentation should change.',
   'html-text-and-semantics',
   ['html-element-anatomy', 'html-content-models'],
   [
@@ -1126,10 +1126,15 @@ concept(
       'Semantic HTML 2.4 advanced text',
       'MDN requires correct use of emphasis, importance, and other text-level semantics.'
     ),
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: em, strong, i, and b',
+      'HTML distinguishes stress emphasis, importance or urgency, alternate voice, and attention without importance; visual styling alone does not select among them.'
+    ),
   ],
-  ['Strong and em are interchangeable shortcuts for bold and italic appearance.'],
+  ['Strong, em, b, and i are interchangeable shortcuts for bold and italic appearance.'],
   [
-    'Learner must select semantics for changed stress, warning, label, and purely visual requirements.',
+    'Learner must select or reject each element for changed stress, warning, idiom, technical-term, keyword, label, and purely visual requirements.',
     'Artifact must retain intended meaning when author styles and visual emphasis are removed.',
   ]
 );
@@ -1155,22 +1160,146 @@ concept(
 );
 
 concept(
-  'html-machine-readable-text',
-  'Dates, abbreviations, code, and contact context',
-  'Use time, abbreviation, code-related, address, superscript, subscript, deletion, and insertion semantics where their defined meaning fits.',
+  'html-abbreviations-expansions',
+  'Abbreviations and readable expansions',
+  'Mark abbreviations when their semantic identity matters and provide unfamiliar expansions in readable text or a valid title value without assuming hover-only disclosure reaches every learner.',
   'html-text-and-semantics',
   ['html-attribute-syntax', 'html-emphasis-importance'],
   [
     anchor(
-      'rwd-mdn-curriculum',
-      'Semantic HTML 2.4 advanced text',
-      'MDN expects awareness and appropriate use of dates, abbreviations, addresses, code, and related text semantics.'
+      'rwd-whatwg-html',
+      'Text-level semantics: abbr',
+      'The HTML standard defines abbreviations and acronyms, constrains title to an expansion, and recommends inline expansion or title for unfamiliar terms.'
     ),
   ],
-  ['The address element can mark up any street or postal address wherever it appears.'],
   [
-    'Learner must select or reject specialized text semantics in changed editorial contexts.',
-    'Machine-readable values must remain valid while visible localized text changes.',
+    'Adding a title attribute once guarantees every reader and every repeated abbreviation receives the expansion.',
+  ],
+  [
+    'Changed familiar, unfamiliar, plural, repeated, and no-expansion cases must use readable expansion evidence without invalid title text.',
+    'Keyboard, touch, zoom, and text-only inspection must not hide essential meaning behind pointer hover.',
+  ]
+);
+
+concept(
+  'html-contact-address-links',
+  'Contact context and actionable contact links',
+  'Use address for contact information belonging to the nearest article or page, and use valid mailto or tel links only when an actionable destination is intended.',
+  'html-text-and-semantics',
+  ['html-links-destinations', 'html-paragraphs-breaks'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Sections: address element; links: email and telephone schemes',
+      'HTML limits address to contact information for its nearest article or body context, while contact actions remain hyperlinks with explicit destinations.'
+    ),
+  ],
+  ['The address element is the correct wrapper for every physical location mentioned in prose.'],
+  [
+    'Changed author-contact, venue-location, postal-line, email-action, and telephone-action cases must preserve the correct content relationship.',
+    'Learner must inspect the rendered text and resolved link destinations, including a malformed changed case.',
+  ]
+);
+
+concept(
+  'html-time-machine-values',
+  'Human-readable time and valid machine values',
+  'Represent dates, times, durations, and localized labels with time only when a valid machine-readable equivalent can be supplied or derived.',
+  'html-text-and-semantics',
+  ['html-attribute-value-types', 'html-paragraphs-breaks'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: time and datetime value parsing',
+      'The standard defines the supported date, time, time-zone, year, week, and duration forms that can produce a machine-readable equivalent.'
+    ),
+  ],
+  ['Any human-readable date string becomes machine-readable when placed in a time element.'],
+  [
+    'Changed localized labels, offsets, dates, times, durations, invalid values, and non-temporal prose must be represented or rejected correctly.',
+    'Visible text may change locale while parsed datetime evidence preserves the intended instant, period, or duration.',
+  ]
+);
+
+concept(
+  'html-subscript-superscript',
+  'Meaningful subscript and superscript',
+  'Use sub and sup only for typographical conventions whose changed position carries meaning, and identify when richer mathematical markup or ordinary CSS is needed.',
+  'html-text-and-semantics',
+  ['html-content-models', 'html-emphasis-importance'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: sub and sup',
+      'HTML reserves subscript and superscript for meaningful typographical conventions rather than presentation for its own sake and identifies MathML as the richer mathematics path.'
+    ),
+  ],
+  ['Sub and sup are general-purpose controls for making any text smaller and moving its baseline.'],
+  [
+    'Changed chemical, variable, exponent, ordinal, decorative, and structured-equation cases must select HTML, CSS, richer math markup, or refusal appropriately.',
+    'Text and accessibility inspection must preserve enough context to understand the notation without relying on size or position alone.',
+  ]
+);
+
+concept(
+  'html-code-preformatted-text',
+  'Code meaning and preformatted whitespace',
+  'Mark code fragments with code and preserve meaningful block whitespace with pre without confusing either semantic job with syntax highlighting or executable behavior.',
+  'html-text-and-semantics',
+  ['html-text-whitespace', 'html-content-models'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: code; grouping content: pre',
+      'HTML distinguishes a computer-code fragment from preformatted text and shows their composition for whitespace-sensitive code blocks.'
+    ),
+  ],
+  [
+    'Pre means code and code preserves every source space, so either element alone fully represents a formatted code block.',
+  ],
+  [
+    'Changed inline code, multiline code, console output, prose art, wrapped prose, and executable-widget cases must compose or reject elements correctly.',
+    'Whitespace, text alternatives, overflow, copy behavior, and changed long-line evidence must remain usable at supported widths.',
+  ]
+);
+
+concept(
+  'html-editorial-annotations',
+  'Annotations, stale claims, and document edits',
+  'Distinguish unarticulated annotations, no-longer-accurate content, inserted or deleted edits, contextual highlights, and decoration using u, s, ins, del, mark, or CSS according to meaning.',
+  'html-text-and-semantics',
+  ['html-emphasis-importance', 'html-content-models'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: s, u, and mark; edits: ins and del',
+      'HTML separates non-textual annotations, content that is no longer accurate or relevant, contextual relevance, and explicit document edits.'
+    ),
+  ],
+  ['S and del are interchangeable strikethrough styles, while u is a general underline control.'],
+  [
+    'Changed misspelling, proper-name annotation, old price, removed revision, inserted revision, search hit, and decoration cases must preserve their distinct meaning.',
+    'Artifact must not make annotations look like links or communicate state through decoration alone.',
+  ]
+);
+
+concept(
+  'html-ruby-annotations',
+  'Ruby base text, annotations, and fallback',
+  'Associate ruby base text with rt annotations and use rp only when a deliberate fallback representation is required, preserving document language and reading order.',
+  'html-text-and-semantics',
+  ['html-document-language', 'html-content-models'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Text-level semantics: ruby, rt, and rp',
+      'HTML defines ruby as base-text and annotation segments, rt as annotation text, and rp as fallback parentheses for user agents without ruby rendering.'
+    ),
+  ],
+  ['Ruby is an East-Asian-only visual effect, and rp is always required around every rt element.'],
+  [
+    'Changed pronunciation, translation, acronym, nested annotation, language, fallback, and ordinary parenthesis cases must preserve correct base-to-annotation relationships.',
+    'DOM, language, visual, and linearized-text evidence must keep base text and annotations intelligible.',
   ]
 );
 
