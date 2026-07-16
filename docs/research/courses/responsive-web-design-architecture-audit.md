@@ -2,11 +2,11 @@
 
 Reviewed: 2026-07-16
 
-Status: **blocking internal second-pass audit; not independent approval**
+Status: **blocking internal second-pass audit; structural sequence repaired, activity evidence not complete, not independent approval**
 
 ## Decision
 
-The Responsive Web Design research inventory is broad enough to begin architecture repair, but the current 17-module graph is not yet safe to author at scale. It is a research macro-sequence, not a complete learner sequence. Its prerequisite graph is acyclic and its source inventory is exact, but its beginner order, reinforcement wiring, certification-project selection, activity granularity, and assessment plan require repair.
+The Responsive Web Design research inventory is broad enough to support a repaired structural sequence, but it is not yet safe to author at scale. The overloaded 17-module macro-sequence has been replaced by 38 learner-sized candidate modules: 16 HTML/tooling modules and 22 CSS/design/responsive modules, each owning no more than ten new concepts. The prerequisite graph is acyclic and earlier-pointing. The certification-project selection is corrected. Activity-level reinforcement, original activity depth, assessment validity, independent review, and learner evidence remain blocking.
 
 This audit corrected one concrete project-mapping error immediately: the five project briefs now trace to the five actual certification-project benchmarks in the pinned source—Survey Form, Tribute Page, Technical Documentation Page, Product Landing Page, and Personal Portfolio. Page of Playing Cards and Book Inventory remain useful lab evidence, but they are not substituted for certification projects.
 
@@ -18,7 +18,7 @@ This audit does **not** approve the source mappings, concept graph, modules, pro
 - all 158 challenge-level source inspection records in `responsive-web-design-concept-alignment.json`;
 - all 83 HTML/tooling concepts in `responsive-web-design-html-concepts.json`;
 - all 103 CSS/design/responsive concepts in `responsive-web-design-css-concepts.json`;
-- all 17 candidate modules and five project briefs in `responsive-web-design-course-architecture.json`;
+- all 38 candidate modules and five project briefs in `responsive-web-design-course-architecture.json`;
 - the course dossier and its 103 bounded research sources;
 - the curriculum design handbook, platform rebuild contract, beginner-sequence inspection, block inspection notes, and current publication boundary;
 - exact title and objective normalization, lexical-neighbor review, prerequisite-edge review, retention-edge comparison, retrieval-edge comparison, project provenance review, and module-load review.
@@ -34,20 +34,19 @@ This audit does **not** approve the source mappings, concept graph, modules, pro
 | Block-specific candidate mappings | 157 | Candidate scope only |
 | External exam containers without item evidence | 1 | Hard assessment-validity boundary |
 | Target concepts | 186 | 83 HTML/tooling plus 103 CSS/design/responsive |
-| Candidate macro-modules | 17 | Too coarse to serve as final learner modules |
+| Candidate learner modules | 38 | 16 HTML/tooling plus 22 CSS/design/responsive |
+| Maximum new concepts in one candidate module | 10 | Structural load cap; activity-level cognitive load still needs review |
 | Prerequisite edges | 340 | Acyclic and earlier-pointing under current schema |
-| Declared concept-retention edges | 217 | Mostly terminal-project defaults; not an activity schedule |
-| Explicit module-retrieval edges | 63 | Only 16 agree with declared retention edges |
-| Declared retention edges absent from module retrieval | 201 | Blocking metadata disconnect |
-| Module retrieval edges absent from concept retention | 47 | Blocking metadata disconnect |
-| Concepts with only one named terminal-project retention | 161 | No explicit intermediate delayed event |
-| Concepts with neither explicit module retrieval nor project use | 121 | No visible later evidence assignment |
+| Removed disconnected `retainedInModuleIds` defaults | 217 | Retired rather than translated into the repaired sequence |
+| Candidate module-retrieval edges | 133 | Module intent only; not activity evidence |
+| Distinct concepts named for candidate module retrieval | 75 | Incomplete until the activity matrix exists |
+| Concepts with neither candidate module retrieval nor project use | 98 | Activity-level schedule must close this gap |
 | Project concept edges | 46 | Planning coverage, not an assessment blueprint |
 | Exact normalized duplicate concept titles | 0 | No exact title duplication found |
 | Exact normalized duplicate concept objectives | 0 | No exact objective duplication found |
 | Authored activities, steps, checks, or assessments | 0 | No teaching or mastery evidence exists |
 
-The counts above are derived from the reviewed research artifacts. They must be recomputed whenever module ownership, concept retention, retrieval, or project placement changes.
+The counts above are derived from the reviewed research artifacts. They must be recomputed whenever module ownership, retrieval, activity evidence, or project placement changes.
 
 ## Finding 1: the project provenance was wrong and is now repaired
 
@@ -65,46 +64,30 @@ The corrected project provenance is:
 
 The five scenarios are original and use different stakeholder evidence, artifacts, content risks, requirements, and defenses. The portfolio explicitly prohibits invented projects, fake metrics, dead controls, and unsupported capability claims. Project briefs remain `planned-not-authored` and require review before implementation.
 
-## Finding 2: the beginner opening is still too abstract
+## Finding 2: the beginner opening was too abstract and is structurally repaired
 
-The opening contract is correct in one important way: the learner changes HTML by action two, and tooling follows the first artifact instead of recreating the rejected thirteen-activity pre-HTML barrier.
+The audited opening delayed headings, paragraphs, and lists until a later macro-module while front-loading terminology, content models, parser recovery, and media. The replacement begins with `html-first-content`: the learner edits by action two and builds a meaningful heading, paragraphs, and list while connecting source, element anatomy, text, nesting, content relationships, tree, preview, and saved state. `html-source-syntax-and-repair` then adds tag/node distinctions, void syntax, attributes, character references, comments, and parser recovery around defects in the existing artifact. Two tooling modules follow meaningful HTML construction. Complete documents and loading, links, images, media, specialized text semantics, landmarks, forms, tables, accessibility models, validation, and independent transfer then build cumulatively.
 
-The concept grouping is still not beginner-ready:
+The structural order is repaired, but learner-facing authoring still cannot scale. The activity matrix must prove that the opening uses concrete work before terminology, that every abstraction enters at a useful decision, and that the same artifact persists through prediction, edit, inspection, repair, fading, retrieval, assessment, and transfer. The opening vertical slice must pass beginner observation before later modules are authored.
 
-- `html-first-page` owns twelve concepts, including element-versus-tag terminology, DOM-node distinctions, content models, void syntax, character references, and parser recovery;
-- headings, paragraphs, and lists do not enter until `html-text-and-semantics`, currently module five;
-- links enter in module three;
-- images and media currently enter in module four, before the text-and-semantics module;
-- the first module therefore risks teaching taxonomy and recovery rules before the learner has built enough ordinary page content to give those models a purpose.
+## Finding 3: overloaded CSS buckets were split into bounded candidate modules
 
-The architecture repair must create a concrete content-first opening. A true beginner should quickly write and inspect a complete small page using a heading, paragraphs, a list, and a meaningful link while learning only the element anatomy needed for the next action. Tree, content-model, parser-recovery, character-reference, and DOM/source distinctions should enter at the first defect or changed case that makes each model useful. Images, licensing, media, and embeds should follow basic document content and paths. The first artifact must stay cumulative rather than restart for every concept.
-
-No learner-facing HTML authoring may scale from the current macro grouping. The repaired opening sequence and its activity matrix must be reviewed first, then implemented as the vertical slice.
-
-## Finding 3: CSS concept buckets are not final learner modules
-
-The current CSS macro-modules contain 17, 13, 23, 8, 12, 14, 15, and 1 newly owned concepts. The sequence has sensible broad dependencies—language before boxes, boxes before Flex and Grid, layout before responsive integration—but several buckets combine too many mechanisms and decision types for one beginner module:
+The audited CSS macro-modules contained 17, 13, 23, 8, 12, 14, 15, and 1 newly owned concepts. Several buckets combined too many mechanisms and decision types for one beginner module:
 
 - `css-language-and-cascade` combines first stylesheet use, selector families, pseudo-elements, list counters, inheritance, origins, importance, specificity, cascade layers and scope, unregistered and registered custom properties, and link-state sequencing before box layout;
 - `css-type-color-and-design` combines font delivery and metrics, variable-font features, text layout, color spaces and derived colors, filters and gradients, user research, prototyping, tokens, wayfinding, cards, registration disclosure, and control states;
 - `css-grid-and-positioning` combines two-dimensional Grid, subgrid, positioning, anchor positioning, stacking contexts, and legacy float use;
 - `css-interaction-accessibility-and-motion` combines zoom, focus, input capability, target size, modal behavior, multistep recovery, cart correction, motion, forced colors, print, causal debugging, performance, and regression.
 
-These are defensible research strands, but not defensible final lesson loads. Architecture repair must split them into learner-sized modules and lessons based on mental-model boundaries, not copy the benchmark's navigation or force an arbitrary module count. Each new module must name its prerequisite retrieval, bounded new complexity, cumulative artifact change, formative evidence, independent lab, delayed event, and exit decision.
+The replacement uses 22 CSS/design/responsive modules. First rules are separate from selector relationships, cascade/layers, and custom properties. Display and the box model are separate from sizing/units/overflow. Paint/transforms, font delivery, typography, color/effects, user research/prototypes, and design systems/components have distinct boundaries. Flex, Grid, positioning, fluid responsive foundations, responsive components/testing, accessible interaction, workflow/preferences/output, motion, debugging/performance/regression, and independent transfer remain separate. No CSS module owns more than nine new concepts.
 
-Advanced mechanisms such as registered custom properties, cascade scope, variable-font features, anchor positioning, container units, forced colors, and rendering-performance traces must not delay or obscure basic stylesheet application, selectors, declarations, ordinary text styling, and box behavior. They should extend an already usable model at a justified artifact decision.
+Advanced mechanisms such as registered custom properties, cascade scope, variable-font features, anchor positioning, container units, forced colors, and rendering-performance traces now follow the models they extend. Activity review must still verify that they enter at a justified artifact decision and do not delay or obscure basic stylesheet application, selectors, declarations, ordinary text styling, and box behavior.
 
-## Finding 4: the retention graph is disconnected from the retrieval graph
+## Finding 4: the disconnected retention defaults were removed; the activity matrix is still missing
 
-The concept graphs declare 217 `retainedInModuleIds` edges. The architecture declares 63 module `retrievalConceptIds` edges. These are currently independent lists:
+The audited graphs used 217 `retainedInModuleIds` defaults tied to the deleted macro-sequence. Two hundred one disagreed with module retrieval declarations, and 161 deferred all named retention to a terminal project. Those fields were removed from the concept schema, compilers, and artifacts rather than translated or aliased into the repaired sequence.
 
-- 201 declared retention edges are not named by the target module's retrieval list;
-- 47 module retrieval edges are not declared as retention by the concept;
-- only 16 concept-to-module pairs agree;
-- 161 concepts name only an HTML or CSS independent-project module as their sole retention target;
-- 121 concepts have neither an explicit module retrieval assignment nor use in one of the five project briefs.
-
-Listing every evidence stage on every research concept does not repair this. The stage labels state the intended progression; they do not identify an actual activity, delay, changed scenario, evidence rule, correction branch, or reassessment.
+The 38 candidate modules currently name 133 prerequisite-retrieval edges covering 75 distinct concepts. These are planning intent only. Ninety-eight concepts have neither a candidate module retrieval reference nor project use. Listing every evidence stage on a research concept does not repair this: stage labels do not identify an actual activity, delay, changed scenario, evidence rule, correction branch, or reassessment.
 
 The replacement must be one authoritative activity-level reinforcement schedule. For every concept it must identify:
 
@@ -119,7 +102,7 @@ The replacement must be one authoritative activity-level reinforcement schedule.
 
 The schedule must link each event to an activity ID, interaction type, scenario, observable evidence, prerequisite set, feedback/correction path, and delay boundary. Module summaries may be derived from that reviewed schedule, but must not become a second manually maintained truth.
 
-## Finding 5: activity and step depth is unplanned below the macro-module level
+## Finding 5: activity and step depth remains unplanned below the candidate-module level
 
 The platform contract requires at least the benchmark depth: 33 original guided builds, at least 1,287 original workshop code steps, at least 185 interactive theory steps, 34 independent labs, 24 active-recall reviews, 22 quiz banks, five original certification projects, one broad randomized exam, and at least 2,000 meaningful learner interactions before quizzes and the exam.
 
@@ -186,13 +169,12 @@ The repair should preserve these decisions unless evidence disproves them:
 
 ## Required repair order
 
-1. Replace the 17 macro-buckets with reviewed learner-sized module and lesson boundaries, starting with a concrete content-first HTML opening.
-2. Create one authoritative activity-level I-G-F-R-A-T reinforcement matrix for all 186 concepts; derive module retrieval summaries from it.
-3. Design distinct original theory, prediction, worked-example, workshop, faded, debug, lab, review, quiz, project, correction, delayed-retrieval, and transfer events at or above the verified depth floor.
-4. Publish an internal assessment blueprint and author original formative and summative evidence plans without using unavailable external exam items.
-5. Run second-pass subject, instructional, assessment, accessibility, runtime, and semantic-duplication review on the planned matrix.
-6. Author only the true-beginner HTML/editor vertical slice, verify its real grading, hints, persistence, correction, keyboard, tablet, desktop, and phone-handoff behavior, and observe representative beginners.
-7. Repair pilot findings before scaling the rest of Responsive Web Design.
+1. Create one authoritative activity-level I-G-F-R-A-T reinforcement matrix for all 186 concepts; derive module retrieval summaries from it.
+2. Design distinct original theory, prediction, worked-example, workshop, faded, debug, lab, review, quiz, project, correction, delayed-retrieval, and transfer events at or above the verified depth floor.
+3. Publish an internal assessment blueprint and author original formative and summative evidence plans without using unavailable external exam items.
+4. Run second-pass subject, instructional, assessment, accessibility, runtime, and semantic-duplication review on the repaired sequence and planned matrix.
+5. Author only the true-beginner HTML/editor vertical slice, verify its real grading, hints, persistence, correction, keyboard, tablet, desktop, and phone-handoff behavior, and observe representative beginners.
+6. Repair pilot findings before scaling the rest of Responsive Web Design.
 
 ## Exit conditions for this blocker
 

@@ -4312,21 +4312,37 @@ describe('research contracts', () => {
     );
 
     expect(architecture.status).toBe('researching');
-    expect(architecture.modules).toHaveLength(17);
+    expect(architecture.modules).toHaveLength(38);
     expect(architecture.conceptIds).toHaveLength(186);
     expect(architecture.sourceObjectiveIds).toHaveLength(157);
     expect(architecture.unmappedSourceObjectiveIds).toHaveLength(1);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
-      openingModuleId: 'html-first-page',
+      openingModuleId: 'html-first-content',
       firstMeaningfulEditByLearnerAction: 2,
       delayedToolingBarrierProhibited: true,
     });
     expect(architecture.moduleIds).not.toContain('computer-basics');
-    expect(architecture.moduleIds.slice(0, 3)).toEqual([
-      'html-first-page',
-      'web-tooling-just-in-time',
-      'html-documents-and-paths',
+    expect(architecture.moduleIds).not.toContain('html-first-page');
+    expect(architecture.moduleIds).not.toContain('css-type-color-and-design');
+    expect(architecture.moduleIds.slice(0, 5)).toEqual([
+      'html-first-content',
+      'html-source-syntax-and-repair',
+      'tooling-local-projects',
+      'tooling-web-browser-research',
+      'html-documents-paths-and-loading',
+    ]);
+    expect(Math.max(...architecture.modules.map((module) => module.conceptIds.length))).toBe(10);
+    expect(architecture.modules[0].conceptIds).toEqual([
+      'html-workspace-feedback-loop',
+      'html-purpose-structure',
+      'html-element-anatomy',
+      'html-text-whitespace',
+      'html-nesting-tree',
+      'html-content-models',
+      'html-paragraphs-breaks',
+      'html-heading-hierarchy',
+      'html-lists',
     ]);
     expect(architecture.conceptIds).toEqual(concepts.map((concept) => concept.id));
     expect(architecture.sourceObjectiveIds).toEqual(
@@ -4356,27 +4372,27 @@ describe('research contracts', () => {
       {
         projectId: 'community-support-intake',
         sourceObjectiveId: 'fcc-v9-lab-survey-form',
-        placementAfterModuleId: 'html-independent-project',
+        placementAfterModuleId: 'html-independent-transfer',
       },
       {
         projectId: 'neighborhood-history-exhibit',
         sourceObjectiveId: 'fcc-v9-lab-tribute-page',
-        placementAfterModuleId: 'css-type-color-and-design',
+        placementAfterModuleId: 'design-systems-and-components',
       },
       {
         projectId: 'emergency-preparedness-field-guide',
         sourceObjectiveId: 'fcc-v9-lab-technical-documentation-page',
-        placementAfterModuleId: 'responsive-systems',
+        placementAfterModuleId: 'responsive-components-navigation-and-testing',
       },
       {
         projectId: 'community-energy-program-launch',
         sourceObjectiveId: 'fcc-v9-lab-product-landing-page',
-        placementAfterModuleId: 'css-interaction-accessibility-and-motion',
+        placementAfterModuleId: 'css-debugging-performance-and-regression',
       },
       {
         projectId: 'professional-evidence-portfolio',
         sourceObjectiveId: 'fcc-v9-lab-personal-portfolio',
-        placementAfterModuleId: 'css-independent-project',
+        placementAfterModuleId: 'css-independent-responsive-transfer',
       },
     ]);
     expect(
@@ -4439,14 +4455,9 @@ describe('research contracts', () => {
         )
       ),
     ].flatMap((graph) => graph.concepts);
-    const declaredRetentionEdges = concepts.flatMap((concept) =>
-      concept.retainedInModuleIds.map((moduleId) => `${concept.id}::${moduleId}`)
-    );
     const explicitRetrievalEdges = architecture.modules.flatMap((module) =>
       module.retrievalConceptIds.map((conceptId) => `${conceptId}::${module.id}`)
     );
-    const declaredRetentionEdgeSet = new Set(declaredRetentionEdges);
-    const explicitRetrievalEdgeSet = new Set(explicitRetrievalEdges);
     const projectConceptIds = new Set(
       architecture.projects.flatMap((project) => project.conceptIds)
     );
@@ -4455,35 +4466,21 @@ describe('research contracts', () => {
     );
 
     expect(audit.length).toBeGreaterThan(12_000);
-    expect(audit).toContain('blocking internal second-pass audit; not independent approval');
+    expect(audit).toContain('blocking internal second-pass audit');
+    expect(audit).toContain('not independent approval');
     expect(audit).toContain('the project provenance was wrong and is now repaired');
-    expect(audit).toContain('the beginner opening is still too abstract');
-    expect(audit).toContain('the retention graph is disconnected from the retrieval graph');
+    expect(audit).toContain('the beginner opening was too abstract');
+    expect(audit).toContain('the disconnected retention defaults were removed');
     expect(audit).toContain('the external exam cannot validate LEARN-IT-ALL certification');
     expect(audit).toContain('content duplication is untestable');
     expect(audit).toContain('Until then, the correct state is **researching');
-    expect(declaredRetentionEdges).toHaveLength(217);
-    expect(explicitRetrievalEdges).toHaveLength(63);
-    expect(
-      declaredRetentionEdges.filter((edge) => !explicitRetrievalEdgeSet.has(edge))
-    ).toHaveLength(201);
-    expect(
-      explicitRetrievalEdges.filter((edge) => !declaredRetentionEdgeSet.has(edge))
-    ).toHaveLength(47);
-    expect(
-      concepts.filter(
-        (concept) =>
-          concept.retainedInModuleIds.length === 1 &&
-          ['html-independent-project', 'css-independent-project'].includes(
-            concept.retainedInModuleIds[0]
-          )
-      )
-    ).toHaveLength(161);
+    expect(JSON.stringify(concepts)).not.toContain('retainedInModuleIds');
+    expect(explicitRetrievalEdges).toHaveLength(133);
     expect(
       concepts.filter(
         (concept) => !retrievedConceptIds.has(concept.id) && !projectConceptIds.has(concept.id)
       )
-    ).toHaveLength(121);
+    ).toHaveLength(98);
   });
 
   it('rejects a research architecture that assigns project work before instruction', () => {

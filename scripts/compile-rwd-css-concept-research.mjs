@@ -16,8 +16,7 @@ function add(
   locator,
   claim,
   misconception,
-  evidenceRequirements,
-  retainedInModuleIds = [finalModule]
+  evidenceRequirements
 ) {
   concepts.push({
     id,
@@ -30,7 +29,6 @@ function add(
     misconceptions: [misconception],
     evidenceRequirements,
     stages,
-    retainedInModuleIds,
     currentState: 'researched-not-authored',
   });
 }
@@ -48,8 +46,7 @@ add(
   [
     'Learner must change one declaration, identify the matched rule and computed result, then prove the edit survives reload.',
     'A rejected near-miss must distinguish invalid syntax, unmatched selector, overridden value, unsupported value, and unsaved source.',
-  ],
-  ['css-boxes-and-sizing', finalModule]
+  ]
 );
 
 add(
@@ -273,8 +270,7 @@ add(
   [
     'Changed invalid, missing, inherited, and locally overridden tokens must yield the predicted computed values.',
     'Learner must design a fallback chain that survives one missing theme token without hiding unrelated errors.',
-  ],
-  ['css-type-color-and-design', 'responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -290,8 +286,7 @@ add(
   [
     'Missing descriptors, invalid syntax strings, dependent initial values, invalid typed declarations, inheritance changes, duplicate registrations, and unsupported-registration cases must yield predicted specified and computed results.',
     'A transition must prove typed interpolation, interruption, reduced-motion behavior, and a usable unregistered baseline without claiming registration changes cascade priority.',
-  ],
-  ['css-type-color-and-design', 'css-interaction-accessibility-and-motion', finalModule]
+  ]
 );
 
 add(
@@ -743,8 +738,7 @@ add(
   [
     'Learner must convert observed or supplied research evidence into need, context, outcome, constraint, and acceptance records without prescribing a solution.',
     'A changed user with disability, language, device, time, or support constraints must alter the task model and design decision where evidence warrants it.',
-  ],
-  ['responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -780,8 +774,7 @@ add(
   [
     'Learner must match prototype fidelity to a bounded research question and record task success, errors, barriers, quotes, and observation limits separately.',
     'A changed finding must trace to keep, revise, reject, or investigate decisions and a planned re-test rather than an unsupported aesthetic change.',
-  ],
-  ['responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -813,8 +806,7 @@ add(
   [
     'Each implemented decision must trace to an outcome, constraint, accepted design-system rule, accessibility requirement, or explicitly recorded assumption rather than pixel imitation.',
     'A changed stakeholder constraint or ambiguous handoff value must produce a versioned question, decision, acceptance update, and re-review instead of silent invention.',
-  ],
-  ['responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -830,8 +822,7 @@ add(
   [
     'Styles-disabled, script-unavailable, unsupported-feature, slow-resource, preference, and input changes must preserve the bounded essential task and truthful status.',
     'Learner must identify the essential outcome, enhancement boundary, capability evidence, failure behavior, and testing matrix before adding the enhancement.',
-  ],
-  ['responsive-systems', 'css-interaction-accessibility-and-motion', finalModule]
+  ]
 );
 
 add(
@@ -847,8 +838,7 @@ add(
   [
     'Deep-link, short hierarchy, narrow width, zoom, long label, translated label, current-page, and keyboard cases must preserve understandable location and destinations.',
     'Learner must reject breadcrumbs where the information model has no stable parent hierarchy and choose a task-appropriate navigation aid instead.',
-  ],
-  ['responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -864,8 +854,7 @@ add(
   [
     'Long headings, missing media, multiple actions, keyboard, touch, zoom, forced-color, and changed-order cases must retain content relationships and distinct operable targets.',
     'Learner must justify whether a repeated item needs a list, article, heading, link, button, or no card treatment before applying visual containment.',
-  ],
-  ['responsive-systems', finalModule]
+  ]
 );
 
 add(
@@ -881,8 +870,7 @@ add(
   [
     'Essential-content, discoverability, expanded-state, keyboard, focus, refresh, privacy, saved-state, and account-required cases must preserve a complete and understandable task path.',
     'Learner must separate optional detail from required decisions and justify the exact point where registration becomes necessary using user outcome, data, continuity, abuse, and risk evidence.',
-  ],
-  ['responsive-systems', 'css-interaction-accessibility-and-motion', finalModule]
+  ]
 );
 
 add(
@@ -1426,8 +1414,7 @@ add(
   [
     'Keyboard, screen-reader, zoom, slow-response, empty, error, deep-link, browser-back, detail-return, changed-sort, and final-page cases must preserve location and control.',
     'Learner must justify pagination, load-more, virtualization, or another bounded pattern from task behavior and verify focus placement, status, URL/history, and restored context.',
-  ],
-  [finalModule]
+  ]
 );
 
 add(
@@ -1527,8 +1514,7 @@ add(
   [
     'Keyboard, screen-reader, long-content, zoom, destructive-action, nested-trigger, validation-error, pointer-dismissal, Escape, and invoker-removal cases must preserve task state and logical focus.',
     'Learner must first reject a modal when inline content or a normal page better fits the task, then document title, description, initial focus, tab containment, dismissal, error, and return-focus behavior when modal use remains justified.',
-  ],
-  [finalModule]
+  ]
 );
 
 add(
@@ -1544,8 +1530,7 @@ add(
   [
     'Keyboard, screen-reader, refresh, session-return, conditional-step, validation, back, edit, final-review, timeout, and network-error cases must retain understandable progress and recoverable data.',
     'Learner must distinguish determinate from conditional progress, expose textual state, and demonstrate correction plus return to the prior place without unnecessary re-entry.',
-  ],
-  [finalModule]
+  ]
 );
 
 add(
@@ -1561,8 +1546,7 @@ add(
   [
     'Zero, maximum, invalid, delayed-price, unavailable-item, discount, tax, shipping, keyboard, screen-reader, refresh, concurrent-change, and final-confirmation cases must expose accurate state and recovery.',
     'Learner must reconcile visible line items, quantities, totals, announced changes, error ownership, review, edit return, and irreversible commitment against changed cart data.',
-  ],
-  [finalModule]
+  ]
 );
 
 add(
@@ -1717,8 +1701,7 @@ add(
   [
     'The empty-stylesheet artifact must pass behavior, accessibility, responsive, failure, performance, validation, and changed-content evidence.',
     'Learner must defend cascade architecture, layout choices, breakpoints, container adaptations, typography, color, motion, tests, tradeoffs, and remaining uncertainty.',
-  ],
-  [finalModule]
+  ]
 );
 
 const graph = {

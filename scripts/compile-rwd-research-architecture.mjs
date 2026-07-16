@@ -28,231 +28,646 @@ const alignment = await readJson(
 const graphs = [htmlGraph, cssGraph];
 const concepts = graphs.flatMap((graph) => graph.concepts);
 const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
-const moduleIds = graphs.flatMap((graph) => graph.moduleIds);
-const moduleOrder = new Map(moduleIds.map((moduleId, index) => [moduleId, index + 1]));
-const conceptModule = new Map(concepts.map((concept) => [concept.id, concept.moduleId]));
+const module = (
+  id,
+  title,
+  conceptIds,
+  retrievalConceptIds,
+  cumulativeArtifact,
+  newComplexityBoundary
+) => ({
+  id,
+  title,
+  conceptIds,
+  retrievalConceptIds,
+  cumulativeArtifact,
+  newComplexityBoundary,
+});
 
-const moduleMetadata = {
-  'html-first-page': {
-    title: 'Build and Inspect a First HTML Page',
-    cumulativeArtifact:
-      'A saved, resumable one-page community notice whose source, parsed tree, visible output, and passing checkpoint remain distinguishable.',
-    newComplexityBoundary:
-      'Only source editing, HTML purpose, element anatomy, text, nesting, attributes, comments, content models, and parser recovery enter here.',
-    retrievalConceptIds: [],
-  },
-  'web-tooling-just-in-time': {
-    title: 'Use Computer, Files, Browser, Search, and Tools Safely',
-    cumulativeArtifact:
-      'The first page becomes a learner-owned portable project with an evidence-backed folder tree, safe account and browser plan, reversible file operations, and a recorded research trail.',
-    newComplexityBoundary:
-      'Computer resources, input safety, internet access, sign-in boundaries, developer tool roles, file operations, naming, organization, types, browsers, and search enter only after the learner has edited HTML.',
-    retrievalConceptIds: [
+const moduleDefinitions = [
+  module(
+    'html-first-content',
+    'Build Meaningful Page Content Immediately',
+    [
       'html-workspace-feedback-loop',
       'html-purpose-structure',
-      'html-attribute-syntax',
-    ],
-  },
-  'html-documents-and-paths': {
-    title: 'Documents, Browser Evidence, Paths, and Discovery',
-    cumulativeArtifact:
-      'The notice becomes a portable multi-page information directory with complete documents, working references, truthful discovery metadata, and evidence notes.',
-    newComplexityBoundary:
-      'Document envelope, language, encoding, metadata, URLs, links, browser loading, and authority verification extend the first page without adding media or CSS.',
-    retrievalConceptIds: [
+      'html-element-anatomy',
+      'html-text-whitespace',
       'html-nesting-tree',
+      'html-content-models',
+      'html-paragraphs-breaks',
+      'html-heading-hierarchy',
+      'html-lists',
+    ],
+    [],
+    'A saved community notice with a meaningful heading, paragraphs, and list whose source, tree, preview, and checkpoint remain distinguishable.',
+    'Only the source-preview loop, element anatomy, ordinary text, nesting, allowed relationships, headings, paragraphs, and lists enter while the learner builds immediately.'
+  ),
+  module(
+    'html-source-syntax-and-repair',
+    'Read, Author, and Repair HTML Source',
+    [
+      'html-tag-element-distinction',
+      'html-void-elements',
+      'html-attribute-syntax',
+      'html-attribute-value-types',
+      'html-comments-character-references',
+      'html-parser-recovery',
+    ],
+    ['html-element-anatomy', 'html-nesting-tree', 'html-content-models'],
+    'The notice gains behavior-changing attributes, comments, reserved characters, and repaired malformed cases with source-to-DOM evidence.',
+    'Tag/node distinctions, void syntax, attribute forms, character references, comments, and parser recovery enter only after usable page content exists.'
+  ),
+  module(
+    'tooling-local-projects',
+    'Own Files, Folders, Input, and Local Project State',
+    [
+      'tooling-local-computer-resources',
+      'tooling-input-methods-ergonomics',
+      'tooling-developer-tool-landscape',
+      'tooling-file-manager-operations',
+      'tooling-file-naming-portability',
+      'tooling-project-folder-organization',
+      'tooling-file-types-search-inspection',
+    ],
+    ['html-workspace-feedback-loop', 'html-purpose-structure'],
+    'The saved notice becomes a portable learner-owned project with reversible file operations, a verified folder tree, and an ergonomic input plan.',
+    'Local resources, input safety, tool roles, file operations, portable naming, folder organization, and type inspection enter around the existing artifact rather than before HTML.'
+  ),
+  module(
+    'tooling-web-browser-research',
+    'Use Browsers, Accounts, Search, and the Web Safely',
+    [
+      'tooling-internet-access-layers',
+      'tooling-account-signin-security',
+      'tooling-browser-install-update-engines',
+      'tooling-browser-site-search-engine',
+      'tooling-search-query-refinement',
+    ],
+    ['html-workspace-feedback-loop', 'tooling-local-computer-resources'],
+    'The learner verifies the project in a supported browser and records a safe, reproducible research trail without exposing credentials or confusing browser, site, and search boundaries.',
+    'Internet layers, account safety, browser engines and updates, destinations versus search, and query refinement enter only when the learner needs external evidence.'
+  ),
+  module(
+    'html-documents-paths-and-loading',
+    'Build Complete Documents and Trace Browser Loading',
+    [
+      'html-doctype-rendering-mode',
+      'html-document-root-head-body',
+      'html-document-language',
+      'html-character-encoding',
+      'html-title-metadata',
+      'html-discovery-metadata',
+      'html-viewport-metadata',
+      'html-files-paths-urls',
+      'html-browser-request-parse-render',
+      'html-authority-research-verification',
+    ],
+    [
       'html-attribute-syntax',
       'html-parser-recovery',
       'tooling-project-folder-organization',
       'tooling-search-query-refinement',
     ],
-  },
-  'html-images-and-media': {
-    title: 'Images, Graphics, Media, and Embedded Boundaries',
-    cumulativeArtifact:
-      'The directory gains purpose-classified images, scalable graphics, controlled media, alternatives, and a constrained external embed.',
-    newComplexityBoundary:
-      'Replaced and embedded content enters only after learners can resolve paths, author attributes, inspect requests, and explain document boundaries.',
-    retrievalConceptIds: [
-      'html-files-paths-urls',
-      'html-attribute-value-types',
-      'html-browser-request-parse-render',
-      'html-authority-research-verification',
-    ],
-  },
-  'html-text-and-semantics': {
-    title: 'Text Meaning, Hierarchy, Landmarks, and Native Interaction',
-    cumulativeArtifact:
-      'The directory becomes a structured public guide whose reading order, headings, landmarks, articles, quotations, dates, and disclosures carry explicit meaning.',
-    newComplexityBoundary:
-      'Semantic relationships and native disclosure enter while prior document, link, and media correctness remains enforced.',
-    retrievalConceptIds: [
-      'html-content-models',
-      'html-link-purpose-fragments',
+    'The notice becomes a complete portable multi-page document set with truthful metadata, working paths, observable requests, and source-backed decisions.',
+    'Document mode and envelope, language, encoding, metadata, paths, URLs, loading, rendering, and authority verification enter without adding media or CSS.'
+  ),
+  module(
+    'html-links-and-navigation',
+    'Connect Destinations with Purposeful Links',
+    ['html-links-destinations', 'html-link-purpose-fragments'],
+    ['html-files-paths-urls', 'html-attribute-syntax', 'html-heading-hierarchy'],
+    'The document set gains working relative, absolute, fragment, email, telephone, and download paths with clear purpose and recovery from changed locations.',
+    'Only link destinations, URL behavior, fragments, and link purpose enter while earlier document and path correctness remains active.'
+  ),
+  module(
+    'html-images-graphics-and-rights',
+    'Choose and Explain Images, Graphics, and Rights',
+    [
+      'html-replaced-content-boundaries',
       'html-images-purpose-alt',
+      'html-image-dimensions-loading',
+      'html-figures-captions',
+      'html-media-rights-licensing',
+      'html-svg-semantics',
     ],
-  },
-  'html-forms': {
-    title: 'Forms, Submitted Data, Controls, and Recovery',
-    cumulativeArtifact:
-      'The guide gains an accessible request workflow with purposeful data names, native controls, labels, grouped choices, validation, errors, and recovery.',
-    newComplexityBoundary:
-      'User input and submission enter only after native semantics, source order, attributes, text alternatives, and document relationships are usable.',
-    retrievalConceptIds: [
-      'html-native-controls-first',
+    ['html-files-paths-urls', 'html-attribute-value-types', 'html-link-purpose-fragments'],
+    'The guide gains purpose-classified images and scalable graphics with dimensions, alternatives, captions, failure behavior, and recorded permission evidence.',
+    'Replaced-content boundaries, image purpose, dimensions and loading, figures, rights, and SVG enter before time-based media or embedded third parties.'
+  ),
+  module(
+    'html-media-and-embeds',
+    'Provide Equivalent Audio, Video, and Embeds',
+    ['html-audio-video', 'html-captions-transcripts', 'html-iframe-title-permissions'],
+    ['html-replaced-content-boundaries', 'html-files-paths-urls', 'html-images-purpose-alt'],
+    'The guide gains controlled media, captions or transcripts, fallbacks, and one constrained external embed with title, permissions, privacy, and failure evidence.',
+    'Time-based media and third-party embed boundaries enter only after paths, replaced content, alternatives, and external-source evaluation are usable.'
+  ),
+  module(
+    'html-semantic-text',
+    'Express Meaning in Quotations, Dates, Code, and Language',
+    [
+      'html-emphasis-importance',
+      'html-quotations-citations',
+      'html-abbreviations-expansions',
+      'html-contact-address-links',
+      'html-time-machine-values',
+      'html-subscript-superscript',
+      'html-code-preformatted-text',
+      'html-editorial-annotations',
+      'html-ruby-annotations',
+    ],
+    [
       'html-heading-hierarchy',
-      'html-document-language',
-    ],
-  },
-  'html-tables': {
-    title: 'Data Tables and Header Relationships',
-    cumulativeArtifact:
-      'The guide gains a genuine two-dimensional service schedule with caption, row groups, headers, and verified cell context.',
-    newComplexityBoundary:
-      'Tabular relationships enter without using tables for page layout or relaxing earlier semantic and keyboard requirements.',
-    retrievalConceptIds: [
+      'html-paragraphs-breaks',
       'html-content-models',
-      'html-heading-hierarchy',
-      'html-form-labels-instructions',
+      'html-links-destinations',
     ],
-  },
-  'html-accessibility-and-debugging': {
-    title: 'Accessibility Information and Evidence-Led HTML Debugging',
-    cumulativeArtifact:
-      'Learners audit and repair the complete guide using source, validation, DOM, accessibility, network, keyboard, and changed-content evidence.',
-    newComplexityBoundary:
-      'Accessibility-tree reasoning, ARIA boundaries, causal inspection, and changed-case testing formalize correctness already required in every earlier artifact.',
-    retrievalConceptIds: [
+    'The guide gains evidence-rich prose whose emphasis, quotations, citations, abbreviations, contacts, dates, scientific notation, code, edits, and language annotations carry explicit meaning.',
+    'Specialized text semantics enter from actual content requirements; none is taught as a visual-formatting shortcut.'
+  ),
+  module(
+    'html-landmarks-sections-and-disclosure',
+    'Organize Landmarks, Sections, Articles, and Native Disclosure',
+    [
       'html-landmarks',
+      'html-sectioning-articles',
+      'html-details-summary',
+      'html-native-controls-first',
+    ],
+    ['html-heading-hierarchy', 'html-content-models', 'html-link-purpose-fragments'],
+    'The guide becomes a navigable information architecture with purposeful landmarks, sections, articles, headings, and native disclosure behavior.',
+    'Page-region and disclosure relationships enter while source order, headings, link purpose, and media alternatives remain enforced.'
+  ),
+  module(
+    'html-forms-data-and-controls',
+    'Collect Intentional Data with Native Controls',
+    [
+      'html-form-submission-data',
+      'html-form-labels-instructions',
+      'html-input-types-autocomplete',
+      'html-choice-groups',
+      'html-textarea-select-buttons',
+    ],
+    ['html-native-controls-first', 'html-document-language', 'html-heading-hierarchy'],
+    'The guide gains a request workflow whose submitted names and values, labels, instructions, autocomplete, grouped choices, text areas, selections, and buttons are observable.',
+    'Form ownership, submitted data, labels, input purpose, choice grouping, and native controls enter before validation and recovery complexity.'
+  ),
+  module(
+    'html-form-validation-and-recovery',
+    'Validate, Explain, Correct, and Recover Form Input',
+    ['html-form-control-states', 'html-native-validation', 'html-form-errors-recovery'],
+    ['html-form-labels-instructions', 'html-attribute-value-types', 'html-native-controls-first'],
+    'The request workflow gains perceivable states, native constraints, specific error evidence, retained valid data, correction, and successful resubmission.',
+    'Control state, constraint behavior, error communication, correction, and recovery enter only after submission and labeling work end to end.'
+  ),
+  module(
+    'html-data-tables',
+    'Represent Two-Dimensional Data and Header Relationships',
+    [
+      'html-tables-purpose',
+      'html-table-structure',
+      'html-table-cell-spans',
+      'html-table-header-associations',
+    ],
+    ['html-lists', 'html-content-models', 'html-form-labels-instructions'],
+    'The guide gains a genuine service schedule with caption, row groups, spans only where necessary, and programmatically verified header context.',
+    'Tabular purpose, structure, spans, and header association enter without using tables for page layout.'
+  ),
+  module(
+    'html-accessibility-models',
+    'Inspect People, Barriers, Names, Trees, Order, and ARIA Boundaries',
+    [
+      'html-accessibility-user-barriers-tools',
+      'html-native-accessibility-tree',
+      'html-accessible-name-description',
+      'html-accessibility-tree-inclusion',
+      'html-source-order-keyboard',
+      'html-aria-boundary',
+      'html-accessibility-evaluation-evidence',
+    ],
+    [
+      'html-landmarks',
+      'html-images-purpose-alt',
       'html-form-errors-recovery',
       'html-table-header-associations',
       'html-captions-transcripts',
     ],
-  },
-  'html-independent-project': {
-    title: 'Independent HTML Transfer and Defense',
-    cumulativeArtifact:
-      'An unfamiliar multi-page stakeholder artifact built from an empty project and defended with behavior, accessibility, failure, validation, and changed-case evidence.',
-    newComplexityBoundary:
-      'No new HTML mechanism enters; difficulty comes from independent selection, integration, testing, tradeoffs, and defense.',
-    retrievalConceptIds: [
+    'Learners inspect and repair the complete guide through user barriers, keyboard tasks, DOM and accessibility trees, names, descriptions, inclusion, source order, native semantics, ARIA limits, and complementary evaluation.',
+    'Accessibility models become explicit evidence tools for correctness already required throughout HTML; automation is never treated as complete proof.'
+  ),
+  module(
+    'html-validation-and-changed-cases',
+    'Diagnose HTML with Validation and Changed Cases',
+    ['html-validation-inspection', 'html-changed-case-testing'],
+    [
+      'html-parser-recovery',
       'html-document-root-head-body',
+      'html-accessibility-evaluation-evidence',
+      'html-form-errors-recovery',
+      'html-table-header-associations',
+    ],
+    'Learners diagnose and repair interacting source, DOM, path, request, accessibility, form, table, and content failures, then preserve each repair with changed-case checks.',
+    'Causal validation and regression evidence integrate prior HTML mechanisms; no new page feature enters.'
+  ),
+  module(
+    'html-independent-transfer',
+    'Build and Defend an Independent HTML Service',
+    ['html-independent-transfer-defense'],
+    [
+      'html-document-root-head-body',
+      'html-link-purpose-fragments',
       'html-sectioning-articles',
       'html-form-errors-recovery',
       'html-table-header-associations',
       'html-changed-case-testing',
     ],
-  },
-  'css-language-and-cascade': {
-    title: 'CSS Language, Selectors, Cascade, and Stateful Styling',
-    cumulativeArtifact:
-      'The independent HTML artifact gains a separately loaded stylesheet with inspectable rules, bounded selectors, predictable conflicts, list markers, link states, and reusable tokens.',
-    newComplexityBoundary:
-      'Presentation begins only after semantic HTML transfer; syntax, matching, inheritance, cascade, specificity, layers, properties, and states enter before visual design recipes.',
-    retrievalConceptIds: [
+    'An unfamiliar multi-page stakeholder service is built from empty files and defended with content, behavior, accessibility, failure, validation, privacy, and changed-case evidence.',
+    'No new HTML mechanism enters; complexity comes from independent selection, integration, testing, revision, tradeoffs, and defense.'
+  ),
+  module(
+    'css-first-rules',
+    'Apply and Inspect the First CSS Rules',
+    [
+      'css-source-preview-loop',
+      'css-purpose-and-boundary',
+      'css-rule-declaration-anatomy',
+      'css-application-and-loading',
+      'css-type-class-id-selectors',
+    ],
+    [
       'html-purpose-structure',
       'html-document-root-head-body',
       'html-source-order-keyboard',
       'html-validation-inspection',
     ],
-  },
-  'css-boxes-and-sizing': {
-    title: 'Boxes, Intrinsic Constraints, Units, Overflow, and Geometry',
-    cumulativeArtifact:
-      'The styled artifact gains resilient component boxes whose size, spacing, paint, transform, and overflow remain explainable under changed content.',
-    newComplexityBoundary:
-      'Outer and inner display, box arithmetic, intrinsic sizing, units, logical dimensions, paint, transforms, and overflow enter before layout systems.',
-    retrievalConceptIds: [
+    'The independent HTML service gains a separately loaded stylesheet with inspectable rules, bounded type/class/ID matching, saved state, and a usable unstyled fallback.',
+    'CSS purpose, rule anatomy, loading, and basic selectors enter without advanced cascade, layout, or design-system mechanisms.'
+  ),
+  module(
+    'css-selectors-and-states',
+    'Match Relationships, Attributes, States, and Fragments',
+    [
+      'css-selector-lists-combinators',
+      'css-attribute-selectors',
+      'css-pseudo-classes',
+      'css-pseudo-elements',
+      'css-list-markers-counters',
+    ],
+    ['css-rule-declaration-anatomy', 'css-type-class-id-selectors', 'html-heading-hierarchy'],
+    'The stylesheet gains relationship, attribute, state, pseudo-element, marker, and counter rules whose complete matched sets survive changed markup.',
+    'Selector composition and presentational fragments enter while semantics, persistent content, and behavior remain in HTML.'
+  ),
+  module(
+    'css-cascade-inheritance-and-layers',
+    'Predict Inheritance, Cascade, Specificity, Layers, and Link States',
+    [
+      'css-inheritance-initial-unset-revert',
+      'css-cascade-origins-importance-order',
+      'css-specificity-functional-selectors',
+      'css-cascade-layers-scope',
+      'css-link-state-sequence',
+    ],
+    [
+      'css-rule-declaration-anatomy',
+      'css-application-and-loading',
+      'css-attribute-selectors',
+      'css-pseudo-classes',
+    ],
+    'The stylesheet gains predictable conflict resolution, bounded layer ownership, functional-selector specificity traces, and complete keyboard/pointer link-state behavior.',
+    'Inheritance, origins, importance, specificity, source order, layers, scope, and link-state conflicts enter before reusable value systems.'
+  ),
+  module(
+    'css-custom-properties',
+    'Own Reusable Values and Registered Property Contracts',
+    ['css-custom-properties-fallbacks', 'css-registered-custom-properties'],
+    ['css-inheritance-initial-unset-revert', 'css-cascade-origins-importance-order'],
+    'The stylesheet gains purpose-named reusable values with observable substitution, fallback, inheritance, registration, invalid-value, and animation behavior.',
+    'Unregistered substitution and registered property contracts enter as distinct computed-value models, not as a token-numbering recipe.'
+  ),
+  module(
+    'css-flow-display-and-box-model',
+    'Reason from Display and the Box Model',
+    [
+      'css-outer-inner-display',
+      'css-box-model-areas',
+      'css-box-sizing-models',
+      'css-margin-collapse-formatting-contexts',
+    ],
+    [
       'css-rule-declaration-anatomy',
       'css-cascade-origins-importance-order',
       'html-text-whitespace',
     ],
-  },
-  'css-type-color-and-design': {
-    title: 'User Evidence, Typography, Color, Hierarchy, and Prototypes',
-    cumulativeArtifact:
-      'The artifact receives an evidence-backed design direction, readable type system, accessible color roles, visual hierarchy, resilient controls, and evaluated prototype revisions.',
-    newComplexityBoundary:
-      'User needs and task evidence lead visual decisions; typography, color, hierarchy, filters, tokens, controls, prototypes, and testing follow explicit constraints.',
-    retrievalConceptIds: [
-      'css-custom-properties-fallbacks',
+    'The styled service gains explainable outer and inner display behavior with measured content, padding, border, margin, sizing, collapse, and formatting-context evidence.',
+    'Outer/inner display, box arithmetic, box sizing, margin collapse, and formatting contexts enter before sizing constraints or layout systems.'
+  ),
+  module(
+    'css-sizing-units-and-overflow',
+    'Size Normal-Flow Content with Constraints, Units, Math, and Overflow',
+    [
+      'css-intrinsic-extrinsic-sizing',
+      'css-absolute-font-relative-viewport-units',
+      'css-percentages-containing-blocks',
+      'css-calculated-value-math',
+      'css-min-max-clamp-functions',
+      'css-overflow-containment-scroll',
+      'css-logical-properties-writing-modes',
+      'css-normal-flow',
+    ],
+    ['css-box-model-areas', 'css-box-sizing-models'],
+    'Normal-flow components gain content-driven minimums, maximums, logical dimensions, computed math, and intentional overflow behavior across changed text, writing mode, and containing blocks.',
+    'Sizing contributions, units, percentages, calculations, bounds, overflow, containment, logical dimensions, and the normal-flow baseline enter before Flex, Grid, or positioning.'
+  ),
+  module(
+    'css-backgrounds-borders-and-transforms',
+    'Paint and Transform Boxes without Hiding Structure',
+    ['css-backgrounds-borders-shadows', 'css-transform-reference-boxes'],
+    ['css-box-model-areas', 'css-percentages-containing-blocks', 'html-images-purpose-alt'],
+    'Components gain purposeful backgrounds, borders, shadows, and transforms whose paint layers, reference boxes, hit areas, and semantic boundaries remain observable.',
+    'Box paint and transform geometry enter before color-system effects; decoration never substitutes for content, redaction, or behavior.'
+  ),
+  module(
+    'css-fonts-and-loading',
+    'Select, Load, and Stabilize Font Resources',
+    [
+      'css-font-stacks-generic-fallbacks',
+      'css-web-font-sources-loading',
+      'css-font-metrics-fallback-stability',
+      'css-variable-fonts-features',
+    ],
+    ['css-inheritance-initial-unset-revert', 'css-intrinsic-extrinsic-sizing'],
+    'The interface gains licensed, observable font delivery with resilient stacks, fallback metrics, failure behavior, variable axes, language features, and layout-stability evidence.',
+    'Font selection, delivery, metrics, fallback, synthesis, and variable features enter before typographic composition.'
+  ),
+  module(
+    'css-text-and-typography',
+    'Compose Readable Type and Text Layout',
+    [
+      'css-type-scale-line-height',
+      'css-readable-measure-alignment',
+      'css-text-wrap-spacing-decoration',
+      'css-text-decoration-shadows-emphasis',
+    ],
+    [
+      'css-font-stacks-generic-fallbacks',
+      'css-font-metrics-fallback-stability',
       'css-intrinsic-extrinsic-sizing',
       'html-heading-hierarchy',
+    ],
+    'The interface gains readable type scale, line height, measure, alignment, wrapping, language-aware spacing, and decorations that survive changed content and font failure.',
+    'Typographic composition and text paint enter from reading tasks rather than genre stereotypes or copied label dimensions.'
+  ),
+  module(
+    'css-color-contrast-and-effects',
+    'Build Color Roles, Contrast, Gradients, and Filter Fallbacks',
+    [
+      'css-color-spaces-alpha',
+      'css-derived-color-functions',
+      'css-contrast-noncolor-meaning',
+      'css-filter-effects-fallbacks',
+      'css-gradients-background-images',
+    ],
+    [
+      'css-backgrounds-borders-shadows',
+      'css-calculated-value-math',
+      'css-readable-measure-alignment',
+    ],
+    'The interface gains semantic color roles, modern color calculations, non-color meaning, gradients, and bounded filters with contrast and unavailable-effect evidence.',
+    'Color models, alpha, derived functions, contrast, gradients, and filters enter without treating visual effects as confidentiality, state, or accessibility proof.'
+  ),
+  module(
+    'design-user-needs-and-prototypes',
+    'Translate User Evidence into Task Flows and Tested Prototypes',
+    [
+      'design-user-needs-task-flows',
+      'css-visual-hierarchy-spacing',
+      'design-prototypes-evaluation-iteration',
+      'design-brief-handoff-artifacts',
+      'design-progressive-enhancement',
+    ],
+    ['html-sectioning-articles', 'html-form-errors-recovery', 'css-purpose-and-boundary'],
+    'Learners turn stakeholder and user evidence into task flows, bounded prototypes, evaluation findings, revisions, a decision-ready brief, and a progressively enhanced baseline.',
+    'User research, task evidence, prototype fidelity, evaluation, handoff, and progressive enhancement enter before component-system styling decisions.'
+  ),
+  module(
+    'design-systems-and-components',
+    'Create Hierarchy, Tokens, Components, and Recoverable States',
+    [
+      'css-design-tokens-theming',
+      'design-hierarchical-wayfinding',
+      'design-card-content-actions',
+      'design-progressive-disclosure-registration',
+      'css-form-control-states',
+    ],
+    [
+      'design-user-needs-task-flows',
+      'design-prototypes-evaluation-iteration',
+      'css-custom-properties-fallbacks',
+      'css-contrast-noncolor-meaning',
       'html-form-labels-instructions',
     ],
-  },
-  'css-flexible-layout': {
-    title: 'Normal Flow and One-Dimensional Flexible Layout',
-    cumulativeArtifact:
-      'A reusable component set handles navigation, media, toolbars, forms, and card groups through content-driven flex constraints rather than fixed screenshots.',
-    newComplexityBoundary:
-      'Normal flow remains baseline; flex containers, axes, lines, sizing, alignment, gaps, order, and component selection solve one-dimensional relationships.',
-    retrievalConceptIds: [
-      'css-outer-inner-display',
+    'The product gains evidence-backed hierarchy, spacing, semantic tokens, wayfinding, cards, registration disclosure, and complete form-control states across a reusable component set.',
+    'Component and design-system decisions enter only after user tasks, content, typography, color, and progressive enhancement have evidence.'
+  ),
+  module(
+    'css-flex-layout',
+    'Solve One-Dimensional Layout with Flex Constraints',
+    [
+      'css-flex-container-items-axes',
+      'css-flex-direction-wrap-lines',
+      'css-flex-basis-grow-shrink',
+      'css-flex-alignment-distribution',
+      'css-flex-gap-spacing',
+      'css-flex-order-accessibility',
+      'css-flex-component-transfer',
+    ],
+    [
+      'css-normal-flow',
       'css-intrinsic-extrinsic-sizing',
       'css-visual-hierarchy-spacing',
       'html-source-order-keyboard',
     ],
-  },
-  'css-grid-and-positioning': {
-    title: 'Two-Dimensional Grid, Positioning, Stacking, and Floats',
-    cumulativeArtifact:
-      'The interface gains content-led page regions, nested alignment, bounded overlays, sticky context, and genuine figure wrapping with traceable paint order.',
-    newComplexityBoundary:
-      'Grid tracks and placement, positioning schemes, stacking contexts, and remaining float use enter after learners can size and align flexible components.',
-    retrievalConceptIds: [
-      'css-normal-flow',
-      'css-flex-order-accessibility',
-      'css-percentages-containing-blocks',
-      'html-sectioning-articles',
-    ],
-  },
-  'responsive-systems': {
-    title: 'Content-Driven Responsive Pages and Components',
-    cumulativeArtifact:
-      'The interface adapts fluidly across continuous sizes, container contexts, media capabilities, navigation states, content variation, zoom, and image-selection conditions.',
-    newComplexityBoundary:
-      'Viewport and container adaptation, responsive media, content-derived breakpoints, narrow-first enhancement, range syntax, intrinsic grids, navigation, and evidence matrices integrate prior layout.',
-    retrievalConceptIds: [
-      'css-intrinsic-extrinsic-sizing',
+    'Navigation, toolbars, media objects, forms, and card groups adapt through axes, wrapping, free-space sizing, alignment, gaps, and source-order-safe Flex choices.',
+    'Flex containers, items, axes, lines, sizing, alignment, gaps, order, and component selection solve one-dimensional relationships only.'
+  ),
+  module(
+    'css-grid-layout',
+    'Compose Two-Dimensional Layout with Grid and Subgrid',
+    [
+      'css-grid-container-tracks-cells',
+      'css-grid-explicit-tracks-fr',
       'css-grid-repeat-minmax-intrinsic',
+      'css-grid-line-placement-spans',
+      'css-grid-template-areas',
+      'css-grid-auto-placement-dense',
+      'css-grid-alignment-distribution',
+      'css-subgrid-alignment',
+    ],
+    ['css-normal-flow', 'css-flex-component-transfer', 'css-intrinsic-extrinsic-sizing'],
+    'The product gains content-led two-dimensional regions, track sizing, explicit and automatic placement, named areas, alignment, and nested subgrid relationships with source-order evidence.',
+    'Grid tracks, lines, placement, areas, automatic flow, alignment, and subgrid enter after learners can distinguish one- from two-dimensional constraints.'
+  ),
+  module(
+    'css-positioning-stacking-and-floats',
+    'Trace Containing Blocks, Positioning, Stacking, Anchors, and Floats',
+    [
+      'css-positioning-containing-blocks',
+      'css-anchor-positioning-fallbacks',
+      'css-stacking-contexts-z-index',
+      'css-floats-content-wrapping',
+    ],
+    ['css-normal-flow', 'css-percentages-containing-blocks', 'css-grid-template-areas'],
+    'The product gains bounded overlays, sticky context, traceable paint order, support-gated anchor placement, and genuine figure wrapping without coordinate tracing.',
+    'Containing blocks, positioning schemes, stacking contexts, anchor fallbacks, and remaining float use enter without replacing normal layout systems.'
+  ),
+  module(
+    'responsive-fluid-foundations',
+    'Build Fluid Defaults, Media, Queries, and Content Breakpoints',
+    [
+      'responsive-fluid-default',
+      'responsive-viewport-zoom',
+      'responsive-fluid-media',
+      'responsive-image-selection',
+      'responsive-media-query-model',
+      'responsive-content-breakpoints',
+      'responsive-mobile-first-enhancement',
+      'responsive-range-syntax-overlap',
+      'responsive-grid-auto-fit-fill',
+    ],
+    [
+      'css-intrinsic-extrinsic-sizing',
       'css-flex-component-transfer',
+      'css-grid-repeat-minmax-intrinsic',
       'html-viewport-metadata',
     ],
-  },
-  'css-interaction-accessibility-and-motion': {
-    title: 'Interaction, Preferences, Motion, Performance, and Regression',
-    cumulativeArtifact:
-      'The responsive interface gains complete focus and pointer evidence, preference adaptations, safe motion, print output, causal diagnostics, rendering stability, and changed-case regression protection.',
-    newComplexityBoundary:
-      'Input capabilities, focus, targets, motion, forced colors, zoom, print, debugging, performance, and regression become explicit test dimensions rather than late polish.',
-    retrievalConceptIds: [
-      'css-contrast-noncolor-meaning',
-      'responsive-media-query-model',
+    'The product works fluidly across continuous widths, zoom, media failures, image candidates, intrinsic grids, and content-derived query boundaries before named device assumptions.',
+    'Fluid defaults, viewport behavior, media selection, media queries, content breakpoints, narrow-first enhancement, range logic, and intrinsic grids enter together.'
+  ),
+  module(
+    'responsive-components-navigation-and-testing',
+    'Adapt Components, Navigation, and Continuous-Size Evidence',
+    [
+      'responsive-container-query-model',
+      'responsive-container-query-units',
+      'responsive-navigation-disclosure',
+      'design-long-collection-navigation',
       'responsive-test-matrix',
-      'html-changed-case-testing',
     ],
-  },
-  'css-independent-project': {
-    title: 'Independent Responsive Interface Transfer and Defense',
-    cumulativeArtifact:
-      'A wholly unfamiliar multi-page responsive product built from empty stylesheets and defended through user, semantic, cascade, layout, accessibility, responsive, performance, and changed-case evidence.',
-    newComplexityBoundary:
-      'No new web mechanism enters; learner independently researches, designs, implements, tests, revises, and defends an integrated stakeholder outcome.',
-    retrievalConceptIds: [
+    [
+      'responsive-media-query-model',
+      'responsive-content-breakpoints',
+      'css-form-control-states',
+      'css-flex-order-accessibility',
+      'html-link-purpose-fragments',
+    ],
+    'Reusable components adapt to their containers; navigation remains complete; long collections remain findable; and a continuous-size, zoom, orientation, input, preference, and changed-content matrix records evidence.',
+    'Container context, container units, complete navigation disclosure, collection wayfinding, and systematic responsive evidence extend viewport adaptation.'
+  ),
+  module(
+    'interface-accessible-interaction',
+    'Support Zoom, Focus, Input Capabilities, Targets, and Dialog Tasks',
+    [
+      'css-zoom-reflow-text-spacing',
+      'css-focus-visible-indicators',
+      'css-input-capability-adaptation',
+      'css-target-size-spacing',
+      'design-modal-dialog-focus',
+    ],
+    [
+      'css-contrast-noncolor-meaning',
+      'responsive-test-matrix',
+      'css-pseudo-classes',
+      'html-source-order-keyboard',
+    ],
+    'The responsive product preserves tasks under zoom and text spacing, exposes visible focus, adapts to input capabilities, provides usable targets, and completes dialog focus and return behavior.',
+    'Interaction evidence enters across keyboard, pointer, touch, zoom, and dialog states without device detection or hover-only assumptions.'
+  ),
+  module(
+    'interface-workflows-preferences-and-output',
+    'Preserve Recovery, Correction, Forced Colors, and Non-Screen Output',
+    [
+      'design-multistep-progress-recovery',
+      'design-cart-review-correction',
+      'css-forced-colors-preferences',
+      'css-print-and-non-screen-media',
+    ],
+    [
+      'css-form-control-states',
+      'css-focus-visible-indicators',
+      'css-zoom-reflow-text-spacing',
+      'css-design-tokens-theming',
+      'responsive-media-query-model',
+    ],
+    'Multistep and review workflows preserve status, correction, and valid work while the visual system remains usable in forced colors, print, and other non-screen outputs.',
+    'Workflow recovery and output preferences enter as complete task contracts, not late visual overrides.'
+  ),
+  module(
+    'css-motion-transitions-and-animation',
+    'Use Purposeful, Controllable, Preference-Safe Motion',
+    [
+      'css-reduced-motion-preference',
+      'css-transitions-state-change',
+      'css-keyframe-animation-model',
+    ],
+    ['responsive-media-query-model', 'css-pseudo-classes', 'css-focus-visible-indicators'],
+    'The product gains bounded state transitions and keyframe sequences with explicit purpose, timing evidence, controls, equivalent reduced modes, and no hidden task information.',
+    'Preference-safe transition and animation models enter after state, focus, responsive, and recovery behavior already works without motion.'
+  ),
+  module(
+    'css-debugging-performance-and-regression',
+    'Diagnose CSS, Measure Rendering, and Protect Changed Cases',
+    [
+      'css-devtools-causal-debugging',
+      'css-rendering-performance-stability',
+      'css-changed-case-regression',
+    ],
+    [
+      'css-cascade-layers-scope',
+      'css-stacking-contexts-z-index',
+      'responsive-test-matrix',
+      'css-web-font-sources-loading',
+      'responsive-image-selection',
+      'css-transitions-state-change',
+    ],
+    'Learners diagnose cascade, layout, paint, request, font, image, motion, and rendering defects from recorded evidence, then preserve repairs with behavior and changed-case regression checks.',
+    'Causal debugging, runtime performance, rendering stability, and regression evidence integrate prior CSS; no new visual feature enters.'
+  ),
+  module(
+    'css-independent-responsive-transfer',
+    'Research, Build, Test, and Defend an Independent Responsive Product',
+    ['css-independent-transfer-defense'],
+    [
       'css-cascade-layers-scope',
       'design-user-needs-task-flows',
       'css-flex-component-transfer',
       'css-grid-template-areas',
-      'responsive-container-query-model',
+      'responsive-navigation-disclosure',
       'css-changed-case-regression',
     ],
-  },
-};
+    'A wholly unfamiliar multi-page responsive product is researched, designed, built from empty stylesheets, tested, revised, and defended through user, semantic, cascade, layout, accessibility, responsive, performance, and changed-case evidence.',
+    'No new web mechanism enters; the learner independently selects, integrates, verifies, revises, and defends an evidence-backed stakeholder outcome.'
+  ),
+];
 
-for (const moduleId of moduleIds) {
-  if (!moduleMetadata[moduleId]) throw new Error(`Missing architecture metadata for ${moduleId}.`);
+const moduleIds = moduleDefinitions.map((definition) => definition.id);
+const moduleOrder = new Map(moduleIds.map((moduleId, index) => [moduleId, index + 1]));
+const assignedConceptIds = moduleDefinitions.flatMap((definition) => definition.conceptIds);
+if (new Set(assignedConceptIds).size !== assignedConceptIds.length) {
+  throw new Error('Repaired architecture assigns one or more concepts more than once.');
 }
+if (
+  assignedConceptIds.length !== concepts.length ||
+  assignedConceptIds.some((conceptId) => !conceptById.has(conceptId)) ||
+  concepts.some((concept) => !assignedConceptIds.includes(concept.id))
+) {
+  throw new Error('Repaired architecture must assign every researched concept exactly once.');
+}
+const conceptModule = new Map(
+  moduleDefinitions.flatMap((definition) =>
+    definition.conceptIds.map((conceptId) => [conceptId, definition.id])
+  )
+);
 
 const sourceObjectiveIds = alignment.alignments
   .filter((record) => record.mappingBasis === 'block-specific-source')
@@ -273,7 +688,11 @@ const sourceObjectiveIdsByModule = new Map(
 );
 
 const modules = moduleIds.map((moduleId, index) => {
-  const moduleConcepts = concepts.filter((concept) => concept.moduleId === moduleId);
+  const definition = moduleDefinitions[index];
+  const moduleConcepts = definition.conceptIds.map((conceptId) => conceptById.get(conceptId));
+  if (moduleConcepts.some((concept) => !concept)) {
+    throw new Error(`Architecture module ${moduleId} contains an unknown concept.`);
+  }
   const crossPrerequisiteModules = moduleConcepts.flatMap((concept) =>
     concept.prerequisiteIds
       .map((conceptId) => conceptModule.get(conceptId))
@@ -283,17 +702,16 @@ const modules = moduleIds.map((moduleId, index) => {
   const prerequisiteModuleIds = [...new Set(crossPrerequisiteModules)].sort(
     (left, right) => moduleOrder.get(left) - moduleOrder.get(right)
   );
-  const metadata = moduleMetadata[moduleId];
   return {
     id: moduleId,
-    title: metadata.title,
+    title: definition.title,
     order: index + 1,
     prerequisiteModuleIds,
-    conceptIds: moduleConcepts.map((concept) => concept.id),
+    conceptIds: definition.conceptIds,
     sourceObjectiveIds: sourceObjectiveIdsByModule.get(moduleId),
-    retrievalConceptIds: metadata.retrievalConceptIds,
-    cumulativeArtifact: metadata.cumulativeArtifact,
-    newComplexityBoundary: metadata.newComplexityBoundary,
+    retrievalConceptIds: definition.retrievalConceptIds,
+    cumulativeArtifact: definition.cumulativeArtifact,
+    newComplexityBoundary: definition.newComplexityBoundary,
     currentState: 'planned-not-authored',
   };
 });
@@ -307,7 +725,7 @@ const projects = [
       'A neighborhood mutual-aid coordinator needs residents to understand available support, request help privately, and compare service times without losing access on keyboard or assistive technology.',
     artifact:
       'A multi-page semantic service guide, request form, and data schedule built from empty HTML files.',
-    placementAfterModuleId: 'html-independent-project',
+    placementAfterModuleId: 'html-independent-transfer',
     conceptIds: [
       'html-document-root-head-body',
       'html-landmarks',
@@ -342,7 +760,7 @@ const projects = [
       'A neighborhood archive needs visitors to understand one consequential local event through sourced records, images, quotations, dates, and uncertainty without turning commemoration into unsupported praise.',
     artifact:
       'A semantic, sourced, accessible interpretive exhibit with a readable visual system and explicit evidence limits.',
-    placementAfterModuleId: 'css-type-color-and-design',
+    placementAfterModuleId: 'design-systems-and-components',
     conceptIds: [
       'html-images-purpose-alt',
       'html-figures-captions',
@@ -379,7 +797,7 @@ const projects = [
       'A regional preparedness team needs a trustworthy field guide that works in narrow or wide containers, supports long translated procedures, and keeps urgent navigation usable under zoom and mixed input.',
     artifact:
       'A content-driven responsive documentation system with adaptive navigation, media, and reusable information components.',
-    placementAfterModuleId: 'responsive-systems',
+    placementAfterModuleId: 'responsive-components-navigation-and-testing',
     conceptIds: [
       'html-link-purpose-fragments',
       'html-sectioning-articles',
@@ -415,7 +833,7 @@ const projects = [
       'A nonprofit energy cooperative needs residents to understand a complex program, compare commitments, enroll confidently, and verify claims across devices, preferences, and failure conditions.',
     artifact:
       'An independently researched, designed, built, tested, and defended multi-page responsive program experience.',
-    placementAfterModuleId: 'css-interaction-accessibility-and-motion',
+    placementAfterModuleId: 'css-debugging-performance-and-regression',
     conceptIds: [
       'html-discovery-metadata',
       'html-form-errors-recovery',
@@ -454,7 +872,7 @@ const projects = [
       "A real prospective collaborator needs to understand the learner's verified capabilities, decisions, work samples, limits, and contact path without invented projects, fake metrics, dead controls, or inaccessible presentation.",
     artifact:
       "A truthful multi-page portfolio built from the learner's completed evidence and independently defended across content, design, behavior, accessibility, responsiveness, and performance.",
-    placementAfterModuleId: 'css-independent-project',
+    placementAfterModuleId: 'css-independent-responsive-transfer',
     conceptIds: [
       'html-discovery-metadata',
       'html-sectioning-articles',
@@ -510,22 +928,6 @@ for (const project of projects) {
 const explicitRetrievalEdges = modules.flatMap((module) =>
   module.retrievalConceptIds.map((conceptId) => `${conceptId}::${module.id}`)
 );
-const declaredRetentionEdges = concepts.flatMap((concept) =>
-  concept.retainedInModuleIds.map((moduleId) => `${concept.id}::${moduleId}`)
-);
-const explicitRetrievalEdgeSet = new Set(explicitRetrievalEdges);
-const declaredRetentionEdgeSet = new Set(declaredRetentionEdges);
-const disconnectedRetentionEdgeCount = declaredRetentionEdges.filter(
-  (edge) => !explicitRetrievalEdgeSet.has(edge)
-).length;
-const undeclaredRetrievalEdgeCount = explicitRetrievalEdges.filter(
-  (edge) => !declaredRetentionEdgeSet.has(edge)
-).length;
-const conceptsOnlyRetainedAtTerminalCount = concepts.filter(
-  (concept) =>
-    concept.retainedInModuleIds.length === 1 &&
-    ['html-independent-project', 'css-independent-project'].includes(concept.retainedInModuleIds[0])
-).length;
 
 const architecture = {
   schemaVersion: 1,
@@ -535,7 +937,7 @@ const architecture = {
   entryContract: {
     intendedLearner:
       'A true beginner who can operate a supported tablet or desktop browser but may not know files, HTML, CSS, developer tools, accessibility, or responsive design.',
-    openingModuleId: 'html-first-page',
+    openingModuleId: 'html-first-content',
     firstMeaningfulEditByLearnerAction: 2,
     delayedToolingBarrierProhibited: true,
     entryEvidence: [
@@ -550,14 +952,14 @@ const architecture = {
   modules,
   projects,
   architectureFindings: [
-    'The proposed 17-module concept sequence replaces the current 29-module benchmark-shaped order; external block identity remains coverage evidence rather than learner navigation architecture.',
-    'The current computer-basics-first module and its thirteen-activity barrier are removed from the target architecture; twelve bounded computer, file, browser, account-safety, search, DevTools, and research competencies enter in a just-in-time module immediately after the first HTML edit.',
+    'The repaired 38-module learner sequence replaces the overloaded 17-module macro-sequence and does not copy the benchmark navigation; external block identity remains coverage evidence rather than learner navigation architecture.',
+    'The current computer-basics-first module and its thirteen-activity barrier are removed from the target architecture; twelve bounded computer, file, browser, account-safety, search, DevTools, and research competencies enter in two just-in-time modules only after meaningful HTML construction.',
     'HTML semantics, accessibility, source order, validation, and changed-case habits remain retrieval and correctness constraints throughout CSS, responsive, interaction, and project work.',
     'The five actual certification-project benchmarks are survey form, tribute page, technical documentation, product landing page, and personal portfolio; each now has a distinct original stakeholder transfer with different domains, artifacts, requirements, evidence, placement, and empty-start policy.',
   ],
   gaps: [
     `${unmappedSourceObjectiveIds.length} source objective remains non-specific because the external certification exam exposes no reviewable item bank; LEARN-IT-ALL must author and validate its own blueprint, item bank, forms, scoring, correction, security, and standard-setting evidence without guessing external coverage.`,
-    `The concept graphs declare ${declaredRetentionEdges.length} retention edges, but ${disconnectedRetentionEdgeCount} are absent from the target module retrieval declarations; ${undeclaredRetrievalEdgeCount} module retrieval edges are not declared by their concepts, and ${conceptsOnlyRetainedAtTerminalCount} concepts defer all named retention to a terminal project. Replace this disconnected metadata with an activity-level reinforcement schedule before authoring.`,
+    `The disconnected macro-module retention defaults were removed instead of translated into the repaired sequence. Its ${explicitRetrievalEdges.length} named prerequisite-retrieval edges remain candidate module intent only; replace them with one activity-level reinforcement schedule covering immediate, faded, independent, delayed, assessment, correction, and transfer evidence before authoring.`,
     'Subject and instructional reviewers must inspect every module boundary, cross-concept prerequisite, retrieval choice, artifact accumulation, and new-complexity limit.',
     'Every concept still needs a complete original I-G-F-R-A-T activity matrix with debugging, correction, delayed retention, and changed-case grading.',
     'All five project briefs need stakeholder, accessibility, assessment, originality, runtime, and representative-learner review before authoring.',

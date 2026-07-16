@@ -14,8 +14,7 @@ const concept = (
   prerequisiteIds,
   sourceAnchors,
   misconceptions,
-  evidenceRequirements,
-  retainedInModuleIds = ['html-independent-project']
+  evidenceRequirements
 ) => {
   concepts.push({
     id,
@@ -28,7 +27,6 @@ const concept = (
     misconceptions,
     evidenceRequirements,
     stages,
-    retainedInModuleIds,
     currentState: 'researched-not-authored',
   });
 };
@@ -50,8 +48,7 @@ concept(
   [
     'Changed text must appear in the preview and remain after a reload.',
     'Learner must identify source, parsed output, saved draft, and last passing checkpoint separately.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -302,8 +299,7 @@ concept(
   [
     'Learner must match processor, memory, storage, input, output, operating-system, and application evidence to their bounded roles.',
     'A constrained preview case must be diagnosed from supplied resource evidence without making hardware-performance guarantees.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -330,8 +326,7 @@ concept(
   [
     'Learner must complete the same bounded workspace and file task with a documented keyboard path and another supported input path.',
     'Learner must identify one reach, repetition, posture, or break risk and choose a reversible adjustment without medical claims.',
-  ],
-  ['html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -358,8 +353,7 @@ concept(
   [
     'Learner must classify changed failure evidence at device, local-network, provider, internet, DNS, server, or browser-request layer.',
     'Diagnosis must state what the supplied evidence proves and what requires an authorized provider or administrator.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -386,8 +380,7 @@ concept(
   [
     'Learner must reject a simulated lookalike sign-in, secret-sharing request, shared administrator account, and weak recovery path with a reason.',
     'A fictional setup plan must preserve individual identity, least privilege, locking, updates, recovery, and no collection of real credentials.',
-  ],
-  ['html-independent-project']
+  ]
 );
 
 concept(
@@ -414,8 +407,7 @@ concept(
   [
     'Learner must select the smallest suitable tool for source editing, DOM inspection, computed style, requests, revision evidence, and deployment transfer.',
     'Learner must identify which simulated workspace evidence still needs verification in an authentic external toolchain.',
-  ],
-  ['html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -437,8 +429,7 @@ concept(
   [
     'Learner must complete reversible operations in a disposable project and predict resulting paths before applying them.',
     'A mistaken rename or deletion must be recovered from retained evidence without modifying operating-system or unrelated user files.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -460,8 +451,7 @@ concept(
   [
     'Changed Windows-like and case-sensitive deployment cases must resolve the same intended assets without spaces or case drift.',
     'Learner must distinguish base name, extension, file content, MIME handling, and public URL rather than inferring one from another.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -483,8 +473,7 @@ concept(
   [
     'Learner must build and explain a portable project tree from artifact requirements without receiving the final folder layout.',
     'A moved document and renamed asset case must expose and repair every affected reference without machine-specific paths.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -511,8 +500,7 @@ concept(
   [
     'Learner must locate a changed target among same-name and wrong-extension distractors using at least two evidence fields.',
     'Learner must classify common web source, media, data, and archive files while preserving an unknown-file safety boundary.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -534,8 +522,7 @@ concept(
   [
     'Learner must identify browser brand, engine family, version evidence, update source, and unsupported platform combinations.',
     'A fictional installation plan must use official distribution, avoid bundled software, and name remaining authentic-device tests.',
-  ],
-  ['html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -557,8 +544,7 @@ concept(
   [
     'Learner must label browser chrome, URL, origin, page, site, search query, result, and destination in a changed navigation trace.',
     'Learner must navigate directly by URL and by search while explaining distinct requests, intermediaries, and privacy limits.',
-  ],
-  ['html-documents-and-paths', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -580,8 +566,7 @@ concept(
   [
     'Learner must create, refine, and compare queries for an unfamiliar browser problem while recording excluded ambiguity.',
     'Evidence record must distinguish result snippet, opened source, authority, date, version, tested behavior, and remaining uncertainty.',
-  ],
-  ['html-documents-and-paths', 'html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -757,8 +742,7 @@ concept(
   [
     'Moved-folder and nested-document cases must resolve expected resources without machine-specific paths.',
     'Learner must diagnose case, extension, base, path-segment, and URL-encoding failures from network evidence.',
-  ],
-  ['html-images-and-media', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -785,8 +769,7 @@ concept(
   [
     'Learner must connect changed source, requested resources, response failures, DOM nodes, computed styles, and rendered output without collapsing them into one layer.',
     'A missing-resource case must be diagnosed at URL, request, response, parse, match, or render stage using the evidence surface that can prove it.',
-  ],
-  ['html-images-and-media', 'html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -808,8 +791,7 @@ concept(
   [
     'Learner must produce a claim-evidence-limit-test record for a changed HTML question using a current authority rather than a copied answer.',
     'Conflicting or outdated evidence must be resolved by version, normative status, browser observation, and an explicit remaining-uncertainty statement.',
-  ],
-  ['html-accessibility-and-debugging', 'html-independent-project']
+  ]
 );
 
 concept(
@@ -1902,8 +1884,7 @@ concept(
   [
     'Artifact must begin from empty project constraints and pass behavior, accessibility, failure, changed-content, and validation evidence.',
     'Learner must defend element choices, relationships, alternatives, form data, table context, test limits, and remaining uncertainty.',
-  ],
-  ['html-independent-project']
+  ]
 );
 
 const graph = {

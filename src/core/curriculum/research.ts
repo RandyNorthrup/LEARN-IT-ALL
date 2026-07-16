@@ -279,7 +279,6 @@ const ConceptResearchSchema = z.object({
   misconceptions: z.array(z.string().min(15)).min(1),
   evidenceRequirements: z.array(z.string().min(20)).min(2),
   stages: z.array(ConceptEvidenceStageSchema),
-  retainedInModuleIds: z.array(IdentifierSchema).min(1),
   currentState: z.literal('researched-not-authored'),
 });
 
@@ -301,7 +300,6 @@ export const ConceptResearchGraphSchema = z
     const expectedStages = new Set(ConceptEvidenceStageSchema.options);
     const sourceIds = new Set(graph.sourceIds);
     const moduleIds = new Set(graph.moduleIds);
-    const moduleOrder = new Map(graph.moduleIds.map((moduleId, index) => [moduleId, index]));
     const conceptById = new Map(graph.concepts.map((concept) => [concept.id, concept]));
     const conceptIds = graph.concepts.map((concept) => concept.id);
     const normalize = (value: string) =>
@@ -398,21 +396,6 @@ export const ConceptResearchGraphSchema = z
             code: 'custom',
             message: `Concept ${concept.id} references unknown source ${source.sourceId}`,
             path: ['concepts', conceptIndex, 'sourceAnchors'],
-          });
-        }
-      }
-      for (const moduleId of concept.retainedInModuleIds) {
-        if (!moduleIds.has(moduleId)) {
-          context.addIssue({
-            code: 'custom',
-            message: `Concept ${concept.id} retains into unknown module ${moduleId}`,
-            path: ['concepts', conceptIndex, 'retainedInModuleIds'],
-          });
-        } else if ((moduleOrder.get(moduleId) ?? -1) < (moduleOrder.get(concept.moduleId) ?? -1)) {
-          context.addIssue({
-            code: 'custom',
-            message: `Concept ${concept.id} retains into earlier module ${moduleId}`,
-            path: ['concepts', conceptIndex, 'retainedInModuleIds'],
           });
         }
       }
