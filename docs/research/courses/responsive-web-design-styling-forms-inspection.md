@@ -424,7 +424,7 @@ Password input instruction distinguishes demonstrating HTML mechanics from creat
 
 ## Remaining blockers
 
-- The remaining 36 source blocks still require complete challenge-level inspection with zero guessed mappings.
+- The remaining 31 source blocks still require complete challenge-level inspection with zero guessed mappings.
 - Independent subject reviewers must verify the seven candidate maps, every technical correction, and the native-controls-first decision against current specifications and interoperable browser behavior.
 - CSS Form Control Styling Level 1 remains a freshness watch; no draft-only feature may enter assessed production content without maturity, browser, test, accessibility, and failure evidence.
 - Instructional and assessment reviewers must approve the complete concept-to-activity matrix, fading plan, retrieval schedule, misconception treatment, item blueprint, corrective routes, and anti-duplication evidence.

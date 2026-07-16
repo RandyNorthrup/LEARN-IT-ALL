@@ -1130,13 +1130,29 @@ add(
   'Select a positioning scheme by flow participation, containing block, scroll behavior, offsets, and overlap requirements.',
   'css-grid-and-positioning',
   ['css-normal-flow', 'css-percentages-containing-blocks'],
-  'rwd-mdn-css-layout',
-  '5.3 positioning',
-  'Positioning modes differ in flow participation, containing block, offset behavior, and viewport or scroll attachment.',
+  'rwd-css-position-three',
+  'Sections 2 through 4',
+  'Positioning schemes differ in flow participation, containing-block formation, inset resolution, scroll attachment, and overflow consequences.',
   'Position relative removes the box from normal flow in the same way as absolute positioning.',
   [
     'Learner must predict original space, containing block, offset, and scroll response for every positioning mode.',
     'A positioned overlay must remain reachable and avoid obscuring focus or content at zoom and narrow sizes.',
+  ]
+);
+
+add(
+  'css-anchor-positioning-fallbacks',
+  'Anchor positioning and overflow fallbacks',
+  'Position a bounded out-of-flow callout relative to a named anchor with logical placement and overflow fallbacks while preserving native semantics, focus, reading order, viewport access, and a usable unsupported-feature path.',
+  'css-grid-and-positioning',
+  ['css-positioning-containing-blocks', 'css-logical-properties-writing-modes'],
+  'rwd-css-anchor-position-one',
+  'Anchor association, position-area, anchor functions, and position fallback',
+  'Anchor positioning can relate an absolutely positioned box to another element and try alternate logical placements when the initial option overflows.',
+  'CSS anchor positioning creates popover semantics, keyboard behavior, focus management, dismissal, top-layer placement, and a collision-proof fallback automatically.',
+  [
+    'Changed writing mode, anchor location, scroll position, zoom, callout size, viewport edge, anchor removal, and unsupported-feature cases must preserve content and operation.',
+    'Learner must separate semantic disclosure or popover behavior from CSS placement, inspect the winning fallback, and justify a simpler in-flow alternative when support or task constraints do not fit.',
   ]
 );
 
@@ -1146,9 +1162,9 @@ add(
   'Trace stacking-context creation and paint order so local z-index values solve bounded overlap without escalating global layer numbers.',
   'css-grid-and-positioning',
   ['css-positioning-containing-blocks', 'css-backgrounds-borders-shadows'],
-  'rwd-mdn-css-layout',
-  '5.3 stacking context',
-  'Z-axis ordering is constrained by nested stacking contexts rather than one page-wide integer list.',
+  'rwd-css-position-three',
+  'Section 2.2 Painting Order and Stacking Contexts',
+  'Paint order and z-index are constrained by stacking-context boundaries; fixed and sticky boxes create contexts even when z-index is auto.',
   'Any z-index of 999999 must paint above every element with a smaller number anywhere in the document.',
   [
     'Learner must draw context boundaries and paint order for changed positioned, transformed, opaque, and isolated ancestors.',
@@ -1162,12 +1178,12 @@ add(
   'Use floats for bounded content wrapping, clear them deliberately, and reject them as the default multi-column page-layout mechanism.',
   'css-grid-and-positioning',
   ['css-normal-flow', 'css-margin-collapse-formatting-contexts'],
-  'rwd-mdn-css-layout',
-  '5.2 floats',
-  'Floats remain useful for content wrapping, while flexbox and grid replace historical column-layout hacks.',
+  'rwd-css-two-two',
+  'Sections 9.4, 9.5, and 9.7',
+  'Floats shift boxes to an inline side while line content can flow beside them; clear adds a constraint below earlier floats, and modern layout replaces historical column hacks.',
   'Float is the most compatible choice for every modern multi-column component and responsive page structure.',
   [
-    'A figure-and-prose case must wrap and clear correctly after media and text size changes.',
+    'A figure-and-prose case must wrap and clear correctly after media, writing direction, and text-size changes, with flow-root used when the container needs an independent formatting context.',
     'Learner must migrate an obsolete float layout to flex or grid while preserving the one genuine wrapping use.',
   ]
 );
@@ -1699,6 +1715,8 @@ const graph = {
     'rwd-filter-effects-one',
     'rwd-css-flexbox-one',
     'rwd-css-align-three',
+    'rwd-css-position-three',
+    'rwd-css-anchor-position-one',
     'rwd-css-fonts-four',
     'rwd-css-font-loading-three',
     'rwd-css-text-four',
