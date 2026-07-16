@@ -5189,6 +5189,95 @@ describe('research contracts', () => {
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
+  it('decomposes semantic text into 209 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-semantic-text-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'html-heading-hierarchy',
+      'html-paragraphs-breaks',
+      'html-content-models',
+      'html-links-destinations',
+    ]);
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(209);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(209);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(14);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      199
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects machine-time evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-semantic-text-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const machineTimeInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'machine-time');
+    if (!machineTimeInteraction) {
+      throw new Error('Machine-time evidence fixture missing');
+    }
+    delete machineTimeInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
   it('rejects browser research evidence without a changed trace', () => {
     const missingTrace = structuredClone(
       readJson(
