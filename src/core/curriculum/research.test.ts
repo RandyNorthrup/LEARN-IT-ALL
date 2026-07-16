@@ -258,9 +258,26 @@ describe('research contracts', () => {
       readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
     );
     const dossierSourceIds = new Set(dossier.sources.map((source) => source.id));
+    const conceptIds = graph.concepts.map((concept) => concept.id);
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(69);
+    expect(graph.concepts).toHaveLength(71);
+    expect(conceptIds).toEqual(
+      expect.arrayContaining(['html-replaced-content-boundaries', 'html-media-rights-licensing'])
+    );
+    expect(
+      graph.concepts.find((concept) => concept.id === 'html-media-rights-licensing')?.sourceAnchors
+    ).toHaveLength(3);
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-media-rights-evidence')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-mdn-html-images',
+        'rwd-us-copyright-fair-use',
+        'rwd-creative-commons-licenses',
+      ],
+    });
     expect(
       graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
     ).toBe(true);
@@ -363,23 +380,41 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([69, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([71, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(7);
+    ).toHaveLength(23);
     expect(
       matrix.alignments
-        .filter((alignment) => alignment.inspectionState === 'agent-inspected')
-        .map((alignment) => alignment.sourceBlockSlug)
-    ).toEqual(inspectedOpeningBlocks);
+        .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
+        .every(
+          (alignment) =>
+            alignment.inspectionState === 'agent-inspected' &&
+            alignment.mappingBasis === 'block-specific-source'
+        )
+    ).toBe(true);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
         .reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
     ).toBe(61);
+    const basicHtmlAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'basic-html'
+    );
+    expect(basicHtmlAlignments).toHaveLength(23);
     expect(
-      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback').length
-    ).toBeGreaterThan(0);
+      basicHtmlAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(137);
+    expect(
+      basicHtmlAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
+    ).toHaveLength(98);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -530,7 +565,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(155);
+    expect(architecture.conceptIds).toHaveLength(157);
     expect(architecture.sourceObjectiveIds).toHaveLength(158);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({

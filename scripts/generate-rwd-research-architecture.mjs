@@ -76,6 +76,7 @@ const moduleMetadata = {
       'html-files-paths-urls',
       'html-attribute-value-types',
       'html-browser-request-parse-render',
+      'html-authority-research-verification',
     ],
   },
   'html-text-and-semantics': {

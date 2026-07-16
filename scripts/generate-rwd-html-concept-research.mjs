@@ -852,11 +852,38 @@ concept(
 );
 
 concept(
+  'html-replaced-content-boundaries',
+  'Replaced media, external content, and intrinsic dimensions',
+  'Distinguish document child content from externally replaced image, media, and embedded content, then predict intrinsic sizing, styling boundaries, loading, and failure evidence.',
+  'html-images-and-media',
+  ['html-files-paths-urls', 'html-browser-request-parse-render'],
+  [
+    anchor(
+      'rwd-mdn-html-images',
+      'Images in HTML: replaced elements',
+      'Replaced elements obtain content and intrinsic size from external resources rather than ordinary document child content.'
+    ),
+  ],
+  [
+    'CSS applied to an iframe, image, or video can directly restyle the external resource content as if it were ordinary child HTML.',
+  ],
+  [
+    'Learner must classify changed image, video, iframe, input, and ordinary-container cases and identify which content, box, intrinsic dimensions, and document boundary the page can control.',
+    'Missing, slow, dimensionless, cross-origin, and mismatched-resource cases must preserve meaningful fallback and produce a causal source-network-layout explanation.',
+  ]
+);
+
+concept(
   'html-images-purpose-alt',
   'Image purpose and text alternatives',
   'Classify informative, functional, decorative, complex, and text images, then provide the appropriate text alternative or exclusion.',
   'html-images-and-media',
-  ['html-files-paths-urls', 'html-attribute-syntax', 'html-content-models'],
+  [
+    'html-files-paths-urls',
+    'html-attribute-syntax',
+    'html-content-models',
+    'html-replaced-content-boundaries',
+  ],
   [
     anchor(
       'rwd-wai-tutorials',
@@ -876,7 +903,7 @@ concept(
   'Image dimensions and loading behavior',
   'Provide intrinsic dimensions, appropriate loading behavior, safe sources, and performance evidence without distorting content.',
   'html-images-and-media',
-  ['html-images-purpose-alt', 'html-attribute-value-types'],
+  ['html-images-purpose-alt', 'html-attribute-value-types', 'html-replaced-content-boundaries'],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -912,6 +939,38 @@ concept(
 );
 
 concept(
+  'html-media-rights-licensing',
+  'Media ownership, permission, licensing, and attribution',
+  'Select web media only after recording ownership or permission evidence, exact license conditions, required attribution, allowed use or adaptation, and unresolved jurisdictional limits.',
+  'html-images-and-media',
+  ['html-images-purpose-alt', 'html-authority-research-verification'],
+  [
+    anchor(
+      'rwd-mdn-html-images',
+      'Media assets and licensing',
+      'MDN requires developers to own an asset, obtain permission, or comply with its exact license conditions before use.'
+    ),
+    anchor(
+      'rwd-us-copyright-fair-use',
+      'Four fair-use factors and case-specific determination',
+      'Fair use is context-dependent, balances four statutory factors, and cannot be promised by a simple course rule.'
+    ),
+    anchor(
+      'rwd-creative-commons-licenses',
+      'License conditions, six license types, and CC0',
+      'Creative Commons permissions and obligations vary by exact license, while CC0 is a distinct public-domain dedication tool.'
+    ),
+  ],
+  [
+    'An image found through search is safe to reuse when the project is educational, noncommercial, or includes the creator name.',
+  ],
+  [
+    'Learner must produce an asset-rights record containing stable source, creator or owner, permission basis, exact license and version, required attribution, modification and commercial-use conditions, and remaining uncertainty.',
+    'Changed missing-license, incompatible-license, disputed-owner, and fair-use-claim cases must be refused, replaced, escalated, or explicitly bounded rather than silently published.',
+  ]
+);
+
+concept(
   'html-svg-semantics',
   'SVG embedding and accessible meaning',
   'Choose inline SVG, external image, or decorative treatment and expose or hide graphic meaning consistently.',
@@ -936,7 +995,7 @@ concept(
   'Native audio and video',
   'Provide native controls, suitable sources, dimensions where relevant, fallback content, and user-controlled playback.',
   'html-images-and-media',
-  ['html-files-paths-urls', 'html-attribute-syntax'],
+  ['html-files-paths-urls', 'html-attribute-syntax', 'html-replaced-content-boundaries'],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -976,7 +1035,7 @@ concept(
   'Embedded document boundaries',
   'Embed a document with an accurate title, minimal permissions, loading fallback, and responsive bounds while preserving origin awareness.',
   'html-images-and-media',
-  ['html-files-paths-urls', 'html-attribute-syntax'],
+  ['html-files-paths-urls', 'html-attribute-syntax', 'html-replaced-content-boundaries'],
   [
     anchor(
       'rwd-whatwg-html',
@@ -1559,6 +1618,9 @@ const graph = {
     'rwd-cisa-phishing-resistant-mfa',
     'rwd-wai-tutorials',
     'rwd-aria-apg',
+    'rwd-mdn-html-images',
+    'rwd-us-copyright-fair-use',
+    'rwd-creative-commons-licenses',
     'rwd-fcc-v9',
     'rwd-fcc-opening-inspection',
   ],
@@ -1579,6 +1641,7 @@ const graph = {
     'Current blueprint delays first HTML construction behind thirteen tooling activities; files, browser, DevTools, and research must enter just in time around the first artifact.',
     'Pinned v9 computer-basics sources cover twelve distinct entry competencies that the previous four-concept tooling map omitted; the target keeps their coverage after the first HTML edit and integrates each skill at its first authentic use.',
     'Current basic HTML and semantic HTML boundaries separate concepts that depend on one another; proposed modules follow element, document, content, interaction, data, access, and transfer prerequisites.',
+    'Pinned v9 image-licensing instruction is a distinct professional and safety competency; it cannot remain hidden inside image optimization or rely on oversimplified fair-use and public-domain claims.',
     'Current generated activities map all competencies across broad source blocks, but this does not prove each concept receives explicit explanation, malformed cases, fading, debugging, retrieval, or independent transfer.',
     'Current HTML project follows existing generated work and cannot count as transfer until its scenario, empty starter, requirements, grading, and defense differ meaningfully from instruction.',
   ],
