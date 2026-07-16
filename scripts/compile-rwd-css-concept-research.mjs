@@ -135,16 +135,16 @@ add(
 add(
   'css-attribute-selectors',
   'Attribute selectors and matching operators',
-  'Match attribute presence and bounded exact, token, prefix, suffix, and substring values without confusing semantic state with text coincidence.',
+  'Match attribute presence and bounded exact, token, language-prefix, prefix, suffix, and substring values with explicit case rules, without confusing semantic state with text coincidence.',
   'css-language-and-cascade',
   ['css-type-class-id-selectors'],
-  'rwd-mdn-css-fundamentals',
-  '3.2 attribute selectors',
-  'Attribute selectors provide several distinct presence and value-matching contracts.',
-  'Substring matching is the safest default because it finds every intended attribute value variation.',
+  'rwd-selectors-four',
+  'Sections 6.1 through 6.5: attribute selectors',
+  'Attribute presence, exact value, whitespace-token, language-prefix, prefix, suffix, and substring selectors have distinct matching contracts; document-language defaults and the i and s flags determine case comparison.',
+  'Substring matching is the safest default, attribute selectors create semantics, and adding !important guarantees a declaration wins.',
   [
-    'Changed attributes containing similar but non-equivalent text must separate exact, token, and substring matches.',
-    'Learner must choose an operator whose accepted and rejected values align with the actual attribute contract.',
+    'Before running code, the learner must predict the complete matched set for presence, exact, token, language-prefix, prefix, suffix, and substring selectors over values containing near matches, empty strings, case changes, paths, queries, fragments, and multiple tokens.',
+    'The learner must choose an operator and case policy whose accepted and rejected values match the semantic attribute contract, mutate attributes through the DOM, inspect the changed matched set and computed result, and repair an over-broad or under-broad selector without !important.',
   ]
 );
 

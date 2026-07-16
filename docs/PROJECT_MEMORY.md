@@ -98,12 +98,12 @@ Current candidate graph:
 - 83 HTML/tooling concepts;
 - 101 CSS/responsive/design concepts;
 - 184 total concepts;
-- 127 agent-inspected source blocks;
-- 1,090 inspected challenges;
-- 1,135 captured question prompts;
-- 3,548 inspected implementation checks;
-- 133 block-specific candidate mappings;
-- 24 uninspected source blocks with exact evidence and zero guessed concepts;
+- 131 agent-inspected source blocks;
+- 1,161 inspected challenges;
+- 1,154 captured question prompts;
+- 3,822 inspected implementation checks;
+- 136 block-specific candidate mappings;
+- 21 uninspected source blocks with exact evidence and zero guessed concepts;
 - 1 assessment container without reviewable item-level evidence;
 - 6 unresolved concepts;
 - 8 explicit modern extensions not credited to the benchmark;
@@ -172,6 +172,8 @@ Pushed milestones:
 - 2026-07-16 CSS Accessibility verification — reproducibility gate current; focused research/current-surface gate 2 files / 42 tests; full test suite 47 files / 226 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 75 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 - 2026-07-16 CSS Positioning research wave — inspect all 5 blocks, 88 challenges, 55 question prompts, and 315 implementation checks; add current CSS Positioned Layout Level 3 and CSS Anchor Positioning Level 1 evidence; replace the broad positioning bundle with five exact maps; correct float-removal, viewport-fixed, sticky-becomes-fixed, and global-z-index myths; reject the 80-step cat coordinate trace and fixed-canvas house as target practice; add one explicit uncredited modern anchor-positioning concept with semantic and support fallbacks. Current alignment: 127 inspected blocks, 1,090 inspected challenges, 1,135 prompts, 3,548 checks, 133 bounded mappings, 24 unmapped blocks, 184 concepts, 8 explicit extensions, and 31 total blocks still requiring inspection.
 - 2026-07-16 CSS Positioning verification — a focused gate caught and repaired accidental benchmark credit for the anchor-positioning extension before acceptance; final focused research/current-surface gate passes 2 files / 44 tests. Reproducibility and research audits are current. Full test suite passes 47 files / 228 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 78 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
+- 2026-07-16 Attribute Selectors research wave — inspect all 4 blocks, 71 challenges, 19 question prompts, and 274 implementation checks; replace the broad module assignment with four exact maps; anchor the existing selector concept in current Selectors Level 4; correct private-data/language confusion and absolute `!important` claims; reject exact serialized-class recipes, copied visually-hidden declarations, global `z-index`, and fixed negative-offset balance-sheet tracing as target instruction; require semantic contracts, matched-set prediction, DOM mutation, cascade provenance, accessible table tasks, changed cases, delayed retrieval, and transfer evidence. Current alignment: 131 inspected blocks, 1,161 inspected challenges, 1,154 prompts, 3,822 checks, 136 bounded mappings, 21 unmapped blocks, 184 concepts, 8 explicit extensions, and 27 total blocks still requiring inspection.
+- 2026-07-16 Attribute Selectors verification — reproducibility and research audits are current; focused research/current-surface gate passes 2 files / 46 tests; full test suite passes 47 files / 230 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 79 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -210,7 +212,7 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Complete challenge-level inspection for the remaining 31 Responsive Web Design source blocks without guessed concept mappings.
+1. Complete challenge-level inspection for the remaining 27 Responsive Web Design source blocks without guessed concept mappings.
 2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
 3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
