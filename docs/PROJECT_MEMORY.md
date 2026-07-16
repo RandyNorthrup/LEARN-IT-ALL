@@ -1,6 +1,6 @@
 # LEARN-IT-ALL Project Memory
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 This file is the canonical repository handoff. Reverify volatile counts before reporting them.
 
@@ -96,17 +96,17 @@ Current research artifacts:
 Current candidate graph:
 
 - 83 HTML/tooling concepts;
-- 97 CSS/responsive/design concepts;
-- 180 total concepts;
-- 112 agent-inspected source blocks;
-- 852 inspected challenges;
-- 1,003 captured question prompts;
-- 2,614 inspected implementation checks;
-- 121 block-specific candidate mappings;
-- 36 uninspected source blocks with exact evidence and zero guessed concepts;
+- 100 CSS/responsive/design concepts;
+- 183 total concepts;
+- 117 agent-inspected source blocks;
+- 930 inspected challenges;
+- 1,064 captured question prompts;
+- 2,871 inspected implementation checks;
+- 125 block-specific candidate mappings;
+- 32 uninspected source blocks with exact evidence and zero guessed concepts;
 - 1 assessment container without reviewable item-level evidence;
 - 6 unresolved concepts;
-- 6 explicit modern extensions not credited to the benchmark;
+- 7 explicit modern extensions not credited to the benchmark;
 - candidate architecture of 17 cumulative modules and 5 original project briefs.
 
 All mappings remain `candidate-review`. All modules and projects remain `planned-not-authored`. Source capture and agent inspection are not independent subject review, authored teaching, assessment validity, accessibility proof, retention evidence, or learner success.
@@ -165,6 +165,8 @@ Pushed milestones:
 - 2026-07-15 CSS Layouts and Effects verification — reproducibility gate current; focused research test 30/30; full test suite 47 files / 217 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Lighthouse remains held.
 - 2026-07-15 Flexbox research wave — inspect all 7 Flexbox and playing-cards blocks and 71 challenges; add current CSS Flexbox 1, Box Alignment 3, sizing, order, focus, and meaningful-sequence evidence; reject physical-direction recipes, unscaled shrink claims, brittle ghost items, and visual ordering that contradicts DOM and keyboard order; compile 112 inspected blocks and 121 bounded mappings.
 - 2026-07-15 Flexbox verification — reproducibility gate current; focused research test 32/32; full test suite 47 files / 219 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. The research audit correctly retains 53 missing-dossier blockers and one incomplete-research warning. Lighthouse remains held.
+- 2026-07-16 Typography research wave — inspect all 5 Typography blocks and 78 challenges; add current CSS Fonts 4, Font Loading 3, Text 4, Text Decoration 4, Inline 3, WOFF2, WCAG, WAI, and FDA evidence; split selection, delivery, metrics, variable features, line layout, text processing, and decoration into testable concepts; reject named-font consistency, serif/sans readability stereotypes, unexamined third-party requests, regulated-label tracing, tiny fixed text, negative-offset recipes, and source-string grading; compile 117 inspected blocks and 125 bounded mappings.
+- 2026-07-16 Typography verification — reproducibility gate current; focused research test 35/35; full test suite 47 files / 222 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 72 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -187,7 +189,7 @@ Both deleted Responsive Web Design page routes returned 404. Attempt, draft, hin
 The current research/editor/runtime hard-cut milestone passed:
 
 - complete Pseudo-classes and Pseudo-elements source inspection: 6 blocks, 74 challenges, 61 question prompts, and 270 implementation checks;
-- current RWD research compilation: 112 inspected blocks, 852 inspected challenges, 1,003 captured prompts, 2,614 inspected checks, 121 block-specific mappings, 36 uninspected/unmapped blocks, and 46 total blocks still requiring inspection;
+- current RWD research compilation: 117 inspected blocks, 930 inspected challenges, 1,064 captured prompts, 2,871 inspected checks, 125 block-specific mappings, 32 uninspected/unmapped blocks, and 41 total blocks still requiring inspection;
 - removal of every `generate-*` script, the course-outline writer, the stale 54-course/11,742-activity baseline, dead packages, app compatibility shims, the dual TypeScript path, the host learner-diagnostics endpoint, and the obsolete PicoC runtime;
 - one direct CodeMirror editor implementation with current official HTML, CSS, JavaScript, Python, SQL, and Go parsers; no Monaco, coding textarea, legacy mode, lazy alternate workspace, or second editor path;
 - a single TypeScript 6.0.3 application compiler, selected after TypeScript 7.0.2 failed current Next.js type-generation compatibility and official TypeScript evidence confirmed that 7.0 ships without a programmatic API;
@@ -203,7 +205,7 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Complete challenge-level inspection for the remaining 46 Responsive Web Design source blocks without guessed concept mappings.
+1. Complete challenge-level inspection for the remaining 41 Responsive Web Design source blocks without guessed concept mappings.
 2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
 3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
@@ -213,4 +215,4 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Blockers
 
-No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 46 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.
+No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 41 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.

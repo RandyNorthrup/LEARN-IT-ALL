@@ -19,6 +19,7 @@ export const ResearchTrackSchema = z.enum([
 
 export const ResearchAuthoritySchema = z.enum([
   'consensus-report',
+  'government-primary',
   'government-practice-guide',
   'systematic-review',
   'peer-reviewed-research',

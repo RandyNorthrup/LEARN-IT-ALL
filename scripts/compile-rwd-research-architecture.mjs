@@ -504,7 +504,7 @@ const architecture = {
   schemaVersion: 1,
   courseId: 'responsive-web-design',
   status: 'researching',
-  reviewedAt: '2026-07-15',
+  reviewedAt: '2026-07-16',
   entryContract: {
     intendedLearner:
       'A true beginner who can operate a supported tablet or desktop browser but may not know files, HTML, CSS, developer tools, accessibility, or responsive design.',

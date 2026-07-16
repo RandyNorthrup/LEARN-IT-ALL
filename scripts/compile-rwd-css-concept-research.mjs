@@ -503,33 +503,65 @@ add(
 
 add(
   'css-font-stacks-generic-fallbacks',
-  'Font stacks and generic fallbacks',
-  'Build font-family stacks that preserve readable category, glyph coverage, metrics, and system fallback when preferred fonts are absent.',
+  'Font selection, faces, generic fallbacks, and synthesis',
+  'Predict family, width, style, weight, character-cluster, generic-family, and synthesized-face selection while preserving language support and readable fallback.',
   'css-type-color-and-design',
   ['css-inheritance-initial-unset-revert'],
-  'rwd-webdev-css',
-  'Typography module',
-  'Font stacks fall through available faces and should end in an appropriate generic family.',
-  'Declaring one web font guarantees its file loads and contains every character the page needs.',
+  'rwd-css-fonts-four',
+  'Sections 2, 5, and 6: basic font properties, font matching, and font features',
+  'CSS selects faces from a prioritized family list using requested width, style, weight, language, and cluster coverage; installed fonts and generic mappings vary by user agent, platform, locale, and user choice, and missing faces can trigger synthesis.',
+  'A named font that exists on most computers renders every script, weight, italic, metric, and glyph consistently across platforms.',
   [
-    'Missing font, missing glyph, slow load, and platform substitution cases must remain legible and structurally stable.',
-    'Learner must justify fallback order using category, language, metrics, and content needs.',
+    'Missing family, missing face, missing cluster, synthetic bold or italic, different locale, and user-chosen generic cases must remain legible and preserve meaning.',
+    'Learner must inspect the rendered face and justify family order, generic choice, synthesis policy, language coverage, and requested style rather than infer results from authored CSS.',
   ]
 );
 
 add(
-  'css-font-loading-variable-fonts',
-  'Web font loading and variable axes',
-  'Declare bounded font sources, formats, display behavior, weights, styles, and variable axes while limiting payload and layout shift.',
+  'css-web-font-sources-loading',
+  'Web font sources, loading, licensing, privacy, and failure',
+  'Declare licensed, bounded font sources, formats, technologies, unicode ranges, display behavior, weights, widths, and styles while controlling requests, payload, privacy exposure, and failure behavior.',
   'css-type-color-and-design',
   ['css-font-stacks-generic-fallbacks'],
-  'rwd-webdev-css',
-  'Web fonts and variable fonts coverage',
-  'Font loading affects availability, rendering phases, supported styles, payload, and text metrics.',
-  'One variable-font file is automatically smaller and faster than every subset of static fonts.',
+  'rwd-css-fonts-four',
+  'Sections 3 and 4: display timeline, font resources, descriptors, fetching, and font-display',
+  'Font faces use ordered local or URL sources plus descriptors that define matching ranges and display behavior; fetching, blocking, swap, failure, licensing, cross-origin delivery, and third-party requests remain separate operational decisions.',
+  'Pasting a remote font stylesheet link guarantees valid licensing, private requests, complete character coverage, fast rendering, and a usable offline result.',
   [
-    'Network-disabled, slow-font, unsupported-format, and missing-weight cases must render usable fallback text.',
-    'Learner must compare declared axis range and requested values, then measure payload and layout behavior.',
+    'Blocked, slow, failed, cross-origin, unsupported-format, missing-range, offline, and third-party-disabled cases must keep all text readable and the task usable.',
+    'Learner must verify license and source ownership, inspect actual requests and loaded faces, minimize required variants and subsets, and defend self-hosted or third-party delivery against privacy, security, availability, and performance constraints.',
+  ]
+);
+
+add(
+  'css-font-metrics-fallback-stability',
+  'Font metrics, fallback matching, and layout stability',
+  'Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to fallback sizing, line boxes, overflow, and layout shift.',
+  'css-type-color-and-design',
+  ['css-web-font-sources-loading', 'css-intrinsic-extrinsic-sizing'],
+  'rwd-css-fonts-four',
+  'Sections 2.5, 2.6, and 4.11: size, size adjustment, and font metric overrides',
+  'Font metrics affect perceived size, glyph width, line boxes, fallback geometry, and layout stability; size-adjust and ascent, descent, and line-gap overrides can align known fallback metrics but require measured values.',
+  'Matching fallback category or declared font size guarantees identical x-height, line breaks, line boxes, and element dimensions before and after a web font loads.',
+  [
+    'Changed fallback family, delayed load, 200% text, missing glyph, heading wrap, button label, and multilingual cases must preserve content and bounded layout stability.',
+    'Learner must measure actual metrics and geometry before using adjustment descriptors, then prove the correction across at least two changed strings without clipping glyphs.',
+  ]
+);
+
+add(
+  'css-variable-fonts-features',
+  'Variable axes, typographic features, and language-aware glyphs',
+  'Use registered variable axes, bounded custom axes, kerning, ligatures, numeric forms, capitalization, and language-aware shaping through high-level properties before low-level feature overrides.',
+  'css-type-color-and-design',
+  ['css-web-font-sources-loading', 'css-font-stacks-generic-fallbacks'],
+  'rwd-css-fonts-four',
+  'Sections 6 through 8: feature properties, resolution, and variation properties',
+  'CSS Fonts maps high-level weight, width, style, variant, kerning, and language properties into font selection and OpenType features; variation axes and low-level settings apply in a defined order and only when the selected face supports them.',
+  'A variable font automatically includes every useful style and language, is always smaller than static subsets, and should be controlled only through font-variation-settings.',
+  [
+    'Unsupported-axis, clamped-range, missing-feature, changed-language, numeric-data, code, and fallback-face cases must preserve readable and semantically suitable glyphs.',
+    'Learner must inspect supported axes and features, choose high-level CSS when available, measure payload against required static faces, and explain any low-level override.',
   ]
 );
 
@@ -538,10 +570,14 @@ add(
   'Type scale, line height, and rhythm',
   'Set a readable type scale and unitless line heights that adapt through inheritance, zoom, content hierarchy, and component context.',
   'css-type-color-and-design',
-  ['css-font-stacks-generic-fallbacks', 'css-absolute-font-relative-viewport-units'],
-  'rwd-webdev-css',
-  'Typography module',
-  'Font size and line height jointly control hierarchy, readability, inheritance, and vertical rhythm.',
+  [
+    'css-font-stacks-generic-fallbacks',
+    'css-font-metrics-fallback-stability',
+    'css-absolute-font-relative-viewport-units',
+  ],
+  'rwd-css-inline-three',
+  'Sections 3 and 5: line boxes, logical height, and line-height',
+  'Inline formatting produces line boxes whose logical height depends on font metrics, inline contents, alignment, and line-height; a unitless number inherits as a factor while fixed computed lengths can mis-scale descendants.',
   'Line-height should use a fixed pixel value so nested text cannot alter a carefully designed rhythm.',
   [
     'Changed font family, zoom, nested size, and two-line control cases must retain legible spacing without clipping.',
@@ -555,9 +591,9 @@ add(
   'Constrain line measure and choose alignment based on reading direction, content length, scanning, and layout rather than screen width alone.',
   'css-type-color-and-design',
   ['css-type-scale-line-height', 'css-intrinsic-extrinsic-sizing'],
-  'rwd-webdev-responsive',
-  'Typography',
-  'Responsive typography includes readable line length, spacing, sizing, and alignment across available space.',
+  'rwd-wcag-two-two',
+  '1.4.4 Resize Text, 1.4.10 Reflow, and 1.4.12 Text Spacing',
+  'Readable measure and alignment must survive enlarged text, reflow, and user spacing overrides without content or function loss.',
   'Center alignment improves readability for all long-form text because each line has visual symmetry.',
   [
     'Short labels, long prose, narrow containers, and RTL text must use alignment and measure suited to the reading task.',
@@ -567,17 +603,33 @@ add(
 
 add(
   'css-text-wrap-spacing-decoration',
-  'Wrapping, spacing, decoration, and overflow text',
-  'Control wrapping, word breaking, hyphenation, spacing, decoration, and truncation without hiding content or overriding user text-spacing needs.',
+  'Wrapping, spacing, transformation, and overflow text',
+  'Control white space, wrapping, word and line breaking, hyphenation, alignment, case transformation, spacing, indentation, and truncation without hiding content or overriding language and user text-spacing needs.',
   'css-type-color-and-design',
   ['css-readable-measure-alignment', 'css-overflow-containment-scroll'],
-  'rwd-webdev-css',
-  'Text and typography modules',
-  'Text properties affect wrapping, overflow, decoration, white space, and readability under content variation.',
+  'rwd-css-text-four',
+  'Sections 2 through 8: transformation, white space, wrapping, line breaking, alignment, spacing, and indentation',
+  'Text processing is language- and writing-system-aware: case mapping, white-space handling, wrap opportunities, line breaking, hyphenation, alignment, letter and word spacing, and indentation operate through defined processing models.',
   'Single-line ellipsis communicates the complete hidden value to every keyboard and assistive-technology user.',
   [
     'Long URLs, unbroken identifiers, translated strings, enlarged spacing, and multi-line labels must remain understandable.',
     'Any truncation must expose the complete value through a task-appropriate accessible interaction or remove the fixed constraint.',
+  ]
+);
+
+add(
+  'css-text-decoration-shadows-emphasis',
+  'Text decoration, shadows, and emphasis',
+  'Apply underlines, overlines, line-throughs, emphasis marks, and text shadows without obscuring glyphs, imitating links, carrying meaning by decoration alone, or mistaking ink overflow for layout space.',
+  'css-type-color-and-design',
+  ['css-text-wrap-spacing-decoration', 'css-backgrounds-borders-shadows'],
+  'rwd-css-text-decoration-four',
+  'Sections 2 through 5: line decoration, emphasis marks, text shadows, painting, and overflow',
+  'Text decorations propagate and paint in defined layers; text shadows are ordered ink effects that do not affect layout or scrollable overflow, while decoration purpose and readability depend on language, contrast, thickness, offset, and fallback.',
+  'A large blurred text shadow improves contrast and readability because it makes letters visually thicker on every background.',
+  [
+    'Changed backdrop, zoom, forced colors, link state, spelling or editorial meaning, vertical text, and decoration-disabled cases must preserve readable text and non-decoration meaning.',
+    'Learner must predict paint order and ink overflow, measure rendered contrast, and remove any shadow or decoration that obscures glyph boundaries or imitates another interaction state.',
   ]
 );
 
@@ -1565,7 +1617,7 @@ add(
   'Rendering cost and layout stability',
   'Reduce blocking payload, unnecessary style work, layout shifts, expensive paint, and animation cost without sacrificing semantics or accessibility.',
   'css-interaction-accessibility-and-motion',
-  ['css-font-loading-variable-fonts', 'responsive-image-selection', 'css-transitions-state-change'],
+  ['css-web-font-sources-loading', 'responsive-image-selection', 'css-transitions-state-change'],
   'rwd-webdev-responsive',
   'Performance',
   'Responsive experience includes resource selection, stable rendering, and appropriate work across network and device conditions.',
@@ -1625,7 +1677,7 @@ const graph = {
   courseId: 'responsive-web-design',
   scopeId: 'css-and-responsive-design',
   status: 'researching',
-  reviewedAt: '2026-07-15',
+  reviewedAt: '2026-07-16',
   sourceIds: [
     'rwd-css-snapshot',
     'rwd-css-syntax-three',
@@ -1647,6 +1699,12 @@ const graph = {
     'rwd-filter-effects-one',
     'rwd-css-flexbox-one',
     'rwd-css-align-three',
+    'rwd-css-fonts-four',
+    'rwd-css-font-loading-three',
+    'rwd-css-text-four',
+    'rwd-css-text-decoration-four',
+    'rwd-css-inline-three',
+    'rwd-woff-two',
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
     'rwd-mdn-css-fundamentals',
