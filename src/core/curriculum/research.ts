@@ -1299,6 +1299,9 @@ const StepDesignEvidenceKindSchema = z.enum([
   'input-purpose-behavior',
   'choice-group-behavior',
   'form-control-behavior',
+  'control-state-transition',
+  'constraint-validity',
+  'error-recovery',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1368,6 +1371,9 @@ const StepDesignLayoutSchema = z.enum([
   'input-purpose-matrix',
   'choice-group-inspector',
   'form-control-inspector',
+  'control-state-inspector',
+  'validity-inspector',
+  'error-recovery-trace',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1653,6 +1659,9 @@ export const ResearchModuleStepDesignSchema = z
             'input-purpose-behavior',
             'choice-group-behavior',
             'form-control-behavior',
+            'control-state-transition',
+            'constraint-validity',
+            'error-recovery',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
