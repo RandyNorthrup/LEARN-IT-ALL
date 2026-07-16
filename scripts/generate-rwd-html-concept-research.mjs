@@ -1486,6 +1486,33 @@ concept(
 );
 
 concept(
+  'html-form-control-states',
+  'Control states, availability, and submitted values',
+  'Distinguish default and current values, focus, checked or selected state, readonly state, and disabled state, then predict operability and submitted-data consequences.',
+  'html-forms',
+  ['html-form-submission-data', 'html-input-types-autocomplete', 'html-textarea-select-buttons'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Form control infrastructure and input disabled and readonly attributes',
+      'HTML defines separate focus, mutability, disabled, checked, selected, default-value, current-value, and form-entry behavior; disabled and readonly are not interchangeable.'
+    ),
+    anchor(
+      'rwd-wai-tutorials',
+      'Forms labels, validation, and notifications',
+      'Control state and changes need persistent, programmatically available information and usable keyboard behavior.'
+    ),
+  ],
+  [
+    'Readonly and disabled both prevent edits, remain focusable, and submit the same name-value entry.',
+  ],
+  [
+    'Changed text, choice, selection, initial-value, focused, readonly, disabled, reset, and submission cases must predict interaction and entry-list behavior separately.',
+    'Keyboard, accessibility, reset, and submitted-data evidence must expose state without relying on dimmed styling alone.',
+  ]
+);
+
+concept(
   'html-native-validation',
   'Constraint validation',
   'Apply required, length, range, and pattern constraints only where they match realistic data, then inspect validity and browser behavior.',
@@ -1566,11 +1593,38 @@ concept(
 );
 
 concept(
+  'html-table-cell-spans',
+  'Row and column spans preserve the data grid',
+  'Use colspan and rowspan only when one cell genuinely covers multiple grid positions, then verify the resulting dimensions, groups, and header relationships.',
+  'html-tables',
+  ['html-table-structure'],
+  [
+    anchor(
+      'rwd-whatwg-html',
+      'Tabular data processing model and colspan and rowspan attributes',
+      'HTML places spanning cells into a table grid according to bounded row and column spans rather than treating spans as visual width controls.'
+    ),
+    anchor(
+      'rwd-wai-tutorials',
+      'Tables with irregular and multi-level headers',
+      'Spans can change header ranges and may require rowgroup, colgroup, scope, or explicit header associations.'
+    ),
+  ],
+  [
+    'Colspan is a presentation shortcut for making a cell wider and does not change the logical table grid.',
+  ],
+  [
+    'Changed total, grouped-header, missing-cell, excessive-span, row-span, and responsive cases must produce the intended grid without overlap or gaps.',
+    'Linearized and accessibility inspection must preserve each spanning cell purpose and the headers governing every affected data cell.',
+  ]
+);
+
+concept(
   'html-table-header-associations',
   'Header associations',
   'Use th, scope, and explicit headers relationships according to simple and complex table structure so each data cell retains context.',
   'html-tables',
-  ['html-table-structure', 'html-form-labels-instructions'],
+  ['html-table-cell-spans', 'html-form-labels-instructions'],
   [
     anchor(
       'rwd-wai-tutorials',

@@ -261,7 +261,7 @@ describe('research contracts', () => {
     const conceptIds = graph.concepts.map((concept) => concept.id);
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(77);
+    expect(graph.concepts).toHaveLength(79);
     expect(conceptIds).toEqual(
       expect.arrayContaining([
         'html-replaced-content-boundaries',
@@ -273,6 +273,8 @@ describe('research contracts', () => {
         'html-code-preformatted-text',
         'html-editorial-annotations',
         'html-ruby-annotations',
+        'html-form-control-states',
+        'html-table-cell-spans',
       ])
     );
     expect(conceptIds).not.toContain('html-machine-readable-text');
@@ -391,10 +393,10 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([77, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([79, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(33);
+    ).toHaveLength(41);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -549,9 +551,99 @@ describe('research contracts', () => {
       semanticHtmlAlignments.find((alignment) => alignment.sourceBlockSlug === 'quiz-semantic-html')
         ?.sourceEvidence.quizQuestionCount
     ).toBe(60);
+    const formsTablesAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'html-forms-and-tables'
+    );
+    expect(formsTablesAlignments).toHaveLength(8);
+    expect(
+      formsTablesAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(53);
+    expect(
+      formsTablesAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(61);
+    expect(
+      formsTablesAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        formsTablesAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-working-with-forms': [
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+      ],
+      'workshop-hotel-feedback-form': [
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-landmarks',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+      ],
+      'lecture-working-with-tables': ['html-tables-purpose', 'html-table-structure'],
+      'workshop-final-exams-table': [
+        'html-tables-purpose',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-table-header-associations',
+      ],
+      'lab-book-catalog-table': [
+        'html-tables-purpose',
+        'html-table-structure',
+        'html-table-cell-spans',
+      ],
+      'lecture-working-with-html-tools': [
+        'html-tag-element-distinction',
+        'html-nesting-tree',
+        'html-parser-recovery',
+        'html-links-destinations',
+        'html-validation-inspection',
+        'html-browser-request-parse-render',
+      ],
+      'review-html-tables-and-forms': [
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-validation-inspection',
+      ],
+      'quiz-html-tables-and-forms': [
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-validation-inspection',
+      ],
+    });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
-    ).toHaveLength(92);
+    ).toHaveLength(87);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -702,7 +794,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(163);
+    expect(architecture.conceptIds).toHaveLength(165);
     expect(architecture.sourceObjectiveIds).toHaveLength(158);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
