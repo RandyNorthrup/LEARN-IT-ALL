@@ -4,6 +4,8 @@
 
 This is a replacement architecture. The current pages and course files are migration input, not the target design. Legacy code is removed only after equivalent data and learner flows pass migration tests.
 
+The 2026-07-15 learner review invalidated the earlier content-complete checkpoint. Generated activity counts, topic mappings, schemas, and duplication scores did not prove that the material actually taught a beginner. Every course is audit-required until its learner-facing explanations, practice progression, editor/runtime path, feedback, assessment validity, and transfer evidence pass the contracts in [the research-backed rebuild plan](./LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md).
+
 ## Verified Responsive Web Design baseline
 
 Reference snapshot: freeCodeCamp `responsive-web-design-v9` at commit `c115efdd41f868d8850156f6a7a211219c35a847` (2026-07-13).
@@ -75,6 +77,22 @@ Guided code steps must have:
 
 Independent labs and projects must not reuse workshop starter code, wording, visual scenario, or requirement sequence. They expose user stories and acceptance tests, not a recipe.
 
+## Universal inline workspace contract
+
+Every activity that asks a learner to create, modify, inspect, debug, test, or defend an artifact opens that artifact inline. A code or build course cannot send the learner to a passive challenge card or require an unrelated local setup for its primary practice path.
+
+Each course declares its workspace profile: supported files, editor language modes, preview or output surface, execution boundary, test/check adapter, resource limits, reset behavior, persistence contract, and named transfer boundary. The supported profiles include:
+
+- sandboxed HTML/CSS/JavaScript preview with source, DOM, accessibility, responsive, and behavior checks;
+- isolated browser workers for bounded Python, Go, C, SQL, and JavaScript practice;
+- bounded TypeScript compilation and execution with deterministic diagnostics;
+- deterministic stateful shell, Git, network, infrastructure, support, prompt, repository-quality, and configuration simulators that never execute learner text on the host;
+- calculation, data, and mathematical workspaces with expression, table, graph, units, and changed-case evidence rather than a prose-only response box.
+
+The workspace provides files or artifact sections, syntax support where appropriate, preview/output, diagnostics, tests, check results, progressive hints, reset and diff/review actions, autosave, resume, and an export path. It must preserve one coherent artifact across cumulative steps instead of replacing the learner's work with a new starter on every screen.
+
+Desktop and supported tablet layouts use an enhanced inline editor with accessibility support, explicit ARIA labels, keyboard help, high-contrast support, and no keyboard trap. Monaco is the preferred desktop editor; tablet browsers receive Monaco only where supported and otherwise use the fully functional native editor. Phone course studios are intentionally unsupported and show an accessible handoff to continue on a tablet or computer. Public navigation and course information remain readable on phones.
+
 ## Quality gates
 
 The curriculum audit fails CI when it finds:
@@ -90,17 +108,17 @@ The curriculum audit fails CI when it finds:
 - client-supplied answers used as canonical grading data;
 - inaccessible interaction controls or layouts that fail supported viewports.
 
-Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on mobile, tablet, and desktop; every score must be at least 99. SEO is intentionally excluded.
+Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on tablet and desktop; every score must be at least 99. SEO is intentionally excluded.
 
 ## Product experience
 
 The rebuilt interface uses a responsive workspace instead of a collection of disconnected pages:
 
-- a personalized dashboard with resume, review queue, goals, streaks, and recent builds;
+- a personalized dashboard with one clear resume action, due review, demonstrated competencies, unfinished builds, and recent evidence;
 - a course map that shows prerequisites, mastery, projects, and estimated effort;
 - a distraction-free learning workspace with instructions, editor, preview, tests, console, notes, and step navigation;
-- earned XP, meaningful achievements, project gallery, mastery heatmaps, and celebrations that respect reduced-motion preferences;
-- compact mobile modes, a productive tablet split view, and a full desktop workspace;
+- a project gallery, evidence-backed mastery map, and brief optional celebrations that respect reduced-motion preferences;
+- a productive tablet workspace and a full desktop workspace, plus a clear phone handoff;
 - persistent skip links, landmarks, visible focus, screen-reader status messages, logical headings, large touch targets, and no color-only state.
 
 Fun comes from rapid feedback, visible progress, varied challenges, creative builds, and learner choice—not from obstructive animation or arbitrary points.

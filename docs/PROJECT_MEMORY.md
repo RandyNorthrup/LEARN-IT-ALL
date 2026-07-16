@@ -1,8 +1,24 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified full gate: 2026-07-15 after local-only automation policy verification
+Last verified non-Lighthouse code gate: 2026-07-15 after research-contract and blueprint-state correction
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
+
+## Active learner-review correction — 2026-07-15
+
+Direct learner-facing inspection invalidated the prior content-complete and publication claims. Responsive Web Design mapped the current freeCodeCamp v9 inventory and produced thousands of schema-valid steps, but its opening HTML sequence mostly used generic checkpoint prose, delayed meaningful editing, repeated instructions, and token-presence checks instead of explicitly teaching a beginner how HTML elements, tags, content, nesting, attributes, and documents work. Passing count, schema, duplication, build, and selected browser gates did not establish instructional quality.
+
+Treat all 54 courses as `audit-required`; historical module, activity, step, and check totals below are inventory only. The completion marker has been removed, Lighthouse is paused again, and no course may be called approved or published until it passes the new teaching-clarity, prerequisite, practice-progression, assessment-validity, inline-workspace, accessibility, subject-review, and learner-flow gates in `docs/LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md`.
+
+All build-capable courses must provide a real inline editor or structured artifact workspace backed by the appropriate isolated runtime or deterministic simulator. The current shared workspace and runtimes are implementation assets, but catalog-wide editor coverage, enhanced editing, tablet support, meaningful checks, and course-specific learner flow remain unverified work. By user decision on 2026-07-15, course studios target tablet and desktop; phone visits receive a clear accessible handoff rather than a degraded editor. Public navigation and course information remain usable on phones.
+
+Research is a blocking, continuous workstream rather than a completed benchmark task. Before architecture or bulk authoring, the platform needs an evidence register and each of all 54 courses needs a current subject dossier, authoritative-source/version record, external-objective coverage map, prerequisite and misconception analysis, authentic-task and safety boundaries, instructional alignment matrix, research-to-design decisions, and maintenance triggers. Platform work separately requires learning-science, institutional-course-quality, competitive task, usability/information-architecture, accessibility, assessment-validity, editor/runtime-isolation, security/privacy, learner-pilot, and stack-compatibility research. A link list or topic match does not make a course `researched`; reviewed evidence must change and trace to scope, order, teaching, interaction, assessment, tests, or maintenance.
+
+The permanent research contract and baseline audit now make those gaps enforceable. All 54 blueprints are `audit-required`, and their generators no longer recreate false `approved` states. The platform register records 11 research tracks with source limits, decisions, validation, and refresh triggers. The 2026-07-15 baseline found 799 existing source records, but only 39 of 1,135 modules name source-objective IDs; all 54 courses lack complete source identity, limitation, decision, freshness, and objective-traceability evidence. Responsive Web Design has the first honest `researching` dossier; 53 dossiers remain missing and zero courses are `researched`. Current audit inventory: 323 blocker groups and one warning. See `docs/audits/RESEARCH_PROGRAM_BASELINE_2026-07-15.md`.
+
+Focused research and blueprint tests passed 62 tests. Full local verification then passed 98 test files and 612 tests, `npm run type-check`, normal lint, strict lint, and the Next.js 16.2.10 production build. No learner UI changed in this research-contract milestone, so no changed browser flow required re-verification. Lighthouse remained paused and no workflow runner was added.
+
+The first permanent learner-quality scanner now covers all 11,742 activities. Its 2026-07-15 baseline found at least one issue in all 54 courses and 9,051 activities: 3,599 blocker groups and 8,764 warning groups. Blockers include 3,269 delayed-artifact-practice groups, 207 token-only grading groups, 88 known generic-template-language groups, and 35 missing-code-model groups. The warnings identify 8,764 activities whose artifact evidence is limited to source shape and requires assessment review. Responsive Web Design has 330 blocker groups across 220 of 303 activities. See `docs/audits/LEARNING_QUALITY_BASELINE_2026-07-15.md`; these counts are defect inventory, not a replacement quality score.
 
 ## Mission
 
@@ -12,6 +28,7 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 
 - Use `/caveman` for agent communication.
 - Keep active goal and plan updated.
+- Keep primary-source research, course dossiers, coverage/alignment matrices, research-to-design decisions, and observed learner evidence active throughout the rebuild; research is never treated as a finished one-time checkbox.
 - Add or update tests with new code and content.
 - Make all UI/UX accessible and responsive.
 - Suggest next steps and explain blockers at each session handoff.
@@ -21,14 +38,16 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Upgrade stack to latest mutually compatible working releases, then repair fallout.
 - Responsive Web Design must cover the depth and topics of freeCodeCamp Responsive Web Design v9 with original LEARN-IT-ALL material.
 - Every course, including preexisting courses, needs theory, workshops, labs, debugging, reviews, quizzes, real-world projects, exams, and repeated build-to-learn practice.
+- Every build-capable course needs an inline, resumable editor or structured artifact workspace with a verified safe runtime or deterministic simulator, feedback, hints, tests, and real evidence.
 - Each lesson must retrieve and correctly reuse earlier skills before adding bounded new complexity. Generated quantity and renamed variants do not establish quality.
-- Lighthouse is paused until all content work is complete. Final Lighthouse runs must cover mobile, tablet, and desktop, exclude SEO, and reach at least 99 in performance, accessibility, and best practices.
+- Lighthouse is paused until all content work is complete. Final Lighthouse runs cover tablet and desktop, exclude SEO, and reach at least 99 in performance, accessibility, and best practices in both profiles. The former mobile learner-studio profile was removed by user decision on 2026-07-15.
 
 ## Current architecture
 
 - Next.js App Router application with React, TypeScript, SQLite, and version 2 curriculum documents.
 - Repository and container toolchain: Node.js 24.18.0 LTS and npm 12.0.1, pinned in package metadata, engines, the lockfile, Docker, and tested lifecycle-script policy.
 - Canonical curriculum types and audits: `src/core/curriculum`.
+- Research contracts and audits: `src/core/curriculum/research.ts`, `scripts/audit-research-program.ts`, `docs/research/platform-research-register.json`, and `docs/research/courses/<course-id>.json`.
 - Learner-facing version 2 content: `content/v2/courses/<course-id>`.
 - Course blueprints: `blueprints/<course-id>.json`.
 - Shared content generators: `scripts/lib/generate-course-blueprint.mjs` and `scripts/lib/generate-expanded-course-content.mjs`.
@@ -36,9 +55,9 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Shared interactive targets include sandboxed web output, JavaScript, Pyodide Python, isolated Go WebAssembly, fresh in-memory SQLite, deterministic network/shell simulation, prompt evaluation, repository/config quality gates, and numeric calculation.
 - Legacy content is migration input. Do not extend old repeated Markdown/JSON layouts as the target model.
 
-## Verified rebuild state
+## Historical technical inventory — instructional quality invalidated
 
-At the last full gate, all 54 catalog courses were wired into the version 2 learner path and published:
+At the last technical gate, all 54 catalog courses were wired into the version 2 learner path. These counts remain useful for migration and audit scope; they are not evidence that the courses teach effectively and no longer support a publication claim:
 
 - Responsive Web Design: 29 modules, 303 activities, 4,855 steps, and 5,407 checks.
 - Python Basics, Python OOP, and CompTIA Network+ N10-009: 45 modules, 529 activities, 4,588 steps, and 5,027 checks combined.
@@ -83,7 +102,7 @@ At the last full gate, all 54 catalog courses were wired into the version 2 lear
 
 Verified platform total at this checkpoint: 1,135 modules, 11,742 activities, 98,870 learner steps, and 108,370 checks across 54 version 2 courses.
 
-The catalog contains 54 courses total and all 54 now have verified version 2 releases. Catalog-wide near-duplication repair, equivalent-flow version 1 curriculum retirement, and gamified-practice modernization are complete. The audited `content/v2/CONTENT_COMPLETE` marker releases the Lighthouse hold for the final mobile, tablet, and desktop gate only.
+The catalog contains 54 version 2 course inventories. Every course now requires the reopened instructional and learner-flow audit. `content/v2/CONTENT_COMPLETE` is absent and the Lighthouse hold is active.
 
 ## Catalog-wide duplication repair evidence
 
@@ -416,12 +435,15 @@ Run focused tests after each new change, then repeat the full non-Lighthouse gat
 
 ## Active next work
 
-1. Conduct observed learner studies across representative beginner, intermediate, and advanced courses; use completion, retry, hint, transfer, and abandonment evidence to prioritize the next pedagogical revisions.
-2. Regenerate and parity-test runtime outlines whenever course, module, activity, prerequisite, estimate, or step ordering changes; the predev, pretest, and prebuild hooks regenerate the compressed runtime index when source metadata changes.
-3. Keep the proven container-image health and packaged-activity smoke as an explicit local release check. Do not add GitHub Actions or push-triggered automation unless the user explicitly reverses the no-workflow policy.
+1. Finish platform competitive-task, navigation/usability, mastery-validity, runtime-threat, privacy/ethics, stack-compatibility, and observed-learner research records.
+2. Complete Responsive Web Design's granular source-objective coverage and prerequisite maps, then review the true-beginner HTML vertical slice before any generator expansion.
+3. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, and freshness triggers.
+4. Audit all 54 learner flows and generators; classify each as keep, rewrite, replace, or remove. Counts and schema validity cannot close this audit.
+5. Enforce inline workspace/runtime declarations, then build the accessible Monaco/native tablet-desktop reference flow with phone handoff.
+6. Refactor navigation, progress, grading, and curriculum around real persisted evidence; keep Lighthouse paused and workflows absent until every release blocker closes.
 
 ## Known caution
 
 Generated quantity is not proof of instructional quality. Course completion requires source coverage, competency alignment, original explanations, varied scenarios, meaningful changed-case evidence, independent projects, accessible interaction, subject review, and learner-flow verification. Generic templates repeated across hundreds of activities are a defect even when IDs and schema checks differ. New or regenerated content must repeat the same gates before publication.
 
-There is no external release blocker recorded at this checkpoint. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke are recorded compatibility boundaries, not blockers because the source-verified compatible smokes passed. The former broad Turbopack curriculum warnings are eliminated through the compressed runtime index and route-scoped trace includes. The content hold and final three-profile Lighthouse gate are complete.
+There is no external execution blocker recorded. The internal release blockers are substantive: all courses need instructional audit, Responsive Web Design needs a beginner-first rewrite, inline workspace coverage needs enforcement and completion, learner-facing navigation/progress needs repair, and representative learner pilots have not passed. Tcl/Tk 9.0 packaging with PyInstaller 6.21.0, Playwright's fallback Chromium package on this host, google-adk 2.4.0's OpenTelemetry SDK 1.42.1 upper bound, and npm's transitive `whatwg-encoding` deprecation in the disposable Cheerio smoke remain compatibility boundaries. The Lighthouse hold is active.

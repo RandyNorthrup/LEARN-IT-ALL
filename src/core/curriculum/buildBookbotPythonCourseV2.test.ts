@@ -75,7 +75,7 @@ describe('Unicode-safe Bookbot with Python 3.14 v2 guided project', () => {
   it('is schema-valid, audited, cumulative, prerequisite-gated, and scenario-diverse', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual(['python-basics', 'git-basics']);
     expect(graph.course.prerequisites).toEqual(['python-basics', 'git-basics']);
     expect(new Set(graph.activities.map((activity) => activity.kind))).toEqual(

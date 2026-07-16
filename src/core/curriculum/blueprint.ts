@@ -9,6 +9,15 @@ const IdSchema = z
 
 export const CoverageStageSchema = z.enum(['I', 'G', 'F', 'R', 'A', 'T']);
 
+export const BlueprintStatusSchema = z.enum([
+  'audit-required',
+  'researching',
+  'researched',
+  'authoring',
+  'in-review',
+  'approved',
+]);
+
 const SkillCoverageSchema = z.object({
   competencyId: IdSchema,
   stages: z.array(CoverageStageSchema).min(1),
@@ -55,7 +64,7 @@ export const CourseBlueprintSchema = z.object({
   id: IdSchema,
   title: z.string().min(5),
   version: z.string().min(1),
-  status: z.enum(['draft', 'in-review', 'approved']),
+  status: BlueprintStatusSchema,
   researchedAt: z.iso.datetime(),
   audience: z.object({
     description: z.string().min(30),
@@ -76,6 +85,7 @@ export const CourseBlueprintSchema = z.object({
   sources: z
     .array(
       z.object({
+        id: IdSchema.optional(),
         title: z.string().min(5),
         authority: z.enum([
           'standard',
@@ -88,6 +98,14 @@ export const CourseBlueprintSchema = z.object({
         version: z.string().min(1),
         reviewedAt: z.iso.date(),
         scope: z.string().min(10),
+        limitations: z.array(z.string().min(15)).min(1).optional(),
+        decisionIds: z.array(IdSchema).min(1).optional(),
+        nextReview: z
+          .object({
+            onOrBefore: z.iso.date().optional(),
+            triggers: z.array(z.string().min(10)).min(1),
+          })
+          .optional(),
       })
     )
     .min(3),

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -34,15 +34,18 @@ function loadProfile(profile: string): LighthouseConfig {
 }
 
 describe('Lighthouse profiles', () => {
-  it('runs only after the audited version 2 completion marker is present', () => {
-    const marker = readFileSync(path.join(process.cwd(), 'content/v2/CONTENT_COMPLETE'), 'utf8');
-    expect(marker).toContain('All 54 published courses passed');
-    expect(marker).toContain('duplication, accessibility, and learner-flow gates');
-    expect(marker).toContain('mobile, tablet, and desktop Lighthouse gate may run');
+  it('stays paused while the reopened curriculum and learner-flow audit is incomplete', () => {
+    expect(existsSync(path.join(process.cwd(), 'content/v2/CONTENT_COMPLETE'))).toBe(false);
+
+    const guard = readFileSync(
+      path.join(process.cwd(), 'scripts/run-lighthouse-after-content.mjs'),
+      'utf8'
+    );
+    expect(guard).toContain('Lighthouse paused');
+    expect(guard).toContain('content/v2/CONTENT_COMPLETE');
   });
 
   it.each([
-    ['mobile', 412, 823],
     ['tablet', 768, 1024],
     ['desktop', 1440, 900],
   ])('measures the %s viewport five times without SEO', (profile, width, height) => {
@@ -66,16 +69,6 @@ describe('Lighthouse profiles', () => {
     });
   });
 
-  it('models a constrained modern phone with the mobile network profile', () => {
-    const mobile = loadProfile('mobile');
-    expect(mobile.ci.collect.settings.formFactor).toBe('mobile');
-    expect(mobile.ci.collect.settings.throttling).toMatchObject({
-      rttMs: 150,
-      throughputKbps: 1638.4,
-      cpuSlowdownMultiplier: 3,
-    });
-  });
-
   it('models a midrange tablet without relaxing its constrained mobile network', () => {
     const tablet = loadProfile('tablet');
     expect(tablet.ci.collect.settings.formFactor).toBe('mobile');
@@ -91,12 +84,12 @@ describe('Lighthouse profiles', () => {
     'accessibility',
     'best-practices',
   ])('requires at least 99 for %s', (category) => {
-    const config = loadProfile('mobile');
+    const config = loadProfile('tablet');
     expect(config.ci.assert.assertions[`categories:${category}`][1].minScore).toBe(0.99);
   });
 
   it('uses a five-run median for volatile performance and worst-run accessibility gates', () => {
-    const config = loadProfile('mobile');
+    const config = loadProfile('tablet');
     expect(config.ci.assert.assertions['categories:performance'][1].aggregationMethod).toBe(
       'median'
     );

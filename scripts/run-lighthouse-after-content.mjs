@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const completionMarker = resolve(root, 'content/v2/CONTENT_COMPLETE');
 const requestedProfile = process.argv[2] ?? 'all';
-const profiles = requestedProfile === 'all' ? ['mobile', 'tablet', 'desktop'] : [requestedProfile];
+const profiles = requestedProfile === 'all' ? ['tablet', 'desktop'] : [requestedProfile];
 
 if (!existsSync(completionMarker)) {
   console.log(
@@ -14,7 +14,7 @@ if (!existsSync(completionMarker)) {
   process.exit(0);
 }
 
-if (!profiles.every((profile) => ['mobile', 'tablet', 'desktop'].includes(profile))) {
+if (!profiles.every((profile) => ['tablet', 'desktop'].includes(profile))) {
   console.error(`Unknown Lighthouse profile: ${requestedProfile}`);
   process.exit(1);
 }

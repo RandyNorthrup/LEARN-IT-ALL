@@ -81,7 +81,7 @@ describe('production static-site generator with Python 3.14 v2 guided project', 
   it('is schema-valid, audited, cumulative, prerequisite-gated, and scenario-diverse', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual([
       'python-basics',
       'python-oop',

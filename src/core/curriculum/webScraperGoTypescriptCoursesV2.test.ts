@@ -235,8 +235,8 @@ describe('authorized web crawler and accessible site auditor Go and TypeScript v
     expect(validateCurriculumGraph(typescriptGraph)).toEqual([]);
     expect(auditCourseBlueprint(goBlueprint)).toEqual([]);
     expect(auditCourseBlueprint(typescriptBlueprint)).toEqual([]);
-    expect(goBlueprint.status).toBe('approved');
-    expect(typescriptBlueprint.status).toBe('approved');
+    expect(goBlueprint.status).toBe('audit-required');
+    expect(typescriptBlueprint.status).toBe('audit-required');
     expect(goBlueprint.pathways.prerequisiteCourseIds).toEqual([
       'go-basics',
       'http-clients-go',

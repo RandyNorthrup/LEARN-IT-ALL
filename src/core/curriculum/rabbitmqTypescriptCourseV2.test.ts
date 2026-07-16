@@ -140,7 +140,7 @@ describe('RabbitMQ 4.3 Pub/Sub and Reliable Messaging with TypeScript 7 v2 cours
   it('is schema-valid, audited, cumulative, prerequisite-gated, and scenario-diverse', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual(['http-servers-typescript']);
     expect(graph.course.prerequisites).toEqual(['http-servers-typescript']);
     expect(new Set(graph.activities.map((activity) => activity.kind))).toEqual(

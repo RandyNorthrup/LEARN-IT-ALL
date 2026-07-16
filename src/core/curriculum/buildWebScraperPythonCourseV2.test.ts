@@ -97,7 +97,7 @@ describe('authorized web crawler and accessible site auditor with Python 3.14 v2
   it('is schema-valid, cumulative, prerequisite-gated, and scenario-diverse', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual([
       'python-basics',
       'python-dsa',

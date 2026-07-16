@@ -234,7 +234,7 @@ export async function generateCourseBlueprint(config) {
     id: config.id,
     title: config.title,
     version: config.version,
-    status: 'approved',
+    status: 'audit-required',
     researchedAt: config.researchedAt,
     audience: config.audience,
     pathways: config.pathways ?? {

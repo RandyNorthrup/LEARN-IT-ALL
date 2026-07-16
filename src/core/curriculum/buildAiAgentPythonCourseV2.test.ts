@@ -97,7 +97,7 @@ describe('safe evaluated AI agent with Python 3.14 and Gemini 3.5 v2 course', ()
   it('is schema-valid, cumulative, prerequisite-gated, and scenario-diverse', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual([
       'python-basics',
       'python-functional',

@@ -75,7 +75,7 @@ describe('Kubernetes Basics v2 course', () => {
   it('is schema-valid, audited, cumulative, prerequisite-gated, and interaction-complete', () => {
     expect(validateCurriculumGraph(graph)).toEqual([]);
     expect(auditCourseBlueprint(blueprint)).toEqual([]);
-    expect(blueprint.status).toBe('approved');
+    expect(blueprint.status).toBe('audit-required');
     expect(blueprint.pathways.prerequisiteCourseIds).toEqual(['docker-basics']);
     expect(graph.course.prerequisites).toEqual(['docker-basics']);
     expect(new Set(graph.activities.map((activity) => activity.kind))).toEqual(

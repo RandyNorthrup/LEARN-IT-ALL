@@ -233,8 +233,8 @@ describe('production feed aggregator Go and TypeScript v2 courses', () => {
     expect(validateCurriculumGraph(typescriptGraph)).toEqual([]);
     expect(auditCourseBlueprint(goBlueprint)).toEqual([]);
     expect(auditCourseBlueprint(typescriptBlueprint)).toEqual([]);
-    expect(goBlueprint.status).toBe('approved');
-    expect(typescriptBlueprint.status).toBe('approved');
+    expect(goBlueprint.status).toBe('audit-required');
+    expect(typescriptBlueprint.status).toBe('audit-required');
     expect(goBlueprint.pathways.prerequisiteCourseIds).toEqual([
       'go-basics',
       'http-clients-go',

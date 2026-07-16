@@ -1,18 +1,6 @@
-const profileName = process.env.LIGHTHOUSE_PROFILE || 'mobile';
+const profileName = process.env.LIGHTHOUSE_PROFILE || 'tablet';
 
 const profiles = {
-  mobile: {
-    formFactor: 'mobile',
-    screenEmulation: { mobile: true, width: 412, height: 823, deviceScaleFactor: 2.625, disabled: false },
-    throttling: {
-      rttMs: 150,
-      throughputKbps: 1638.4,
-      cpuSlowdownMultiplier: 3,
-      requestLatencyMs: 0,
-      downloadThroughputKbps: 0,
-      uploadThroughputKbps: 0,
-    },
-  },
   tablet: {
     formFactor: 'mobile',
     screenEmulation: { mobile: true, width: 768, height: 1024, deviceScaleFactor: 2, disabled: false },

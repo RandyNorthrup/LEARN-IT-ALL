@@ -387,7 +387,7 @@ describe('platform course blueprints', () => {
       );
 
       expect(auditCourseBlueprint(blueprint)).toEqual([]);
-      expect(blueprint.status).toBe('approved');
+      expect(blueprint.status).toBe('audit-required');
       expect(blueprint.competencies).toHaveLength(expected.competencies);
       expect(blueprint.modules).toHaveLength(expected.modules);
       expect(blueprint.modules.reduce((total, module) => total + module.activities.length, 0)).toBe(

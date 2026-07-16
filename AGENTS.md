@@ -43,10 +43,10 @@ Legacy pages and course files are migration input, not the target design. Do not
 
 ## UI and interaction
 
-- Build accessibility and responsiveness into every UI/UX change from the first implementation.
+- Build accessibility and responsiveness into every UI/UX change from the first implementation. Course studios target tablet and desktop; public informational and navigation surfaces remain usable on phones.
 - Support keyboard-only use, logical landmarks and headings, visible focus, announced status, large touch targets, reduced motion, structured text alternatives, and no color-only meaning.
 - Make interaction genuinely useful: rapid feedback, resumable work, progressive hints, correction paths, varied practice, learner choice, and visible mastery. Gamification supports learning and never substitutes for it.
-- Verify every changed learner flow at mobile, tablet, and desktop viewports. Check content reflow, overflow, touch/keyboard operation, status announcements, console errors, and the actual grading/runtime path.
+- Verify every changed learner flow at tablet and desktop viewports. Check content reflow, overflow, touch/keyboard operation, status announcements, console errors, and the actual grading/runtime path. Phone visits to course studios receive a clear accessible handoff to continue on a tablet or computer.
 
 ## Verification and Lighthouse hold
 
@@ -58,14 +58,14 @@ Use this non-Lighthouse gate order:
 4. `npm run lint`;
 5. `npm run lint:strict` so warnings also fail the release gate;
 6. `npm run build`;
-7. browser verification of changed flows at mobile, tablet, and desktop sizes.
+7. browser verification of changed flows at tablet and desktop sizes.
 
-Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run mobile, tablet, and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in every profile.
+Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run tablet and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in both profiles.
 
 ## Durable memory and handoff
 
 - Treat `docs/PROJECT_MEMORY.md` as the canonical repository-local handoff. Update it whenever scope, architecture, course state, verification evidence, next work, or blockers materially change.
 - Keep external agent memory as a pointer to this repository-local source, never as a competing project-status record. Resolve conflicts in favor of this file after reverifying volatile facts.
 - Record dated verified facts separately from unverified in-progress work. Keep volatile counts dated and recompute them before reporting them as current.
-- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final three-profile Lighthouse thresholds.
+- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final tablet/desktop Lighthouse thresholds.
 - Do not weaken the curriculum release gates, learner-code isolation, accessibility rules, or Lighthouse hold unless the user explicitly changes them.

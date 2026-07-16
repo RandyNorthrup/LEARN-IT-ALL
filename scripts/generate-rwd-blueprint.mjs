@@ -1646,7 +1646,7 @@ const blueprint = {
   id: 'responsive-web-design',
   title: 'Responsive Web Design: Build for Everyone',
   version: '2.0.0',
-  status: 'in-review',
+  status: 'audit-required',
   researchedAt: '2026-07-13T00:00:00.000Z',
   audience: {
     description:

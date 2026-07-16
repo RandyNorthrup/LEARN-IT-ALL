@@ -30,7 +30,6 @@ describe('local-only verification policy', () => {
       lint: 'biome check src scripts',
       'lint:strict': 'biome check --diagnostic-level=warn src scripts',
       build: 'next build',
-      'lighthouse:mobile': 'node scripts/run-lighthouse-after-content.mjs mobile',
       'lighthouse:tablet': 'node scripts/run-lighthouse-after-content.mjs tablet',
       'lighthouse:desktop': 'node scripts/run-lighthouse-after-content.mjs desktop',
     });
