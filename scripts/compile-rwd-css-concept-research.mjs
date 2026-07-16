@@ -1126,6 +1126,22 @@ add(
 );
 
 add(
+  'css-grid-alignment-distribution',
+  'Grid item, content, and self alignment',
+  'Align grid items and distribute grid tracks with place, align, and justify properties according to the alignment subject, container, logical axis, available space, baseline, and overflow-safety requirement.',
+  'css-grid-and-positioning',
+  ['css-grid-container-tracks-cells'],
+  'rwd-css-align-three',
+  'Sections 3 through 6: alignment terminology, content distribution, and self alignment',
+  'Grid layout uses the shared box-alignment model; content alignment moves the track collection while self alignment moves items within their grid areas along logical axes.',
+  'place-items centers the entire grid track collection because items and content are the same alignment subject.',
+  [
+    'Changed free space, item size, baseline, writing mode, safe overflow, and multi-track cases must move the predicted subject along the predicted logical axis.',
+    'Learner must select items, self, or content alignment from the actual constraint and reject a visually similar property applied to the wrong box.',
+  ]
+);
+
+add(
   'css-subgrid-alignment',
   'Subgrid and cross-component alignment',
   'Use subgrid when nested content must participate in ancestor track sizing and alignment, with a fallback for unsupported or unsuitable contexts.',
@@ -1635,9 +1651,9 @@ add(
   'Use validation, matched rules, computed styles, box, flex, grid, accessibility, responsive, and performance evidence to test one cause hypothesis at a time.',
   'css-interaction-accessibility-and-motion',
   ['css-cascade-layers-scope', 'css-stacking-contexts-z-index', 'responsive-test-matrix'],
-  'rwd-mdn-css-fundamentals',
-  '3.10 debugging CSS',
-  'CSS debugging requires validation and browser inspection of applied declarations and layout models.',
+  'rwd-chrome-devtools-css',
+  'Styles, Computed, issues, grid overlays, accessibility details, and responsive inspection',
+  'Current browser tooling exposes matched and overridden rules, computed values, box geometry, Grid and Flex overlays, accessibility information, and responsive inspection surfaces for causal debugging.',
   'Toggling random declarations until the screenshot improves is equivalent to diagnosing the cascade and layout cause.',
   [
     'Learner must state a falsifiable hypothesis, select the evidence surface, change one variable, and record the result.',
@@ -1745,6 +1761,8 @@ const graph = {
     'rwd-media-queries-five',
     'rwd-css-contain-three',
     'rwd-css-grid-two',
+    'rwd-chrome-devtools-css',
+    'rwd-w3c-css-validator',
     'rwd-whatwg-html',
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
