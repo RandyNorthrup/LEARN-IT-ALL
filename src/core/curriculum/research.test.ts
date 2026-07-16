@@ -410,7 +410,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(55);
+    ).toHaveLength(61);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -838,9 +838,150 @@ describe('research contracts', () => {
         'html-table-header-associations',
       ],
     });
+    const htmlReview = matrix.alignments.find(
+      (alignment) => alignment.sourceBlockSlug === 'review-html'
+    );
+    expect(htmlReview).toMatchObject({
+      sourceModuleId: 'review-html',
+      sourceChallengeCount: 1,
+      sourceEvidence: { quizQuestionCount: 0 },
+      mappingBasis: 'block-specific-source',
+      inspectionState: 'agent-inspected',
+      conceptIds: [
+        'html-purpose-structure',
+        'html-element-anatomy',
+        'html-void-elements',
+        'html-attribute-syntax',
+        'html-attribute-value-types',
+        'html-comments-character-references',
+        'html-doctype-rendering-mode',
+        'html-document-root-head-body',
+        'html-character-encoding',
+        'html-title-metadata',
+        'html-discovery-metadata',
+        'html-files-paths-urls',
+        'html-links-destinations',
+        'html-link-purpose-fragments',
+        'html-replaced-content-boundaries',
+        'html-images-purpose-alt',
+        'html-media-rights-licensing',
+        'html-svg-semantics',
+        'html-audio-video',
+        'html-captions-transcripts',
+        'html-iframe-title-permissions',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-lists',
+        'html-emphasis-importance',
+        'html-quotations-citations',
+        'html-abbreviations-expansions',
+        'html-contact-address-links',
+        'html-time-machine-values',
+        'html-subscript-superscript',
+        'html-code-preformatted-text',
+        'html-editorial-annotations',
+        'html-ruby-annotations',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+        'html-table-structure',
+        'html-table-cell-spans',
+        'html-accessibility-user-barriers-tools',
+        'html-native-accessibility-tree',
+        'html-accessible-name-description',
+        'html-accessibility-tree-inclusion',
+        'html-source-order-keyboard',
+        'html-aria-boundary',
+        'html-validation-inspection',
+      ],
+    });
+    const computerBasicsAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'computer-basics'
+    );
+    expect(computerBasicsAlignments).toHaveLength(5);
+    expect(
+      computerBasicsAlignments.reduce(
+        (total, alignment) => total + alignment.sourceChallengeCount,
+        0
+      )
+    ).toBe(16);
+    expect(
+      computerBasicsAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(82);
+    expect(
+      computerBasicsAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        computerBasicsAlignments.map((alignment) => [
+          alignment.sourceBlockSlug,
+          alignment.conceptIds,
+        ])
+      )
+    ).toEqual({
+      'lecture-understanding-computer-internet-and-tooling-basics': [
+        'tooling-local-computer-resources',
+        'tooling-input-methods-ergonomics',
+        'tooling-internet-access-layers',
+        'tooling-account-signin-security',
+        'tooling-developer-tool-landscape',
+      ],
+      'lecture-working-with-file-systems': [
+        'tooling-file-manager-operations',
+        'tooling-file-naming-portability',
+        'tooling-project-folder-organization',
+        'tooling-file-types-search-inspection',
+        'html-files-paths-urls',
+      ],
+      'lecture-browsing-the-web-effectively': [
+        'tooling-browser-install-update-engines',
+        'tooling-browser-site-search-engine',
+        'tooling-search-query-refinement',
+        'html-browser-request-parse-render',
+      ],
+      'review-computer-basics': [
+        'tooling-local-computer-resources',
+        'tooling-internet-access-layers',
+        'tooling-account-signin-security',
+        'tooling-developer-tool-landscape',
+        'tooling-file-manager-operations',
+        'tooling-file-naming-portability',
+        'tooling-project-folder-organization',
+        'tooling-file-types-search-inspection',
+        'tooling-browser-site-search-engine',
+        'tooling-search-query-refinement',
+      ],
+      'quiz-computer-basics': [
+        'tooling-local-computer-resources',
+        'tooling-input-methods-ergonomics',
+        'tooling-internet-access-layers',
+        'tooling-account-signin-security',
+        'tooling-developer-tool-landscape',
+        'tooling-file-manager-operations',
+        'tooling-file-naming-portability',
+        'tooling-project-folder-organization',
+        'tooling-file-types-search-inspection',
+        'tooling-browser-install-update-engines',
+        'tooling-browser-site-search-engine',
+        'tooling-search-query-refinement',
+      ],
+    });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
-    ).toHaveLength(77);
+    ).toHaveLength(74);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
