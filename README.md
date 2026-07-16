@@ -69,7 +69,9 @@ src/core/curriculum/                 Schemas, graph loading, validators, and dup
 src/core/learning/                   Grading, access, progress, runtimes, and simulators
 ```
 
-Legacy curriculum pages are compatibility redirects only. Do not add content outside `content/v2`.
+The learner surface is `/courses` plus `/learn`. Retired page and API aliases are not kept. Course
+inventory remains under `content/v2` while each audit-required course is replaced through the
+research, review, vertical-slice, and learner-pilot gates.
 
 ## Required verification order
 
@@ -92,7 +94,7 @@ Useful focused curriculum audits:
 ```bash
 npm run curriculum:audit:duplication
 npm run curriculum:audit:go
-npm run curriculum:content:rwd-all
+npm run curriculum:research:rwd:check
 ```
 
 The duplication audit checks normalized repeated scaffold text, structural layout diversity,

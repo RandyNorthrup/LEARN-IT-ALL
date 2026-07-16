@@ -12,7 +12,7 @@ interface CourseJourneyPageProps {
   searchParams: Promise<{ module?: string | string[] }>;
 }
 
-interface LegacyProgressSummary {
+interface HistoricalProgressSummary {
   completedLessons: number;
   passedExercises: number;
   passedQuizzes: number;
@@ -56,12 +56,13 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
     (total, activity) => total + activity.progress.totalSteps,
     0
   );
-  const profile = dbHelpers.getLearningProfile() as { totalXp: number } | undefined;
-  const legacyProgress = dbHelpers.getLegacyCourseProgressSummary(
+  const historicalProgress = dbHelpers.getHistoricalCourseProgressSummary(
     courseId
-  ) as LegacyProgressSummary;
-  const legacyRecordCount =
-    legacyProgress.completedLessons + legacyProgress.passedExercises + legacyProgress.passedQuizzes;
+  ) as HistoricalProgressSummary;
+  const historicalRecordCount =
+    historicalProgress.completedLessons +
+    historicalProgress.passedExercises +
+    historicalProgress.passedQuizzes;
   const firstActivity =
     activities.find((activity) => !activity.progress.activityCompleted) ?? activities[0];
   const firstModule = graph.modules.find((module) => module.id === firstActivity.moduleId);
@@ -95,7 +96,7 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
           <span>
             {completedSteps}/{totalSteps} interactions complete
           </span>
-          <strong>{profile?.totalXp ?? 0} XP</strong>
+          <strong>{Math.max(0, totalSteps - completedSteps)} remaining</strong>
         </div>
       </header>
 
@@ -132,21 +133,21 @@ export default async function CourseJourneyPage({ params, searchParams }: Course
         </aside>
       </section>
 
-      {legacyRecordCount > 0 && (
+      {historicalRecordCount > 0 && (
         <aside className={styles.migrationNotice} aria-labelledby="migration-notice-title">
           <div>
-            <span className={styles.sectionKicker}>Previous edition preserved</span>
+            <span className={styles.sectionKicker}>Earlier learning history</span>
             <h2 id="migration-notice-title">Your earlier work is still recorded.</h2>
           </div>
           <p>
-            We kept {legacyRecordCount} previous-edition completion{' '}
-            {legacyRecordCount === 1 ? 'record' : 'records'} as learning history. The rebuilt path
+            We kept {historicalRecordCount} earlier completion{' '}
+            {historicalRecordCount === 1 ? 'record' : 'records'} as learning history. This path
             requires current evidence before granting mastery or unlocking later work.
           </p>
-          <ul aria-label="Previous-edition progress records">
-            <li>{legacyProgress.completedLessons} lessons completed</li>
-            <li>{legacyProgress.passedExercises} exercises passed</li>
-            <li>{legacyProgress.passedQuizzes} quizzes passed</li>
+          <ul aria-label="Earlier learning history records">
+            <li>{historicalProgress.completedLessons} lessons completed</li>
+            <li>{historicalProgress.passedExercises} exercises passed</li>
+            <li>{historicalProgress.passedQuizzes} quizzes passed</li>
           </ul>
         </aside>
       )}

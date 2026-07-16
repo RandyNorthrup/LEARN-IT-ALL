@@ -45,10 +45,16 @@ describe('learning studio responsive runtime layout', () => {
   it('gives runtime actions a touch-size target', () => {
     expect(styles).toMatch(/\.previewBar button\s*\{[^}]*min-height: 44px;/);
     expect(styles).toMatch(/\.feedback button\s*\{[^}]*min-height: 44px;/);
+    expect(styles).toMatch(/\.orderActions button\s*\{[^}]*width: 44px;[^}]*height: 44px;/);
   });
 
-  it('uses the verified high-contrast studio token for hint consequences', () => {
+  it('uses the verified high-contrast studio token for hint guidance', () => {
     expect(styles).toMatch(/\.hintSection small\s*\{[^}]*color: var\(--studio-muted\);/);
+  });
+
+  it('keeps arbitrary points out of the learner interface', () => {
+    expect(studio).not.toContain(' XP');
+    expect(studio).not.toContain('initialXp');
   });
 
   it('uses a direct exit without prefetch and does not post an unchanged first-paint draft', () => {

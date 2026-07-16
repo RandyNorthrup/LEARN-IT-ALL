@@ -1,15 +1,4 @@
-import {
-  ArrowRight,
-  Blocks,
-  BookOpenCheck,
-  Bug,
-  Flame,
-  Gauge,
-  RotateCcw,
-  Settings,
-  Sparkles,
-  Target,
-} from 'lucide-react';
+import { ArrowRight, BookOpenCheck, Gauge, RotateCcw, Settings, Target } from 'lucide-react';
 import Link from 'next/link';
 import {
   loadCurriculumActivity,
@@ -35,10 +24,6 @@ export default function HomePage() {
     firstActivity.steps.map((step) => step.id),
     records
   );
-  const profile = dbHelpers.getLearningProfile() as {
-    totalXp: number;
-    currentStreak: number;
-  };
   const settings = dbHelpers.getSettings() as { displayName: string };
   const dueReviews = dbHelpers.getDueLearningReviews() as unknown[];
   const displayName = settings.displayName === 'Learner' ? 'Builder' : settings.displayName;
@@ -53,8 +38,8 @@ export default function HomePage() {
           <Link href="/courses" prefetch={false}>
             Courses
           </Link>
-          <Link href="/challenges" prefetch={false}>
-            Practice
+          <Link href="/tracks" prefetch={false}>
+            Learning paths
           </Link>
           <Link href="/progress" prefetch={false}>
             Progress
@@ -110,15 +95,15 @@ export default function HomePage() {
 
       <section className={styles.metrics} aria-label="Learning momentum">
         <article>
-          <Sparkles aria-hidden="true" />
+          <BookOpenCheck aria-hidden="true" />
           <span>
-            <strong>{profile.totalXp}</strong> total XP
+            <strong>{progress.completedSteps}</strong> interactions complete
           </span>
         </article>
         <article>
-          <Flame aria-hidden="true" />
+          <Target aria-hidden="true" />
           <span>
-            <strong>{profile.currentStreak}</strong> day streak
+            <strong>{progress.totalSteps - progress.completedSteps}</strong> interactions remaining
           </span>
         </article>
         <article>
@@ -171,30 +156,30 @@ export default function HomePage() {
         <aside className={styles.practiceShelf}>
           <header className={styles.sectionHeader}>
             <div>
-              <span className={styles.eyebrow}>Practice mixer</span>
-              <h2>Change the mode</h2>
+              <span className={styles.eyebrow}>Learning actions</span>
+              <h2>Choose the next useful step</h2>
             </div>
           </header>
           <div className={styles.practiceGrid}>
-            <Link href="/challenges" prefetch={false}>
-              <Bug aria-hidden="true" />
+            <Link href="/learn/responsive-web-design" prefetch={false}>
+              <BookOpenCheck aria-hidden="true" />
               <span>
-                <strong>Debug room</strong>
-                <small>Find causes, not symptoms</small>
+                <strong>Continue the course</strong>
+                <small>Resume the first incomplete interaction</small>
               </span>
             </Link>
-            <Link href="/games" prefetch={false}>
-              <Blocks aria-hidden="true" />
+            <Link href="/tracks" prefetch={false}>
+              <Target aria-hidden="true" />
               <span>
-                <strong>Build sprint</strong>
-                <small>Make something under constraints</small>
+                <strong>Explore learning paths</strong>
+                <small>See prerequisites and course order</small>
               </span>
             </Link>
             <Link href="/progress" prefetch={false}>
               <BookOpenCheck aria-hidden="true" />
               <span>
-                <strong>Retrieval queue</strong>
-                <small>Bring older skills back</small>
+                <strong>Review progress</strong>
+                <small>Inspect attempts, completed work, and reviews</small>
               </span>
             </Link>
           </div>

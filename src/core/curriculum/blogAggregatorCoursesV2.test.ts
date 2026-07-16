@@ -288,16 +288,13 @@ describe('production feed aggregator Go and TypeScript v2 courses', () => {
     }
   });
 
-  it('gives every build a unique exact changed-case contract and one profile per module', () => {
+  it('gives every build a unique exact changed-case contract', () => {
     const tracks = [
       {
         graph: goGraph,
         language: 'go',
         markerPrefix: '// Evidence: feed-go-',
         starter: 'cumulative accessible publisher-respecting feed-service portfolio',
-        modules: goModuleIds,
-        profilePath: 'blog-aggregator-go-evidence-contracts.mjs',
-        profilePrefix: 'feed-go-',
         builds: 246,
       },
       {
@@ -305,9 +302,6 @@ describe('production feed aggregator Go and TypeScript v2 courses', () => {
         language: 'typescript',
         markerPrefix: '// Evidence: feed-ts-',
         starter: 'cumulative inclusive runtime-validated feed-service portfolio',
-        modules: typescriptModuleIds,
-        profilePath: 'blog-aggregator-typescript-evidence-contracts.mjs',
-        profilePrefix: 'feed-ts-',
         builds: 262,
       },
     ] as const;
@@ -339,16 +333,6 @@ describe('production feed aggregator Go and TypeScript v2 courses', () => {
           activity.starterFiles?.[track.language].includes(track.starter)
         )
       ).toBe(true);
-
-      const contractSource = readFileSync(
-        path.join(process.cwd(), 'scripts', 'lib', track.profilePath),
-        'utf8'
-      );
-      const profileIds = [...contractSource.matchAll(/^ {2}'(feed-(?:go|ts)-[^']+)': profile\(/gmu)]
-        .map((match) => match[1])
-        .filter((id) => id.startsWith(track.profilePrefix));
-      expect(profileIds).toEqual(track.modules);
-      expect(new Set(profileIds).size).toBe(track.modules.length);
     }
     expect(new Set(allExamples).size).toBe(allExamples.length);
     const exampleTerms = allExamples.map(terms);

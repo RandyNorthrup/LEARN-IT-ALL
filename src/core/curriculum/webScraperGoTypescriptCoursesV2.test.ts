@@ -285,16 +285,13 @@ describe('authorized web crawler and accessible site auditor Go and TypeScript v
     }
   });
 
-  it('gives every build a unique exact changed-case contract and one profile per module', () => {
+  it('gives every build a unique exact changed-case contract', () => {
     const tracks = [
       {
         graph: goGraph,
         language: 'go',
         markerPrefix: '// Evidence: crawler-go-',
         starter: 'cumulative owner-approved accessible site-audit portfolio',
-        modules: goModuleIds,
-        profilePath: 'web-scraper-go-evidence-contracts.mjs',
-        profilePrefix: 'crawler-go-',
         builds: 246,
       },
       {
@@ -302,9 +299,6 @@ describe('authorized web crawler and accessible site auditor Go and TypeScript v
         language: 'typescript',
         markerPrefix: '// Evidence: crawler-ts-',
         starter: 'cumulative owner-authorized accessible site-audit portfolio',
-        modules: typescriptModuleIds,
-        profilePath: 'web-scraper-typescript-evidence-contracts.mjs',
-        profilePrefix: 'crawler-ts-',
         builds: 262,
       },
     ] as const;
@@ -335,15 +329,6 @@ describe('authorized web crawler and accessible site auditor Go and TypeScript v
           activity.starterFiles?.[track.language].includes(track.starter)
         )
       ).toBe(true);
-      const source = readFileSync(
-        path.join(process.cwd(), 'scripts', 'lib', track.profilePath),
-        'utf8'
-      );
-      const profileIds = [...source.matchAll(/^ {2}'(crawler-(?:go|ts)-[^']+)': profile\(/gmu)]
-        .map((match) => match[1])
-        .filter((id) => id.startsWith(track.profilePrefix));
-      expect(profileIds).toEqual(track.modules);
-      expect(new Set(profileIds).size).toBe(track.modules.length);
     }
     expect(new Set(allExamples).size).toBe(allExamples.length);
     const exampleTerms = allExamples.map(terms);

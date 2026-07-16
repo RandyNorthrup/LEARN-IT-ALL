@@ -198,17 +198,7 @@ describe('safe evaluated AI agent with Python 3.14 and Gemini 3.5 v2 course', ()
     ).toBeLessThan(0.9);
   });
 
-  it('keeps one evidence profile per module and default-runs every browser Python model', () => {
-    const contractSource = readFileSync(
-      path.join(process.cwd(), 'scripts', 'lib', 'ai-agent-python-evidence-contracts.mjs'),
-      'utf8'
-    );
-    const profileIds = [...contractSource.matchAll(/^ {2}'(agentpy-[^']+)': profile\(/gmu)].map(
-      (match) => match[1]
-    );
-    expect(profileIds).toEqual(moduleIds);
-    expect(new Set(profileIds).size).toBe(moduleIds.length);
-
+  it('default-runs every browser Python model', () => {
     const activityRoot = path.join(
       process.cwd(),
       'content',

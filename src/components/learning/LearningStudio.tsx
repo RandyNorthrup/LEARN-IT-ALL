@@ -16,7 +16,6 @@ interface InitialProgress {
 interface AttemptResult {
   passed: boolean;
   newlyCompleted: boolean;
-  earnedXp: number;
   results: Array<{
     id: string;
     description: string;
@@ -32,7 +31,6 @@ interface LearningStudioProps {
   courseTitle: string;
   moduleTitle: string;
   initialProgress: InitialProgress;
-  initialXp: number;
   initialFiles: StudioFiles;
   initialDrafts: LearningInputDrafts;
   initialStepIntro: ReactNode;
@@ -64,7 +62,6 @@ export function LearningStudio({
   courseTitle,
   moduleTitle,
   initialProgress,
-  initialXp,
   initialFiles,
   initialDrafts,
   initialStepIntro,
@@ -83,7 +80,6 @@ export function LearningStudio({
   const [attempt, setAttempt] = useState<AttemptResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingHint, setIsLoadingHint] = useState(false);
-  const [totalXp, setTotalXp] = useState(initialXp);
 
   const activeIndex = activity.steps.findIndex((step) => step.id === activeStepId);
   const step = activity.steps[activeIndex] ?? activity.steps[0];
@@ -154,13 +150,11 @@ export function LearningStudio({
       setAttempt(result);
       if (result.passed && !completedStepIds.includes(step.id)) {
         setCompletedStepIds((current) => [...current, step.id]);
-        setTotalXp((current) => current + result.earnedXp);
       }
     } catch (error) {
       setAttempt({
         passed: false,
         newlyCompleted: false,
-        earnedXp: 0,
         results: [],
         hiddenFailureMessage:
           error instanceof Error ? error.message : 'Evidence checks could not run.',
@@ -217,10 +211,6 @@ export function LearningStudio({
         </div>
 
         <div className={styles.progressCluster}>
-          <div className={styles.xpPill} title="Experience earned">
-            <span aria-hidden="true">✦</span>
-            <strong>{totalXp}</strong> XP
-          </div>
           <div className={styles.progressSummary}>
             <span>{progressPercent}% explored</span>
             <progress max={activity.steps.length} value={completedCount}>
@@ -244,7 +234,7 @@ export function LearningStudio({
             <span>
               Step {activeIndex + 1} of {activity.steps.length}
             </span>
-            <span>{step.xp} XP</span>
+            <span>{completedCount} complete</span>
           </div>
           <StepWorkspace
             key={step.id}
@@ -372,7 +362,7 @@ export function LearningStudio({
                   ? 'Revealing…'
                   : `Reveal hint ${hints.length + 1}`}
             </button>
-            <small>Hints reduce XP, never block learning.</small>
+            <small>Hints support correction and never block learning.</small>
           </section>
         </aside>
       </div>

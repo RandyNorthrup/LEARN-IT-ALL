@@ -8,6 +8,7 @@ const page = readFileSync(path.join(process.cwd(), 'src/app/courses/page.tsx'), 
 describe('course catalog accessibility contract', () => {
   it('keeps the compact home control at least touch-target height', () => {
     expect(styles).toMatch(/\.back\s*\{[^}]*min-height:\s*44px;/);
+    expect(styles).toMatch(/\.brand\s*\{[^}]*min-height:\s*44px;/);
   });
 
   it('keeps decorative catalog icons out of the accessibility tree', () => {

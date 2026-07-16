@@ -1,13 +1,4 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  BookOpenCheck,
-  BrainCircuit,
-  Flame,
-  Gauge,
-  RotateCcw,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpenCheck, BrainCircuit, Gauge, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { dbHelpers } from '@/lib/db';
 import styles from './Progress.module.css';
@@ -20,21 +11,12 @@ interface LearningProgressStats {
   interactionsCompleted: number;
   totalAttempts: number;
   reviewsDue: number;
-  totalXp: number;
-  currentStreak: number;
-  longestStreak: number;
-  legacyRecords: number;
+  historicalRecords: number;
 }
 
 export default function ProgressPage() {
   const stats = dbHelpers.getProgressStats() as LearningProgressStats;
   const metrics = [
-    {
-      label: 'Total XP',
-      value: stats.totalXp,
-      note: 'Earned once from verified interactions',
-      icon: Sparkles,
-    },
     {
       label: 'Interactions mastered',
       value: stats.interactionsCompleted,
@@ -59,12 +41,6 @@ export default function ProgressPage() {
       note: 'Older skills ready for retrieval',
       icon: RotateCcw,
     },
-    {
-      label: 'Current streak',
-      value: stats.currentStreak,
-      note: `Longest recorded streak: ${stats.longestStreak} days`,
-      icon: Flame,
-    },
   ];
 
   return (
@@ -87,8 +63,8 @@ export default function ProgressPage() {
           <h1>Progress means work you can defend.</h1>
         </div>
         <p>
-          These numbers come from current interactive checks, attempts, spaced reviews, and earned
-          XP—not passive seat time or a retired lesson counter.
+          These numbers come from interactive checks, attempts, and spaced reviews—not passive seat
+          time or arbitrary points.
         </p>
       </section>
 
@@ -112,17 +88,17 @@ export default function ProgressPage() {
         </dl>
       </section>
 
-      {stats.legacyRecords > 0 && (
+      {stats.historicalRecords > 0 && (
         <aside className={styles.history} aria-labelledby="history-heading">
           <div>
             <span className={styles.eyebrow}>History kept, mastery honest</span>
             <h2 id="history-heading" className={styles.historyTitle}>
-              {stats.legacyRecords} previous-edition records preserved
+              {stats.historicalRecords} earlier learning records preserved
             </h2>
           </div>
           <p>
-            Earlier completions remain in local history. They do not silently unlock the rebuilt
-            path because the current curriculum asks for stronger, observable evidence.
+            Earlier completions remain in local history. They do not silently unlock this path
+            because current mastery requires observable evidence.
           </p>
         </aside>
       )}

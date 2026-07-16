@@ -42,7 +42,7 @@ export function LockedActivity({ courseId, activityTitle, prerequisites }: Locke
         </div>
       </section>
       <p className={styles.note}>
-        This gate protects the build order; it does not spend XP or reveal assessment answers.
+        This gate protects the build order without revealing assessment answers.
       </p>
     </main>
   );

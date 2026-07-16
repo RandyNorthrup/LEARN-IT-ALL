@@ -1,8 +1,18 @@
 # LEARN-IT-ALL Project Memory
 
-Last verified non-Lighthouse code gate: 2026-07-15 after complete RWD Basic CSS source inspection and fallback-map removal
+Last verified non-Lighthouse code gate: 2026-07-15 after obsolete implementation, content-generator, parallel-practice, and vanity-metric removal
 
 This is the canonical repository-local handoff. A fact under **Verified rebuild state** passed the recorded full gate. Anything described as planned or active has not. Generated files and large counts are not completion evidence.
+
+## Verified obsolete-implementation removal — 2026-07-15
+
+The user rejected retention of “old” generator and compatibility paths. The repository audit found that the live learner UI did not depend on the proportional bookmark mapper, retired course API tombstones, dynamic course aliases, dashboard redirect, challenge-room hub, arcade routes, or the blueprint/content generators. Those paths have been deleted. The removal covers 117 script files, 29 application files, six game-component files, four game-engine files, and four guessed-migration helper/test files—more than 93,000 deleted lines. All `curriculum:content:*` and `curriculum:blueprint:*` commands are gone. The only remaining `generate-*` programs create current RWD research artifacts or mechanical outline/runtime indexes.
+
+The local database had one completed earlier lesson and zero rows in the other five earlier course tables. That row was preserved exactly as typed provenance plus the original JSON payload in `historical_learning_records`; all six earlier tables and the temporary one-time migration code were then removed. Learner-facing XP/streak UI and the rejected practice-room/repository-decision copy are gone. Home now links only to current courses, learning paths, progress, and the current course journey. `src/lib/currentPlatformSurface.test.ts` protects this boundary.
+
+The final local gate passed 90 test files and 608 tests, type-check, normal lint, strict lint across 185 active source/script files, and the Next.js 16.2.10 production build. Production browser verification passed 390×844 public home, 768×1024 catalog/course/studio, and 1440×900 progress/settings with one H1, zero overflow, zero undersized visible controls, reduced motion, real HTTP 200 grading with announced corrective feedback, and no browser errors. Removed route/API samples all return 404. Browser review found and repaired hidden phone navigation, a 19-pixel catalog-brand target, and 40-pixel reorder controls. The review server was restarted cleanly and verified at `http://localhost:3000`; use `localhost`, not `127.0.0.1`, because Next development assets enforce the advertised origin. Lighthouse remains paused. Exact scope and retention rules are in `docs/audits/OBSOLETE_IMPLEMENTATION_REMOVAL_2026-07-15.md`.
+
+The 54 static blueprint inventories and 12,985 indexed `content/v2` source documents remain only because current research, catalog, and learner routes use them. They remain `audit-required` and are not protected for historical consistency. Each is replaced and deleted after its researched vertical slice and exact learner-data/runtime/accessibility/assessment/flow cutover passes. No compatibility alias, guessed mapping, or superseded content generator may return.
 
 ## Active learner-review correction — 2026-07-15
 
@@ -88,10 +98,10 @@ This repository is undergoing a total platform and curriculum rebuild, not a cos
 - Research contracts and audits: `src/core/curriculum/research.ts`, `scripts/audit-research-program.ts`, `docs/research/platform-research-register.json`, and `docs/research/courses/<course-id>.json`.
 - Learner-facing version 2 content: `content/v2/courses/<course-id>`.
 - Course blueprints: `blueprints/<course-id>.json`.
-- Shared content generators: `scripts/lib/generate-course-blueprint.mjs` and `scripts/lib/generate-expanded-course-content.mjs`.
+- Reproducible generation is limited to current RWD research artifacts plus mechanical course outlines and the compressed runtime index. Learner-content and blueprint generators have been removed.
 - Permanent catalog duplication gate: `scripts/audit-v2-duplication.ts`, backed by `src/core/curriculum/duplicationAudit.ts` and regression tests.
 - Shared interactive targets include sandboxed web output, JavaScript, Pyodide Python, isolated Go WebAssembly, fresh in-memory SQLite, deterministic network/shell simulation, prompt evaluation, repository/config quality gates, and numeric calculation.
-- Legacy content is migration input. Do not extend old repeated Markdown/JSON layouts as the target model.
+- Audit-required live content is replacement input. Do not extend repeated layouts or generic prose as the target model; cut each input over to a researched replacement, then delete it.
 
 ## Historical technical inventory — instructional quality invalidated
 
@@ -476,7 +486,7 @@ Run focused tests after each new change, then repeat the full non-Lighthouse gat
 1. Inspect the remaining 85 RWD source blocks challenge by challenge, replace 66 explicit unmapped records and the unavailable assessment container with bounded evidence records, obtain independent subject review for all 158 assignments, then build the full introduce-model-guided-faded-debug-retrieve-assess-delayed-retain-transfer matrix before authoring. The retired broad module-fallback mechanism must not return.
 2. Finish platform competitive-task observations, navigation/usability studies, mastery-validity work, privacy/ethics review, stack-compatibility smokes, assistive-technology/device trials, and representative learner research records.
 3. Build and review the remaining 53 course dossiers in prerequisite waves; every source needs stable identity, bounded claim, limitations, decisions, authentic tasks, misconception and safety analysis, and freshness triggers.
-4. Audit all 54 learner flows and generators; classify each as keep, rewrite, replace, or remove. Counts and schema validity cannot close this audit.
+4. Audit all 54 learner flows and static live inputs; the obsolete blueprint/content generators are already removed. Classify every remaining input as rewrite, replace, or remove. Counts and schema validity cannot close this audit.
 5. Enforce inline workspace/runtime declarations, then build and pilot the accessible Monaco/native tablet-desktop RWD reference slice with phone handoff before scaling.
 6. Refactor navigation, progress, grading, and curriculum around real persisted evidence; keep Lighthouse paused and workflows absent until every release blocker closes.
 

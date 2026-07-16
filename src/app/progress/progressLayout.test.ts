@@ -8,11 +8,13 @@ const styles = readFileSync(
   'utf8'
 );
 
-describe('V2 progress surface', () => {
-  it('reports interactive evidence and does not label legacy tables as current progress', () => {
+describe('current progress surface', () => {
+  it('reports interactive evidence and keeps historical records separate from mastery', () => {
     expect(source).toContain('interactionsCompleted');
     expect(source).toContain('activitiesPracticed');
-    expect(source).toContain('previous-edition records preserved');
+    expect(source).toContain('earlier learning records preserved');
+    expect(source).not.toContain('Total XP');
+    expect(source).not.toContain('Current streak');
     expect(source).not.toContain('lessonsCompleted');
     expect(source).not.toContain('quizzesPassed');
   });

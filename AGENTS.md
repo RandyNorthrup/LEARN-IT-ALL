@@ -19,7 +19,7 @@ Rebuild LEARN-IT-ALL as a modern, fun, local-first, accessible, responsive, high
 
 Every course must take its stated learner from verified entry skills to independent mastery. Courses and lessons must follow prerequisites, accumulate skills, retrieve and reinforce earlier material, avoid duplication, and contain substantial original theory, prediction, worked examples, guided workshops, faded practice, debugging, independent labs, retrieval, quizzes, authentic projects, and cumulative exams.
 
-Legacy pages and course files are migration input, not the target design. Do not preserve weak repeated layouts, shallow renamed exercises, or generic generated prose for consistency. Use the version 2 course/module/activity/step/check graph under `content/v2` and contracts under `src/core/curriculum`.
+The audit-required course inventory under `content/v2` is temporary live input, not the target design. Do not preserve weak repeated layouts, shallow renamed exercises, or generic generated prose for consistency. Do not add compatibility aliases, retired API tombstones, guessed migrations, fallback curriculum mappings, or generators that can recreate unapproved content. Replace each live input through researched vertical slices, verify equivalent learner data and flows, then delete the superseded input.
 
 ## Curriculum research and quality
 
@@ -36,10 +36,10 @@ Legacy pages and course files are migration input, not the target design. Do not
 ## Stack and implementation
 
 - Upgrade the stack to the latest mutually compatible stable releases, then repair fallout. Verify versions and compatibility from primary release documentation; keep the lockfile reproducible.
-- Prefer coherent replacement architecture over compatibility layers that perpetuate broken legacy design. Remove legacy paths only after equivalent version 2 data, progress, and learner flows pass migration tests.
+- Prefer coherent replacement architecture over compatibility layers. Remove obsolete executable paths immediately when current learner data and flows do not depend on them. When data does depend on an earlier shape, migrate exact records without proportional or guessed equivalence, verify preservation, then remove the earlier schema and migration code.
 - Keep canonical grading answers server-side. Client submissions are evidence, never the source of truth.
 - Keep learner code isolated: browser previews remain sandboxed; Python, SQL, and Go run only in bounded workers; shell and network work use deterministic simulation; learner source never reaches host command execution.
-- Treat generators as maintainable source code. Generated output must be reproducible, reviewed, and protected by schema, order, coverage, compilation, duplication, and behavior tests.
+- Use generators only for reproducible research artifacts and mechanical envelopes backed by reviewed source models. Never generate learner-facing instructional prose from topic names. Generated output must be reproducible, reviewed, and protected by schema, order, coverage, compilation, duplication, and behavior tests.
 
 ## UI and interaction
 
@@ -58,14 +58,14 @@ Use this non-Lighthouse gate order:
 4. `npm run lint`;
 5. `npm run lint:strict` so warnings also fail the release gate;
 6. `npm run build`;
-7. browser verification of changed flows at tablet and desktop sizes.
+7. browser verification of changed public and phone-handoff flows at mobile, plus changed learner flows at tablet and desktop sizes.
 
-Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run tablet and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in both profiles.
+Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run mobile, tablet, and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in every profile.
 
 ## Durable memory and handoff
 
 - Treat `docs/PROJECT_MEMORY.md` as the canonical repository-local handoff. Update it whenever scope, architecture, course state, verification evidence, next work, or blockers materially change.
 - Keep external agent memory as a pointer to this repository-local source, never as a competing project-status record. Resolve conflicts in favor of this file after reverifying volatile facts.
 - Record dated verified facts separately from unverified in-progress work. Keep volatile counts dated and recompute them before reporting them as current.
-- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final tablet/desktop Lighthouse thresholds.
+- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final mobile/tablet/desktop Lighthouse thresholds.
 - Do not weaken the curriculum release gates, learner-code isolation, accessibility rules, or Lighthouse hold unless the user explicitly changes them.

@@ -96,8 +96,8 @@ export default function SettingsClient({ initialDisplayName, courses }: Settings
   const selectedCourse = courses.find((course) => course.id === courseId);
   const resetDescription =
     resetRequest?.type === 'all'
-      ? 'This removes current V2 attempts, drafts, XP, reviews, and preserved previous-edition history from this device.'
-      : `This removes current attempts, drafts, XP, reviews, and preserved history for ${selectedCourse?.title ?? 'the selected course'}.`;
+      ? 'This removes current attempts, drafts, reviews, and earlier learning history from this device.'
+      : `This removes current attempts, drafts, reviews, and earlier learning history for ${selectedCourse?.title ?? 'the selected course'}.`;
 
   return (
     <main className={styles.page}>
@@ -161,8 +161,8 @@ export default function SettingsClient({ initialDisplayName, courses }: Settings
             </div>
           </header>
           <p>
-            Resets delete drafts, attempts, earned XP, and review scheduling. They never change
-            curriculum files.
+            Resets delete drafts, attempts, and review scheduling. They never change curriculum
+            files.
           </p>
           <label htmlFor="reset-course">Course to reset</label>
           <select

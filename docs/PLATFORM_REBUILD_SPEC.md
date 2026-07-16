@@ -2,7 +2,7 @@
 
 ## Decision
 
-This is a replacement architecture. The current pages and course files are migration input, not the target design. Legacy code is removed only after equivalent data and learner flows pass migration tests.
+This is a replacement architecture. Audit-required course files remain temporary live input until a researched replacement passes equivalent learner-data and flow tests. Obsolete routes, API tombstones, guessed mappings, parallel practice surfaces, and content generators are not retained. Exact historical evidence is preserved without keeping the earlier runtime schema.
 
 The 2026-07-15 learner review invalidated the earlier content-complete checkpoint. Generated activity counts, topic mappings, schemas, and duplication scores did not prove that the material actually taught a beginner. Every course is audit-required until its learner-facing explanations, practice progression, editor/runtime path, feedback, assessment validity, and transfer evidence pass the contracts in [the research-backed rebuild plan](./LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md).
 
@@ -91,7 +91,7 @@ Each course declares its workspace profile: supported files, editor language mod
 
 The workspace provides files or artifact sections, syntax support where appropriate, preview/output, diagnostics, tests, check results, progressive hints, reset and diff/review actions, autosave, resume, and an export path. It must preserve one coherent artifact across cumulative steps instead of replacing the learner's work with a new starter on every screen.
 
-Desktop and supported tablet layouts use an enhanced inline editor with accessibility support, explicit ARIA labels, keyboard help, high-contrast support, and no keyboard trap. Monaco is the preferred desktop editor; tablet browsers receive Monaco only where supported and otherwise use the fully functional native editor. Phone course studios are intentionally unsupported and show an accessible handoff to continue on a tablet or computer. Public navigation and course information remain readable on phones.
+Desktop and supported tablet layouts use an enhanced inline editor with accessibility support, explicit ARIA labels, keyboard help, high-contrast support, and no keyboard trap. Monaco is the preferred desktop editor; a fully functional native editor is a separately verified supported tablet path where Monaco is unsupported. Phone course studios are intentionally unsupported and show an accessible handoff to continue on a tablet or computer. Public navigation and course information remain readable on phones.
 
 ## Quality gates
 

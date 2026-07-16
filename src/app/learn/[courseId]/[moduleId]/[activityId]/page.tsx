@@ -62,7 +62,6 @@ export default async function LearningPage({ params }: LearningPageProps) {
     data.activity.steps.map((step) => step.id),
     records
   );
-  const profile = dbHelpers.getLearningProfile() as { totalXp: number } | undefined;
   const starterFiles = data.activity.starterFiles ?? EMPTY_LEARNING_FILES;
   const prerequisiteRecordGroups = data.activity.artifactId
     ? access.prerequisites
@@ -86,7 +85,6 @@ export default async function LearningPage({ params }: LearningPageProps) {
         currentStepId: progress.currentStepId,
         percent: progress.percent,
       }}
-      initialXp={profile?.totalXp ?? 0}
       initialFiles={cumulativeLearningFiles(records, prerequisiteRecordGroups, starterFiles)}
       initialDrafts={learningInputDrafts(records)}
       initialStepIntro={<StepIntro step={initialStep} />}

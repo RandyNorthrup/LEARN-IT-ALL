@@ -8,6 +8,8 @@ LEARN-IT-ALL is not content-complete. The earlier checkpoint proved file invento
 
 All 54 courses are therefore `audit-required`. Existing content is evidence and migration input, not approved instruction. `content/v2/CONTENT_COMPLETE` remains absent and Lighthouse remains paused until the entire curriculum, migration, duplication, and learner-flow program is complete.
 
+Obsolete implementation is not a migration strategy. The 2026-07-15 removal audit deleted the guessed proportional bookmark mapper, retired page and API aliases, parallel challenge-room/dashboard/arcade surfaces, arbitrary XP and streak UI, and every blueprint/content generator capable of recreating the unapproved inventory. Only current research generators and mechanical outline/runtime-index generators remain. Existing `blueprints` and `content/v2` files stay solely because they are active audit and learner inputs; each is rewritten and deleted when its researched replacement passes exact data, prerequisite, runtime, accessibility, assessment, and learner-flow gates. Historical learner rows are preserved exactly in one neutral evidence table without retaining the earlier runtime tables or one-time migration code.
+
 The objective is not to clone another platform. It is to combine the strongest verified patterns with original instruction, authentic practice, reliable assessment, accessible interaction, safe execution, and transparent evidence of mastery.
 
 ## Research-backed goal contract
@@ -31,6 +33,7 @@ Research artifacts remain explicitly `researching`, `candidate-review`, or `plan
 This plan is incomplete if it omits any item below:
 
 - total platform and curriculum replacement, not cosmetic improvements to legacy layouts;
+- no obsolete compatibility aliases, API tombstones, guessed mappings, parallel practice surfaces, arbitrary point/streak UI, or generators that can recreate unapproved instruction;
 - a blocking, documented research program covering learning science, subject scope, assessment validity, accessibility, usability, safe execution, privacy, stack compatibility, competing learner experiences, and observed learner behavior before and during implementation;
 - latest mutually compatible stable stack followed by repair of every upgrade regression;
 - completeness and prerequisite-order verification for every course and competency;
@@ -112,7 +115,7 @@ Sources must be primary and current wherever the claim can change. Peer-reviewed
 
 Research now has typed, tested repository contracts rather than only prose. `docs/research/platform-research-register.json` records 11 open or decided platform research questions, bounded claims, limitations, decisions, affected artifacts, validation needs, and re-review triggers. `src/core/curriculum/research.ts` validates platform registers and course dossiers, rejects broken source/decision references, and prevents an `approved` dossier from retaining missing objective coverage, open questions, or incomplete reviews.
 
-All 54 blueprints now honestly use `audit-required`; shared and Responsive Web Design generators preserve that state. The first baseline audit found 799 existing source entries but only 39 of 1,135 modules with source-objective IDs. All 54 blueprints lack stable source identity, limitations, research-to-design decision links, review triggers, and complete objective traceability. Responsive Web Design is the first started dossier and remains `researching`; 53 dossiers are missing and zero courses are `researched`. See `docs/audits/RESEARCH_PROGRAM_BASELINE_2026-07-15.md`. These are gap measurements, not research completion claims.
+All 54 static blueprint inventories honestly use `audit-required`. Their former blueprint/content generators have been removed so they cannot recreate unapproved instruction. The first baseline audit found 799 existing source entries but only 39 of 1,135 modules with source-objective IDs. All 54 blueprints lack stable source identity, limitations, research-to-design decision links, review triggers, and complete objective traceability. Responsive Web Design is the first started dossier and remains `researching`; 53 dossiers are missing and zero courses are `researched`. See `docs/audits/RESEARCH_PROGRAM_BASELINE_2026-07-15.md`. These are gap measurements, not research completion claims.
 
 The first platform evidence wave now records 20 bounded sources and 15 traceable decisions. The [competitive task audit](research/COMPETITIVE_TASK_AUDIT_2026-07-15.md) separates official documentation from direct observation and learner validation; the [editor/runtime threat model](research/EDITOR_RUNTIME_THREAT_MODEL_2026-07-15.md) defines assets, trust boundaries, capability policies, adversarial tests, accessibility, recovery, and residual risk; the [stack matrix](research/STACK_COMPATIBILITY_MATRIX_2026-07-15.md) records current versions, the repaired Puppeteer peer conflict, command evidence, and remaining clean-install/browser gates; the [progress and navigation contract](research/PROGRESS_NAVIGATION_EVIDENCE_CONTRACT.md) prevents activity counts or fake metrics from masquerading as mastery; and the [learner pilot protocol](research/LEARNER_RESEARCH_AND_PILOT_PROTOCOL.md) defines consent, participant coverage, tasks, severity, pass rules, repair, and re-test evidence.
 
@@ -216,7 +219,7 @@ Projects begin with a stakeholder need and acceptance criteria, not a starter id
 Every build-capable activity declares:
 
 - artifact type and supported files or structured sections;
-- editor mode, language service, formatting behavior, and accessible fallback;
+- editor mode, language service, formatting behavior, and separately verified accessible editor paths;
 - starter provenance and the exact earlier learner artifact it continues;
 - preview, output, simulator, or visualization surface;
 - canonical check adapter and hidden changed-case tests;
@@ -450,7 +453,7 @@ Execution order:
 ### Package B: universal learner workspace
 
 - Promote the current code textarea into a baseline artifact editor available to every build-capable course.
-- Integrate Monaco progressively for supported desktop/tablet environments; keep native fallback first-class.
+- Integrate Monaco progressively for supported desktop/tablet environments; keep the native editor as a separately verified supported path.
 - Add semantic diagnostics, tests, artifact history/diff, checkpoints, reset, export, responsive preview controls, and workspace help.
 - Map every course/activity to a verified runtime or simulator and expose transfer boundaries in learner language.
 

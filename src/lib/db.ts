@@ -26,70 +26,17 @@ CREATE TABLE IF NOT EXISTS settings (
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS course_enrollments (
-  id TEXT PRIMARY KEY,
-  courseId TEXT UNIQUE NOT NULL,
-  status TEXT DEFAULT 'IN_PROGRESS',
-  completionPercentage INTEGER DEFAULT 0,
-  enrolledAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  completedAt DATETIME,
-  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS lesson_progress (
-  id TEXT PRIMARY KEY,
-  lessonId TEXT UNIQUE NOT NULL,
-  courseId TEXT NOT NULL,
-  status TEXT DEFAULT 'NOT_STARTED',
-  startedAt DATETIME,
-  completedAt DATETIME,
-  timeSpent INTEGER
-);
-
-CREATE TABLE IF NOT EXISTS exercise_submissions (
-  id TEXT PRIMARY KEY,
-  exerciseId TEXT NOT NULL,
-  courseId TEXT NOT NULL,
-  code TEXT NOT NULL,
-  language TEXT NOT NULL,
-  status TEXT DEFAULT 'PENDING',
-  score INTEGER DEFAULT 0,
-  feedback TEXT,
-  submittedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  completedAt DATETIME
-);
-
-CREATE TABLE IF NOT EXISTS quiz_attempts (
-  id TEXT PRIMARY KEY,
-  quizId TEXT NOT NULL,
-  courseId TEXT NOT NULL,
-  answers TEXT,
-  score INTEGER NOT NULL,
-  pointsEarned INTEGER DEFAULT 0,
-  pointsPossible INTEGER DEFAULT 0,
-  passed INTEGER DEFAULT 0,
-  startedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  completedAt DATETIME,
-  timeSpent INTEGER
-);
-
-CREATE TABLE IF NOT EXISTS test_results (
-  id TEXT PRIMARY KEY,
-  submissionId TEXT NOT NULL,
-  testCaseId TEXT NOT NULL,
-  passed INTEGER NOT NULL,
-  expectedOutput TEXT NOT NULL,
-  actualOutput TEXT,
-  errorMessage TEXT,
-  executionTime INTEGER,
-  FOREIGN KEY (submissionId) REFERENCES exercise_submissions(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS certificates (
-  id TEXT PRIMARY KEY,
-  courseId TEXT UNIQUE NOT NULL,
-  issuedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  certificateUrl TEXT
+CREATE TABLE IF NOT EXISTS historical_learning_records (
+  sourceCollection TEXT NOT NULL,
+  sourceId TEXT NOT NULL,
+  courseId TEXT,
+  recordType TEXT NOT NULL,
+  itemId TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  occurredAt DATETIME,
+  payloadJson TEXT NOT NULL CHECK (json_valid(payloadJson)),
+  importedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (sourceCollection, sourceId)
 );
 
 CREATE TABLE IF NOT EXISTS learning_step_progress (
@@ -150,7 +97,7 @@ export const dbHelpers = {
       .run(displayName, 'settings');
   },
 
-  // Version 2 learning engine
+  // Current learning engine
   getLearningStepProgress: (activityId: string) => {
     return getDb()
       .prepare(
@@ -288,20 +235,26 @@ export const dbHelpers = {
       .all();
   },
 
-  getLegacyCourseProgressSummary: (courseId: string) => {
+  getHistoricalCourseProgressSummary: (courseId: string) => {
     const completedLessons = getDb()
       .prepare(
-        "SELECT COUNT(*) AS count FROM lesson_progress WHERE courseId = ? AND status = 'COMPLETED'"
+        `SELECT COUNT(DISTINCT itemId) AS count
+         FROM historical_learning_records
+         WHERE courseId = ? AND recordType = 'lesson' AND outcome = 'COMPLETED'`
       )
       .get(courseId) as { count: number };
     const passedExercises = getDb()
       .prepare(
-        "SELECT COUNT(DISTINCT exerciseId) AS count FROM exercise_submissions WHERE courseId = ? AND status = 'PASSED'"
+        `SELECT COUNT(DISTINCT itemId) AS count
+         FROM historical_learning_records
+         WHERE courseId = ? AND recordType = 'exercise' AND outcome = 'PASSED'`
       )
       .get(courseId) as { count: number };
     const passedQuizzes = getDb()
       .prepare(
-        'SELECT COUNT(DISTINCT quizId) AS count FROM quiz_attempts WHERE courseId = ? AND passed = 1'
+        `SELECT COUNT(DISTINCT itemId) AS count
+         FROM historical_learning_records
+         WHERE courseId = ? AND recordType = 'quiz' AND outcome = 'PASSED'`
       )
       .get(courseId) as { count: number };
 
@@ -354,13 +307,8 @@ export const dbHelpers = {
         "SELECT totalXp, currentStreak, longestStreak FROM learning_profile WHERE id = 'learner'"
       )
       .get() as { totalXp: number; currentStreak: number; longestStreak: number };
-    const legacyRecords = getDb()
-      .prepare(
-        `SELECT
-          (SELECT COUNT(*) FROM lesson_progress WHERE status = 'COMPLETED') +
-          (SELECT COUNT(DISTINCT exerciseId) FROM exercise_submissions WHERE status = 'PASSED') +
-          (SELECT COUNT(DISTINCT quizId) FROM quiz_attempts WHERE passed = 1) AS count`
-      )
+    const historicalRecords = getDb()
+      .prepare('SELECT COUNT(*) AS count FROM historical_learning_records')
       .get() as { count: number };
 
     return {
@@ -372,18 +320,13 @@ export const dbHelpers = {
       totalXp: profile.totalXp,
       currentStreak: profile.currentStreak,
       longestStreak: profile.longestStreak,
-      legacyRecords: legacyRecords.count,
+      historicalRecords: historicalRecords.count,
     };
   },
 
   // Progress Clearing
   clearAllProgress: () => {
-    getDb().prepare('DELETE FROM course_enrollments').run();
-    getDb().prepare('DELETE FROM lesson_progress').run();
-    getDb().prepare('DELETE FROM exercise_submissions').run();
-    getDb().prepare('DELETE FROM quiz_attempts').run();
-    getDb().prepare('DELETE FROM test_results').run();
-    getDb().prepare('DELETE FROM certificates').run();
+    getDb().prepare('DELETE FROM historical_learning_records').run();
     getDb().prepare('DELETE FROM learning_step_progress').run();
     getDb().prepare('DELETE FROM learning_review_queue').run();
     getDb()
@@ -394,11 +337,7 @@ export const dbHelpers = {
   },
 
   clearCourseProgress: (courseId: string) => {
-    getDb().prepare('DELETE FROM course_enrollments WHERE courseId = ?').run(courseId);
-    getDb().prepare('DELETE FROM lesson_progress WHERE courseId = ?').run(courseId);
-    getDb().prepare('DELETE FROM exercise_submissions WHERE courseId = ?').run(courseId);
-    getDb().prepare('DELETE FROM quiz_attempts WHERE courseId = ?').run(courseId);
-    getDb().prepare('DELETE FROM certificates WHERE courseId = ?').run(courseId);
+    getDb().prepare('DELETE FROM historical_learning_records WHERE courseId = ?').run(courseId);
     const activities = getDb()
       .prepare('SELECT DISTINCT activityId FROM learning_step_progress WHERE courseId = ?')
       .all(courseId) as Array<{ activityId: string }>;

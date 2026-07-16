@@ -7,7 +7,15 @@ const styles = readFileSync(path.join(process.cwd(), 'src/app/Home.module.css'),
 describe('home responsive interaction layout', () => {
   it('keeps compact header and course-map links at least 44 pixels tall', () => {
     expect(styles).toMatch(/\.brand\s*\{[^}]*min-height:\s*44px;/u);
+    expect(styles).toMatch(/\.header nav :where\(a\)\s*\{[^}]*min-height:\s*44px;/u);
     expect(styles).toMatch(/\.settings\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;/u);
     expect(styles).toMatch(/\.sectionHeader > a\s*\{[^}]*min-height:\s*44px;/u);
+  });
+
+  it('keeps primary navigation visible on phones', () => {
+    expect(styles).toMatch(
+      /@media \(max-width: 700px\)[\s\S]*?\.header nav\s*\{[^}]*display:\s*flex;[^}]*grid-column:\s*1 \/ -1;/u
+    );
+    expect(styles).not.toMatch(/\.header nav\s*\{[^}]*display:\s*none;/u);
   });
 });
