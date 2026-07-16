@@ -312,7 +312,7 @@ const CICD_CRITERIA: ConfigCriterion[] = [
     id: 'runner-toolchain',
     label: 'Runner and reproducible toolchain',
     patterns: [
-      /\b(?:ephemeral[-_ ]runner|runner[-_ ]image|node:\s*24|node[-_ ]24|typescript[-_ ]native:\s*7\.0\.2|typescript[-_ ]api[-_ ]compatibility:\s*6\.0\.2|npm[-_ ]ci|frozen[-_ ]lock)\b/i,
+      /\b(?:ephemeral[-_ ]runner|runner[-_ ]image|node:\s*24|node[-_ ]24|typescript:\s*6\.0\.3|typescript[-_ ]6\.0\.3|npm[-_ ]ci|frozen[-_ ]lock)\b/i,
     ],
     remediation:
       'Name runner isolation, supported action runtime, Node, TypeScript, npm, and lockfile behavior.',

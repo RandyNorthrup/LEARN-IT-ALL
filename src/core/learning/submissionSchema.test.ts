@@ -5,10 +5,8 @@ const files = {
   html: '<main></main>',
   css: 'main {}',
   javascript: 'console.log("ready")',
-  typescript: 'const ready: boolean = true;',
   python: 'print("ready")',
   go: 'package main\nfunc main() {}',
-  c: 'int main(void) { return 0; }',
   sql: 'SELECT 1;',
   shell: 'printf ready',
   prompt: 'Goal: verify readiness',
@@ -32,11 +30,14 @@ describe('learning submission schemas', () => {
     expect(
       LearningSubmissionSchema.parse({
         stepId: 'build-evidence',
-        files: { c: files.c },
+        files: { python: files.python },
       }).files
-    ).toEqual({ c: files.c });
+    ).toEqual({ python: files.python });
     expect(
-      LearningDraftSchema.safeParse({ stepId: 'build-evidence', files: { c: files.c } }).success
+      LearningDraftSchema.safeParse({
+        stepId: 'build-evidence',
+        files: { python: files.python },
+      }).success
     ).toBe(false);
   });
 });

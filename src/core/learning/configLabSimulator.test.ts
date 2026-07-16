@@ -93,7 +93,7 @@ workflow-ref: owner/repo/.github/workflows/release.yml@refs/heads/main
 source-revision: reviewed-sha
 run-id: 8842
 event-policy: fork-policy with least permissions and untrusted-input treated as data
-runner: ephemeral-runner with node-24 typescript-native: 7.0.2 typescript-api-compatibility: 6.0.2 npm-ci frozen-lock
+runner: ephemeral-runner with node-24 typescript: 6.0.3 npm-ci frozen-lock
 gates: lint type-check required-check changed-case tests
 state: immutable-artifact with artifact-digest; cache-key allows trusted cache-writer only
 execution: concurrency with stale-run check, timeout, retry-policy, and cleanup-evidence

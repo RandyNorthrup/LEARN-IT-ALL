@@ -6,14 +6,12 @@ import {
   learningInputDrafts,
 } from './draft';
 
-const fallback: LearningFiles = {
+const starterFiles: LearningFiles = {
   html: '<main></main>',
   css: '',
   javascript: '',
-  typescript: '',
   python: '',
   go: '',
-  c: '',
   sql: '',
   shell: '',
   prompt: '',
@@ -33,7 +31,7 @@ describe('latestLearningFiles', () => {
           draftJson: JSON.stringify({ files: { html: '<main><h1>Saved</h1></main>' } }),
         },
       ],
-      fallback
+      starterFiles
     );
     expect(result.html).toContain('<h1>Saved</h1>');
     expect(result.css).toBe('');
@@ -51,12 +49,12 @@ describe('latestLearningFiles', () => {
           draftJson: '{broken',
         },
       ],
-      fallback
+      starterFiles
     );
-    expect(result).toEqual(fallback);
+    expect(result).toEqual(starterFiles);
   });
 
-  it('restores cumulative Python, Go, C, SQL, network, prompt, and gate lab work', () => {
+  it('restores cumulative Python, Go, SQL, network, prompt, and gate lab work', () => {
     const result = latestLearningFiles(
       [
         {
@@ -69,7 +67,6 @@ describe('latestLearningFiles', () => {
             files: {
               python: 'print("ready")',
               go: 'package main\nfunc main() {}',
-              c: 'int main(void) { return 0; }',
               sql: 'SELECT name FROM teams;',
               shell: 'ping 192.0.2.1',
               prompt: 'Goal: diagnose the failure',
@@ -78,11 +75,10 @@ describe('latestLearningFiles', () => {
           }),
         },
       ],
-      fallback
+      starterFiles
     );
     expect(result.python).toBe('print("ready")');
     expect(result.go).toContain('package main');
-    expect(result.c).toContain('int main');
     expect(result.sql).toContain('SELECT name');
     expect(result.shell).toBe('ping 192.0.2.1');
     expect(result.prompt).toContain('diagnose');
@@ -114,7 +110,7 @@ describe('latestLearningFiles', () => {
           },
         ],
       ],
-      fallback
+      starterFiles
     );
 
     expect(result.html).toBe('<main>Second layer</main>');
@@ -144,7 +140,7 @@ describe('latestLearningFiles', () => {
           },
         ],
       ],
-      fallback
+      starterFiles
     );
 
     expect(result.html).toBe('<main>Current draft</main>');

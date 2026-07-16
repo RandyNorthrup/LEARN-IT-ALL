@@ -65,15 +65,14 @@ describe('learning studio responsive runtime layout', () => {
     expect(studio).toContain('if (draftSnapshot === lastScheduledDraft.current) return;');
   });
 
-  it('loads code runtimes only when the active step needs a code workspace', () => {
-    expect(stepWorkspace).toContain('lazy(async () =>');
-    expect(stepWorkspace).toContain("import('./CodeWorkspace')");
-    expect(stepWorkspace).toContain('<Suspense fallback={<CodeWorkspaceLoading />}>');
-    expect(stepWorkspace).toContain('role="status"');
+  it('uses one direct code workspace path with no alternate loading implementation', () => {
+    expect(stepWorkspace).toContain("import { CodeWorkspace } from './CodeWorkspace'");
+    expect(stepWorkspace).toContain('<CodeWorkspace step={step}');
+    expect(stepWorkspace).not.toContain('lazy(');
+    expect(stepWorkspace).not.toContain('Suspense');
     expect(stepWorkspace).not.toMatch(
       /from '\.\/(?:C|Go|JavaScript|Network|Python|Sql|TypeScript)RunPanel'/u
     );
-    expect(codeWorkspace).toContain("from './TypeScriptRunPanel'");
     expect(codeWorkspace).toContain('role="tablist"');
   });
 

@@ -9,9 +9,9 @@ These instructions apply to the entire repository. They are durable project rule
 - Keep the active goal and working plan current. Update the plan when scope, order, evidence, or blockers change.
 - Execute requested build and refactor work end to end while safe in-scope work remains. Do not stop at recommendations.
 - Preserve unrelated user work in this intentionally dirty worktree. Never reset, discard, replace, or silently reformat unrelated changes.
-- Add or update tests for every code, schema, generator, content-contract, migration, and behavior change.
-- Distinguish `planned`, `generated`, `schema-valid`, `flow-verified`, and `published`. Never report one state as another.
-- End every user-facing session with verified results, the next concrete work, and blockers. Never call unfinished generated content complete.
+- Add or update tests for every code, schema, compiler, content-contract, migration, and behavior change.
+- Distinguish `planned`, `authored`, `compiled`, `schema-valid`, `flow-verified`, and `published`. Never report one state as another.
+- End every user-facing session with verified results, the next concrete work, and blockers. Never call unfinished authored content complete.
 
 ## Product objective
 
@@ -30,7 +30,7 @@ Rejected generated course data and blueprints have been removed. `content/v2/cou
 - Every lesson must retrieve named earlier skills, add bounded complexity, and continue enforcing previously learned correctness, accessibility, security, testing, and design habits.
 - Workshops, labs, debugging tasks, quizzes, and projects must use meaningfully different scenarios, starters, requirements, reasoning, and evidence. Renamed or lightly paraphrased copies fail review.
 - Code shape or keyword presence alone is not mastery evidence. Require runnable behavior, changed-case output, causal diagnosis, invariant checks, design justification, or defensible stakeholder evidence.
-- Generated file or step count is inventory, never proof of pedagogy or completeness. Inspect learner flow and content quality before publication.
+- File or step count is inventory, never proof of pedagogy or completeness. Inspect learner flow and content quality before publication.
 - Never mark a course `available`, `approved`, certified, or published until schema, prerequisite order, coverage, runnable-content, assessment, duplication, accessibility, responsive-flow, and subject-quality gates pass.
 
 ## Stack and implementation
@@ -39,7 +39,7 @@ Rejected generated course data and blueprints have been removed. `content/v2/cou
 - Prefer coherent replacement architecture over compatibility layers. Remove obsolete executable paths immediately when current learner data and flows do not depend on them. When data does depend on an earlier shape, migrate exact records without proportional or guessed equivalence, verify preservation, then remove the earlier schema and migration code.
 - Keep canonical grading answers server-side. Client submissions are evidence, never the source of truth.
 - Keep learner code isolated: browser previews remain sandboxed; Python, SQL, and Go run only in bounded workers; shell and network work use deterministic simulation; learner source never reaches host command execution.
-- Use generators only for reproducible research artifacts and mechanical envelopes backed by reviewed source models. Never generate learner-facing instructional prose from topic names. Generated output must be reproducible, reviewed, and protected by schema, order, coverage, compilation, duplication, and behavior tests.
+- Compile reproducible research artifacts and runtime indexes only from reviewed source models. Never generate learner-facing instructional prose, examples, steps, checks, or assessments from topic names. Compiled output must be reproducible and protected by source-integrity, schema, order, coverage, compilation, duplication, and behavior tests.
 
 ## UI and interaction
 
@@ -60,12 +60,12 @@ Use this non-Lighthouse gate order:
 6. `npm run build`;
 7. browser verification of changed public and phone-handoff flows at mobile, plus changed learner flows at tablet and desktop sizes.
 
-Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run mobile, tablet, and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in every profile.
+Do not run Lighthouse while any planned course content, migration, or platform-wide duplication work remains. Lighthouse is the final release gate only. After all content work is complete, run tablet and desktop profiles; exclude SEO; require at least 99 for performance, accessibility, and best practices in both profiles. Public pages and the phone handoff remain phone-usable through browser-flow verification, not a mobile Lighthouse profile.
 
 ## Durable memory and handoff
 
 - Treat `docs/PROJECT_MEMORY.md` as the canonical repository-local handoff. Update it whenever scope, architecture, course state, verification evidence, next work, or blockers materially change.
 - Keep external agent memory as a pointer to this repository-local source, never as a competing project-status record. Resolve conflicts in favor of this file after reverifying volatile facts.
 - Record dated verified facts separately from unverified in-progress work. Keep volatile counts dated and recompute them before reporting them as current.
-- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final mobile/tablet/desktop Lighthouse thresholds.
+- Preserve the active goal: total platform rebuild, complete prerequisite-ordered curricula, original interactive practice, duplication removal, current compatible stack, and final tablet/desktop Lighthouse thresholds.
 - Do not weaken the curriculum release gates, learner-code isolation, accessibility rules, or Lighthouse hold unless the user explicitly changes them.

@@ -4,10 +4,8 @@ export interface LearningFiles {
   html: string;
   css: string;
   javascript: string;
-  typescript: string;
   python: string;
   go: string;
-  c: string;
   sql: string;
   shell: string;
   prompt: string;
@@ -24,10 +22,8 @@ export const EMPTY_LEARNING_FILES: LearningFiles = {
   html: '',
   css: '',
   javascript: '',
-  typescript: '',
   python: '',
   go: '',
-  c: '',
   sql: '',
   shell: '',
   prompt: '',
@@ -77,7 +73,7 @@ export function learningInputDrafts(records: StepProgressRecord[]): LearningInpu
 
 export function latestLearningFiles(
   records: StepProgressRecord[],
-  fallback: LearningFiles
+  starterFiles: LearningFiles
 ): LearningFiles {
   for (const record of [...records].reverse()) {
     if (!record.draftJson) continue;
@@ -85,30 +81,28 @@ export function latestLearningFiles(
       const draft = JSON.parse(record.draftJson) as { files?: Partial<LearningFiles> };
       if (draft.files) {
         return {
-          html: draft.files.html ?? fallback.html,
-          css: draft.files.css ?? fallback.css,
-          javascript: draft.files.javascript ?? fallback.javascript,
-          typescript: draft.files.typescript ?? fallback.typescript,
-          python: draft.files.python ?? fallback.python,
-          go: draft.files.go ?? fallback.go,
-          c: draft.files.c ?? fallback.c,
-          sql: draft.files.sql ?? fallback.sql,
-          shell: draft.files.shell ?? fallback.shell,
-          prompt: draft.files.prompt ?? fallback.prompt,
-          config: draft.files.config ?? fallback.config,
+          html: draft.files.html ?? starterFiles.html,
+          css: draft.files.css ?? starterFiles.css,
+          javascript: draft.files.javascript ?? starterFiles.javascript,
+          python: draft.files.python ?? starterFiles.python,
+          go: draft.files.go ?? starterFiles.go,
+          sql: draft.files.sql ?? starterFiles.sql,
+          shell: draft.files.shell ?? starterFiles.shell,
+          prompt: draft.files.prompt ?? starterFiles.prompt,
+          config: draft.files.config ?? starterFiles.config,
         };
       }
     } catch {
       // Ignore corrupt history and continue toward an earlier usable increment.
     }
   }
-  return fallback;
+  return starterFiles;
 }
 
 export function cumulativeLearningFiles(
   currentRecords: StepProgressRecord[],
   prerequisiteRecordGroups: StepProgressRecord[][],
-  fallback: LearningFiles
+  starterFiles: LearningFiles
 ): LearningFiles {
   const emptyMarker = { ...EMPTY_LEARNING_FILES };
   const current = latestLearningFiles(currentRecords, emptyMarker);
@@ -118,5 +112,5 @@ export function cumulativeLearningFiles(
     const inherited = latestLearningFiles(records, emptyMarker);
     if (inherited !== emptyMarker) return inherited;
   }
-  return fallback;
+  return starterFiles;
 }

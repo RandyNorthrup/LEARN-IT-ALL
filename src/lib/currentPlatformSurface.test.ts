@@ -33,18 +33,22 @@ describe('current platform surface', () => {
     }
   });
 
-  it('keeps only reproducible research and mechanical-index generators', () => {
+  it('keeps no curriculum generators and only explicit research/runtime compilers', () => {
     const generationScripts = readdirSync(path.join(root, 'scripts'))
       .filter((file) => file.startsWith('generate-'))
       .sort();
 
-    expect(generationScripts).toEqual([
-      'generate-curriculum-outlines.mjs',
-      'generate-curriculum-runtime-index.mjs',
-      'generate-rwd-concept-alignment.mjs',
-      'generate-rwd-css-concept-research.mjs',
-      'generate-rwd-html-concept-research.mjs',
-      'generate-rwd-research-architecture.mjs',
+    expect(generationScripts).toEqual([]);
+    expect(
+      readdirSync(path.join(root, 'scripts'))
+        .filter((file) => file.startsWith('compile-'))
+        .sort()
+    ).toEqual([
+      'compile-curriculum-runtime-index.mjs',
+      'compile-rwd-concept-alignment.mjs',
+      'compile-rwd-css-concept-research.mjs',
+      'compile-rwd-html-concept-research.mjs',
+      'compile-rwd-research-architecture.mjs',
     ]);
 
     const packageJson = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')) as {

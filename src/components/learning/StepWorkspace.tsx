@@ -1,26 +1,14 @@
 'use client';
 
-import { lazy, type ReactNode, Suspense } from 'react';
+import type { ReactNode } from 'react';
 import type { LearnerStep } from '@/core/curriculum/publicActivity';
 import type { LearningFiles } from '@/core/learning/draft';
+import { CodeWorkspace } from './CodeWorkspace';
 import { ContentBlocks } from './ContentBlocks';
 import { EvidenceStimulus } from './EvidenceStimulus';
 import { getInteractionPresentation } from './interactionPresentation';
 import styles from './LearningStudio.module.css';
 import { StepIntro } from './StepIntro';
-
-const CodeWorkspace = lazy(async () => {
-  const module = await import('./CodeWorkspace');
-  return { default: module.CodeWorkspace };
-});
-
-function CodeWorkspaceLoading() {
-  return (
-    <p className={styles.workspaceLoading} role="status">
-      Loading the isolated code workspace…
-    </p>
-  );
-}
 
 export type StudioFiles = LearningFiles;
 
@@ -175,11 +163,7 @@ export function StepWorkspace({
         </div>
       )}
 
-      {isCode && (
-        <Suspense fallback={<CodeWorkspaceLoading />}>
-          <CodeWorkspace step={step} files={files} onFilesChange={onFilesChange} />
-        </Suspense>
-      )}
+      {isCode && <CodeWorkspace step={step} files={files} onFilesChange={onFilesChange} />}
     </div>
   );
 }

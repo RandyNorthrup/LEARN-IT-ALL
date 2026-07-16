@@ -124,16 +124,16 @@ Source: [official Sandpack documentation](https://sandpack.codesandbox.io/)
 - Reject: arbitrary package execution, uncontrolled network access, inaccessible editor-only paths, or third-party runtime behavior as the canonical grader.
 - Local validation: keyboard, screen-reader, zoom, touch, failure, timeout, persistence, changed-case, and escape attempts at tablet and desktop sizes.
 
-### Monaco Editor
+### CodeMirror 6
 
-Sources: [official repository and browser support](https://github.com/microsoft/monaco-editor) and [integrator accessibility guidance](https://github.com/microsoft/monaco-editor/wiki/Accessibility-Guide-for-Integrators)
+Sources: [official documentation](https://codemirror.net/docs/), [Tab handling guidance](https://codemirror.net/examples/tab/), and [official changelog](https://codemirror.net/docs/changelog/)
 
-- Documented pattern: language services, diagnostics, keyboard help, screen-reader mode, high contrast, and editor accessibility APIs.
-- Documented limit: mobile browsers are not supported.
-- Adopt as trial: Monaco on supported tablet and desktop browsers, with explicit labels, semantic diagnostic list, focus escape, keyboard help, and screen-reader testing.
-- Required fallback: a fully functional native editor when Monaco is unsupported or fails, plus a phone handoff that preserves work.
-- Reject: a course activity whose only completion path depends on Monaco.
-- Local validation: identical save, run, feedback, reset, recovery, and submission outcomes in Monaco and fallback paths.
+- Documented pattern: composable editor state, view, language modes, autocomplete, lint, commands, and semantic content attributes.
+- Documented accessibility decision: Tab is unbound by default to avoid a keyboard trap; any indentation binding requires an explained escape mechanism.
+- Current maintenance evidence: 2025–2026 releases repair touch selection, iOS and Android composition, native context-menu selection, screen-reader announcements, accessible completion relationships, and diagnostic navigation.
+- Adopt as the single coding editor: one CodeMirror path on supported tablet and desktop browsers, with explicit labels, semantic diagnostic lists, keyboard help, visible focus, and observed assistive-technology testing.
+- Reject: a second editor implementation, an unsupported environment entering the studio, or editor syntax state acting as canonical grading evidence.
+- Local validation: save, run, feedback, reset, recovery, persistence, changed-case grading, keyboard escape, touch, composition, zoom, forced colors, and screen-reader tasks must pass in the supported matrix.
 
 ## Explicitly unresolved platforms and tasks
 

@@ -60,7 +60,7 @@ describe('CurriculumActivitySchema', () => {
     expect(CurriculumActivitySchema.parse(validActivity()).steps).toHaveLength(1);
   });
 
-  it('accepts Python, Go, C, SQL, and shell workspaces for interactive labs', () => {
+  it('accepts Python, Go, SQL, and shell workspaces for interactive labs', () => {
     const baseActivity = validActivity();
     const pythonActivity = {
       ...baseActivity,
@@ -70,7 +70,6 @@ describe('CurriculumActivitySchema', () => {
         javascript: '',
         python: 'def greet(name):\n    return f"Hello, {name}"',
         go: 'package main\n\nfunc main() {}',
-        c: 'int main(void) { return 0; }',
         sql: 'SELECT name FROM teams ORDER BY name;',
         shell: '',
       },
@@ -93,7 +92,6 @@ describe('CurriculumActivitySchema', () => {
     expect(parsed.steps[0].targetFile).toBe('python');
     expect(parsed.starterFiles?.python).toContain('def greet');
     expect(parsed.starterFiles?.go).toContain('package main');
-    expect(parsed.starterFiles?.c).toContain('int main');
     expect(parsed.starterFiles?.sql).toContain('SELECT name');
     expect(parsed.starterFiles?.shell).toBe('');
 
@@ -107,30 +105,6 @@ describe('CurriculumActivitySchema', () => {
       })),
     };
     expect(CurriculumActivitySchema.parse(goActivity).steps[0].targetFile).toBe('go');
-
-    const cActivity = {
-      ...pythonActivity,
-      steps: baseActivity.steps.map((step) => ({
-        ...step,
-        targetFile: 'c',
-        content: [
-          {
-            type: 'code',
-            language: 'c',
-            code: 'int main(void) { return 0; }',
-            caption: 'A complete C program.',
-          },
-        ],
-      })),
-      checks: pythonActivity.checks.map((check) => ({
-        ...check,
-        file: 'c',
-        expected: 'int main',
-      })),
-    };
-    const parsedCActivity = CurriculumActivitySchema.parse(cActivity);
-    expect(parsedCActivity.steps[0].targetFile).toBe('c');
-    expect(parsedCActivity.steps[0].content[0]).toMatchObject({ language: 'c' });
   });
 
   it('accepts prompt and quality-gate workspaces for simulation labs', () => {

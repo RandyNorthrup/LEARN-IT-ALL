@@ -6,10 +6,8 @@ export const LEARNING_FILE_ORDER: LearningFile[] = [
   'html',
   'css',
   'javascript',
-  'typescript',
   'python',
   'go',
-  'c',
   'sql',
   'shell',
   'prompt',
@@ -20,10 +18,8 @@ const FILE_LABELS: Record<LearningFile, string> = {
   html: '<> HTML',
   css: '# CSS',
   javascript: '{} JavaScript',
-  typescript: 'TS TypeScript',
   python: '🐍 Python',
   go: 'GO Go',
-  c: 'C C source',
   sql: 'DB SQL',
   shell: '>_ Terminal',
   prompt: '✦ Prompt',
@@ -47,10 +43,8 @@ export function visibleLearningFiles(
 export type WorkspaceOutput =
   | 'web'
   | 'javascript'
-  | 'typescript'
   | 'python'
   | 'go'
-  | 'c'
   | 'sql'
   | 'network'
   | 'prompt'
@@ -60,10 +54,8 @@ export function workspaceOutputFor(file: LearningFile, files?: LearningFiles): W
   if (file === 'javascript') {
     return files?.html.trim() || files?.css.trim() ? 'web' : 'javascript';
   }
-  if (file === 'typescript') return 'typescript';
   if (file === 'python') return 'python';
   if (file === 'go') return 'go';
-  if (file === 'c') return 'c';
   if (file === 'sql') return 'sql';
   if (file === 'shell') return 'network';
   if (file === 'prompt') return 'prompt';

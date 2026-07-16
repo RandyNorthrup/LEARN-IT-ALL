@@ -2,7 +2,7 @@
 
 ## Decision
 
-This is a replacement architecture. Audit-required course files remain temporary live input until a researched replacement passes equivalent learner-data and flow tests. Obsolete routes, API tombstones, guessed mappings, parallel practice surfaces, and content generators are not retained. Exact historical evidence is preserved without keeping the earlier runtime schema.
+This is a replacement architecture. Rejected course output is deleted and cannot serve live learners or generate new instruction. Obsolete routes, API tombstones, guessed mappings, parallel practice surfaces, compatibility layers, alternate editor implementations, and content generators are not retained. Exact history remains in Git without keeping the earlier runtime schema or executable path.
 
 The 2026-07-15 learner review invalidated the earlier content-complete checkpoint. Generated activity counts, topic mappings, schemas, and duplication scores did not prove that the material actually taught a beginner. The rejected course data and blueprint system are deleted. Every planned course remains unpublished until its learner-facing explanations, practice progression, editor/runtime path, feedback, assessment validity, and transfer evidence pass the contracts in [the research-backed rebuild plan](./LEARNING_PLATFORM_RESEARCH_AND_REBUILD_PLAN.md).
 
@@ -91,11 +91,11 @@ Each course declares its workspace profile: supported files, editor language mod
 
 The workspace provides files or artifact sections, syntax support where appropriate, preview/output, diagnostics, tests, check results, progressive hints, reset and diff/review actions, autosave, resume, and an export path. It must preserve one coherent artifact across cumulative steps instead of replacing the learner's work with a new starter on every screen.
 
-Desktop and supported tablet layouts use an enhanced inline editor with accessibility support, explicit ARIA labels, keyboard help, high-contrast support, and no keyboard trap. Monaco is the preferred desktop editor; a fully functional native editor is a separately verified supported tablet path where Monaco is unsupported. Phone course studios are intentionally unsupported and show an accessible handoff to continue on a tablet or computer. Public navigation and course information remain readable on phones.
+Desktop and supported tablet layouts use CodeMirror 6 as the single inline coding editor, with explicit accessible labels, keyboard help, high-contrast support, touch and composition verification, semantic diagnostics, and no keyboard trap. An environment that fails the supported editor matrix cannot enter a course studio. Phone course studios are intentionally unsupported and show an accessible handoff to continue on a supported tablet or computer. Public navigation and course information remain readable on phones.
 
 ## Quality gates
 
-The curriculum audit fails CI when it finds:
+The local curriculum release gate fails when it finds:
 
 - an unmapped required topic or reference block;
 - a dangling course/module/activity/step/check reference;
@@ -108,7 +108,7 @@ The curriculum audit fails CI when it finds:
 - client-supplied answers used as canonical grading data;
 - inaccessible interaction controls or layouts that fail supported viewports.
 
-Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on mobile, tablet, and desktop; every score must be at least 99. SEO is intentionally excluded. Mobile validates public information, navigation, and the accessible phone handoff rather than an unsupported full course studio.
+Application gates are unit, content-contract, migration, API integration, browser flow, type, lint, build, and final Lighthouse tests. Lighthouse covers performance, accessibility, and best practices on tablet and desktop; every score must be at least 99. SEO is intentionally excluded. Public information, navigation, and the accessible phone handoff remain phone-usable through browser-flow verification, not a third Lighthouse profile.
 
 ## Product experience
 

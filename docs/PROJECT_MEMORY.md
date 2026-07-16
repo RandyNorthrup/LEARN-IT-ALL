@@ -37,8 +37,9 @@ The rejected implementation is physically removed:
 - the blueprint schema, template, audit, and blueprint-derived RWD coverage generator;
 - generated-course assertion and compile suites that only certified deleted output;
 - fake course availability, hours, lesson counts, chapter counts, and path-hour data;
-- stale baseline reports that treated rejected blueprints as active architecture;
+- stale baseline reports that treated rejected blueprints or deleted course files as active architecture;
 - the Go content audit tied only to deleted generated Go lessons.
+- the PicoC substitute runtime and C workspace contract, which covered only C89/C90 plus selected C99 rather than the planned C23 course;
 
 Git history is the only archive. Do not create an archive directory, old-data package, compatibility route, renamed copy, fallback mapping, or generator that can recreate deleted instruction.
 
@@ -46,13 +47,16 @@ Current infrastructure retained intentionally:
 
 - `src/core/curriculum/schema.ts`: target v2 course/module/activity/step/check contracts;
 - `src/core/curriculum/repository.ts`: digest-verifying runtime loader;
-- `scripts/generate-curriculum-outlines.mjs`: mechanical compiler for independently reviewed source;
-- `scripts/generate-curriculum-runtime-index.mjs`: mechanical compressed runtime index;
+- `scripts/compile-curriculum-runtime-index.mjs`: builds the compressed runtime index and derives its lightweight outline in memory from independently reviewed source; it writes no derived file into course source;
 - learning-quality and duplication audit engines;
 - sandboxed browser runtimes and worker boundaries;
 - current primary-source research compilers and pinned evidence.
 
 These are rebuild infrastructure, not compatibility layers.
+
+The planned C course remains in the 54-course research scope but has no live workspace/runtime contract. Reintroduce C only after current C23, sanitizer, diagnostic, isolation, delivery, accessibility, and transfer gates accept one production path.
+
+The planned TypeScript course also remains in scope but has no live workspace/runtime contract. TypeScript 6.0.3 is the sole direct application compiler and the host-side learner diagnostics endpoint is removed. TypeScript 7.0.2 was tested and rejected for this stack because it ships without a programmatic API and current Next.js type generation did not recognize it as a complete TypeScript installation. Reintroduce TypeScript learning files only after one current isolated browser or bounded-service design passes the same gates without executing learner source through the application host CLI.
 
 ## Research evidence
 
@@ -94,13 +98,14 @@ Current candidate graph:
 - 83 HTML/tooling concepts;
 - 96 CSS/responsive/design concepts;
 - 179 total concepts;
-- 82 agent-inspected source blocks;
-- 471 inspected challenges;
-- 758 captured prompts;
-- 96 block-specific candidate mappings;
-- 61 uninspected blocks with exact evidence and zero guessed concepts;
+- 88 agent-inspected source blocks;
+- 545 inspected challenges;
+- 819 captured question prompts;
+- 1,785 inspected implementation checks;
+- 101 block-specific candidate mappings;
+- 56 uninspected source blocks with exact evidence and zero guessed concepts;
 - 1 assessment container without reviewable item-level evidence;
-- 7 unresolved concepts;
+- 6 unresolved concepts;
 - 7 explicit modern extensions not credited to the benchmark;
 - candidate architecture of 17 cumulative modules and 5 original project briefs.
 
@@ -125,8 +130,8 @@ The target opening begins with a meaningful HTML edit by learner action two. Req
 
 - Course studios target accessible tablet and desktop use. Public information and the phone handoff remain phone-usable.
 - Every changed flow must support keyboard use, logical landmarks/headings, visible focus, announced feedback, 44-pixel targets, reduced motion, structured alternatives, and no color-only meaning.
-- Verify changed flows at mobile, tablet, and desktop viewports as required by `AGENTS.md`.
-- Browser previews remain sandboxed. Python, SQL, Go, and C run only in bounded workers. Shell/network work uses deterministic simulation. No learner source reaches host command execution.
+- Verify public information and phone handoff at a phone viewport, and changed learner flows at supported tablet and desktop viewports.
+- Browser previews remain sandboxed. Python, SQL, and Go run only in bounded workers. Shell/network work uses deterministic simulation. C and TypeScript have no approved learner runtime. No learner source reaches host command execution.
 - Persist real completion, attempts, hints, correction, competency mastery, retention, transfer, project readiness, drafts, and evidence. Do not invent analytics.
 
 ## Verification order
@@ -141,7 +146,7 @@ For every milestone:
 6. `npm run build`;
 7. browser verification of changed learner flows at required viewports.
 
-Do not run Lighthouse while planned content, authoring, reviews, migration-removal, duplication work, editor/progress/navigation work, or learner pilots remain. Final Lighthouse excludes SEO and requires at least 99 for performance, accessibility, and best practices on mobile, tablet, and desktop.
+Do not run Lighthouse while planned content, authoring, reviews, migration-removal, duplication work, editor/progress/navigation work, or learner pilots remain. Final Lighthouse excludes SEO and requires at least 99 for performance, accessibility, and best practices on tablet and desktop.
 
 Do not add GitHub Actions, workflow files, or push-triggered runners. Run gates locally.
 
@@ -150,7 +155,8 @@ Do not add GitHub Actions, workflow files, or push-triggered runners. Run gates 
 Pushed milestones:
 
 - `6b23ee63` — deny generated curriculum publication;
-- `21aa3272` — remove the blueprint-derived Responsive Web Design coverage generator and feed concept alignment directly from pinned source evidence.
+- `21aa3272` — remove the blueprint-derived Responsive Web Design coverage generator and feed concept alignment directly from pinned source evidence;
+- `2be14c1b` — physically remove the rejected generated curriculum and blueprint inventory.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -170,17 +176,33 @@ Tablet Settings also rendered one H1, no overflow, and no undersized controls. W
 
 Both deleted Responsive Web Design page routes returned 404. Attempt, draft, hint, and course-specific progress-clear APIs returned 404. `/api/tracks` returned HTTP 200 with `[]`. The restarted review server holds the zero-document index and remains available at `http://localhost:3000`.
 
+The current research/editor/runtime hard-cut milestone passed:
+
+- complete Pseudo-classes and Pseudo-elements source inspection: 6 blocks, 74 challenges, 61 question prompts, and 270 implementation checks;
+- current RWD research compilation: 88 inspected blocks, 545 inspected challenges, 819 captured prompts, 1,785 inspected checks, 101 block-specific mappings, 56 uninspected/unmapped blocks, and 70 total blocks still requiring inspection;
+- removal of every `generate-*` script, the course-outline writer, the stale 54-course/11,742-activity baseline, dead packages, app compatibility shims, the dual TypeScript path, the host learner-diagnostics endpoint, and the obsolete PicoC runtime;
+- one direct CodeMirror editor implementation with current official HTML, CSS, JavaScript, Python, SQL, and Go parsers; no Monaco, coding textarea, legacy mode, lazy alternate workspace, or second editor path;
+- a single TypeScript 6.0.3 application compiler, selected after TypeScript 7.0.2 failed current Next.js type-generation compatibility and official TypeScript evidence confirmed that 7.0 ships without a programmatic API;
+- five byte-identical pinned Pyodide assets served from the application origin; the CDN runtime path is gone;
+- focused gate: 14 test files / 100 tests;
+- full `npm test`: 47 test files / 211 tests;
+- `npm run type-check`, normal lint, and warning-failing strict lint across 134 source/script files;
+- Next.js 16.2.10 production build with 16 expected routes and no TypeScript learner-runtime route;
+- valid complete npm tree, zero production or complete audit vulnerabilities, and one explicit `npm outdated` exception: TypeScript 6.0.3 selected/wanted versus incompatible 7.0.2 latest;
+- live same-origin Pyodide asset smoke plus catalog browser checks at 390×844, 1024×768, and 1440×900: one H1, no horizontal overflow, no undersized interactive target, and no console error.
+
+The CodeMirror component is test-, type-, lint-, and build-valid but not learner-flow-verified: publication correctly exposes no activity route, and no fake course was created to manufacture a browser test. Flow verification is a blocking acceptance task for the first independently reviewed HTML vertical slice.
+
 ## Next work
 
-1. Commit and push the verified physical hard cut.
-2. Complete challenge-level inspection for the remaining 76 Responsive Web Design source blocks without guessed concept mappings.
-3. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
-4. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
-5. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
-6. Finish cohesive navigation, real mastery/progress, isolated runtimes, persistence, correction, and accessible responsive learner flows.
-7. Run representative learner pilots, repair findings, and repeat all release gates.
-8. Run final Lighthouse only after every earlier gate is complete.
+1. Complete challenge-level inspection for the remaining 70 Responsive Web Design source blocks without guessed concept mappings.
+2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
+3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
+4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
+5. Finish cohesive navigation, real mastery/progress, isolated runtimes, persistence, correction, and accessible responsive learner flows; research current C and TypeScript learner runtimes before restoring either file contract.
+6. Run representative learner pilots, repair findings, and repeat all release gates.
+7. Run final Lighthouse only after every earlier gate is complete.
 
 ## Blockers
 
-No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 76 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unfinished editor/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.
+No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 70 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.

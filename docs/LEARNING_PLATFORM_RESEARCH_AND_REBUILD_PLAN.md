@@ -8,7 +8,7 @@ LEARN-IT-ALL is not content-complete. The earlier checkpoint proved file invento
 
 The [research inventory](research/course-inventory.json) retains the intended 54-course scope without pretending that course content exists: Responsive Web Design is `researching`, the other 53 courses are `pending`, and zero courses are approved or published. `content/v2/courses` contains no course JSON. Lighthouse remains paused until the entire curriculum, duplication, platform, review, and learner-flow program is complete.
 
-Obsolete implementation is not a migration strategy. The 2026-07-15 removal audit deleted the guessed proportional bookmark mapper, retired page and API aliases, parallel challenge-room/dashboard/arcade surfaces, arbitrary XP and streak UI, and every blueprint/content generator capable of recreating the unapproved inventory. Only current research compilers and mechanical outline/runtime-index compilers remain.
+Obsolete implementation is not a migration strategy. The 2026-07-15 removal audit deleted the guessed proportional bookmark mapper, retired page and API aliases, parallel challenge-room/dashboard/arcade surfaces, arbitrary XP and streak UI, and every blueprint/content generator capable of recreating the unapproved inventory. Current scripts compile only reviewed research evidence and the runtime index. The runtime compiler derives lightweight course outlines in memory and writes no generated files into course source.
 
 The earlier staged-retention decision was rejected and the hard cut is complete. Publication is deny-by-default through one explicit manifest containing zero courses. Home, catalog, paths, settings, both learner routes, the tracks API, and all course attempt/draft/hint APIs reject unpublished IDs. Direct deleted course routes and APIs return 404; the learner UI shows an honest navigable empty state with no planned cards, fake hours, fake activity totals, or unusable filters. All 54 blueprints, all 12,985 generated course documents, their course-specific assertion suites, the blueprint contract, the blueprint-derived research generator, fake catalog metrics, and the populated runtime index are gone. The rebuilt runtime index contains zero curriculum documents. Git history is the only archive; no archive directory, renamed copy, compatibility route, or publication exception replaces the deleted implementation. Historical learner rows remain preserved exactly in one neutral evidence table because learner-owned evidence is data, not implementation.
 
@@ -28,7 +28,7 @@ The goal therefore includes all of the following blocking research outcomes:
 - representative novice, intermediate, advanced, disabled, keyboard-only, tablet, and phone-handoff learner studies with severity-rated findings and re-tests;
 - formal subject-matter, instructional-design, assessment, accessibility, safety/privacy, and observed-learner approval before publication.
 
-Research artifacts remain explicitly `researching`, `candidate-review`, or `planned-not-authored` until their own evidence closes. Topic counts, generated steps, links, passing schemas, and one successful walkthrough cannot advance those states.
+Research artifacts remain explicitly `researching`, `candidate-review`, or `planned-not-authored` until their own evidence closes. Topic counts, step counts, links, passing schemas, and one successful walkthrough cannot advance those states.
 
 ## Complete user requirement register
 
@@ -56,8 +56,8 @@ This plan is incomplete if it omits any item below:
 - accessible tablet and desktop course studios, an accessible phone handoff, and phone-usable public information/navigation;
 - isolated learner execution: sandboxed web output, bounded workers, deterministic simulators, no learner source executed on the host, and server-held canonical answers;
 - no GitHub Actions workflows or push-triggered runners; verification remains explicit and local;
-- tests updated with every code, schema, generator, content-contract, migration, and behavior change;
-- Lighthouse held until the entire content/platform/migration/pilot program is complete, followed by mobile, tablet, and desktop profiles, no SEO, and scores of at least 99 for performance, accessibility, and best practices in every profile;
+- tests updated with every code, schema, compiler, content-contract, migration, and behavior change;
+- Lighthouse held until the entire content/platform/migration/pilot program is complete, followed by tablet and desktop profiles, no SEO, and scores of at least 99 for performance, accessibility, and best practices in both profiles;
 - verified milestone commits and pushes with current project-memory handoffs, next work, and blockers.
 
 ## Research method
@@ -81,7 +81,7 @@ Research is not a finished discovery task or a one-time bibliography. It is a bl
 3. **Subject-matter scope for every course:** current specifications, standards, certification objectives, official manuals, language and library releases, security guidance, professional practices, known misconceptions, authentic tasks, deprecations, disputed practices, scope boundaries, and prerequisite knowledge.
 4. **Responsive Web Design certification coverage:** a versioned topic-and-practice map against the current freeCodeCamp v9 curriculum plus WHATWG, W3C, MDN, web.dev, CSS Working Group, and WCAG sources. The map must distinguish external coverage requirements from original LEARN-IT-ALL instruction and assessment.
 5. **Competitive learner-experience research:** direct task-level inspection of onboarding, diagnostics, course maps, inline editors, feedback, hints, review, progress, projects, credentials, accessibility, recovery, and pricing/lock boundaries across leading platforms. Features become hypotheses, never requirements copied by popularity.
-6. **Editor and runtime research:** Monaco and native-editor accessibility, tablet browser support, language services, sandboxing, worker isolation, compiler/interpreter limits, dependency policy, deterministic simulation, output termination, state recovery, and transfer to authentic toolchains.
+6. **Editor and runtime research:** CodeMirror 6 accessibility and tablet/desktop browser support, language services, sandboxing, worker isolation, compiler/interpreter limits, dependency policy, deterministic simulation, output termination, state recovery, and transfer to authentic toolchains.
 7. **Assessment and progress validity:** what each metric claims, the evidence needed to support it, changed-case and delayed checks, rubric reliability, false-positive and false-negative review, answer security, retry effects, learner explanations, and how mastery may decay or recover.
 8. **Information architecture and usability:** learner mental models, labels, wayfinding, prerequisite visibility, resume behavior, error recovery, help, cognitive walkthroughs, screen-reader and keyboard paths, tablet ergonomics, phone handoff, and comprehension of all progress claims.
 9. **Safety, security, privacy, and ethics:** learner-code isolation, content security, canonical-answer protection, resource bounds, data minimization, consent, retention, accessibility, authorized practice, AI limitations, model/provider changes, supply-chain risk, and threat modeling.
@@ -105,7 +105,7 @@ Sources must be primary and current wherever the claim can change. Peer-reviewed
 
 ### Research gates
 
-- No candidate course architecture is accepted or used for learner-facing migration or bulk authoring without its reviewed subject dossier, objective coverage map, prerequisite evidence, and required reviewers. Candidate structures may be generated only as explicit `researching` review artifacts that cannot publish content.
+- No candidate course architecture is accepted or used for learner-facing migration or bulk authoring without its reviewed subject dossier, objective coverage map, prerequisite evidence, and required reviewers. Candidate structures may be compiled only as explicit `researching` review artifacts that cannot publish content.
 - No learner-facing explanation, example, assessment, or project is approved solely because it matches an external topic list.
 - No interaction or gamification mechanic ships without a named learning purpose, an accessibility path, a failure hypothesis, and learner-observation evidence.
 - No progress value ships unless research and validation support the learner-facing claim it makes.
@@ -130,9 +130,9 @@ The first concept-level [HTML research graph](research/courses/responsive-web-de
 
 The companion [CSS and responsive-design research graph](research/courses/responsive-web-design-css-concepts.json) now defines 96 ordered concepts across CSS language and cascade, boxes and intrinsic sizing, typography/color/design, flex layout, grid/positioning, responsive systems, interaction/accessibility/motion, and independent transfer. Beyond the previously separated design and interface contracts, the new calculated-value concept distinguishes percentage bases, numeric type algebra, valid result types, operator whitespace, and changed-reference behavior instead of treating `calc()` as a magic responsive recipe. Current primary research includes CSS Syntax, Selectors, Cascade, Display, Backgrounds, Values and Units, Color Adjustment, WCAG, ARIA APG, WAI multi-page forms, W3C COGA, GOV.UK research and pagination, MDN progressive enhancement, and current official handoff-tool evidence. The accepted `rwd-css-spec-graph`, `rwd-length-reference-frame-evidence`, `rwd-resilient-design-patterns`, and `rwd-current-design-tool-capabilities` decisions correct benchmark shortcuts, require complete behavior contracts, and reject stale vendor trivia. The graph replaces device-name, appearance, and unit-suffix recipes with explicit reference frames, fluid defaults, content-derived constraints, failure recovery, changed-case evidence, and cumulative accessibility checks.
 
-The generated and tested [v9-to-concept candidate alignment](research/courses/responsive-web-design-concept-alignment.json) preserves all 158 pinned source blocks and all 1,553 exact challenge identities without assigning guessed coverage. Its source snapshot captures 6,431,329 bytes across the exact pinned files plus paths, SHA-256 hashes, section inventories, 5,163 executable hint checks, and 1,365 question prompts. All previously inspected HTML, accessibility, tooling, Basic CSS, and design blocks remain exact. The complete new [Absolute and Relative Units inspection](research/courses/responsive-web-design-absolute-relative-units-inspection.md) adds four blocks, eight challenges, 35 question prompts, and 17 lab checks. It corrects parent-only percentage explanations, physical-pixel assumptions, guaranteed `16px` root sizing, viewport-as-screen language, unbounded viewport typography, `100vw` box overflow, `100vh` mobile behavior, and untyped `calc()` rules. This produces 82 inspected blocks, 471 inspected challenges, and 758 captured prompts. Ninety-six blocks have block-specific candidate maps; 61 uninspected blocks and the unavailable certification assessment retain exact source evidence with zero concept assignments. Seven concepts remain explicitly unresolved. Seven concepts lacking enough pinned-v9 evidence remain explicit modern extensions. No broad, proportional, guessed, or compatibility mapping exists. Every record remains `candidate-review`; inspection of the remaining 76 blocks, independent reviews, original full evidence progression, assessment validation, runtime evidence, accessibility verification, and observed learner success remain blocking.
+The compiled and tested [v9-to-concept candidate alignment](research/courses/responsive-web-design-concept-alignment.json) preserves all 158 pinned source blocks and all 1,553 exact challenge identities without assigning guessed coverage. Its source snapshot captures 6,431,329 bytes across the exact pinned files plus paths, SHA-256 hashes, section inventories, 5,163 executable hint checks, and 1,365 question prompts. All previously inspected HTML, accessibility, tooling, Basic CSS, design, and unit blocks remain exact. The complete [Pseudo-classes and Pseudo-elements inspection](research/courses/responsive-web-design-pseudo-classes-elements-inspection.md) adds six inspected blocks, 74 challenges, 61 question prompts, and 270 implementation checks. It corrects activation timing, hover-only interaction, removed focus outlines, immediate and color-only validation, native-control replacement, visited privacy, obsolete `:local-link` instruction, structural-selector changed cases, functional-selector specificity, relational `:has()` behavior, generated-content accessibility, forced-colors handling, and reduced-motion omissions. This produces 88 inspected blocks, 545 inspected challenges, 819 captured question prompts, and 1,785 inspected implementation checks. One hundred one blocks have block-specific candidate maps; 56 uninspected source blocks and the unavailable certification assessment retain exact source evidence with zero concept assignments. Six concepts remain explicitly unresolved. Seven concepts lacking enough pinned-v9 evidence remain explicit modern extensions. No broad, proportional, guessed, fallback, or compatibility mapping exists. Every record remains `candidate-review`; inspection of the remaining 70 blocks, independent reviews, original full evidence progression, assessment validation, runtime evidence, accessibility verification, and observed learner success remain blocking.
 
-The generated and tested [candidate research architecture](research/courses/responsive-web-design-course-architecture.json) translates verified candidate mappings into a reviewable 17-module cumulative sequence rather than copying the benchmark's 29-module navigation or the deleted generated sequence. It opens with `html-first-page`, requires a meaningful source edit by learner action two, then places `web-tooling-just-in-time` before documents and paths. It assigns every one of the 179 target concepts exactly once, maps only 96 bounded source objectives into modules, retains the other 62 source identities in an explicit unmapped inventory, names prior concepts to retrieve, bounds new complexity, and defines a continuing learner artifact. Five certification benchmarks become original stakeholder projects in mutual-aid, museum, public-library, emergency-information, and community-energy domains with distinct requirements, evidence, concepts, placements, and empty-start policies. All modules and projects remain `planned-not-authored`; the architecture remains `researching` and cannot drive learner-facing authoring until the remaining 76 inspections, all independent reviews, and activity-matrix gates close.
+The compiled and tested [candidate research architecture](research/courses/responsive-web-design-course-architecture.json) translates verified candidate mappings into a reviewable 17-module cumulative sequence rather than copying the benchmark's 29-module navigation or the deleted generated sequence. It opens with `html-first-page`, requires a meaningful source edit by learner action two, then places `web-tooling-just-in-time` before documents and paths. It assigns every one of the 179 target concepts exactly once, maps only 101 bounded source objectives into modules, retains the other 57 source identities in an explicit non-specific inventory, names prior concepts to retrieve, bounds new complexity, and defines a continuing learner artifact. Five certification benchmarks become original stakeholder projects in mutual-aid, museum, public-library, emergency-information, and community-energy domains with distinct requirements, evidence, concepts, placements, and empty-start policies. All modules and projects remain `planned-not-authored`; the architecture remains `researching` and cannot drive learner-facing authoring until the remaining 70 inspections, all independent reviews, and activity-matrix gates close.
 
 ## Findings translated into product rules
 
@@ -164,8 +164,8 @@ The generated and tested [candidate research architecture](research/courses/resp
 | [Codecademy Paths](https://help.codecademy.com/hc/en-us/articles/220453248-Picking-Your-Learning-Path) and [projects](https://www.codecademy.com/projects)  | Clear milestones combine lessons, quizzes, guided practice, and increasingly independent real-world projects.                         | Progress must expose actual competency evidence rather than subscription, completion, or activity totals.                                                                                  |
 | [Khan Academy mastery challenges](https://www.khanacademy.org/resources/teacher-essentials/product-tour-videos/a/mastery-challenges-course-mastery)         | Skill-level progress and delayed mixed review make retention visible.                                                                 | Coding mastery also requires runnable behavior, debugging, changed cases, and transfer builds.                                                                                             |
 | [Carnegie Mellon OLI](https://oli.cmu.edu/homepage/)                                                                                                        | Immediate feedback, hints, clear goals, practice data, and continuous course improvement form a coherent learning system.             | Analytics must be privacy-minimal, explainable, and used to improve instruction rather than manipulate engagement.                                                                         |
-| [CodeSandbox Sandpack](https://codesandbox.io/blog/sandpack-announcement)                                                                                   | Browser-local multi-file editing, preview, tests, and customizable learning surfaces support rapid build-feedback loops.              | Third-party bundling is not automatically safe or accessible; execution boundaries and fallback modes remain LEARN-IT-ALL responsibilities.                                                |
-| [Monaco Editor accessibility guidance](https://github.com/microsoft/monaco-editor/wiki/Accessibility-Guide-for-Integrators)                                 | A mature editor provides language support, diagnostics, keyboard commands, screen-reader mode, high contrast, and accessibility help. | Monaco officially does not support mobile browsers. Course studios therefore target tablet/desktop, use a native editor on unsupported tablet browsers, and provide a clear phone handoff. |
+| [CodeSandbox Sandpack](https://codesandbox.io/blog/sandpack-announcement)                                                                                   | Browser-local multi-file editing, preview, tests, and customizable learning surfaces support rapid build-feedback loops.              | Third-party bundling is not automatically safe or accessible; the selected editor and runtime must pass every required safety, accessibility, and recovery gate without an alternate editor mode. |
+| [CodeMirror 6 documentation](https://codemirror.net/docs/), [Tab handling](https://codemirror.net/examples/tab/), and [changelog](https://codemirror.net/docs/changelog/) | A composable browser editor supports language modes and diagnostics, intentionally avoids a default Tab trap, and records current touch, composition, selection, and accessibility repairs. | CodeMirror is the one coding editor path, not proof of this integration. Supported tablet/desktop devices, browsers, keyboards, touch, zoom, forced colors, and assistive technologies must pass observed tasks; phones receive a clear handoff. |
 
 ### What the platform will not copy
 
@@ -222,7 +222,7 @@ Projects begin with a stakeholder need and acceptance criteria, not a starter id
 Every build-capable activity declares:
 
 - artifact type and supported files or structured sections;
-- editor mode, language service, formatting behavior, and separately verified accessible editor paths;
+- CodeMirror language mode, language service, formatting behavior, and the single verified accessible editor path;
 - starter provenance and the exact earlier learner artifact it continues;
 - preview, output, simulator, or visualization surface;
 - canonical check adapter and hidden changed-case tests;
@@ -236,7 +236,7 @@ An activity that requires an artifact but lacks this declaration fails publicati
 ### Editor behavior
 
 - Editing, running/checking, previewing, resetting, and saving work inline at every supported viewport.
-- Desktop uses Monaco after it loads. Supported tablets use Monaco where available and the fully functional native editor otherwise.
+- Supported tablets and desktops use the same CodeMirror 6 editor. Unsupported environments cannot enter the studio and receive a precise supported-environment explanation.
 - File tabs follow the ARIA tab pattern, preserve per-file undo, and never hide the active file name from assistive technology.
 - The editor exposes filename/language, line and column, diagnostics, keyboard help, and a direct way to leave the editing surface.
 - Error markers also appear in a semantic, focusable list linked to the relevant file and location.
@@ -450,13 +450,13 @@ Execution order:
 
 - Remove content-complete and published claims invalidated by learner review.
 - Add explicit course states: planned, researched, authored, schema-valid, runtime-valid, flow-verified, pilot-validated, approved, published.
-- Generate a human-readable audit report with evidence and failures for every course.
+- Produce a human-readable audit report with evidence and failures for every course.
 - Fail on generic scaffolds, instructions without teaching content, late first practice, token-only mastery, weak cumulative checks, and missing workspace profiles.
 
 ### Package B: universal learner workspace
 
-- Promote the current code textarea into a baseline artifact editor available to every build-capable course.
-- Integrate Monaco progressively for supported desktop/tablet environments; keep the native editor as a separately verified supported path.
+- Replace the coding textarea and unused Monaco dependencies with CodeMirror 6 as the one tablet/desktop artifact editor for every build-capable course.
+- Keep phone course studios unsupported with a clear work-preserving handoff; do not ship a second coding editor implementation.
 - Add semantic diagnostics, tests, artifact history/diff, checkpoints, reset, export, responsive preview controls, and workspace help.
 - Map every course/activity to a verified runtime or simulator and expose transfer boundaries in learner language.
 
@@ -469,9 +469,9 @@ Execution order:
 ### Package D: curriculum rebuild
 
 - Write the competency and alignment matrix before learner prose.
-- Author explicit explanations and small worked examples before generating repeated structures.
-- Generate only mechanical envelopes from reviewed source models; never generate generic instructional prose from topic names.
-- Inspect and learner-test a vertical slice before expanding a generator across a course.
+- Author explicit explanations and small worked examples before defining repeated activity structures.
+- Compile only runtime indexes and research evidence from reviewed source models; never generate learner-facing instruction, examples, practice, checks, feedback, or assessments from topic names.
+- Inspect and learner-test each vertical slice before authoring the next sequence.
 
 ### Package E: release
 
@@ -487,7 +487,7 @@ Required order:
 8. mobile public-information/phone-handoff plus tablet and desktop studio browser verification of real learner flows;
 9. observed learner pilot evidence and repairs;
 10. creation of `content/v2/CONTENT_COMPLETE` only after all planned course and migration work is closed;
-11. final Lighthouse mobile, tablet, and desktop profiles, excluding SEO, with at least 99 for performance, accessibility, and best practices.
+11. final Lighthouse tablet and desktop profiles, excluding SEO, with at least 99 for performance, accessibility, and best practices.
 
 ## Definition of done
 
@@ -503,7 +503,7 @@ The overhaul is complete only when:
 - navigation and progress are understandable to a learner without exposing repository or implementation decisions;
 - representative learner pilots find no critical teaching, order, navigation, editor, feedback, accessibility, or recovery failure;
 - all local technical gates, mobile public-information/phone-handoff flows, and tablet/desktop learner flows pass;
-- only then, all three final Lighthouse profiles pass the required non-SEO thresholds.
+- only then, both final Lighthouse profiles pass the required non-SEO thresholds.
 
 ## Research maintenance
 

@@ -89,8 +89,8 @@ A participant may belong to several groups. Demographic collection is limited to
 - enter, use, and leave the editor with the participant's input method;
 - find and act on semantic diagnostics without depending on color or visual markers;
 - run work without unexpected focus movement and review announced status and detailed output;
-- recover from timeout, worker failure, offline change, corrupt field, storage denial, unsupported Monaco path, preview denial, and reset confirmation;
-- complete the same outcome through the native editor fallback.
+- recover from timeout, worker failure, offline change, corrupt field, storage denial, unsupported-environment admission, editor failure, preview denial, and reset confirmation;
+- complete editing, saving, running, diagnosis, correction, and submission through the one supported CodeMirror path.
 
 ## Session procedure
 

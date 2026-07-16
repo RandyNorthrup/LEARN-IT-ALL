@@ -11,17 +11,16 @@ import {
   workspaceOutputFor,
 } from '@/core/learning/workspace';
 import { ContentBlocks } from './ContentBlocks';
-import { CRunPanel } from './CRunPanel';
 import { EvidenceStimulus } from './EvidenceStimulus';
 import { GoRunPanel } from './GoRunPanel';
 import { JavaScriptRunPanel } from './JavaScriptRunPanel';
+import { LearningCodeEditor } from './LearningCodeEditor';
 import styles from './LearningStudio.module.css';
 import { NetworkRunPanel } from './NetworkRunPanel';
 import { PromptHarnessPanel } from './PromptHarnessPanel';
 import { PythonRunPanel } from './PythonRunPanel';
 import { QualityGatePanel } from './QualityGatePanel';
 import { SqlRunPanel } from './SqlRunPanel';
-import { TypeScriptRunPanel } from './TypeScriptRunPanel';
 
 export interface CodeWorkspaceProps {
   step: LearnerStep;
@@ -81,24 +80,24 @@ export function CodeWorkspace({ step, files, onFilesChange }: CodeWorkspaceProps
               </button>
             ))}
           </div>
-          <label
+          <div
             className={styles.editorLabel}
             id="learning-code-panel"
             role="tabpanel"
             aria-labelledby={`file-tab-${activeFile}`}
           >
-            <span className="sr-only">Edit {activeFile.toUpperCase()} source</span>
-            <textarea
-              id="learning-code-editor"
+            <p className={styles.editorHelp} id="learning-code-editor-help">
+              Tab moves to the next control. Use the editor commands for indentation, search, and
+              diagnostics.
+            </p>
+            <LearningCodeEditor
+              key={activeFile}
+              file={activeFile}
               value={files[activeFile]}
-              onChange={(event) =>
-                onFilesChange({ ...files, [activeFile]: event.currentTarget.value })
-              }
-              spellCheck={false}
-              autoCapitalize="off"
-              autoCorrect="off"
+              describedBy="learning-code-editor-help"
+              onChange={(value) => onFilesChange({ ...files, [activeFile]: value })}
             />
-          </label>
+          </div>
         </section>
         {outputKind === 'web' && (
           <section className={styles.previewPanel} aria-labelledby="preview-title">
@@ -117,10 +116,8 @@ export function CodeWorkspace({ step, files, onFilesChange }: CodeWorkspaceProps
         )}
         {outputKind === 'python' && <PythonRunPanel code={files.python} />}
         {outputKind === 'go' && <GoRunPanel source={files.go} />}
-        {outputKind === 'c' && <CRunPanel source={files.c} />}
         {outputKind === 'sql' && <SqlRunPanel source={files.sql} />}
         {outputKind === 'javascript' && <JavaScriptRunPanel code={files.javascript} />}
-        {outputKind === 'typescript' && <TypeScriptRunPanel source={files.typescript} />}
         {outputKind === 'network' && <NetworkRunPanel source={files.shell} />}
         {outputKind === 'prompt' && <PromptHarnessPanel source={files.prompt} />}
         {outputKind === 'gates' && <QualityGatePanel source={files.config} />}

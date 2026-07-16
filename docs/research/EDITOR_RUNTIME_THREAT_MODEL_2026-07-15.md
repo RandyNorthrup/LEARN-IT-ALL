@@ -6,7 +6,7 @@ Reviewed: 2026-07-15
 
 Every build-capable activity needs an accessible inline artifact workspace. Learner source is untrusted. It never becomes a host command, never supplies canonical answers, and never receives ambient credentials or unrestricted network access.
 
-Browser workers and sandboxed iframes are bounded execution components, not complete trust boundaries. Each domain needs a declared capability policy, resource controller, message schema, persistence boundary, fallback path, and authentic transfer gate.
+Browser workers and sandboxed iframes are bounded execution components, not complete trust boundaries. Each domain needs a declared capability policy, resource controller, message schema, persistence boundary, explicit failure and recovery behavior, and authentic transfer gate.
 
 ## Protected assets
 
@@ -102,7 +102,7 @@ Technical authorities: [Pyodide worker guidance](https://pyodide.org/en/stable/u
 - retain drafts across editor load failure, worker crash, timeout, route change, refresh, browser restart, and supported tablet-to-desktop handoff;
 - verify screen reader, keyboard-only, zoom/reflow, high contrast, reduced motion, touch, and error recovery with people and supported assistive technology.
 
-Accessibility authorities: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [Monaco accessibility guidance](https://github.com/microsoft/monaco-editor/wiki/Accessibility-Guide-for-Integrators).
+Accessibility authorities: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [CodeMirror 6 documentation](https://codemirror.net/docs/), and [CodeMirror Tab handling guidance](https://codemirror.net/examples/tab/).
 
 ## Domain policy matrix
 
@@ -128,7 +128,7 @@ Accessibility authorities: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [Monaco
 5. hidden checks and solutions cannot be fetched, inferred from identifiers, or reconstructed from feedback;
 6. valid alternative solutions pass while near-miss, misplaced, malformed, hard-coded, and token-only submissions fail;
 7. timeout, crash, offline change, storage denial, unsupported browser, editor failure, and version mismatch preserve recoverable work;
-8. keyboard, screen reader, zoom, high contrast, reduced motion, touch, and native fallback complete the same learner outcome;
+8. keyboard, screen reader, zoom, high contrast, reduced motion, touch, and composition complete the same learner outcome through the one supported editor path;
 9. no learner input reaches a host command, production service, account, device, repository, credential, or external message;
 10. logs and analytics contain no source, secret, personal content, or unneeded learner identifiers.
 
@@ -136,7 +136,7 @@ Accessibility authorities: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [Monaco
 
 - Worker and iframe isolation depends on browser correctness and application policy; it is not equivalent to a separate operating-system sandbox.
 - Memory enforcement is weaker in browser workers than in controlled disposable server sandboxes; large-runtime courses may require a different architecture.
-- Monaco does not support mobile browsers, and tablet behavior needs device-specific observation rather than viewport emulation alone.
+- CodeMirror tablet behavior, touch selection, software and hardware keyboards, composition, and assistive-technology behavior need device-specific observation rather than viewport emulation alone.
 - Safe third-party package execution needs domain allowlists, provenance, update review, and a replacement path.
 - Assistive-technology behavior varies by browser, editor, operating system, and user settings.
 - Real network, device, compiler, cloud, concurrency, performance, and production claims remain controlled transfer gates.

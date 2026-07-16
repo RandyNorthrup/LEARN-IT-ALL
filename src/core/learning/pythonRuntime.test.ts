@@ -27,4 +27,23 @@ describe('Python learning runtime', () => {
     expect(worker).toContain('const globals = makeDictionary()');
     expect(worker).toContain('globals.destroy()');
   });
+
+  it('uses only pinned same-origin Pyodide runtime assets', () => {
+    const worker = readFileSync(path.join(process.cwd(), 'public', 'python-worker.mjs'), 'utf8');
+    const runtimeFiles = [
+      'pyodide.mjs',
+      'pyodide.asm.mjs',
+      'pyodide.asm.wasm',
+      'pyodide-lock.json',
+      'python_stdlib.zip',
+    ];
+
+    expect(worker).toContain("const PYODIDE_MODULE_URL = '/pyodide/pyodide.mjs'");
+    expect(worker).not.toMatch(/https?:\/\//u);
+    for (const fileName of runtimeFiles) {
+      const installed = readFileSync(path.join(process.cwd(), 'node_modules', 'pyodide', fileName));
+      const published = readFileSync(path.join(process.cwd(), 'public', 'pyodide', fileName));
+      expect(published.equals(installed), fileName).toBe(true);
+    }
+  });
 });

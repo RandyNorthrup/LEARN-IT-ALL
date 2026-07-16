@@ -1,13 +1,13 @@
-const PYODIDE_VERSION = '314.0.2';
-const PYODIDE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
+const PYODIDE_MODULE_URL = '/pyodide/pyodide.mjs';
+const PYODIDE_INDEX_URL = new URL('/pyodide/', self.location.origin).href;
 const MAX_SOURCE_CHARACTERS = 32768;
 const MAX_OUTPUT_CHARACTERS = 65536;
 
 let runtimePromise;
 
 async function runtime() {
-  runtimePromise ??= import(PYODIDE_URL).then(({ loadPyodide }) =>
-    loadPyodide({ indexURL: PYODIDE_URL.replace('pyodide.mjs', '') })
+  runtimePromise ??= import(PYODIDE_MODULE_URL).then(({ loadPyodide }) =>
+    loadPyodide({ indexURL: PYODIDE_INDEX_URL })
   );
   return runtimePromise;
 }

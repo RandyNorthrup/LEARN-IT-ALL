@@ -52,9 +52,9 @@
     {
       "id": "editor-runtime-access",
       "track": "editor-runtime",
-      "question": "Which editor, language-service, runtime, simulator, isolation, fallback, and recovery design works accessibly on supported tablets and desktops?",
+      "question": "Which single editor, language-service, runtime, simulator, isolation, and recovery design works accessibly on supported tablets and desktops?",
       "acceptanceEvidence": [
-        "Keyboard, screen-reader, native fallback, resource-bound, failure, persistence, and authentic-transfer flows pass observed tests."
+        "Keyboard, screen-reader, touch, resource-bound, failure, persistence, recovery, and authentic-transfer flows pass observed tests through one editor path."
       ],
       "status": "decision-recorded"
     },
@@ -309,25 +309,25 @@
       }
     },
     {
-      "id": "monaco-accessibility-guide",
-      "title": "Monaco Editor Accessibility Guide for Integrators",
+      "id": "codemirror-six-docs",
+      "title": "CodeMirror 6 Documentation, Tab Handling, and Changelog",
       "authority": "official-docs",
-      "url": "https://github.com/microsoft/monaco-editor/wiki/Accessibility-Guide-for-Integrators",
-      "versionOrPublished": "Current Monaco integration guidance reviewed 2026-07",
+      "url": "https://codemirror.net/docs/",
+      "versionOrPublished": "CodeMirror 6 package set current through @codemirror/view 6.43.6; official docs and changelog reviewed 2026-07-15",
       "reviewedAt": "2026-07-15",
       "questionIds": ["editor-runtime-access", "learner-navigation-usability"],
       "claims": [
         {
-          "statement": "Editor integration must expose accessible labeling, keyboard help, screen-reader mode, high contrast, diagnostics, and a reliable way to leave the editor.",
+          "statement": "CodeMirror 6 provides a composable browser editor, intentionally leaves Tab unbound to avoid a keyboard trap, exposes content attributes for accessible labeling, and records current touch, mobile composition, screen-reader announcement, selection, and diagnostic repairs in its official changelog.",
           "limitations": [
-            "Guidance does not prove this platform integration works, and Monaco does not support mobile browsers; native fallback and observed testing remain required."
+            "Documentation and package release notes do not prove this integration is usable on the supported tablet, desktop, browser, keyboard, touch, zoom, high-contrast, or assistive-technology matrix; direct observed tests remain required."
           ],
           "decisionIds": ["accessible-tablet-desktop-studio"]
         }
       ],
       "nextReview": {
         "onOrBefore": "2026-10-15",
-        "triggers": ["Monaco changes accessibility APIs, browser support, editor architecture, or integration guidance." ]
+        "triggers": ["CodeMirror changes view, state, language, accessibility, input, browser, or integration behavior." ]
       }
     },
     {
@@ -537,7 +537,7 @@
       "questionIds": ["stack-compatibility-evidence"],
       "claims": [
         {
-          "statement": "After upgrading Biome to 2.5.4 and agent-browser to 0.32.0, adding proxy-agent 8.0.2 resolved Puppeteer's peer requirement while LHCI retained its compatible nested 6.5.0 dependency; npm outdated and npm ls then reported no unresolved package gap or invalid tree.",
+          "statement": "After the current dependency and runtime purge, npm ls reports a valid tree. npm outdated reports TypeScript 7.0.2 as newer than the selected 6.0.3, but TypeScript 7 ships without the programmatic API required by current Next.js tooling; the tested stack therefore records this one explicit compatibility exception.",
           "limitations": [
             "A current registry comparison and valid local dependency tree do not prove clean installation, runtime behavior, browser behavior, or compatibility on every supported operating system."
           ],
@@ -547,6 +547,29 @@
       "nextReview": {
         "onOrBefore": "2026-08-15",
         "triggers": ["A direct or transitive dependency changes, a peer constraint changes, a security advisory appears, or a supported runtime or browser changes."]
+      }
+    },
+    {
+      "id": "typescript-seven-api-transition",
+      "title": "Announcing TypeScript 7.0",
+      "authority": "official-docs",
+      "url": "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/",
+      "versionOrPublished": "TypeScript 7.0 announcement, July 2026",
+      "reviewedAt": "2026-07-15",
+      "questionIds": ["editor-runtime-access", "stack-compatibility-evidence"],
+      "claims": [
+        {
+          "statement": "TypeScript 7.0 does not ship a programmatic API; the TypeScript team expects a new API in 7.1 and documents TypeScript 6 for tools that still need programmatic compiler access.",
+          "limitations": [
+            "The announcement does not certify Next.js compatibility, define a browser learner-runtime design, or authorize sending learner source to a host compiler. Local Next.js type-generation behavior is separate direct evidence."
+          ],
+          "decisionIds": ["latest-compatible-tested-stack"]
+        }
+      ],
+      "nextReview": {
+        "triggers": [
+          "TypeScript 7.1 or another stable release exposes the new API, Next.js documents TypeScript 7 support, or the isolated learner-runtime design changes."
+        ]
       }
     }
   ],
@@ -629,16 +652,16 @@
     },
     {
       "id": "accessible-tablet-desktop-studio",
-      "title": "Support tablet and desktop studios with native fallback",
+      "title": "Support tablet and desktop studios through one verified editor",
       "status": "accepted",
-      "rationale": "Course editors require room and keyboard-capable interaction; Monaco brings language tooling but unsupported environments need a first-class native editor and phones need clear handoff.",
-      "sourceIds": ["cast-udl-three", "w3c-wcag-two-two", "monaco-accessibility-guide"],
+      "rationale": "Course editors require room and keyboard-capable interaction. CodeMirror 6 is the only coding editor path, supported tablet and desktop environments must pass the same gates, and phones receive a clear handoff rather than a second implementation.",
+      "sourceIds": ["cast-udl-three", "w3c-wcag-two-two", "codemirror-six-docs"],
       "affects": [
         {"kind": "platform", "reference": "learning-studio"},
         {"kind": "gate", "reference": "tablet-desktop-browser-verification"}
       ],
       "validation": [
-        "Keyboard, screen-reader, zoom, reflow, touch, reduced-motion, diagnostics, fallback, persistence, and phone-handoff tasks must pass."
+        "Keyboard, screen-reader, zoom, reflow, touch, reduced-motion, diagnostics, persistence, recovery, and phone-handoff tasks must pass through the one supported editor path."
       ]
     },
     {
@@ -716,7 +739,7 @@
       "title": "Keep build, observation, diagnosis, and revision together",
       "status": "trial",
       "rationale": "A cohesive multi-file workspace can reduce interaction cost and make cause and effect visible when output, diagnostics, evidence, hints, and revision remain accessible without solving the task for the learner.",
-      "sourceIds": ["sandpack-live-code", "monaco-accessibility-guide", "w3c-wcag-two-two"],
+      "sourceIds": ["sandpack-live-code", "codemirror-six-docs", "w3c-wcag-two-two"],
       "affects": [
         {"kind": "platform", "reference": "learning-studio"},
         {"kind": "activity", "reference": "build-capable-workspace"}
@@ -758,7 +781,7 @@
       "title": "Accept upgrades only after dependency and repository smokes",
       "status": "accepted",
       "rationale": "Registry latest status is useful inventory, but compatibility is established only when peer constraints resolve and the reproducible install, package tree, tests, types, lint, build, runtime packaging, and changed browser flows all pass.",
-      "sourceIds": ["npm-stack-observation-2026-07-15"],
+      "sourceIds": ["npm-stack-observation-2026-07-15", "typescript-seven-api-transition"],
       "affects": [
         {"kind": "gate", "reference": "stack-upgrade"},
         {"kind": "test", "reference": "dependency-tree-and-runtime-smokes"}

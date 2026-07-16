@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -41,6 +41,12 @@ describe('production JavaScript toolchain pins', () => {
     });
   });
 
+  it('uses one direct TypeScript compiler compatible with current Next.js tooling', () => {
+    expect(manifest.devDependencies?.typescript).toBe('^6.0.3');
+    expect(Object.keys(manifest.devDependencies ?? {})).not.toContain('@typescript/native');
+    expect(manifest.devDependencies?.typescript).not.toContain('npm:');
+  });
+
   it('runs the latest Lighthouse engine through the latest compatible LHCI harness', () => {
     expect(manifest.devDependencies?.['@lhci/cli']).toBe('^0.15.1');
     expect(manifest.devDependencies?.lighthouse).toBe('^13.4.0');
@@ -55,13 +61,13 @@ describe('production JavaScript toolchain pins', () => {
     expect(dockerfile).toContain('COPY package.json package-lock.json .npmrc ./');
     expect(dockerfile).not.toContain('COPY --from=builder /app/content ./content');
     expect(dockerignore).toContain('content/v2/.runtime');
-    expect(dockerignore).toContain('!scripts/generate-curriculum-runtime-index.mjs');
+    expect(dockerignore).toContain('!scripts/compile-curriculum-runtime-index.mjs');
     expect(dockerfile).not.toContain('FROM node:20');
   });
 
-  it('ships TypeScript standard-library declarations in standalone runtime traces', () => {
-    expect(nextConfig).toContain("'/api/v2/runtime/typescript'");
-    expect(nextConfig).toContain("'./node_modules/@typescript/old/lib/*.d.ts'");
+  it('does not expose an unisolated host-side learner compiler route', () => {
+    expect(nextConfig).not.toContain('/api/v2/runtime/typescript');
+    expect(existsSync(path.join(root, 'src/app/api/v2/runtime/typescript/route.ts'))).toBe(false);
   });
 
   it('uses route-scoped curriculum traces instead of a global content wildcard', () => {
@@ -75,18 +81,11 @@ describe('production JavaScript toolchain pins', () => {
     expect(nextConfig).toMatch(/experimental:\s*\{\s*inlineCss:\s*true,/u);
   });
 
-  it('replaces redundant framework legacy patches with the narrow modern-browser fallback', () => {
-    expect(nextConfig).toContain("'../build/polyfills/polyfill-module'");
-    expect(nextConfig).toContain("'./src/lib/modernBrowserCompatibility.ts'");
-
-    const compatibility = readFileSync(
-      path.join(root, 'src/lib/modernBrowserCompatibility.ts'),
-      'utf8'
-    );
-    expect(compatibility).toContain("if (!('canParse' in URL))");
-    expect(compatibility).not.toMatch(
-      /trimStart|trimEnd|\.flat\(|\.flatMap\(|Promise\.prototype\.finally|Object\.fromEntries|\.at\(|Object\.hasOwn/u
-    );
+  it('does not patch framework internals or ship an application compatibility runtime', () => {
+    expect(nextConfig).not.toContain('resolveAlias');
+    expect(nextConfig).not.toContain('polyfill-module');
+    expect(existsSync(path.join(root, 'src/lib/currentBrowserRuntime.ts'))).toBe(false);
+    expect(existsSync(path.join(root, 'src/lib/modernBrowserCompatibility.ts'))).toBe(false);
   });
 
   it('pins every dependency install script that was reviewed for npm 12', () => {
