@@ -99,6 +99,18 @@ const sourceModuleConcepts = {
   ]),
   'computer-basics': [
     'html-workspace-feedback-loop',
+    'tooling-local-computer-resources',
+    'tooling-input-methods-ergonomics',
+    'tooling-internet-access-layers',
+    'tooling-account-signin-security',
+    'tooling-developer-tool-landscape',
+    'tooling-file-manager-operations',
+    'tooling-file-naming-portability',
+    'tooling-project-folder-organization',
+    'tooling-file-types-search-inspection',
+    'tooling-browser-install-update-engines',
+    'tooling-browser-site-search-engine',
+    'tooling-search-query-refinement',
     'html-files-paths-urls',
     'html-browser-request-parse-render',
     'html-authority-research-verification',
@@ -319,11 +331,36 @@ sourceModuleConcepts['responsive-web-design-certification-exam'] = requireKnown(
 );
 
 const blockConcepts = {
+  'workshop-curriculum-outline': [
+    'html-workspace-feedback-loop',
+    'html-purpose-structure',
+    'html-element-anatomy',
+    'html-tag-element-distinction',
+    'html-text-whitespace',
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+  ],
+  'lab-debug-camperbots-profile-page': [
+    'html-element-anatomy',
+    'html-tag-element-distinction',
+    'html-parser-recovery',
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-validation-inspection',
+  ],
   'lecture-understanding-html-attributes': [
     'html-purpose-structure',
     'html-element-anatomy',
     'html-attribute-syntax',
     'html-attribute-value-types',
+  ],
+  'lab-debug-pet-adoption-page': [
+    'html-void-elements',
+    'html-attribute-syntax',
+    'html-attribute-value-types',
+    'html-links-destinations',
+    'html-images-purpose-alt',
+    'html-validation-inspection',
   ],
   'lecture-understanding-the-html-boilerplate': [
     'html-doctype-rendering-mode',
@@ -332,6 +369,44 @@ const blockConcepts = {
     'html-character-encoding',
     'html-title-metadata',
     'css-application-and-loading',
+  ],
+  'workshop-cat-photo-app': [
+    'html-purpose-structure',
+    'html-element-anatomy',
+    'html-nesting-tree',
+    'html-content-models',
+    'html-void-elements',
+    'html-attribute-syntax',
+    'html-attribute-value-types',
+    'html-comments-character-references',
+    'html-doctype-rendering-mode',
+    'html-document-root-head-body',
+    'html-document-language',
+    'html-character-encoding',
+    'html-title-metadata',
+    'html-links-destinations',
+    'html-link-purpose-fragments',
+    'html-images-purpose-alt',
+    'html-figures-captions',
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-lists',
+    'html-emphasis-importance',
+    'html-landmarks',
+    'html-sectioning-articles',
+  ],
+  'lab-recipe-page': [
+    'html-void-elements',
+    'html-attribute-syntax',
+    'html-doctype-rendering-mode',
+    'html-document-root-head-body',
+    'html-document-language',
+    'html-character-encoding',
+    'html-title-metadata',
+    'html-images-purpose-alt',
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-lists',
   ],
   'lecture-understanding-how-html-affects-seo': [
     'html-title-metadata',
@@ -414,11 +489,23 @@ const blockConcepts = {
     'html-iframe-title-permissions',
   ],
   'lecture-understanding-computer-internet-and-tooling-basics': [
-    'html-workspace-feedback-loop',
-    'html-browser-request-parse-render',
+    'tooling-local-computer-resources',
+    'tooling-input-methods-ergonomics',
+    'tooling-internet-access-layers',
+    'tooling-account-signin-security',
+    'tooling-developer-tool-landscape',
   ],
-  'lecture-working-with-file-systems': ['html-files-paths-urls', 'html-workspace-feedback-loop'],
+  'lecture-working-with-file-systems': [
+    'tooling-file-manager-operations',
+    'tooling-file-naming-portability',
+    'tooling-project-folder-organization',
+    'tooling-file-types-search-inspection',
+    'html-files-paths-urls',
+  ],
   'lecture-browsing-the-web-effectively': [
+    'tooling-browser-install-update-engines',
+    'tooling-browser-site-search-engine',
+    'tooling-search-query-refinement',
     'html-authority-research-verification',
     'html-browser-request-parse-render',
     'html-validation-inspection',
@@ -487,6 +574,16 @@ for (const [blockSlug, ids] of Object.entries(blockConcepts)) {
   blockConcepts[blockSlug] = requireKnown(`Source block ${blockSlug}`, ids);
 }
 
+const agentInspectedBlockSlugs = new Set([
+  'workshop-curriculum-outline',
+  'lab-debug-camperbots-profile-page',
+  'lecture-understanding-html-attributes',
+  'lab-debug-pet-adoption-page',
+  'lecture-understanding-the-html-boilerplate',
+  'workshop-cat-photo-app',
+  'lab-recipe-page',
+]);
+
 const evidenceByType = {
   lecture: [
     'Subject reviewer must inspect every source challenge and confirm concept meaning, omissions, and limits.',
@@ -520,18 +617,84 @@ const alignments = reference.chapters.flatMap((chapter) =>
     if (!defaultConceptIds)
       throw new Error(`Missing concept map for source module ${sourceModule.id}.`);
     return sourceModule.blocks.map((block) => {
+      const explicitConceptIds = blockConcepts[block.slug];
+      const mappingBasis =
+        block.type === 'exam'
+          ? 'assessment-container'
+          : explicitConceptIds
+            ? 'block-specific-source'
+            : 'module-fallback';
+      const inspectionState = agentInspectedBlockSlugs.has(block.slug)
+        ? 'agent-inspected'
+        : 'evidence-captured';
       const conceptIds = requireKnown(
         `Source block ${block.slug}`,
-        blockConcepts[block.slug] ?? defaultConceptIds
+        explicitConceptIds ?? defaultConceptIds
       );
+      const challengeIds = block.challengeOrder.map((challenge) => challenge.id);
+      const challengeEvidence = block.challengeOrder.map((challenge) => challenge.sourceEvidence);
+      const reviewFindings = [];
+      if (mappingBasis === 'module-fallback') {
+        reviewFindings.push({
+          severity: 'blocker',
+          code: 'module-fallback-overreach',
+          summary:
+            'This block still inherits its full source-module concept bundle and requires challenge-level source inspection before the assignment can be trusted.',
+        });
+      } else if (mappingBasis === 'assessment-container') {
+        reviewFindings.push({
+          severity: 'blocker',
+          code: 'assessment-items-unavailable',
+          summary:
+            'The captured certification container does not expose a reviewable item-level assessment blueprint, so concept validity and sampling remain unverified.',
+        });
+      } else if (inspectionState === 'evidence-captured') {
+        reviewFindings.push({
+          severity: 'warning',
+          code: 'source-scope-inspection-required',
+          summary:
+            'The block has an explicit candidate map, but an agent has not yet recorded a complete challenge-by-challenge source-scope inspection.',
+        });
+      }
+      if (inspectionState === 'agent-inspected') {
+        reviewFindings.push({
+          severity: 'warning',
+          code: 'independent-subject-review-required',
+          summary:
+            'Exact source inspection supports this candidate assignment, but an independent subject reviewer must still confirm its scope and limits.',
+        });
+      }
       return {
         objectiveId: block.objectiveId,
         sourceModuleId: sourceModule.id,
         sourceBlockSlug: block.slug,
         sourceActivityType: block.type,
         sourceChallengeCount: block.challengeCount,
+        sourceEvidence: {
+          challengeIds,
+          sourceFileSha256s: challengeEvidence.map((evidence) => evidence.sha256),
+          sourceBytes: challengeEvidence.reduce((total, evidence) => total + evidence.bytes, 0),
+          hintCheckCount: challengeEvidence.reduce(
+            (total, evidence) => total + evidence.hintCheckCount,
+            0
+          ),
+          quizQuestionCount: challengeEvidence.reduce(
+            (total, evidence) => total + evidence.quizQuestionCount,
+            0
+          ),
+        },
         conceptIds,
-        mappingRationale: `Candidate mapping preserves ${block.slug} as a ${block.type} coverage and practice-depth benchmark while assigning its ${block.challengeCount} source challenges to explicit LEARN-IT-ALL concepts; it does not copy or approve learner-facing work.`,
+        mappingRationale:
+          mappingBasis === 'module-fallback'
+            ? `Unreviewed fallback temporarily assigns ${block.slug} to its source module concept bundle so source coverage cannot disappear; this is evidence inventory, not a trustworthy concept-level review.`
+            : mappingBasis === 'assessment-container'
+              ? `The ${block.slug} assessment container is retained as a required certification-depth evidence gap, but unavailable item-level evidence prevents a valid concept-sampling claim.`
+              : inspectionState === 'agent-inspected'
+                ? `Exact source inspection of all ${block.challengeCount} challenges narrows ${block.slug} to the concepts actually exercised while preserving the block only as a depth benchmark and copying no learner-facing work.`
+                : `Captured challenge identities and source files support a block-specific candidate assignment for ${block.slug}; complete source-scope inspection and independent review remain required.`,
+        mappingBasis,
+        inspectionState,
+        reviewFindings,
         evidenceNeeded: evidenceByType[block.type],
         state: 'candidate-review',
       };
@@ -540,6 +703,12 @@ const alignments = reference.chapters.flatMap((chapter) =>
 );
 
 const benchmarkConceptIds = new Set(alignments.flatMap((alignment) => alignment.conceptIds));
+const fallbackCount = alignments.filter(
+  (alignment) => alignment.mappingBasis === 'module-fallback'
+).length;
+const agentInspectedCount = alignments.filter(
+  (alignment) => alignment.inspectionState === 'agent-inspected'
+).length;
 const uncoveredConcepts = concepts.filter((concept) => !benchmarkConceptIds.has(concept.id));
 const extensionModuleIds = unique(uncoveredConcepts.map((concept) => concept.moduleId));
 const courseExtensions = extensionModuleIds.map((moduleId) => {
@@ -590,12 +759,15 @@ const matrix = {
   courseExtensions,
   architectureFindings: [
     'Current blueprint maps every source block to broad legacy competency bundles; this candidate matrix instead narrows lectures to named concepts and makes workshop, lab, review, quiz, project, and exam accumulation inspectable.',
+    `All 1,553 exact source challenge files now contribute identities, paths, SHA-256 hashes, byte counts, captured section names, hint-check counts, and quiz-question counts; evidence capture is not the same as concept inspection or expert review.`,
+    `${agentInspectedCount} opening blocks containing 61 source challenges have challenge-level agent inspection and narrower block-specific assignments; ${fallbackCount} blocks still expose a blocker because they inherit broad source-module concept bundles.`,
     'Computer and browser concepts stay mapped to the benchmark but must enter just in time around the first HTML artifact rather than preserve the current thirteen-activity delay.',
     'Concepts absent from explicit pinned v9 evidence remain separately named modern course extensions; source-block counts cannot be used to claim their coverage.',
     'All mappings remain candidate review because source identity and topic similarity do not establish standards accuracy, pedagogical order, assessment validity, originality, accessibility, retention, or learner transfer.',
   ],
   gaps: [
-    'Subject reviewer must inspect all 158 source blocks and their 1,553 challenge identities against the candidate concept assignments.',
+    `Challenge-level source-scope inspection remains unfinished for ${158 - agentInspectedCount} of 158 source blocks, including ${fallbackCount} broad module fallbacks; no such block may claim expert review or approval.`,
+    'Independent subject reviewers must verify all 158 candidate assignments after agent inspection, including the seven inspected opening blocks and unavailable assessment-item boundaries.',
     'Every concept needs an authored I-G-F-R-A-T activity matrix plus explicit debug, correction, delayed-retention, and transfer evidence.',
     'Workshop, lab, review, quiz, project, and exam assignments need originality and assessment-validity review before authoring scale-up.',
     'Representative beginner and accessibility pilots must verify sequence, language, editor interaction, feedback, recovery, and independent transfer.',

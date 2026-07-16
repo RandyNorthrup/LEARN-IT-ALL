@@ -283,6 +283,307 @@ concept(
 );
 
 concept(
+  'tooling-local-computer-resources',
+  'Local computer components and resource evidence',
+  'Distinguish processor, memory, persistent storage, input, output, operating system, and application roles, then use observable resource evidence to explain one bounded development constraint.',
+  'web-tooling-just-in-time',
+  ['html-workspace-feedback-loop'],
+  [
+    anchor(
+      'rwd-fcc-v9',
+      'computer basics: basic parts of a computer',
+      'The pinned benchmark introduces major computer components before broader developer tooling.'
+    ),
+  ],
+  [
+    'Memory and persistent storage are interchangeable places where every running program permanently keeps its files.',
+  ],
+  [
+    'Learner must match processor, memory, storage, input, output, operating-system, and application evidence to their bounded roles.',
+    'A constrained preview case must be diagnosed from supplied resource evidence without making hardware-performance guarantees.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-input-methods-ergonomics',
+  'Keyboard, pointer, alternative input, and ergonomic operation',
+  'Use keyboard, pointer, touch, and alternative input paths safely while adjusting posture, reach, repetition, and breaks without treating one body or device as the default.',
+  'web-tooling-just-in-time',
+  ['tooling-local-computer-resources'],
+  [
+    anchor(
+      'rwd-fcc-v9',
+      'computer basics: keyboards, pointing devices, and safe use',
+      'The pinned benchmark covers keyboard, mouse, alternative pointing devices, and safer physical operation.'
+    ),
+    anchor(
+      'rwd-mdn-dealing-files',
+      'keyboard navigation in the editor and file explorer',
+      'MDN supplies keyboard-operable file and editor paths rather than assuming pointer-only operation.'
+    ),
+  ],
+  [
+    'Keyboard shortcuts are inherently inaccessible, while pointer gestures are always the simpler universal path.',
+  ],
+  [
+    'Learner must complete the same bounded workspace and file task with a documented keyboard path and another supported input path.',
+    'Learner must identify one reach, repetition, posture, or break risk and choose a reversible adjustment without medical claims.',
+  ],
+  ['html-accessibility-and-debugging', 'html-independent-project']
+);
+
+concept(
+  'tooling-internet-access-layers',
+  'Device, local network, provider, internet, and web layers',
+  'Distinguish a local device, local network, internet service provider, internet connectivity, web service, and browser request so a failure is located at the smallest supported layer.',
+  'web-tooling-just-in-time',
+  ['tooling-local-computer-resources'],
+  [
+    anchor(
+      'rwd-fcc-v9',
+      'computer basics: internet service providers',
+      'The pinned benchmark explicitly introduces internet service providers and access relationships.'
+    ),
+    anchor(
+      'rwd-mdn-how-internet-works',
+      'internet infrastructure and ISP connection',
+      'MDN distinguishes the internet infrastructure from the web and places an ISP between a local network and wider connectivity.'
+    ),
+  ],
+  [
+    'A working Wi-Fi icon proves the browser, DNS, remote web service, and every requested page resource are working.',
+  ],
+  [
+    'Learner must classify changed failure evidence at device, local-network, provider, internet, DNS, server, or browser-request layer.',
+    'Diagnosis must state what the supplied evidence proves and what requires an authorized provider or administrator.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-account-signin-security',
+  'Safe local sign-in and account boundaries',
+  'Use unique accounts, trusted sign-in surfaces, password-manager-generated credentials, phishing-resistant multifactor authentication where available, locking, updates, and least privilege without exposing real secrets.',
+  'web-tooling-just-in-time',
+  ['tooling-local-computer-resources'],
+  [
+    anchor(
+      'rwd-fcc-v9',
+      'computer basics: safe ways to sign into a computer',
+      'The pinned benchmark includes safe computer sign-in as beginner coverage.'
+    ),
+    anchor(
+      'rwd-cisa-phishing-resistant-mfa',
+      'phishing-resistant MFA guidance',
+      'CISA recommends phishing-resistant multifactor authentication and explains limits of weaker factors.'
+    ),
+  ],
+  [
+    'A long reused password makes a shared administrator account safe enough for ordinary development work.',
+  ],
+  [
+    'Learner must reject a simulated lookalike sign-in, secret-sharing request, shared administrator account, and weak recovery path with a reason.',
+    'A fictional setup plan must preserve individual identity, least privilege, locking, updates, recovery, and no collection of real credentials.',
+  ],
+  ['html-independent-project']
+);
+
+concept(
+  'tooling-developer-tool-landscape',
+  'Developer tool roles and transfer boundaries',
+  'Choose among editor, browser, developer tools, terminal, version control, graphics, testing, and deployment tools by the evidence-producing job each performs.',
+  'web-tooling-just-in-time',
+  ['html-workspace-feedback-loop', 'tooling-local-computer-resources'],
+  [
+    anchor(
+      'rwd-mdn-installing-software',
+      'code editors, browsers, local servers, graphics, version control, and deployment tools',
+      'MDN separates essential beginner tools from tools that should enter later when a task requires them.'
+    ),
+    anchor(
+      'rwd-mdn-code-editors',
+      'basic code-editor functionality',
+      'MDN describes editors as source tools with file, search, syntax, completion, and extension capabilities.'
+    ),
+  ],
+  [
+    'Professional developers use one application that edits, renders, validates, deploys, and proves every web requirement.',
+  ],
+  [
+    'Learner must select the smallest suitable tool for source editing, DOM inspection, computed style, requests, revision evidence, and deployment transfer.',
+    'Learner must identify which simulated workspace evidence still needs verification in an authentic external toolchain.',
+  ],
+  ['html-accessibility-and-debugging', 'html-independent-project']
+);
+
+concept(
+  'tooling-file-manager-operations',
+  'Bounded file and folder operations with recovery',
+  'Create, select, copy, move, rename, delete, restore, and search project files inside a learner-owned boundary while predicting path and reference consequences.',
+  'web-tooling-just-in-time',
+  ['tooling-input-methods-ergonomics', 'tooling-developer-tool-landscape'],
+  [
+    anchor(
+      'rwd-mdn-dealing-files',
+      'manipulating files and folders',
+      'MDN demonstrates visual and keyboard file operations inside a safe learner-owned project location.'
+    ),
+  ],
+  [
+    'Moving a file only changes where its icon appears; references to the old path continue resolving automatically.',
+  ],
+  [
+    'Learner must complete reversible operations in a disposable project and predict resulting paths before applying them.',
+    'A mistaken rename or deletion must be recovered from retained evidence without modifying operating-system or unrelated user files.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-file-naming-portability',
+  'Portable web file names and identity',
+  'Name web files with intentional extensions, portable characters, consistent case, and URL-safe separators while distinguishing display labels from file identity.',
+  'web-tooling-just-in-time',
+  ['tooling-file-manager-operations'],
+  [
+    anchor(
+      'rwd-mdn-dealing-files',
+      'file names and extensions',
+      'MDN explains case sensitivity, extensions, URL mapping, spaces, and portable lowercase hyphenated names.'
+    ),
+  ],
+  [
+    'File names are case-insensitive everywhere and a renamed extension changes the encoded contents into the new format.',
+  ],
+  [
+    'Changed Windows-like and case-sensitive deployment cases must resolve the same intended assets without spaces or case drift.',
+    'Learner must distinguish base name, extension, file content, MIME handling, and public URL rather than inferring one from another.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-project-folder-organization',
+  'Project roots, folders, and asset relationships',
+  'Organize one project root with entry document, styles, scripts, media, and bounded data so each reference is portable and ownership remains clear.',
+  'web-tooling-just-in-time',
+  ['tooling-file-naming-portability'],
+  [
+    anchor(
+      'rwd-mdn-dealing-files',
+      'website structure and file paths',
+      'MDN introduces one project root with index, image, style, and script locations tied together by relative paths.'
+    ),
+  ],
+  [
+    'A folder named images automatically makes every nested image available to every HTML document without a path.',
+  ],
+  [
+    'Learner must build and explain a portable project tree from artifact requirements without receiving the final folder layout.',
+    'A moved document and renamed asset case must expose and repair every affected reference without machine-specific paths.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-file-types-search-inspection',
+  'File types, extensions, search, and content inspection',
+  'Search by bounded name, extension, location, content, or modification evidence and verify a file by inspecting its actual content instead of trusting an icon.',
+  'web-tooling-just-in-time',
+  ['tooling-file-manager-operations', 'tooling-file-naming-portability'],
+  [
+    anchor(
+      'rwd-fcc-v9',
+      'computer basics: searching files and common web file types',
+      'The pinned benchmark covers file search plus common document, style, script, image, audio, video, and archive extensions.'
+    ),
+    anchor(
+      'rwd-mdn-dealing-files',
+      'file extensions and project contents',
+      'MDN connects extensions to expected content and applications while warning that names alone do not transform content.'
+    ),
+  ],
+  [
+    'A familiar icon or extension proves a file has the expected content and is safe to open or publish.',
+  ],
+  [
+    'Learner must locate a changed target among same-name and wrong-extension distractors using at least two evidence fields.',
+    'Learner must classify common web source, media, data, and archive files while preserving an unknown-file safety boundary.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-browser-install-update-engines',
+  'Current browsers, updates, and rendering-engine coverage',
+  'Choose supported current browsers, verify update state, distinguish browser brand from rendering engine, and plan bounded cross-engine testing without unsafe downloads.',
+  'web-tooling-just-in-time',
+  ['tooling-developer-tool-landscape', 'tooling-account-signin-security'],
+  [
+    anchor(
+      'rwd-mdn-installing-software',
+      'modern web browsers and update guidance',
+      'MDN recommends current browsers and testing across distinct rendering engines while noting platform limits.'
+    ),
+  ],
+  [
+    'Installing two Chromium-based browser brands proves behavior across all major rendering engines and assistive environments.',
+  ],
+  [
+    'Learner must identify browser brand, engine family, version evidence, update source, and unsupported platform combinations.',
+    'A fictional installation plan must use official distribution, avoid bundled software, and name remaining authentic-device tests.',
+  ],
+  ['html-accessibility-and-debugging', 'html-independent-project']
+);
+
+concept(
+  'tooling-browser-site-search-engine',
+  'Browser, website, web page, address, and search engine distinctions',
+  'Distinguish browser application, web page, website, web server, URL, address-bar navigation, search query, and search-engine results through observable evidence.',
+  'web-tooling-just-in-time',
+  ['tooling-browser-install-update-engines', 'tooling-internet-access-layers'],
+  [
+    anchor(
+      'rwd-mdn-browsing-web',
+      'browsers, websites, search engines, requests, parsing, and rendering',
+      'MDN separates browser software, websites, search engines, URLs, requests, and rendered results.'
+    ),
+  ],
+  [
+    'The address bar is a search engine, and a search-result title is the address of the destination page.',
+  ],
+  [
+    'Learner must label browser chrome, URL, origin, page, site, search query, result, and destination in a changed navigation trace.',
+    'Learner must navigate directly by URL and by search while explaining distinct requests, intermediaries, and privacy limits.',
+  ],
+  ['html-documents-and-paths', 'html-independent-project']
+);
+
+concept(
+  'tooling-search-query-refinement',
+  'Bounded search queries and evidence refinement',
+  'Turn a web-development problem into constrained search terms, compare result authority and freshness, refine the query from evidence, and preserve unanswered uncertainty.',
+  'web-tooling-just-in-time',
+  ['tooling-browser-site-search-engine'],
+  [
+    anchor(
+      'rwd-mdn-browsing-web',
+      'searching for technical information',
+      'MDN recommends problem-specific search terms, technology context, result evaluation, and iterative refinement.'
+    ),
+  ],
+  [
+    'Adding more words always improves a query, and the first result with matching code resolves the technical claim.',
+  ],
+  [
+    'Learner must create, refine, and compare queries for an unfamiliar browser problem while recording excluded ambiguity.',
+    'Evidence record must distinguish result snippet, opened source, authority, date, version, tested behavior, and remaining uncertainty.',
+  ],
+  ['html-documents-and-paths', 'html-accessibility-and-debugging', 'html-independent-project']
+);
+
+concept(
   'html-doctype-rendering-mode',
   'Doctype and rendering mode',
   'Place the HTML doctype first and explain its current rendering-mode purpose without treating it as an HTML element or version declaration.',
@@ -441,7 +742,7 @@ concept(
   'Files, paths, and URL references',
   'Organize a portable project and resolve relative, root-relative, absolute, and fragment references from the correct base URL.',
   'html-documents-and-paths',
-  ['html-workspace-feedback-loop'],
+  ['html-workspace-feedback-loop', 'tooling-project-folder-organization'],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -464,7 +765,12 @@ concept(
   'Browser request, parse, and render evidence',
   'Trace navigation through URL resolution, requests, responses, resource discovery, HTML parsing, DOM construction, CSS matching, layout, paint, and interactive output at a beginner-appropriate level.',
   'html-documents-and-paths',
-  ['html-files-paths-urls', 'html-document-root-head-body', 'html-parser-recovery'],
+  [
+    'html-files-paths-urls',
+    'html-document-root-head-body',
+    'html-parser-recovery',
+    'tooling-internet-access-layers',
+  ],
   [
     anchor(
       'rwd-mdn-browser-loading',
@@ -487,7 +793,7 @@ concept(
   'Technical authority and claim verification',
   'Turn an HTML or browser question into a bounded claim, locate current specification or official documentation evidence, record version and context, test behavior where appropriate, and preserve uncertainty.',
   'html-documents-and-paths',
-  ['html-browser-request-parse-render'],
+  ['html-browser-request-parse-render', 'tooling-search-query-refinement'],
   [
     anchor(
       'rwd-mdn-curriculum',
@@ -1244,6 +1550,13 @@ const graph = {
     'rwd-mdn-curriculum',
     'rwd-webdev-html',
     'rwd-mdn-browser-loading',
+    'rwd-mdn-environment-setup',
+    'rwd-mdn-installing-software',
+    'rwd-mdn-code-editors',
+    'rwd-mdn-dealing-files',
+    'rwd-mdn-browsing-web',
+    'rwd-mdn-how-internet-works',
+    'rwd-cisa-phishing-resistant-mfa',
     'rwd-wai-tutorials',
     'rwd-aria-apg',
     'rwd-fcc-v9',
@@ -1251,6 +1564,7 @@ const graph = {
   ],
   moduleIds: [
     'html-first-page',
+    'web-tooling-just-in-time',
     'html-documents-and-paths',
     'html-images-and-media',
     'html-text-and-semantics',
@@ -1263,6 +1577,7 @@ const graph = {
   concepts,
   architectureFindings: [
     'Current blueprint delays first HTML construction behind thirteen tooling activities; files, browser, DevTools, and research must enter just in time around the first artifact.',
+    'Pinned v9 computer-basics sources cover twelve distinct entry competencies that the previous four-concept tooling map omitted; the target keeps their coverage after the first HTML edit and integrates each skill at its first authentic use.',
     'Current basic HTML and semantic HTML boundaries separate concepts that depend on one another; proposed modules follow element, document, content, interaction, data, access, and transfer prerequisites.',
     'Current generated activities map all competencies across broad source blocks, but this does not prove each concept receives explicit explanation, malformed cases, fading, debugging, retrieval, or independent transfer.',
     'Current HTML project follows existing generated work and cannot count as transfer until its scenario, empty starter, requirements, grading, and defense differ meaningfully from instruction.',

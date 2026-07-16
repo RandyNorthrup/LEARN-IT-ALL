@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -13,12 +14,58 @@ if (!upstreamRoot) {
 const commit = execFileSync('git', ['-C', upstreamRoot, 'rev-parse', 'HEAD'], {
   encoding: 'utf8',
 }).trim();
+if (process.env.FREECODECAMP_COMMIT && process.env.FREECODECAMP_COMMIT !== commit) {
+  throw new Error(
+    `FREECODECAMP_COMMIT ${process.env.FREECODECAMP_COMMIT} differs from checkout HEAD ${commit}.`
+  );
+}
 const structurePath = path.join(
   upstreamRoot,
   'curriculum/structure/superblocks/responsive-web-design-v9.json'
 );
 const blocksRoot = path.join(upstreamRoot, 'curriculum/structure/blocks');
 const structure = JSON.parse(await readFile(structurePath, 'utf8'));
+
+const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+const topLevelSections = (source) =>
+  [...source.matchAll(/^# --([a-z-]+)--\s*$/gm)].map((match) => match[1]);
+const section = (source, name) => {
+  const marker = `# --${name}--`;
+  const markerIndex = source.indexOf(marker);
+  if (markerIndex < 0) return '';
+  const bodyStart = markerIndex + marker.length;
+  const remaining = source.slice(bodyStart);
+  const nextSection = remaining.search(/\n# --[a-z-]+--\s*$/m);
+  return nextSection < 0 ? remaining : remaining.slice(0, nextSection);
+};
+const sourceEvidence = async (blockSlug, challenge) => {
+  const relativePath = path.posix.join(
+    'curriculum',
+    'challenges',
+    'english',
+    'blocks',
+    blockSlug,
+    `${challenge.id}.md`
+  );
+  const source = await readFile(path.join(upstreamRoot, relativePath), 'utf8');
+  const hints = section(source, 'hints');
+  const questions = section(source, 'questions');
+  return {
+    relativePath,
+    sha256: sha256(source),
+    bytes: Buffer.byteLength(source),
+    topLevelSections: topLevelSections(source),
+    hintCheckCount: [...hints.matchAll(/```(?:js|javascript)\s*\n/g)].length,
+    quizQuestionCount: [...questions.matchAll(/^## --text--\s*$/gm)].length,
+    codeLanguages: [
+      ...new Set(
+        [...source.matchAll(/^```([^\s`]*)\s*$/gm)]
+          .map((match) => match[1] || 'plain')
+          .filter((language) => language !== 'md')
+      ),
+    ].sort(),
+  };
+};
 
 const chapters = [];
 const totals = {
@@ -37,7 +84,13 @@ for (const chapter of structure.chapters) {
       const block = JSON.parse(await readFile(path.join(blocksRoot, `${slug}.json`), 'utf8'));
       const type = block.blockLabel ?? 'unknown';
       const challengeCount = block.challengeOrder?.length ?? 0;
-      const challengeOrder = (block.challengeOrder ?? []).map(({ id, title }) => ({ id, title }));
+      const challengeOrder = await Promise.all(
+        (block.challengeOrder ?? []).map(async ({ id, title }) => ({
+          id,
+          title,
+          sourceEvidence: await sourceEvidence(slug, { id }),
+        }))
+      );
       blocks.push({
         objectiveId: `fcc-v9-${slug}`,
         slug,
@@ -66,10 +119,10 @@ for (const chapter of structure.chapters) {
 }
 
 const reference = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   source: 'freeCodeCamp Responsive Web Design v9',
   sourceUrl: 'https://www.freecodecamp.org/learn/responsive-web-design-v9/',
-  upstreamCommit: process.env.FREECODECAMP_COMMIT ?? commit,
+  upstreamCommit: commit,
   capturedAt: '2026-07-13T00:00:00.000Z',
   totals,
   chapters,

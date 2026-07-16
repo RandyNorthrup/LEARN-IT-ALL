@@ -8,7 +8,7 @@ Source snapshot: freeCodeCamp Responsive Web Design v9 commit `c115efdd41f868d88
 
 This is a direct source inspection and sequence decision record. It is not approval of freeCodeCamp instruction, not permission to copy it, and not learner validation of the proposed LEARN-IT-ALL sequence.
 
-The inspection covered all 64 units in the first seven current v9 blocks: the opening curriculum-outline workshop, two debugging labs, the attributes lecture, the document-boilerplate lecture, the 42-step cat-photo workshop, and the HTML-fundamentals lecture. Stable challenge identities are retained in `references/freecodecamp-rwd-v9.json`; learner-facing source prose is not copied into this repository.
+The inspection covered all 61 units in the first seven current v9 blocks: the opening curriculum-outline workshop, two debugging labs, the attributes lecture, the document-boilerplate lecture, the 42-step cat-photo workshop, and the one-challenge recipe-page lab. Stable challenge identities, source paths, hashes, byte counts, section names, and check counts are retained in `references/freecodecamp-rwd-v9.json`; learner-facing source prose is not copied into this repository. The prior 64-unit figure was an arithmetic error and has been corrected rather than carried forward as research evidence.
 
 ## What the source inspection changed
 

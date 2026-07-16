@@ -7,6 +7,7 @@ import {
   auditCourseResearch,
   ConceptResearchGraphSchema,
   CourseResearchDossierSchema,
+  ExternalCurriculumEvidenceSnapshotSchema,
   ExternalObjectiveConceptAlignmentSchema,
   PlatformResearchRegisterSchema,
   ResearchCourseArchitectureSchema,
@@ -163,10 +164,69 @@ describe('research contracts', () => {
       'utf8'
     );
 
-    expect(content).toContain('covered all 64 units');
+    expect(content).toContain('covered all 61 units');
     expect(content).toContain('The first meaningful edit must occur within two learner actions');
     expect(content).toContain('thirteen-activity barrier before HTML');
     expect(content).toContain('## Blockers before sequence approval');
+  });
+
+  it('captures every exact pinned v9 challenge source as reproducible research evidence', () => {
+    const snapshot = ExternalCurriculumEvidenceSnapshotSchema.parse(
+      readJson(path.join(repositoryRoot, 'references/freecodecamp-rwd-v9.json'))
+    );
+    const blocks = snapshot.chapters.flatMap((chapter) =>
+      chapter.modules.flatMap((module) => module.blocks)
+    );
+    const challenges = blocks.flatMap((block) => block.challengeOrder);
+
+    expect(snapshot).toMatchObject({
+      schemaVersion: 2,
+      upstreamCommit: 'c115efdd41f868d8850156f6a7a211219c35a847',
+      totals: { chapters: 4, modules: 29, blocks: 158, challenges: 1553 },
+    });
+    expect(challenges).toHaveLength(1553);
+    expect(new Set(challenges.map((challenge) => challenge.id))).toHaveLength(1553);
+    expect(
+      challenges.every(
+        (challenge) =>
+          challenge.sourceEvidence.relativePath.includes('/blocks/') &&
+          challenge.sourceEvidence.sha256.length === 64 &&
+          challenge.sourceEvidence.bytes > 0 &&
+          challenge.sourceEvidence.topLevelSections.some((sectionName) =>
+            ['description', 'interactive'].includes(sectionName)
+          )
+      )
+    ).toBe(true);
+    expect(
+      challenges.reduce((total, challenge) => total + challenge.sourceEvidence.quizQuestionCount, 0)
+    ).toBeGreaterThan(0);
+  });
+
+  it('rejects corrupted pinned-v9 source evidence', () => {
+    const snapshot = readJson(path.join(repositoryRoot, 'references/freecodecamp-rwd-v9.json')) as {
+      chapters: Array<{
+        modules: Array<{
+          blocks: Array<{
+            challengeOrder: Array<{
+              sourceEvidence: { relativePath: string; sha256: string };
+            }>;
+          }>;
+        }>;
+      }>;
+    };
+    const brokenHash = structuredClone(snapshot);
+    brokenHash.chapters[0].modules[0].blocks[0].challengeOrder[0].sourceEvidence.sha256 =
+      'not-a-source-hash';
+    expect(ExternalCurriculumEvidenceSnapshotSchema.safeParse(brokenHash).success).toBe(false);
+
+    const brokenPath = structuredClone(snapshot);
+    brokenPath.chapters[0].modules[0].blocks[0].challengeOrder[0].sourceEvidence.relativePath =
+      'curriculum/challenges/english/blocks/wrong/file.md';
+    const result = ExternalCurriculumEvidenceSnapshotSchema.safeParse(brokenPath);
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some((issue) => issue.message.includes('path differs from block'))
+    ).toBe(true);
   });
 
   it('maps every pinned Responsive Web Design source block and challenge identity honestly', () => {
@@ -200,7 +260,7 @@ describe('research contracts', () => {
     const dossierSourceIds = new Set(dossier.sources.map((source) => source.id));
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(57);
+    expect(graph.concepts).toHaveLength(69);
     expect(
       graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
     ).toBe(true);
@@ -259,6 +319,9 @@ describe('research contracts', () => {
         path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-coverage.json')
       )
     );
+    const reference = ExternalCurriculumEvidenceSnapshotSchema.parse(
+      readJson(path.join(repositoryRoot, 'references/freecodecamp-rwd-v9.json'))
+    );
     const graphs = [
       ConceptResearchGraphSchema.parse(
         readJson(
@@ -277,6 +340,22 @@ describe('research contracts', () => {
     const sourceByObjective = new Map(
       coverage.objectives.map((objective) => [objective.objectiveId, objective])
     );
+    const referenceByObjective = new Map(
+      reference.chapters.flatMap((chapter) =>
+        chapter.modules.flatMap((module) =>
+          module.blocks.map((block) => [block.objectiveId, block] as const)
+        )
+      )
+    );
+    const inspectedOpeningBlocks = [
+      'workshop-curriculum-outline',
+      'lab-debug-camperbots-profile-page',
+      'lecture-understanding-html-attributes',
+      'lab-debug-pet-adoption-page',
+      'lecture-understanding-the-html-boilerplate',
+      'workshop-cat-photo-app',
+      'lab-recipe-page',
+    ];
 
     expect(matrix.status).toBe('researching');
     expect(matrix.alignments).toHaveLength(158);
@@ -284,23 +363,107 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([57, 86]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([69, 86]);
+    expect(
+      matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
+    ).toHaveLength(7);
+    expect(
+      matrix.alignments
+        .filter((alignment) => alignment.inspectionState === 'agent-inspected')
+        .map((alignment) => alignment.sourceBlockSlug)
+    ).toEqual(inspectedOpeningBlocks);
+    expect(
+      matrix.alignments
+        .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
+        .reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(61);
+    expect(
+      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback').length
+    ).toBeGreaterThan(0);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
+      const sourceEvidence = referenceByObjective.get(alignment.objectiveId);
       expect(source, alignment.objectiveId).toBeDefined();
+      expect(sourceEvidence, alignment.objectiveId).toBeDefined();
       expect(alignment).toMatchObject({
         sourceModuleId: source?.sourceModuleId,
         sourceBlockSlug: source?.sourceBlockSlug,
         sourceActivityType: source?.sourceActivityType,
         sourceChallengeCount: source?.sourceChallengeCount,
       });
+      expect(alignment.sourceEvidence.challengeIds).toEqual(
+        sourceEvidence?.challengeOrder.map((challenge) => challenge.id)
+      );
+      expect(alignment.sourceEvidence.sourceFileSha256s).toEqual(
+        sourceEvidence?.challengeOrder.map((challenge) => challenge.sourceEvidence.sha256)
+      );
+      expect(alignment.sourceEvidence.sourceBytes).toBe(
+        sourceEvidence?.challengeOrder.reduce(
+          (total, challenge) => total + challenge.sourceEvidence.bytes,
+          0
+        )
+      );
+      expect(alignment.sourceEvidence.hintCheckCount).toBe(
+        sourceEvidence?.challengeOrder.reduce(
+          (total, challenge) => total + challenge.sourceEvidence.hintCheckCount,
+          0
+        )
+      );
+      expect(alignment.sourceEvidence.quizQuestionCount).toBe(
+        sourceEvidence?.challengeOrder.reduce(
+          (total, challenge) => total + challenge.sourceEvidence.quizQuestionCount,
+          0
+        )
+      );
     }
+
+    expect(
+      matrix.alignments.find(
+        (alignment) => alignment.sourceBlockSlug === 'lab-debug-camperbots-profile-page'
+      )?.conceptIds.length
+    ).toBeLessThanOrEqual(6);
+    expect(
+      matrix.alignments.find(
+        (alignment) => alignment.sourceBlockSlug === 'lab-debug-pet-adoption-page'
+      )?.conceptIds.length
+    ).toBeLessThanOrEqual(6);
 
     expect(matrix.conceptInventories.flatMap((inventory) => inventory.conceptIds)).toEqual(
       graphs.flatMap((graph) => graph.concepts.map((concept) => concept.id))
     );
     expect(matrix.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('blocks expert-review claims on unresolved source-module fallbacks', () => {
+    const matrix = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-concept-alignment.json'
+      )
+    ) as {
+      alignments: Array<{
+        mappingBasis: string;
+        inspectionState: string;
+        state: string;
+      }>;
+    };
+    const broken = structuredClone(matrix);
+    const fallback = broken.alignments.find(
+      (alignment) => alignment.mappingBasis === 'module-fallback'
+    );
+    expect(fallback).toBeDefined();
+    if (!fallback) throw new Error('Expected at least one unresolved module fallback.');
+    fallback.inspectionState = 'expert-reviewed';
+    fallback.state = 'expert-reviewed';
+
+    const result = ExternalObjectiveConceptAlignmentSchema.safeParse(broken);
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some((issue) =>
+        issue.message.includes('claims review with unresolved source evidence')
+      )
+    ).toBe(true);
   });
 
   it('rejects treating one concept as benchmark evidence and a modern extension', () => {
@@ -366,8 +529,8 @@ describe('research contracts', () => {
     );
 
     expect(architecture.status).toBe('researching');
-    expect(architecture.modules).toHaveLength(16);
-    expect(architecture.conceptIds).toHaveLength(143);
+    expect(architecture.modules).toHaveLength(17);
+    expect(architecture.conceptIds).toHaveLength(155);
     expect(architecture.sourceObjectiveIds).toHaveLength(158);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
@@ -376,6 +539,11 @@ describe('research contracts', () => {
       delayedToolingBarrierProhibited: true,
     });
     expect(architecture.moduleIds).not.toContain('computer-basics');
+    expect(architecture.moduleIds.slice(0, 3)).toEqual([
+      'html-first-page',
+      'web-tooling-just-in-time',
+      'html-documents-and-paths',
+    ]);
     expect(architecture.conceptIds).toEqual(concepts.map((concept) => concept.id));
     expect(architecture.sourceObjectiveIds).toEqual(
       alignment.alignments.map((record) => record.objectiveId)

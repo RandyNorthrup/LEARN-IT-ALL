@@ -76,6 +76,169 @@ export const ResearchDecisionSchema = z.object({
   validation: z.array(z.string().min(20)).min(1),
 });
 
+const ExternalSourceActivityTypeSchema = z.enum([
+  'workshop',
+  'lab',
+  'lecture',
+  'review',
+  'quiz',
+  'exam',
+]);
+
+const ExternalChallengeSourceEvidenceSchema = z.object({
+  relativePath: z.string().min(20),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  bytes: z.number().int().positive(),
+  topLevelSections: z.array(IdentifierSchema).min(1),
+  hintCheckCount: z.number().int().nonnegative(),
+  quizQuestionCount: z.number().int().nonnegative(),
+  codeLanguages: z.array(z.string().min(1)),
+});
+
+export const ExternalCurriculumEvidenceSnapshotSchema = z
+  .object({
+    schemaVersion: z.literal(2),
+    source: z.string().min(10),
+    sourceUrl: z.url(),
+    upstreamCommit: z.string().regex(/^[a-f0-9]{40}$/),
+    capturedAt: z.iso.datetime(),
+    totals: z.object({
+      chapters: z.number().int().positive(),
+      modules: z.number().int().positive(),
+      blocks: z.number().int().positive(),
+      challenges: z.number().int().positive(),
+      byType: z.record(
+        ExternalSourceActivityTypeSchema,
+        z.object({
+          blocks: z.number().int().nonnegative(),
+          challenges: z.number().int().nonnegative(),
+        })
+      ),
+    }),
+    chapters: z.array(
+      z.object({
+        id: IdentifierSchema,
+        type: z.string().min(3),
+        modules: z.array(
+          z.object({
+            id: IdentifierSchema,
+            type: z.string().min(3),
+            blocks: z.array(
+              z.object({
+                objectiveId: IdentifierSchema,
+                slug: IdentifierSchema,
+                type: ExternalSourceActivityTypeSchema,
+                challengeCount: z.number().int().positive(),
+                challengeOrder: z.array(
+                  z.object({
+                    id: z.string().min(8),
+                    title: z.string().min(3),
+                    sourceEvidence: ExternalChallengeSourceEvidenceSchema,
+                  })
+                ),
+              })
+            ),
+          })
+        ),
+      })
+    ),
+  })
+  .superRefine((snapshot, context) => {
+    const modules = snapshot.chapters.flatMap((chapter) => chapter.modules);
+    const blocks = modules.flatMap((module) => module.blocks);
+    const challenges = blocks.flatMap((block) => block.challengeOrder);
+    const duplicateIssue = (values: string[], message: string, path: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+
+    if (snapshot.chapters.length !== snapshot.totals.chapters) {
+      context.addIssue({ code: 'custom', message: 'External chapter total differs from records' });
+    }
+    if (modules.length !== snapshot.totals.modules) {
+      context.addIssue({ code: 'custom', message: 'External module total differs from records' });
+    }
+    if (blocks.length !== snapshot.totals.blocks) {
+      context.addIssue({ code: 'custom', message: 'External block total differs from records' });
+    }
+    if (challenges.length !== snapshot.totals.challenges) {
+      context.addIssue({
+        code: 'custom',
+        message: 'External challenge total differs from records',
+      });
+    }
+    duplicateIssue(
+      snapshot.chapters.map((chapter) => chapter.id),
+      'Duplicate external chapter IDs',
+      ['chapters']
+    );
+    duplicateIssue(
+      modules.map((module) => module.id),
+      'Duplicate external module IDs',
+      ['chapters']
+    );
+    duplicateIssue(
+      blocks.map((block) => block.objectiveId),
+      'Duplicate external objective IDs',
+      ['chapters']
+    );
+    duplicateIssue(
+      blocks.map((block) => block.slug),
+      'Duplicate external block slugs',
+      ['chapters']
+    );
+    duplicateIssue(
+      challenges.map((challenge) => challenge.id),
+      'Duplicate external challenge IDs',
+      ['chapters']
+    );
+
+    for (const activityType of ExternalSourceActivityTypeSchema.options) {
+      const typedBlocks = blocks.filter((block) => block.type === activityType);
+      const expected = snapshot.totals.byType[activityType];
+      if (
+        expected.blocks !== typedBlocks.length ||
+        expected.challenges !==
+          typedBlocks.reduce((total, block) => total + block.challengeCount, 0)
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `External ${activityType} totals differ from records`,
+          path: ['totals', 'byType', activityType],
+        });
+      }
+    }
+
+    for (const block of blocks) {
+      if (block.challengeOrder.length !== block.challengeCount) {
+        context.addIssue({
+          code: 'custom',
+          message: `External block ${block.slug} challenge total differs from identities`,
+        });
+      }
+      for (const challenge of block.challengeOrder) {
+        const expectedSuffix = `/blocks/${block.slug}/${challenge.id}.md`;
+        if (!challenge.sourceEvidence.relativePath.endsWith(expectedSuffix)) {
+          context.addIssue({
+            code: 'custom',
+            message: `External challenge ${challenge.id} evidence path differs from block identity`,
+          });
+        }
+        if (
+          !challenge.sourceEvidence.topLevelSections.some((sectionName) =>
+            ['description', 'interactive'].includes(sectionName)
+          )
+        ) {
+          context.addIssue({
+            code: 'custom',
+            message: `External challenge ${challenge.id} lacks a captured content section`,
+          });
+        }
+      }
+    }
+  });
+
 export const SourceObjectiveCoverageMatrixSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -95,7 +258,7 @@ export const SourceObjectiveCoverageMatrixSchema = z
           sourceId: IdentifierSchema,
           sourceModuleId: IdentifierSchema,
           sourceBlockSlug: IdentifierSchema,
-          sourceActivityType: z.enum(['workshop', 'lab', 'lecture', 'review', 'quiz', 'exam']),
+          sourceActivityType: ExternalSourceActivityTypeSchema,
           sourceChallengeIds: z.array(z.string().min(8)).min(1),
           sourceChallengeCount: z.number().int().positive(),
           coverageIntent: z.string().min(30),
@@ -395,10 +558,40 @@ export const ExternalObjectiveConceptAlignmentSchema = z
           objectiveId: IdentifierSchema,
           sourceModuleId: IdentifierSchema,
           sourceBlockSlug: IdentifierSchema,
-          sourceActivityType: z.enum(['workshop', 'lab', 'lecture', 'review', 'quiz', 'exam']),
+          sourceActivityType: ExternalSourceActivityTypeSchema,
           sourceChallengeCount: z.number().int().positive(),
+          sourceEvidence: z.object({
+            challengeIds: z.array(z.string().min(8)).min(1),
+            sourceFileSha256s: z.array(z.string().regex(/^[a-f0-9]{64}$/)).min(1),
+            sourceBytes: z.number().int().positive(),
+            hintCheckCount: z.number().int().nonnegative(),
+            quizQuestionCount: z.number().int().nonnegative(),
+          }),
           conceptIds: z.array(IdentifierSchema).min(1),
           mappingRationale: z.string().min(40),
+          mappingBasis: z.enum([
+            'block-specific-source',
+            'module-fallback',
+            'assessment-container',
+          ]),
+          inspectionState: z.enum([
+            'evidence-captured',
+            'agent-inspected',
+            'expert-reviewed',
+            'approved',
+          ]),
+          reviewFindings: z.array(
+            z.object({
+              severity: z.enum(['blocker', 'warning']),
+              code: z.enum([
+                'module-fallback-overreach',
+                'source-scope-inspection-required',
+                'assessment-items-unavailable',
+                'independent-subject-review-required',
+              ]),
+              summary: z.string().min(30),
+            })
+          ),
           evidenceNeeded: z.array(z.string().min(20)).min(2),
           state: z.enum(['candidate-review', 'expert-reviewed', 'approved']),
         })
@@ -434,6 +627,9 @@ export const ExternalObjectiveConceptAlignmentSchema = z
       (extension) => extension.conceptIds
     );
     const extensionConceptIdSet = new Set(extensionConceptIds);
+    const sourceChallengeIds = matrix.alignments.flatMap(
+      (alignment) => alignment.sourceEvidence.challengeIds
+    );
 
     const rejectDuplicates = (values: string[], message: string, path?: PropertyKey[]) => {
       if (new Set(values).size !== values.length) {
@@ -452,6 +648,9 @@ export const ExternalObjectiveConceptAlignmentSchema = z
     ]);
     rejectDuplicates(extensionConceptIds, 'Concept appears in multiple course extensions', [
       'courseExtensions',
+    ]);
+    rejectDuplicates(sourceChallengeIds, 'Challenge appears in multiple alignment evidence sets', [
+      'alignments',
     ]);
 
     if (matrix.alignments.length !== matrix.sourceSnapshot.sourceObjectives) {
@@ -496,6 +695,51 @@ export const ExternalObjectiveConceptAlignmentSchema = z
             path: ['alignments', alignmentIndex, 'conceptIds'],
           });
         }
+      }
+      if (
+        alignment.sourceEvidence.challengeIds.length !== alignment.sourceChallengeCount ||
+        alignment.sourceEvidence.sourceFileSha256s.length !== alignment.sourceChallengeCount
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Source objective ${alignment.objectiveId} evidence count differs from challenge total`,
+          path: ['alignments', alignmentIndex, 'sourceEvidence'],
+        });
+      }
+      if (
+        alignment.mappingBasis === 'module-fallback' &&
+        alignment.reviewFindings.every(
+          (finding) =>
+            finding.code !== 'module-fallback-overreach' || finding.severity !== 'blocker'
+        )
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Source objective ${alignment.objectiveId} hides module-fallback overreach`,
+          path: ['alignments', alignmentIndex, 'reviewFindings'],
+        });
+      }
+      if (
+        alignment.mappingBasis === 'assessment-container' &&
+        alignment.reviewFindings.every((finding) => finding.code !== 'assessment-items-unavailable')
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Source objective ${alignment.objectiveId} hides unavailable assessment items`,
+          path: ['alignments', alignmentIndex, 'reviewFindings'],
+        });
+      }
+      if (
+        ['expert-reviewed', 'approved'].includes(alignment.state) &&
+        (alignment.mappingBasis === 'module-fallback' ||
+          alignment.reviewFindings.some((finding) => finding.severity === 'blocker') ||
+          !['expert-reviewed', 'approved'].includes(alignment.inspectionState))
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Source objective ${alignment.objectiveId} claims review with unresolved source evidence`,
+          path: ['alignments', alignmentIndex],
+        });
       }
     }
 
@@ -832,6 +1076,7 @@ function addReferenceIssues(
   const questionIds = new Set(value.questions.map((question) => question.id));
   const sourceIds = new Set(value.sources.map((source) => source.id));
   const decisionIds = new Set(value.decisions.map((decision) => decision.id));
+  const decisionById = new Map(value.decisions.map((decision) => [decision.id, decision]));
   const duplicateCount = (values: string[]) => values.length - new Set(values).size;
 
   if (duplicateCount(value.questions.map((question) => question.id)) > 0) {
@@ -869,6 +1114,12 @@ function addReferenceIssues(
           context.addIssue({
             code: 'custom',
             message: `Source ${source.id} references unknown decision ${decisionId}`,
+            path: ['sources', sourceIndex, 'claims'],
+          });
+        } else if (!decisionById.get(decisionId)?.sourceIds.includes(source.id)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Decision ${decisionId} does not cite supporting source ${source.id}`,
             path: ['sources', sourceIndex, 'claims'],
           });
         }
@@ -987,6 +1238,9 @@ export const CourseResearchDossierSchema = z
 
 export type CourseResearchDossier = z.infer<typeof CourseResearchDossierSchema>;
 export type PlatformResearchRegister = z.infer<typeof PlatformResearchRegisterSchema>;
+export type ExternalCurriculumEvidenceSnapshot = z.infer<
+  typeof ExternalCurriculumEvidenceSnapshotSchema
+>;
 export type SourceObjectiveCoverageMatrix = z.infer<typeof SourceObjectiveCoverageMatrixSchema>;
 export type ConceptResearchGraph = z.infer<typeof ConceptResearchGraphSchema>;
 export type ExternalObjectiveConceptAlignment = z.infer<

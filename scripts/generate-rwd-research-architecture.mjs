@@ -40,13 +40,31 @@ const moduleMetadata = {
       'Only source editing, HTML purpose, element anatomy, text, nesting, attributes, comments, content models, and parser recovery enter here.',
     retrievalConceptIds: [],
   },
+  'web-tooling-just-in-time': {
+    title: 'Use Computer, Files, Browser, Search, and Tools Safely',
+    cumulativeArtifact:
+      'The first page becomes a learner-owned portable project with an evidence-backed folder tree, safe account and browser plan, reversible file operations, and a recorded research trail.',
+    newComplexityBoundary:
+      'Computer resources, input safety, internet access, sign-in boundaries, developer tool roles, file operations, naming, organization, types, browsers, and search enter only after the learner has edited HTML.',
+    retrievalConceptIds: [
+      'html-workspace-feedback-loop',
+      'html-purpose-structure',
+      'html-attribute-syntax',
+    ],
+  },
   'html-documents-and-paths': {
     title: 'Documents, Browser Evidence, Paths, and Discovery',
     cumulativeArtifact:
       'The notice becomes a portable multi-page information directory with complete documents, working references, truthful discovery metadata, and evidence notes.',
     newComplexityBoundary:
       'Document envelope, language, encoding, metadata, URLs, links, browser loading, and authority verification extend the first page without adding media or CSS.',
-    retrievalConceptIds: ['html-nesting-tree', 'html-attribute-syntax', 'html-parser-recovery'],
+    retrievalConceptIds: [
+      'html-nesting-tree',
+      'html-attribute-syntax',
+      'html-parser-recovery',
+      'tooling-project-folder-organization',
+      'tooling-search-query-refinement',
+    ],
   },
   'html-images-and-media': {
     title: 'Images, Graphics, Media, and Embedded Boundaries',
@@ -485,8 +503,8 @@ const architecture = {
   modules,
   projects,
   architectureFindings: [
-    'The proposed 16-module concept sequence replaces the current 29-module benchmark-shaped order; external block identity remains coverage evidence rather than learner navigation architecture.',
-    'The current computer-basics-first module and its thirteen-activity barrier are removed from the target architecture; workspace, file, browser, DevTools, and research concepts enter around the first artifact.',
+    'The proposed 17-module concept sequence replaces the current 29-module benchmark-shaped order; external block identity remains coverage evidence rather than learner navigation architecture.',
+    'The current computer-basics-first module and its thirteen-activity barrier are removed from the target architecture; twelve bounded computer, file, browser, account-safety, search, DevTools, and research competencies enter in a just-in-time module immediately after the first HTML edit.',
     'HTML semantics, accessibility, source order, validation, and changed-case habits remain retrieval and correctness constraints throughout CSS, responsive, interaction, and project work.',
     'Five certification project benchmarks become distinct original stakeholder transfers with different domains, artifacts, requirements, concepts, evidence, placement, and empty-start policies.',
   ],
