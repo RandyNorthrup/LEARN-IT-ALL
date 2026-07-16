@@ -125,7 +125,7 @@ Code shape, a screenshot, stakeholder approval, tool-generated CSS, or a correct
 ## Remaining blockers
 
 - Independent subject, instructional, assessment, accessibility, safety, privacy, and representative-user reviews must confirm every concept assignment and correction.
-- The complete 179-concept introduce/model/guided/faded/debug/retrieve/assess/delayed-retain/transfer matrix is not authored.
+- The complete 180-concept introduce/model/guided/faded/debug/retrieve/assess/delayed-retain/transfer matrix is not authored.
 - Original Design for Developers activities, checks, hints, correction paths, secure canonical grading, and learner evidence are not authored or flow-verified.
 - Tablet and desktop editor behavior, accessible phone handoff, theme conditions, keyboard paths, focus restoration, persistence, and assistive-technology feedback require observed learner testing.
 - Seventy-six source blocks still need challenge-level inspection; 61 blocks and one unavailable assessment container retain exact evidence with zero guessed concept assignments.

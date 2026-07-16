@@ -266,10 +266,10 @@ Keyword presence, a requested unit suffix, a single computed value, screenshot s
 ## Remaining blockers
 
 - Independent subject review must confirm every concept assignment, specification interpretation, and current-browser boundary.
-- The complete 179-concept introduce/model/guided/faded/debug/retrieve/assess/delayed-retain/transfer matrix is not authored.
+- The complete 180-concept introduce/model/guided/faded/debug/retrieve/assess/delayed-retain/transfer matrix is not authored.
 - Original unit activities, varied scenarios, hints, correction paths, server-side checks, and solutions are not authored.
 - Assessment reviewers have not mapped cognitive level, misconception, difficulty, discrimination, false-positive, or false-negative risk.
 - Representative learners have not completed the unit sequence or the independent replacement lab.
 - Tablet and desktop inline-editor behavior plus accessible phone handoff remain unverified for this sequence.
-- The remaining 76 source blocks still need challenge-level inspection; 61 blocks and one unavailable assessment container retain exact evidence with zero guessed concept assignments.
+- The remaining 65 source blocks still need challenge-level inspection; 52 blocks and one unavailable assessment container retain exact evidence with zero guessed concept assignments.
 - Lighthouse remains held until all content, migration, duplication, editor, progress, navigation, review, and pilot work is complete.

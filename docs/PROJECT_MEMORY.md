@@ -96,17 +96,17 @@ Current research artifacts:
 Current candidate graph:
 
 - 83 HTML/tooling concepts;
-- 96 CSS/responsive/design concepts;
-- 179 total concepts;
-- 88 agent-inspected source blocks;
-- 545 inspected challenges;
-- 819 captured question prompts;
-- 1,785 inspected implementation checks;
-- 101 block-specific candidate mappings;
-- 56 uninspected source blocks with exact evidence and zero guessed concepts;
+- 97 CSS/responsive/design concepts;
+- 180 total concepts;
+- 93 agent-inspected source blocks;
+- 643 inspected challenges;
+- 877 captured question prompts;
+- 1,958 inspected implementation checks;
+- 105 block-specific candidate mappings;
+- 52 uninspected source blocks with exact evidence and zero guessed concepts;
 - 1 assessment container without reviewable item-level evidence;
 - 6 unresolved concepts;
-- 7 explicit modern extensions not credited to the benchmark;
+- 8 explicit modern extensions not credited to the benchmark;
 - candidate architecture of 17 cumulative modules and 5 original project briefs.
 
 All mappings remain `candidate-review`. All modules and projects remain `planned-not-authored`. Source capture and agent inspection are not independent subject review, authored teaching, assessment validity, accessibility proof, retention evidence, or learner success.
@@ -156,7 +156,9 @@ Pushed milestones:
 
 - `6b23ee63` — deny generated curriculum publication;
 - `21aa3272` — remove the blueprint-derived Responsive Web Design coverage generator and feed concept alignment directly from pinned source evidence;
-- `2be14c1b` — physically remove the rejected generated curriculum and blueprint inventory.
+- `2be14c1b` — physically remove the rejected generated curriculum and blueprint inventory;
+- `9ce07e46` — replace obsolete generators and runtimes with current research/runtime compilers, one CodeMirror editor path, same-origin Pyodide assets, and explicit C/TypeScript publication blockers.
+- 2026-07-15 CSS Colors research wave — inspect all 5 blocks and 98 challenges; add current CSS Color 4/5, CSS Images 4, Color Adjustment, and WCAG evidence; split modern derived-color behavior into an uncredited extension; compile 93 inspected blocks and 105 bounded mappings.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -179,7 +181,7 @@ Both deleted Responsive Web Design page routes returned 404. Attempt, draft, hin
 The current research/editor/runtime hard-cut milestone passed:
 
 - complete Pseudo-classes and Pseudo-elements source inspection: 6 blocks, 74 challenges, 61 question prompts, and 270 implementation checks;
-- current RWD research compilation: 88 inspected blocks, 545 inspected challenges, 819 captured prompts, 1,785 inspected checks, 101 block-specific mappings, 56 uninspected/unmapped blocks, and 70 total blocks still requiring inspection;
+- current RWD research compilation: 93 inspected blocks, 643 inspected challenges, 877 captured prompts, 1,958 inspected checks, 105 block-specific mappings, 52 uninspected/unmapped blocks, and 65 total blocks still requiring inspection;
 - removal of every `generate-*` script, the course-outline writer, the stale 54-course/11,742-activity baseline, dead packages, app compatibility shims, the dual TypeScript path, the host learner-diagnostics endpoint, and the obsolete PicoC runtime;
 - one direct CodeMirror editor implementation with current official HTML, CSS, JavaScript, Python, SQL, and Go parsers; no Monaco, coding textarea, legacy mode, lazy alternate workspace, or second editor path;
 - a single TypeScript 6.0.3 application compiler, selected after TypeScript 7.0.2 failed current Next.js type-generation compatibility and official TypeScript evidence confirmed that 7.0 ships without a programmatic API;
@@ -195,7 +197,7 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Complete challenge-level inspection for the remaining 70 Responsive Web Design source blocks without guessed concept mappings.
+1. Complete challenge-level inspection for the remaining 65 Responsive Web Design source blocks without guessed concept mappings.
 2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
 3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
@@ -205,4 +207,4 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Blockers
 
-No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 70 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.
+No external execution blocker is currently recorded. Release is blocked by incomplete research, 53 missing course dossiers, 65 uninspected Responsive Web Design source blocks, missing independent reviews and activity matrices, zero authored/published courses, unverified CodeMirror learner flow, missing approved C and TypeScript runtimes, unfinished editor diagnostics/progress/navigation integration, and missing observed-learner pilot evidence. Lighthouse remains intentionally blocked by this work.

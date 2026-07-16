@@ -348,12 +348,12 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(96);
+    expect(graph.concepts).toHaveLength(97);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
       'css-language-and-cascade': 16,
       'css-boxes-and-sizing': 13,
-      'css-type-color-and-design': 19,
+      'css-type-color-and-design': 20,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 10,
       'responsive-systems': 14,
@@ -372,6 +372,9 @@ describe('research contracts', () => {
         'rwd-css-display-three',
         'rwd-css-backgrounds-three',
         'rwd-css-values-four',
+        'rwd-css-color-four',
+        'rwd-css-color-five',
+        'rwd-css-images-four',
         'rwd-mdn-progressive-enhancement',
         'rwd-css-color-adjust-one',
         'rwd-w3c-coga-usable',
@@ -446,7 +449,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 76 source blocks');
+    expect(content).toContain('The remaining 65 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -484,7 +487,7 @@ describe('research contracts', () => {
     expect(content).toContain('outside click is not a modal contract');
     expect(content).toContain('automatic infinite scroll');
     expect(content).toContain('Adobe XD is maintenance mode');
-    expect(content).toContain('The complete 179-concept');
+    expect(content).toContain('The complete 180-concept');
     expect(content.length).toBeGreaterThan(15_000);
     expect(
       designConceptIds.every((conceptId) =>
@@ -610,8 +613,8 @@ describe('research contracts', () => {
     expect(content).toContain('default `v*` viewport units use the large viewport');
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
-    expect(content).toContain('The complete 179-concept');
-    expect(content).toContain('The remaining 76 source blocks');
+    expect(content).toContain('The complete 180-concept');
+    expect(content).toContain('The remaining 65 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -707,7 +710,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 70 blocks');
+    expect(content).toContain('The remaining 65 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -860,6 +863,126 @@ describe('research contracts', () => {
     });
   });
 
+  it('records and bounds the complete CSS Colors inspection', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-css-colors-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+
+    expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
+    expect(content).toContain('creates a CSS generated image value and no DOM element');
+    expect(content).toContain('Class order in an HTML `class` attribute does not decide');
+    expect(content).toContain('remaining 65 source blocks');
+    expect(content).toContain('Keyword presence, a notation-matching regular expression');
+    expect(content.length).toBeGreaterThan(20_000);
+    expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-colors-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-15',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-current-color-evidence')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-css-color-four',
+        'rwd-css-color-five',
+        'rwd-css-images-four',
+        'rwd-css-color-adjust-one',
+        'rwd-wcag-two-two',
+        'rwd-fcc-colors-inspection',
+      ],
+    });
+  });
+
+  it('keeps all five CSS Colors blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const colorAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'css-colors'
+    );
+
+    expect(colorAlignments).toHaveLength(5);
+    expect(
+      colorAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(98);
+    expect(
+      colorAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(58);
+    expect(
+      colorAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.hintCheckCount,
+        0
+      )
+    ).toBe(173);
+    expect(
+      colorAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        colorAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-working-with-colors-in-css': [
+        'css-color-spaces-alpha',
+        'css-contrast-noncolor-meaning',
+        'css-gradients-background-images',
+        'css-backgrounds-borders-shadows',
+      ],
+      'workshop-colored-markers': [
+        'html-heading-hierarchy',
+        'css-application-and-loading',
+        'css-rule-declaration-anatomy',
+        'css-type-class-id-selectors',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-backgrounds-borders-shadows',
+        'css-color-spaces-alpha',
+        'css-gradients-background-images',
+      ],
+      'lab-colored-boxes': [
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-intrinsic-extrinsic-sizing',
+        'css-color-spaces-alpha',
+      ],
+      'review-css-colors': [
+        'css-color-spaces-alpha',
+        'css-gradients-background-images',
+        'css-backgrounds-borders-shadows',
+      ],
+      'quiz-css-colors': ['css-color-spaces-alpha', 'css-gradients-background-images'],
+    });
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -911,11 +1034,11 @@ describe('research contracts', () => {
     expect(matrix.alignments.every((alignment) => alignment.state === 'candidate-review')).toBe(
       true
     );
-    expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 96]);
+    expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(8);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 97]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(88);
+    ).toHaveLength(93);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -1683,10 +1806,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(101);
+    ).toHaveLength(105);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(56);
+    ).toHaveLength(52);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -1843,9 +1966,9 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(179);
-    expect(architecture.sourceObjectiveIds).toHaveLength(101);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(57);
+    expect(architecture.conceptIds).toHaveLength(180);
+    expect(architecture.sourceObjectiveIds).toHaveLength(105);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(53);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

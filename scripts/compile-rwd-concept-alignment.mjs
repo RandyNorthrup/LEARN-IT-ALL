@@ -1351,6 +1351,30 @@ const blockConcepts = {
     'css-focus-visible-indicators',
   ],
   'lecture-working-with-colors-in-css': sourceModuleConcepts['css-colors'],
+  'workshop-colored-markers': [
+    'html-heading-hierarchy',
+    'css-application-and-loading',
+    'css-rule-declaration-anatomy',
+    'css-type-class-id-selectors',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-backgrounds-borders-shadows',
+    'css-color-spaces-alpha',
+    'css-gradients-background-images',
+  ],
+  'lab-colored-boxes': [
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-intrinsic-extrinsic-sizing',
+    'css-color-spaces-alpha',
+  ],
+  'review-css-colors': [
+    'css-color-spaces-alpha',
+    'css-gradients-background-images',
+    'css-backgrounds-borders-shadows',
+  ],
+  'quiz-css-colors': ['css-color-spaces-alpha', 'css-gradients-background-images'],
   'lecture-best-practices-for-styling-forms': sourceModuleConcepts['styling-forms'],
   'lecture-working-with-css-transforms-overflow-and-filters': sourceModuleConcepts['css-box-model'],
   'lecture-working-with-css-flexbox': sourceModuleConcepts['css-flexbox'],
@@ -1466,6 +1490,11 @@ const agentInspectedBlockSlugs = new Set([
   'lab-job-application-form',
   'review-css-pseudo-classes',
   'quiz-css-pseudo-classes',
+  'lecture-working-with-colors-in-css',
+  'workshop-colored-markers',
+  'lab-colored-boxes',
+  'review-css-colors',
+  'quiz-css-colors',
 ]);
 
 const evidenceByType = {
@@ -1603,6 +1632,7 @@ const explicitModernExtensionConceptIds = [
   'responsive-container-query-model',
   'responsive-container-query-units',
   'css-print-and-non-screen-media',
+  'css-derived-color-functions',
 ];
 const explicitModernExtensionConceptIdSet = new Set(explicitModernExtensionConceptIds);
 const extensionConcepts = concepts.filter((concept) =>

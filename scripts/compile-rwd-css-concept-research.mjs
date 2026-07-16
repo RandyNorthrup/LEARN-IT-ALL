@@ -584,16 +584,32 @@ add(
 add(
   'css-color-spaces-alpha',
   'Color notation, spaces, and alpha',
-  'Choose named, hexadecimal, RGB, HSL, and modern color-space notation while predicting alpha compositing against changed backgrounds.',
+  'Choose named, hexadecimal, RGB, HSL, perceptual, and wide-gamut color notation while predicting conversion, gamut mapping, and alpha compositing against changed backgrounds.',
   'css-type-color-and-design',
   ['css-rule-declaration-anatomy'],
-  'rwd-webdev-css',
-  'Color module',
-  'CSS supports multiple color notations and color spaces whose channels and compositing behavior differ.',
+  'rwd-css-color-four',
+  'Sections 2 through 16: color terminology, syntax, spaces, alpha, interpolation, gamut mapping, resolving, and serialization',
+  'CSS Color Level 4 defines legacy and modern color syntax, sRGB and perceptual or predefined spaces, alpha compositing, interpolation, gamut mapping, and resolved values as distinct concerns.',
   'An alpha color has the same visible result regardless of the layers painted behind it.',
   [
-    'Learner must compare equivalent and non-equivalent notations and calculate changed composited appearance.',
-    'A theme color must remain inside the supported gamut or define a defensible fallback.',
+    'Learner must compare equivalent and non-equivalent notations, identify the processing space, and calculate changed composited appearance.',
+    'A wide-gamut color must be inspected on supported and narrower-gamut output without treating a valid authored value as proof of the displayed result.',
+  ]
+);
+
+add(
+  'css-derived-color-functions',
+  'Mixed, relative, and contextual colors',
+  'Derive maintainable color variants with color-mix(), relative color syntax, currentColor, and supported contextual functions while choosing an interpolation space and preserving contrast under changed inputs.',
+  'css-type-color-and-design',
+  ['css-color-spaces-alpha', 'css-calculated-value-math'],
+  'rwd-css-color-five',
+  'Sections 2 through 4: color mixing, contrast selection status, and relative color syntax',
+  'CSS Color Level 5 defines color mixing and relative color processing with explicit normalization, origin colors, component keywords, math, and interpolation-space behavior; draft-only features require separate interoperability evidence.',
+  'Mixing two passing palette colors or changing one channel automatically preserves contrast and produces the same visual midpoint in every color space.',
+  [
+    'Learner must predict and inspect changed color-mix percentages, alpha, interpolation spaces, and hue paths rather than accept a plausible swatch.',
+    'Relative variants must trace to their origin and retain required contrast, forced-color behavior, and a usable result when the assessed feature is unavailable in the supported browser matrix.',
   ]
 );
 
@@ -635,9 +651,9 @@ add(
   'Build gradients and decorative background images with predictable stops, sizing, repeat, position, and fallback while keeping required content in HTML.',
   'css-type-color-and-design',
   ['css-color-spaces-alpha', 'css-backgrounds-borders-shadows'],
-  'rwd-mdn-css-fundamentals',
-  '3.5 image values and 3.7 backgrounds',
-  'CSS images and layered backgrounds can provide presentational color transitions and imagery.',
+  'rwd-css-images-four',
+  'Sections 3 and 4: linear, radial, conic, and repeating gradients, color stops, interpolation methods, and image sizing',
+  'CSS Images defines gradients as generated images with geometry, color-stop fixup, interpolation-space behavior, and sizing distinct from flat color values.',
   'A CSS background image receives alternative text from the element content property automatically.',
   [
     'Image-disabled and high-contrast cases must preserve the complete task and text readability.',
@@ -1619,6 +1635,9 @@ const graph = {
     'rwd-css-display-three',
     'rwd-css-backgrounds-three',
     'rwd-css-values-four',
+    'rwd-css-color-four',
+    'rwd-css-color-five',
+    'rwd-css-images-four',
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
     'rwd-mdn-css-fundamentals',
