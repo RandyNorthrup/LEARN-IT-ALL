@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const stages = ['introduce', 'model', 'guided', 'faded', 'debug', 'retrieve', 'assess', 'transfer'];
@@ -395,6 +395,28 @@ concept(
 );
 
 concept(
+  'html-discovery-metadata',
+  'Search and sharing discovery metadata',
+  'Provide accurate descriptions, canonical identity, icons, and bounded sharing metadata whose consumers, limitations, and visible-content relationship can be verified.',
+  'html-documents-and-paths',
+  ['html-title-metadata', 'html-document-language'],
+  [
+    anchor(
+      'rwd-webdev-html',
+      'Metadata and document head coverage',
+      'Document metadata describes the page to browsers, search systems, sharing tools, and other consumers without replacing visible content.'
+    ),
+  ],
+  [
+    'Metadata keywords can guarantee ranking and may describe content that the visible page does not provide.',
+  ],
+  [
+    'Changed multi-page cases must expose unique truthful title, description, canonical, icon, and sharing evidence without duplicated identity.',
+    'Learner must name each metadata consumer, verify inspectable output where possible, and state what the metadata cannot guarantee.',
+  ]
+);
+
+concept(
   'html-viewport-metadata',
   'Viewport configuration',
   'Configure the layout viewport for responsive design without restricting zoom or treating metadata as a substitute for resilient CSS.',
@@ -435,6 +457,52 @@ concept(
     'Learner must diagnose case, extension, base, path-segment, and URL-encoding failures from network evidence.',
   ],
   ['html-images-and-media', 'html-independent-project']
+);
+
+concept(
+  'html-browser-request-parse-render',
+  'Browser request, parse, and render evidence',
+  'Trace navigation through URL resolution, requests, responses, resource discovery, HTML parsing, DOM construction, CSS matching, layout, paint, and interactive output at a beginner-appropriate level.',
+  'html-documents-and-paths',
+  ['html-files-paths-urls', 'html-document-root-head-body', 'html-parser-recovery'],
+  [
+    anchor(
+      'rwd-mdn-browser-loading',
+      'Requests, responses, HTML handling, CSS handling, and rendering',
+      'Browsers request multiple resources, parse HTML into a DOM, parse and match CSS, then assemble rendered output.'
+    ),
+  ],
+  [
+    'Opening one HTML file makes the browser read every project file automatically without references or requests.',
+  ],
+  [
+    'Learner must connect changed source, requested resources, response failures, DOM nodes, computed styles, and rendered output without collapsing them into one layer.',
+    'A missing-resource case must be diagnosed at URL, request, response, parse, match, or render stage using the evidence surface that can prove it.',
+  ],
+  ['html-images-and-media', 'html-accessibility-and-debugging', 'html-independent-project']
+);
+
+concept(
+  'html-authority-research-verification',
+  'Technical authority and claim verification',
+  'Turn an HTML or browser question into a bounded claim, locate current specification or official documentation evidence, record version and context, test behavior where appropriate, and preserve uncertainty.',
+  'html-documents-and-paths',
+  ['html-browser-request-parse-render'],
+  [
+    anchor(
+      'rwd-mdn-curriculum',
+      'Research technical information and web standards outcomes',
+      'Professional web work requires finding authoritative technical information and separating standards from examples, compatibility observations, and unsupported claims.'
+    ),
+  ],
+  [
+    'The first search result or generated answer is authoritative when its code appears to work in one browser.',
+  ],
+  [
+    'Learner must produce a claim-evidence-limit-test record for a changed HTML question using a current authority rather than a copied answer.',
+    'Conflicting or outdated evidence must be resolved by version, normative status, browser observation, and an explicit remaining-uncertainty statement.',
+  ],
+  ['html-accessibility-and-debugging', 'html-independent-project']
 );
 
 concept(
@@ -1175,6 +1243,7 @@ const graph = {
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
     'rwd-webdev-html',
+    'rwd-mdn-browser-loading',
     'rwd-wai-tutorials',
     'rwd-aria-apg',
     'rwd-fcc-v9',
@@ -1202,7 +1271,7 @@ const graph = {
     'Subject-matter review must verify each locator, standards claim, prerequisite edge, misconception, and scope boundary.',
     'Instructional and assessment review must map each concept into original activities and inspect full evidence progression.',
     'Accessibility review and representative beginner observation must test the sequence, editor, feedback, recovery, and independent project.',
-    'CSS concept graph and cross-boundary prerequisites remain required before the complete course dossier can enter review.',
+    'HTML-to-CSS cross-boundary prerequisites and exact alignment to all pinned v9 objectives require reviewer closure before the complete course dossier can enter review.',
   ],
 };
 
@@ -1214,5 +1283,12 @@ const output = path.join(
   'responsive-web-design-html-concepts.json'
 );
 await mkdir(path.dirname(output), { recursive: true });
-await writeFile(output, `${JSON.stringify(graph, null, 2)}\n`);
-console.log(`Wrote ${output}: ${graph.concepts.length} researched HTML concepts.`);
+const serialized = `${JSON.stringify(graph, null, 2)}\n`;
+if (process.argv.includes('--check')) {
+  const current = await readFile(output, 'utf8');
+  if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
+  console.log(`Current ${output}: ${graph.concepts.length} researched HTML concepts.`);
+} else {
+  await writeFile(output, serialized);
+  console.log(`Wrote ${output}: ${graph.concepts.length} researched HTML concepts.`);
+}

@@ -344,6 +344,186 @@ export const ConceptResearchGraphSchema = z
     }
   });
 
+export const ExternalObjectiveConceptAlignmentSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    courseId: IdentifierSchema,
+    status: z.enum(['researching', 'in-review', 'approved']),
+    reviewedAt: z.iso.date(),
+    sourceSnapshot: z.object({
+      sourceId: IdentifierSchema,
+      upstreamCommit: z.string().min(20),
+      sourceObjectives: z.number().int().positive(),
+      sourceChallenges: z.number().int().positive(),
+    }),
+    conceptInventories: z
+      .array(
+        z.object({
+          scopeId: IdentifierSchema,
+          conceptCount: z.number().int().positive(),
+          conceptIds: z.array(IdentifierSchema).min(1),
+        })
+      )
+      .min(1),
+    alignments: z
+      .array(
+        z.object({
+          objectiveId: IdentifierSchema,
+          sourceModuleId: IdentifierSchema,
+          sourceBlockSlug: IdentifierSchema,
+          sourceActivityType: z.enum(['workshop', 'lab', 'lecture', 'review', 'quiz', 'exam']),
+          sourceChallengeCount: z.number().int().positive(),
+          conceptIds: z.array(IdentifierSchema).min(1),
+          mappingRationale: z.string().min(40),
+          evidenceNeeded: z.array(z.string().min(20)).min(2),
+          state: z.enum(['candidate-review', 'expert-reviewed', 'approved']),
+        })
+      )
+      .min(1),
+    courseExtensions: z.array(
+      z.object({
+        extensionId: IdentifierSchema,
+        title: z.string().min(8),
+        rationale: z.string().min(40),
+        conceptIds: z.array(IdentifierSchema).min(1),
+        sourceIds: z.array(IdentifierSchema).min(1),
+        validationNeeded: z.array(z.string().min(20)).min(2),
+        state: z.enum(['candidate-review', 'expert-reviewed', 'approved']),
+      })
+    ),
+    architectureFindings: z.array(z.string().min(30)).min(1),
+    gaps: z.array(z.string().min(20)),
+  })
+  .superRefine((matrix, context) => {
+    const objectiveIds = matrix.alignments.map((alignment) => alignment.objectiveId);
+    const blockSlugs = matrix.alignments.map((alignment) => alignment.sourceBlockSlug);
+    const extensionIds = matrix.courseExtensions.map((extension) => extension.extensionId);
+    const inventoryScopeIds = matrix.conceptInventories.map((inventory) => inventory.scopeId);
+    const inventoryConceptIds = matrix.conceptInventories.flatMap(
+      (inventory) => inventory.conceptIds
+    );
+    const knownConceptIds = new Set(inventoryConceptIds);
+    const benchmarkConceptIds = new Set(
+      matrix.alignments.flatMap((alignment) => alignment.conceptIds)
+    );
+    const extensionConceptIds = matrix.courseExtensions.flatMap(
+      (extension) => extension.conceptIds
+    );
+    const extensionConceptIdSet = new Set(extensionConceptIds);
+
+    const rejectDuplicates = (values: string[], message: string, path?: PropertyKey[]) => {
+      if (new Set(values).size !== values.length) {
+        context.addIssue({ code: 'custom', message, path });
+      }
+    };
+
+    rejectDuplicates(objectiveIds, 'Duplicate aligned source objective IDs', ['alignments']);
+    rejectDuplicates(blockSlugs, 'Duplicate aligned source block slugs', ['alignments']);
+    rejectDuplicates(extensionIds, 'Duplicate course extension IDs', ['courseExtensions']);
+    rejectDuplicates(inventoryScopeIds, 'Duplicate concept inventory scope IDs', [
+      'conceptInventories',
+    ]);
+    rejectDuplicates(inventoryConceptIds, 'Concept appears in multiple inventories', [
+      'conceptInventories',
+    ]);
+    rejectDuplicates(extensionConceptIds, 'Concept appears in multiple course extensions', [
+      'courseExtensions',
+    ]);
+
+    if (matrix.alignments.length !== matrix.sourceSnapshot.sourceObjectives) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Alignment count does not match source objective total',
+        path: ['alignments'],
+      });
+    }
+    if (
+      matrix.alignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0) !==
+      matrix.sourceSnapshot.sourceChallenges
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Aligned challenge count does not match source snapshot total',
+        path: ['alignments'],
+      });
+    }
+
+    for (const [inventoryIndex, inventory] of matrix.conceptInventories.entries()) {
+      if (inventory.conceptIds.length !== inventory.conceptCount) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept inventory ${inventory.scopeId} count does not match its identities`,
+          path: ['conceptInventories', inventoryIndex, 'conceptIds'],
+        });
+      }
+    }
+
+    for (const [alignmentIndex, alignment] of matrix.alignments.entries()) {
+      rejectDuplicates(
+        alignment.conceptIds,
+        `Source objective ${alignment.objectiveId} repeats concept IDs`,
+        ['alignments', alignmentIndex, 'conceptIds']
+      );
+      for (const conceptId of alignment.conceptIds) {
+        if (!knownConceptIds.has(conceptId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Source objective ${alignment.objectiveId} references unknown concept ${conceptId}`,
+            path: ['alignments', alignmentIndex, 'conceptIds'],
+          });
+        }
+      }
+    }
+
+    for (const [extensionIndex, extension] of matrix.courseExtensions.entries()) {
+      rejectDuplicates(
+        extension.conceptIds,
+        `Course extension ${extension.extensionId} repeats concept IDs`,
+        ['courseExtensions', extensionIndex, 'conceptIds']
+      );
+      for (const conceptId of extension.conceptIds) {
+        if (!knownConceptIds.has(conceptId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Course extension ${extension.extensionId} references unknown concept ${conceptId}`,
+            path: ['courseExtensions', extensionIndex, 'conceptIds'],
+          });
+        }
+        if (benchmarkConceptIds.has(conceptId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Concept ${conceptId} is claimed as both benchmark coverage and course extension`,
+            path: ['courseExtensions', extensionIndex, 'conceptIds'],
+          });
+        }
+      }
+    }
+
+    for (const conceptId of knownConceptIds) {
+      if (!benchmarkConceptIds.has(conceptId) && !extensionConceptIdSet.has(conceptId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${conceptId} lacks benchmark or extension alignment`,
+        });
+      }
+    }
+
+    if (matrix.status === 'approved') {
+      if (matrix.gaps.length > 0) {
+        context.addIssue({ code: 'custom', message: 'Approved alignment cannot retain open gaps' });
+      }
+      if (
+        matrix.alignments.some((alignment) => alignment.state !== 'approved') ||
+        matrix.courseExtensions.some((extension) => extension.state !== 'approved')
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Approved alignment requires every objective and extension approved',
+        });
+      }
+    }
+  });
+
 function addReferenceIssues(
   value: {
     questions: z.infer<typeof ResearchQuestionSchema>[];
@@ -503,6 +683,9 @@ export type CourseResearchDossier = z.infer<typeof CourseResearchDossierSchema>;
 export type PlatformResearchRegister = z.infer<typeof PlatformResearchRegisterSchema>;
 export type SourceObjectiveCoverageMatrix = z.infer<typeof SourceObjectiveCoverageMatrixSchema>;
 export type ConceptResearchGraph = z.infer<typeof ConceptResearchGraphSchema>;
+export type ExternalObjectiveConceptAlignment = z.infer<
+  typeof ExternalObjectiveConceptAlignmentSchema
+>;
 
 export interface ResearchAuditFinding {
   severity: 'blocker' | 'warning';

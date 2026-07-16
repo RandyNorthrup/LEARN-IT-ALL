@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -6,6 +7,7 @@ import {
   auditCourseResearch,
   ConceptResearchGraphSchema,
   CourseResearchDossierSchema,
+  ExternalObjectiveConceptAlignmentSchema,
   PlatformResearchRegisterSchema,
   SourceObjectiveCoverageMatrixSchema,
 } from './research';
@@ -193,7 +195,7 @@ describe('research contracts', () => {
     const dossierSourceIds = new Set(dossier.sources.map((source) => source.id));
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(54);
+    expect(graph.concepts).toHaveLength(57);
     expect(
       graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
     ).toBe(true);
@@ -219,12 +221,12 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(80);
+    expect(graph.concepts).toHaveLength(86);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
-      'css-language-and-cascade': 14,
-      'css-boxes-and-sizing': 11,
-      'css-type-color-and-design': 11,
+      'css-language-and-cascade': 16,
+      'css-boxes-and-sizing': 12,
+      'css-type-color-and-design': 14,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 10,
       'responsive-systems': 13,
@@ -236,6 +238,99 @@ describe('research contracts', () => {
     ).toBe(true);
     expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
     expect(graph.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const coverage = SourceObjectiveCoverageMatrixSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-coverage.json')
+      )
+    );
+    const graphs = [
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(
+            repositoryRoot,
+            'docs/research/courses/responsive-web-design-html-concepts.json'
+          )
+        )
+      ),
+      ConceptResearchGraphSchema.parse(
+        readJson(
+          path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+        )
+      ),
+    ];
+    const sourceByObjective = new Map(
+      coverage.objectives.map((objective) => [objective.objectiveId, objective])
+    );
+
+    expect(matrix.status).toBe('researching');
+    expect(matrix.alignments).toHaveLength(158);
+    expect(matrix.alignments.every((alignment) => alignment.state === 'candidate-review')).toBe(
+      true
+    );
+    expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([57, 86]);
+
+    for (const alignment of matrix.alignments) {
+      const source = sourceByObjective.get(alignment.objectiveId);
+      expect(source, alignment.objectiveId).toBeDefined();
+      expect(alignment).toMatchObject({
+        sourceModuleId: source?.sourceModuleId,
+        sourceBlockSlug: source?.sourceBlockSlug,
+        sourceActivityType: source?.sourceActivityType,
+        sourceChallengeCount: source?.sourceChallengeCount,
+      });
+    }
+
+    expect(matrix.conceptInventories.flatMap((inventory) => inventory.conceptIds)).toEqual(
+      graphs.flatMap((graph) => graph.concepts.map((concept) => concept.id))
+    );
+    expect(matrix.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('rejects treating one concept as benchmark evidence and a modern extension', () => {
+    const matrix = readJson(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-concept-alignment.json'
+      )
+    ) as {
+      alignments: Array<{ conceptIds: string[] }>;
+      courseExtensions: Array<{ conceptIds: string[] }>;
+    };
+    const broken = structuredClone(matrix);
+    broken.courseExtensions[0].conceptIds.push(broken.alignments[0].conceptIds[0]);
+
+    const result = ExternalObjectiveConceptAlignmentSchema.safeParse(broken);
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some((issue) => issue.message.includes('both benchmark coverage'))
+    ).toBe(true);
+  });
+
+  it('keeps generated RWD concept research and alignment outputs reproducible', () => {
+    for (const script of [
+      'scripts/generate-rwd-html-concept-research.mjs',
+      'scripts/generate-rwd-css-concept-research.mjs',
+      'scripts/generate-rwd-concept-alignment.mjs',
+    ]) {
+      expect(() =>
+        execFileSync(process.execPath, [script, '--check'], {
+          cwd: repositoryRoot,
+          stdio: 'pipe',
+        })
+      ).not.toThrow();
+    }
   });
 
   it('rejects a concept graph whose prerequisite appears later in the sequence', () => {

@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const stages = ['introduce', 'model', 'guided', 'faded', 'debug', 'retrieve', 'assess', 'transfer'];
@@ -180,6 +180,22 @@ add(
 );
 
 add(
+  'css-list-markers-counters',
+  'List markers, counters, and retained semantics',
+  'Style marker position, type, image, pseudo-element, and counters while preserving list relationships, readable numbering, and fallback meaning.',
+  'css-language-and-cascade',
+  ['css-pseudo-elements', 'css-selector-lists-combinators'],
+  'rwd-webdev-css',
+  'Lists module',
+  'List boxes expose marker styling and counters without requiring authors to replace semantic list structure.',
+  'Removing list style also removes list semantics in every browser and assistive-technology combination.',
+  [
+    'Ordered, unordered, nested, reversed, start-value, long-marker, and styles-disabled cases must retain understandable relationships and numbering.',
+    'Learner must choose native markers, counters, or generated decoration based on semantic order and fallback evidence.',
+  ]
+);
+
+add(
   'css-inheritance-initial-unset-revert',
   'Inheritance and global values',
   'Predict inherited and non-inherited computed values and deliberately use initial, inherit, unset, or revert without treating them as synonyms.',
@@ -258,6 +274,22 @@ add(
     'Learner must design a fallback chain that survives one missing theme token without hiding unrelated errors.',
   ],
   ['css-type-color-and-design', 'responsive-systems', finalModule]
+);
+
+add(
+  'css-link-state-sequence',
+  'Link states and state distinguishability',
+  'Style unvisited, visited, hover, focus-visible, and active link states in cascade-safe order without exposing history, removing affordance, or relying on color alone.',
+  'css-language-and-cascade',
+  ['css-pseudo-classes', 'css-cascade-origins-importance-order'],
+  'rwd-webdev-css',
+  'Pseudo-classes, focus, and color modules',
+  'Link interaction states participate in the cascade and need distinguishable, privacy-bounded presentation.',
+  'Visited links may reveal any computed property and can use generated content to show a user where they browsed.',
+  [
+    'Keyboard, pointer, visited, unvisited, active, forced-color, and changed-background cases must retain link identity and focus evidence.',
+    'Learner must trace a state conflict through cascade order and repair it without disabling another input path.',
+  ]
 );
 
 add(
@@ -437,6 +469,22 @@ add(
 );
 
 add(
+  'css-transform-reference-boxes',
+  'Transforms, coordinate space, and reference boxes',
+  'Compose translate, rotate, scale, skew, origin, and transform functions while predicting coordinate order, reference boxes, hit testing, stacking, and layout-flow effects.',
+  'css-boxes-and-sizing',
+  ['css-box-model-areas', 'css-percentages-containing-blocks'],
+  'rwd-webdev-css',
+  'Transforms module',
+  'Transforms alter rendered coordinate space and composition without changing ordinary flow allocation.',
+  'Transform functions execute right-to-left or left-to-right interchangeably because every transform result is independent.',
+  [
+    'Learner must predict changed function order, origin, percentage reference, overflow, hit region, and sibling-flow evidence.',
+    'A visual placement repair must use layout when flow should change and transforms only when transformed rendering is the intended model.',
+  ]
+);
+
+add(
   'css-font-stacks-generic-fallbacks',
   'Font stacks and generic fallbacks',
   'Build font-family stacks that preserve readable category, glyph coverage, metrics, and system fallback when preferred fonts are absent.',
@@ -549,6 +597,22 @@ add(
 );
 
 add(
+  'css-filter-effects-fallbacks',
+  'Filter effects and readable fallbacks',
+  'Apply bounded filter and backdrop-filter effects while preserving text, contrast, focus, performance, stacking, and usable fallback output.',
+  'css-type-color-and-design',
+  ['css-color-spaces-alpha', 'css-contrast-noncolor-meaning', 'css-backgrounds-borders-shadows'],
+  'rwd-webdev-css',
+  'Filters module',
+  'Filter effects alter rendered pixels and may create performance, contrast, and containing or stacking behavior that needs direct evidence.',
+  'A blur or opacity filter changes the underlying semantic state and guarantees readable contrast against every backdrop.',
+  [
+    'Unsupported-filter, forced-color, reduced-transparency, changed-backdrop, focus, and low-performance cases must preserve the complete task.',
+    'Learner must measure actual rendered contrast and effect cost, then provide a no-filter fallback rather than encoding meaning in the effect.',
+  ]
+);
+
+add(
   'css-gradients-background-images',
   'Gradients and presentational images',
   'Build gradients and decorative background images with predictable stops, sizing, repeat, position, and fallback while keeping required content in HTML.',
@@ -565,11 +629,32 @@ add(
 );
 
 add(
+  'design-user-needs-task-flows',
+  'Evidence-backed user needs and task flows',
+  'Derive user needs, constraints, task sequences, failure paths, and acceptance evidence from research rather than designing around personal preference or a fictional typical user.',
+  'css-type-color-and-design',
+  ['css-purpose-and-boundary'],
+  'rwd-govuk-user-needs',
+  'Learning about users and their needs',
+  'Service design begins with evidence about varied users, desired outcomes, current behavior, barriers, and continuously validated needs.',
+  'A designer represents the target audience, so personal preference is sufficient evidence of user needs.',
+  [
+    'Learner must convert observed or supplied research evidence into need, context, outcome, constraint, and acceptance records without prescribing a solution.',
+    'A changed user with disability, language, device, time, or support constraints must alter the task model and design decision where evidence warrants it.',
+  ],
+  ['responsive-systems', finalModule]
+);
+
+add(
   'css-visual-hierarchy-spacing',
   'Visual hierarchy, proximity, and rhythm',
   'Use size, weight, spacing, grouping, alignment, and contrast to make semantic hierarchy and task priority perceivable without changing reading order.',
   'css-type-color-and-design',
-  ['css-readable-measure-alignment', 'css-contrast-noncolor-meaning'],
+  [
+    'design-user-needs-task-flows',
+    'css-readable-measure-alignment',
+    'css-contrast-noncolor-meaning',
+  ],
   'rwd-mdn-curriculum',
   'Design for developers and core styling outcomes',
   'CSS presentation should reinforce content hierarchy, scan paths, grouping, and interaction priorities.',
@@ -578,6 +663,23 @@ add(
     'Heading, group, action, and error hierarchy must remain clear with styles disabled and under zoom.',
     'Learner must defend each visual cue against the semantic relationship and user task it supports.',
   ]
+);
+
+add(
+  'design-prototypes-evaluation-iteration',
+  'Prototypes, evaluation, and iterative decisions',
+  'Choose low- or high-fidelity prototypes, define research questions and tasks, observe representative use, separate findings from opinion, and revise traceable design decisions.',
+  'css-type-color-and-design',
+  ['design-user-needs-task-flows', 'css-visual-hierarchy-spacing'],
+  'rwd-govuk-user-needs',
+  'Planning research, testing ideas, and validating needs through development',
+  'Research continues across development phases and uses prototypes plus observed behavior to test assumptions and design ideas.',
+  'A polished mockup is validated when stakeholders approve its appearance without representative users completing tasks.',
+  [
+    'Learner must match prototype fidelity to a bounded research question and record task success, errors, barriers, quotes, and observation limits separately.',
+    'A changed finding must trace to keep, revise, reject, or investigate decisions and a planned re-test rather than an unsupported aesthetic change.',
+  ],
+  ['responsive-systems', finalModule]
 );
 
 add(
@@ -1346,6 +1448,7 @@ const graph = {
     'rwd-mdn-css-layout',
     'rwd-webdev-css',
     'rwd-webdev-responsive',
+    'rwd-govuk-user-needs',
     'rwd-wai-tutorials',
     'rwd-fcc-v9',
   ],
@@ -1383,5 +1486,14 @@ const output = path.join(
   'responsive-web-design-css-concepts.json'
 );
 await mkdir(path.dirname(output), { recursive: true });
-await writeFile(output, `${JSON.stringify(graph, null, 2)}\n`);
-console.log(`Wrote ${output}: ${graph.concepts.length} researched CSS and responsive concepts.`);
+const serialized = `${JSON.stringify(graph, null, 2)}\n`;
+if (process.argv.includes('--check')) {
+  const current = await readFile(output, 'utf8');
+  if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
+  console.log(
+    `Current ${output}: ${graph.concepts.length} researched CSS and responsive concepts.`
+  );
+} else {
+  await writeFile(output, serialized);
+  console.log(`Wrote ${output}: ${graph.concepts.length} researched CSS and responsive concepts.`);
+}
