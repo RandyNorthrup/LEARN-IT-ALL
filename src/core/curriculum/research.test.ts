@@ -345,8 +345,77 @@ describe('research contracts', () => {
     expect(
       graph.concepts.every((concept) => concept.currentState === 'researched-not-authored')
     ).toBe(true);
+    expect(graph.sourceIds).toEqual(
+      expect.arrayContaining([
+        'rwd-css-syntax-three',
+        'rwd-selectors-four',
+        'rwd-css-cascade-five',
+        'rwd-css-cascade-six',
+        'rwd-css-display-three',
+        'rwd-css-backgrounds-three',
+      ])
+    );
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-css-spec-graph')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-css-snapshot',
+        'rwd-css-syntax-three',
+        'rwd-selectors-four',
+        'rwd-css-cascade-five',
+        'rwd-css-cascade-six',
+        'rwd-css-display-three',
+        'rwd-css-backgrounds-three',
+      ],
+    });
+    expect(
+      Object.fromEntries(
+        [
+          'css-rule-declaration-anatomy',
+          'css-type-class-id-selectors',
+          'css-inheritance-initial-unset-revert',
+          'css-cascade-origins-importance-order',
+          'css-specificity-functional-selectors',
+          'css-outer-inner-display',
+          'css-backgrounds-borders-shadows',
+        ].map((conceptId) => [
+          conceptId,
+          graph.concepts.find((concept) => concept.id === conceptId)?.sourceAnchors[0].sourceId,
+        ])
+      )
+    ).toEqual({
+      'css-rule-declaration-anatomy': 'rwd-css-syntax-three',
+      'css-type-class-id-selectors': 'rwd-selectors-four',
+      'css-inheritance-initial-unset-revert': 'rwd-css-cascade-five',
+      'css-cascade-origins-importance-order': 'rwd-css-cascade-five',
+      'css-specificity-functional-selectors': 'rwd-selectors-four',
+      'css-outer-inner-display': 'rwd-css-display-three',
+      'css-backgrounds-borders-shadows': 'rwd-css-backgrounds-three',
+    });
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-type-class-id-selectors')?.title
+    ).toBe('Universal, type, class, and ID selectors');
     expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
     expect(graph.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('records the complete pinned Basic CSS inspection and its replacement constraints', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-basic-css-inspection.md'
+      ),
+      'utf8'
+    );
+
+    expect(content).toContain('**122**');
+    expect(content).toContain('**158**');
+    expect(content).toContain('Specificity is not a decimal or four-position score');
+    expect(content).toContain('fitting two inline-block columns through source-whitespace');
+    expect(content).toContain('Source text or declaration presence is never sufficient evidence');
+    expect(content).toContain('The remaining 85 source blocks');
+    expect(content.length).toBeGreaterThan(10_000);
   });
 
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
@@ -410,7 +479,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 86]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(61);
+    ).toHaveLength(73);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -979,9 +1048,218 @@ describe('research contracts', () => {
         'tooling-search-query-refinement',
       ],
     });
+    const basicCssAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'basic-css'
+    );
+    expect(basicCssAlignments).toHaveLength(12);
     expect(
-      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'module-fallback')
-    ).toHaveLength(74);
+      basicCssAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(122);
+    expect(
+      basicCssAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(158);
+    expect(
+      basicCssAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        basicCssAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-what-is-css': [
+        'css-source-preview-loop',
+        'css-purpose-and-boundary',
+        'css-rule-declaration-anatomy',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-cascade-origins-importance-order',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'responsive-viewport-zoom',
+      ],
+      'workshop-cafe-menu': [
+        'html-doctype-rendering-mode',
+        'html-document-root-head-body',
+        'html-document-language',
+        'html-character-encoding',
+        'html-title-metadata',
+        'html-viewport-metadata',
+        'html-files-paths-urls',
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'html-contact-address-links',
+        'html-links-destinations',
+        'html-images-purpose-alt',
+        'html-void-elements',
+        'css-source-preview-loop',
+        'css-rule-declaration-anatomy',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-link-state-sequence',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-backgrounds-borders-shadows',
+        'css-font-stacks-generic-fallbacks',
+        'css-type-scale-line-height',
+        'css-readable-measure-alignment',
+        'responsive-fluid-default',
+        'responsive-viewport-zoom',
+      ],
+      'lab-business-card': [
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-links-destinations',
+        'html-images-purpose-alt',
+        'html-void-elements',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-backgrounds-borders-shadows',
+        'css-font-stacks-generic-fallbacks',
+        'css-type-scale-line-height',
+        'css-readable-measure-alignment',
+        'responsive-fluid-media',
+      ],
+      'lecture-css-specificity-the-cascade-algorithm-and-inheritance': [
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-attribute-selectors',
+        'css-pseudo-classes',
+        'css-pseudo-elements',
+        'css-inheritance-initial-unset-revert',
+        'css-cascade-origins-importance-order',
+        'css-specificity-functional-selectors',
+      ],
+      'review-basic-css': [
+        'css-purpose-and-boundary',
+        'css-rule-declaration-anatomy',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-inheritance-initial-unset-revert',
+        'css-cascade-origins-importance-order',
+        'css-specificity-functional-selectors',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'responsive-viewport-zoom',
+      ],
+      'quiz-basic-css': [
+        'css-purpose-and-boundary',
+        'css-rule-declaration-anatomy',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-cascade-origins-importance-order',
+        'css-specificity-functional-selectors',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'responsive-viewport-zoom',
+      ],
+      'lecture-styling-lists-and-links': [
+        'css-list-markers-counters',
+        'css-box-model-areas',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-link-state-sequence',
+        'css-focus-visible-indicators',
+        'css-contrast-noncolor-meaning',
+      ],
+      'lab-stylized-to-do-list': [
+        'html-lists',
+        'html-links-destinations',
+        'html-form-labels-instructions',
+        'html-choice-groups',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-pseudo-classes',
+        'css-link-state-sequence',
+        'css-focus-visible-indicators',
+      ],
+      'lecture-working-with-backgrounds-and-borders': [
+        'css-backgrounds-borders-shadows',
+        'css-gradients-background-images',
+        'css-contrast-noncolor-meaning',
+        'html-audio-video',
+      ],
+      'lab-blog-post-card': [
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-images-purpose-alt',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-pseudo-classes',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-percentages-containing-blocks',
+        'css-backgrounds-borders-shadows',
+        'css-readable-measure-alignment',
+        'responsive-fluid-media',
+      ],
+      'review-css-backgrounds-and-borders': [
+        'css-list-markers-counters',
+        'css-box-model-areas',
+        'css-absolute-font-relative-viewport-units',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-link-state-sequence',
+        'css-focus-visible-indicators',
+        'css-backgrounds-borders-shadows',
+        'css-gradients-background-images',
+        'css-contrast-noncolor-meaning',
+        'html-audio-video',
+      ],
+      'quiz-css-backgrounds-and-borders': [
+        'css-list-markers-counters',
+        'css-box-model-areas',
+        'css-absolute-font-relative-viewport-units',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-link-state-sequence',
+        'css-focus-visible-indicators',
+        'css-backgrounds-borders-shadows',
+        'css-gradients-background-images',
+      ],
+    });
+    expect(
+      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
+    ).toHaveLength(91);
+    expect(
+      matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
+    ).toHaveLength(66);
+    expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
+      'module-fallback'
+    );
+    expect(
+      matrix.alignments
+        .filter((alignment) => alignment.mappingBasis !== 'block-specific-source')
+        .every((alignment) => alignment.conceptIds.length === 0)
+    ).toBe(true);
+    expect(matrix.unresolvedConceptIds).toHaveLength(6);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -1037,7 +1315,7 @@ describe('research contracts', () => {
     expect(matrix.gaps.length).toBeGreaterThan(0);
   });
 
-  it('blocks expert-review claims on unresolved source-module fallbacks', () => {
+  it('keeps uninspected source blocks explicitly unmapped and blocks guessed coverage', () => {
     const matrix = readJson(
       path.join(
         repositoryRoot,
@@ -1048,23 +1326,22 @@ describe('research contracts', () => {
         mappingBasis: string;
         inspectionState: string;
         state: string;
+        conceptIds: string[];
       }>;
+      conceptInventories: Array<{ conceptIds: string[] }>;
     };
     const broken = structuredClone(matrix);
-    const fallback = broken.alignments.find(
-      (alignment) => alignment.mappingBasis === 'module-fallback'
+    const unmapped = broken.alignments.find(
+      (alignment) => alignment.mappingBasis === 'unmapped-source'
     );
-    expect(fallback).toBeDefined();
-    if (!fallback) throw new Error('Expected at least one unresolved module fallback.');
-    fallback.inspectionState = 'expert-reviewed';
-    fallback.state = 'expert-reviewed';
+    expect(unmapped).toBeDefined();
+    if (!unmapped) throw new Error('Expected at least one explicitly unmapped source block.');
+    unmapped.conceptIds.push(matrix.conceptInventories[0].conceptIds[0]);
 
     const result = ExternalObjectiveConceptAlignmentSchema.safeParse(broken);
     expect(result.success).toBe(false);
     expect(
-      result.error?.issues.some((issue) =>
-        issue.message.includes('claims review with unresolved source evidence')
-      )
+      result.error?.issues.some((issue) => issue.message.includes('assigns guessed concepts'))
     ).toBe(true);
   });
 
@@ -1133,7 +1410,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(169);
-    expect(architecture.sourceObjectiveIds).toHaveLength(158);
+    expect(architecture.sourceObjectiveIds).toHaveLength(91);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(67);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
@@ -1148,7 +1426,14 @@ describe('research contracts', () => {
     ]);
     expect(architecture.conceptIds).toEqual(concepts.map((concept) => concept.id));
     expect(architecture.sourceObjectiveIds).toEqual(
-      alignment.alignments.map((record) => record.objectiveId)
+      alignment.alignments
+        .filter((record) => record.mappingBasis === 'block-specific-source')
+        .map((record) => record.objectiveId)
+    );
+    expect(architecture.unmappedSourceObjectiveIds).toEqual(
+      alignment.alignments
+        .filter((record) => record.mappingBasis !== 'block-specific-source')
+        .map((record) => record.objectiveId)
     );
     expect(
       architecture.modules.every((module) => module.currentState === 'planned-not-authored')
@@ -1158,7 +1443,12 @@ describe('research contracts', () => {
     ).toBe(true);
     expect(new Set(architecture.projects.map((project) => project.scenarioDomain))).toHaveLength(5);
     expect(
-      new Set(architecture.projects.flatMap((project) => project.sourceObjectiveIds))
+      new Set(
+        architecture.projects.flatMap((project) => [
+          ...project.sourceObjectiveIds,
+          ...project.unmappedSourceObjectiveIds,
+        ])
+      )
     ).toHaveLength(5);
 
     for (const concept of concepts) {

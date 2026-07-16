@@ -996,19 +996,168 @@ const blockConcepts = {
     'css-rule-declaration-anatomy',
     'css-application-and-loading',
     'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-cascade-origins-importance-order',
     'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'responsive-viewport-zoom',
+  ],
+  'workshop-cafe-menu': [
+    'html-doctype-rendering-mode',
+    'html-document-root-head-body',
+    'html-document-language',
+    'html-character-encoding',
+    'html-title-metadata',
+    'html-viewport-metadata',
+    'html-files-paths-urls',
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-landmarks',
+    'html-sectioning-articles',
+    'html-contact-address-links',
+    'html-links-destinations',
+    'html-images-purpose-alt',
+    'html-void-elements',
+    'css-source-preview-loop',
+    'css-rule-declaration-anatomy',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-link-state-sequence',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-backgrounds-borders-shadows',
+    'css-font-stacks-generic-fallbacks',
+    'css-type-scale-line-height',
+    'css-readable-measure-alignment',
+    'responsive-fluid-default',
+    'responsive-viewport-zoom',
+  ],
+  'lab-business-card': [
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-links-destinations',
+    'html-images-purpose-alt',
+    'html-void-elements',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-backgrounds-borders-shadows',
+    'css-font-stacks-generic-fallbacks',
+    'css-type-scale-line-height',
+    'css-readable-measure-alignment',
+    'responsive-fluid-media',
   ],
   'lecture-css-specificity-the-cascade-algorithm-and-inheritance': [
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-attribute-selectors',
+    'css-pseudo-classes',
+    'css-pseudo-elements',
     'css-inheritance-initial-unset-revert',
     'css-cascade-origins-importance-order',
     'css-specificity-functional-selectors',
   ],
+  'review-basic-css': [
+    'css-purpose-and-boundary',
+    'css-rule-declaration-anatomy',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-inheritance-initial-unset-revert',
+    'css-cascade-origins-importance-order',
+    'css-specificity-functional-selectors',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'responsive-viewport-zoom',
+  ],
+  'quiz-basic-css': [
+    'css-purpose-and-boundary',
+    'css-rule-declaration-anatomy',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-cascade-origins-importance-order',
+    'css-specificity-functional-selectors',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'responsive-viewport-zoom',
+  ],
   'lecture-styling-lists-and-links': [
     'css-list-markers-counters',
-    'css-link-state-sequence',
+    'css-box-model-areas',
+    'css-type-scale-line-height',
     'css-pseudo-classes',
+    'css-link-state-sequence',
+    'css-focus-visible-indicators',
+    'css-contrast-noncolor-meaning',
+  ],
+  'lab-stylized-to-do-list': [
+    'html-lists',
+    'html-links-destinations',
+    'html-form-labels-instructions',
+    'html-choice-groups',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-selector-lists-combinators',
+    'css-pseudo-classes',
+    'css-link-state-sequence',
+    'css-focus-visible-indicators',
   ],
   'lecture-working-with-backgrounds-and-borders': [
+    'css-backgrounds-borders-shadows',
+    'css-gradients-background-images',
+    'css-contrast-noncolor-meaning',
+    'html-audio-video',
+  ],
+  'lab-blog-post-card': [
+    'html-heading-hierarchy',
+    'html-paragraphs-breaks',
+    'html-images-purpose-alt',
+    'css-application-and-loading',
+    'css-type-class-id-selectors',
+    'css-pseudo-classes',
+    'css-outer-inner-display',
+    'css-box-model-areas',
+    'css-intrinsic-extrinsic-sizing',
+    'css-percentages-containing-blocks',
+    'css-backgrounds-borders-shadows',
+    'css-readable-measure-alignment',
+    'responsive-fluid-media',
+  ],
+  'review-css-backgrounds-and-borders': [
+    'css-list-markers-counters',
+    'css-box-model-areas',
+    'css-absolute-font-relative-viewport-units',
+    'css-type-scale-line-height',
+    'css-pseudo-classes',
+    'css-link-state-sequence',
+    'css-focus-visible-indicators',
+    'css-backgrounds-borders-shadows',
+    'css-gradients-background-images',
+    'css-contrast-noncolor-meaning',
+    'html-audio-video',
+  ],
+  'quiz-css-backgrounds-and-borders': [
+    'css-list-markers-counters',
+    'css-box-model-areas',
+    'css-absolute-font-relative-viewport-units',
+    'css-type-scale-line-height',
+    'css-pseudo-classes',
+    'css-link-state-sequence',
+    'css-focus-visible-indicators',
     'css-backgrounds-borders-shadows',
     'css-gradients-background-images',
   ],
@@ -1116,6 +1265,18 @@ const agentInspectedBlockSlugs = new Set([
   'lecture-browsing-the-web-effectively',
   'review-computer-basics',
   'quiz-computer-basics',
+  'lecture-what-is-css',
+  'workshop-cafe-menu',
+  'lab-business-card',
+  'lecture-css-specificity-the-cascade-algorithm-and-inheritance',
+  'review-basic-css',
+  'quiz-basic-css',
+  'lecture-styling-lists-and-links',
+  'lab-stylized-to-do-list',
+  'lecture-working-with-backgrounds-and-borders',
+  'lab-blog-post-card',
+  'review-css-backgrounds-and-borders',
+  'quiz-css-backgrounds-and-borders',
 ]);
 
 const evidenceByType = {
@@ -1147,8 +1308,7 @@ const evidenceByType = {
 
 const alignments = reference.chapters.flatMap((chapter) =>
   chapter.modules.flatMap((sourceModule) => {
-    const defaultConceptIds = sourceModuleConcepts[sourceModule.id];
-    if (!defaultConceptIds)
+    if (!sourceModuleConcepts[sourceModule.id])
       throw new Error(`Missing concept map for source module ${sourceModule.id}.`);
     return sourceModule.blocks.map((block) => {
       const explicitConceptIds = blockConcepts[block.slug];
@@ -1157,23 +1317,23 @@ const alignments = reference.chapters.flatMap((chapter) =>
           ? 'assessment-container'
           : explicitConceptIds
             ? 'block-specific-source'
-            : 'module-fallback';
+            : 'unmapped-source';
       const inspectionState = agentInspectedBlockSlugs.has(block.slug)
         ? 'agent-inspected'
         : 'evidence-captured';
-      const conceptIds = requireKnown(
-        `Source block ${block.slug}`,
-        explicitConceptIds ?? defaultConceptIds
-      );
+      const conceptIds =
+        mappingBasis === 'block-specific-source'
+          ? requireKnown(`Source block ${block.slug}`, explicitConceptIds)
+          : [];
       const challengeIds = block.challengeOrder.map((challenge) => challenge.id);
       const challengeEvidence = block.challengeOrder.map((challenge) => challenge.sourceEvidence);
       const reviewFindings = [];
-      if (mappingBasis === 'module-fallback') {
+      if (mappingBasis === 'unmapped-source') {
         reviewFindings.push({
           severity: 'blocker',
-          code: 'module-fallback-overreach',
+          code: 'source-inspection-required',
           summary:
-            'This block still inherits its full source-module concept bundle and requires challenge-level source inspection before the assignment can be trusted.',
+            'This block has no concept assignment until challenge-level source inspection establishes a bounded candidate map.',
         });
       } else if (mappingBasis === 'assessment-container') {
         reviewFindings.push({
@@ -1219,8 +1379,8 @@ const alignments = reference.chapters.flatMap((chapter) =>
         },
         conceptIds,
         mappingRationale:
-          mappingBasis === 'module-fallback'
-            ? `Unreviewed fallback temporarily assigns ${block.slug} to its source module concept bundle so source coverage cannot disappear; this is evidence inventory, not a trustworthy concept-level review.`
+          mappingBasis === 'unmapped-source'
+            ? `${block.slug} retains exact source identity and challenge evidence but assigns zero concepts until challenge-level inspection supports a bounded map.`
             : mappingBasis === 'assessment-container'
               ? `The ${block.slug} assessment container is retained as a required certification-depth evidence gap, but unavailable item-level evidence prevents a valid concept-sampling claim.`
               : inspectionState === 'agent-inspected'
@@ -1237,8 +1397,8 @@ const alignments = reference.chapters.flatMap((chapter) =>
 );
 
 const benchmarkConceptIds = new Set(alignments.flatMap((alignment) => alignment.conceptIds));
-const fallbackCount = alignments.filter(
-  (alignment) => alignment.mappingBasis === 'module-fallback'
+const unmappedCount = alignments.filter(
+  (alignment) => alignment.mappingBasis === 'unmapped-source'
 ).length;
 const agentInspectedCount = alignments.filter(
   (alignment) => alignment.inspectionState === 'agent-inspected'
@@ -1246,10 +1406,29 @@ const agentInspectedCount = alignments.filter(
 const agentInspectedChallengeCount = alignments
   .filter((alignment) => alignment.inspectionState === 'agent-inspected')
   .reduce((total, alignment) => total + alignment.sourceChallengeCount, 0);
-const uncoveredConcepts = concepts.filter((concept) => !benchmarkConceptIds.has(concept.id));
-const extensionModuleIds = unique(uncoveredConcepts.map((concept) => concept.moduleId));
+const explicitModernExtensionConceptIds = [
+  'css-cascade-layers-scope',
+  'css-margin-collapse-formatting-contexts',
+  'css-logical-properties-writing-modes',
+  'css-subgrid-alignment',
+  'responsive-container-query-model',
+  'responsive-container-query-units',
+  'css-print-and-non-screen-media',
+];
+const explicitModernExtensionConceptIdSet = new Set(explicitModernExtensionConceptIds);
+const extensionConcepts = concepts.filter((concept) =>
+  explicitModernExtensionConceptIdSet.has(concept.id)
+);
+if (extensionConcepts.length !== explicitModernExtensionConceptIds.length) {
+  throw new Error('Explicit modern extension inventory references an unknown concept.');
+}
+const unresolvedConcepts = concepts.filter(
+  (concept) =>
+    !benchmarkConceptIds.has(concept.id) && !explicitModernExtensionConceptIdSet.has(concept.id)
+);
+const extensionModuleIds = unique(extensionConcepts.map((concept) => concept.moduleId));
 const courseExtensions = extensionModuleIds.map((moduleId) => {
-  const moduleConceptRecords = uncoveredConcepts.filter((concept) => concept.moduleId === moduleId);
+  const moduleConceptRecords = extensionConcepts.filter((concept) => concept.moduleId === moduleId);
   return {
     extensionId: `modern-extension-${moduleId}`,
     title: `Modern extension for ${moduleId.replaceAll('-', ' ')}`,
@@ -1293,17 +1472,18 @@ const matrix = {
     conceptIds: graph.concepts.map((concept) => concept.id),
   })),
   alignments,
+  unresolvedConceptIds: unresolvedConcepts.map((concept) => concept.id),
   courseExtensions,
   architectureFindings: [
     'Current blueprint maps every source block to broad legacy competency bundles; this candidate matrix instead narrows lectures to named concepts and makes workshop, lab, review, quiz, project, and exam accumulation inspectable.',
     `All 1,553 exact source challenge files now contribute identities, paths, SHA-256 hashes, byte counts, captured section names, hint-check counts, and quiz-question counts; evidence capture is not the same as concept inspection or expert review.`,
-    `${agentInspectedCount} source blocks containing ${agentInspectedChallengeCount} source challenges have challenge-level agent inspection and narrower block-specific assignments; ${fallbackCount} blocks still expose a blocker because they inherit broad source-module concept bundles.`,
+    `${agentInspectedCount} source blocks containing ${agentInspectedChallengeCount} source challenges have challenge-level agent inspection and narrower block-specific assignments; ${unmappedCount} blocks retain exact evidence but assign zero concepts until inspection.`,
     'Computer and browser concepts stay mapped to the benchmark but must enter just in time around the first HTML artifact rather than preserve the current thirteen-activity delay.',
     'Concepts absent from explicit pinned v9 evidence remain separately named modern course extensions; source-block counts cannot be used to claim their coverage.',
     'All mappings remain candidate review because source identity and topic similarity do not establish standards accuracy, pedagogical order, assessment validity, originality, accessibility, retention, or learner transfer.',
   ],
   gaps: [
-    `Challenge-level source-scope inspection remains unfinished for ${158 - agentInspectedCount} of 158 source blocks, including ${fallbackCount} broad module fallbacks; no such block may claim expert review or approval.`,
+    `Challenge-level source-scope inspection remains unfinished for ${158 - agentInspectedCount} of 158 source blocks, including ${unmappedCount} explicitly unmapped source blocks; no such block may claim expert review or approval.`,
     `Independent subject reviewers must verify all 158 candidate assignments after agent inspection, including the ${agentInspectedCount} inspected blocks and unavailable assessment-item boundaries.`,
     'Every concept needs an authored I-G-F-R-A-T activity matrix plus explicit debug, correction, delayed-retention, and transfer evidence.',
     'Workshop, lab, review, quiz, project, and exam assignments need originality and assessment-validity review before authoring scale-up.',
@@ -1324,11 +1504,11 @@ if (process.argv.includes('--check')) {
   const current = await readFile(output, 'utf8');
   if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
   console.log(
-    `Current ${output}: ${alignments.length} source objectives, ${concepts.length} concepts, ${uncoveredConcepts.length} explicit modern extensions.`
+    `Current ${output}: ${alignments.length} source objectives, ${concepts.length} concepts, ${extensionConcepts.length} explicit modern extensions, ${unmappedCount} unmapped source blocks.`
   );
 } else {
   await writeFile(output, serialized);
   console.log(
-    `Wrote ${output}: ${alignments.length} source objectives, ${concepts.length} concepts, ${uncoveredConcepts.length} explicit modern extensions.`
+    `Wrote ${output}: ${alignments.length} source objectives, ${concepts.length} concepts, ${extensionConcepts.length} explicit modern extensions, ${unmappedCount} unmapped source blocks.`
   );
 }

@@ -567,11 +567,11 @@ export const ExternalObjectiveConceptAlignmentSchema = z
             hintCheckCount: z.number().int().nonnegative(),
             quizQuestionCount: z.number().int().nonnegative(),
           }),
-          conceptIds: z.array(IdentifierSchema).min(1),
+          conceptIds: z.array(IdentifierSchema),
           mappingRationale: z.string().min(40),
           mappingBasis: z.enum([
             'block-specific-source',
-            'module-fallback',
+            'unmapped-source',
             'assessment-container',
           ]),
           inspectionState: z.enum([
@@ -584,7 +584,7 @@ export const ExternalObjectiveConceptAlignmentSchema = z
             z.object({
               severity: z.enum(['blocker', 'warning']),
               code: z.enum([
-                'module-fallback-overreach',
+                'source-inspection-required',
                 'source-scope-inspection-required',
                 'assessment-items-unavailable',
                 'independent-subject-review-required',
@@ -597,6 +597,7 @@ export const ExternalObjectiveConceptAlignmentSchema = z
         })
       )
       .min(1),
+    unresolvedConceptIds: z.array(IdentifierSchema),
     courseExtensions: z.array(
       z.object({
         extensionId: IdentifierSchema,
@@ -627,6 +628,7 @@ export const ExternalObjectiveConceptAlignmentSchema = z
       (extension) => extension.conceptIds
     );
     const extensionConceptIdSet = new Set(extensionConceptIds);
+    const unresolvedConceptIdSet = new Set(matrix.unresolvedConceptIds);
     const sourceChallengeIds = matrix.alignments.flatMap(
       (alignment) => alignment.sourceEvidence.challengeIds
     );
@@ -648,6 +650,9 @@ export const ExternalObjectiveConceptAlignmentSchema = z
     ]);
     rejectDuplicates(extensionConceptIds, 'Concept appears in multiple course extensions', [
       'courseExtensions',
+    ]);
+    rejectDuplicates(matrix.unresolvedConceptIds, 'Concept appears multiple times as unresolved', [
+      'unresolvedConceptIds',
     ]);
     rejectDuplicates(sourceChallengeIds, 'Challenge appears in multiple alignment evidence sets', [
       'alignments',
@@ -706,32 +711,50 @@ export const ExternalObjectiveConceptAlignmentSchema = z
           path: ['alignments', alignmentIndex, 'sourceEvidence'],
         });
       }
-      if (
-        alignment.mappingBasis === 'module-fallback' &&
-        alignment.reviewFindings.every(
-          (finding) =>
-            finding.code !== 'module-fallback-overreach' || finding.severity !== 'blocker'
-        )
-      ) {
+      if (alignment.mappingBasis === 'block-specific-source' && alignment.conceptIds.length === 0) {
         context.addIssue({
           code: 'custom',
-          message: `Source objective ${alignment.objectiveId} hides module-fallback overreach`,
-          path: ['alignments', alignmentIndex, 'reviewFindings'],
+          message: `Source objective ${alignment.objectiveId} claims a block-specific map without concepts`,
+          path: ['alignments', alignmentIndex, 'conceptIds'],
         });
+      }
+      if (alignment.mappingBasis === 'unmapped-source') {
+        if (alignment.conceptIds.length > 0) {
+          context.addIssue({
+            code: 'custom',
+            message: `Unmapped source objective ${alignment.objectiveId} assigns guessed concepts`,
+            path: ['alignments', alignmentIndex, 'conceptIds'],
+          });
+        }
+        if (
+          alignment.reviewFindings.every(
+            (finding) =>
+              finding.code !== 'source-inspection-required' || finding.severity !== 'blocker'
+          )
+        ) {
+          context.addIssue({
+            code: 'custom',
+            message: `Unmapped source objective ${alignment.objectiveId} hides required inspection`,
+            path: ['alignments', alignmentIndex, 'reviewFindings'],
+          });
+        }
       }
       if (
         alignment.mappingBasis === 'assessment-container' &&
-        alignment.reviewFindings.every((finding) => finding.code !== 'assessment-items-unavailable')
+        (alignment.conceptIds.length > 0 ||
+          alignment.reviewFindings.every(
+            (finding) => finding.code !== 'assessment-items-unavailable'
+          ))
       ) {
         context.addIssue({
           code: 'custom',
-          message: `Source objective ${alignment.objectiveId} hides unavailable assessment items`,
-          path: ['alignments', alignmentIndex, 'reviewFindings'],
+          message: `Source objective ${alignment.objectiveId} guesses or hides unavailable assessment items`,
+          path: ['alignments', alignmentIndex],
         });
       }
       if (
         ['expert-reviewed', 'approved'].includes(alignment.state) &&
-        (alignment.mappingBasis === 'module-fallback' ||
+        (alignment.mappingBasis !== 'block-specific-source' ||
           alignment.reviewFindings.some((finding) => finding.severity === 'blocker') ||
           !['expert-reviewed', 'approved'].includes(alignment.inspectionState))
       ) {
@@ -739,6 +762,23 @@ export const ExternalObjectiveConceptAlignmentSchema = z
           code: 'custom',
           message: `Source objective ${alignment.objectiveId} claims review with unresolved source evidence`,
           path: ['alignments', alignmentIndex],
+        });
+      }
+    }
+
+    for (const conceptId of matrix.unresolvedConceptIds) {
+      if (!knownConceptIds.has(conceptId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Unresolved concept ${conceptId} is absent from the research inventories`,
+          path: ['unresolvedConceptIds'],
+        });
+      }
+      if (benchmarkConceptIds.has(conceptId) || extensionConceptIdSet.has(conceptId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Concept ${conceptId} is unresolved and also claims mapped coverage`,
+          path: ['unresolvedConceptIds'],
         });
       }
     }
@@ -768,10 +808,14 @@ export const ExternalObjectiveConceptAlignmentSchema = z
     }
 
     for (const conceptId of knownConceptIds) {
-      if (!benchmarkConceptIds.has(conceptId) && !extensionConceptIdSet.has(conceptId)) {
+      if (
+        !benchmarkConceptIds.has(conceptId) &&
+        !extensionConceptIdSet.has(conceptId) &&
+        !unresolvedConceptIdSet.has(conceptId)
+      ) {
         context.addIssue({
           code: 'custom',
-          message: `Concept ${conceptId} lacks benchmark or extension alignment`,
+          message: `Concept ${conceptId} lacks benchmark, extension, or unresolved alignment`,
         });
       }
     }
@@ -784,6 +828,7 @@ export const ExternalObjectiveConceptAlignmentSchema = z
         });
       }
       if (
+        matrix.unresolvedConceptIds.length > 0 ||
         matrix.alignments.some((alignment) => alignment.state !== 'approved') ||
         matrix.courseExtensions.some((extension) => extension.state !== 'approved')
       ) {
@@ -809,6 +854,7 @@ export const ResearchCourseArchitectureSchema = z
       entryEvidence: z.array(z.string().min(20)).min(2),
     }),
     sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+    unmappedSourceObjectiveIds: z.array(IdentifierSchema),
     conceptIds: z.array(IdentifierSchema).min(1),
     moduleIds: z.array(IdentifierSchema).min(1),
     modules: z
@@ -819,7 +865,7 @@ export const ResearchCourseArchitectureSchema = z
           order: z.number().int().positive(),
           prerequisiteModuleIds: z.array(IdentifierSchema),
           conceptIds: z.array(IdentifierSchema).min(1),
-          sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+          sourceObjectiveIds: z.array(IdentifierSchema),
           retrievalConceptIds: z.array(IdentifierSchema),
           cumulativeArtifact: z.string().min(30),
           newComplexityBoundary: z.string().min(30),
@@ -837,7 +883,8 @@ export const ResearchCourseArchitectureSchema = z
           artifact: z.string().min(20),
           placementAfterModuleId: IdentifierSchema,
           conceptIds: z.array(IdentifierSchema).min(5),
-          sourceObjectiveIds: z.array(IdentifierSchema).min(1),
+          sourceObjectiveIds: z.array(IdentifierSchema),
+          unmappedSourceObjectiveIds: z.array(IdentifierSchema),
           requirements: z.array(z.string().min(20)).min(5),
           evidence: z.array(z.string().min(20)).min(3),
           starterPolicy: z.string().min(30),
@@ -864,9 +911,10 @@ export const ResearchCourseArchitectureSchema = z
     );
     const projectIds = architecture.projects.map((project) => project.id);
     const projectDomains = architecture.projects.map((project) => project.scenarioDomain);
-    const projectSourceObjectiveIds = architecture.projects.flatMap(
-      (project) => project.sourceObjectiveIds
-    );
+    const projectSourceObjectiveIds = architecture.projects.flatMap((project) => [
+      ...project.sourceObjectiveIds,
+      ...project.unmappedSourceObjectiveIds,
+    ]);
 
     const duplicateIssue = (values: string[], message: string, path: PropertyKey[]) => {
       if (new Set(values).size !== values.length) {
@@ -889,6 +937,11 @@ export const ResearchCourseArchitectureSchema = z
     duplicateIssue(architecture.sourceObjectiveIds, 'Duplicate architecture source objective IDs', [
       'sourceObjectiveIds',
     ]);
+    duplicateIssue(
+      architecture.unmappedSourceObjectiveIds,
+      'Duplicate unmapped architecture source objective IDs',
+      ['unmappedSourceObjectiveIds']
+    );
     duplicateIssue(projectIds, 'Duplicate architecture project IDs', ['projects']);
     duplicateIssue(projectDomains, 'Architecture projects repeat a scenario domain', ['projects']);
     duplicateIssue(projectSourceObjectiveIds, 'Certification project source objective is reused', [
@@ -931,6 +984,17 @@ export const ResearchCourseArchitectureSchema = z
         code: 'custom',
         message: 'Architecture modules do not cover every source objective',
         path: ['modules'],
+      });
+    }
+    if (
+      architecture.unmappedSourceObjectiveIds.some((objectiveId) =>
+        architecture.sourceObjectiveIds.includes(objectiveId)
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Architecture source objectives cannot be both mapped and unmapped',
+        path: ['unmappedSourceObjectiveIds'],
       });
     }
 
@@ -1006,6 +1070,13 @@ export const ResearchCourseArchitectureSchema = z
 
     for (const [projectIndex, project] of architecture.projects.entries()) {
       const placementOrder = moduleOrder.get(project.placementAfterModuleId);
+      if (project.sourceObjectiveIds.length + project.unmappedSourceObjectiveIds.length === 0) {
+        context.addIssue({
+          code: 'custom',
+          message: `Architecture project ${project.id} lacks source objective provenance`,
+          path: ['projects', projectIndex],
+        });
+      }
       if (!placementOrder) {
         context.addIssue({
           code: 'custom',
@@ -1044,13 +1115,22 @@ export const ResearchCourseArchitectureSchema = z
           });
         }
       }
+      for (const objectiveId of project.unmappedSourceObjectiveIds) {
+        if (!architecture.unmappedSourceObjectiveIds.includes(objectiveId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Architecture project ${project.id} references unknown unmapped source objective ${objectiveId}`,
+            path: ['projects', projectIndex, 'unmappedSourceObjectiveIds'],
+          });
+        }
+      }
     }
 
     if (architecture.status === 'approved') {
-      if (architecture.gaps.length > 0) {
+      if (architecture.gaps.length > 0 || architecture.unmappedSourceObjectiveIds.length > 0) {
         context.addIssue({
           code: 'custom',
-          message: 'Approved architecture cannot retain gaps',
+          message: 'Approved architecture cannot retain gaps or unmapped source objectives',
         });
       }
       if (

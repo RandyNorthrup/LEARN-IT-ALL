@@ -253,7 +253,13 @@ for (const moduleId of moduleIds) {
   if (!moduleMetadata[moduleId]) throw new Error(`Missing architecture metadata for ${moduleId}.`);
 }
 
-const sourceObjectiveIds = alignment.alignments.map((record) => record.objectiveId);
+const sourceObjectiveIds = alignment.alignments
+  .filter((record) => record.mappingBasis === 'block-specific-source')
+  .map((record) => record.objectiveId);
+const unmappedSourceObjectiveIds = alignment.alignments
+  .filter((record) => record.mappingBasis !== 'block-specific-source')
+  .map((record) => record.objectiveId);
+const mappedSourceObjectiveIdSet = new Set(sourceObjectiveIds);
 const sourceObjectiveIdsByModule = new Map(
   moduleIds.map((moduleId) => [
     moduleId,
@@ -473,7 +479,18 @@ const projects = [
       'Start from research evidence, content, and acceptance criteria only; no landing-page starter, workshop layout, requirement sequence, styling recipe, or final solution is provided.',
     currentState: 'planned-not-authored',
   },
-];
+].map((project) => {
+  const benchmarkSourceObjectiveIds = project.sourceObjectiveIds;
+  return {
+    ...project,
+    sourceObjectiveIds: benchmarkSourceObjectiveIds.filter((objectiveId) =>
+      mappedSourceObjectiveIdSet.has(objectiveId)
+    ),
+    unmappedSourceObjectiveIds: benchmarkSourceObjectiveIds.filter(
+      (objectiveId) => !mappedSourceObjectiveIdSet.has(objectiveId)
+    ),
+  };
+});
 
 for (const project of projects) {
   for (const conceptId of project.conceptIds) {
@@ -499,6 +516,7 @@ const architecture = {
     ],
   },
   sourceObjectiveIds,
+  unmappedSourceObjectiveIds,
   conceptIds: concepts.map((concept) => concept.id),
   moduleIds,
   modules,
@@ -510,6 +528,7 @@ const architecture = {
     'Five certification project benchmarks become distinct original stakeholder transfers with different domains, artifacts, requirements, concepts, evidence, placement, and empty-start policies.',
   ],
   gaps: [
+    `${unmappedSourceObjectiveIds.length} source objectives remain outside module coverage until bounded concept inspection replaces their explicit unmapped state.`,
     'Subject and instructional reviewers must inspect every module boundary, cross-concept prerequisite, retrieval choice, artifact accumulation, and new-complexity limit.',
     'Every concept still needs a complete original I-G-F-R-A-T activity matrix with debugging, correction, delayed retention, and changed-case grading.',
     'All five project briefs need stakeholder, accessibility, assessment, originality, runtime, and representative-learner review before authoring.',
