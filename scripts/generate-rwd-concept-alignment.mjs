@@ -158,10 +158,10 @@ const sourceModuleConcepts = {
   ],
   'absolute-and-relative-units': [
     'css-intrinsic-extrinsic-sizing',
+    'css-box-model-areas',
     'css-absolute-font-relative-viewport-units',
     'css-percentages-containing-blocks',
-    'css-min-max-clamp-functions',
-    'responsive-fluid-default',
+    'css-calculated-value-math',
   ],
   'pseudo-classes-and-elements': [
     'css-selector-lists-combinators',
@@ -1230,8 +1230,31 @@ const blockConcepts = {
     'design-multistep-progress-recovery',
     'design-cart-review-correction',
   ],
-  'lecture-working-with-relative-and-absolute-units':
-    sourceModuleConcepts['absolute-and-relative-units'],
+  'lecture-working-with-relative-and-absolute-units': [
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-calculated-value-math',
+  ],
+  'lab-event-flyer-page': [
+    'html-heading-hierarchy',
+    'html-landmarks',
+    'html-sectioning-articles',
+    'css-box-model-areas',
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-calculated-value-math',
+  ],
+  'review-css-relative-and-absolute-units': [
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-calculated-value-math',
+  ],
+  'quiz-css-relative-and-absolute-units': [
+    'css-intrinsic-extrinsic-sizing',
+    'css-absolute-font-relative-viewport-units',
+    'css-percentages-containing-blocks',
+    'css-calculated-value-math',
+  ],
   'lecture-working-with-pseudo-classes-and-pseudo-elements-in-css':
     sourceModuleConcepts['pseudo-classes-and-elements'],
   'lecture-working-with-colors-in-css': sourceModuleConcepts['css-colors'],
@@ -1340,6 +1363,10 @@ const agentInspectedBlockSlugs = new Set([
   'lecture-common-design-tools',
   'review-design-fundamentals',
   'quiz-design-fundamentals',
+  'lecture-working-with-relative-and-absolute-units',
+  'lab-event-flyer-page',
+  'review-css-relative-and-absolute-units',
+  'quiz-css-relative-and-absolute-units',
 ]);
 
 const evidenceByType = {

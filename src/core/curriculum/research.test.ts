@@ -330,11 +330,11 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(95);
+    expect(graph.concepts).toHaveLength(96);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
       'css-language-and-cascade': 16,
-      'css-boxes-and-sizing': 12,
+      'css-boxes-and-sizing': 13,
       'css-type-color-and-design': 19,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 10,
@@ -353,6 +353,7 @@ describe('research contracts', () => {
         'rwd-css-cascade-six',
         'rwd-css-display-three',
         'rwd-css-backgrounds-three',
+        'rwd-css-values-four',
         'rwd-mdn-progressive-enhancement',
         'rwd-css-color-adjust-one',
         'rwd-w3c-coga-usable',
@@ -373,6 +374,7 @@ describe('research contracts', () => {
         'rwd-css-cascade-six',
         'rwd-css-display-three',
         'rwd-css-backgrounds-three',
+        'rwd-css-values-four',
       ],
     });
     expect(
@@ -385,6 +387,9 @@ describe('research contracts', () => {
           'css-specificity-functional-selectors',
           'css-outer-inner-display',
           'css-backgrounds-borders-shadows',
+          'css-absolute-font-relative-viewport-units',
+          'css-percentages-containing-blocks',
+          'css-calculated-value-math',
         ].map((conceptId) => [
           conceptId,
           graph.concepts.find((concept) => concept.id === conceptId)?.sourceAnchors[0].sourceId,
@@ -398,6 +403,9 @@ describe('research contracts', () => {
       'css-specificity-functional-selectors': 'rwd-selectors-four',
       'css-outer-inner-display': 'rwd-css-display-three',
       'css-backgrounds-borders-shadows': 'rwd-css-backgrounds-three',
+      'css-absolute-font-relative-viewport-units': 'rwd-css-values-four',
+      'css-percentages-containing-blocks': 'rwd-css-values-four',
+      'css-calculated-value-math': 'rwd-css-values-four',
     });
     expect(
       graph.concepts.find((concept) => concept.id === 'css-type-class-id-selectors')?.title
@@ -420,7 +428,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 80 source blocks');
+    expect(content).toContain('The remaining 76 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -458,7 +466,7 @@ describe('research contracts', () => {
     expect(content).toContain('outside click is not a modal contract');
     expect(content).toContain('automatic infinite scroll');
     expect(content).toContain('Adobe XD is maintenance mode');
-    expect(content).toContain('The complete 178-concept');
+    expect(content).toContain('The complete 179-concept');
     expect(content.length).toBeGreaterThan(15_000);
     expect(
       designConceptIds.every((conceptId) =>
@@ -563,6 +571,108 @@ describe('research contracts', () => {
     });
   });
 
+  it('records and bounds the complete Absolute and Relative Units inspection', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-absolute-relative-units-inspection.md'
+      ),
+      'utf8'
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+
+    expect(content).toContain('four blocks, eight challenges, 35 question prompts');
+    expect(content).toContain('default `v*` viewport units use the large viewport');
+    expect(content).toContain('`calc(100% - 0)` was not accepted');
+    expect(content).toContain('Merely writing a requested unit');
+    expect(content).toContain('The complete 179-concept');
+    expect(content).toContain('The remaining 76 source blocks');
+    expect(content.length).toBeGreaterThan(15_000);
+    expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-length-reference-frame-evidence')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: ['rwd-css-values-four', 'rwd-wcag-two-two', 'rwd-fcc-units-inspection'],
+    });
+  });
+
+  it('keeps all four Absolute and Relative Units source blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const unitAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'absolute-and-relative-units'
+    );
+
+    expect(unitAlignments).toHaveLength(4);
+    expect(
+      unitAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(8);
+    expect(
+      unitAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(35);
+    expect(
+      unitAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.hintCheckCount,
+        0
+      )
+    ).toBe(17);
+    expect(
+      unitAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        unitAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-working-with-relative-and-absolute-units': [
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-calculated-value-math',
+      ],
+      'lab-event-flyer-page': [
+        'html-heading-hierarchy',
+        'html-landmarks',
+        'html-sectioning-articles',
+        'css-box-model-areas',
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-calculated-value-math',
+      ],
+      'review-css-relative-and-absolute-units': [
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-calculated-value-math',
+      ],
+      'quiz-css-relative-and-absolute-units': [
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-calculated-value-math',
+      ],
+    });
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -621,10 +731,10 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 95]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 96]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(78);
+    ).toHaveLength(82);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -1392,10 +1502,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(93);
+    ).toHaveLength(96);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(64);
+    ).toHaveLength(61);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -1404,7 +1514,7 @@ describe('research contracts', () => {
         .filter((alignment) => alignment.mappingBasis !== 'block-specific-source')
         .every((alignment) => alignment.conceptIds.length === 0)
     ).toBe(true);
-    expect(matrix.unresolvedConceptIds).toHaveLength(6);
+    expect(matrix.unresolvedConceptIds).toHaveLength(7);
 
     for (const alignment of matrix.alignments) {
       const source = sourceByObjective.get(alignment.objectiveId);
@@ -1554,9 +1664,9 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
-    expect(architecture.conceptIds).toHaveLength(178);
-    expect(architecture.sourceObjectiveIds).toHaveLength(93);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(65);
+    expect(architecture.conceptIds).toHaveLength(179);
+    expect(architecture.sourceObjectiveIds).toHaveLength(96);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(62);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

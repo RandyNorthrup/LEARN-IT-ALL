@@ -378,9 +378,9 @@ add(
   'Select px, physical units, em, rem, ch, cap, viewport, and dynamic viewport units according to the quantity and user adaptation required.',
   'css-boxes-and-sizing',
   ['css-intrinsic-extrinsic-sizing'],
-  'rwd-mdn-css-fundamentals',
-  '3.5 values and units',
-  'Length units represent different reference frames and therefore respond differently to text and viewport changes.',
+  'rwd-css-values-four',
+  '5.5 percentages; 6 distance units',
+  'Length units represent different reference frames; CSS px is a reference-pixel unit, font-relative lengths resolve from defined font metrics, and default viewport units use the large viewport.',
   'Pixels are physical screen pixels, so a pixel length has the same physical size on every display and zoom level.',
   [
     'Learner must predict changed root font, local font, zoom, and viewport effects for each selected unit.',
@@ -394,8 +394,8 @@ add(
   'Resolve percentage values against the correct reference size and explain indefinite-size cases where a percentage cannot behave as expected.',
   'css-boxes-and-sizing',
   ['css-absolute-font-relative-viewport-units'],
-  'rwd-webdev-css',
-  'Sizing and logical properties modules',
+  'rwd-css-values-four',
+  '5.5 percentages and percentage-dimension mixes',
   'Percentage resolution depends on the property, containing block, writing mode, and whether the reference size is definite.',
   'Every percentage in CSS is calculated from the viewport width.',
   [
@@ -405,11 +405,27 @@ add(
 );
 
 add(
+  'css-calculated-value-math',
+  'Calculated values and compatible-unit math',
+  'Use calc() arithmetic only where the property accepts the resulting numeric type, preserve required operator whitespace, and predict results after percentage references and relative units change.',
+  'css-boxes-and-sizing',
+  ['css-percentages-containing-blocks'],
+  'rwd-css-values-four',
+  '10 mathematical expressions and 10.1 calc()',
+  'CSS calculation validity follows numeric type algebra: compatible sums can mix resolved percentages and dimensions, multiplication needs a unitless factor for a length result, and division must produce a type accepted by the property.',
+  'calc() can combine any written units, and adding the numbers always produces a valid length.',
+  [
+    'Learner must predict valid, invalid, computed, and changed-reference cases before inspecting rendered output.',
+    'A repair must explain the result type, percentage basis, operator precedence, required whitespace, and property grammar instead of merely changing literals until the declaration parses.',
+  ]
+);
+
+add(
   'css-min-max-clamp-functions',
   'Minimum, maximum, and fluid value functions',
   'Compose min(), max(), clamp(), min-content, max-content, and minmax() to express bounded fluid constraints with defensible extremes.',
   'css-boxes-and-sizing',
-  ['css-intrinsic-extrinsic-sizing', 'css-absolute-font-relative-viewport-units'],
+  ['css-intrinsic-extrinsic-sizing', 'css-calculated-value-math'],
   'rwd-webdev-css',
   'Functions and sizing modules',
   'Modern CSS functions can encode lower, preferred, and upper constraints without many discrete breakpoints.',
@@ -1601,6 +1617,7 @@ const graph = {
     'rwd-css-cascade-six',
     'rwd-css-display-three',
     'rwd-css-backgrounds-three',
+    'rwd-css-values-four',
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
     'rwd-mdn-css-fundamentals',
