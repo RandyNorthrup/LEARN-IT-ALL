@@ -1302,6 +1302,10 @@ const StepDesignEvidenceKindSchema = z.enum([
   'control-state-transition',
   'constraint-validity',
   'error-recovery',
+  'table-purpose-choice',
+  'table-grid-structure',
+  'table-span-geometry',
+  'table-header-context',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1374,6 +1378,11 @@ const StepDesignLayoutSchema = z.enum([
   'control-state-inspector',
   'validity-inspector',
   'error-recovery-trace',
+  'table-purpose-board',
+  'table-grid-inspector',
+  'span-grid-visualizer',
+  'header-association-inspector',
+  'responsive-table-inspector',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1662,6 +1671,10 @@ export const ResearchModuleStepDesignSchema = z
             'control-state-transition',
             'constraint-validity',
             'error-recovery',
+            'table-purpose-choice',
+            'table-grid-structure',
+            'table-span-geometry',
+            'table-header-context',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
