@@ -387,6 +387,12 @@ describe('research contracts', () => {
         'rwd-css-color-four',
         'rwd-css-color-five',
         'rwd-css-images-four',
+        'rwd-css-transitions-one',
+        'rwd-css-transitions-two',
+        'rwd-css-animations-one',
+        'rwd-css-animations-two',
+        'rwd-css-easing-two',
+        'rwd-chrome-runtime-performance',
         'rwd-mdn-progressive-enhancement',
         'rwd-css-color-adjust-one',
         'rwd-w3c-coga-usable',
@@ -3071,6 +3077,145 @@ describe('research contracts', () => {
     }
   });
 
+  it('records the complete CSS Animations inspection and motion-evidence decision', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-css-animations-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+
+    expect(content).toContain('All seven pinned CSS Animations blocks');
+    expect(content).toContain('Complete 104-step Flappy Penguin audit');
+    expect(content).toContain('CSS parser/helper checks | 317');
+    expect(content).toContain(
+      '2 total source blocks still require challenge-level or item-level inspection'
+    );
+    expect(content.length).toBeGreaterThan(28_000);
+    expect(graph.sourceIds).toEqual(
+      expect.arrayContaining([
+        'rwd-css-transitions-one',
+        'rwd-css-transitions-two',
+        'rwd-css-animations-one',
+        'rwd-css-animations-two',
+        'rwd-css-easing-two',
+        'rwd-chrome-runtime-performance',
+      ])
+    );
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-transitions-state-change')
+    ).toMatchObject({ sourceAnchors: [{ sourceId: 'rwd-css-transitions-two' }] });
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-keyframe-animation-model')
+    ).toMatchObject({ sourceAnchors: [{ sourceId: 'rwd-css-animations-two' }] });
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-rendering-performance-stability')
+    ).toMatchObject({ sourceAnchors: [{ sourceId: 'rwd-chrome-runtime-performance' }] });
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-css-animations-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-motion-purpose-control-evidence')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-css-transitions-one',
+        'rwd-css-transitions-two',
+        'rwd-css-animations-one',
+        'rwd-css-animations-two',
+        'rwd-css-easing-two',
+        'rwd-media-queries-five',
+        'rwd-wcag-two-two',
+        'rwd-chrome-runtime-performance',
+        'rwd-fcc-css-animations-inspection',
+      ],
+    });
+  });
+
+  it('keeps all seven CSS Animations blocks exact without false debug or transfer credit', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const alignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'css-animations'
+    );
+    const bySlug = Object.fromEntries(
+      alignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+    );
+
+    expect(alignments).toHaveLength(7);
+    expect(alignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)).toBe(
+      139
+    );
+    expect(
+      alignments.reduce((total, alignment) => total + alignment.sourceEvidence.quizQuestionCount, 0)
+    ).toBe(46);
+    expect(
+      alignments.reduce((total, alignment) => total + alignment.sourceEvidence.hintCheckCount, 0)
+    ).toBe(451);
+    expect(
+      alignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(bySlug['lecture-animations-and-accessibility']).toEqual([
+      'css-transform-reference-boxes',
+      'responsive-media-query-model',
+      'css-reduced-motion-preference',
+      'css-transitions-state-change',
+      'css-keyframe-animation-model',
+      'css-rendering-performance-stability',
+    ]);
+    expect(bySlug['review-css-animations']).toEqual([
+      'css-transform-reference-boxes',
+      'responsive-media-query-model',
+      'css-reduced-motion-preference',
+      'css-transitions-state-change',
+      'css-keyframe-animation-model',
+    ]);
+    expect(bySlug['quiz-css-animations']).toEqual([
+      'css-transform-reference-boxes',
+      'responsive-media-query-model',
+      'css-reduced-motion-preference',
+      'css-transitions-state-change',
+      'css-keyframe-animation-model',
+      'css-rendering-performance-stability',
+    ]);
+    expect(bySlug['workshop-ferris-wheel']).toHaveLength(21);
+    expect(bySlug['lab-moon-orbit']).toHaveLength(22);
+    expect(bySlug['workshop-flappy-penguin']).toHaveLength(33);
+    expect(bySlug['lab-personal-portfolio']).toHaveLength(53);
+    expect(bySlug['workshop-ferris-wheel']).not.toContain('css-reduced-motion-preference');
+    expect(bySlug['lab-moon-orbit']).not.toContain('css-reduced-motion-preference');
+    expect(bySlug['workshop-flappy-penguin']).not.toContain('css-reduced-motion-preference');
+    expect(bySlug['lab-personal-portfolio']).not.toContain('css-keyframe-animation-model');
+    for (const alignment of alignments) {
+      expect(alignment.conceptIds).not.toContain('css-devtools-causal-debugging');
+      expect(alignment.conceptIds).not.toContain('css-changed-case-regression');
+      expect(alignment.conceptIds).not.toContain('css-independent-transfer-defense');
+    }
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -3126,7 +3271,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 103]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(149);
+    ).toHaveLength(156);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -3894,10 +4039,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(150);
+    ).toHaveLength(156);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(7);
+    ).toHaveLength(1);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -4055,8 +4200,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(186);
-    expect(architecture.sourceObjectiveIds).toHaveLength(150);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(8);
+    expect(architecture.sourceObjectiveIds).toHaveLength(156);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(2);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
