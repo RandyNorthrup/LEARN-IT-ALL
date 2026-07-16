@@ -457,7 +457,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 27 source blocks');
+    expect(content).toContain('The remaining 26 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -622,7 +622,7 @@ describe('research contracts', () => {
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
     expect(content).toContain('The complete 180-concept');
-    expect(content).toContain('The remaining 27 source blocks');
+    expect(content).toContain('The remaining 26 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -718,7 +718,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 27 blocks');
+    expect(content).toContain('The remaining 26 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -891,7 +891,7 @@ describe('research contracts', () => {
     expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
     expect(content).toContain('creates a CSS generated image value and no DOM element');
     expect(content).toContain('Class order in an HTML `class` attribute does not decide');
-    expect(content).toContain('remaining 27 source blocks');
+    expect(content).toContain('remaining 26 source blocks');
     expect(content).toContain('Keyword presence, a notation-matching regular expression');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
@@ -1011,7 +1011,7 @@ describe('research contracts', () => {
     expect(content).toContain('seven blocks, 84 challenges, 19 question prompts');
     expect(content).toContain("The benchmark's claim that `required` does not work");
     expect(content).toContain('This is direct instructional duplication');
-    expect(content).toContain('remaining 27 source blocks');
+    expect(content).toContain('remaining 26 source blocks');
     expect(content).toContain('`appearance: none` suppresses the native appearance');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toContain('rwd-css-ui-four');
@@ -1212,7 +1212,7 @@ describe('research contracts', () => {
     expect(content).toContain('A blurred secret is exposed data, not redaction');
     expect(content).toContain('false for mixed or all-negative margins');
     expect(content).toContain('`hidden` and `clip` are absent as distinct behavior models');
-    expect(content).toContain('remaining 27 source blocks');
+    expect(content).toContain('remaining 26 source blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.sourceIds).toEqual(
       expect.arrayContaining([
@@ -2118,6 +2118,7 @@ describe('research contracts', () => {
         'rwd-wai-tutorials',
         'rwd-wcag-two-two',
         'rwd-fcc-attribute-selectors-inspection',
+        'rwd-fcc-book-inventory-lab-inspection',
       ],
     });
   });
@@ -2204,6 +2205,78 @@ describe('research contracts', () => {
     });
   });
 
+  it('records the complete Book Inventory lab inspection without inventing transfer evidence', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-book-inventory-lab-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+
+    expect(content).toContain('one 28,308-byte challenge with 17 user stories and 53');
+    expect(content).toContain('class-order-dependent selectors');
+    expect(content).toContain('No check calls `getComputedStyle`');
+    expect(content).toContain('26 total source blocks still requiring challenge-level inspection');
+    expect(content.length).toBeGreaterThan(25_000);
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-book-inventory-lab-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+  });
+
+  it('keeps the Book Inventory lab exact, bounded, and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const alignment = matrix.alignments.find(
+      (candidate) => candidate.sourceBlockSlug === 'lab-book-inventory-app'
+    );
+
+    expect(alignment).toMatchObject({
+      sourceModuleId: 'lab-book-inventory-app',
+      sourceActivityType: 'lab',
+      sourceChallengeCount: 1,
+      mappingBasis: 'block-specific-source',
+      inspectionState: 'agent-inspected',
+      conceptIds: [
+        'html-heading-hierarchy',
+        'html-tables-purpose',
+        'html-table-structure',
+        'html-table-header-associations',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-attribute-selectors',
+        'css-pseudo-classes',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-box-sizing-models',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-backgrounds-borders-shadows',
+        'css-gradients-background-images',
+        'css-font-stacks-generic-fallbacks',
+        'css-contrast-noncolor-meaning',
+      ],
+    });
+    expect(alignment?.sourceEvidence.hintCheckCount).toBe(53);
+    expect(alignment?.conceptIds).not.toEqual(
+      expect.arrayContaining(['css-changed-case-regression', 'css-independent-transfer-defense'])
+    );
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -2259,7 +2332,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 101]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(131);
+    ).toHaveLength(132);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -3027,10 +3100,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(136);
+    ).toHaveLength(137);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(21);
+    ).toHaveLength(20);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -3188,8 +3261,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(184);
-    expect(architecture.sourceObjectiveIds).toHaveLength(136);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(22);
+    expect(architecture.sourceObjectiveIds).toHaveLength(137);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(21);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

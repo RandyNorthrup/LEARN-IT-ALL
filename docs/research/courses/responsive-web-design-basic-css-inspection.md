@@ -121,5 +121,5 @@ Basic CSS grading must combine:
 - The complete 180-concept introduce/model/guided/faded/debug/retrieve/assess/delayed-retain/transfer matrix is not authored.
 - Original Basic CSS activities, checks, hints, correction paths, and server-side grading are not authored or flow-verified.
 - Tablet and desktop editor behavior plus accessible phone handoff are not verified with representative learners.
-- The remaining 27 source blocks still need challenge-level inspection; 21 blocks and one unavailable assessment container now retain exact evidence with zero guessed concept assignments.
+- The remaining 26 source blocks still need challenge-level inspection; 20 blocks and one unavailable assessment container now retain exact evidence with zero guessed concept assignments.
 - Lighthouse remains on hold until all content, migration, duplication, editor, progress, navigation, review, and pilot work is complete.
