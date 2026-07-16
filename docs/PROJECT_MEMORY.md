@@ -97,14 +97,14 @@ Current research artifacts:
 Current candidate graph:
 
 - 83 HTML/tooling concepts;
-- 101 CSS/responsive/design concepts;
-- 184 total concepts;
-- 137 agent-inspected source blocks;
-- 1,200 inspected challenges;
-- 1,206 captured question prompts;
-- 3,983 inspected implementation checks;
-- 141 block-specific candidate mappings;
-- 16 uninspected source blocks with exact evidence and zero guessed concepts;
+- 102 CSS/responsive/design concepts;
+- 185 total concepts;
+- 142 agent-inspected source blocks;
+- 1,320 inspected challenges;
+- 1,252 captured question prompts;
+- 4,403 inspected implementation checks;
+- 145 block-specific candidate mappings;
+- 12 uninspected source blocks with exact evidence and zero guessed concepts;
 - 1 assessment container without reviewable item-level evidence;
 - 7 unresolved concepts;
 - 7 explicit modern extensions not credited to the benchmark;
@@ -182,6 +182,8 @@ Pushed milestones:
 - 2026-07-16 retired-asset cleanup — repository search confirms no learner-content generator, blueprint, earlier course tree, compatibility route, or tracked Lighthouse/browser report remains. Remove three unreferenced 2025 game assets and ignored local scan/browser output; extend the current-surface contract so the retired assets cannot return. The retained `compile-*` scripts only compile reviewed research evidence or the deny-by-default runtime index and cannot author learner-facing instruction. Focused current-surface gate passes 1 file / 6 tests; full suite passes 47 files / 235 tests; type-check, normal lint, warning-failing strict lint, and the Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Lighthouse remains held.
 - 2026-07-16 Technical Documentation lab research wave — inspect the single 30,275-byte challenge, all 15 stories, and all 22 checks; add current CSS Scroll Snap fragment/scroll-visibility evidence; remove unsupported breakpoint, narrow-first, navigation-disclosure, test-matrix, zoom/reflow, and independent-transfer credits; reject header-as-heading substitution, mutable text-derived IDs, quantity-only content, stale copied claims, unexecuted navigation, one-offset persistence, magic fixed dimensions, and media-rule presence as responsive proof; require stable fragments, coherent headings and landmarks, versioned content, native navigation, focus and target visibility, invariant-derived adaptation, changed cases, correction, and defense. Current alignment: 137 inspected blocks, 1,200 challenges, 1,206 prompts, 3,983 checks, 141 bounded mappings, 16 unmapped blocks, and 21 total blocks still requiring inspection.
 - 2026-07-16 Technical Documentation lab verification — reproducibility gate passes; focused research contracts pass 1 file / 47 tests; full test suite passes 47 files / 237 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 85 sources and intentionally exits nonzero for 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
+- 2026-07-16 CSS Variables research wave — inspect all 5 blocks, 120 challenges, 46 prompts, and 420 checks; upgrade the primary CSS snapshot to 2026; add Custom Properties Level 1 and Properties and Values API Level 1 evidence; split registered custom properties from unregistered substitution as a new target concept; replace the broad module bundle with five exact maps; correct fallback, registered initial-value, typed interpolation, device-width theme, and responsive claims; reject the 115-step skyline trace, color-only availability table, numbered tokens, parser-only gradient proof, and duplicate recall; require specified/computed evidence, semantic token ownership, preferences, forced colors, registration, changed cases, correction, delayed retrieval, and transfer. Current alignment: 142 inspected blocks, 1,320 challenges, 1,252 prompts, 4,403 checks, 145 bounded mappings, 12 unmapped blocks, 185 concepts, and 16 total blocks still requiring inspection.
+- 2026-07-16 CSS Variables verification — reproducibility gate passes; focused research contracts pass 1 file / 49 tests; full test suite passes 47 files / 239 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 88 sources and intentionally exits nonzero for 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -220,7 +222,7 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Complete challenge-level inspection for the remaining 21 Responsive Web Design source blocks without guessed concept mappings.
+1. Complete challenge-level inspection for the remaining 16 Responsive Web Design source blocks without guessed concept mappings.
 2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
 3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.

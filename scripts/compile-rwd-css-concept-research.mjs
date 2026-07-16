@@ -266,15 +266,32 @@ add(
   'Define and consume scoped custom properties with valid fallback behavior while distinguishing token substitution from ordinary typed property validation.',
   'css-language-and-cascade',
   ['css-inheritance-initial-unset-revert'],
-  'rwd-webdev-css',
-  'Custom properties module',
-  'Custom properties participate in cascade and inheritance, then substitute into consuming declarations.',
+  'rwd-css-variables-one',
+  'Sections 2 and 3: defining custom properties and using var()',
+  'Unregistered custom properties cascade, inherit by default, retain token streams, substitute at computed-value time, and use var() fallback only under the defined missing or guaranteed-invalid conditions.',
   'A declared custom property is guaranteed valid for every property where var() inserts it.',
   [
     'Changed invalid, missing, inherited, and locally overridden tokens must yield the predicted computed values.',
     'Learner must design a fallback chain that survives one missing theme token without hiding unrelated errors.',
   ],
   ['css-type-color-and-design', 'responsive-systems', finalModule]
+);
+
+add(
+  'css-registered-custom-properties',
+  'Registered custom properties and typed interpolation',
+  'Register a custom property with a valid @property syntax, inheritance flag, and computationally independent initial value, then predict invalid-at-computed-value behavior and typed interpolation without confusing the registered initial value with a var() fallback.',
+  'css-language-and-cascade',
+  ['css-custom-properties-fallbacks'],
+  'rwd-css-properties-values-api-one',
+  'Sections 2 and 3: registered custom properties and the @property rule',
+  'A valid registration gives a custom property a declared syntax, initial value, inheritance behavior, and typed computed value that can interpolate according to its registered type.',
+  'If a registered custom property receives an invalid typed value, var() always uses its fallback argument instead of the registration initial value.',
+  [
+    'Missing descriptors, invalid syntax strings, dependent initial values, invalid typed declarations, inheritance changes, duplicate registrations, and unsupported-registration cases must yield predicted specified and computed results.',
+    'A transition must prove typed interpolation, interruption, reduced-motion behavior, and a usable unregistered baseline without claiming registration changes cascade priority.',
+  ],
+  ['css-type-color-and-design', 'css-interaction-accessibility-and-motion', finalModule]
 );
 
 add(
@@ -1700,6 +1717,8 @@ const graph = {
     'rwd-selectors-four',
     'rwd-css-cascade-five',
     'rwd-css-cascade-six',
+    'rwd-css-variables-one',
+    'rwd-css-properties-values-api-one',
     'rwd-css-display-three',
     'rwd-css-backgrounds-three',
     'rwd-css-values-four',

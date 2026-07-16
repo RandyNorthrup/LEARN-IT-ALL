@@ -344,7 +344,7 @@ Keyword presence, a notation-matching regular expression, a screenshot of attrac
 
 ## Remaining blockers
 
-- The remaining 21 source blocks still require complete challenge-level inspection with zero guessed mappings.
+- The remaining 16 source blocks still require complete challenge-level inspection with zero guessed mappings.
 - Independent subject reviewers must verify the five candidate maps and every technical correction against current specifications and interoperable browser behavior.
 - The new `css-derived-color-functions` modern extension needs a supported-browser and Web Platform Test decision before assessed authoring.
 - Instructional and assessment reviewers must approve the full concept-to-activity matrix, fading plan, retrieval schedule, misconception treatments, item blueprint, and corrective routes.
