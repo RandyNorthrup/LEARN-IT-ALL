@@ -5802,6 +5802,95 @@ describe('research contracts', () => {
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
+  it('decomposes independent HTML transfer into 45 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-independent-transfer-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'html-document-root-head-body',
+      'html-link-purpose-fragments',
+      'html-sectioning-articles',
+      'html-form-errors-recovery',
+      'html-table-header-associations',
+      'html-changed-case-testing',
+    ]);
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(45);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(45);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(9);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(45);
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects independent transfer evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-html-independent-transfer-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const transferInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'independent-transfer-defense');
+    if (!transferInteraction) {
+      throw new Error('Independent transfer evidence fixture missing');
+    }
+    delete transferInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
   it('rejects browser research evidence without a changed trace', () => {
     const missingTrace = structuredClone(
       readJson(

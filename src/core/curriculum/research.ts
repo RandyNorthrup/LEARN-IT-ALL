@@ -1315,6 +1315,7 @@ const StepDesignEvidenceKindSchema = z.enum([
   'accessibility-evaluation-record',
   'validation-diagnostic-trace',
   'changed-case-invariant',
+  'independent-transfer-defense',
   'rendered-text-prediction',
   'dom-tree',
   'dom-relationship',
@@ -1403,6 +1404,9 @@ const StepDesignLayoutSchema = z.enum([
   'validator-diagnostic-board',
   'hypothesis-evidence-trace',
   'regression-mutation-board',
+  'project-brief-board',
+  'stakeholder-constraint-map',
+  'evidence-defense-studio',
 ]);
 
 const StepDesignSupportSchema = z.enum([
@@ -1704,6 +1708,7 @@ export const ResearchModuleStepDesignSchema = z
             'accessibility-evaluation-record',
             'validation-diagnostic-trace',
             'changed-case-invariant',
+            'independent-transfer-defense',
             'parser-diagnostic',
             'changed-case',
             'artifact-persistence',
