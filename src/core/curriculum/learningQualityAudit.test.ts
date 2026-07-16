@@ -55,7 +55,6 @@ function activity(overrides: Partial<CurriculumActivity> = {}): CurriculumActivi
           'Place it at the start of the HTML source.',
           'Write <h1>Community garden guide</h1>.',
         ],
-        xp: 10,
         targetFile: 'html',
       },
       {
@@ -81,7 +80,6 @@ function activity(overrides: Partial<CurriculumActivity> = {}): CurriculumActivi
           'Place it after the closing h1 tag.',
           'Wrap your sentence in <p> and </p>.',
         ],
-        xp: 10,
         targetFile: 'html',
       },
     ],

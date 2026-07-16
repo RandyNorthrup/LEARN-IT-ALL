@@ -3,7 +3,6 @@ export interface StepProgressRecord {
   status: 'IN_PROGRESS' | 'COMPLETED';
   attempts: number;
   hintsUsed: number;
-  earnedXp: number;
   draftJson?: string | null;
 }
 
@@ -14,7 +13,6 @@ export interface ActivityProgressSnapshot {
   totalSteps: number;
   percent: number;
   activityCompleted: boolean;
-  earnedXp: number;
 }
 
 export function buildActivityProgress(
@@ -42,7 +40,6 @@ export function buildActivityProgress(
     totalSteps: orderedStepIds.length,
     percent: Math.round((completedSteps / orderedStepIds.length) * 100),
     activityCompleted: completedSteps === orderedStepIds.length,
-    earnedXp: records.reduce((total, record) => total + record.earnedXp, 0),
   };
 }
 

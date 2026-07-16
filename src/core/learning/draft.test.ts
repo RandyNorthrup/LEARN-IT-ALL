@@ -27,7 +27,6 @@ describe('latestLearningFiles', () => {
           status: 'COMPLETED',
           attempts: 1,
           hintsUsed: 0,
-          earnedXp: 10,
           draftJson: JSON.stringify({ files: { html: '<main><h1>Saved</h1></main>' } }),
         },
       ],
@@ -45,7 +44,6 @@ describe('latestLearningFiles', () => {
           status: 'IN_PROGRESS',
           attempts: 0,
           hintsUsed: 0,
-          earnedXp: 0,
           draftJson: '{broken',
         },
       ],
@@ -62,7 +60,6 @@ describe('latestLearningFiles', () => {
           status: 'IN_PROGRESS',
           attempts: 0,
           hintsUsed: 0,
-          earnedXp: 0,
           draftJson: JSON.stringify({
             files: {
               python: 'print("ready")',
@@ -95,7 +92,6 @@ describe('latestLearningFiles', () => {
             status: 'COMPLETED',
             attempts: 1,
             hintsUsed: 0,
-            earnedXp: 10,
             draftJson: JSON.stringify({ files: { html: '<main>First layer</main>' } }),
           },
         ],
@@ -105,7 +101,6 @@ describe('latestLearningFiles', () => {
             status: 'COMPLETED',
             attempts: 1,
             hintsUsed: 0,
-            earnedXp: 10,
             draftJson: JSON.stringify({ files: { html: '<main>Second layer</main>' } }),
           },
         ],
@@ -124,7 +119,6 @@ describe('latestLearningFiles', () => {
           status: 'IN_PROGRESS',
           attempts: 0,
           hintsUsed: 0,
-          earnedXp: 0,
           draftJson: JSON.stringify({ files: { html: '<main>Current draft</main>' } }),
         },
       ],
@@ -135,7 +129,6 @@ describe('latestLearningFiles', () => {
             status: 'COMPLETED',
             attempts: 1,
             hintsUsed: 0,
-            earnedXp: 10,
             draftJson: JSON.stringify({ files: { html: '<main>Prior draft</main>' } }),
           },
         ],
@@ -155,7 +148,6 @@ describe('learningInputDrafts', () => {
         status: 'COMPLETED',
         attempts: 1,
         hintsUsed: 0,
-        earnedXp: 10,
         draftJson: JSON.stringify({
           selectedOptionId: 'bounded-answer',
           orderedOptionIds: ['frame', 'model', 'run', 'verify'],
@@ -166,7 +158,6 @@ describe('learningInputDrafts', () => {
         status: 'COMPLETED',
         attempts: 1,
         hintsUsed: 0,
-        earnedXp: 10,
         draftJson: JSON.stringify({
           textResponse: 'The learner explains the changed-case evidence.',
         }),
@@ -189,7 +180,6 @@ describe('learningInputDrafts', () => {
         status: 'IN_PROGRESS',
         attempts: 0,
         hintsUsed: 0,
-        earnedXp: 0,
         draftJson: '{broken',
       },
       {
@@ -197,7 +187,6 @@ describe('learningInputDrafts', () => {
         status: 'IN_PROGRESS',
         attempts: 0,
         hintsUsed: 0,
-        earnedXp: 0,
         draftJson: JSON.stringify({
           selectedOptionId: 42,
           orderedOptionIds: ['frame', 42],

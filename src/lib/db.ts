@@ -1,9 +1,118 @@
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import Database from 'better-sqlite3';
+import { PUBLISHED_COURSE_IDS } from './data/publishedCourses';
 
 // Lazy initialization - only create DB connection when needed
 let db: Database.Database | null = null;
+
+export function migrateCurrentLearningSchema(database: Database.Database): void {
+  const progressColumns = database.pragma("table_info('learning_step_progress')") as Array<{
+    name: string;
+  }>;
+  const hasEarnedXp = progressColumns.some((column) => column.name === 'earnedXp');
+
+  database.transaction(() => {
+    if (hasEarnedXp) {
+      database.exec(`
+CREATE TABLE learning_step_progress_current (
+  courseId TEXT NOT NULL,
+  moduleId TEXT NOT NULL,
+  activityId TEXT NOT NULL,
+  stepId TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'IN_PROGRESS',
+  attempts INTEGER NOT NULL DEFAULT 0,
+  hintsUsed INTEGER NOT NULL DEFAULT 0,
+  draftJson TEXT,
+  completedAt DATETIME,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (activityId, stepId)
+);
+
+INSERT INTO learning_step_progress_current
+  (courseId, moduleId, activityId, stepId, status, attempts, hintsUsed, draftJson, completedAt, updatedAt)
+SELECT courseId, moduleId, activityId, stepId, status, attempts, hintsUsed, draftJson, completedAt, updatedAt
+FROM learning_step_progress;
+
+DROP TABLE learning_step_progress;
+ALTER TABLE learning_step_progress_current RENAME TO learning_step_progress;
+`);
+    }
+
+    database.exec('DROP TABLE IF EXISTS learning_profile;');
+  })();
+}
+
+export function archiveUnpublishedLearningProgress(
+  database: Database.Database,
+  publishedCourseIds: readonly string[]
+): number {
+  const placeholders = publishedCourseIds.map(() => '?').join(', ');
+  const unpublishedWhere = publishedCourseIds.length
+    ? `WHERE courseId NOT IN (${placeholders})`
+    : '';
+  const records = database
+    .prepare(
+      `SELECT courseId, moduleId, activityId, stepId, status, attempts, hintsUsed,
+              draftJson, completedAt, updatedAt
+       FROM learning_step_progress
+       ${unpublishedWhere}
+       ORDER BY courseId, activityId, stepId`
+    )
+    .all(...publishedCourseIds) as Array<{
+    courseId: string;
+    moduleId: string;
+    activityId: string;
+    stepId: string;
+    status: string;
+    attempts: number;
+    hintsUsed: number;
+    draftJson: string | null;
+    completedAt: string | null;
+    updatedAt: string | null;
+  }>;
+
+  if (records.length === 0) return 0;
+
+  return database.transaction(() => {
+    const archive = database.prepare(
+      `INSERT OR IGNORE INTO historical_learning_records
+        (sourceCollection, sourceId, courseId, recordType, itemId, outcome, occurredAt, payloadJson)
+       VALUES ('retired-v2-step-progress', ?, ?, 'step', ?, ?, ?, ?)`
+    );
+    const retiredActivityIds = new Set<string>();
+
+    for (const record of records) {
+      retiredActivityIds.add(record.activityId);
+      archive.run(
+        `${record.courseId}:${record.activityId}:${record.stepId}`,
+        record.courseId,
+        record.stepId,
+        record.status,
+        record.completedAt ?? record.updatedAt,
+        JSON.stringify({
+          moduleId: record.moduleId,
+          activityId: record.activityId,
+          attempts: record.attempts,
+          hintsUsed: record.hintsUsed,
+          draftJson: record.draftJson,
+        })
+      );
+    }
+
+    const clearReviews = database.prepare('DELETE FROM learning_review_queue WHERE activityId = ?');
+    for (const activityId of retiredActivityIds) clearReviews.run(activityId);
+
+    const clearProgress = database.prepare(
+      'DELETE FROM learning_step_progress WHERE courseId = ? AND activityId = ? AND stepId = ?'
+    );
+    for (const record of records) {
+      clearProgress.run(record.courseId, record.activityId, record.stepId);
+    }
+
+    return records.length;
+  })();
+}
 
 function getDb(): Database.Database {
   if (!db) {
@@ -47,20 +156,10 @@ CREATE TABLE IF NOT EXISTS learning_step_progress (
   status TEXT NOT NULL DEFAULT 'IN_PROGRESS',
   attempts INTEGER NOT NULL DEFAULT 0,
   hintsUsed INTEGER NOT NULL DEFAULT 0,
-  earnedXp INTEGER NOT NULL DEFAULT 0,
   draftJson TEXT,
   completedAt DATETIME,
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (activityId, stepId)
-);
-
-CREATE TABLE IF NOT EXISTS learning_profile (
-  id TEXT PRIMARY KEY DEFAULT 'learner',
-  totalXp INTEGER NOT NULL DEFAULT 0,
-  currentStreak INTEGER NOT NULL DEFAULT 0,
-  longestStreak INTEGER NOT NULL DEFAULT 0,
-  lastActiveDate TEXT,
-  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS learning_review_queue (
@@ -74,11 +173,12 @@ CREATE TABLE IF NOT EXISTS learning_review_queue (
 
 -- Insert default settings if not exists
 INSERT OR IGNORE INTO settings (id, displayName) VALUES ('settings', 'Learner');
-INSERT OR IGNORE INTO learning_profile (id) VALUES ('learner');
 `;
 
     // Run initialization
-    getDb().exec(initSchema);
+    db.exec(initSchema);
+    migrateCurrentLearningSchema(db);
+    archiveUnpublishedLearningProgress(db, PUBLISHED_COURSE_IDS);
   }
 
   return db;
@@ -101,7 +201,7 @@ export const dbHelpers = {
   getLearningStepProgress: (activityId: string) => {
     return getDb()
       .prepare(
-        `SELECT stepId, status, attempts, hintsUsed, earnedXp, draftJson
+        `SELECT stepId, status, attempts, hintsUsed, draftJson
          FROM learning_step_progress
          WHERE activityId = ?
          ORDER BY updatedAt ASC`
@@ -141,7 +241,7 @@ export const dbHelpers = {
       .run(courseId, moduleId, activityId, stepId);
     return getDb()
       .prepare(
-        `SELECT stepId, status, attempts, hintsUsed, earnedXp, draftJson
+        `SELECT stepId, status, attempts, hintsUsed, draftJson
          FROM learning_step_progress WHERE activityId = ? AND stepId = ?`
       )
       .get(activityId, stepId) as {
@@ -149,7 +249,6 @@ export const dbHelpers = {
       status: string;
       attempts: number;
       hintsUsed: number;
-      earnedXp: number;
       draftJson: string | null;
     };
   },
@@ -160,29 +259,24 @@ export const dbHelpers = {
     activityId: string,
     stepId: string,
     passed: boolean,
-    xp: number,
     reviewDays: number[],
     draft: Record<string, unknown>
   ) => {
     const database = getDb();
     return database.transaction(() => {
       const existing = database
-        .prepare(
-          'SELECT status, earnedXp FROM learning_step_progress WHERE activityId = ? AND stepId = ?'
-        )
-        .get(activityId, stepId) as { status: string; earnedXp: number } | undefined;
+        .prepare('SELECT status FROM learning_step_progress WHERE activityId = ? AND stepId = ?')
+        .get(activityId, stepId) as { status: string } | undefined;
       const newlyCompleted = passed && existing?.status !== 'COMPLETED';
-      const earnedXp = newlyCompleted ? xp : (existing?.earnedXp ?? 0);
 
       database
         .prepare(
           `INSERT INTO learning_step_progress
-            (courseId, moduleId, activityId, stepId, status, attempts, earnedXp, draftJson, completedAt, updatedAt)
-           VALUES (?, ?, ?, ?, ?, 1, ?, ?, CASE WHEN ? THEN CURRENT_TIMESTAMP ELSE NULL END, CURRENT_TIMESTAMP)
+            (courseId, moduleId, activityId, stepId, status, attempts, draftJson, completedAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, 1, ?, CASE WHEN ? THEN CURRENT_TIMESTAMP ELSE NULL END, CURRENT_TIMESTAMP)
            ON CONFLICT(activityId, stepId) DO UPDATE SET
             status = CASE WHEN excluded.status = 'COMPLETED' THEN 'COMPLETED' ELSE learning_step_progress.status END,
             attempts = learning_step_progress.attempts + 1,
-            earnedXp = MAX(learning_step_progress.earnedXp, excluded.earnedXp),
             draftJson = excluded.draftJson,
             completedAt = CASE WHEN excluded.status = 'COMPLETED' THEN COALESCE(learning_step_progress.completedAt, CURRENT_TIMESTAMP) ELSE learning_step_progress.completedAt END,
             updatedAt = CURRENT_TIMESTAMP`
@@ -193,19 +287,11 @@ export const dbHelpers = {
           activityId,
           stepId,
           passed ? 'COMPLETED' : 'IN_PROGRESS',
-          earnedXp,
           JSON.stringify(draft),
           passed ? 1 : 0
         );
 
       if (newlyCompleted) {
-        database
-          .prepare(
-            `UPDATE learning_profile
-             SET totalXp = totalXp + ?, updatedAt = CURRENT_TIMESTAMP
-             WHERE id = 'learner'`
-          )
-          .run(xp);
         const queueReview = database.prepare(
           `INSERT OR IGNORE INTO learning_review_queue
             (activityId, stepId, intervalDays, dueAt)
@@ -216,12 +302,8 @@ export const dbHelpers = {
         });
       }
 
-      return { newlyCompleted, earnedXp };
+      return { newlyCompleted };
     })();
-  },
-
-  getLearningProfile: () => {
-    return getDb().prepare("SELECT * FROM learning_profile WHERE id = 'learner'").get();
   },
 
   getDueLearningReviews: () => {
@@ -270,14 +352,6 @@ export const dbHelpers = {
     return database.transaction(() => {
       database.prepare('DELETE FROM learning_review_queue WHERE activityId = ?').run(activityId);
       database.prepare('DELETE FROM learning_step_progress WHERE activityId = ?').run(activityId);
-      database
-        .prepare(
-          `UPDATE learning_profile
-           SET totalXp = COALESCE((SELECT SUM(earnedXp) FROM learning_step_progress), 0),
-               updatedAt = CURRENT_TIMESTAMP
-           WHERE id = 'learner'`
-        )
-        .run();
     })();
   },
 
@@ -302,11 +376,6 @@ export const dbHelpers = {
         'SELECT COUNT(*) AS count FROM learning_review_queue WHERE completedAt IS NULL AND dueAt <= CURRENT_TIMESTAMP'
       )
       .get() as { count: number };
-    const profile = getDb()
-      .prepare(
-        "SELECT totalXp, currentStreak, longestStreak FROM learning_profile WHERE id = 'learner'"
-      )
-      .get() as { totalXp: number; currentStreak: number; longestStreak: number };
     const historicalRecords = getDb()
       .prepare('SELECT COUNT(*) AS count FROM historical_learning_records')
       .get() as { count: number };
@@ -317,9 +386,6 @@ export const dbHelpers = {
       interactionsCompleted: interactionsCompleted.count,
       totalAttempts: totalAttempts.count,
       reviewsDue: reviewsDue.count,
-      totalXp: profile.totalXp,
-      currentStreak: profile.currentStreak,
-      longestStreak: profile.longestStreak,
       historicalRecords: historicalRecords.count,
     };
   },
@@ -329,11 +395,6 @@ export const dbHelpers = {
     getDb().prepare('DELETE FROM historical_learning_records').run();
     getDb().prepare('DELETE FROM learning_step_progress').run();
     getDb().prepare('DELETE FROM learning_review_queue').run();
-    getDb()
-      .prepare(
-        "UPDATE learning_profile SET totalXp = 0, currentStreak = 0, longestStreak = 0, lastActiveDate = NULL WHERE id = 'learner'"
-      )
-      .run();
   },
 
   clearCourseProgress: (courseId: string) => {
@@ -346,14 +407,6 @@ export const dbHelpers = {
       clearReviews.run(activityId);
     });
     getDb().prepare('DELETE FROM learning_step_progress WHERE courseId = ?').run(courseId);
-    getDb()
-      .prepare(
-        `UPDATE learning_profile
-         SET totalXp = COALESCE((SELECT SUM(earnedXp) FROM learning_step_progress), 0),
-             updatedAt = CURRENT_TIMESTAMP
-         WHERE id = 'learner'`
-      )
-      .run();
   },
 };
 

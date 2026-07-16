@@ -6,13 +6,12 @@ describe('learning progress', () => {
 
   it('resumes at the first incomplete step', () => {
     const snapshot = buildActivityProgress(steps, [
-      { stepId: 'step-one', status: 'COMPLETED', attempts: 1, hintsUsed: 0, earnedXp: 10 },
-      { stepId: 'step-two', status: 'IN_PROGRESS', attempts: 2, hintsUsed: 1, earnedXp: 0 },
+      { stepId: 'step-one', status: 'COMPLETED', attempts: 1, hintsUsed: 0 },
+      { stepId: 'step-two', status: 'IN_PROGRESS', attempts: 2, hintsUsed: 1 },
     ]);
 
     expect(snapshot.currentStepId).toBe('step-two');
     expect(snapshot.percent).toBe(33);
-    expect(snapshot.earnedXp).toBe(10);
   });
 
   it('unlocks only completed work and the next step', () => {
@@ -29,7 +28,6 @@ describe('learning progress', () => {
         status: 'COMPLETED' as const,
         attempts: 1,
         hintsUsed: 0,
-        earnedXp: 10,
       }))
     );
     expect(snapshot).toMatchObject({ activityCompleted: true, percent: 100 });

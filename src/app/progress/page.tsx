@@ -18,9 +18,9 @@ export default function ProgressPage() {
   const stats = dbHelpers.getProgressStats() as LearningProgressStats;
   const metrics = [
     {
-      label: 'Interactions mastered',
+      label: 'Steps completed',
       value: stats.interactionsCompleted,
-      note: 'Checks passed in current activities',
+      note: 'Step requirements passed in current activities',
       icon: BookOpenCheck,
     },
     {

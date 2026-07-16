@@ -57,15 +57,12 @@ export async function POST(
   const checks = activity.checks.filter((check) => checkIdSet.has(check.id));
   const results = validateCurriculumChecks(parsed.data, checks);
   const passed = results.length > 0 && results.every((result) => result.passed);
-  const record = records.find((entry) => entry.stepId === step.id);
-  const xp = Math.max(1, step.xp - (record?.hintsUsed ?? 0) * 2);
   const persisted = dbHelpers.recordLearningAttempt(
     courseId,
     activity.moduleId,
     activity.id,
     step.id,
     passed,
-    xp,
     activity.mastery.spacedReviewDays,
     parsed.data
   );
@@ -79,7 +76,6 @@ export async function POST(
   return NextResponse.json({
     passed,
     newlyCompleted: persisted.newlyCompleted,
-    earnedXp: passed ? persisted.earnedXp : 0,
     results: publicResults,
     hiddenFailureMessage:
       hiddenFailures > 0

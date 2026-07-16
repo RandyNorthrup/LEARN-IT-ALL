@@ -159,30 +159,31 @@ const StepStimulusSchema = z.object({
     .min(1),
 });
 
-export const CurriculumStepSchema = z.object({
-  id: IdentifierSchema,
-  title: z.string().min(3).max(100),
-  interaction: InteractionKindSchema,
-  instruction: z.string().min(12),
-  why: z.string().min(12),
-  buildsOnStepIds: z.array(IdentifierSchema).default([]),
-  content: z.array(StepContentBlockSchema).default([]),
-  stimulus: StepStimulusSchema.optional(),
-  checkIds: z.array(IdentifierSchema).min(1),
-  competencyIds: z.array(IdentifierSchema).min(1),
-  hints: z.array(z.string().min(8)).length(3),
-  xp: z.number().int().min(1).max(100).default(10),
-  targetFile: CurriculumFileSchema.optional(),
-  options: z
-    .array(
-      z.object({
-        id: IdentifierSchema,
-        text: z.string().min(1),
-      })
-    )
-    .min(2)
-    .optional(),
-});
+export const CurriculumStepSchema = z
+  .object({
+    id: IdentifierSchema,
+    title: z.string().min(3).max(100),
+    interaction: InteractionKindSchema,
+    instruction: z.string().min(12),
+    why: z.string().min(12),
+    buildsOnStepIds: z.array(IdentifierSchema).default([]),
+    content: z.array(StepContentBlockSchema).default([]),
+    stimulus: StepStimulusSchema.optional(),
+    checkIds: z.array(IdentifierSchema).min(1),
+    competencyIds: z.array(IdentifierSchema).min(1),
+    hints: z.array(z.string().min(8)).length(3),
+    targetFile: CurriculumFileSchema.optional(),
+    options: z
+      .array(
+        z.object({
+          id: IdentifierSchema,
+          text: z.string().min(1),
+        })
+      )
+      .min(2)
+      .optional(),
+  })
+  .strict();
 
 export const CurriculumActivitySchema = z
   .object({

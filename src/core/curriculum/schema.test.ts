@@ -35,7 +35,6 @@ function validActivity() {
           'Place the heading between the opening and closing main tags.',
           'Add <h1>Learner profile</h1> inside main.',
         ],
-        xp: 10,
         targetFile: 'html',
       },
     ],
@@ -58,6 +57,18 @@ function validActivity() {
 describe('CurriculumActivitySchema', () => {
   it('accepts a complete progressive code activity', () => {
     expect(CurriculumActivitySchema.parse(validActivity()).steps).toHaveLength(1);
+  });
+
+  it('rejects arbitrary point awards on learner steps', () => {
+    const activity = validActivity();
+    const withPoints = structuredClone(activity) as typeof activity & {
+      steps: Array<(typeof activity.steps)[number] & { xp?: number }>;
+    };
+    withPoints.steps[0].xp = 10;
+
+    const result = CurriculumActivitySchema.safeParse(withPoints);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.some((issue) => issue.message.includes('xp'))).toBe(true);
   });
 
   it('accepts Python, Go, SQL, and shell workspaces for interactive labs', () => {

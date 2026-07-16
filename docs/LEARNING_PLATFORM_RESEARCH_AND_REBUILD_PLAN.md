@@ -466,7 +466,8 @@ Execution order:
 
 ### Package C: real mastery and navigation
 
-- Replace XP/streak/room/card copy with resume, due review, competency evidence, project state, and corrective actions.
+- XP, streak, room, and card copy plus point/streak storage are removed; deleted-course step records are historical evidence rather than false active progress.
+- Add resume, due review, competency evidence, retention, transfer, project state, and corrective actions only from current persisted evidence.
 - Use one shared header/navigation model and predictable course/module/activity hierarchy.
 - Make every progress value traceable to persisted evidence.
 

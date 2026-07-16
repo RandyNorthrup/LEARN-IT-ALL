@@ -136,6 +136,28 @@ describe('current platform surface', () => {
     }
   });
 
+  it('removes vanity points and streak state from curriculum and active progress storage', () => {
+    const curriculumSchema = readFileSync(
+      path.join(root, 'src', 'core', 'curriculum', 'schema.ts'),
+      'utf8'
+    );
+    const progressEngine = readFileSync(
+      path.join(root, 'src', 'core', 'learning', 'progress.ts'),
+      'utf8'
+    );
+    const attemptRoute = readFileSync(
+      path.join(root, 'src/app/api/v2/courses/[courseId]/activities/[activityId]/attempt/route.ts'),
+      'utf8'
+    );
+    const databaseSource = readFileSync(path.join(root, 'src', 'lib', 'db.ts'), 'utf8');
+
+    expect(curriculumSchema).not.toMatch(/\bxp\s*:/u);
+    expect(progressEngine).not.toMatch(/earnedXp|totalXp|currentStreak|longestStreak/u);
+    expect(attemptRoute).not.toMatch(/earnedXp|\bxp\b/u);
+    expect(databaseSource).not.toMatch(/earnedXp INTEGER|totalXp|currentStreak|longestStreak/u);
+    expect(databaseSource).not.toContain('CREATE TABLE IF NOT EXISTS learning_profile');
+  });
+
   it('keeps parallel practice, arbitrary points, and streaks out of primary learner navigation', () => {
     const home = readFileSync(path.join(root, 'src', 'app', 'page.tsx'), 'utf8');
     const progress = readFileSync(path.join(root, 'src', 'app', 'progress', 'page.tsx'), 'utf8');
