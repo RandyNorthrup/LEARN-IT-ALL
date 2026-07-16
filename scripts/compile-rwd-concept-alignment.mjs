@@ -2014,7 +2014,7 @@ const matrix = {
   unresolvedConceptIds: unresolvedConcepts.map((concept) => concept.id),
   courseExtensions,
   architectureFindings: [
-    'The rejected generated curriculum and its broad legacy competency bundles are not research evidence; this candidate matrix derives directly from the pinned source snapshot and narrows inspected blocks to named concepts.',
+    'This candidate matrix derives directly from the pinned source snapshot and narrows inspected blocks to named concepts; no learner curriculum or broad topic bundle is treated as research evidence.',
     `All 1,553 exact source challenge files now contribute identities, paths, SHA-256 hashes, byte counts, captured section names, hint-check counts, and quiz-question counts; evidence capture is not the same as concept inspection or expert review.`,
     `${agentInspectedCount} source blocks containing ${agentInspectedChallengeCount} source challenges have challenge-level agent inspection and narrower block-specific assignments; ${unmappedCount} blocks retain exact evidence but assign zero concepts until inspection.`,
     'Computer and browser concepts stay mapped to the benchmark but must enter just in time around the first HTML artifact rather than preserve the current thirteen-activity delay.',
@@ -2041,7 +2041,7 @@ await mkdir(path.dirname(output), { recursive: true });
 const serialized = `${JSON.stringify(matrix, null, 2)}\n`;
 if (process.argv.includes('--check')) {
   const current = await readFile(output, 'utf8');
-  if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
+  if (current !== serialized) throw new Error(`${output} is stale; run this compiler.`);
   console.log(
     `Current ${output}: ${alignments.length} source objectives, ${concepts.length} concepts, ${extensionConcepts.length} explicit modern extensions, ${unmappedCount} unmapped source blocks.`
   );

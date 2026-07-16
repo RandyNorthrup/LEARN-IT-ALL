@@ -548,7 +548,7 @@ await mkdir(path.dirname(output), { recursive: true });
 const serialized = `${JSON.stringify(architecture, null, 2)}\n`;
 if (process.argv.includes('--check')) {
   const current = await readFile(output, 'utf8');
-  if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
+  if (current !== serialized) throw new Error(`${output} is stale; run this compiler.`);
   console.log(
     `Current ${output}: ${modules.length} modules, ${concepts.length} concepts, ${projects.length} original project briefs.`
   );

@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -33,5 +34,19 @@ describe('empty curriculum audit boundaries', () => {
       blockerGroups: 53,
       warningGroups: 1,
     });
+  });
+
+  it('rejects research-report output inside reviewed course source', () => {
+    const reportPath = path.join(root, 'content', 'v2', 'courses', 'research-report.md');
+    const result = run(
+      'scripts/audit-research-program.ts',
+      '--report-only',
+      '--report',
+      reportPath
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('outside reviewed course source');
+    expect(existsSync(reportPath)).toBe(false);
   });
 });

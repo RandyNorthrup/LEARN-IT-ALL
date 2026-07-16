@@ -4,7 +4,7 @@ LEARN-IT-ALL is being rebuilt as a local-first, research-backed, build-to-learn 
 
 ## Current state
 
-The old generated curriculum, blueprints, routes, API aliases, fake progress metrics, and generated-course publication claims are removed. They are available only through Git history.
+No legacy curriculum, blueprint, compatibility route, learner-content generator, fake progress metric, or generated-course publication path exists in the current tree. Git history is the only record of prior implementation.
 
 The production catalog intentionally contains zero courses. `content/v2/courses/README.md` is the only file under the course directory, the runtime curriculum index contains zero documents, and the published course and path manifests are empty. This is a deny-by-default boundary: no course appears until research, authoring, runtime, assessment, duplication, accessibility, responsive-flow, review, and observed-learner gates pass.
 

@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -96,5 +96,24 @@ describe('curriculum runtime compiler boundary', () => {
     } finally {
       rmSync(temporaryRoot, { recursive: true, force: true });
     }
+  });
+
+  it('rejects a runtime output path inside reviewed course source', () => {
+    const unsafeOutput = path.join(courseRoot, 'curriculum.sqlite');
+    const result = spawnSync(
+      process.execPath,
+      [
+        'scripts/compile-curriculum-runtime-index.mjs',
+        '--source-root',
+        courseRoot,
+        '--output',
+        unsafeOutput,
+      ],
+      { cwd: process.cwd(), encoding: 'utf8' }
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('outside reviewed course source');
+    expect(existsSync(unsafeOutput)).toBe(false);
   });
 });

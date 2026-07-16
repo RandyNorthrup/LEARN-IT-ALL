@@ -1735,7 +1735,7 @@ const graph = {
   requiredStages: stages,
   concepts,
   architectureFindings: [
-    'The deleted generated sequence fragmented cascade, units, box geometry, selectors, layout, accessibility, and responsive behavior into topic modules that did not consistently expose prerequisite edges or retained checks.',
+    'The target exposes prerequisite edges and retained checks across cascade, units, box geometry, selectors, layout, accessibility, and responsive behavior.',
     'Responsive design currently arrives after several isolated CSS feature modules; the replacement must introduce fluid and changed-content constraints during sizing and layout, then integrate media and container queries after those foundations.',
     'Flexbox, grid, positioning, and responsive modules require prediction and layout-inspector evidence before independent construction; visual resemblance cannot establish sizing, order, overflow, or stacking understanding.',
     'The current project sequence cannot count as transfer until each project starts from meaningfully different stakeholder constraints, uses different layout and responsive decisions, and includes accessibility plus changed-case defense.',
@@ -1759,7 +1759,7 @@ await mkdir(path.dirname(output), { recursive: true });
 const serialized = `${JSON.stringify(graph, null, 2)}\n`;
 if (process.argv.includes('--check')) {
   const current = await readFile(output, 'utf8');
-  if (current !== serialized) throw new Error(`${output} is stale; regenerate it.`);
+  if (current !== serialized) throw new Error(`${output} is stale; run this compiler.`);
   console.log(
     `Current ${output}: ${graph.concepts.length} researched CSS and responsive concepts.`
   );

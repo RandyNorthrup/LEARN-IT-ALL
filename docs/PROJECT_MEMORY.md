@@ -27,9 +27,9 @@ Build-capable courses require resumable inline workspaces with the appropriate i
 
 The learner-facing site presents an honest empty state. It does not expose planned cards, estimated hours, activity totals, XP, streaks, fake recommendations, practice rooms, or internal repository decisions.
 
-## Hard cut completed in the current working milestone
+## Current implementation boundary
 
-The rejected implementation is physically removed:
+The current tree contains none of the following:
 
 - all 54 files under `blueprints/**`;
 - all 12,985 generated files formerly under `content/v2/courses/**`;
@@ -41,7 +41,7 @@ The rejected implementation is physically removed:
 - the Go content audit tied only to deleted generated Go lessons.
 - the PicoC substitute runtime and C workspace contract, which covered only C89/C90 plus selected C99 rather than the planned C23 course;
 
-Git history is the only archive. Do not create an archive directory, old-data package, compatibility route, renamed copy, fallback mapping, or generator that can recreate deleted instruction.
+Git history is the only prior-implementation record. Do not create an archive directory, compatibility route, renamed copy, fallback mapping, or learner-content generator.
 
 Current infrastructure retained intentionally:
 
@@ -52,7 +52,7 @@ Current infrastructure retained intentionally:
 - sandboxed browser runtimes and worker boundaries;
 - current primary-source research compilers and pinned evidence.
 
-These are rebuild infrastructure, not compatibility layers.
+These are the only current rebuild infrastructure; none is a compatibility layer or learner-content authoring path.
 
 The planned C course remains in the 54-course research scope but has no live workspace/runtime contract. Reintroduce C only after current C23, sanitizer, diagnostic, isolation, delivery, accessibility, and transfer gates accept one production path.
 
@@ -167,6 +167,7 @@ Pushed milestones:
 - 2026-07-15 Flexbox verification — reproducibility gate current; focused research test 32/32; full test suite 47 files / 219 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. The research audit correctly retains 53 missing-dossier blockers and one incomplete-research warning. Lighthouse remains held.
 - 2026-07-16 Typography research wave — inspect all 5 Typography blocks and 78 challenges; add current CSS Fonts 4, Font Loading 3, Text 4, Text Decoration 4, Inline 3, WOFF2, WCAG, WAI, and FDA evidence; split selection, delivery, metrics, variable features, line layout, text processing, and decoration into testable concepts; reject named-font consistency, serif/sans readability stereotypes, unexamined third-party requests, regulated-label tracing, tiny fixed text, negative-offset recipes, and source-string grading; compile 117 inspected blocks and 125 bounded mappings.
 - 2026-07-16 Typography verification — reproducibility gate current; focused research test 35/35; full test suite 47 files / 222 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 72 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
+- 2026-07-16 current-only implementation boundary — active plan and README now describe the current replacement architecture instead of leading with deleted implementation; the exact top-level script inventory is allowlisted; no learner-content authoring script exists; runtime-index and research-report commands reject every output path inside reviewed course source; research artifacts remain byte-reproducible. Focused boundary/research gate: 4 files / 47 tests. Full gate: 47 files / 224 tests, type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build with 16 expected routes and zero curriculum documents. Lighthouse remains held.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 

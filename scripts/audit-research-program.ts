@@ -164,7 +164,18 @@ async function main() {
   };
 
   const reportPath = argumentValue('--report');
-  if (reportPath) await writeFile(path.resolve(root, reportPath), renderMarkdown(summary));
+  if (reportPath) {
+    const resolvedReportPath = path.resolve(root, reportPath);
+    const courseSourceRoot = path.join(root, 'content', 'v2', 'courses');
+    const relativeToCourseSource = path.relative(courseSourceRoot, resolvedReportPath);
+    if (
+      relativeToCourseSource === '' ||
+      (!relativeToCourseSource.startsWith(`..${path.sep}`) && relativeToCourseSource !== '..')
+    ) {
+      throw new Error('Research reports must remain outside reviewed course source.');
+    }
+    await writeFile(resolvedReportPath, renderMarkdown(summary));
+  }
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
   if (!process.argv.includes('--report-only') && summary.blockerGroups > 0) process.exitCode = 1;
 }

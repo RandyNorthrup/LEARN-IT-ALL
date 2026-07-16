@@ -2775,7 +2775,7 @@ describe('research contracts', () => {
     );
   });
 
-  it('keeps generated RWD research outputs reproducible', () => {
+  it('keeps compiled RWD research outputs reproducible', () => {
     for (const script of [
       'scripts/compile-rwd-html-concept-research.mjs',
       'scripts/compile-rwd-css-concept-research.mjs',

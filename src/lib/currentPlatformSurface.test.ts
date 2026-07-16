@@ -34,6 +34,27 @@ describe('current platform surface', () => {
   });
 
   it('keeps no curriculum generators and only explicit research/runtime compilers', () => {
+    const scriptFiles = readdirSync(path.join(root, 'scripts'), { withFileTypes: true })
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .sort();
+
+    expect(scriptFiles).toEqual([
+      'audit-research-program.ts',
+      'audit-v2-duplication.ts',
+      'audit-v2-learning-quality.ts',
+      'compile-curriculum-runtime-index.mjs',
+      'compile-rwd-concept-alignment.mjs',
+      'compile-rwd-css-concept-research.mjs',
+      'compile-rwd-html-concept-research.mjs',
+      'compile-rwd-research-architecture.mjs',
+      'import-fcc-rwd-reference.mjs',
+      'run-lighthouse-after-content.mjs',
+      'sync-go-runtime.mjs',
+      'sync-python-runtime.mjs',
+      'sync-sql-runtime.mjs',
+    ]);
+
     const generationScripts = readdirSync(path.join(root, 'scripts'))
       .filter((file) => file.startsWith('generate-'))
       .sort();

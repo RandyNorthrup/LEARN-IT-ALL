@@ -17,6 +17,13 @@ function optionValue(name) {
 const sourceRoot = optionValue('--source-root') ?? path.join(root, 'content', 'v2', 'courses');
 const outputPath =
   optionValue('--output') ?? path.join(root, 'content', 'v2', '.runtime', 'curriculum.sqlite');
+const outputRelativeToSource = path.relative(sourceRoot, outputPath);
+if (
+  outputRelativeToSource === '' ||
+  (!outputRelativeToSource.startsWith(`..${path.sep}`) && outputRelativeToSource !== '..')
+) {
+  throw new Error('Curriculum runtime output must remain outside reviewed course source.');
+}
 const runtimeRoot = path.dirname(outputPath);
 const temporaryPath = `${outputPath}.${process.pid}.tmp`;
 const identifierPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
