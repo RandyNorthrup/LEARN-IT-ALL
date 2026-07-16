@@ -819,16 +819,16 @@ add(
 add(
   'css-form-control-states',
   'Resilient form control presentation',
-  'Style native controls, labels, fieldsets, help, validation, disabled, read-only, focus, and autofill states without removing affordances or behavior.',
+  'Style native controls, labels, fieldsets, help, validation, disabled, read-only, focus, and autofill states with native appearance and accent-color first; use appearance suppression only when the complete control contract is reproduced.',
   'css-type-color-and-design',
   ['css-contrast-noncolor-meaning', 'css-pseudo-classes', 'css-box-sizing-models'],
-  'rwd-mdn-css-fundamentals',
-  '3.9 styling form elements',
-  'Form controls differ in browser and system styling; some accept limited customization and still require complete states.',
-  'Appearance none makes every control a blank cross-browser primitive with equivalent keyboard and accessibility behavior.',
+  'rwd-css-ui-four',
+  'Sections 4, 7, and 8: outline, accent-color, and appearance',
+  'Form styling must preserve focus indication and control behavior; accent-color lets user agents maintain control contrast, while appearance none suppresses native appearance and can leave a primitive or invisible control that authors must rebuild.',
+  'Appearance none is a harmless visual reset that preserves every control affordance, state, platform convention, forced-color adaptation, and input behavior automatically.',
   [
-    'Mouse, keyboard, touch, autofill, invalid, disabled, zoom, and forced-color cases must retain identity and operation.',
-    'Learner must preserve a native control when custom painting cannot reproduce its full state and behavior contract.',
+    'Mouse, keyboard, touch, speech, autofill, invalid, disabled, read-only, indeterminate, zoom, increased-contrast, and forced-color cases must retain identity, state, instructions, error recovery, and operation.',
+    'Learner must prefer native appearance or accent-color and preserve a native control whenever custom painting cannot reproduce its complete semantic, visual, interaction, submission, and user-preference contract.',
   ]
 );
 
@@ -1638,6 +1638,7 @@ const graph = {
     'rwd-css-color-four',
     'rwd-css-color-five',
     'rwd-css-images-four',
+    'rwd-css-ui-four',
     'rwd-wcag-two-two',
     'rwd-mdn-curriculum',
     'rwd-mdn-css-fundamentals',

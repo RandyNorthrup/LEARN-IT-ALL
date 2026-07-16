@@ -449,7 +449,7 @@ describe('research contracts', () => {
     expect(content).toContain('Specificity is not a decimal or four-position score');
     expect(content).toContain('fitting two inline-block columns through source-whitespace');
     expect(content).toContain('Source text or declaration presence is never sufficient evidence');
-    expect(content).toContain('The remaining 65 source blocks');
+    expect(content).toContain('The remaining 58 source blocks');
     expect(content.length).toBeGreaterThan(10_000);
   });
 
@@ -614,7 +614,7 @@ describe('research contracts', () => {
     expect(content).toContain('`calc(100% - 0)` was not accepted');
     expect(content).toContain('Merely writing a requested unit');
     expect(content).toContain('The complete 180-concept');
-    expect(content).toContain('The remaining 65 source blocks');
+    expect(content).toContain('The remaining 58 source blocks');
     expect(content.length).toBeGreaterThan(15_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-calculated-value-math');
     expect(
@@ -710,7 +710,7 @@ describe('research contracts', () => {
     expect(content).toContain('`:local-link` appears only in historical change notes');
     expect(content).toContain('`:has()` is relational, not merely a “parent selector”');
     expect(content).toContain('Keyword or selector presence alone cannot pass');
-    expect(content).toContain('The remaining 65 blocks');
+    expect(content).toContain('The remaining 58 blocks');
     expect(content.length).toBeGreaterThan(20_000);
     expect(
       dossier.sources.find((source) => source.id === 'rwd-fcc-pseudo-inspection')
@@ -883,7 +883,7 @@ describe('research contracts', () => {
     expect(content).toContain('five blocks, 98 challenges, 58 question prompts');
     expect(content).toContain('creates a CSS generated image value and no DOM element');
     expect(content).toContain('Class order in an HTML `class` attribute does not decide');
-    expect(content).toContain('remaining 65 source blocks');
+    expect(content).toContain('remaining 58 source blocks');
     expect(content).toContain('Keyword presence, a notation-matching regular expression');
     expect(content.length).toBeGreaterThan(20_000);
     expect(graph.concepts.map((concept) => concept.id)).toContain('css-derived-color-functions');
@@ -983,6 +983,206 @@ describe('research contracts', () => {
     });
   });
 
+  it('records the complete Styling Forms inspection and native-controls-first decision', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-styling-forms-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+    const graph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+
+    expect(content).toContain('seven blocks, 84 challenges, 19 question prompts');
+    expect(content).toContain("The benchmark's claim that `required` does not work");
+    expect(content).toContain('This is direct instructional duplication');
+    expect(content).toContain('remaining 58 source blocks');
+    expect(content).toContain('`appearance: none` suppresses the native appearance');
+    expect(content.length).toBeGreaterThan(20_000);
+    expect(graph.sourceIds).toContain('rwd-css-ui-four');
+    expect(
+      graph.concepts.find((concept) => concept.id === 'css-form-control-states')
+    ).toMatchObject({
+      sourceAnchors: [{ sourceId: 'rwd-css-ui-four' }],
+    });
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-styling-forms-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-15',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(dossier.sources.find((source) => source.id === 'rwd-css-forms-one')).toMatchObject({
+      authority: 'standard',
+      reviewedAt: '2026-07-15',
+    });
+    expect(
+      dossier.decisions.find((decision) => decision.id === 'rwd-native-form-controls-first')
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-whatwg-html',
+        'rwd-css-ui-four',
+        'rwd-css-forms-one',
+        'rwd-wcag-two-two',
+        'rwd-fcc-styling-forms-inspection',
+      ],
+    });
+  });
+
+  it('keeps all seven Styling Forms blocks exact and agent-inspected', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const formAlignments = matrix.alignments.filter(
+      (alignment) => alignment.sourceModuleId === 'styling-forms'
+    );
+
+    expect(formAlignments).toHaveLength(7);
+    expect(
+      formAlignments.reduce((total, alignment) => total + alignment.sourceChallengeCount, 0)
+    ).toBe(84);
+    expect(
+      formAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.quizQuestionCount,
+        0
+      )
+    ).toBe(19);
+    expect(
+      formAlignments.reduce(
+        (total, alignment) => total + alignment.sourceEvidence.hintCheckCount,
+        0
+      )
+    ).toBe(337);
+    expect(
+      formAlignments.every(
+        (alignment) =>
+          alignment.mappingBasis === 'block-specific-source' &&
+          alignment.inspectionState === 'agent-inspected'
+      )
+    ).toBe(true);
+    expect(
+      Object.fromEntries(
+        formAlignments.map((alignment) => [alignment.sourceBlockSlug, alignment.conceptIds])
+      )
+    ).toEqual({
+      'lecture-best-practices-for-styling-forms': [
+        'css-form-control-states',
+        'css-box-sizing-models',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-focus-visible-indicators',
+        'css-target-size-spacing',
+      ],
+      'workshop-registration-form': [
+        'html-heading-hierarchy',
+        'html-paragraphs-breaks',
+        'html-form-submission-data',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-textarea-select-buttons',
+        'html-form-control-states',
+        'html-native-validation',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-selector-lists-combinators',
+        'css-attribute-selectors',
+        'css-pseudo-classes',
+        'css-outer-inner-display',
+        'css-box-model-areas',
+        'css-box-sizing-models',
+        'css-intrinsic-extrinsic-sizing',
+        'css-absolute-font-relative-viewport-units',
+        'css-percentages-containing-blocks',
+        'css-backgrounds-borders-shadows',
+        'css-font-stacks-generic-fallbacks',
+        'css-type-scale-line-height',
+        'css-color-spaces-alpha',
+        'css-form-control-states',
+      ],
+      'lab-contact-form': [
+        'html-heading-hierarchy',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-textarea-select-buttons',
+        'html-native-validation',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-pseudo-classes',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-backgrounds-borders-shadows',
+        'css-font-stacks-generic-fallbacks',
+        'css-type-scale-line-height',
+        'css-color-spaces-alpha',
+        'css-form-control-states',
+      ],
+      'workshop-game-settings-panel': [
+        'html-heading-hierarchy',
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-form-control-states',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-attribute-selectors',
+        'css-pseudo-classes',
+        'css-pseudo-elements',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-backgrounds-borders-shadows',
+        'css-color-spaces-alpha',
+        'css-form-control-states',
+        'css-transitions-state-change',
+      ],
+      'lab-feature-selection': [
+        'html-form-labels-instructions',
+        'html-input-types-autocomplete',
+        'html-choice-groups',
+        'html-form-control-states',
+        'css-application-and-loading',
+        'css-type-class-id-selectors',
+        'css-attribute-selectors',
+        'css-pseudo-classes',
+        'css-pseudo-elements',
+        'css-box-model-areas',
+        'css-intrinsic-extrinsic-sizing',
+        'css-backgrounds-borders-shadows',
+        'css-color-spaces-alpha',
+        'css-form-control-states',
+      ],
+      'review-styling-forms': [
+        'css-form-control-states',
+        'css-box-sizing-models',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-pseudo-elements',
+        'css-focus-visible-indicators',
+        'css-target-size-spacing',
+      ],
+      'quiz-styling-forms': [
+        'css-form-control-states',
+        'css-type-scale-line-height',
+        'css-pseudo-classes',
+        'css-pseudo-elements',
+        'css-focus-visible-indicators',
+      ],
+    });
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -1038,7 +1238,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 97]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(93);
+    ).toHaveLength(100);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -1806,10 +2006,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(105);
+    ).toHaveLength(111);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(52);
+    ).toHaveLength(46);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -1967,8 +2167,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(180);
-    expect(architecture.sourceObjectiveIds).toHaveLength(105);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(53);
+    expect(architecture.sourceObjectiveIds).toHaveLength(111);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(47);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',
