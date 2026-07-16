@@ -3216,6 +3216,120 @@ describe('research contracts', () => {
     }
   });
 
+  it('records the complete CSS review and certification evidence boundary', () => {
+    const content = readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/research/courses/responsive-web-design-css-review-exam-inspection.md'
+      ),
+      'utf8'
+    );
+    const dossier = CourseResearchDossierSchema.parse(
+      readJson(path.join(repositoryRoot, 'docs/research/courses/responsive-web-design.json'))
+    );
+
+    expect(content).toContain('Complete CSS review inventory');
+    expect(content).toContain('Exam container evidence boundary');
+    expect(content).toContain('all 158 source blocks have challenge-level agent inspection');
+    expect(content).toContain(
+      'Challenge-level source inspection is complete. Research is not complete.'
+    );
+    expect(content.length).toBeGreaterThan(27_000);
+    expect(
+      dossier.sources.find((source) => source.id === 'rwd-fcc-css-review-exam-inspection')
+    ).toMatchObject({
+      authority: 'direct-observation',
+      reviewedAt: '2026-07-16',
+      questionIds: ['rwd-current-scope-depth', 'rwd-workspace-assessment'],
+    });
+    expect(
+      dossier.decisions.find(
+        (decision) => decision.id === 'rwd-retrieval-review-and-valid-certification'
+      )
+    ).toMatchObject({
+      status: 'accepted',
+      sourceIds: [
+        'rwd-ies-instruction-study',
+        'rwd-testing-standards',
+        'rwd-ets-evidence-centered-design',
+        'rwd-fcc-css-review-exam-inspection',
+      ],
+    });
+  });
+
+  it('maps only reviewed CSS contacts and keeps the unavailable exam item bank uncredited', () => {
+    const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-concept-alignment.json'
+        )
+      )
+    );
+    const review = matrix.alignments.find(
+      (alignment) => alignment.sourceBlockSlug === 'review-css'
+    );
+    const exam = matrix.alignments.find(
+      (alignment) => alignment.sourceBlockSlug === 'exam-responsive-web-design-certification'
+    );
+
+    expect(review).toMatchObject({
+      sourceChallengeCount: 1,
+      sourceEvidence: {
+        challengeIds: ['671a9a0a140c2b9d6a75629f'],
+        sourceFileSha256s: ['04782cd9c9f4d328b80fe948db8e42ac74556bce752205601ec8c802fed2c955'],
+        sourceBytes: 59_198,
+        hintCheckCount: 0,
+        quizQuestionCount: 0,
+      },
+      mappingBasis: 'block-specific-source',
+      inspectionState: 'agent-inspected',
+    });
+    expect(review?.conceptIds).toHaveLength(79);
+    for (const unsupportedConceptId of [
+      'css-source-preview-loop',
+      'css-cascade-layers-scope',
+      'css-logical-properties-writing-modes',
+      'css-font-metrics-fallback-stability',
+      'css-variable-fonts-features',
+      'css-derived-color-functions',
+      'css-subgrid-alignment',
+      'css-anchor-positioning-fallbacks',
+      'responsive-image-selection',
+      'responsive-range-syntax-overlap',
+      'responsive-container-query-model',
+      'responsive-container-query-units',
+      'responsive-grid-auto-fit-fill',
+      'responsive-navigation-disclosure',
+      'responsive-test-matrix',
+      'css-devtools-causal-debugging',
+      'css-rendering-performance-stability',
+      'css-changed-case-regression',
+      'css-independent-transfer-defense',
+    ]) {
+      expect(review?.conceptIds).not.toContain(unsupportedConceptId);
+    }
+    expect(exam).toMatchObject({
+      sourceChallengeCount: 1,
+      sourceEvidence: {
+        challengeIds: ['68db37350b398ecddd1f5dac'],
+        sourceFileSha256s: ['2eef33dd95fe63001a55a2a076838e9597659668fecf216c310c507d3f7e5ccf'],
+        sourceBytes: 296,
+        hintCheckCount: 0,
+        quizQuestionCount: 0,
+      },
+      conceptIds: [],
+      mappingBasis: 'assessment-container',
+      inspectionState: 'agent-inspected',
+    });
+    expect(
+      matrix.alignments.every((alignment) => alignment.inspectionState === 'agent-inspected')
+    ).toBe(true);
+    expect(matrix.alignments).not.toContainEqual(
+      expect.objectContaining({ mappingBasis: 'unmapped-source' })
+    );
+  });
+
   it('aligns every pinned v9 block to known concepts without hiding modern extensions', () => {
     const matrix = ExternalObjectiveConceptAlignmentSchema.parse(
       readJson(
@@ -3271,7 +3385,7 @@ describe('research contracts', () => {
     expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 103]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
-    ).toHaveLength(156);
+    ).toHaveLength(158);
     expect(
       matrix.alignments
         .filter((alignment) => inspectedOpeningBlocks.includes(alignment.sourceBlockSlug))
@@ -4039,10 +4153,10 @@ describe('research contracts', () => {
     });
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'block-specific-source')
-    ).toHaveLength(156);
+    ).toHaveLength(157);
     expect(
       matrix.alignments.filter((alignment) => alignment.mappingBasis === 'unmapped-source')
-    ).toHaveLength(1);
+    ).toHaveLength(0);
     expect(new Set(matrix.alignments.map((alignment) => alignment.mappingBasis))).not.toContain(
       'module-fallback'
     );
@@ -4105,7 +4219,7 @@ describe('research contracts', () => {
     expect(matrix.gaps.length).toBeGreaterThan(0);
   });
 
-  it('keeps uninspected source blocks explicitly unmapped and blocks guessed coverage', () => {
+  it('rejects guessed concepts if a source record is forced back to unmapped', () => {
     const matrix = readJson(
       path.join(
         repositoryRoot,
@@ -4121,12 +4235,12 @@ describe('research contracts', () => {
       conceptInventories: Array<{ conceptIds: string[] }>;
     };
     const broken = structuredClone(matrix);
-    const unmapped = broken.alignments.find(
-      (alignment) => alignment.mappingBasis === 'unmapped-source'
+    const mapped = broken.alignments.find(
+      (alignment) => alignment.mappingBasis === 'block-specific-source'
     );
-    expect(unmapped).toBeDefined();
-    if (!unmapped) throw new Error('Expected at least one explicitly unmapped source block.');
-    unmapped.conceptIds.push(matrix.conceptInventories[0].conceptIds[0]);
+    expect(mapped).toBeDefined();
+    if (!mapped) throw new Error('Expected at least one mapped source block.');
+    mapped.mappingBasis = 'unmapped-source';
 
     const result = ExternalObjectiveConceptAlignmentSchema.safeParse(broken);
     expect(result.success).toBe(false);
@@ -4200,8 +4314,8 @@ describe('research contracts', () => {
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(17);
     expect(architecture.conceptIds).toHaveLength(186);
-    expect(architecture.sourceObjectiveIds).toHaveLength(156);
-    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(2);
+    expect(architecture.sourceObjectiveIds).toHaveLength(157);
+    expect(architecture.unmappedSourceObjectiveIds).toHaveLength(1);
     expect(architecture.projects).toHaveLength(5);
     expect(architecture.entryContract).toMatchObject({
       openingModuleId: 'html-first-page',

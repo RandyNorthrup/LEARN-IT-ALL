@@ -99,12 +99,12 @@ Current candidate graph:
 - 83 HTML/tooling concepts;
 - 103 CSS/responsive/design concepts;
 - 186 total concepts;
-- 156 agent-inspected source blocks;
-- 1,551 inspected challenges;
+- all 158 source blocks agent-inspected at the evidence available in the snapshot;
+- all 1,553 source challenge identities exact and inspected;
 - all 1,365 captured question prompts;
 - all 5,163 inspected implementation checks;
-- 156 block-specific candidate mappings;
-- 1 uninspected source block with exact evidence and zero guessed concepts;
+- 157 block-specific candidate mappings;
+- 0 uninspected or `unmapped-source` blocks;
 - 1 assessment container without reviewable item-level evidence;
 - 7 unresolved concepts;
 - 7 explicit modern extensions not credited to the benchmark;
@@ -190,6 +190,8 @@ Pushed milestones:
 - 2026-07-16 Product Landing Page lab verification — reproducibility gate passes; focused research contracts pass 1 file / 53 tests; full test suite passes 47 files / 243 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 92 sources and correctly retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
 - 2026-07-16 CSS Animations research wave — inspect all 7 blocks, 139 challenges, 46 prompts, 451 checks, and 510,809 bytes; add current Transitions Levels 1/2, Animations Levels 1/2, Easing Level 2, WCAG motion, and browser runtime-performance evidence; remove false debugging and changed-case credit; reject the 29-step coordinate wheel, exact orbit recipe, 104-step Penguin trace, infinite motion without control or reduced mode, global almost-zero-duration override, misleading pointer-only div, and explicitly fake/malformed portfolio; require motion purpose, timing-state prediction, control, preference equivalence, flash/timing safety, runtime traces, correction, authentic portfolio evidence, and delayed transfer. Current alignment: 156 inspected blocks, 1,551 challenges, all 1,365 prompts, all 5,163 checks, 156 bounded mappings, 1 unmapped block, 186 concepts, and 2 total source or assessment blocks still requiring inspection.
 - 2026-07-16 CSS Animations verification — reproducibility gate passes; focused research contracts pass 1 file / 55 tests; full test suite passes 47 files / 245 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 99 sources and intentionally retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held.
+- 2026-07-16 CSS review and certification-boundary research wave — inspect the 59,198-byte CSS review and 296-byte exam container; record all 59 exposed answer-sheet headings and zero review prompts/checks; correct cascade, unit, margin, design-pattern, typography, Flex, positioning, z-index, device-band, responsive-image, custom-property, and motion shortcuts; replace rereading with retrieve-first interleaved prediction, build, diagnosis, correction, and delay; add IES learning guidance, AERA/APA/NCME testing standards, and ETS evidence-centered design; keep the unavailable external exam item bank at zero concepts with a hard validity blocker. Challenge-level inspection now covers all 158 blocks, 1,553 challenges, 1,365 prompts, and 5,163 checks; 157 blocks have bounded maps, zero remain `unmapped-source`, and the exam remains one inspected `assessment-container`.
+- 2026-07-16 complete source-inspection verification — reproducibility gate passes; focused research contracts pass 1 file / 57 tests; full test suite passes 47 files / 247 tests; type-check, normal lint, warning-failing strict lint, and Next.js 16.2.10 production build pass with 16 expected routes and zero curriculum documents. Research audit records 103 sources and intentionally retains 53 missing-dossier blockers plus one incomplete-research warning. Lighthouse remains held. Source inspection is complete; independent review, authoring, assessment validation, runtime, accessibility, duplication, pilots, retention, transfer, and publication remain open.
 
 Before the physical deletion milestone, the deny-by-default publication change passed 91 test files / 590 tests, type-check, normal lint, strict lint, Next.js 16.2.10 production build, and real browser checks at 390×844, 768×1024, and 1440×900. Deleted RWD routes and attempt/draft/hint APIs returned 404; `/api/tracks` returned an empty array.
 
@@ -228,7 +230,7 @@ The CodeMirror component is test-, type-, lint-, and build-valid but not learner
 
 ## Next work
 
-1. Inspect `review-css`, then record the certification assessment container's exact item-level evidence boundary without guessed concept mappings.
+1. Independently review the complete RWD concept graph and all 158 bounded source records for subject accuracy, omissions, duplication, prerequisite order, and mapping overclaim.
 2. Run independent subject, instructional-design, assessment, accessibility, and duplication reviews; create the complete activity matrix.
 3. Author and pilot the true-beginner HTML/editor vertical slice before scaling Responsive Web Design.
 4. Complete and review the full Responsive Web Design course, then research and rebuild the other 53 courses in prerequisite order.
