@@ -450,9 +450,9 @@ add(
   'Choose content-based, available-space, fixed, minimum-content, maximum-content, and fit-content sizing from actual constraints.',
   'css-boxes-and-sizing',
   ['css-box-sizing-models'],
-  'rwd-webdev-css',
-  'Sizing module',
-  'CSS sizing combines intrinsic content contributions with externally imposed constraints.',
+  'rwd-css-sizing-three',
+  'Sections 2 through 5: automatic, intrinsic, extrinsic, definite, and indefinite sizing',
+  'CSS sizing derives min-content and max-content sizes from content, fit-content from intrinsic and available-space constraints, and extrinsic results from the containing layout context.',
   'Every reliable layout needs explicit width and height values for all components.',
   [
     'Long, short, replaced, and empty content cases must produce predicted intrinsic sizes without magic numbers.',
@@ -483,8 +483,8 @@ add(
   'css-boxes-and-sizing',
   ['css-absolute-font-relative-viewport-units'],
   'rwd-css-values-four',
-  '5.5 percentages and percentage-dimension mixes',
-  'Percentage resolution depends on the property, containing block, writing mode, and whether the reference size is definite.',
+  'Sections 5.5 and 10.11: percentages, mixed types, and resolution stages',
+  'Each accepting property defines a percentage basis and resolution stage; unresolved percentages remain mixed with dimensions until the needed reference becomes available.',
   'Every percentage in CSS is calculated from the viewport width.',
   [
     'Learner must identify the reference dimension for width, height, margin, padding, and transform percentage cases.',
@@ -511,18 +511,27 @@ add(
 add(
   'css-min-max-clamp-functions',
   'Minimum, maximum, and fluid value functions',
-  'Compose min(), max(), clamp(), min-content, max-content, and minmax() to express bounded fluid constraints with defensible extremes.',
+  'Compose min(), max(), clamp(), min-content, max-content, and fit-content sizing to express bounded fluid constraints with defensible extremes before Grid-specific track functions enter.',
   'css-boxes-and-sizing',
   ['css-intrinsic-extrinsic-sizing', 'css-calculated-value-math'],
-  'rwd-webdev-css',
-  'Functions and sizing modules',
-  'Modern CSS functions can encode lower, preferred, and upper constraints without many discrete breakpoints.',
+  'rwd-css-values-four',
+  'Sections 10.2 and 10.8: min(), max(), clamp(), type consistency, and syntax',
+  'The min(), max(), and clamp() functions compare type-consistent calculations; clamp() applies its preferred calculation between explicit lower and upper constraints rather than selecting the middle token unconditionally.',
   'Clamp chooses the middle written argument even when it falls outside the minimum and maximum.',
   [
     'Learner must calculate changed low, middle, and high input cases and identify the active constraint.',
     'A fluid size must remain within explicit readability or interaction bounds under zoom and container changes.',
   ]
 );
+
+addSourceAnchors('css-min-max-clamp-functions', [
+  {
+    sourceId: 'rwd-css-sizing-three',
+    locator: 'Sections 2.1 and 3.2: min-content, max-content, and fit-content sizing',
+    claim:
+      'Intrinsic sizing keywords and fit-content encode content and available-space constraints; they are sizing values, not interchangeable with the general numeric min(), max(), and clamp() functions.',
+  },
+]);
 
 add(
   'css-overflow-containment-scroll',
@@ -546,15 +555,24 @@ add(
   'Use block, inline, start, and end properties so spacing, sizing, position, and borders survive writing-direction and writing-mode changes.',
   'css-boxes-and-sizing',
   ['css-box-model-areas'],
-  'rwd-webdev-css',
-  'Logical properties module',
-  'Logical properties map intent to flow-relative axes instead of assuming left-to-right horizontal text.',
+  'rwd-css-logical-one',
+  'Sections 1 and 4: flow-relative mappings and logical box-model properties',
+  'Logical properties map flow-relative dimensions and sides through the element writing mode, while intentionally physical design requirements remain physical.',
   'Inline-start always means the physical left edge, including right-to-left and vertical writing.',
   [
     'The component must preserve semantic start and end relationships under LTR, RTL, and vertical changed cases.',
     'Learner must replace physical properties only where the requirement is flow-relative and retain physical ones where intentional.',
   ]
 );
+
+addSourceAnchors('css-logical-properties-writing-modes', [
+  {
+    sourceId: 'rwd-css-writing-modes-four',
+    locator: 'Section 1: inline base direction, block flow direction, and writing mode',
+    claim:
+      'Writing mode defines inline progression and block stacking through writing-mode, direction, and text-orientation rather than fixed horizontal left-to-right assumptions.',
+  },
+]);
 
 add(
   'css-backgrounds-borders-shadows',
@@ -970,9 +988,9 @@ add(
   'Predict block and inline layout in normal flow before selecting any layout override, and retain source order as the primary reading and focus order.',
   'css-flexible-layout',
   ['css-outer-inner-display', 'css-intrinsic-extrinsic-sizing'],
-  'rwd-mdn-css-layout',
-  '5.1 CSS layout basics',
-  'Normal flow is the default layout model and other mechanisms intentionally alter parts of it.',
+  'rwd-css-two-two',
+  'Sections 9.4, 9.8.1, and 10.3: normal flow, formatting contexts, and normal-flow sizing',
+  'In-flow block and inline boxes participate in defined formatting contexts, use containing-block and content constraints for sizing, and preserve source sequence unless another layout mechanism changes participation or presentation.',
   'A page without flexbox, grid, float, or positioning has no layout behavior to reason about.',
   [
     'Learner must draw the block and inline flow of changed content before applying layout properties.',
@@ -1800,6 +1818,8 @@ const graph = {
     'rwd-css-display-three',
     'rwd-css-backgrounds-three',
     'rwd-css-values-four',
+    'rwd-css-logical-one',
+    'rwd-css-writing-modes-four',
     'rwd-css-color-four',
     'rwd-css-color-five',
     'rwd-css-images-four',

@@ -6391,6 +6391,145 @@ describe('research contracts', () => {
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
+  it('decomposes sizing, units, and overflow into 183 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-sizing-units-and-overflow-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const cssGraph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+    const plannedConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds].sort();
+
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(['css-box-model-areas', 'css-box-sizing-models']);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(cssGraph.sourceIds).toEqual(
+      expect.arrayContaining(['rwd-css-logical-one', 'rwd-css-writing-modes-four'])
+    );
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-intrinsic-extrinsic-sizing')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toContain('rwd-css-sizing-three');
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-min-max-clamp-functions')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(expect.arrayContaining(['rwd-css-values-four', 'rwd-css-sizing-three']));
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-logical-properties-writing-modes')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(expect.arrayContaining(['rwd-css-logical-one', 'rwd-css-writing-modes-four']));
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-normal-flow')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toContain('rwd-css-two-two');
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.plannedInteractions).toBe(planned?.minimumInteractions);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+      expect(
+        [
+          ...new Set(activity?.interactions.flatMap((interaction) => interaction.conceptIds) ?? []),
+        ].sort()
+      ).toEqual(plannedConceptIds);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    const requiredLayouts = [
+      'intrinsic-sizing-inspector',
+      'length-reference-frame-board',
+      'percentage-basis-inspector',
+      'css-math-calculation-board',
+      'bounded-value-constraint-graph',
+      'logical-axis-mapper',
+      'normal-flow-size-inspector',
+      'overflow-access-inspector',
+    ];
+    expect(interactions).toHaveLength(183);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(183);
+    expect(new Set(interactions.map((interaction) => interaction.layout))).toEqual(
+      new Set(['box-area-measurement-board', 'box-sizing-equation-board', ...requiredLayouts])
+    );
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      183
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+
+    const tokenSet = (value: string) => new Set(value.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+    for (const [leftIndex, left] of interactions.entries()) {
+      const leftTokens = tokenSet(left.learnerAction);
+      for (const right of interactions.slice(leftIndex + 1)) {
+        const rightTokens = tokenSet(right.learnerAction);
+        const intersection = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+        const union = leftTokens.size + rightTokens.size - intersection;
+        expect(intersection / union).toBeLessThan(0.8);
+      }
+    }
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects intrinsic-sizing evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-sizing-units-and-overflow-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const intrinsicInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'intrinsic-size-contribution');
+    if (!intrinsicInteraction) {
+      throw new Error('Intrinsic-sizing evidence fixture missing');
+    }
+    delete intrinsicInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
   it('rejects browser research evidence without a changed trace', () => {
     const missingTrace = structuredClone(
       readJson(
