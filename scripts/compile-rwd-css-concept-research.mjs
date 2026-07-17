@@ -306,6 +306,15 @@ add(
   ]
 );
 
+addSourceAnchors('css-cascade-layers-scope', [
+  {
+    sourceId: 'rwd-css-cascade-six',
+    locator: 'Sections 3.1 and 3.5: scope proximity, scope boundaries, and the @scope rule',
+    claim:
+      'The exploratory Level 6 draft places scope proximity between specificity and order and defines bounded @scope rules without adding prelude specificity.',
+  },
+]);
+
 add(
   'css-custom-properties-fallbacks',
   'Custom properties, substitution, and fallbacks',
@@ -340,8 +349,8 @@ add(
 
 add(
   'css-link-state-sequence',
-  'Link states and state distinguishability',
-  'Style unvisited, visited, hover, focus-visible, and active link states in cascade-safe order without exposing history, removing affordance, or relying on color alone.',
+  'Link states, cascade, and state distinguishability',
+  'Trace and style unvisited, visited, hover, focus-visible, and active link states without exposing history, removing affordance, relying on color alone, or treating one mnemonic declaration order as the whole cascade.',
   'css-language-and-cascade',
   ['css-pseudo-classes', 'css-cascade-origins-importance-order'],
   'rwd-selectors-four',
@@ -353,6 +362,22 @@ add(
     'Learner must trace a state conflict through cascade order and repair it without disabling another input path.',
   ]
 );
+
+addSourceAnchors('css-link-state-sequence', [
+  {
+    sourceId: 'rwd-css-color-adjust-one',
+    locator: 'Section 3 and Section 5: forced-color palettes and test emulation',
+    claim:
+      'Forced-colors replaces author color components and selected paint effects with user-system colors and exposes deterministic emulation palettes for changed-environment testing.',
+  },
+  {
+    sourceId: 'rwd-wcag-two-two',
+    locator:
+      'Success Criteria 1.4.1, 2.4.7, and 2.4.11: color, visible focus, and unobscured focus',
+    claim:
+      'Link state and focus evidence cannot depend on color alone, must expose visible keyboard focus, and must keep the focused component at least partially visible.',
+  },
+]);
 
 add(
   'css-outer-inner-display',

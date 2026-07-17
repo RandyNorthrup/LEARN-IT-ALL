@@ -481,6 +481,16 @@ describe('research contracts', () => {
       'rwd-css-counter-styles-three',
       'rwd-wcag-two-two',
     ]);
+    expect(
+      graph.concepts
+        .find((concept) => concept.id === 'css-cascade-layers-scope')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(['rwd-css-cascade-five', 'rwd-css-cascade-six']);
+    expect(
+      graph.concepts
+        .find((concept) => concept.id === 'css-link-state-sequence')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(['rwd-selectors-four', 'rwd-css-color-adjust-one', 'rwd-wcag-two-two']);
     expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
     expect(graph.gaps.length).toBeGreaterThan(0);
   });
@@ -6099,6 +6109,104 @@ describe('research contracts', () => {
       throw new Error('Pseudo-class state evidence fixture missing');
     }
     delete stateInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
+  it('decomposes cascade inheritance and layers into 119 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-cascade-inheritance-and-layers-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'css-rule-declaration-anatomy',
+      'css-application-and-loading',
+      'css-attribute-selectors',
+      'css-pseudo-classes',
+    ]);
+    const plannedConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds].sort();
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+      expect(
+        [
+          ...new Set(activity?.interactions.flatMap((interaction) => interaction.conceptIds) ?? []),
+        ].sort()
+      ).toEqual(plannedConceptIds);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(119);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(119);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(5);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      119
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects cascade-winner evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-cascade-inheritance-and-layers-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const cascadeInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'cascade-winner-trace');
+    if (!cascadeInteraction) {
+      throw new Error('Cascade-winner evidence fixture missing');
+    }
+    delete cascadeInteraction.evidence.changedCase;
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
