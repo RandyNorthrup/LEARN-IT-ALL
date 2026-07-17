@@ -46,6 +46,7 @@
     "rwd-css-text-decoration-four",
     "rwd-css-inline-three",
     "rwd-woff-two",
+    "rwd-sil-open-font-license",
     "rwd-media-queries-five",
     "rwd-css-contain-three",
     "rwd-css-grid-two",
@@ -1456,8 +1457,8 @@
     },
     {
       "id": "css-font-stacks-generic-fallbacks",
-      "title": "Font selection, faces, generic fallbacks, and synthesis",
-      "objective": "Predict family, width, style, weight, character-cluster, generic-family, and synthesized-face selection while preserving language support and readable fallback.",
+      "title": "Font families, generic mappings, matching, and glyph fallback",
+      "objective": "Predict ordered family, generic-family, width, style, weight, character-cluster, and installed-font fallback selection while preserving language support and readable output.",
       "order": 38,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
@@ -1466,16 +1467,51 @@
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-fonts-four",
-          "locator": "Sections 2, 5, and 6: basic font properties, font matching, and font features",
-          "claim": "CSS selects faces from a prioritized family list using requested width, style, weight, language, and cluster coverage; installed fonts and generic mappings vary by user agent, platform, locale, and user choice, and missing faces can trigger synthesis."
+          "locator": "Sections 2, 5, 10, and 15: family properties, matching, font taxonomy, and privacy",
+          "claim": "CSS selects faces from ordered families using requested width, style, weight, and character-cluster coverage; generic mappings and installed-font availability vary by user agent, platform, locale, privacy policy, and user choice."
         }
       ],
       "misconceptions": [
-        "A named font that exists on most computers renders every script, weight, italic, metric, and glyph consistently across platforms."
+        "A named system font or generic family produces the same face, metrics, language coverage, and glyphs on every device."
       ],
       "evidenceRequirements": [
-        "Missing family, missing face, missing cluster, synthetic bold or italic, different locale, and user-chosen generic cases must remain legible and preserve meaning.",
-        "Learner must inspect the rendered face and justify family order, generic choice, synthesis policy, language coverage, and requested style rather than infer results from authored CSS."
+        "Missing family, missing face, missing cluster, different locale, privacy-restricted installed fonts, and user-chosen generic cases must remain legible and preserve meaning.",
+        "Learner must inspect the rendered face and justify family order, generic choice, language coverage, and requested attributes rather than infer results from authored CSS."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-font-synthesis-face-selection",
+      "title": "Real faces, missing-face selection, and synthesis control",
+      "objective": "Distinguish real from synthesized weight, style, small-cap, and position forms; select available faces and bound synthesis where script, legibility, or brand integrity requires it.",
+      "order": 39,
+      "moduleId": "css-type-color-and-design",
+      "prerequisiteIds": [
+        "css-font-stacks-generic-fallbacks"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-fonts-four",
+          "locator": "Sections 2.2 through 2.4, 2.8, and 5: requested faces, missing weights, synthesis, and matching",
+          "claim": "When a requested face is unavailable, matching can select another face and user agents can synthesize bold, oblique, small-cap, super, or sub forms unless the applicable font-synthesis values prohibit that behavior."
+        }
+      ],
+      "misconceptions": [
+        "A requested italic or bold declaration proves the selected font contains a designed italic or bold face rather than a synthesized approximation."
+      ],
+      "evidenceRequirements": [
+        "Missing weight, style, small-cap, super, sub, script, and glyph cases must expose whether a real, different, synthesized, or last-resort face rendered.",
+        "Learner must choose a synthesis policy from content and script evidence, then verify readable fallback rather than disable synthesis as a universal rule."
       ],
       "stages": [
         "introduce",
@@ -1491,26 +1527,112 @@
     },
     {
       "id": "css-web-font-sources-loading",
-      "title": "Web font sources, loading, licensing, privacy, and failure",
-      "objective": "Declare licensed, bounded font sources, formats, technologies, unicode ranges, display behavior, weights, widths, and styles while controlling requests, payload, privacy exposure, and failure behavior.",
-      "order": 39,
+      "title": "Web font rules, descriptors, and ordered source activation",
+      "objective": "Declare bounded @font-face rules with family, ordered local or URL sources, formats, technologies, weight, width, style, and unicode ranges while proving which source parses, activates, matches, and supplies each character.",
+      "order": 40,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
-        "css-font-stacks-generic-fallbacks"
+        "css-font-stacks-generic-fallbacks",
+        "css-font-synthesis-face-selection"
       ],
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-fonts-four",
-          "locator": "Sections 3 and 4: display timeline, font resources, descriptors, fetching, and font-display",
-          "claim": "Font faces use ordered local or URL sources plus descriptors that define matching ranges and display behavior; fetching, blocking, swap, failure, licensing, cross-origin delivery, and third-party requests remain separate operational decisions."
+          "locator": "Sections 4.1 through 4.8 and 11: @font-face, sources, matching descriptors, unicode ranges, requests, formats, and technologies",
+          "claim": "@font-face defines document-scoped faces; required family and src descriptors, ordered source activation, face ranges, format and technology hints, and unicode-range matching determine whether a resource is considered and downloaded."
         }
       ],
       "misconceptions": [
-        "Pasting a remote font stylesheet link guarantees valid licensing, private requests, complete character coverage, fast rendering, and a usable offline result."
+        "A valid @font-face rule or visible stylesheet link proves the URL downloaded, parsed, matched every character, and rendered the requested face."
       ],
       "evidenceRequirements": [
-        "Blocked, slow, failed, cross-origin, unsupported-format, missing-range, offline, and third-party-disabled cases must keep all text readable and the task usable.",
-        "Learner must verify license and source ownership, inspect actual requests and loaded faces, minimize required variants and subsets, and defend self-hosted or third-party delivery against privacy, security, availability, and performance constraints."
+        "Missing descriptor, overridden src, unsupported technology, corrupt file, unmatched face range, missing glyph, and unused-face cases must expose the exact selection boundary.",
+        "Learner must inspect rule, request, parse, activation, match, rendered face, and character coverage separately instead of awarding success from source syntax."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-font-display-loading-lifecycle",
+      "title": "Font display periods, deferred loading, readiness, success, and failure",
+      "objective": "Choose font-display behavior from task and performance constraints while tracing deferred requests, block, swap, and failure periods plus FontFace and FontFaceSet readiness evidence without requiring script for ordinary delivery.",
+      "order": 41,
+      "moduleId": "css-type-color-and-design",
+      "prerequisiteIds": [
+        "css-web-font-sources-loading"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-fonts-four",
+          "locator": "Sections 3.2 and 4.9: the font display timeline and font-display descriptor",
+          "claim": "A font face moves through block, swap, and failure periods while user agents can defer unused downloads; display policy controls invisible or visible fallback and whether a later loaded face replaces it."
+        },
+        {
+          "sourceId": "rwd-css-font-loading-three",
+          "locator": "Sections 1 through 4: FontFace, FontFaceSet, events, load, check, and ready",
+          "claim": "FontFace and FontFaceSet expose unloaded, loading, loaded, and error state plus readiness and events, while an unused declared face may remain unrequested until matching needs it."
+        }
+      ],
+      "misconceptions": [
+        "Declaring @font-face starts an immediate download, document.fonts.ready proves the requested face rendered, and font-display: swap is optimal for every task."
+      ],
+      "evidenceRequirements": [
+        "Unused, delayed, slow, failed, offline, cache-warm, and user-disabled download cases must retain readable content and expose request, status, fallback, and swap behavior.",
+        "Learner must predict display periods, inspect actual load evidence, and justify policy from content priority and layout stability without adding unnecessary JavaScript."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-font-licensing-privacy-subsetting",
+      "title": "Font license evidence, delivery privacy, payload, and coverage-preserving subsets",
+      "objective": "Verify exact font permission and required notices, choose self-hosted or third-party delivery from privacy and availability constraints, and subset only with measured payload and complete language, glyph, feature, and axis coverage.",
+      "order": 42,
+      "moduleId": "css-type-color-and-design",
+      "prerequisiteIds": [
+        "css-web-font-sources-loading"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-sil-open-font-license",
+          "locator": "OFL 1.1, current OFL-FAQ, and official using and modifying guidance",
+          "claim": "OFL webfont use and distribution are permitted under exact license terms, while modified redistribution can require retained notices, continued licensing, and Reserved Font Name changes; other fonts require their own verified permission."
+        },
+        {
+          "sourceId": "rwd-css-fonts-four",
+          "locator": "Sections 4.5 and 15: unicode-range, font requests, and privacy considerations",
+          "claim": "Unicode ranges influence conditional downloads, cross-origin font requests can expose referrer information, and installed-font availability can be reduced by user-agent privacy policy."
+        },
+        {
+          "sourceId": "rwd-woff-two",
+          "locator": "Introduction and general requirements",
+          "claim": "WOFF2 packages fonts with font-aware compression for web delivery but does not itself grant a content license or prove subset coverage."
+        }
+      ],
+      "misconceptions": [
+        "A free download, WOFF2 conversion, attribution line, or educational site automatically grants web embedding, modification, redistribution, and subsetting rights."
+      ],
+      "evidenceRequirements": [
+        "Learner must record asset identity, source, copyright holder, exact license and version, embedding and modification permission, required notices, Reserved Font Names, uncertainty, and refusal or replacement path.",
+        "Third-party-disabled, referrer-exposure, offline, metered, changed-language, missing-glyph, missing-feature, and changed-axis cases must preserve the task and prove any subset remains complete."
       ],
       "stages": [
         "introduce",
@@ -1526,19 +1648,19 @@
     },
     {
       "id": "css-font-metrics-fallback-stability",
-      "title": "Font metrics, fallback matching, and layout stability",
-      "objective": "Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to fallback sizing, line boxes, overflow, and layout shift.",
-      "order": 40,
+      "title": "Font metrics, fallback adjustment, and layout stability",
+      "objective": "Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to font-size-adjust, @font-face metric overrides, fallback geometry, overflow, and layout shift.",
+      "order": 43,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
-        "css-web-font-sources-loading",
+        "css-font-display-loading-lifecycle",
         "css-intrinsic-extrinsic-sizing"
       ],
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-fonts-four",
-          "locator": "Sections 2.5, 2.6, and 4.11: size, size adjustment, and font metric overrides",
-          "claim": "Font metrics affect perceived size, glyph width, line boxes, fallback geometry, and layout stability; size-adjust and ascent, descent, and line-gap overrides can align known fallback metrics but require measured values."
+          "locator": "Sections 2.5, 2.6, and 4.11: size, relative size adjustment, and face metric overrides",
+          "claim": "Font metrics affect perceived size, glyph width, line boxes, fallback geometry, and layout stability; font-size-adjust, size-adjust, and ascent, descent, and line-gap overrides act at different boundaries and require measured values."
         }
       ],
       "misconceptions": [
@@ -1546,7 +1668,7 @@
       ],
       "evidenceRequirements": [
         "Changed fallback family, delayed load, 200% text, missing glyph, heading wrap, button label, and multilingual cases must preserve content and bounded layout stability.",
-        "Learner must measure actual metrics and geometry before using adjustment descriptors, then prove the correction across at least two changed strings without clipping glyphs."
+        "Learner must measure actual metrics and geometry before using adjustment properties or descriptors, then prove the correction across changed strings without clipping glyphs."
       ],
       "stages": [
         "introduce",
@@ -1561,28 +1683,98 @@
       "currentState": "researched-not-authored"
     },
     {
-      "id": "css-variable-fonts-features",
-      "title": "Variable axes, typographic features, and language-aware glyphs",
-      "objective": "Use registered variable axes, bounded custom axes, kerning, ligatures, numeric forms, capitalization, and language-aware shaping through high-level properties before low-level feature overrides.",
-      "order": 41,
+      "id": "css-variable-font-axes-optical-sizing",
+      "title": "Variable font axes, declared ranges, clamping, and optical sizing",
+      "objective": "Use registered weight, width, slant, italic, and optical-size axes through high-level properties; bound custom axes and low-level settings to verified face ranges and payload needs.",
+      "order": 44,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
-        "css-web-font-sources-loading",
+        "css-web-font-sources-loading"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-fonts-four",
+          "locator": "Sections 4.4, 4.6, 4.7, 7, and 8: face ranges, variation resolution, optical sizing, and low-level settings",
+          "claim": "Variable faces advertise axis ranges; registered axes map through high-level font properties, unsupported axes are ignored, out-of-range values clamp, and low-level variation settings do not replace matching behavior."
+        }
+      ],
+      "misconceptions": [
+        "A variable font contains every useful style and language, is always smaller than required static faces, and should be controlled only with font-variation-settings."
+      ],
+      "evidenceRequirements": [
+        "Unsupported-axis, clamped-range, missing-instance, static-fallback, optical-size, changed-language, and payload-comparison cases must preserve readable output.",
+        "Learner must inspect available axes and ranges, choose high-level properties when defined, and justify custom-axis or low-level use from a verified font contract."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-font-features-language-shaping",
+      "title": "Kerning, ligatures, numeric forms, capitals, and language-aware shaping",
+      "objective": "Choose high-level kerning and font-variant properties from language and content needs, trace feature precedence, and reserve low-level feature settings for supported cases that lack a high-level control.",
+      "order": 45,
+      "moduleId": "css-type-color-and-design",
+      "prerequisiteIds": [
         "css-font-stacks-generic-fallbacks"
       ],
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-fonts-four",
-          "locator": "Sections 6 through 8: feature properties, resolution, and variation properties",
-          "claim": "CSS Fonts maps high-level weight, width, style, variant, kerning, and language properties into font selection and OpenType features; variation axes and low-level settings apply in a defined order and only when the selected face supports them."
+          "locator": "Sections 6 and 7: feature properties, language-specific display, and feature resolution",
+          "claim": "CSS maps language, kerning, ligature, capitalization, numeric, position, alternate, and East Asian properties into font feature selection with defined precedence that depends on the selected face and its supported glyph features."
         }
       ],
       "misconceptions": [
-        "A variable font automatically includes every useful style and language, is always smaller than static subsets, and should be controlled only through font-variation-settings."
+        "Ligatures, tabular numbers, small caps, fractions, and language-specific glyphs work identically in every font and can be enabled safely through one global low-level feature list."
       ],
       "evidenceRequirements": [
-        "Unsupported-axis, clamped-range, missing-feature, changed-language, numeric-data, code, and fallback-face cases must preserve readable and semantically suitable glyphs.",
-        "Learner must inspect supported axes and features, choose high-level CSS when available, measure payload against required static faces, and explain any low-level override."
+        "Changed language, fallback face, numeric table, code sample, abbreviation, fraction, ruby, missing-feature, copy, and search cases must retain correct and readable text.",
+        "Learner must inspect selected glyph behavior, use high-level properties where available, and explain any low-level override plus its fallback when unsupported."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-color-font-palettes-emoji",
+      "title": "Color font palettes and text or emoji presentation",
+      "objective": "Select built-in or bounded custom color-font palettes and text or emoji presentation while retaining semantic text, contrast, forced-color behavior, fallback glyphs, and non-color meaning.",
+      "order": 46,
+      "moduleId": "css-type-color-and-design",
+      "prerequisiteIds": [
+        "css-font-features-language-shaping",
+        "css-web-font-sources-loading"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-fonts-four",
+          "locator": "Section 9: color font palettes, @font-palette-values, and font-variant-emoji",
+          "claim": "Color fonts can expose palettes and palette overrides, while font-variant-emoji requests text or emoji presentation; actual results depend on selected-face capabilities, fallback, user agent, and user color adjustments."
+        }
+      ],
+      "misconceptions": [
+        "A color-font glyph behaves like a CSS background image, automatically preserves contrast in forced colors, and can carry required status meaning without text."
+      ],
+      "evidenceRequirements": [
+        "Missing-color-font, unsupported-palette, forced-colors, monochrome, print, text-presentation, emoji-presentation, and fallback-face cases must preserve meaning and readability.",
+        "Learner must inspect selected font and palette support, measure adjacent contrast where applicable, and keep status or instructions outside glyph color alone."
       ],
       "stages": [
         "introduce",
@@ -1600,7 +1792,7 @@
       "id": "css-type-scale-line-height",
       "title": "Type scale, line height, and rhythm",
       "objective": "Set a readable type scale and unitless line heights that adapt through inheritance, zoom, content hierarchy, and component context.",
-      "order": 42,
+      "order": 47,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-font-stacks-generic-fallbacks",
@@ -1637,7 +1829,7 @@
       "id": "css-readable-measure-alignment",
       "title": "Readable measure and text alignment",
       "objective": "Constrain line measure and choose alignment based on reading direction, content length, scanning, and layout rather than screen width alone.",
-      "order": 43,
+      "order": 48,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-type-scale-line-height",
@@ -1673,7 +1865,7 @@
       "id": "css-text-wrap-spacing-decoration",
       "title": "Wrapping, spacing, transformation, and overflow text",
       "objective": "Control white space, wrapping, word and line breaking, hyphenation, alignment, case transformation, spacing, indentation, and truncation without hiding content or overriding language and user text-spacing needs.",
-      "order": 44,
+      "order": 49,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-readable-measure-alignment",
@@ -1709,7 +1901,7 @@
       "id": "css-text-decoration-shadows-emphasis",
       "title": "Text decoration, shadows, and emphasis",
       "objective": "Apply underlines, overlines, line-throughs, emphasis marks, and text shadows without obscuring glyphs, imitating links, carrying meaning by decoration alone, or mistaking ink overflow for layout space.",
-      "order": 45,
+      "order": 50,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-text-wrap-spacing-decoration",
@@ -1745,7 +1937,7 @@
       "id": "css-color-spaces-alpha",
       "title": "Color notation, spaces, and alpha",
       "objective": "Choose named, hexadecimal, RGB, HSL, perceptual, and wide-gamut color notation while predicting conversion, gamut mapping, and alpha compositing against changed backgrounds.",
-      "order": 46,
+      "order": 51,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-rule-declaration-anatomy"
@@ -1780,7 +1972,7 @@
       "id": "css-derived-color-functions",
       "title": "Mixed, relative, and contextual colors",
       "objective": "Derive maintainable color variants with color-mix(), relative color syntax, currentColor, and supported contextual functions while choosing an interpolation space and preserving contrast under changed inputs.",
-      "order": 47,
+      "order": 52,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1816,7 +2008,7 @@
       "id": "css-contrast-noncolor-meaning",
       "title": "Contrast and non-color evidence",
       "objective": "Verify text, component, focus, and state contrast while providing shape, text, position, or semantics when color alone cannot carry meaning.",
-      "order": 48,
+      "order": 53,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1852,7 +2044,7 @@
       "id": "css-filter-effects-fallbacks",
       "title": "Filter effects and readable fallbacks",
       "objective": "Apply bounded filter and backdrop-filter effects while preserving text, contrast, focus, performance, stacking, and usable fallback output.",
-      "order": 49,
+      "order": 54,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1889,7 +2081,7 @@
       "id": "css-gradients-background-images",
       "title": "Gradients and presentational images",
       "objective": "Build gradients and decorative background images with predictable stops, sizing, repeat, position, and fallback while keeping required content in HTML.",
-      "order": 50,
+      "order": 55,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1925,7 +2117,7 @@
       "id": "design-user-needs-task-flows",
       "title": "Evidence-backed user needs and task flows",
       "objective": "Derive user needs, constraints, task sequences, failure paths, and acceptance evidence from research rather than designing around personal preference or a fictional typical user.",
-      "order": 51,
+      "order": 56,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-purpose-and-boundary"
@@ -1960,7 +2152,7 @@
       "id": "css-visual-hierarchy-spacing",
       "title": "Composition, balance, scale, hierarchy, proximity, and rhythm",
       "objective": "Compose and balance size, weight, spacing, grouping, alignment, imagery, and contrast so semantic hierarchy and task priority remain perceivable without changing reading order.",
-      "order": 52,
+      "order": 57,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1997,7 +2189,7 @@
       "id": "design-prototypes-evaluation-iteration",
       "title": "Prototypes, evaluation, and iterative decisions",
       "objective": "Choose low- or high-fidelity prototypes, define research questions and tasks, observe representative use, separate findings from opinion, and revise traceable design decisions.",
-      "order": 53,
+      "order": 58,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -2033,7 +2225,7 @@
       "id": "css-design-tokens-theming",
       "title": "Design tokens and theme constraints",
       "objective": "Model semantic color, type, spacing, radius, and elevation decisions as scoped tokens while declaring supported color schemes and preserving user preferences.",
-      "order": 54,
+      "order": 59,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-custom-properties-fallbacks",
@@ -2069,7 +2261,7 @@
       "id": "design-brief-handoff-artifacts",
       "title": "Evidence-backed design briefs and developer handoff",
       "objective": "Turn researched outcomes, content, accessibility needs, constraints, risks, acceptance evidence, decisions, and open questions into a versioned brief and inspectable developer handoff.",
-      "order": 55,
+      "order": 60,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -2105,7 +2297,7 @@
       "id": "design-progressive-enhancement",
       "title": "Essential baseline and progressive enhancement",
       "objective": "Deliver essential content and task behavior in a broadly usable baseline, then add supported layout and interaction enhancements without making the enhancement the only path.",
-      "order": 56,
+      "order": 61,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-purpose-and-boundary",
@@ -2141,7 +2333,7 @@
       "id": "design-hierarchical-wayfinding",
       "title": "Hierarchical wayfinding and breadcrumbs",
       "objective": "Choose breadcrumbs only for genuine parent-page hierarchy, expose an ordered path in a labelled navigation landmark, and identify the current page without confusing hierarchy with visit history or task progress.",
-      "order": 57,
+      "order": 62,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -2177,7 +2369,7 @@
       "id": "design-card-content-actions",
       "title": "Card grouping, content priority, and action boundaries",
       "objective": "Use a card only when a set of related content benefits from repeated grouping, preserve heading and list relationships, bound its primary and secondary actions, and make every action operable without invalid nested interaction.",
-      "order": 58,
+      "order": 63,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-visual-hierarchy-spacing",
@@ -2213,7 +2405,7 @@
       "id": "design-progressive-disclosure-registration",
       "title": "Progressive disclosure and proportionate registration",
       "objective": "Reveal secondary complexity through a clear persistent control while keeping essential information visible, and require identity or account data only when the user task and risk make it necessary.",
-      "order": 59,
+      "order": 64,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -2249,7 +2441,7 @@
       "id": "css-form-control-states",
       "title": "Resilient form control presentation",
       "objective": "Style native controls, labels, fieldsets, help, validation, disabled, read-only, focus, and autofill states with native appearance and accent-color first; use appearance suppression only when the complete control contract is reproduced.",
-      "order": 60,
+      "order": 65,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-contrast-noncolor-meaning",
@@ -2286,7 +2478,7 @@
       "id": "css-normal-flow",
       "title": "Normal flow as the layout baseline",
       "objective": "Predict block and inline layout in normal flow before selecting any layout override, and retain source order as the primary reading and focus order.",
-      "order": 61,
+      "order": 66,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-outer-inner-display",
@@ -2322,7 +2514,7 @@
       "id": "css-flex-container-items-axes",
       "title": "Flex containers, items, and axes",
       "objective": "Identify flex container, direct flex items, main axis, cross axis, starts, ends, and writing-mode effects before changing alignment.",
-      "order": 62,
+      "order": 67,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-normal-flow"
@@ -2357,7 +2549,7 @@
       "id": "css-flex-direction-wrap-lines",
       "title": "Flex direction, wrapping, and lines",
       "objective": "Choose row or column direction and wrapping behavior while preserving logical order, usable growth, and predictable new-line formation.",
-      "order": 63,
+      "order": 68,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-container-items-axes"
@@ -2392,7 +2584,7 @@
       "id": "css-flex-basis-grow-shrink",
       "title": "Flex base size, growth, and shrinkage",
       "objective": "Predict flex base sizes, free-space distribution, shrink factors, minimum contributions, and resulting item sizes.",
-      "order": 64,
+      "order": 69,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-direction-wrap-lines",
@@ -2428,7 +2620,7 @@
       "id": "css-flex-alignment-distribution",
       "title": "Flex alignment and free-space distribution",
       "objective": "Use justify, align, content, items, self, and auto margins according to axis, line count, free space, and baseline needs.",
-      "order": 65,
+      "order": 70,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-container-items-axes",
@@ -2464,7 +2656,7 @@
       "id": "css-flex-gap-spacing",
       "title": "Flex gaps and resilient spacing",
       "objective": "Use gap, padding, and margins according to whether spacing belongs between items, inside a container, or to one component edge.",
-      "order": 66,
+      "order": 71,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-alignment-distribution",
@@ -2500,7 +2692,7 @@
       "id": "css-flex-order-accessibility",
       "title": "Flex visual order and accessibility",
       "objective": "Use source order as the meaningful sequence and restrict order changes to cases where visual reordering does not contradict reading, focus, or task order.",
-      "order": 67,
+      "order": 72,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-direction-wrap-lines"
@@ -2535,7 +2727,7 @@
       "id": "css-flex-component-transfer",
       "title": "Flexible component patterns",
       "objective": "Build unfamiliar navigation, media, card, toolbar, and form-row components by selecting flex constraints from content behavior rather than memorized recipes.",
-      "order": 68,
+      "order": 73,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-basis-grow-shrink",
@@ -2572,7 +2764,7 @@
       "id": "css-grid-container-tracks-cells",
       "title": "Grid containers, tracks, lines, cells, and areas",
       "objective": "Identify grid container, direct items, axes, lines, tracks, cells, gaps, and areas as a two-dimensional placement model.",
-      "order": 69,
+      "order": 74,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2608,7 +2800,7 @@
       "id": "css-grid-explicit-tracks-fr",
       "title": "Explicit tracks and fractional space",
       "objective": "Define explicit rows and columns with fixed, percentage, intrinsic, and fr tracks while accounting for gaps and minimum contributions.",
-      "order": 70,
+      "order": 75,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-container-tracks-cells",
@@ -2644,7 +2836,7 @@
       "id": "css-grid-repeat-minmax-intrinsic",
       "title": "Repeat, minmax, and intrinsic tracks",
       "objective": "Compose repeat(), minmax(), min-content, max-content, fit-content, and flexible tracks to encode bounded content behavior.",
-      "order": 71,
+      "order": 76,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr",
@@ -2680,7 +2872,7 @@
       "id": "css-grid-line-placement-spans",
       "title": "Grid line placement and spans",
       "objective": "Place items with positive and negative lines, spans, and named lines while preserving a logical source sequence and non-overlapping task flow.",
-      "order": 72,
+      "order": 77,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr"
@@ -2715,7 +2907,7 @@
       "id": "css-grid-template-areas",
       "title": "Named grid areas and responsive rearrangement",
       "objective": "Define complete rectangular named areas and change visual arrangements only when source, reading, focus, and task sequences remain coherent.",
-      "order": 73,
+      "order": 78,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-line-placement-spans",
@@ -2751,7 +2943,7 @@
       "id": "css-grid-auto-placement-dense",
       "title": "Implicit tracks and auto-placement",
       "objective": "Predict implicit track creation, auto-flow order, and dense packing while avoiding visual arrangements that contradict meaningful sequence.",
-      "order": 74,
+      "order": 79,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-line-placement-spans"
@@ -2786,7 +2978,7 @@
       "id": "css-grid-alignment-distribution",
       "title": "Grid item, content, and self alignment",
       "objective": "Align grid items and distribute grid tracks with place, align, and justify properties according to the alignment subject, container, logical axis, available space, baseline, and overflow-safety requirement.",
-      "order": 75,
+      "order": 80,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-container-tracks-cells"
@@ -2821,7 +3013,7 @@
       "id": "css-subgrid-alignment",
       "title": "Subgrid and cross-component alignment",
       "objective": "Use subgrid when nested content must participate in ancestor track sizing and alignment, with a fallback for unsupported or unsuitable contexts.",
-      "order": 76,
+      "order": 81,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr",
@@ -2857,7 +3049,7 @@
       "id": "css-positioning-containing-blocks",
       "title": "Static, relative, absolute, fixed, and sticky positioning",
       "objective": "Select a positioning scheme by flow participation, containing block, scroll behavior, offsets, and overlap requirements.",
-      "order": 77,
+      "order": 82,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2893,7 +3085,7 @@
       "id": "css-anchor-positioning-fallbacks",
       "title": "Anchor positioning and overflow fallbacks",
       "objective": "Position a bounded out-of-flow callout relative to a named anchor with logical placement and overflow fallbacks while preserving native semantics, focus, reading order, viewport access, and a usable unsupported-feature path.",
-      "order": 78,
+      "order": 83,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-positioning-containing-blocks",
@@ -2929,7 +3121,7 @@
       "id": "css-stacking-contexts-z-index",
       "title": "Stacking contexts and z-index",
       "objective": "Trace stacking-context creation and paint order so local z-index values solve bounded overlap without escalating global layer numbers.",
-      "order": 79,
+      "order": 84,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-positioning-containing-blocks",
@@ -2965,7 +3157,7 @@
       "id": "css-floats-content-wrapping",
       "title": "Floats for content wrapping",
       "objective": "Use floats for bounded content wrapping, clear them deliberately, and reject them as the default multi-column page-layout mechanism.",
-      "order": 80,
+      "order": 85,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -3001,7 +3193,7 @@
       "id": "responsive-fluid-default",
       "title": "Fluid content as the responsive baseline",
       "objective": "Begin from normal reflow and intrinsic sizing, then add only constraints justified by readability, task, media, or component evidence.",
-      "order": 81,
+      "order": 86,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -3038,7 +3230,7 @@
       "id": "responsive-viewport-zoom",
       "title": "Viewport configuration and zoom",
       "objective": "Configure the layout viewport for device width without disabling user zoom or assuming CSS pixels equal physical pixels.",
-      "order": 82,
+      "order": 87,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default"
@@ -3073,7 +3265,7 @@
       "id": "responsive-fluid-media",
       "title": "Fluid images, video, and embedded content",
       "objective": "Constrain replaced media to its container while preserving intrinsic aspect ratio, meaningful cropping, controls, and failure behavior.",
-      "order": 83,
+      "order": 88,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default",
@@ -3109,7 +3301,7 @@
       "id": "responsive-image-selection",
       "title": "Resolution and art-direction image selection",
       "objective": "Use srcset, sizes, picture, source, type, and media so the browser selects an appropriate resource without hiding required alternative content.",
-      "order": 84,
+      "order": 89,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-media"
@@ -3144,7 +3336,7 @@
       "id": "responsive-media-query-model",
       "title": "Media-query conditions and user features",
       "objective": "Compose media types, width ranges, orientation, resolution, interaction, color, contrast, and preference features around actual adaptation needs.",
-      "order": 85,
+      "order": 90,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default"
@@ -3179,7 +3371,7 @@
       "id": "responsive-content-breakpoints",
       "title": "Content-derived breakpoints",
       "objective": "Introduce a breakpoint where content, measure, controls, or layout can no longer satisfy explicit acceptance constraints.",
-      "order": 86,
+      "order": 91,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3215,7 +3407,7 @@
       "id": "responsive-mobile-first-enhancement",
       "title": "Narrow-first progressive enhancement",
       "objective": "Author a simple narrow layout and add wider-space enhancements without treating narrow interaction, content, or performance as lesser versions.",
-      "order": 87,
+      "order": 92,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-content-breakpoints"
@@ -3250,7 +3442,7 @@
       "id": "responsive-range-syntax-overlap",
       "title": "Range syntax and boundary ownership",
       "objective": "Use inclusive and exclusive media-query ranges so adjacent conditions have intentional boundaries without overlap gaps or fragile pixel offsets.",
-      "order": 88,
+      "order": 93,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3286,7 +3478,7 @@
       "id": "responsive-container-query-model",
       "title": "Container query establishment and conditions",
       "objective": "Establish a query container and adapt a reusable component to its available inline size or state independently of viewport width.",
-      "order": 89,
+      "order": 94,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-content-breakpoints",
@@ -3322,7 +3514,7 @@
       "id": "responsive-container-query-units",
       "title": "Container query units and bounded fluid components",
       "objective": "Use cqi, cqb, cqmin, and cqmax inside explicit bounds so component scale follows its query container without becoming unreadable.",
-      "order": 90,
+      "order": 95,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-container-query-model",
@@ -3358,7 +3550,7 @@
       "id": "responsive-grid-auto-fit-fill",
       "title": "Intrinsic responsive grids",
       "objective": "Use repeat with auto-fit or auto-fill and safe minmax constraints to form content-responsive tracks without unnecessary viewport breakpoints.",
-      "order": 91,
+      "order": 96,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "css-grid-repeat-minmax-intrinsic",
@@ -3394,7 +3586,7 @@
       "id": "responsive-navigation-disclosure",
       "title": "Responsive navigation and disclosure behavior",
       "objective": "Adapt navigation presentation without removing destinations, changing meaningful order, trapping focus, or depending on hover and viewport width alone.",
-      "order": 92,
+      "order": 97,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-container-query-model",
@@ -3431,7 +3623,7 @@
       "id": "design-long-collection-navigation",
       "title": "Long collections, pagination, and restored context",
       "objective": "Choose explicit pagination or a bounded user-requested continuation for long collections, expose position and destinations, preserve history and focus, and restore context after detail navigation.",
-      "order": 93,
+      "order": 98,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-navigation-disclosure",
@@ -3467,7 +3659,7 @@
       "id": "responsive-test-matrix",
       "title": "Responsive evidence matrix",
       "objective": "Test continuous size ranges and changed content, zoom, input, preferences, orientation, density, media, performance, and browser conditions using recorded evidence.",
-      "order": 94,
+      "order": 99,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-image-selection",
@@ -3504,7 +3696,7 @@
       "id": "css-zoom-reflow-text-spacing",
       "title": "Zoom, reflow, and user text spacing",
       "objective": "Preserve content and operation under browser zoom, viewport reflow, enlarged text, and user-overridden line, paragraph, letter, and word spacing.",
-      "order": 95,
+      "order": 100,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-test-matrix",
@@ -3540,7 +3732,7 @@
       "id": "css-focus-visible-indicators",
       "title": "Keyboard focus and focus-visible indicators",
       "objective": "Create persistent, unobscured, high-contrast focus indicators using focus-visible while preserving a usable fallback and logical focus order.",
-      "order": 96,
+      "order": 101,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-pseudo-classes",
@@ -3577,7 +3769,7 @@
       "id": "css-input-capability-adaptation",
       "title": "Hover, pointer, touch, and input capabilities",
       "objective": "Use hover, any-hover, pointer, and any-pointer as enhancement signals while keeping complete operation for mixed and changing input devices.",
-      "order": 97,
+      "order": 102,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3613,7 +3805,7 @@
       "id": "css-target-size-spacing",
       "title": "Pointer target size and spacing",
       "objective": "Provide usable target dimensions and spacing without enlarging overlapping hit areas, hiding labels, or weakening dense-data exceptions.",
-      "order": 98,
+      "order": 103,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-box-model-areas",
@@ -3649,7 +3841,7 @@
       "id": "design-modal-dialog-focus",
       "title": "Modal necessity, semantics, focus, and dismissal",
       "objective": "Use a modal only for a bounded interrupting task, make background content inert, label the dialog, contain and place focus deliberately, provide explicit dismissal, protect entered work, and restore logical focus.",
-      "order": 99,
+      "order": 104,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-focus-visible-indicators",
@@ -3686,7 +3878,7 @@
       "id": "design-multistep-progress-recovery",
       "title": "Multi-step progress, persistence, review, and recovery",
       "objective": "Break a genuinely long process into logical steps, communicate current and total progress in text, preserve entered data, support backward correction, and recover after interruption without inventing false certainty for conditional paths.",
-      "order": 100,
+      "order": 105,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-focus-visible-indicators",
@@ -3723,7 +3915,7 @@
       "id": "design-cart-review-correction",
       "title": "Cart state, quantity correction, totals, and confirmation",
       "objective": "Keep selected items and costs inspectable, provide labelled quantity and removal controls, announce material changes, prevent silent loss, and offer a complete review-and-correct step before commitment.",
-      "order": 101,
+      "order": 106,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-form-control-states",
@@ -3759,7 +3951,7 @@
       "id": "css-reduced-motion-preference",
       "title": "Reduced-motion adaptation",
       "objective": "Use prefers-reduced-motion to remove or replace nonessential movement while preserving state changes, spatial understanding, and task feedback.",
-      "order": 102,
+      "order": 107,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model"
@@ -3794,7 +3986,7 @@
       "id": "css-transitions-state-change",
       "title": "Transitions and state continuity",
       "objective": "Transition animatable properties with bounded duration and easing so changes remain perceptible without delaying operation or animating unintended properties.",
-      "order": 103,
+      "order": 108,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-pseudo-classes",
@@ -3830,7 +4022,7 @@
       "id": "css-keyframe-animation-model",
       "title": "Keyframes, timing, fill, and iteration",
       "objective": "Define keyframe animations with intentional interpolation, iteration, direction, delay, fill, composition, and termination behavior.",
-      "order": 104,
+      "order": 109,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-transitions-state-change"
@@ -3865,7 +4057,7 @@
       "id": "css-forced-colors-preferences",
       "title": "Forced colors, contrast, and theme preferences",
       "objective": "Adapt to forced-colors, prefers-contrast, color-scheme, and light or dark preferences without defeating system colors or hiding controls.",
-      "order": 105,
+      "order": 110,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-design-tokens-theming",
@@ -3901,7 +4093,7 @@
       "id": "css-print-and-non-screen-media",
       "title": "Print and non-screen output",
       "objective": "Provide a print adaptation that preserves document meaning, URLs or references, page breaks, contrast, and hidden-versus-required content.",
-      "order": 106,
+      "order": 111,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3937,7 +4129,7 @@
       "id": "css-devtools-causal-debugging",
       "title": "Computed-style and layout debugging",
       "objective": "Use validation, matched rules, computed styles, box, flex, grid, accessibility, responsive, and performance evidence to test one cause hypothesis at a time.",
-      "order": 107,
+      "order": 112,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-cascade-layers-scope",
@@ -3974,7 +4166,7 @@
       "id": "css-rendering-performance-stability",
       "title": "Rendering cost and layout stability",
       "objective": "Reduce blocking payload, unnecessary style work, layout shifts, expensive paint, and animation cost without sacrificing semantics or accessibility.",
-      "order": 108,
+      "order": 113,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-web-font-sources-loading",
@@ -4011,7 +4203,7 @@
       "id": "css-changed-case-regression",
       "title": "Changed-case CSS regression testing",
       "objective": "Protect semantic, visual, responsive, interaction, accessibility, and performance invariants with behavior checks rather than selector-token assertions.",
-      "order": 109,
+      "order": 114,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-devtools-causal-debugging",
@@ -4048,7 +4240,7 @@
       "id": "css-independent-transfer-defense",
       "title": "Independent responsive interface transfer and defense",
       "objective": "Design, build, test, and defend an unfamiliar multi-page responsive interface from an empty stylesheet and stakeholder acceptance criteria.",
-      "order": 110,
+      "order": 115,
       "moduleId": "css-independent-project",
       "prerequisiteIds": [
         "css-cascade-layers-scope",

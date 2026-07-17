@@ -729,65 +729,169 @@ addSourceAnchors('css-backgrounds-borders-shadows', [
 
 add(
   'css-font-stacks-generic-fallbacks',
-  'Font selection, faces, generic fallbacks, and synthesis',
-  'Predict family, width, style, weight, character-cluster, generic-family, and synthesized-face selection while preserving language support and readable fallback.',
+  'Font families, generic mappings, matching, and glyph fallback',
+  'Predict ordered family, generic-family, width, style, weight, character-cluster, and installed-font fallback selection while preserving language support and readable output.',
   'css-type-color-and-design',
   ['css-inheritance-initial-unset-revert'],
   'rwd-css-fonts-four',
-  'Sections 2, 5, and 6: basic font properties, font matching, and font features',
-  'CSS selects faces from a prioritized family list using requested width, style, weight, language, and cluster coverage; installed fonts and generic mappings vary by user agent, platform, locale, and user choice, and missing faces can trigger synthesis.',
-  'A named font that exists on most computers renders every script, weight, italic, metric, and glyph consistently across platforms.',
+  'Sections 2, 5, 10, and 15: family properties, matching, font taxonomy, and privacy',
+  'CSS selects faces from ordered families using requested width, style, weight, and character-cluster coverage; generic mappings and installed-font availability vary by user agent, platform, locale, privacy policy, and user choice.',
+  'A named system font or generic family produces the same face, metrics, language coverage, and glyphs on every device.',
   [
-    'Missing family, missing face, missing cluster, synthetic bold or italic, different locale, and user-chosen generic cases must remain legible and preserve meaning.',
-    'Learner must inspect the rendered face and justify family order, generic choice, synthesis policy, language coverage, and requested style rather than infer results from authored CSS.',
+    'Missing family, missing face, missing cluster, different locale, privacy-restricted installed fonts, and user-chosen generic cases must remain legible and preserve meaning.',
+    'Learner must inspect the rendered face and justify family order, generic choice, language coverage, and requested attributes rather than infer results from authored CSS.',
+  ]
+);
+
+add(
+  'css-font-synthesis-face-selection',
+  'Real faces, missing-face selection, and synthesis control',
+  'Distinguish real from synthesized weight, style, small-cap, and position forms; select available faces and bound synthesis where script, legibility, or brand integrity requires it.',
+  'css-type-color-and-design',
+  ['css-font-stacks-generic-fallbacks'],
+  'rwd-css-fonts-four',
+  'Sections 2.2 through 2.4, 2.8, and 5: requested faces, missing weights, synthesis, and matching',
+  'When a requested face is unavailable, matching can select another face and user agents can synthesize bold, oblique, small-cap, super, or sub forms unless the applicable font-synthesis values prohibit that behavior.',
+  'A requested italic or bold declaration proves the selected font contains a designed italic or bold face rather than a synthesized approximation.',
+  [
+    'Missing weight, style, small-cap, super, sub, script, and glyph cases must expose whether a real, different, synthesized, or last-resort face rendered.',
+    'Learner must choose a synthesis policy from content and script evidence, then verify readable fallback rather than disable synthesis as a universal rule.',
   ]
 );
 
 add(
   'css-web-font-sources-loading',
-  'Web font sources, loading, licensing, privacy, and failure',
-  'Declare licensed, bounded font sources, formats, technologies, unicode ranges, display behavior, weights, widths, and styles while controlling requests, payload, privacy exposure, and failure behavior.',
+  'Web font rules, descriptors, and ordered source activation',
+  'Declare bounded @font-face rules with family, ordered local or URL sources, formats, technologies, weight, width, style, and unicode ranges while proving which source parses, activates, matches, and supplies each character.',
   'css-type-color-and-design',
-  ['css-font-stacks-generic-fallbacks'],
+  ['css-font-stacks-generic-fallbacks', 'css-font-synthesis-face-selection'],
   'rwd-css-fonts-four',
-  'Sections 3 and 4: display timeline, font resources, descriptors, fetching, and font-display',
-  'Font faces use ordered local or URL sources plus descriptors that define matching ranges and display behavior; fetching, blocking, swap, failure, licensing, cross-origin delivery, and third-party requests remain separate operational decisions.',
-  'Pasting a remote font stylesheet link guarantees valid licensing, private requests, complete character coverage, fast rendering, and a usable offline result.',
+  'Sections 4.1 through 4.8 and 11: @font-face, sources, matching descriptors, unicode ranges, requests, formats, and technologies',
+  '@font-face defines document-scoped faces; required family and src descriptors, ordered source activation, face ranges, format and technology hints, and unicode-range matching determine whether a resource is considered and downloaded.',
+  'A valid @font-face rule or visible stylesheet link proves the URL downloaded, parsed, matched every character, and rendered the requested face.',
   [
-    'Blocked, slow, failed, cross-origin, unsupported-format, missing-range, offline, and third-party-disabled cases must keep all text readable and the task usable.',
-    'Learner must verify license and source ownership, inspect actual requests and loaded faces, minimize required variants and subsets, and defend self-hosted or third-party delivery against privacy, security, availability, and performance constraints.',
+    'Missing descriptor, overridden src, unsupported technology, corrupt file, unmatched face range, missing glyph, and unused-face cases must expose the exact selection boundary.',
+    'Learner must inspect rule, request, parse, activation, match, rendered face, and character coverage separately instead of awarding success from source syntax.',
   ]
 );
+
+add(
+  'css-font-display-loading-lifecycle',
+  'Font display periods, deferred loading, readiness, success, and failure',
+  'Choose font-display behavior from task and performance constraints while tracing deferred requests, block, swap, and failure periods plus FontFace and FontFaceSet readiness evidence without requiring script for ordinary delivery.',
+  'css-type-color-and-design',
+  ['css-web-font-sources-loading'],
+  'rwd-css-fonts-four',
+  'Sections 3.2 and 4.9: the font display timeline and font-display descriptor',
+  'A font face moves through block, swap, and failure periods while user agents can defer unused downloads; display policy controls invisible or visible fallback and whether a later loaded face replaces it.',
+  'Declaring @font-face starts an immediate download, document.fonts.ready proves the requested face rendered, and font-display: swap is optimal for every task.',
+  [
+    'Unused, delayed, slow, failed, offline, cache-warm, and user-disabled download cases must retain readable content and expose request, status, fallback, and swap behavior.',
+    'Learner must predict display periods, inspect actual load evidence, and justify policy from content priority and layout stability without adding unnecessary JavaScript.',
+  ]
+);
+
+addSourceAnchors('css-font-display-loading-lifecycle', [
+  {
+    sourceId: 'rwd-css-font-loading-three',
+    locator: 'Sections 1 through 4: FontFace, FontFaceSet, events, load, check, and ready',
+    claim:
+      'FontFace and FontFaceSet expose unloaded, loading, loaded, and error state plus readiness and events, while an unused declared face may remain unrequested until matching needs it.',
+  },
+]);
+
+add(
+  'css-font-licensing-privacy-subsetting',
+  'Font license evidence, delivery privacy, payload, and coverage-preserving subsets',
+  'Verify exact font permission and required notices, choose self-hosted or third-party delivery from privacy and availability constraints, and subset only with measured payload and complete language, glyph, feature, and axis coverage.',
+  'css-type-color-and-design',
+  ['css-web-font-sources-loading'],
+  'rwd-sil-open-font-license',
+  'OFL 1.1, current OFL-FAQ, and official using and modifying guidance',
+  'OFL webfont use and distribution are permitted under exact license terms, while modified redistribution can require retained notices, continued licensing, and Reserved Font Name changes; other fonts require their own verified permission.',
+  'A free download, WOFF2 conversion, attribution line, or educational site automatically grants web embedding, modification, redistribution, and subsetting rights.',
+  [
+    'Learner must record asset identity, source, copyright holder, exact license and version, embedding and modification permission, required notices, Reserved Font Names, uncertainty, and refusal or replacement path.',
+    'Third-party-disabled, referrer-exposure, offline, metered, changed-language, missing-glyph, missing-feature, and changed-axis cases must preserve the task and prove any subset remains complete.',
+  ]
+);
+
+addSourceAnchors('css-font-licensing-privacy-subsetting', [
+  {
+    sourceId: 'rwd-css-fonts-four',
+    locator: 'Sections 4.5 and 15: unicode-range, font requests, and privacy considerations',
+    claim:
+      'Unicode ranges influence conditional downloads, cross-origin font requests can expose referrer information, and installed-font availability can be reduced by user-agent privacy policy.',
+  },
+  {
+    sourceId: 'rwd-woff-two',
+    locator: 'Introduction and general requirements',
+    claim:
+      'WOFF2 packages fonts with font-aware compression for web delivery but does not itself grant a content license or prove subset coverage.',
+  },
+]);
 
 add(
   'css-font-metrics-fallback-stability',
-  'Font metrics, fallback matching, and layout stability',
-  'Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to fallback sizing, line boxes, overflow, and layout shift.',
+  'Font metrics, fallback adjustment, and layout stability',
+  'Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to font-size-adjust, @font-face metric overrides, fallback geometry, overflow, and layout shift.',
   'css-type-color-and-design',
-  ['css-web-font-sources-loading', 'css-intrinsic-extrinsic-sizing'],
+  ['css-font-display-loading-lifecycle', 'css-intrinsic-extrinsic-sizing'],
   'rwd-css-fonts-four',
-  'Sections 2.5, 2.6, and 4.11: size, size adjustment, and font metric overrides',
-  'Font metrics affect perceived size, glyph width, line boxes, fallback geometry, and layout stability; size-adjust and ascent, descent, and line-gap overrides can align known fallback metrics but require measured values.',
+  'Sections 2.5, 2.6, and 4.11: size, relative size adjustment, and face metric overrides',
+  'Font metrics affect perceived size, glyph width, line boxes, fallback geometry, and layout stability; font-size-adjust, size-adjust, and ascent, descent, and line-gap overrides act at different boundaries and require measured values.',
   'Matching fallback category or declared font size guarantees identical x-height, line breaks, line boxes, and element dimensions before and after a web font loads.',
   [
     'Changed fallback family, delayed load, 200% text, missing glyph, heading wrap, button label, and multilingual cases must preserve content and bounded layout stability.',
-    'Learner must measure actual metrics and geometry before using adjustment descriptors, then prove the correction across at least two changed strings without clipping glyphs.',
+    'Learner must measure actual metrics and geometry before using adjustment properties or descriptors, then prove the correction across changed strings without clipping glyphs.',
   ]
 );
 
 add(
-  'css-variable-fonts-features',
-  'Variable axes, typographic features, and language-aware glyphs',
-  'Use registered variable axes, bounded custom axes, kerning, ligatures, numeric forms, capitalization, and language-aware shaping through high-level properties before low-level feature overrides.',
+  'css-variable-font-axes-optical-sizing',
+  'Variable font axes, declared ranges, clamping, and optical sizing',
+  'Use registered weight, width, slant, italic, and optical-size axes through high-level properties; bound custom axes and low-level settings to verified face ranges and payload needs.',
   'css-type-color-and-design',
-  ['css-web-font-sources-loading', 'css-font-stacks-generic-fallbacks'],
+  ['css-web-font-sources-loading'],
   'rwd-css-fonts-four',
-  'Sections 6 through 8: feature properties, resolution, and variation properties',
-  'CSS Fonts maps high-level weight, width, style, variant, kerning, and language properties into font selection and OpenType features; variation axes and low-level settings apply in a defined order and only when the selected face supports them.',
-  'A variable font automatically includes every useful style and language, is always smaller than static subsets, and should be controlled only through font-variation-settings.',
+  'Sections 4.4, 4.6, 4.7, 7, and 8: face ranges, variation resolution, optical sizing, and low-level settings',
+  'Variable faces advertise axis ranges; registered axes map through high-level font properties, unsupported axes are ignored, out-of-range values clamp, and low-level variation settings do not replace matching behavior.',
+  'A variable font contains every useful style and language, is always smaller than required static faces, and should be controlled only with font-variation-settings.',
   [
-    'Unsupported-axis, clamped-range, missing-feature, changed-language, numeric-data, code, and fallback-face cases must preserve readable and semantically suitable glyphs.',
-    'Learner must inspect supported axes and features, choose high-level CSS when available, measure payload against required static faces, and explain any low-level override.',
+    'Unsupported-axis, clamped-range, missing-instance, static-fallback, optical-size, changed-language, and payload-comparison cases must preserve readable output.',
+    'Learner must inspect available axes and ranges, choose high-level properties when defined, and justify custom-axis or low-level use from a verified font contract.',
+  ]
+);
+
+add(
+  'css-font-features-language-shaping',
+  'Kerning, ligatures, numeric forms, capitals, and language-aware shaping',
+  'Choose high-level kerning and font-variant properties from language and content needs, trace feature precedence, and reserve low-level feature settings for supported cases that lack a high-level control.',
+  'css-type-color-and-design',
+  ['css-font-stacks-generic-fallbacks'],
+  'rwd-css-fonts-four',
+  'Sections 6 and 7: feature properties, language-specific display, and feature resolution',
+  'CSS maps language, kerning, ligature, capitalization, numeric, position, alternate, and East Asian properties into font feature selection with defined precedence that depends on the selected face and its supported glyph features.',
+  'Ligatures, tabular numbers, small caps, fractions, and language-specific glyphs work identically in every font and can be enabled safely through one global low-level feature list.',
+  [
+    'Changed language, fallback face, numeric table, code sample, abbreviation, fraction, ruby, missing-feature, copy, and search cases must retain correct and readable text.',
+    'Learner must inspect selected glyph behavior, use high-level properties where available, and explain any low-level override plus its fallback when unsupported.',
+  ]
+);
+
+add(
+  'css-color-font-palettes-emoji',
+  'Color font palettes and text or emoji presentation',
+  'Select built-in or bounded custom color-font palettes and text or emoji presentation while retaining semantic text, contrast, forced-color behavior, fallback glyphs, and non-color meaning.',
+  'css-type-color-and-design',
+  ['css-font-features-language-shaping', 'css-web-font-sources-loading'],
+  'rwd-css-fonts-four',
+  'Section 9: color font palettes, @font-palette-values, and font-variant-emoji',
+  'Color fonts can expose palettes and palette overrides, while font-variant-emoji requests text or emoji presentation; actual results depend on selected-face capabilities, fallback, user agent, and user color adjustments.',
+  'A color-font glyph behaves like a CSS background image, automatically preserves contrast in forced colors, and can carry required status meaning without text.',
+  [
+    'Missing-color-font, unsupported-palette, forced-colors, monochrome, print, text-presentation, emoji-presentation, and fallback-face cases must preserve meaning and readability.',
+    'Learner must inspect selected font and palette support, measure adjacent contrast where applicable, and keep status or instructions outside glyph color alone.',
   ]
 );
 
@@ -1966,6 +2070,7 @@ const graph = {
     'rwd-css-text-decoration-four',
     'rwd-css-inline-three',
     'rwd-woff-two',
+    'rwd-sil-open-font-license',
     'rwd-media-queries-five',
     'rwd-css-contain-three',
     'rwd-css-grid-two',

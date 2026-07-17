@@ -201,8 +201,6 @@ const sourceModuleConcepts = {
   'css-typography': [
     'css-font-stacks-generic-fallbacks',
     'css-web-font-sources-loading',
-    'css-font-metrics-fallback-stability',
-    'css-variable-fonts-features',
     'css-type-scale-line-height',
     'css-readable-measure-alignment',
     'css-text-wrap-spacing-decoration',
@@ -1751,7 +1749,6 @@ const blockConcepts = {
     'css-application-and-loading',
     'css-font-stacks-generic-fallbacks',
     'css-web-font-sources-loading',
-    'css-font-metrics-fallback-stability',
     'css-type-scale-line-height',
     'css-readable-measure-alignment',
     'css-text-wrap-spacing-decoration',
@@ -1806,7 +1803,6 @@ const blockConcepts = {
   'review-css-typography': [
     'css-font-stacks-generic-fallbacks',
     'css-web-font-sources-loading',
-    'css-font-metrics-fallback-stability',
     'css-type-scale-line-height',
     'css-readable-measure-alignment',
     'css-text-wrap-spacing-decoration',
@@ -1816,7 +1812,6 @@ const blockConcepts = {
   'quiz-css-typography': [
     'css-font-stacks-generic-fallbacks',
     'css-web-font-sources-loading',
-    'css-font-metrics-fallback-stability',
     'css-type-scale-line-height',
     'css-text-wrap-spacing-decoration',
     'css-text-decoration-shadows-emphasis',
@@ -2884,7 +2879,13 @@ const agentInspectedChallengeCount = alignments
   .filter((alignment) => alignment.inspectionState === 'agent-inspected')
   .reduce((total, alignment) => total + alignment.sourceChallengeCount, 0);
 const explicitModernExtensionConceptIds = [
-  'css-variable-fonts-features',
+  'css-font-synthesis-face-selection',
+  'css-font-display-loading-lifecycle',
+  'css-font-licensing-privacy-subsetting',
+  'css-font-metrics-fallback-stability',
+  'css-variable-font-axes-optical-sizing',
+  'css-font-features-language-shaping',
+  'css-color-font-palettes-emoji',
   'css-logical-properties-writing-modes',
   'css-subgrid-alignment',
   'css-anchor-positioning-fallbacks',

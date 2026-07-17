@@ -323,6 +323,7 @@ describe('research contracts', () => {
         'rwd-mdn-html-images',
         'rwd-us-copyright-fair-use',
         'rwd-creative-commons-licenses',
+        'rwd-sil-open-font-license',
       ],
     });
     expect(
@@ -360,12 +361,12 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(110);
+    expect(graph.concepts).toHaveLength(115);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
       'css-language-and-cascade': 17,
       'css-boxes-and-sizing': 20,
-      'css-type-color-and-design': 23,
+      'css-type-color-and-design': 28,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 12,
       'responsive-systems': 14,
@@ -1617,6 +1618,7 @@ describe('research contracts', () => {
         'rwd-css-text-decoration-four',
         'rwd-css-inline-three',
         'rwd-woff-two',
+        'rwd-sil-open-font-license',
       ])
     );
     expect(
@@ -1647,6 +1649,7 @@ describe('research contracts', () => {
         'rwd-css-text-decoration-four',
         'rwd-css-inline-three',
         'rwd-woff-two',
+        'rwd-sil-open-font-license',
         'rwd-wcag-two-two',
         'rwd-wai-tutorials',
         'rwd-fda-nutrition-label',
@@ -1700,7 +1703,6 @@ describe('research contracts', () => {
         'css-application-and-loading',
         'css-font-stacks-generic-fallbacks',
         'css-web-font-sources-loading',
-        'css-font-metrics-fallback-stability',
         'css-type-scale-line-height',
         'css-readable-measure-alignment',
         'css-text-wrap-spacing-decoration',
@@ -1755,7 +1757,6 @@ describe('research contracts', () => {
       'review-css-typography': [
         'css-font-stacks-generic-fallbacks',
         'css-web-font-sources-loading',
-        'css-font-metrics-fallback-stability',
         'css-type-scale-line-height',
         'css-readable-measure-alignment',
         'css-text-wrap-spacing-decoration',
@@ -1765,7 +1766,6 @@ describe('research contracts', () => {
       'quiz-css-typography': [
         'css-font-stacks-generic-fallbacks',
         'css-web-font-sources-loading',
-        'css-font-metrics-fallback-stability',
         'css-type-scale-line-height',
         'css-text-wrap-spacing-decoration',
         'css-text-decoration-shadows-emphasis',
@@ -3339,8 +3339,13 @@ describe('research contracts', () => {
       'css-source-preview-loop',
       'css-cascade-layers-scope',
       'css-logical-properties-writing-modes',
+      'css-font-synthesis-face-selection',
+      'css-font-display-loading-lifecycle',
+      'css-font-licensing-privacy-subsetting',
       'css-font-metrics-fallback-stability',
-      'css-variable-fonts-features',
+      'css-variable-font-axes-optical-sizing',
+      'css-font-features-language-shaping',
+      'css-color-font-palettes-emoji',
       'css-derived-color-functions',
       'css-subgrid-alignment',
       'css-anchor-positioning-fallbacks',
@@ -3430,8 +3435,8 @@ describe('research contracts', () => {
     expect(matrix.alignments.every((alignment) => alignment.state === 'candidate-review')).toBe(
       true
     );
-    expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 110]);
+    expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(13);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 115]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
     ).toHaveLength(158);
@@ -4377,7 +4382,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(38);
-    expect(architecture.conceptIds).toHaveLength(193);
+    expect(architecture.conceptIds).toHaveLength(198);
     expect(architecture.sourceObjectiveIds).toHaveLength(157);
     expect(architecture.unmappedSourceObjectiveIds).toHaveLength(1);
     expect(architecture.projects).toHaveLength(5);
@@ -4539,12 +4544,12 @@ describe('research contracts', () => {
     expect(audit).toContain('content duplication is untestable');
     expect(audit).toContain('Until then, the correct state is **researching');
     expect(JSON.stringify(concepts)).not.toContain('retainedInModuleIds');
-    expect(explicitRetrievalEdges).toHaveLength(141);
+    expect(explicitRetrievalEdges).toHaveLength(148);
     expect(
       concepts.filter(
         (concept) => !retrievedConceptIds.has(concept.id) && !projectConceptIds.has(concept.id)
       )
-    ).toHaveLength(97);
+    ).toHaveLength(96);
   });
 
   it('plans every repaired RWD module through explicit varied activity evidence', () => {
@@ -4590,12 +4595,12 @@ describe('research contracts', () => {
         preAssessmentInteractions: 2000,
       },
       plannedMinimums: {
-        theoryInteractions: 384,
-        workshopSteps: 1520,
+        theoryInteractions: 388,
+        workshopSteps: 1536,
         independentLabs: 38,
         reviews: 38,
         quizBanks: 24,
-        preAssessmentInteractions: 3947,
+        preAssessmentInteractions: 3988,
       },
     });
     expect(matrix.modules[0].activities).toMatchObject({
@@ -6695,6 +6700,165 @@ describe('research contracts', () => {
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
+  it('decomposes font selection and delivery into 140 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-fonts-and-loading-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const cssGraph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+    const plannedConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds].sort();
+
+    expect(design.newConceptIds).toEqual([
+      'css-font-stacks-generic-fallbacks',
+      'css-font-synthesis-face-selection',
+      'css-web-font-sources-loading',
+      'css-font-display-loading-lifecycle',
+      'css-font-licensing-privacy-subsetting',
+      'css-font-metrics-fallback-stability',
+      'css-variable-font-axes-optical-sizing',
+      'css-font-features-language-shaping',
+      'css-color-font-palettes-emoji',
+    ]);
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'css-inheritance-initial-unset-revert',
+      'css-intrinsic-extrinsic-sizing',
+    ]);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-font-display-loading-lifecycle')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(expect.arrayContaining(['rwd-css-fonts-four', 'rwd-css-font-loading-three']));
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-font-licensing-privacy-subsetting')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(
+      expect.arrayContaining(['rwd-sil-open-font-license', 'rwd-css-fonts-four', 'rwd-woff-two'])
+    );
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.plannedInteractions).toBe(planned?.minimumInteractions);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+      expect(
+        [
+          ...new Set(activity?.interactions.flatMap((interaction) => interaction.conceptIds) ?? []),
+        ].sort()
+      ).toEqual(plannedConceptIds);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(140);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(140);
+    expect(new Set(interactions.map((interaction) => interaction.evidence.kind))).toEqual(
+      new Set([
+        'font-match-trace',
+        'font-synthesis-trace',
+        'font-source-activation-trace',
+        'font-loading-lifecycle-trace',
+        'font-license-delivery-record',
+        'font-metric-stability-trace',
+        'variable-axis-range-trace',
+        'font-feature-resolution-trace',
+        'color-font-palette-trace',
+        'css-value-provenance',
+        'intrinsic-size-contribution',
+      ])
+    );
+    expect(new Set(interactions.map((interaction) => interaction.layout))).toEqual(
+      new Set([
+        'font-match-inspector',
+        'font-synthesis-inspector',
+        'font-source-activation-inspector',
+        'font-loading-lifecycle-inspector',
+        'font-license-delivery-board',
+        'font-metric-stability-inspector',
+        'variable-axis-inspector',
+        'font-feature-resolution-inspector',
+        'color-font-palette-inspector',
+        'css-value-provenance-inspector',
+        'intrinsic-sizing-inspector',
+      ])
+    );
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      140
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+
+    const tokenSet = (value: string) => new Set(value.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+    for (const [leftIndex, left] of interactions.entries()) {
+      const leftTokens = tokenSet(left.learnerAction);
+      for (const right of interactions.slice(leftIndex + 1)) {
+        const rightTokens = tokenSet(right.learnerAction);
+        const intersection = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+        const union = leftTokens.size + rightTokens.size - intersection;
+        expect(intersection / union).toBeLessThan(0.8);
+      }
+    }
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects font-loading evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-fonts-and-loading-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const loadingInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'font-loading-lifecycle-trace');
+    if (!loadingInteraction) {
+      throw new Error('Font-loading evidence fixture missing');
+    }
+    delete loadingInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
   it('rejects intrinsic-sizing evidence without a changed case', () => {
     const missingChangedCase = structuredClone(
       readJson(
@@ -6945,7 +7109,7 @@ describe('research contracts', () => {
     );
 
     expect(matrix.status).toBe('researching');
-    expect(matrix.records).toHaveLength(193);
+    expect(matrix.records).toHaveLength(198);
     expect(matrix.records.map((record) => record.conceptId)).toEqual(conceptIds);
     for (const record of matrix.records) {
       const ownerOrder = moduleOrder.get(record.ownerModuleId);
