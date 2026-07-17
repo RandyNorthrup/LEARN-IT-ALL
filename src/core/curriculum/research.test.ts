@@ -413,6 +413,10 @@ describe('research contracts', () => {
         'rwd-css-snapshot',
         'rwd-css-syntax-three',
         'rwd-selectors-four',
+        'rwd-css-pseudo-four',
+        'rwd-css-content-three',
+        'rwd-css-lists-three',
+        'rwd-css-counter-styles-three',
         'rwd-css-cascade-five',
         'rwd-css-cascade-six',
         'rwd-css-display-three',
@@ -425,6 +429,8 @@ describe('research contracts', () => {
         [
           'css-rule-declaration-anatomy',
           'css-type-class-id-selectors',
+          'css-pseudo-elements',
+          'css-list-markers-counters',
           'css-inheritance-initial-unset-revert',
           'css-cascade-origins-importance-order',
           'css-specificity-functional-selectors',
@@ -441,6 +447,8 @@ describe('research contracts', () => {
     ).toEqual({
       'css-rule-declaration-anatomy': 'rwd-css-syntax-three',
       'css-type-class-id-selectors': 'rwd-selectors-four',
+      'css-pseudo-elements': 'rwd-css-pseudo-four',
+      'css-list-markers-counters': 'rwd-css-lists-three',
       'css-inheritance-initial-unset-revert': 'rwd-css-cascade-five',
       'css-cascade-origins-importance-order': 'rwd-css-cascade-five',
       'css-specificity-functional-selectors': 'rwd-selectors-four',
@@ -453,6 +461,26 @@ describe('research contracts', () => {
     expect(
       graph.concepts.find((concept) => concept.id === 'css-type-class-id-selectors')?.title
     ).toBe('Universal, type, class, and ID selectors');
+    expect(
+      graph.concepts
+        .find((concept) => concept.id === 'css-pseudo-elements')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual([
+      'rwd-css-pseudo-four',
+      'rwd-selectors-four',
+      'rwd-css-content-three',
+      'rwd-wcag-two-two',
+    ]);
+    expect(
+      graph.concepts
+        .find((concept) => concept.id === 'css-list-markers-counters')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual([
+      'rwd-css-lists-three',
+      'rwd-whatwg-html',
+      'rwd-css-counter-styles-three',
+      'rwd-wcag-two-two',
+    ]);
     expect(graph.sourceIds.every((sourceId) => dossierSourceIds.has(sourceId))).toBe(true);
     expect(graph.gaps.length).toBeGreaterThan(0);
   });
@@ -5980,6 +6008,97 @@ describe('research contracts', () => {
       throw new Error('Selector-match evidence fixture missing');
     }
     delete selectorInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
+  it('decomposes selector states into 117 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-selectors-and-states-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+
+    expect(design.status).toBe('researching');
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'css-rule-declaration-anatomy',
+      'css-type-class-id-selectors',
+      'html-heading-hierarchy',
+    ]);
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        activity?.interactions.every((interaction) =>
+          planned?.interactionModes.includes(interaction.mode)
+        )
+      ).toBe(true);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(117);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(117);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(5);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      117
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects pseudo-class state evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-selectors-and-states-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const stateInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'pseudo-class-state-transition');
+    if (!stateInteraction) {
+      throw new Error('Pseudo-class state evidence fixture missing');
+    }
+    delete stateInteraction.evidence.changedCase;
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 

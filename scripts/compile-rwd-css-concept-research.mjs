@@ -33,6 +33,12 @@ function add(
   });
 }
 
+function addSourceAnchors(conceptId, sourceAnchors) {
+  const concept = concepts.find((candidate) => candidate.id === conceptId);
+  if (!concept) throw new Error(`Cannot add source anchors to missing concept ${conceptId}`);
+  concept.sourceAnchors.push(...sourceAnchors);
+}
+
 add(
   'css-source-preview-loop',
   'CSS source, computed output, and saved state',
@@ -167,9 +173,9 @@ add(
   'Use pseudo-elements for bounded presentational fragments while keeping required content, names, controls, and task information in the document.',
   'css-language-and-cascade',
   ['css-pseudo-classes'],
-  'rwd-selectors-four',
-  'Sections 3.6 and 19: pseudo-elements',
-  'Pseudo-elements represent tree-abiding or other element fragments for selector matching rather than adding semantic document nodes.',
+  'rwd-css-pseudo-four',
+  'Abstract and Sections 2 through 4: pseudo-elements, originating elements, typographic pseudo-elements, and generated-content pseudo-elements',
+  "Pseudo-elements represent bounded abstract portions of the CSS render tree and remain tied to an originating element and each pseudo-element's own generation rules.",
   'Text inserted with generated content is an equivalent accessible replacement for required HTML labels and instructions.',
   [
     'The artifact must remain understandable when generated content is unavailable or ignored by assistive technology.',
@@ -177,21 +183,64 @@ add(
   ]
 );
 
+addSourceAnchors('css-pseudo-elements', [
+  {
+    sourceId: 'rwd-selectors-four',
+    locator: 'Sections 3.6 and 19: pseudo-elements',
+    claim:
+      'Selectors defines generic pseudo-element syntax and explicitly delegates render-tree behavior to other CSS modules.',
+  },
+  {
+    sourceId: 'rwd-css-content-three',
+    locator: 'Sections 1.1 through 1.2: generated content and accessibility',
+    claim:
+      'Generated presentation has explicit accessibility requirements and unresolved implementation limits, so required task content stays in HTML.',
+  },
+  {
+    sourceId: 'rwd-wcag-two-two',
+    locator: 'Success Criterion 1.3.1: Info and Relationships',
+    claim:
+      'Information, structure, and relationships conveyed through presentation must remain programmatically determinable or available in text.',
+  },
+]);
+
 add(
   'css-list-markers-counters',
   'List markers, counters, and retained semantics',
-  'Style marker position, type, image, pseudo-element, and counters while preserving list relationships, readable numbering, and fallback meaning.',
+  'Style marker position, type, image, pseudo-element, and counters while preserving list relationships, readable numbering, and meaning when custom marker presentation is unavailable.',
   'css-language-and-cascade',
   ['css-pseudo-elements', 'css-selector-lists-combinators'],
-  'rwd-webdev-css',
-  'Lists module',
-  'List boxes expose marker styling and counters without requiring authors to replace semantic list structure.',
+  'rwd-css-lists-three',
+  'Sections 2 through 4: list items, marker boxes, list styles, and counters',
+  'List items generate marker boxes and increment counters whose presentation is controlled separately from document semantics.',
   'Removing list style also removes list semantics in every browser and assistive-technology combination.',
   [
     'Ordered, unordered, nested, reversed, start-value, long-marker, and styles-disabled cases must retain understandable relationships and numbering.',
-    'Learner must choose native markers, counters, or generated decoration based on semantic order and fallback evidence.',
+    'Learner must choose native markers, counters, or generated decoration based on semantic order and evidence from environments where custom marker presentation is unavailable.',
   ]
 );
+
+addSourceAnchors('css-list-markers-counters', [
+  {
+    sourceId: 'rwd-whatwg-html',
+    locator: 'Grouping content Sections 4.4.5 through 4.4.8: ol, ul, menu, and li',
+    claim:
+      'HTML determines whether order is meaningful and preserves list and item relationships independently of CSS marker appearance.',
+  },
+  {
+    sourceId: 'rwd-css-counter-styles-three',
+    locator:
+      'Sections 3, 6, 7, and predefined styles: systems, range handling, representation, and descriptors',
+    claim:
+      'Counter styles convert integer values into bounded representations and use defined alternate behavior when a value cannot be represented.',
+  },
+  {
+    sourceId: 'rwd-wcag-two-two',
+    locator: 'Success Criterion 1.3.1: Info and Relationships',
+    claim:
+      'List information and relationships conveyed visually must remain programmatically determinable or available in text.',
+  },
+]);
 
 add(
   'css-inheritance-initial-unset-revert',
@@ -1714,6 +1763,10 @@ const graph = {
     'rwd-css-snapshot',
     'rwd-css-syntax-three',
     'rwd-selectors-four',
+    'rwd-css-pseudo-four',
+    'rwd-css-content-three',
+    'rwd-css-lists-three',
+    'rwd-css-counter-styles-three',
     'rwd-css-cascade-five',
     'rwd-css-cascade-six',
     'rwd-css-variables-one',
