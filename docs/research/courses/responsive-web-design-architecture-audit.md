@@ -106,7 +106,7 @@ The schedule must link each event to an activity ID, interaction type, scenario,
 
 The platform contract requires at least the benchmark depth: 33 original guided builds, at least 1,287 original workshop code steps, at least 185 interactive theory steps, 34 independent labs, 24 active-recall reviews, 22 quiz banks, five original certification projects, one broad randomized exam, and at least 2,000 meaningful learner interactions before quizzes and the exam.
 
-The machine-checkable `responsive-web-design-activity-matrix.json` now gives every one of the 38 modules a model/prediction set, guided workshop, faded build, debugging clinic, independent lab, retrieval/correction review, and quiz or performance-check bank. Across 266 planned activity families it records 376 theory interactions, 1,488 workshop steps, 38 independent labs, 38 retrieval reviews, 24 quiz banks, and 3,854 pre-assessment interactions. Each module names different model, workshop, faded, debugging, lab, review, and assessment contexts. Exact activity IDs and scenario domains are unique.
+The machine-checkable `responsive-web-design-activity-matrix.json` now gives every one of the 38 modules a model/prediction set, guided workshop, faded build, debugging clinic, independent lab, retrieval/correction review, and quiz or performance-check bank. Across 266 planned activity families it records 376 theory interactions, 1,488 workshop steps, 38 independent labs, 38 retrieval reviews, 24 quiz banks, and 3,855 pre-assessment interactions. Each module names different model, workshop, faded, debugging, lab, review, and assessment contexts. Exact activity IDs and scenario domains are unique.
 
 These are planning floors, not authored activities. The matrix still cannot show:
 

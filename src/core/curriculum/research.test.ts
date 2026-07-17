@@ -4573,7 +4573,7 @@ describe('research contracts', () => {
         independentLabs: 38,
         reviews: 38,
         quizBanks: 24,
-        preAssessmentInteractions: 3854,
+        preAssessmentInteractions: 3855,
       },
     });
     expect(matrix.modules[0].activities).toMatchObject({
@@ -6207,6 +6207,94 @@ describe('research contracts', () => {
       throw new Error('Cascade-winner evidence fixture missing');
     }
     delete cascadeInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
+  it('decomposes custom properties into 51 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-custom-properties-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+    const plannedConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds].sort();
+
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'css-inheritance-initial-unset-revert',
+      'css-cascade-origins-importance-order',
+    ]);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.plannedInteractions).toBe(planned?.minimumInteractions);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+      expect(
+        [
+          ...new Set(activity?.interactions.flatMap((interaction) => interaction.conceptIds) ?? []),
+        ].sort()
+      ).toEqual(plannedConceptIds);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    expect(interactions).toHaveLength(51);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(51);
+    expect(new Set(interactions.map((interaction) => interaction.layout)).size).toBe(4);
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(51);
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects registered-property evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-custom-properties-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const registrationInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'registered-property-contract');
+    if (!registrationInteraction) {
+      throw new Error('Registered-property evidence fixture missing');
+    }
+    delete registrationInteraction.evidence.changedCase;
     expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
   });
 
