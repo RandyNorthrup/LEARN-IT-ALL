@@ -576,35 +576,156 @@ addSourceAnchors('css-logical-properties-writing-modes', [
 
 add(
   'css-backgrounds-borders-shadows',
-  'Background layers, borders, radii, and shadows',
-  'Compose background layers, border geometry, radii, and shadows without encoding required meaning or damaging text contrast and focus visibility.',
+  'Background layers, paint order, and resilient fallback',
+  'Compose ordered background image layers and a base color while tracing list matching, paint order, image failure, and the boundary between decorative paint and required content.',
   'css-boxes-and-sizing',
   ['css-box-model-areas'],
   'rwd-css-backgrounds-three',
-  'Sections 2 through 7: backgrounds, borders, radii, images, and shadows',
-  'Backgrounds and borders paint defined box areas and may layer images, colors, clipping, border geometry, radii, and shadows.',
-  'A border, shadow, or background color is a reliable sole indicator of state for every user.',
+  'Sections 2, 2.1 through 2.3, and 2.10: background layers, base color, image sources, and shorthand',
+  'A box can paint multiple comma-matched background image layers above one base color; missing list values repeat, excess values are ignored, and failed images still leave a layer that draws nothing.',
+  'The last background image is nearest the user, and successful loading means no background color or semantic fallback is needed.',
   [
-    'Changed backgrounds and high-contrast conditions must preserve required text, state, and focus evidence.',
-    'Learner must predict paint order and clipping for multiple layers and rounded corners.',
+    'Learner must expand a changed background shorthand, match every comma-list value to its layer, and predict front-to-back paint including the base color.',
+    'Failed-image, images-disabled, and forced-colors cases must preserve text contrast and every required piece of content or state in HTML.',
+  ]
+);
+
+add(
+  'css-background-position-size-repeat',
+  'Background positioning, sizing, tiling, clipping, and attachment',
+  'Size, position, tile, attach, originate, and clip each background layer against the correct box area and percentage basis without introducing inaccessible or unstable decoration.',
+  'css-boxes-and-sizing',
+  ['css-backgrounds-borders-shadows', 'css-percentages-containing-blocks'],
+  'rwd-css-backgrounds-three',
+  'Sections 2.4 through 2.9: repeat, attachment, position, clip, origin, and size',
+  'Each background layer has a positioning area, painting area, size, repeat behavior, and attachment; position percentages use the positioning-area size minus the image size rather than the containing-block percentage basis.',
+  'A background-position percentage is always the same percentage of the containing block, and cover always reveals the complete image.',
+  [
+    'Learner must predict each layer rectangle after changed box areas, intrinsic image ratios, cover or contain, repeat, attachment, origin, and clip values.',
+    'A resource failure, narrow scroll container, and changed content height must retain readable fallback paint and an intentional scrolling result.',
+  ]
+);
+
+add(
+  'css-border-strokes-shorthands',
+  'Border strokes, sides, and shorthand reset behavior',
+  'Compose border widths, styles, colors, sides, and shorthands while predicting visible stroke, box-size effects, currentColor use, and reset behavior.',
+  'css-boxes-and-sizing',
+  ['css-box-model-areas'],
+  'rwd-css-backgrounds-three',
+  'Section 3: border colors, styles, widths, and shorthand properties',
+  'Border sides resolve width, style, and color independently; a none or hidden style forces used width to zero, and border shorthands reset omitted components.',
+  'Declaring border-width and border-color always paints a border, while a later border shorthand changes only the values written explicitly.',
+  [
+    'Learner must expand side and border shorthands, calculate used border widths, and identify the declaration that removes or resets a stroke.',
+    'Changed zoom, forced colors, and non-color state evidence must remain usable when borders disappear, thicken, or receive user colors.',
+  ]
+);
+
+add(
+  'css-border-radius-clipping',
+  'Elliptical corner radii and clipping geometry',
+  'Construct circular and elliptical corner radii, normalize overlapping curves, and predict how backgrounds, borders, content, and descendant paint are or are not clipped.',
+  'css-boxes-and-sizing',
+  ['css-border-strokes-shorthands', 'css-background-position-size-repeat'],
+  'rwd-css-backgrounds-three',
+  'Section 4: curve radii, corner shaping, clipping, transitions, and overlapping curves',
+  'Border radii define quarter ellipses, may use separate horizontal and vertical radii, are proportionally reduced when adjacent curves overlap, and clip backgrounds and border paint without automatically clipping all descendant content.',
+  'Oversized radii overlap unchanged, and border-radius automatically clips every descendant and focus indicator to the rounded corner.',
+  [
+    'Learner must normalize changed elliptical radii and trace the outer border, inner border, padding, and content corner curves.',
+    'Overflow, focus, and changed child-content checks must prove whether an additional clipping decision is necessary and whether it hides required evidence.',
+  ]
+);
+
+add(
+  'css-border-image-slicing',
+  'Border-image slicing, widths, outset, and repetition',
+  'Slice and place a decorative border image while predicting fallback border behavior, center fill, edge scaling, repeat modes, outset, and hit or layout boundaries.',
+  'css-boxes-and-sizing',
+  ['css-border-strokes-shorthands', 'css-border-radius-clipping'],
+  'rwd-css-backgrounds-three',
+  'Section 5: border image source, slice, width, outset, repeat, drawing, and shorthand',
+  'Border images divide a source into nine regions, map corners and edges to border-image areas, optionally fill the center, and can paint beyond the border box without changing layout or extending the scrollable overflow area.',
+  'border-image replaces the need for a border style, changes the element hit area through outset, and automatically follows border-radius clipping.',
+  [
+    'Learner must map changed slice lines to source regions, compute destination regions, and predict stretch, repeat, round, or space behavior.',
+    'Missing-source and forced-colors cases must retain a deliberate conventional-border fallback and all semantic boundaries without relying on border-image paint.',
+  ]
+);
+
+add(
+  'css-box-shadow-geometry-layering',
+  'Box-shadow geometry, inset shape, blur, spread, and layering',
+  'Compose ordered outer and inset box shadows while tracing shadow shape, offsets, spread, blur, clipping, paint order, and their lack of layout or hit-area contribution.',
+  'css-boxes-and-sizing',
+  ['css-border-radius-clipping'],
+  'rwd-css-backgrounds-three',
+  'Section 6.1: box-shadow shape, spread, knockout, blur, layering, layout, and details',
+  'Each comma-separated shadow paints in order, derives from the border shape, expands or contracts by spread, blurs outward, and contributes neither layout space nor scrolling nor hit testing.',
+  'A shadow enlarges the border box and clickable target, and its blur radius is a guaranteed measured outer extent.',
+  [
+    'Learner must predict changed outer and inset shadow shapes, paint order, clipping, and approximate rather than fictional exact blur extent.',
+    'Shadow-disabled and forced-colors checks must retain focus, state, separation, contrast, and target size through non-shadow evidence.',
+  ]
+);
+
+add(
+  'css-transform-function-order',
+  'Transform functions, coordinate systems, and composition order',
+  'Compose translate, rotate, scale, skew, and matrix functions while predicting local coordinate changes, non-commutative list order, and nested current transformation matrices.',
+  'css-boxes-and-sizing',
+  ['css-box-model-areas'],
+  'rwd-css-transforms-one',
+  'Sections 2, 3, 7, 8, and 12: rendering model, transform property, functions, lists, and mathematical descriptions',
+  'Transform functions become matrices multiplied in list order, act through changing local coordinate systems, and generally produce different results when reordered.',
+  'translate, rotate, scale, and skew are independent visual filters, so reordering them cannot change the final geometry.',
+  [
+    'Learner must map control points through changed transform lists and nested elements rather than infer order from a screenshot alone.',
+    'A repair must choose function order from the intended coordinate system and prove final geometry with a changed point or client rectangle.',
   ]
 );
 
 add(
   'css-transform-reference-boxes',
-  'Transforms, coordinate space, and reference boxes',
-  'Compose translate, rotate, scale, skew, origin, and transform functions while predicting coordinate order, reference boxes, hit testing, stacking, and layout-flow effects.',
+  'Transform origin, percentage translation, and reference boxes',
+  'Choose transform-origin and transform-box while tracing origin translations and the reference dimensions used by percentage translations across CSS and SVG boxes.',
   'css-boxes-and-sizing',
-  ['css-box-model-areas', 'css-percentages-containing-blocks'],
+  ['css-transform-function-order', 'css-percentages-containing-blocks'],
   'rwd-css-transforms-one',
-  'Sections 2 through 7: rendering model, transform lists, origin, reference box, and functions',
-  'Transforms alter the rendered coordinate space after layout, affect overflow, client rectangles, containing blocks, stacking contexts, reference-box percentages, and composed matrix order without reallocating ordinary flow space.',
-  'Transform functions execute right-to-left or left-to-right interchangeably because every transform result is independent.',
+  'Sections 3 through 5: transform, transform-origin, and transform-box',
+  'Transform origins and percentage translations resolve against the selected reference box; CSS layout boxes and SVG geometry can map content, border, fill, stroke, and view boxes differently.',
+  'translate(50%) uses the containing block just like width: 50%, while changing transform-origin also changes ordinary-flow placement.',
   [
-    'Learner must predict changed function order, origin, percentage reference, overflow, hit region, and sibling-flow evidence.',
-    'A visual placement repair must use layout when flow should change and transforms only when transformed rendering is the intended model.',
+    'Learner must name the active reference box, calculate changed origin and percentage offsets, and distinguish CSS layout boxes from SVG reference boxes.',
+    'A changed border, padding, SVG viewBox, or transform-box value must produce a predicted and measured pivot or translation without magic pixel compensation.',
   ]
 );
+
+add(
+  'css-transform-rendering-effects',
+  'Transform flow, overflow, client geometry, stacking, containing blocks, and hit targets',
+  'Use transforms only for bounded visual geometry while proving unchanged normal-flow allocation and changed overflow, client rectangles, stacking contexts, descendant containing blocks, focus visibility, and hit targets.',
+  'css-boxes-and-sizing',
+  ['css-transform-function-order', 'css-transform-reference-boxes'],
+  'rwd-css-transforms-one',
+  'Sections 1.1 and 2: module interactions and the transform rendering model',
+  'Transforms apply after sizing and positioning, do not move surrounding normal-flow content, can extend scrollable overflow, change client rectangles, and create stacking contexts and containing blocks for descendants.',
+  'A translated element reserves space at its visual position, and transform: translateZ(0) is behavior-neutral because it does not visibly move the box.',
+  [
+    'Learner must compare pre-transform layout geometry with post-transform client, overflow, stacking, descendant-positioning, focus, and pointer-hit evidence.',
+    'A changed-content and keyboard-pointer parity test must reject transforms used to repair layout, reading order, or target size.',
+  ]
+);
+
+addSourceAnchors('css-backgrounds-borders-shadows', [
+  {
+    sourceId: 'rwd-css-color-adjust-one',
+    locator: 'Section 3.1: forced-color adjustment of box-shadow and background-image',
+    claim:
+      'Forced-colors mode can remove shadows and non-URL background images, so required meaning, focus, separation, and contrast need non-paint evidence.',
+  },
+]);
 
 add(
   'css-font-stacks-generic-fallbacks',

@@ -382,7 +382,17 @@ const moduleDefinitions = [
   module(
     'css-backgrounds-borders-and-transforms',
     'Paint and Transform Boxes without Hiding Structure',
-    ['css-backgrounds-borders-shadows', 'css-transform-reference-boxes'],
+    [
+      'css-backgrounds-borders-shadows',
+      'css-background-position-size-repeat',
+      'css-border-strokes-shorthands',
+      'css-border-radius-clipping',
+      'css-border-image-slicing',
+      'css-box-shadow-geometry-layering',
+      'css-transform-function-order',
+      'css-transform-reference-boxes',
+      'css-transform-rendering-effects',
+    ],
     ['css-box-model-areas', 'css-percentages-containing-blocks', 'html-images-purpose-alt'],
     'Components gain purposeful backgrounds, borders, shadows, and transforms whose paint layers, reference boxes, hit areas, and semantic boundaries remain observable.',
     'Box paint and transform geometry enter before color-system effects; decoration never substitutes for content, redaction, or behavior.'
@@ -430,6 +440,11 @@ const moduleDefinitions = [
     ],
     [
       'css-backgrounds-borders-shadows',
+      'css-background-position-size-repeat',
+      'css-border-strokes-shorthands',
+      'css-border-radius-clipping',
+      'css-border-image-slicing',
+      'css-box-shadow-geometry-layering',
       'css-calculated-value-math',
       'css-readable-measure-alignment',
     ],
@@ -517,7 +532,14 @@ const moduleDefinitions = [
       'css-stacking-contexts-z-index',
       'css-floats-content-wrapping',
     ],
-    ['css-normal-flow', 'css-percentages-containing-blocks', 'css-grid-template-areas'],
+    [
+      'css-normal-flow',
+      'css-percentages-containing-blocks',
+      'css-grid-template-areas',
+      'css-transform-function-order',
+      'css-transform-reference-boxes',
+      'css-transform-rendering-effects',
+    ],
     'The product gains bounded overlays, sticky context, traceable paint order, support-gated anchor placement, and genuine figure wrapping without coordinate tracing.',
     'Containing blocks, positioning schemes, stacking contexts, anchor fallbacks, and remaining float use enter without replacing normal layout systems.'
   ),

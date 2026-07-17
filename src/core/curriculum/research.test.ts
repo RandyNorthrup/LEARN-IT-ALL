@@ -360,11 +360,11 @@ describe('research contracts', () => {
     );
 
     expect(graph.status).toBe('researching');
-    expect(graph.concepts).toHaveLength(103);
+    expect(graph.concepts).toHaveLength(110);
     expect(graph.moduleIds).toHaveLength(8);
     expect(conceptCounts).toMatchObject({
       'css-language-and-cascade': 17,
-      'css-boxes-and-sizing': 13,
+      'css-boxes-and-sizing': 20,
       'css-type-color-and-design': 23,
       'css-flexible-layout': 8,
       'css-grid-and-positioning': 12,
@@ -1301,6 +1301,7 @@ describe('research contracts', () => {
         'rwd-css-transforms-one',
         'rwd-filter-effects-one',
         'rwd-css-backgrounds-three',
+        'rwd-css-color-adjust-one',
         'rwd-wcag-two-two',
         'rwd-fcc-layout-effects-inspection',
       ],
@@ -1355,7 +1356,9 @@ describe('research contracts', () => {
         'css-margin-collapse-formatting-contexts',
         'css-overflow-containment-scroll',
         'css-backgrounds-borders-shadows',
+        'css-transform-function-order',
         'css-transform-reference-boxes',
+        'css-transform-rendering-effects',
         'css-filter-effects-fallbacks',
       ],
       'workshop-rothko-painting': [
@@ -1392,7 +1395,9 @@ describe('research contracts', () => {
         'css-box-sizing-models',
         'css-margin-collapse-formatting-contexts',
         'css-overflow-containment-scroll',
+        'css-transform-function-order',
         'css-transform-reference-boxes',
+        'css-transform-rendering-effects',
         'css-filter-effects-fallbacks',
       ],
       'quiz-css-layout-and-effects': [
@@ -1401,7 +1406,9 @@ describe('research contracts', () => {
         'css-box-sizing-models',
         'css-margin-collapse-formatting-contexts',
         'css-overflow-containment-scroll',
+        'css-transform-function-order',
         'css-transform-reference-boxes',
+        'css-transform-rendering-effects',
         'css-filter-effects-fallbacks',
       ],
     });
@@ -3424,7 +3431,7 @@ describe('research contracts', () => {
       true
     );
     expect(matrix.courseExtensions.flatMap((extension) => extension.conceptIds)).toHaveLength(7);
-    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 103]);
+    expect(matrix.conceptInventories.map((inventory) => inventory.conceptCount)).toEqual([83, 110]);
     expect(
       matrix.alignments.filter((alignment) => alignment.inspectionState === 'agent-inspected')
     ).toHaveLength(158);
@@ -4149,6 +4156,11 @@ describe('research contracts', () => {
       ],
       'lecture-working-with-backgrounds-and-borders': [
         'css-backgrounds-borders-shadows',
+        'css-background-position-size-repeat',
+        'css-border-strokes-shorthands',
+        'css-border-radius-clipping',
+        'css-border-image-slicing',
+        'css-box-shadow-geometry-layering',
         'css-gradients-background-images',
         'css-contrast-noncolor-meaning',
         'html-audio-video',
@@ -4177,6 +4189,11 @@ describe('research contracts', () => {
         'css-link-state-sequence',
         'css-focus-visible-indicators',
         'css-backgrounds-borders-shadows',
+        'css-background-position-size-repeat',
+        'css-border-strokes-shorthands',
+        'css-border-radius-clipping',
+        'css-border-image-slicing',
+        'css-box-shadow-geometry-layering',
         'css-gradients-background-images',
         'css-contrast-noncolor-meaning',
         'html-audio-video',
@@ -4190,6 +4207,11 @@ describe('research contracts', () => {
         'css-link-state-sequence',
         'css-focus-visible-indicators',
         'css-backgrounds-borders-shadows',
+        'css-background-position-size-repeat',
+        'css-border-strokes-shorthands',
+        'css-border-radius-clipping',
+        'css-border-image-slicing',
+        'css-box-shadow-geometry-layering',
         'css-gradients-background-images',
       ],
     });
@@ -4355,7 +4377,7 @@ describe('research contracts', () => {
 
     expect(architecture.status).toBe('researching');
     expect(architecture.modules).toHaveLength(38);
-    expect(architecture.conceptIds).toHaveLength(186);
+    expect(architecture.conceptIds).toHaveLength(193);
     expect(architecture.sourceObjectiveIds).toHaveLength(157);
     expect(architecture.unmappedSourceObjectiveIds).toHaveLength(1);
     expect(architecture.projects).toHaveLength(5);
@@ -4517,12 +4539,12 @@ describe('research contracts', () => {
     expect(audit).toContain('content duplication is untestable');
     expect(audit).toContain('Until then, the correct state is **researching');
     expect(JSON.stringify(concepts)).not.toContain('retainedInModuleIds');
-    expect(explicitRetrievalEdges).toHaveLength(133);
+    expect(explicitRetrievalEdges).toHaveLength(141);
     expect(
       concepts.filter(
         (concept) => !retrievedConceptIds.has(concept.id) && !projectConceptIds.has(concept.id)
       )
-    ).toHaveLength(98);
+    ).toHaveLength(97);
   });
 
   it('plans every repaired RWD module through explicit varied activity evidence', () => {
@@ -4568,12 +4590,12 @@ describe('research contracts', () => {
         preAssessmentInteractions: 2000,
       },
       plannedMinimums: {
-        theoryInteractions: 376,
-        workshopSteps: 1488,
+        theoryInteractions: 384,
+        workshopSteps: 1520,
         independentLabs: 38,
         reviews: 38,
         quizBanks: 24,
-        preAssessmentInteractions: 3855,
+        preAssessmentInteractions: 3947,
       },
     });
     expect(matrix.modules[0].activities).toMatchObject({
@@ -6507,6 +6529,172 @@ describe('research contracts', () => {
     expect(design.gaps).not.toHaveLength(0);
   });
 
+  it('decomposes box paint and transforms into 156 evidence-bound interactions', () => {
+    const design = ResearchModuleStepDesignSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-backgrounds-borders-and-transforms-step-design.json'
+        )
+      )
+    );
+    const architecture = ResearchCourseArchitectureSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-course-architecture.json'
+        )
+      )
+    );
+    const matrix = ResearchActivityMatrixSchema.parse(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-activity-matrix.json'
+        )
+      )
+    );
+    const cssGraph = ConceptResearchGraphSchema.parse(
+      readJson(
+        path.join(repositoryRoot, 'docs/research/courses/responsive-web-design-css-concepts.json')
+      )
+    );
+    const architectureModule = architecture.modules.find((module) => module.id === design.moduleId);
+    const matrixModule = matrix.modules.find((module) => module.moduleId === design.moduleId);
+    const plannedConceptIds = [...design.newConceptIds, ...design.retrievalConceptIds].sort();
+
+    expect(design.newConceptIds).toEqual([
+      'css-backgrounds-borders-shadows',
+      'css-background-position-size-repeat',
+      'css-border-strokes-shorthands',
+      'css-border-radius-clipping',
+      'css-border-image-slicing',
+      'css-box-shadow-geometry-layering',
+      'css-transform-function-order',
+      'css-transform-reference-boxes',
+      'css-transform-rendering-effects',
+    ]);
+    expect(design.newConceptIds).toEqual(architectureModule?.conceptIds);
+    expect(design.retrievalConceptIds).toEqual([
+      'css-box-model-areas',
+      'css-percentages-containing-blocks',
+      'html-images-purpose-alt',
+    ]);
+    expect(design.retrievalConceptIds).toEqual(architectureModule?.retrievalConceptIds);
+    expect(
+      cssGraph.concepts
+        .find((concept) => concept.id === 'css-backgrounds-borders-shadows')
+        ?.sourceAnchors.map((anchor) => anchor.sourceId)
+    ).toEqual(expect.arrayContaining(['rwd-css-backgrounds-three', 'rwd-css-color-adjust-one']));
+    expect(
+      cssGraph.concepts
+        .filter((concept) => design.newConceptIds.includes(concept.id))
+        .flatMap((concept) => concept.sourceAnchors.map((anchor) => anchor.sourceId))
+    ).toEqual(expect.arrayContaining(['rwd-css-backgrounds-three', 'rwd-css-transforms-one']));
+
+    for (const role of design.activityDeliveryOrder) {
+      const activity = design.activityDesigns.find((candidate) => candidate.role === role);
+      const planned = matrixModule?.activities[role];
+      expect(activity?.activityId).toBe(planned?.id);
+      expect(activity?.scenarioDomain).toBe(planned?.scenarioDomain);
+      expect(activity?.plannedInteractions).toBe(planned?.minimumInteractions);
+      expect(activity?.interactions).toHaveLength(planned?.minimumInteractions ?? 0);
+      expect(
+        [...new Set(activity?.interactions.map((interaction) => interaction.mode) ?? [])].sort()
+      ).toEqual([...(planned?.interactionModes ?? [])].sort());
+      expect(
+        [
+          ...new Set(activity?.interactions.flatMap((interaction) => interaction.conceptIds) ?? []),
+        ].sort()
+      ).toEqual(plannedConceptIds);
+    }
+
+    const interactions = design.activityDesigns.flatMap((activity) => activity.interactions);
+    const evidenceKinds = [
+      'background-layer-paint-trace',
+      'background-geometry-trace',
+      'border-stroke-trace',
+      'border-radius-geometry',
+      'border-image-region-map',
+      'box-shadow-paint-trace',
+      'transform-point-map',
+      'transform-reference-trace',
+      'transform-rendering-trace',
+    ];
+    const layouts = [
+      'background-layer-inspector',
+      'background-geometry-inspector',
+      'border-stroke-inspector',
+      'border-radius-geometry-board',
+      'border-image-region-inspector',
+      'box-shadow-geometry-board',
+      'transform-order-inspector',
+      'transform-reference-inspector',
+      'transform-rendering-inspector',
+    ];
+    expect(interactions).toHaveLength(156);
+    expect(new Set(interactions.map((interaction) => interaction.learnerAction)).size).toBe(156);
+    expect(new Set(interactions.map((interaction) => interaction.evidence.kind))).toEqual(
+      new Set([
+        'box-area-measurement',
+        'percentage-basis-trace',
+        'image-purpose-alternative',
+        ...evidenceKinds,
+      ])
+    );
+    expect(new Set(interactions.map((interaction) => interaction.layout))).toEqual(
+      new Set([
+        'box-area-measurement-board',
+        'percentage-basis-inspector',
+        'image-purpose-board',
+        ...layouts,
+      ])
+    );
+    expect(interactions.filter((interaction) => interaction.evidence.changedCase)).toHaveLength(
+      156
+    );
+    expect(
+      design.activityDesigns
+        .find((activity) => activity.role === 'assessment')
+        ?.interactions.every((interaction) => interaction.support === 'no-assessment-hints')
+    ).toBe(true);
+
+    const tokenSet = (value: string) => new Set(value.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+    for (const [leftIndex, left] of interactions.entries()) {
+      const leftTokens = tokenSet(left.learnerAction);
+      for (const right of interactions.slice(leftIndex + 1)) {
+        const rightTokens = tokenSet(right.learnerAction);
+        const intersection = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+        const union = leftTokens.size + rightTokens.size - intersection;
+        expect(intersection / union).toBeLessThan(0.8);
+      }
+    }
+    expect(design.gaps).not.toHaveLength(0);
+  });
+
+  it('rejects transform-rendering evidence without a changed case', () => {
+    const missingChangedCase = structuredClone(
+      readJson(
+        path.join(
+          repositoryRoot,
+          'docs/research/courses/responsive-web-design-css-backgrounds-borders-and-transforms-step-design.json'
+        )
+      )
+    ) as {
+      activityDesigns: Array<{
+        interactions: Array<{ evidence: { kind: string; changedCase?: string } }>;
+      }>;
+    };
+    const transformInteraction = missingChangedCase.activityDesigns
+      .flatMap((activity) => activity.interactions)
+      .find((interaction) => interaction.evidence.kind === 'transform-rendering-trace');
+    if (!transformInteraction) {
+      throw new Error('Transform-rendering evidence fixture missing');
+    }
+    delete transformInteraction.evidence.changedCase;
+    expect(ResearchModuleStepDesignSchema.safeParse(missingChangedCase).success).toBe(false);
+  });
+
   it('rejects intrinsic-sizing evidence without a changed case', () => {
     const missingChangedCase = structuredClone(
       readJson(
@@ -6757,7 +6945,7 @@ describe('research contracts', () => {
     );
 
     expect(matrix.status).toBe('researching');
-    expect(matrix.records).toHaveLength(186);
+    expect(matrix.records).toHaveLength(193);
     expect(matrix.records.map((record) => record.conceptId)).toEqual(conceptIds);
     for (const record of matrix.records) {
       const ownerOrder = moduleOrder.get(record.ownerModuleId);

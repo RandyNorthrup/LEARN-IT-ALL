@@ -1131,8 +1131,8 @@
     },
     {
       "id": "css-backgrounds-borders-shadows",
-      "title": "Background layers, borders, radii, and shadows",
-      "objective": "Compose background layers, border geometry, radii, and shadows without encoding required meaning or damaging text contrast and focus visibility.",
+      "title": "Background layers, paint order, and resilient fallback",
+      "objective": "Compose ordered background image layers and a base color while tracing list matching, paint order, image failure, and the boundary between decorative paint and required content.",
       "order": 29,
       "moduleId": "css-boxes-and-sizing",
       "prerequisiteIds": [
@@ -1141,16 +1141,234 @@
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-backgrounds-three",
-          "locator": "Sections 2 through 7: backgrounds, borders, radii, images, and shadows",
-          "claim": "Backgrounds and borders paint defined box areas and may layer images, colors, clipping, border geometry, radii, and shadows."
+          "locator": "Sections 2, 2.1 through 2.3, and 2.10: background layers, base color, image sources, and shorthand",
+          "claim": "A box can paint multiple comma-matched background image layers above one base color; missing list values repeat, excess values are ignored, and failed images still leave a layer that draws nothing."
+        },
+        {
+          "sourceId": "rwd-css-color-adjust-one",
+          "locator": "Section 3.1: forced-color adjustment of box-shadow and background-image",
+          "claim": "Forced-colors mode can remove shadows and non-URL background images, so required meaning, focus, separation, and contrast need non-paint evidence."
         }
       ],
       "misconceptions": [
-        "A border, shadow, or background color is a reliable sole indicator of state for every user."
+        "The last background image is nearest the user, and successful loading means no background color or semantic fallback is needed."
       ],
       "evidenceRequirements": [
-        "Changed backgrounds and high-contrast conditions must preserve required text, state, and focus evidence.",
-        "Learner must predict paint order and clipping for multiple layers and rounded corners."
+        "Learner must expand a changed background shorthand, match every comma-list value to its layer, and predict front-to-back paint including the base color.",
+        "Failed-image, images-disabled, and forced-colors cases must preserve text contrast and every required piece of content or state in HTML."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-background-position-size-repeat",
+      "title": "Background positioning, sizing, tiling, clipping, and attachment",
+      "objective": "Size, position, tile, attach, originate, and clip each background layer against the correct box area and percentage basis without introducing inaccessible or unstable decoration.",
+      "order": 30,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-backgrounds-borders-shadows",
+        "css-percentages-containing-blocks"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-backgrounds-three",
+          "locator": "Sections 2.4 through 2.9: repeat, attachment, position, clip, origin, and size",
+          "claim": "Each background layer has a positioning area, painting area, size, repeat behavior, and attachment; position percentages use the positioning-area size minus the image size rather than the containing-block percentage basis."
+        }
+      ],
+      "misconceptions": [
+        "A background-position percentage is always the same percentage of the containing block, and cover always reveals the complete image."
+      ],
+      "evidenceRequirements": [
+        "Learner must predict each layer rectangle after changed box areas, intrinsic image ratios, cover or contain, repeat, attachment, origin, and clip values.",
+        "A resource failure, narrow scroll container, and changed content height must retain readable fallback paint and an intentional scrolling result."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-border-strokes-shorthands",
+      "title": "Border strokes, sides, and shorthand reset behavior",
+      "objective": "Compose border widths, styles, colors, sides, and shorthands while predicting visible stroke, box-size effects, currentColor use, and reset behavior.",
+      "order": 31,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-box-model-areas"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-backgrounds-three",
+          "locator": "Section 3: border colors, styles, widths, and shorthand properties",
+          "claim": "Border sides resolve width, style, and color independently; a none or hidden style forces used width to zero, and border shorthands reset omitted components."
+        }
+      ],
+      "misconceptions": [
+        "Declaring border-width and border-color always paints a border, while a later border shorthand changes only the values written explicitly."
+      ],
+      "evidenceRequirements": [
+        "Learner must expand side and border shorthands, calculate used border widths, and identify the declaration that removes or resets a stroke.",
+        "Changed zoom, forced colors, and non-color state evidence must remain usable when borders disappear, thicken, or receive user colors."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-border-radius-clipping",
+      "title": "Elliptical corner radii and clipping geometry",
+      "objective": "Construct circular and elliptical corner radii, normalize overlapping curves, and predict how backgrounds, borders, content, and descendant paint are or are not clipped.",
+      "order": 32,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-border-strokes-shorthands",
+        "css-background-position-size-repeat"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-backgrounds-three",
+          "locator": "Section 4: curve radii, corner shaping, clipping, transitions, and overlapping curves",
+          "claim": "Border radii define quarter ellipses, may use separate horizontal and vertical radii, are proportionally reduced when adjacent curves overlap, and clip backgrounds and border paint without automatically clipping all descendant content."
+        }
+      ],
+      "misconceptions": [
+        "Oversized radii overlap unchanged, and border-radius automatically clips every descendant and focus indicator to the rounded corner."
+      ],
+      "evidenceRequirements": [
+        "Learner must normalize changed elliptical radii and trace the outer border, inner border, padding, and content corner curves.",
+        "Overflow, focus, and changed child-content checks must prove whether an additional clipping decision is necessary and whether it hides required evidence."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-border-image-slicing",
+      "title": "Border-image slicing, widths, outset, and repetition",
+      "objective": "Slice and place a decorative border image while predicting fallback border behavior, center fill, edge scaling, repeat modes, outset, and hit or layout boundaries.",
+      "order": 33,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-border-strokes-shorthands",
+        "css-border-radius-clipping"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-backgrounds-three",
+          "locator": "Section 5: border image source, slice, width, outset, repeat, drawing, and shorthand",
+          "claim": "Border images divide a source into nine regions, map corners and edges to border-image areas, optionally fill the center, and can paint beyond the border box without changing layout or extending the scrollable overflow area."
+        }
+      ],
+      "misconceptions": [
+        "border-image replaces the need for a border style, changes the element hit area through outset, and automatically follows border-radius clipping."
+      ],
+      "evidenceRequirements": [
+        "Learner must map changed slice lines to source regions, compute destination regions, and predict stretch, repeat, round, or space behavior.",
+        "Missing-source and forced-colors cases must retain a deliberate conventional-border fallback and all semantic boundaries without relying on border-image paint."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-box-shadow-geometry-layering",
+      "title": "Box-shadow geometry, inset shape, blur, spread, and layering",
+      "objective": "Compose ordered outer and inset box shadows while tracing shadow shape, offsets, spread, blur, clipping, paint order, and their lack of layout or hit-area contribution.",
+      "order": 34,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-border-radius-clipping"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-backgrounds-three",
+          "locator": "Section 6.1: box-shadow shape, spread, knockout, blur, layering, layout, and details",
+          "claim": "Each comma-separated shadow paints in order, derives from the border shape, expands or contracts by spread, blurs outward, and contributes neither layout space nor scrolling nor hit testing."
+        }
+      ],
+      "misconceptions": [
+        "A shadow enlarges the border box and clickable target, and its blur radius is a guaranteed measured outer extent."
+      ],
+      "evidenceRequirements": [
+        "Learner must predict changed outer and inset shadow shapes, paint order, clipping, and approximate rather than fictional exact blur extent.",
+        "Shadow-disabled and forced-colors checks must retain focus, state, separation, contrast, and target size through non-shadow evidence."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-transform-function-order",
+      "title": "Transform functions, coordinate systems, and composition order",
+      "objective": "Compose translate, rotate, scale, skew, and matrix functions while predicting local coordinate changes, non-commutative list order, and nested current transformation matrices.",
+      "order": 35,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-box-model-areas"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-transforms-one",
+          "locator": "Sections 2, 3, 7, 8, and 12: rendering model, transform property, functions, lists, and mathematical descriptions",
+          "claim": "Transform functions become matrices multiplied in list order, act through changing local coordinate systems, and generally produce different results when reordered."
+        }
+      ],
+      "misconceptions": [
+        "translate, rotate, scale, and skew are independent visual filters, so reordering them cannot change the final geometry."
+      ],
+      "evidenceRequirements": [
+        "Learner must map control points through changed transform lists and nested elements rather than infer order from a screenshot alone.",
+        "A repair must choose function order from the intended coordinate system and prove final geometry with a changed point or client rectangle."
       ],
       "stages": [
         "introduce",
@@ -1166,27 +1384,63 @@
     },
     {
       "id": "css-transform-reference-boxes",
-      "title": "Transforms, coordinate space, and reference boxes",
-      "objective": "Compose translate, rotate, scale, skew, origin, and transform functions while predicting coordinate order, reference boxes, hit testing, stacking, and layout-flow effects.",
-      "order": 30,
+      "title": "Transform origin, percentage translation, and reference boxes",
+      "objective": "Choose transform-origin and transform-box while tracing origin translations and the reference dimensions used by percentage translations across CSS and SVG boxes.",
+      "order": 36,
       "moduleId": "css-boxes-and-sizing",
       "prerequisiteIds": [
-        "css-box-model-areas",
+        "css-transform-function-order",
         "css-percentages-containing-blocks"
       ],
       "sourceAnchors": [
         {
           "sourceId": "rwd-css-transforms-one",
-          "locator": "Sections 2 through 7: rendering model, transform lists, origin, reference box, and functions",
-          "claim": "Transforms alter the rendered coordinate space after layout, affect overflow, client rectangles, containing blocks, stacking contexts, reference-box percentages, and composed matrix order without reallocating ordinary flow space."
+          "locator": "Sections 3 through 5: transform, transform-origin, and transform-box",
+          "claim": "Transform origins and percentage translations resolve against the selected reference box; CSS layout boxes and SVG geometry can map content, border, fill, stroke, and view boxes differently."
         }
       ],
       "misconceptions": [
-        "Transform functions execute right-to-left or left-to-right interchangeably because every transform result is independent."
+        "translate(50%) uses the containing block just like width: 50%, while changing transform-origin also changes ordinary-flow placement."
       ],
       "evidenceRequirements": [
-        "Learner must predict changed function order, origin, percentage reference, overflow, hit region, and sibling-flow evidence.",
-        "A visual placement repair must use layout when flow should change and transforms only when transformed rendering is the intended model."
+        "Learner must name the active reference box, calculate changed origin and percentage offsets, and distinguish CSS layout boxes from SVG reference boxes.",
+        "A changed border, padding, SVG viewBox, or transform-box value must produce a predicted and measured pivot or translation without magic pixel compensation."
+      ],
+      "stages": [
+        "introduce",
+        "model",
+        "guided",
+        "faded",
+        "debug",
+        "retrieve",
+        "assess",
+        "transfer"
+      ],
+      "currentState": "researched-not-authored"
+    },
+    {
+      "id": "css-transform-rendering-effects",
+      "title": "Transform flow, overflow, client geometry, stacking, containing blocks, and hit targets",
+      "objective": "Use transforms only for bounded visual geometry while proving unchanged normal-flow allocation and changed overflow, client rectangles, stacking contexts, descendant containing blocks, focus visibility, and hit targets.",
+      "order": 37,
+      "moduleId": "css-boxes-and-sizing",
+      "prerequisiteIds": [
+        "css-transform-function-order",
+        "css-transform-reference-boxes"
+      ],
+      "sourceAnchors": [
+        {
+          "sourceId": "rwd-css-transforms-one",
+          "locator": "Sections 1.1 and 2: module interactions and the transform rendering model",
+          "claim": "Transforms apply after sizing and positioning, do not move surrounding normal-flow content, can extend scrollable overflow, change client rectangles, and create stacking contexts and containing blocks for descendants."
+        }
+      ],
+      "misconceptions": [
+        "A translated element reserves space at its visual position, and transform: translateZ(0) is behavior-neutral because it does not visibly move the box."
+      ],
+      "evidenceRequirements": [
+        "Learner must compare pre-transform layout geometry with post-transform client, overflow, stacking, descendant-positioning, focus, and pointer-hit evidence.",
+        "A changed-content and keyboard-pointer parity test must reject transforms used to repair layout, reading order, or target size."
       ],
       "stages": [
         "introduce",
@@ -1204,7 +1458,7 @@
       "id": "css-font-stacks-generic-fallbacks",
       "title": "Font selection, faces, generic fallbacks, and synthesis",
       "objective": "Predict family, width, style, weight, character-cluster, generic-family, and synthesized-face selection while preserving language support and readable fallback.",
-      "order": 31,
+      "order": 38,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-inheritance-initial-unset-revert"
@@ -1239,7 +1493,7 @@
       "id": "css-web-font-sources-loading",
       "title": "Web font sources, loading, licensing, privacy, and failure",
       "objective": "Declare licensed, bounded font sources, formats, technologies, unicode ranges, display behavior, weights, widths, and styles while controlling requests, payload, privacy exposure, and failure behavior.",
-      "order": 32,
+      "order": 39,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-font-stacks-generic-fallbacks"
@@ -1274,7 +1528,7 @@
       "id": "css-font-metrics-fallback-stability",
       "title": "Font metrics, fallback matching, and layout stability",
       "objective": "Connect em square, baselines, ascenders, descenders, x-height, cap height, advance widths, and line metrics to fallback sizing, line boxes, overflow, and layout shift.",
-      "order": 33,
+      "order": 40,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-web-font-sources-loading",
@@ -1310,7 +1564,7 @@
       "id": "css-variable-fonts-features",
       "title": "Variable axes, typographic features, and language-aware glyphs",
       "objective": "Use registered variable axes, bounded custom axes, kerning, ligatures, numeric forms, capitalization, and language-aware shaping through high-level properties before low-level feature overrides.",
-      "order": 34,
+      "order": 41,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-web-font-sources-loading",
@@ -1346,7 +1600,7 @@
       "id": "css-type-scale-line-height",
       "title": "Type scale, line height, and rhythm",
       "objective": "Set a readable type scale and unitless line heights that adapt through inheritance, zoom, content hierarchy, and component context.",
-      "order": 35,
+      "order": 42,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-font-stacks-generic-fallbacks",
@@ -1383,7 +1637,7 @@
       "id": "css-readable-measure-alignment",
       "title": "Readable measure and text alignment",
       "objective": "Constrain line measure and choose alignment based on reading direction, content length, scanning, and layout rather than screen width alone.",
-      "order": 36,
+      "order": 43,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-type-scale-line-height",
@@ -1419,7 +1673,7 @@
       "id": "css-text-wrap-spacing-decoration",
       "title": "Wrapping, spacing, transformation, and overflow text",
       "objective": "Control white space, wrapping, word and line breaking, hyphenation, alignment, case transformation, spacing, indentation, and truncation without hiding content or overriding language and user text-spacing needs.",
-      "order": 37,
+      "order": 44,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-readable-measure-alignment",
@@ -1455,7 +1709,7 @@
       "id": "css-text-decoration-shadows-emphasis",
       "title": "Text decoration, shadows, and emphasis",
       "objective": "Apply underlines, overlines, line-throughs, emphasis marks, and text shadows without obscuring glyphs, imitating links, carrying meaning by decoration alone, or mistaking ink overflow for layout space.",
-      "order": 38,
+      "order": 45,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-text-wrap-spacing-decoration",
@@ -1491,7 +1745,7 @@
       "id": "css-color-spaces-alpha",
       "title": "Color notation, spaces, and alpha",
       "objective": "Choose named, hexadecimal, RGB, HSL, perceptual, and wide-gamut color notation while predicting conversion, gamut mapping, and alpha compositing against changed backgrounds.",
-      "order": 39,
+      "order": 46,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-rule-declaration-anatomy"
@@ -1526,7 +1780,7 @@
       "id": "css-derived-color-functions",
       "title": "Mixed, relative, and contextual colors",
       "objective": "Derive maintainable color variants with color-mix(), relative color syntax, currentColor, and supported contextual functions while choosing an interpolation space and preserving contrast under changed inputs.",
-      "order": 40,
+      "order": 47,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1562,7 +1816,7 @@
       "id": "css-contrast-noncolor-meaning",
       "title": "Contrast and non-color evidence",
       "objective": "Verify text, component, focus, and state contrast while providing shape, text, position, or semantics when color alone cannot carry meaning.",
-      "order": 41,
+      "order": 48,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1598,7 +1852,7 @@
       "id": "css-filter-effects-fallbacks",
       "title": "Filter effects and readable fallbacks",
       "objective": "Apply bounded filter and backdrop-filter effects while preserving text, contrast, focus, performance, stacking, and usable fallback output.",
-      "order": 42,
+      "order": 49,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1635,7 +1889,7 @@
       "id": "css-gradients-background-images",
       "title": "Gradients and presentational images",
       "objective": "Build gradients and decorative background images with predictable stops, sizing, repeat, position, and fallback while keeping required content in HTML.",
-      "order": 43,
+      "order": 50,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-color-spaces-alpha",
@@ -1671,7 +1925,7 @@
       "id": "design-user-needs-task-flows",
       "title": "Evidence-backed user needs and task flows",
       "objective": "Derive user needs, constraints, task sequences, failure paths, and acceptance evidence from research rather than designing around personal preference or a fictional typical user.",
-      "order": 44,
+      "order": 51,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-purpose-and-boundary"
@@ -1706,7 +1960,7 @@
       "id": "css-visual-hierarchy-spacing",
       "title": "Composition, balance, scale, hierarchy, proximity, and rhythm",
       "objective": "Compose and balance size, weight, spacing, grouping, alignment, imagery, and contrast so semantic hierarchy and task priority remain perceivable without changing reading order.",
-      "order": 45,
+      "order": 52,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1743,7 +1997,7 @@
       "id": "design-prototypes-evaluation-iteration",
       "title": "Prototypes, evaluation, and iterative decisions",
       "objective": "Choose low- or high-fidelity prototypes, define research questions and tasks, observe representative use, separate findings from opinion, and revise traceable design decisions.",
-      "order": 46,
+      "order": 53,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1779,7 +2033,7 @@
       "id": "css-design-tokens-theming",
       "title": "Design tokens and theme constraints",
       "objective": "Model semantic color, type, spacing, radius, and elevation decisions as scoped tokens while declaring supported color schemes and preserving user preferences.",
-      "order": 47,
+      "order": 54,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-custom-properties-fallbacks",
@@ -1815,7 +2069,7 @@
       "id": "design-brief-handoff-artifacts",
       "title": "Evidence-backed design briefs and developer handoff",
       "objective": "Turn researched outcomes, content, accessibility needs, constraints, risks, acceptance evidence, decisions, and open questions into a versioned brief and inspectable developer handoff.",
-      "order": 48,
+      "order": 55,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1851,7 +2105,7 @@
       "id": "design-progressive-enhancement",
       "title": "Essential baseline and progressive enhancement",
       "objective": "Deliver essential content and task behavior in a broadly usable baseline, then add supported layout and interaction enhancements without making the enhancement the only path.",
-      "order": 49,
+      "order": 56,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-purpose-and-boundary",
@@ -1887,7 +2141,7 @@
       "id": "design-hierarchical-wayfinding",
       "title": "Hierarchical wayfinding and breadcrumbs",
       "objective": "Choose breadcrumbs only for genuine parent-page hierarchy, expose an ordered path in a labelled navigation landmark, and identify the current page without confusing hierarchy with visit history or task progress.",
-      "order": 50,
+      "order": 57,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1923,7 +2177,7 @@
       "id": "design-card-content-actions",
       "title": "Card grouping, content priority, and action boundaries",
       "objective": "Use a card only when a set of related content benefits from repeated grouping, preserve heading and list relationships, bound its primary and secondary actions, and make every action operable without invalid nested interaction.",
-      "order": 51,
+      "order": 58,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-visual-hierarchy-spacing",
@@ -1959,7 +2213,7 @@
       "id": "design-progressive-disclosure-registration",
       "title": "Progressive disclosure and proportionate registration",
       "objective": "Reveal secondary complexity through a clear persistent control while keeping essential information visible, and require identity or account data only when the user task and risk make it necessary.",
-      "order": 52,
+      "order": 59,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "design-user-needs-task-flows",
@@ -1995,7 +2249,7 @@
       "id": "css-form-control-states",
       "title": "Resilient form control presentation",
       "objective": "Style native controls, labels, fieldsets, help, validation, disabled, read-only, focus, and autofill states with native appearance and accent-color first; use appearance suppression only when the complete control contract is reproduced.",
-      "order": 53,
+      "order": 60,
       "moduleId": "css-type-color-and-design",
       "prerequisiteIds": [
         "css-contrast-noncolor-meaning",
@@ -2032,7 +2286,7 @@
       "id": "css-normal-flow",
       "title": "Normal flow as the layout baseline",
       "objective": "Predict block and inline layout in normal flow before selecting any layout override, and retain source order as the primary reading and focus order.",
-      "order": 54,
+      "order": 61,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-outer-inner-display",
@@ -2068,7 +2322,7 @@
       "id": "css-flex-container-items-axes",
       "title": "Flex containers, items, and axes",
       "objective": "Identify flex container, direct flex items, main axis, cross axis, starts, ends, and writing-mode effects before changing alignment.",
-      "order": 55,
+      "order": 62,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-normal-flow"
@@ -2103,7 +2357,7 @@
       "id": "css-flex-direction-wrap-lines",
       "title": "Flex direction, wrapping, and lines",
       "objective": "Choose row or column direction and wrapping behavior while preserving logical order, usable growth, and predictable new-line formation.",
-      "order": 56,
+      "order": 63,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-container-items-axes"
@@ -2138,7 +2392,7 @@
       "id": "css-flex-basis-grow-shrink",
       "title": "Flex base size, growth, and shrinkage",
       "objective": "Predict flex base sizes, free-space distribution, shrink factors, minimum contributions, and resulting item sizes.",
-      "order": 57,
+      "order": 64,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-direction-wrap-lines",
@@ -2174,7 +2428,7 @@
       "id": "css-flex-alignment-distribution",
       "title": "Flex alignment and free-space distribution",
       "objective": "Use justify, align, content, items, self, and auto margins according to axis, line count, free space, and baseline needs.",
-      "order": 58,
+      "order": 65,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-container-items-axes",
@@ -2210,7 +2464,7 @@
       "id": "css-flex-gap-spacing",
       "title": "Flex gaps and resilient spacing",
       "objective": "Use gap, padding, and margins according to whether spacing belongs between items, inside a container, or to one component edge.",
-      "order": 59,
+      "order": 66,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-alignment-distribution",
@@ -2246,7 +2500,7 @@
       "id": "css-flex-order-accessibility",
       "title": "Flex visual order and accessibility",
       "objective": "Use source order as the meaningful sequence and restrict order changes to cases where visual reordering does not contradict reading, focus, or task order.",
-      "order": 60,
+      "order": 67,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-direction-wrap-lines"
@@ -2281,7 +2535,7 @@
       "id": "css-flex-component-transfer",
       "title": "Flexible component patterns",
       "objective": "Build unfamiliar navigation, media, card, toolbar, and form-row components by selecting flex constraints from content behavior rather than memorized recipes.",
-      "order": 61,
+      "order": 68,
       "moduleId": "css-flexible-layout",
       "prerequisiteIds": [
         "css-flex-basis-grow-shrink",
@@ -2318,7 +2572,7 @@
       "id": "css-grid-container-tracks-cells",
       "title": "Grid containers, tracks, lines, cells, and areas",
       "objective": "Identify grid container, direct items, axes, lines, tracks, cells, gaps, and areas as a two-dimensional placement model.",
-      "order": 62,
+      "order": 69,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2354,7 +2608,7 @@
       "id": "css-grid-explicit-tracks-fr",
       "title": "Explicit tracks and fractional space",
       "objective": "Define explicit rows and columns with fixed, percentage, intrinsic, and fr tracks while accounting for gaps and minimum contributions.",
-      "order": 63,
+      "order": 70,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-container-tracks-cells",
@@ -2390,7 +2644,7 @@
       "id": "css-grid-repeat-minmax-intrinsic",
       "title": "Repeat, minmax, and intrinsic tracks",
       "objective": "Compose repeat(), minmax(), min-content, max-content, fit-content, and flexible tracks to encode bounded content behavior.",
-      "order": 64,
+      "order": 71,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr",
@@ -2426,7 +2680,7 @@
       "id": "css-grid-line-placement-spans",
       "title": "Grid line placement and spans",
       "objective": "Place items with positive and negative lines, spans, and named lines while preserving a logical source sequence and non-overlapping task flow.",
-      "order": 65,
+      "order": 72,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr"
@@ -2461,7 +2715,7 @@
       "id": "css-grid-template-areas",
       "title": "Named grid areas and responsive rearrangement",
       "objective": "Define complete rectangular named areas and change visual arrangements only when source, reading, focus, and task sequences remain coherent.",
-      "order": 66,
+      "order": 73,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-line-placement-spans",
@@ -2497,7 +2751,7 @@
       "id": "css-grid-auto-placement-dense",
       "title": "Implicit tracks and auto-placement",
       "objective": "Predict implicit track creation, auto-flow order, and dense packing while avoiding visual arrangements that contradict meaningful sequence.",
-      "order": 67,
+      "order": 74,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-line-placement-spans"
@@ -2532,7 +2786,7 @@
       "id": "css-grid-alignment-distribution",
       "title": "Grid item, content, and self alignment",
       "objective": "Align grid items and distribute grid tracks with place, align, and justify properties according to the alignment subject, container, logical axis, available space, baseline, and overflow-safety requirement.",
-      "order": 68,
+      "order": 75,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-container-tracks-cells"
@@ -2567,7 +2821,7 @@
       "id": "css-subgrid-alignment",
       "title": "Subgrid and cross-component alignment",
       "objective": "Use subgrid when nested content must participate in ancestor track sizing and alignment, with a fallback for unsupported or unsuitable contexts.",
-      "order": 69,
+      "order": 76,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-grid-explicit-tracks-fr",
@@ -2603,7 +2857,7 @@
       "id": "css-positioning-containing-blocks",
       "title": "Static, relative, absolute, fixed, and sticky positioning",
       "objective": "Select a positioning scheme by flow participation, containing block, scroll behavior, offsets, and overlap requirements.",
-      "order": 70,
+      "order": 77,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2639,7 +2893,7 @@
       "id": "css-anchor-positioning-fallbacks",
       "title": "Anchor positioning and overflow fallbacks",
       "objective": "Position a bounded out-of-flow callout relative to a named anchor with logical placement and overflow fallbacks while preserving native semantics, focus, reading order, viewport access, and a usable unsupported-feature path.",
-      "order": 71,
+      "order": 78,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-positioning-containing-blocks",
@@ -2675,7 +2929,7 @@
       "id": "css-stacking-contexts-z-index",
       "title": "Stacking contexts and z-index",
       "objective": "Trace stacking-context creation and paint order so local z-index values solve bounded overlap without escalating global layer numbers.",
-      "order": 72,
+      "order": 79,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-positioning-containing-blocks",
@@ -2711,7 +2965,7 @@
       "id": "css-floats-content-wrapping",
       "title": "Floats for content wrapping",
       "objective": "Use floats for bounded content wrapping, clear them deliberately, and reject them as the default multi-column page-layout mechanism.",
-      "order": 73,
+      "order": 80,
       "moduleId": "css-grid-and-positioning",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2747,7 +3001,7 @@
       "id": "responsive-fluid-default",
       "title": "Fluid content as the responsive baseline",
       "objective": "Begin from normal reflow and intrinsic sizing, then add only constraints justified by readability, task, media, or component evidence.",
-      "order": 74,
+      "order": 81,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "css-normal-flow",
@@ -2784,7 +3038,7 @@
       "id": "responsive-viewport-zoom",
       "title": "Viewport configuration and zoom",
       "objective": "Configure the layout viewport for device width without disabling user zoom or assuming CSS pixels equal physical pixels.",
-      "order": 75,
+      "order": 82,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default"
@@ -2819,7 +3073,7 @@
       "id": "responsive-fluid-media",
       "title": "Fluid images, video, and embedded content",
       "objective": "Constrain replaced media to its container while preserving intrinsic aspect ratio, meaningful cropping, controls, and failure behavior.",
-      "order": 76,
+      "order": 83,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default",
@@ -2855,7 +3109,7 @@
       "id": "responsive-image-selection",
       "title": "Resolution and art-direction image selection",
       "objective": "Use srcset, sizes, picture, source, type, and media so the browser selects an appropriate resource without hiding required alternative content.",
-      "order": 77,
+      "order": 84,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-media"
@@ -2890,7 +3144,7 @@
       "id": "responsive-media-query-model",
       "title": "Media-query conditions and user features",
       "objective": "Compose media types, width ranges, orientation, resolution, interaction, color, contrast, and preference features around actual adaptation needs.",
-      "order": 78,
+      "order": 85,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-fluid-default"
@@ -2925,7 +3179,7 @@
       "id": "responsive-content-breakpoints",
       "title": "Content-derived breakpoints",
       "objective": "Introduce a breakpoint where content, measure, controls, or layout can no longer satisfy explicit acceptance constraints.",
-      "order": 79,
+      "order": 86,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -2961,7 +3215,7 @@
       "id": "responsive-mobile-first-enhancement",
       "title": "Narrow-first progressive enhancement",
       "objective": "Author a simple narrow layout and add wider-space enhancements without treating narrow interaction, content, or performance as lesser versions.",
-      "order": 80,
+      "order": 87,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-content-breakpoints"
@@ -2996,7 +3250,7 @@
       "id": "responsive-range-syntax-overlap",
       "title": "Range syntax and boundary ownership",
       "objective": "Use inclusive and exclusive media-query ranges so adjacent conditions have intentional boundaries without overlap gaps or fragile pixel offsets.",
-      "order": 81,
+      "order": 88,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3032,7 +3286,7 @@
       "id": "responsive-container-query-model",
       "title": "Container query establishment and conditions",
       "objective": "Establish a query container and adapt a reusable component to its available inline size or state independently of viewport width.",
-      "order": 82,
+      "order": 89,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-content-breakpoints",
@@ -3068,7 +3322,7 @@
       "id": "responsive-container-query-units",
       "title": "Container query units and bounded fluid components",
       "objective": "Use cqi, cqb, cqmin, and cqmax inside explicit bounds so component scale follows its query container without becoming unreadable.",
-      "order": 83,
+      "order": 90,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-container-query-model",
@@ -3104,7 +3358,7 @@
       "id": "responsive-grid-auto-fit-fill",
       "title": "Intrinsic responsive grids",
       "objective": "Use repeat with auto-fit or auto-fill and safe minmax constraints to form content-responsive tracks without unnecessary viewport breakpoints.",
-      "order": 84,
+      "order": 91,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "css-grid-repeat-minmax-intrinsic",
@@ -3140,7 +3394,7 @@
       "id": "responsive-navigation-disclosure",
       "title": "Responsive navigation and disclosure behavior",
       "objective": "Adapt navigation presentation without removing destinations, changing meaningful order, trapping focus, or depending on hover and viewport width alone.",
-      "order": 85,
+      "order": 92,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-container-query-model",
@@ -3177,7 +3431,7 @@
       "id": "design-long-collection-navigation",
       "title": "Long collections, pagination, and restored context",
       "objective": "Choose explicit pagination or a bounded user-requested continuation for long collections, expose position and destinations, preserve history and focus, and restore context after detail navigation.",
-      "order": 86,
+      "order": 93,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-navigation-disclosure",
@@ -3213,7 +3467,7 @@
       "id": "responsive-test-matrix",
       "title": "Responsive evidence matrix",
       "objective": "Test continuous size ranges and changed content, zoom, input, preferences, orientation, density, media, performance, and browser conditions using recorded evidence.",
-      "order": 87,
+      "order": 94,
       "moduleId": "responsive-systems",
       "prerequisiteIds": [
         "responsive-image-selection",
@@ -3250,7 +3504,7 @@
       "id": "css-zoom-reflow-text-spacing",
       "title": "Zoom, reflow, and user text spacing",
       "objective": "Preserve content and operation under browser zoom, viewport reflow, enlarged text, and user-overridden line, paragraph, letter, and word spacing.",
-      "order": 88,
+      "order": 95,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-test-matrix",
@@ -3286,7 +3540,7 @@
       "id": "css-focus-visible-indicators",
       "title": "Keyboard focus and focus-visible indicators",
       "objective": "Create persistent, unobscured, high-contrast focus indicators using focus-visible while preserving a usable fallback and logical focus order.",
-      "order": 89,
+      "order": 96,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-pseudo-classes",
@@ -3323,7 +3577,7 @@
       "id": "css-input-capability-adaptation",
       "title": "Hover, pointer, touch, and input capabilities",
       "objective": "Use hover, any-hover, pointer, and any-pointer as enhancement signals while keeping complete operation for mixed and changing input devices.",
-      "order": 90,
+      "order": 97,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3359,7 +3613,7 @@
       "id": "css-target-size-spacing",
       "title": "Pointer target size and spacing",
       "objective": "Provide usable target dimensions and spacing without enlarging overlapping hit areas, hiding labels, or weakening dense-data exceptions.",
-      "order": 91,
+      "order": 98,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-box-model-areas",
@@ -3395,7 +3649,7 @@
       "id": "design-modal-dialog-focus",
       "title": "Modal necessity, semantics, focus, and dismissal",
       "objective": "Use a modal only for a bounded interrupting task, make background content inert, label the dialog, contain and place focus deliberately, provide explicit dismissal, protect entered work, and restore logical focus.",
-      "order": 92,
+      "order": 99,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-focus-visible-indicators",
@@ -3432,7 +3686,7 @@
       "id": "design-multistep-progress-recovery",
       "title": "Multi-step progress, persistence, review, and recovery",
       "objective": "Break a genuinely long process into logical steps, communicate current and total progress in text, preserve entered data, support backward correction, and recover after interruption without inventing false certainty for conditional paths.",
-      "order": 93,
+      "order": 100,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-focus-visible-indicators",
@@ -3469,7 +3723,7 @@
       "id": "design-cart-review-correction",
       "title": "Cart state, quantity correction, totals, and confirmation",
       "objective": "Keep selected items and costs inspectable, provide labelled quantity and removal controls, announce material changes, prevent silent loss, and offer a complete review-and-correct step before commitment.",
-      "order": 94,
+      "order": 101,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-form-control-states",
@@ -3505,7 +3759,7 @@
       "id": "css-reduced-motion-preference",
       "title": "Reduced-motion adaptation",
       "objective": "Use prefers-reduced-motion to remove or replace nonessential movement while preserving state changes, spatial understanding, and task feedback.",
-      "order": 95,
+      "order": 102,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model"
@@ -3540,7 +3794,7 @@
       "id": "css-transitions-state-change",
       "title": "Transitions and state continuity",
       "objective": "Transition animatable properties with bounded duration and easing so changes remain perceptible without delaying operation or animating unintended properties.",
-      "order": 96,
+      "order": 103,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-pseudo-classes",
@@ -3576,7 +3830,7 @@
       "id": "css-keyframe-animation-model",
       "title": "Keyframes, timing, fill, and iteration",
       "objective": "Define keyframe animations with intentional interpolation, iteration, direction, delay, fill, composition, and termination behavior.",
-      "order": 97,
+      "order": 104,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-transitions-state-change"
@@ -3611,7 +3865,7 @@
       "id": "css-forced-colors-preferences",
       "title": "Forced colors, contrast, and theme preferences",
       "objective": "Adapt to forced-colors, prefers-contrast, color-scheme, and light or dark preferences without defeating system colors or hiding controls.",
-      "order": 98,
+      "order": 105,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-design-tokens-theming",
@@ -3647,7 +3901,7 @@
       "id": "css-print-and-non-screen-media",
       "title": "Print and non-screen output",
       "objective": "Provide a print adaptation that preserves document meaning, URLs or references, page breaks, contrast, and hidden-versus-required content.",
-      "order": 99,
+      "order": 106,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "responsive-media-query-model",
@@ -3683,7 +3937,7 @@
       "id": "css-devtools-causal-debugging",
       "title": "Computed-style and layout debugging",
       "objective": "Use validation, matched rules, computed styles, box, flex, grid, accessibility, responsive, and performance evidence to test one cause hypothesis at a time.",
-      "order": 100,
+      "order": 107,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-cascade-layers-scope",
@@ -3720,7 +3974,7 @@
       "id": "css-rendering-performance-stability",
       "title": "Rendering cost and layout stability",
       "objective": "Reduce blocking payload, unnecessary style work, layout shifts, expensive paint, and animation cost without sacrificing semantics or accessibility.",
-      "order": 101,
+      "order": 108,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-web-font-sources-loading",
@@ -3757,7 +4011,7 @@
       "id": "css-changed-case-regression",
       "title": "Changed-case CSS regression testing",
       "objective": "Protect semantic, visual, responsive, interaction, accessibility, and performance invariants with behavior checks rather than selector-token assertions.",
-      "order": 102,
+      "order": 109,
       "moduleId": "css-interaction-accessibility-and-motion",
       "prerequisiteIds": [
         "css-devtools-causal-debugging",
@@ -3794,7 +4048,7 @@
       "id": "css-independent-transfer-defense",
       "title": "Independent responsive interface transfer and defense",
       "objective": "Design, build, test, and defend an unfamiliar multi-page responsive interface from an empty stylesheet and stakeholder acceptance criteria.",
-      "order": 103,
+      "order": 110,
       "moduleId": "css-independent-project",
       "prerequisiteIds": [
         "css-cascade-layers-scope",
