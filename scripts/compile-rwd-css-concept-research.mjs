@@ -392,6 +392,7 @@ add(
   [
     'Learner must predict sibling flow and child formatting for changed outer and inner display combinations.',
     'A hidden-state implementation must distinguish visually absent, non-rendered, and accessibility-hidden requirements.',
+    'Multi-keyword display syntax and display: contents require named target-browser and accessibility evidence rather than syntax-only claims.',
   ]
 );
 
